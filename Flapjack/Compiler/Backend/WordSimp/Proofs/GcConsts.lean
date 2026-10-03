@@ -504,6 +504,427 @@ theorem push_env_pop_env_locals_thm {width : Nat} [NeZero width] {C : Type} {F :
     · cases h1
   · cases hcut
 
+section SfGcConsts
+
+variable {width : Nat} [NeZero width] {C : Type} {F : Type}
+
+/-- The conclusion of HOL `evaluate_sf_gc_consts`, case by case on the result
+    (untagged rendering of the statement's `case`). -/
+noncomputable def sfMotive (s : WordSemStateFiniteExact width C F) :
+    Option (WordSemResult width) → WordSemStateFiniteExact width C F → Prop
+  | none, s' => List.Forall₂ sfGcConsts s.stack s'.stack ∧ s'.handler = s.handler
+  | some (.result _ _), s' => List.Forall₂ sfGcConsts s.stack s'.stack ∧ s'.handler = s.handler
+  | some (.exception _ _), s' =>
+      s.handler < s.stack.length →
+        List.Forall₂ sfGcConsts (wordSemLastN s.handler s.stack) s'.stack ∧
+          s'.handler = getAboveHandler s
+  | some (.break _), s' => List.Forall₂ sfGcConsts s.stack s'.stack ∧ s'.handler = s.handler
+  | some (.continue _), s' => List.Forall₂ sfGcConsts s.stack s'.stack ∧ s'.handler = s.handler
+  | some _, _ => True
+
+theorem forall₂_sfGcConsts_refl (l : List (WordSemStackFrame width)) :
+    List.Forall₂ sfGcConsts l l :=
+  List.forall₂_same.mpr fun x _ => sfGcConstsRefl x
+
+theorem sfMotive_same (s s' : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
+    (hst : s'.stack = s.stack) (hh : s'.handler = s.handler)
+    (hres : ∀ x y, res ≠ some (.exception x y)) : sfMotive s res s' := by
+  rcases res with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _ <;> simp only [sfMotive] <;>
+    first | trivial | exact absurd rfl (hres x y) |
+      exact ⟨hst ▸ forall₂_sfGcConsts_refl _, hh⟩
+
+/-- Any result outside `NONE`/`Result`/`Exception`/`Break`/`Continue` satisfies the motive. -/
+theorem sfMotive_other (s s' : WordSemStateFiniteExact width C F) (r : WordSemResult width)
+    (h : r = .timeOut ∨ r = .notEnoughSpace ∨ (∃ e, r = .finalFfi e) ∨ r = .error) :
+    sfMotive s (some r) s' := by
+  rcases h with rfl | rfl | ⟨e, rfl⟩ | rfl <;> trivial
+
+theorem sfMotive_shareInst (op : WordMemOp) (v : Nat) (ad : BitVec width)
+    (s : WordSemStateFiniteExact width C F) :
+    sfMotive s (shareInst (rw := width) op v ad s).1 (shareInst (rw := width) op v ad s).2 := by
+  cases op <;>
+    simp only [shareInst, shMemSetVar, shMemLoad, shMemLoadByte, shMemLoad16, shMemLoad32,
+      shMemStore, shMemStoreByte, shMemStore16, shMemStore32] <;>
+    (repeat' split) <;>
+    first
+      | (simp only [sfMotive]; done)
+      | exact sfMotive_same _ _ _ rfl rfl (fun _ _ h => by cases h)
+
+set_option linter.unusedSimpArgs false in
+/-- The permute-constant statements other than `Raise`. -/
+theorem sfMotive_const (s : WordSemStateFiniteExact width C F)
+    (p : WordLangProgHOL (BitVec width)) (hp : wordProgPermuteConst p = true)
+    (hr : ∀ n, p ≠ .raise n) :
+    sfMotive s (evaluate p s).1 (evaluate p s).2 := by
+  cases p <;> simp only [wordProgPermuteConst, Bool.false_eq_true] at hp <;> rw [evaluate] <;>
+    (repeat' split) <;>
+    first
+      | (simp only [sfMotive]; done)
+      | exact absurd rfl (hr _)
+      | exact sfMotive_same _ _ _ rfl rfl (fun _ _ h => by cases h)
+      | exact sfMotive_shareInst _ _ _ _
+      | (rename_i h
+         have hc := instConstFull _ _ _ h
+         exact sfMotive_same _ _ _ hc.2.2.2.2.2.2.2.2.1 hc.2.2.2.2.2.2.2.1 (fun _ _ h => by cases h))
+      | (rename_i h
+         have hc := memStoreConst _ _ _ _ h
+         exact sfMotive_same _ _ _ hc.2.2.2.2.2.2.2.2.2.2.2.2.2.1 hc.2.2.2.2.2.2.2.1
+           (fun _ _ h => by cases h))
+      | (dsimp only; split
+         · exact sfMotive_same _ _ _ rfl rfl (fun _ _ h => by cases h)
+         · simp only [sfMotive])
+
+theorem sfMotive_raise (n : Nat) (s : WordSemStateFiniteExact width C F) :
+    sfMotive s (evaluate (.raise n) s).1 (evaluate (.raise n) s).2 := by
+  rw [evaluate]
+  split
+  · simp only [sfMotive]
+  · rename_i w hw
+    unfold jumpExc
+    by_cases hh : s.handler < s.stack.length
+    · simp only [hh, if_true]
+      rcases hl : wordSemLastN (s.handler + 1) s.stack with _ | ⟨fr, xs⟩
+      · simp only [sfMotive]
+      · rcases fr with ⟨m, e0, e, _ | ⟨n', l1, l2⟩⟩
+        · simp only [sfMotive]
+        · simp only [sfMotive]
+          intro _
+          have hxs := LASTN_TL_res s.stack s.handler _ xs ⟨hh, hl⟩
+          refine ⟨hxs ▸ forall₂_sfGcConsts_refl _, ?_⟩
+          have hhd := HD_LASTN s.stack (s.handler + 1) ⟨by omega, by omega⟩
+          rw [hl] at hhd
+          unfold getAboveHandler
+          rw [← hhd]
+          rfl
+    · simp only [hh, if_false, sfMotive]
+
+theorem sfMotive_alloc (w : BitVec width) (names : WordLangCutsetsHOL)
+    (s : WordSemStateFiniteExact width C F) (hok : gcFunConstOk s.gcFun) :
+    sfMotive s (alloc w names s).1 (alloc w names s).2 := by
+  unfold alloc
+  split
+  · simp only [sfMotive]
+  · rename_i envs hce
+    split
+    · simp only [sfMotive]
+    · rename_i g hg
+      have hrel := gc_sf_gc_consts (pushEnv envs none (setStore .allocSize (.word w) s)) g ⟨hok, hg⟩
+      have hgh := gc_handler (pushEnv envs none (setStore .allocSize (.word w) s)) g hg
+      split
+      · simp only [sfMotive]
+      · rename_i p hp
+        have hpush : (pushEnv envs none (setStore .allocSize (.word w) s)).stack =
+            .stackFrame s.localsSize (sptToAList envs.1)
+              (wordSemEnvToList envs.2 s.permute).1 none :: s.stack := rfl
+        have hpushh : (pushEnv envs none (setStore .allocSize (.word w) s)).handler = s.handler := rfl
+        rw [hpush] at hrel
+        have hpst : List.Forall₂ sfGcConsts s.stack p.stack ∧ p.handler = g.handler := by
+          unfold popEnv at hp
+          generalize hgs : g.stack = gst at hrel hp
+          cases hrel with
+          | @cons a b as bs hf hrest =>
+            rcases b with ⟨m, e0, e, hf''⟩
+            obtain ⟨-, -, hfh⟩ := hf
+            cases hf'' with
+            | some _ => cases hfh
+            | none =>
+              simp only [Option.some.injEq] at hp
+              subst hp
+              exact ⟨hrest, rfl⟩
+        have hstack : List.Forall₂ sfGcConsts s.stack p.stack := hpst.1
+        have hhand : p.handler = s.handler := by rw [hpst.2, hgh, hpushh]
+        split
+        · simp only [sfMotive]
+        · split
+          · simp only [sfMotive]
+          · exact ⟨hstack, hhand⟩
+          · simp only [sfMotive]
+
+theorem wordSemLastN_cons_of_le {α : Type} (n : Nat) (x : α) (l : List α) (h : n ≤ l.length) :
+    wordSemLastN n (x :: l) = wordSemLastN n l := by
+  rw [wordSemLastN_eq_drop, wordSemLastN_eq_drop]
+  simp only [List.length_cons]
+  rw [show l.length + 1 - n = (l.length - n) + 1 by omega, List.drop_succ_cons]
+
+/-- Composition of the motive after a step that keeps the stack related and
+    the handler. -/
+theorem sfMotive_compose {s s1 s2 : WordSemStateFiniteExact width C F} {r : Option (WordSemResult width)}
+    (hs : List.Forall₂ sfGcConsts s.stack s1.stack) (hh : s1.handler = s.handler)
+    (h2 : sfMotive s1 r s2) : sfMotive s r s2 := by
+  have htr : ∀ {l : List (WordSemStackFrame width)}, List.Forall₂ sfGcConsts s1.stack l →
+      List.Forall₂ sfGcConsts s.stack l :=
+    fun h => forall₂_trans' (fun a b c hab hbc => sfGcConstsTrans a b c ⟨hab, hbc⟩) hs h
+  rcases r with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _ <;> simp only [sfMotive] at h2 ⊢
+  · exact ⟨htr h2.1, h2.2.trans hh⟩
+  · exact ⟨htr h2.1, h2.2.trans hh⟩
+  · intro hlt
+    have hlen := hs.length_eq
+    obtain ⟨hl, hah⟩ := h2 (by rw [hh, ← hlen]; exact hlt)
+    refine ⟨?_, ?_⟩
+    · rw [hh] at hl
+      exact EVERY2_trans_LASTN_sf_gc_consts s.stack s1.stack s2.stack s.handler True
+        ⟨by omega, hs, hl⟩
+    · rw [hah]; exact sf_gc_consts_get_above_handler s s1 ⟨hs, hh, hlt⟩
+  · exact ⟨htr h2.1, h2.2.trans hh⟩
+  · exact ⟨htr h2.1, h2.2.trans hh⟩
+
+/-- The motive depends on the start state only through its stack and handler. -/
+theorem sfMotive_start_eq {s s' t : WordSemStateFiniteExact width C F} {r : Option (WordSemResult width)}
+    (hst : s'.stack = s.stack) (hh : s'.handler = s.handler) (h : sfMotive s' r t) : sfMotive s r t := by
+  exact sfMotive_compose (hst ▸ forall₂_sfGcConsts_refl s.stack) hh h
+
+/-- The motive depends on the end state only through its stack and handler. -/
+theorem sfMotive_end_eq {s t t' : WordSemStateFiniteExact width C F} {r : Option (WordSemResult width)}
+    (hst : t'.stack = t.stack) (hh : t'.handler = t.handler) (h : sfMotive s r t) : sfMotive s r t' := by
+  rcases r with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _ <;> simp only [sfMotive] at h ⊢ <;>
+    first | trivial | (rw [hst, hh]; exact h)
+
+set_option linter.unusedSimpArgs false in
+/-- Recursive core of HOL `evaluate_sf_gc_consts`, by recursion on HOL's
+    termination measure following `evaluate_ind`. -/
+theorem sf_aux :
+    ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
+      gcFunConstOk s.gcFun → sfMotive s (evaluate p s).1 (evaluate p s).2
+  | .mustTerminate q, s, hok => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
+      rw [ht]
+      by_cases hz : s.termdep = 0
+      · simp only [hz, dite_true, if_true, sfMotive]
+      · simp only [hz, dite_false, if_false]
+        have ih := sf_aux q { s with
+            clock := wordSemMustTerminateLimit width
+            termdep := s.termdep - 1 } hok
+        rcases hq : evaluate q { s with
+            clock := wordSemMustTerminateLimit width
+            termdep := s.termdep - 1 } with ⟨r, s1⟩
+        rw [hq] at ih
+        have ih' := sfMotive_start_eq (s := s) rfl rfl ih
+        cases r with
+        | none => exact sfMotive_end_eq rfl rfl ih'
+        | some x => cases x <;> first | (simp only [sfMotive]; done) | exact sfMotive_end_eq rfl rfl ih'
+  | .seq c1 c2, s, hok => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.1
+      rw [ht]
+      have ih1 := sf_aux c1 s hok
+      rcases h1 : evaluate c1 s with ⟨r1, s1⟩
+      rw [h1] at ih1
+      have hc := evaluate_clock c1 s r1 s1 h1
+      cases r1 with
+      | none =>
+        have hok1 : gcFunConstOk s1.gcFun := evaluate_gc_fun_const_ok c1 s none s1 ⟨h1, hok⟩
+        exact sfMotive_compose ih1.1 ih1.2 (sf_aux c2 s1 hok1)
+      | some x => exact ih1
+  | .ite cmp r1 ri c1 c2, s, hok => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+      rw [ht]
+      rcases getVar r1 s with _ | x <;> rcases getVarImm ri s with _ | y <;> simp only <;>
+        try (simp only [sfMotive]; done)
+      rcases wordSemWordCmp cmp x y with _ | _ | _ <;> simp only
+      · simp only [sfMotive]
+      · exact sf_aux c2 s hok
+      · exact sf_aux c1 s hok
+  | .loop names c exitNames, s, hok => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+      rw [ht]
+      rcases hcs : cutState (names, .ln) s with _ | s'
+      · simp only [sfMotive]
+      simp only
+      obtain ⟨l, rfl⟩ := cutStateConst _ _ _ hcs
+      have hc2 := cutState_clock_termdep _ _ _ hcs
+      have ih := sf_aux c { s with locals := l } hok
+      rcases hb : evaluate c { s with locals := l } with ⟨rb, s1⟩
+      rw [hb] at ih
+      have ih' := sfMotive_start_eq (s := s) rfl rfl ih
+      have hcl := evaluate_clock c _ rb s1 hb
+      have hok1 : gcFunConstOk s1.gcFun := evaluate_gc_fun_const_ok c _ rb s1 ⟨hb, hok⟩
+      simp only
+      by_cases hcont : wordSemContLoop rb = true
+      · simp only [hcont, if_true]
+        have hrel : List.Forall₂ sfGcConsts s.stack s1.stack ∧ s1.handler = s.handler := by
+          rcases rb with _ | ⟨_ | _ | _ | k | _ | _ | _ | _⟩ <;>
+            simp [wordSemContLoop] at hcont <;> simpa only [sfMotive] using ih'
+        by_cases hz : s1.clock = 0
+        · simp only [hz, dite_true, if_true, sfMotive]
+        · simp only [hz, dite_false, if_false, wordSemSTOP]
+          exact sfMotive_compose hrel.1 hrel.2
+            (sf_aux (.loop names c exitNames) (decClock s1) hok1)
+      · simp only [hcont, Bool.false_eq_true, if_false]
+        split
+        · rcases hce : cutState (exitNames, .ln) s1 with _ | s2
+          · simp only [sfMotive]
+          · obtain ⟨_, rfl⟩ := cutStateConst _ _ _ hce
+            simp only [sfMotive] at ih' ⊢
+            exact ih'
+        · rename_i hnb
+          rcases rb with _ | ⟨x, ys⟩ | ⟨x, y⟩ | k | k | _ | _ | _ | _ <;>
+            simp only [wordSemExitLoop, wordSemContLoop] at hcont ⊢ <;>
+            first | (simp only [sfMotive]; done) | exact ih'
+  | .call ret dest args handler, s, hok => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+      rw [ht]
+      rcases hg : getVars args s with _ | xs
+      · simp only [sfMotive]
+      simp only
+      by_cases hbad : wordSemBadDestArgs dest args = true
+      · simp only [hbad, if_true, sfMotive]
+      simp only [hbad, Bool.false_eq_true, if_false]
+      rcases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) s.code s.stackSize with
+        _ | ⟨args1, prog, ss⟩
+      · simp only [sfMotive]
+      simp only
+      cases ret with
+      | none =>
+        cases handler with
+        | some _ => simp only [sfMotive]
+        | none =>
+          simp only
+          by_cases hz : s.clock = 0
+          · simp only [hz, dite_true, if_true, sfMotive]
+          simp only [hz, dite_false, if_false]
+          have ih := sf_aux prog (callEnv args1 ss (decClock s)) hok
+          rcases hcv : evaluate prog (callEnv args1 ss (decClock s)) with ⟨rc, sc⟩
+          rw [hcv] at ih
+          have ih' := sfMotive_start_eq (s := s) rfl rfl ih
+          simp only
+          split
+          · simp only [sfMotive]
+          · exact ih'
+      | some rv =>
+        obtain ⟨n, names, retHandler, l1, l2⟩ := rv
+        simp only
+        by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
+        · simp only [hdc, if_true, sfMotive]
+        simp only [hdc, if_false]
+        rcases hce : wordSemCutEnvs names s.locals with _ | envs
+        · simp only [sfMotive]
+        simp only
+        by_cases hz : s.clock = 0
+        · rw [if_pos hz]; simp only [sfMotive]
+        rw [if_neg hz]
+        have hokS : gcFunConstOk (callEnv args1 ss (pushEnv envs handler (decClock s))).gcFun := by
+          rcases handler with _ | ⟨_, _, _, _⟩ <;> exact hok
+        have ih := sf_aux prog (callEnv args1 ss (pushEnv envs handler (decClock s))) hokS
+        rcases hcv : evaluate prog (callEnv args1 ss (pushEnv envs handler (decClock s))) with
+          ⟨rc, s2⟩
+        rw [hcv] at ih
+        have hc := evaluate_clock prog _ rc s2 hcv
+        have hok2 : gcFunConstOk s2.gcFun := evaluate_gc_fun_const_ok prog _ rc s2 ⟨hcv, hokS⟩
+        rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | kk | kk | _ | _ | _ | _
+        · simp only [sfMotive]
+        · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
+          · simp only [hx, if_true, sfMotive]
+          simp only [hx, if_false]
+          rcases hp : popEnv s2 with _ | s1
+          · simp only [sfMotive]
+          simp only
+          simp only [sfMotive] at ih
+          have hcr := LIST_REL_call_Result (decClock s) s2 s2 s1 envs handler
+            ⟨ih.1, hp, ih.2⟩
+          have hc2 : s1.clock = s2.clock ∧ s1.termdep = s2.termdep :=
+            ⟨popEnv_clock _ _ hp, popEnv_termdep _ _ hp⟩
+          have hok1 : gcFunConstOk s1.gcFun := pop_env_gc_fun_const_ok s2 s1 ⟨hp, hok2⟩
+          split
+          · exact sfMotive_compose hcr.1 hcr.2
+              (sf_aux retHandler (setVars n ys s1) hok1)
+          · simp only [sfMotive]
+        · cases handler with
+          | none =>
+            simp only [sfMotive] at ih ⊢
+            intro hlt
+            have hpl : (callEnv args1 ss (pushEnv envs none (decClock s))).handler <
+                (callEnv args1 ss (pushEnv envs none (decClock s))).stack.length := by
+              simp only [callEnv, pushEnv, decClock, List.length_cons]; omega
+            obtain ⟨hl, hah⟩ := ih hpl
+            refine ⟨?_, ?_⟩
+            · have := wordSemLastN_cons_of_le s.handler
+                (.stackFrame s.localsSize (sptToAList envs.1)
+                  (wordSemEnvToList envs.2 s.permute).1 none) s.stack (by omega)
+              simp only [callEnv, pushEnv, decClock] at hl
+              rw [this] at hl
+              exact hl
+            · rw [hah]
+              unfold getAboveHandler
+              simp only [callEnv, pushEnv, decClock, List.length_cons]
+              rw [show s.stack.length + 1 - (s.handler + 1) = (s.stack.length - (s.handler + 1)) + 1
+                by omega, holEl_cons_succ]
+          | some hv =>
+            obtain ⟨n', hprog, l1', l2'⟩ := hv
+            simp only
+            simp only [sfMotive] at ih
+            have hpl := call_env_push_env_dec_clock_handler_length s _ args1 ss envs n' hprog l1' l2' rfl
+            obtain ⟨hl, hah⟩ := ih hpl
+            have hrel : List.Forall₂ sfGcConsts s.stack s2.stack := by
+              have := LASTN_LENGTH_CONS s.stack
+                (.stackFrame s.localsSize (sptToAList envs.1) (wordSemEnvToList envs.2 s.permute).1
+                  (some (s.handler, l1', l2')))
+              simp only [callEnv, pushEnv, decClock] at hl
+              rw [this] at hl
+              exact hl
+            have hh2 : s2.handler = s.handler :=
+              get_above_handler_call_env_push_env_dec_clock s _ s2 args1 ss envs n' hprog l1' l2'
+                ⟨rfl, hah⟩
+            split
+            · simp only [sfMotive]
+            · split
+              · exact sfMotive_compose hrel hh2 (sf_aux hprog (setVar n' y s2) hok2)
+              · simp only [sfMotive]
+        all_goals simp only [sfMotive]
+  | .raise n, s, _ => sfMotive_raise n s
+  | .alloc n names, s, hok => by
+      rw [evaluate]
+      split
+      · exact sfMotive_alloc _ names s hok
+      · simp only [sfMotive]
+  | .skip, s, _ => sfMotive_const s _ rfl (by simp)
+  | .move a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .inst a, s, _ => sfMotive_const s _ rfl (by simp)
+  | .assign a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .get a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .set a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .store a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .tick, s, _ => sfMotive_const s _ rfl (by simp)
+  | .storeConsts a b c d f, s, _ => sfMotive_const s _ rfl (by simp)
+  | WordLangProgHOL.return a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | WordLangProgHOL.break a, s, _ => sfMotive_const s _ rfl (by simp)
+  | WordLangProgHOL.continue a, s, _ => sfMotive_const s _ rfl (by simp)
+  | .opCurrHeap a b c, s, _ => sfMotive_const s _ rfl (by simp)
+  | .locValue a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .install a b c d f, s, _ => sfMotive_const s _ rfl (by simp)
+  | .codeBufferWrite a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .dataBufferWrite a b, s, _ => sfMotive_const s _ rfl (by simp)
+  | .ffi a b c d f g, s, _ => sfMotive_const s _ rfl (by simp)
+  | .shareInst a b c, s, _ => sfMotive_const s _ rfl (by simp)
+termination_by p s => (s.termdep, s.clock, sizeOf p)
+decreasing_by
+  all_goals
+    simp_wf
+    apply wordSemLex
+    try (rcases hc with ⟨_, _⟩)
+    try (rcases hcl with ⟨_, _⟩)
+    try (rcases hc2 with ⟨_, _⟩)
+    try simp only [decClock, callEnv, setVars, setVar, pushEnv_clock, pushEnv_termdep,
+      true_and] at *
+    omega
+
+end SfGcConsts
+
+/-- Exact HOL `evaluate_sf_gc_consts` (`word_simpProofScript.sml:692-893`): the
+    complete result-indexed conclusion (stack frames related by `sf_gc_consts`
+    and handler kept for `NONE`/`Result`/`Break`/`Continue`; for `Exception`, under
+    `s.handler < LENGTH s.stack`, the frames above the handler and
+    `get_above_handler`; `T` otherwise), rendered by the untagged `sfMotive`.
+    Inherits `reals_as_rational_cuts` through `evaluate`. -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_sf_gc_consts"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_sf_gc_consts {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (p : WordLangProgHOL (BitVec width)) (s s' : WordSemStateFiniteExact width C F)
+      (res : Option (WordSemResult width)),
+      evaluate p s = (res, s') ∧ gcFunConstOk s.gcFun → sfMotive s res s' := by
+  intro p s s' res ⟨h, hok⟩
+  have := sf_aux p s hok
+  rw [h] at this
+  exact this
+
 end WordSemStateFiniteExact
 
 end Flapjack
