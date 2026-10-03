@@ -7156,3 +7156,7 @@ run_probe riscv_target_skip_probeScript.sml riscv_target_skip_probe.out \
   riscv_encoder_correct_skip_hypotheses riscv_encoder_correct_skip_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe stack_to_lab_no_ret_review_probeScript.sml stack_to_lab_no_ret_review_probe.out \
+  no_ret_correct no_ret_correct_types no_ret_correct_hypotheses no_ret_correct_proved stack_regs_type stack_fp_regs_type stack_store_type stack_code_type \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
