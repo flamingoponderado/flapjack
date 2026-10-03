@@ -7898,6 +7898,7 @@ kernel truth and quantified types. Its Lean port retains four original premises,
 faithful declaration semantics and the original eshapes update. Executed routing
 is independent. Regenerate with
 `HOL_PROBE_ONLY=pan_structs_compile_top_semantics_decls_probeScript.sml`.
+
 ## Whole native Const Run composition
 
 `riscv_const_run_probeScript.sml` executes original `riscv_ast_def` Const
@@ -8018,3 +8019,15 @@ The `backend_lower_pipeline` probe also captures the complete original closed
 `from_word_0_def` and its inferred type, including the actual WordToWord tuple
 and oracle update before `from_word`. This is definition evidence, not an
 executed-route or complete compiler-correctness result.
+## Full typed Word-to-Stack proof captures
+
+The five WordToStack `move_single`, `move_aux`, `move_aux_seqsem`, `move_div2`,
+and `comp_returning_full` probes also print complete original terms under
+`Globals.show_types`. These typed rows supplement the unchanged statement and
+proof rows: they expose the shared word dimension, independent host/FFI types,
+polymorphic DIV2 environment, and every guarded Call induction hypothesis.
+The Move local proofs still replay their original HOL proof scripts; the returning
+Call row is an original kernel theorem specialization, and its induction row is
+the original `evaluate_ind` obligation instantiated with the full compiler
+motive. Printing the obligation does not prove its compiler case, and none of
+these captures establishes HOL-to-Lean equivalence.
