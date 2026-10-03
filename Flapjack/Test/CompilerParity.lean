@@ -9,6 +9,8 @@ import Flapjack.Test.L3AMOMinMaxParity
 import Flapjack.Test.L3AMOArithmeticParity
 import Flapjack.Test.L3SystemSignalsParity
 import Flapjack.Test.BytesInMemoryDomainParity
+import Flapjack.Test.L3TLBFlushParity
+import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.MiscFindIndexShiftParity
 import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity

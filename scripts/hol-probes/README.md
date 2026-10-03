@@ -6398,3 +6398,26 @@ list, a domain hole, a wrong byte and a past-end index. The Lean parity module
 checks all observations and twelve applications of the full theorem. These
 fixtures provide regression evidence, not a cross-language equivalence proof.
 `stack_code_bitmaps_callreturn_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Call SOME specialization. Actual callee/link/clock guards and matching return/exception-label execution restrict continuation IHs to the actual clamped poststate; derive full prefix composition, retain all mismatches and terminal outcomes. Full Call/whole evaluator assembly remains open.
+
+`l3_tlb_flush_probe.out` captures complete flushTLB/SFENCE_VM definitions/types
+and 64 mixed-entry observations. Original TLBEntries=16 visits all slots0..15.
+Independent expectations cover ASID zero/nonzero, global entries, optional masked
+addresses, empty entries, surviving arbitrary records, register-zero semantics,
+other-core tables and the entire frame outside c_tlb. No entry-validity/core-bound
+premise is assumed; these regressions do not establish whole Run/Next correctness.
+
+
+
+`stack_rel_aux_definition_probe.out` captures the complete original generated equations, zero hypotheses and polymorphic type. Three independent source-frame/location/saved-handler word dimensions are retained; total HOL EL applies without an invented source bound. All four clauses including catch-all mismatches remain.
+
+`stack_code_bitmaps_nonrecursive_probeScript.sml` replays the literal complete
+original `evaluate_code_bitmaps` proof (stackPropsScript.sml:421–440), checks
+that its full statement has no hypotheses or free variables, and captures
+all 23 remaining nonrecursive constructor statements. Each Lean case retains
+the sole source evaluation premise and all three existential conclusions over
+compile oracle, code and bitmaps. Shared-memory preservation comes from the
+actual helper execution and original `sh_mem_op_const`; no preserved field is
+assumed. The native consumer module kernel-checks all 23 generic statements.
+These captures provide source regression evidence, not cross-language equivalence
+or full evaluator/pass/compiler correctness.
+`stack_code_bitmaps_call_probe.out` captures the original full theorem, zero hypotheses and arbitrary-ret Call specialization. The Lean constructor case assembles actual NONE/SOME branch proofs with source-path guarded recursive IHs and all three existential conjuncts. Whole evaluator assembly is separate.
