@@ -6236,6 +6236,14 @@ they are when saved in the original theory. It retains the arbitrary frame
 predicate and the complete separated-heap conclusion. The native counterpart
 uses the reviewed `memoryHOL` and SetSep carriers; the capture is regression
 evidence, not a cross-language equivalence proof.
+
+`stack_remove_comp_shmem_probeScript.sml` replays the complete original
+`comp_correct` ShMemOp case (1998–2022), including its literal local register
+and clock-relation prerequisites. The two rows record the full quantified
+case statement and original kernel proof success. All eight operators, the
+original four premises, and the complete target evaluation/postcondition are
+retained. This is regression evidence, not full pass correctness or a
+cross-language equivalence proof.
 `l3_address_exception_probe.out` captures the complete original native
 `signalAddressException` definition/type and four fault-kind/address/current-core
 observations. The corresponding Lean guard proves an unconditional full-state
@@ -6320,6 +6328,13 @@ offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
 and executed deltas; the complete accepted-instruction producer relation uses
 the real instruction encoder, retaining every ordered operand. No whole
 allocator or source-program producer correctness is claimed.
+
+`l3_amoswap_probe.out` captures the literal AMOSWAP_W/D definitions and types
+and 26 original state observations, including rs2=rd operand ordering, rd=rs1,
+zero registers, signed word loads, RV32/RV128 without added mode guards,
+virtual misalignment and returned Sv39 write translations/faults. Matching Lean
+replays use independent wrapping byte/register expectations. These regressions
+do not claim full Run/Next or compiler correctness.
 `stack_code_bitmaps_inst_probe.out` freshly captures the complete original evaluate_code_bitmaps theorem, zero open hypotheses, and its native Inst specialization. The Lean case retains all three existential conjuncts and derives count zero on primitive success and failure; inherited rational-cut limits remain, with no numeric byte-alignment equivalence claim.
 
 `stack_remove_comp_call_full_probeScript.sml` replays all three original scoped Call proofs and assembles the complete Call constructor across arbitrary return/handler options, using exactly their guarded source IHs. Eight rows capture the three complete branch statements/proof successes and the full assembled statement/proof success; no full `comp_correct` is assumed. The branch source proof tactics remain the reviewed originals; assembly uses direct matching and top-level implication currying rather than proof search.
@@ -6328,7 +6343,9 @@ allocator or source-program producer correctness is claimed.
 `stack_code_bitmaps_seq_probe.out` captures complete original evaluate_code_bitmaps, zero hypotheses and native Seq specialization. The native case keeps only actual source-path recursive hypotheses, derives fixClock clamping and concatenates oracle prefixes in original left-fold/bitmap order. Whole evaluator assembly remains open.
 `stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
 
+
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
+
 
 `stack_code_bitmaps_alloc_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Alloc specialization. Native rejected dispatch and actual allocation/GC results derive count zero from full alloc_const, retaining all three original existential conclusions. Whole evaluator assembly remains open.
 

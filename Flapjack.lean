@@ -1,6 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
+import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
+import Flapjack.RiscV.L3.Defs.AMOSwap
 import Flapjack.RiscV.L3.Defs.IntegerStore
+import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
@@ -710,6 +713,8 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionBufferClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionExpressionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionInstructionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
+import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

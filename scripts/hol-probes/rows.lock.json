@@ -1490,6 +1490,12 @@
       "sha256": "60065d52ffc3d80b6b077569838c06367950adcf053f6243470d45cf2eea3691"
     },
     {
+      "bytes": 5739,
+      "out": "l3_amoswap_probe.out",
+      "rows": 30,
+      "sha256": "9c6277d4596ccd4107db7c9c19b84f4ad480407bff2fa6b29133689cf6cb36df"
+    },
+    {
       "bytes": 10113,
       "out": "l3_fetch_primitives_probe.out",
       "rows": 282,
@@ -2238,6 +2244,12 @@
       "out": "lab_to_target_shmem_names_probe.out",
       "rows": 10,
       "sha256": "c2a6ec189c27ace02b78e1a36e17c7bf48d527f7cb7fab8f317efe47b2cfeecc"
+    },
+    {
+      "bytes": 1940,
+      "out": "lab_to_target_shmem_offset_probe.out",
+      "rows": 17,
+      "sha256": "3233d45a8fae304ae0e54f6049a543a35fef32e8fd2f1b55c5613930c413e98e"
     },
     {
       "bytes": 1919,
@@ -5988,6 +6000,12 @@
       "out": "stack_remove_comp_set_size_probe.out",
       "rows": 2,
       "sha256": "1ea0a6a542aeabca41a3591ba099b1d1f885d97cab17d18ccc18df322705b48d"
+    },
+    {
+      "bytes": 786,
+      "out": "stack_remove_comp_shmem_probe.out",
+      "rows": 2,
+      "sha256": "08b759fbc6a1b79efae5bad393ce6e99a1a389fe712d7deb547a8267834eee95"
     },
     {
       "bytes": 700,

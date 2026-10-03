@@ -5728,6 +5728,10 @@ run_probe stack_remove_comp_code_buffer_probeScript.sml stack_remove_comp_code_b
   cc_code_buffer_statement cc_code_buffer_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_comp_shmem_probeScript.sml stack_remove_comp_shmem_probe.out \
+  cc_shmem_statement cc_shmem_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_top_label_safety_probeScript.sml word_to_stack_top_label_safety_probe.out \
   top_full_word_to_stack_good_code_labels top_full_word_to_stack_good_handler_labels top_empty top_self top_missing top_external top_duplicates top_owned top_wrong_owner top_tail_missing top_threaded top_width_one top_raise_owned top_store_owned \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5924,6 +5928,16 @@ run_probe l3_integer_store_probeScript.sml l3_integer_store_probe.out \
 run_probe stack_code_bitmaps_loop_probeScript.sml stack_code_bitmaps_loop_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_loop_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_shmem_offset_probeScript.sml lab_to_target_shmem_offset_probe.out \
+  line_to_info_offset_FST_eq line_to_info_offset_FST_eq_types line_to_info_offset_FST_eq_hypotheses \
+  line_to_info_offset_SND_eq line_to_info_offset_SND_eq_types line_to_info_offset_SND_eq_hypotheses \
+  get_shmem_info_init_pc_offset get_shmem_info_init_pc_offset_types get_shmem_info_init_pc_offset_hypotheses \
+  independent_names independent_records none empty_offset actual_names actual_records valid_guard negative_length \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+run_probe l3_amoswap_probeScript.sml l3_amoswap_probe.out \
+  amoswap_w_definition amoswap_w_type amoswap_d_definition amoswap_d_type amoswap_w_aligned_rd3 amoswap_w_aligned_rd0 amoswap_w_aligned_rd2 amoswap_w_positive_memory_rd3 amoswap_w_rs2_zero_rd3 amoswap_w_address_wrap_rd3 amoswap_w_core_wrap_rd3 amoswap_w_rv32_mode_rd3 amoswap_w_rv128_mode_rd3 amoswap_w_write_walk_returned_state_rd3 amoswap_w_read_only_page_fault_rd3 amoswap_w_invalid_pte_fault_rd3 amoswap_w_rs1_zero_rd3 amoswap_d_aligned_rd3 amoswap_d_aligned_rd0 amoswap_d_aligned_rd2 amoswap_d_positive_memory_rd3 amoswap_d_rs2_zero_rd3 amoswap_d_address_wrap_rd3 amoswap_d_core_wrap_rd3 amoswap_d_rv32_mode_rd3 amoswap_d_rv128_mode_rd3 amoswap_d_write_walk_returned_state_rd3 amoswap_d_read_only_page_fault_rd3 amoswap_d_invalid_pte_fault_rd3 amoswap_d_rs1_zero_rd3 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
 run_probe stack_code_bitmaps_alloc_probeScript.sml stack_code_bitmaps_alloc_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_alloc_statement \
