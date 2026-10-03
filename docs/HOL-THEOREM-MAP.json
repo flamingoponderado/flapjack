@@ -89429,5 +89429,40 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison of full evaluate_wInst Div branch4801-4819. All five original inst/everyVar/maxVar/argument-convention/full stateRel guards and entire existential actual native wInst run/full source-post-target-post relation/stack length-space conclusion retained. Source success derives actual word numerator/denominator, nonzero divisor and complete source post. Reused accepted actual Reg1/Reg2 load theorem (now public untagged infrastructure) preserves both operand values, relation and resources, including aliases/spills. Native wordQuot and BitVec.sdiv implementations have an unconditional kernel proof by all four sign cases; no external assumption or restricted divisor premise. Actual primitive and native register/spill destination write derived internally with original bound/even guards. No targetrun/postrelation/extra success/IH premise. Source/target/result share positive alpha word width; host and FFI remain independent beta/gamma. Fresh typed original kernel specialization regenerated and reviewed: T, hypotheses 0, all five guards and full conclusion retained, not literal local replay or cross-language equivalence. Five canonical map fields use genuine local source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators, no new agreement claim. Other instruction cases/full Inst/compiler remain unfinished.",
     "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "mkBranch",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "mk_Branch_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: Original mk_Branch37-45 has exactly five ordered tests: equality, left Leaf, right Leaf, left Unknown, right Unknown, otherwise Branch. Both inputs arbitrary CallTree; literal exact constructor equality, no extra premise or word carrier. Fresh original exported full types/equations and semantic EVAL cases in word_depth_graph_probe.out; not local replay or independent cross-language equivalence proof. Tree maps are canonical Spt, not finite-map qualifiers. Complete production composition and pass-correctness proofs remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "callGraph",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "call_graph_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: Original call_graph47-86 inferred (num # alpha prog) num_map -> num -> num list -> num -> alpha prog -> call_tree. Exact numeric metadata, all eight clauses and nested Call guards retained: dynamic/lookup miss Unknown; visited tail target Leaf; length guard; returning Call deletes callee only in callee traversal; exact 3-slot handler Const3 overhead; both handler and continuation traversed. Seq/If merge by mkBranch, MustTerminate/Loop recurse, Alloc emits Call n Leaf, Install Unknown, other constructors Leaf. Native WordLangProgHOL at positive shared width faithfully carries original words. No changed payload, context premise, target-run assumption or default. Kernel termination retains lex size-map/list-budget/program structure; sizeOf replaces generated prog_size only as termination measure, never affects result. Fresh original exported full types/equations and semantic EVAL cases in word_depth_graph_probe.out; not local replay or independent cross-language equivalence proof. Tree maps are canonical Spt, not finite-map qualifiers. Complete production composition and pass-correctness proofs remain separate.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "fullCallGraph",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "full_call_graph_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: Original full_call_graph88-94 inferred num -> (num # alpha prog) num_map -> call_tree. Missing lookup Unknown; hit literal Branch(Call n Leaf)(call_graph funs n [n] (size funs) prog), retaining numeric metadata and positive shared word dimension. Branch is not simplified to mkBranch. Fresh original exported full types/equations and semantic EVAL cases in word_depth_graph_probe.out; not local replay or independent cross-language equivalence proof. Tree maps are canonical Spt, not finite-map qualifiers. Complete production composition and pass-correctness proofs remain separate.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "maxDepthGraphs",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "max_depth_graphs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: Original max_depth_graphs96-105 inferred num num_map -> num list -> num list -> (num # alpha prog) num_map -> (beta # alpha prog) num_map -> num option. Arbitrary independent beta metadata is retained as Metadata:Type in allFuns, with no equality/inhabitance premise; funs metadata stays Nat. Both program maps share the positive machine width. Empty names list SOME0; absent allFuns code NONE; hit exact nested OPTION_MAP2 MAX frame lookup, maxDepth of callGraph using size allFuns, and recursive tail. No invented bound for missing frame or Unknown. Historical89981 Nat specialization of allFuns repaired; qualifier covers words only, never arbitrary metadata specialization. Fresh original Bool/list-metadata EVAL rows and kernel replays confirm both native instantiations. Fresh original exported full types/equations and semantic EVAL cases in word_depth_graph_probe.out; not local replay or independent cross-language equivalence proof. Tree maps are canonical Spt, not finite-map qualifiers. Complete production composition and pass-correctness proofs remain separate.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

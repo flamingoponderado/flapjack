@@ -9362,6 +9362,12 @@
       "sha256": "0a43512ef74c87542e249fe0ec2a7a001a11efd7ad57b13ea3183e21a2eb2682"
     },
     {
+      "bytes": 9940,
+      "out": "word_depth_graph_probe.out",
+      "rows": 40,
+      "sha256": "55285867daab1d09eacd88db58b45d703dc34a73488d8b7b3bf8125c5a691e24"
+    },
+    {
       "bytes": 1128,
       "out": "word_depth_probe.out",
       "rows": 14,

@@ -7591,3 +7591,7 @@ run_probe pan_to_target_option_lt_source_replay_probeScript.sml pan_to_target_op
 run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_division_probe.out \
   division_typed division_proved division_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_depth_graph_probeScript.sml word_depth_graph_probe.out \
+  mk_Branch_type mk_Branch_def_typed call_graph_type call_graph_def_typed full_call_graph_type full_call_graph_def_typed max_depth_graphs_type max_depth_graphs_def_typed mb_identity mb_leaf_left mb_leaf_right mb_unknown_left mb_unknown_right mb_branch cg_default cg_seq cg_alloc cg_install cg_call_dest_none cg_call_lookup_miss cg_call_tail_hit cg_call_shortcircuit cg_call_guard fcg_miss fcg_hit mdg_empty mdg_frame_hit mdg_frame_miss mdg_code_miss cg_if cg_must_terminate cg_loop cg_return cg_handler fcg_tail_self fcg_ret_self fcg_mutual mdg_recursive mdg_bool_metadata mdg_list_metadata \
+  "$cake_dir/compiler/backend/word_depthScript.sml" "$cake_dir/compiler/backend"
