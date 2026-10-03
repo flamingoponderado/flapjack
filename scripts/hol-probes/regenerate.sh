@@ -6125,3 +6125,8 @@ run_probe word_to_stack_comp_results_probeScript.sml word_to_stack_comp_results_
 run_probe word_to_stack_comp_control_probeScript.sml word_to_stack_comp_control_probe.out \
   comp_correct_skip_statement comp_correct_skip_proved comp_correct_skip_hypotheses comp_correct_break_statement comp_correct_break_proved comp_correct_break_hypotheses comp_correct_continue_statement comp_correct_continue_proved comp_correct_continue_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_good_init_state_probeScript.sml target_good_init_state_probe.out \
+  good_init_state_def good_init_state_def_types good_init_state_def_hypotheses \
+  word_memory entry_bound space_bound space_overflow_rejected \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
