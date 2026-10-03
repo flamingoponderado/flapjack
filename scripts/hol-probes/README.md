@@ -6742,3 +6742,12 @@ identity rearrangement proofs. It captures the complete statement, proved=T,
 and zero hypotheses. Native EnvironmentIdentity derives all three conclusions
 from the actual output equation; it supplies neither desired sorting nor
 permutation as a premise. Full handler/Raise correctness remains separate.
+
+`word_to_stack_handler_transition_probe` replays the full original local
+`stack_rel_raise` proof with unchanged statements and source-local prerequisite
+proofs. It captures all six premises and the complete existential handler
+header, saved-handler, cleared relation and decoder conclusions, proved=T,
+and zero hypotheses. Local theorem lookup is restored after constituent probe
+opens to resolve the original induction theorem in word_to_stackProof. Native
+HandlerTransition retains the original positive word dimension and total EL;
+this slice does not establish full comp_correct Raise or HOL-to-Lean equivalence.

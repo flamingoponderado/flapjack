@@ -8528,6 +8528,12 @@
       "sha256": "f185a51b195d2228ab0cfb5bd59ea471cb538973d2e5c7304badc1e547d1b054"
     },
     {
+      "bytes": 1293,
+      "out": "word_to_stack_handler_transition_probe.out",
+      "rows": 3,
+      "sha256": "569e69c55b5b4455456d2f0a335e83970713d5de1d7ac993626329e4988ec8f9"
+    },
+    {
       "bytes": 142,
       "out": "word_to_stack_handler_val_generality_probe.out",
       "rows": 8,

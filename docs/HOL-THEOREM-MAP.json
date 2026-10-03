@@ -72019,5 +72019,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead flapjack-word-stack-env-identity-sort: original1291-1310 arbitrary env native Spt word_loc/list/output oracle; sole actual env_to_list(env)(K I)=(l,oracle) premise. Full descending adjacent key SORTED, function identity oracle, complete toAList PERM conclusions retained. Native actual listRearrange identity proven without bijection premise; actual sortSorted and sortPerm with original comparator transitivity/totality, tree unique keys propagated through permutation derive strict order. Original comparator payload/signed order unchanged; only positive word dimension translation, no map qualifier for Spt. No extra desired sorting/permutation/evaluation assumption. Literal original local proof replay reconstructs source-local SORTS_SORT and list_rearrange_I unchanged; source comparison recorded, acceptance on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/HandlerTransition.lean",
+    "lean_name": "stackRelRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_raise",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2: full local2687-2796 six original premises n bound/source handler bound/strict adjacent source env sort/source LASTN equation/actual decoder/full stackRelAux. Complete existential ex/payload, target LASTN head+tail, both3 length bounds, absolute Loc l3 l4 and conditional saved-handler Word n2w, cleared source handler with exact env_to_list(fromAList l)(K I), full cleared auxiliary relation and successful original DROP(offset+3) decoder conclusion. All actual target payload/header/run facts derived; no supplied postrelation/success/safety premise. Source/raw/frame word dimension unified by original decoder and relation; positive BitVec with NeZero; actual Option/List/Spt/word_loc carriers preserved. Total original EL keeps unspecified out-of-range behavior, local inhabitation does not select it. Native source-sized helpers derive suffix/absolute offsets/header obligations/unwinding; full original bounds kept even redundant. Source comparison recorded; coordinator acceptance tracked on bead."
   }
 ]
