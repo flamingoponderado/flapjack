@@ -81803,5 +81803,68 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison LocValue6905-6924, full comp_correct5756 motive5719-5751. Full original Seq.Simulation all quantified operands/source/compiler/target states, complete original premises and targetrun/resource/result conclusion. Actual successful source membership implies target code domain through original stateRel code-domain conjunct, deriving zero-offset locCheck. Original conventions/evenness and maxVar frame bound retained, actual native LocValue callback then full register-write execution. No new label/read/targetrun/postrelation assumption. Qualified named finite-support fields/positive words and genuine same-module codecs; inherited reals_as_rational_cuts unchanged. Fresh original whole LocValue induction obligation/specialization closed captures; no cross-language equivalence claim.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "decClockAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "dec_clock_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "incPcAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "inc_pc_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "updPcAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "upd_pc_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "getPcValueAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "get_pc_value_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "getRetLocAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "get_ret_Loc_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "readBytearrayMemLoadByteAuxAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "read_bytearray_mem_load_byte_aux_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmNavigation.lean",
+    "lean_name": "writeBytearrayAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "write_bytearray_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
   }
 ]
