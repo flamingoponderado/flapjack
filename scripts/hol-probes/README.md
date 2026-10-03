@@ -7133,3 +7133,8 @@ and actual compileFieldsExact, preserving both original premises.
 `pan_structs_exp_cmp_shift_faithful_probe` captures the full original theorem,
 both Cmp/Shift specializations and eval_ind. Both native cases retain all seven
 hypotheses and three conclusions, using only the two original child IHs.
+
+`pan_structs_exp_nstruct_faithful_probe` captures the original full theorem,
+NStruct specialization and eval_ind. Native NStruct retains all seven hypotheses
+and three conclusions, with only the original guarded member-expression IH;
+source evaluation and structInfosOk supply shape checks and reordering premises.
