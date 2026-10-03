@@ -357,8 +357,8 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVChecked
 
 def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
     [NeZero width] (context : WordFfiContext) (removeConfig : StackRemoveConfig)
-    (allocConfig : StackAllocConfig) (gcConfig : StackGcConfig)
-    (storeConstsLocation registerCount : Nat)
+    (_allocConfig : StackAllocConfig) (_gcConfig : StackGcConfig)
+    (_storeConstsLocation registerCount : Nat)
     (entryLabel _initialLabel : Nat)
     (programs : List (Nat × StackProg Nat)) :
     Except LabLoweringError
@@ -367,21 +367,17 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
     .error { sectionId := 0, position := 0, feature := .loweringFailure }
   else
     let removeConfig := cakeStackRemoveConfig removeConfig
-    let programs :=
-      (stackRaiseStubLocation, stackRaiseStub false removeConfig.addressScratch) ::
-        stackAllocCompileWithSimpleGcAndStoreConsts allocConfig gcConfig
-          storeConstsLocation registerCount programs
-    match stackProgramsWithLongDivRuntime removeConfig programs with
+    -- The Word-to-Stack sections go unallocated to `initializedRuntimeLab?`,
+    -- which runs the native `stack_to_lab$compile_def` order
+    -- (rawcall, alloc, remove, names) over the original stubs. No legacy
+    -- allocation, raw-call or long-division preparation remains on this path.
+    let bounds := (BitVec.ofInt width (-2048), BitVec.ofNat width 2047)
+    match initializedRuntimeLab? removeConfig.jump bounds
+        removeConfig.stackPointer stackFunctionFirstLabel registerCount programs with
     | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
-    | some programs =>
-        let programs := stackRawCallPrograms programs
-        let bounds := (BitVec.ofInt width (-2048), BitVec.ofNat width 2047)
-        match initializedRuntimeLab? removeConfig.jump bounds
-            removeConfig.stackPointer stackFunctionFirstLabel registerCount programs with
-        | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
-        | some lab => match compileLabProgramLinkedWithNativeInitialization context lab with
-          | some sections => .ok sections
-          | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
+    | some lab => match compileLabProgramLinkedWithNativeInitialization context lab with
+      | some sections => .ok sections
+      | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
 
 def compileStackProgramNatToRiscVChecked [NeZero width]
   (context : WordFfiContext) (config : StackRemoveConfig)
