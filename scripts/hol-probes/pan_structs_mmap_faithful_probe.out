@@ -1,0 +1,4 @@
+compile_exp_correct_mmap_helper_statement=∀s ctxt es vs. OPT_MMAP (eval s) es = SOME vs ∧ (∀e. MEM e es ⇒ ∀v. eval s e = SOME v ⇒ eval (convert_s ctxt s) (compile_exp ctxt e) = SOME (convert_v v)) ⇒ OPT_MMAP (eval (convert_s ctxt s)) (compile_exps ctxt es) = SOME (MAP convert_v vs)
+compile_exp_correct_mmap_helper_types=s::(α, β) state;ctxt::context;es::α panLang$exp list;vs::α v list
+compile_exp_correct_mmap_helper_hypotheses=0
+compile_exp_correct_mmap_helper_proved=T
