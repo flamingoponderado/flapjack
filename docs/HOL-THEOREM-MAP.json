@@ -83881,5 +83881,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5855-5879; native chunkToBitsW unchanged, arbitrary Bool/word payload lists. Bound retains exactly LENGTH ws < dimindex, sentinel true and every higher in-range bit false; lowbit law unconditional including overflowing chunks. HOL word indexing rendered getLsbD with original in-range guards. Positive-width BitVec is sole words_as_type_indexed_bitvec translation; Bool equality renders HOL boolean iff. Literal original proof replay and Lean kernel check."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CopyWordsPattern.lean",
+    "lean_name": "copyWordsForPatternTheorem",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_words_for_pattern_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5881-5937 complete native evaluator equality. Arbitrary words/xs/address/offset/ys/domain/memory; original LENGTH words < dimindex and const_addresses guards only. Result retains SOME of prefix length+word length, address+bytes_in_word*n2w length and full const_writes memory. Domain set represented by Prop with DecidablePred, mapped through decide for the existing Bool-set const_addresses; neither representation imposes an address restriction. Memory remains total word_loc lookup, lists remain List. Original arbitrary positive HOL word dimension translated by words_as_type_indexed_bitvec. No good_dimindex, target-run or final-state hypotheses. Native writes preserve lowbit relocation word+offset and native byte stride. Inline shift-recovery follows original bit-bound proof. Kernel checked and original literal HOL proof replayed."
   }
 ]

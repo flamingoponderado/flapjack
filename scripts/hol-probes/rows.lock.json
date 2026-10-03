@@ -9572,6 +9572,12 @@
       "sha256": "b4faf1e7be28249691876902414eb7f5169961fcae3b032ee4bd9c44a87b4234"
     },
     {
+      "out": "word_to_stack_copy_pattern_full_probe.out",
+      "sha256": "c8cf357ce5858f4d87a5353a930118e296ee4c10b6d4e7e1f36d245041a288b9",
+      "bytes": 343,
+      "rows": 3
+    },
+    {
       "bytes": 106,
       "out": "word_to_stack_copy_ret_carriers_probe.out",
       "rows": 5,
