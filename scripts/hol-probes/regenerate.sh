@@ -6230,3 +6230,7 @@ run_probe wordsem_evaluate_stack_max_probeScript.sml wordsem_evaluate_stack_max_
   option_le_max_right_statement option_le_max_right_hypotheses \
   option_le_def \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_comp_seq_full_probeScript.sml word_to_stack_comp_seq_full_probe.out \
+  comp_correct_seq_full_statement comp_correct_seq_full_proved comp_correct_seq_full_hypotheses comp_correct_seq_first_none_statement comp_correct_seq_first_none_proved comp_correct_seq_first_none_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
