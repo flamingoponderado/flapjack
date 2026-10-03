@@ -80804,5 +80804,23 @@
     "hol_name": "implements_intro_gen",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison original10620-10625: full Boolean b, canonical HolBehaviour x and predicate behavior-set y; both implications and precise true flag retained. HOL Boolean truth guard translates to b=true. No extra outer non-Fail premise: non-Fail is derived from the original implements guard. Singleton membership is equality. Fresh original full statement/types/hyp0/kernel ACCEPT_TAC replay in lab_to_target_implements_intro_probe.out. No word or representation qualifier needed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/CallReturningHandler/Execution.lean",
+    "lean_name": "compCorrectCallReturningHandler",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 bead9.4.4: FULL original comp_correct motive5719-5751 and entire SOME returning-handler branch9020-10048. Literal three evaluate_ind guarded IHs retain every original intermediate tuple/result/return/handler binder, get/find/cut/clock/result/pop/domain condition; impossible tail IH for fixed SOME return omitted as vacuous. inductionHypothesesOfOriginal kernel-translates these to actual guarded states; Seq.Simulation preserves every original result/poststate/target/frame/config/FFI/bitmap/label/convention/max bound quantifier and full existential clock/run/result/resource conclusion. Source nonError derives get/find/cut guards; whole compNative derives destination/save/return/handler trees. Original header room/argument capacity/zero clock/callee allocation branches and EVERY successful callee outcome are assembled internally. Header/argument/callee allocation failure derives original source stackMax overflow and trace across actual source continuation, including zero clock; target Halt2 execution is constructed. Zero clock precedes callee allocation after successful argument setup. Successful body uses only original guarded body IH, actual callee key/body compilation, code/bitmap history, full returned caller38field relation or exceptional handler restoration and original guarded continuation IHs; clocks summed by actual evaluate_add_clock. Full unmatched Halt2, matching Return placement, Exception pushLocals/LASTN/locals union/reg1 and terminal FFI/clock conclusion retained. No targetrun/postrelation/source overflow/narrowed body outcomes or strengthened IH input. Canonical imported WordSemStateFiniteExact fpRegs/store and StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip witnesses; Spt/List unchanged, positive BitVec width and Type0 C/F. Inherits reals_as_rational_cuts evaluator assurance limit; no numerical FP correspondence or cross-language equivalence claim. Fresh original whole constructor specialization and evaluate_ind obligation captures provide statement evidence, not literal full local proof replay. No full pass/compiler completion.",
+    "hol_line": 5756
   }
 ]

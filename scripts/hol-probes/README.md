@@ -7333,3 +7333,13 @@ and its `Assign vk v e` specialization, with all quantified binder types and
 closed kernel proofs. The Lean case retains all ten original premises and seven
 conclusions for both local and global assignment, deriving target validity and
 shape-map neutrality internally from source validity and full value conversion.
+
+`word_to_stack_comp_handler_full_probe.out` records the full original SOME-handler
+returning Call specialization of comp_correct, its closed kernel theorem
+(proved=T, hypotheses=0), and the complete original evaluate_ind Call obligation.
+The native constructor retains the three literal guarded returning IHs; the
+fixed SOME return makes the fourth tail IH impossible. Header/argument/callee
+allocation, zero clock, all body results and normal/exception continuations are
+assembled with the entire original result/resource conclusion. This capture is
+statement evidence from the original full theorem, not a replay of the local
+9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
