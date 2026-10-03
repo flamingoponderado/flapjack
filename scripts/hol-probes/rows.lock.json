@@ -1982,6 +1982,12 @@
       "sha256": "767ce000d5991bf953db9bba278281a09f3e5e5758595dac05c509246ea7e143"
     },
     {
+      "bytes": 2085,
+      "out": "lab_to_target_make_init_probe.out",
+      "rows": 26,
+      "sha256": "84d880aeaee9f5cf06f0460c9da1fa86ef0a608fceb7bc8327139777ff58e3f2"
+    },
+    {
       "bytes": 376,
       "out": "lab_to_target_maplemmas_probe.out",
       "rows": 8,

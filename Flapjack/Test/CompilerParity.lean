@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetInitializationParity
 import Flapjack.Test.LabToTargetFfiEntryExclusionParity
 import Flapjack.Test.LabToTargetMmioClassificationParity
 import Flapjack.Test.MiscFindIndexSuccessfulMemParity

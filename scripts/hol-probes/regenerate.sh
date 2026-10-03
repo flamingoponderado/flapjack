@@ -6051,3 +6051,8 @@ run_probe lab_to_target_ffi_entry_exclusion_probeScript.sml lab_to_target_ffi_en
 run_probe stack_code_bitmaps_call_probeScript.sml stack_code_bitmaps_call_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_call_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_make_init_probeScript.sml lab_to_target_make_init_probe.out \
+  make_init_def make_init_def_types make_init_def_hypotheses \
+  regs fp_regs mem mem_domain shared_mem_domain pc be ffi io_regs io_fp_regs cc_regs cc_fp_regs code clock failed ptr_reg len_reg ptr2_reg len2_reg link_reg compile code_buffer compile_oracle \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
