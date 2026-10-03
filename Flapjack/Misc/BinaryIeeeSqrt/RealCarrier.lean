@@ -1,5 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+import Flapjack.Misc.BinaryIeeeConvert
 
 /-!
 # HOL `binary_ieee` rounding and `float_sqrt` over Mathlib reals
@@ -316,5 +317,73 @@ theorem holFp64Sqrt_eq_holFp64SqrtR (mode : HolRounding) (a : BitVec 64) :
     holFp64Sqrt mode a = holFp64SqrtR mode a := by
   unfold holFp64Sqrt holFp64SqrtR
   rw [holFloatSqrt_eq_holFloatSqrtR]
+
+/-! ## At rational arguments the real carrier is the `Rat` rendering
+
+The executed `Rat` renderings of `round`, `float_round`,
+`float_round_with_flags` and `real_to_float` are the restrictions of the
+tagged arbitrary-real ports to rational arguments, for every mode, with no
+range, success or agreement premise. -/
+
+theorem holIsClosestR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (q : Rat)
+    (a : HolFloat t w) :
+    holIsClosestR s (q : ℝ) a ↔ holIsClosest s q a := by
+  have key : ∀ u v : Rat, (|(u : ℝ) - q| ≤ |(v : ℝ) - q|) ↔ holRatAbs (u - q) ≤ holRatAbs (v - q) := by
+    intro u v
+    rw [← Rat.cast_sub, ← Rat.cast_sub, ← holRatAbs_cast, ← holRatAbs_cast, Rat.cast_le]
+  unfold holIsClosestR holIsClosest
+  simp only [holFloatToRealR_eq_cast, key]
+
+theorem holClosestSuchR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (p s : HolFloat t w → Prop) (q : Rat) :
+    holClosestSuchR p s (q : ℝ) = holClosestSuch p s q := by
+  unfold holClosestSuchR holClosestSuch
+  simp only [holIsClosestR_ratCast]
+
+theorem holClosestR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (q : Rat) :
+    holClosestR s (q : ℝ) = holClosest s q :=
+  holClosestSuchR_ratCast (fun _ => True) s q
+
+theorem holRoundR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (q : Rat) :
+    (holRoundR mode (q : ℝ) : HolFloat t w) = holRound mode q := by
+  cases mode <;>
+    simp only [holRoundR, holRound, holFloatThresholdR_eq_cast, holFloatLargestR_eq_cast,
+      holFloatToRealR_eq_cast, ← holRatAbs_cast, ← Rat.cast_neg, Rat.cast_le, Rat.cast_lt,
+      holClosestR_ratCast, holClosestSuchR_ratCast]
+
+theorem holFloatRoundR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool)
+    (q : Rat) :
+    (holFloatRoundR mode toneg (q : ℝ) : HolFloat t w) = holFloatRound mode toneg q := by
+  unfold holFloatRoundR holFloatRound
+  rw [holRoundR_ratCast]
+
+theorem holFloatRoundWithFlagsR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (toNeg : Bool) (q : Rat) :
+    (holFloatRoundWithFlagsR mode toNeg (q : ℝ) : HolFloatFlags × HolFloat t w) =
+      holFloatRoundWithFlags mode toNeg q := by
+  have ha : |(q : ℝ)| = ((holRatAbs q : Rat) : ℝ) := (holRatAbs_cast q).symm
+  have h1 : ((2 : ℝ) ^ holIntMin w ≤ ((holRatAbs q : Rat) : ℝ)) ↔
+      ((2 : Rat) ^ holIntMin w ≤ holRatAbs q) := by
+    constructor <;> intro h <;> exact_mod_cast h
+  have h2 : (((holRatAbs q : Rat) : ℝ) < (2 : ℝ) / (2 : ℝ) ^ holFloatBias w) ↔
+      (holRatAbs q < (2 : Rat) / (2 : Rat) ^ holFloatBias w) := by
+    have hc : (2 : ℝ) / (2 : ℝ) ^ holFloatBias w =
+        (((2 : Rat) / (2 : Rat) ^ holFloatBias w : Rat) : ℝ) := by
+      push_cast; rfl
+    rw [hc, Rat.cast_lt]
+  unfold holFloatRoundWithFlagsR holFloatRoundWithFlags
+  simp only [holFloatRoundR_ratCast, holFloatValueR_eq, ha, h1, h2]
+  cases holFloatValue (holFloatRound mode toNeg q : HolFloat t w) <;> simp
+
+/-- The general-real `real_to_float` at a rational is the executed `Rat`
+`holRealToFloat` (used by `int_to_fp64`), for every mode. -/
+theorem holRealToFloatR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (q : Rat) :
+    (holRealToFloatR mode (q : ℝ) : HolFloat t w) = holRealToFloat mode q :=
+  holFloatRoundR_ratCast mode _ q
+
+theorem holRealToFloatWithFlagsR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (q : Rat) :
+    (holRealToFloatWithFlagsR mode (q : ℝ) : HolFloatFlags × HolFloat t w) =
+      holFloatRoundWithFlags mode (decide (mode = .roundTowardNegative)) q :=
+  holFloatRoundWithFlagsR_ratCast mode _ q
 
 end Flapjack

@@ -78,8 +78,11 @@ The following are open review or verification obligations:
    NaN payload choice remains unspecified. HOL `real_to_float` and
    `real_to_fp64` accept arbitrary reals. The executed path renders them
    only for rational inputs (`holRealToFloat`, `holRealToFp64`); the
-   general-real `real_to_float` over Mathlib `ℝ` is `holRealToFloatR`, with no
-   proved agreement theorem to the rational rendering yet. The one wordSem
+   general-real `real_to_float` over Mathlib `ℝ` is `holRealToFloatR`, and
+   `holRealToFloatR_ratCast` proves that at every rational argument it equals
+   the executed `holRealToFloat` (likewise `round`, `float_round` and
+   `float_round_with_flags`, in `Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean`).
+   The one wordSem
    use, `int_to_fp64`, applies them to integers, which are in scope. Irrational square-root rounding
    is not covered by these rational-input theorems, and is handled
    separately below.
