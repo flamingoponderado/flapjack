@@ -72376,5 +72376,13 @@
     "lean_name": "prefixChain_filter",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha, arbitrary Boolean P and arbitrary list set; sole prefix_chain antecedent. IMAGE FILTER is exactly the existential preimage membership predicate. List.IsPrefix.filter proves each original prefix alternative for the same P; no decidability premise or membership restriction is added."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
+    "lean_name": "sptDomainFromList2",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "domain_fromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; bead flapjack-sola-call-entry-locals-domain): HOL miscScript.sml:2263-2269 universally quantifies an arbitrary payload list q and states domain(fromList2 q) = set(GENLIST (fun x => 2*x) (LENGTH q)), without hypotheses. Lean retains arbitrary Type payloads and List, native reviewed Spt/fromList2 fold, Nat keys, predicate-valued domain/set equality and exact length-indexed range/map generator. Existing sptFromList2 is the reviewed original foldl insertion at even keys; proof derives domain from every actual insertion including empty lists. No width, WF, distinctness, output or target-evaluation premise added. Counterpart beneath Sptree; callEnv consumer derives original SSA entry domain from real argument list."
   }
 ]
