@@ -43,7 +43,9 @@ theorem encodeInstructionBytes_mod_four [NeZero width]
 theorem encodeInstructionBytes_ne_nil [NeZero width]
     (instruction : Instruction width) :
     encodeInstructionBytes instruction ≠ [] := by
-  simp [encodeInstructionBytes, encodeWordBytes]
+  intro empty
+  have lengthEq := congrArg List.length empty
+  simp at lengthEq
 
 theorem encodeInstructions_mod_four [NeZero width]
     (instructions : List (Instruction width)) :
@@ -57,7 +59,9 @@ theorem encodeInstructions_ne_nil [NeZero width]
   cases instructions with
   | nil => contradiction
   | cons instruction instructions =>
-      simp [encodeInstructions, encodeInstructionBytes, encodeWordBytes]
+      intro empty
+      have lengthEq := congrArg List.length empty
+      simp [encodeInstructions_length] at lengthEq
 
 @[simp] theorem encodeLinkedSections_length [NeZero width]
     (sections : List (Nat × Word width × List (Instruction width))) :
