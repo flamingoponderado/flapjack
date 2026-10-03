@@ -76094,6 +76094,96 @@
     "reviewer": "Flapjack representation infrastructure re-exporting actual PanSemStateFiniteExact canonical two-way broad-carrier roundtrip, not a separate HOL theorem."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Instructions.lean",
+    "lean_name": "ssaCcTrans_preAllocInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Inst case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Seq case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocMustTerminate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original MustTerminate case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocIf",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original If case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Loop case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Break case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Continue case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "loc_to_pc_eq_NONE",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/LocationLookup.lean",
+    "lean_name": "locToPcEqNone",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.5.1): Original310 all section/label/code binders and sole filtered locToPc NONE guard retained; derives actual original locToPc NONE. Native exact Option mapping under filter/adjustPc proves no label disappearance, with no original lookup or successful-locator premise. Full original alpha word-indexed sec/line carriers translated constructor-for-constructor with fixed8 encoded bytes, arbitrary positive-width BitVec qualifier and ordinary Nat numeric binders. Full types freshly captured. Unchanged original local statements/proofs replayed with exact original temporary simplifier setup from script10/12 (lift_disj_eq/lift_imp_disj/NORMEQ_CONV removed), producing full statement/type/zero hypotheses/kernel reproof12rows. No source changes, arbitrary carrier specialization, target evaluation or relation premise. These are genuine filter_correct669 prerequisites, not full simulation completion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "loc_to_pc_eq_SOME",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/LocationLookup.lean",
+    "lean_name": "locToPcEqSome",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.5.1): Original345 all section/label/code/filtered-PC binders and sole filtered SOME guard retained. Derives actual existential original PC, complete original successful locToPc equality and exact adjustPc originalPC code=filteredPC. Native lookup-map equation derives the witness; no supplied locator or adjustment, label distinctness, nonempty program or success premise beyond original filtered lookup. Full original alpha word-indexed sec/line carriers translated constructor-for-constructor with fixed8 encoded bytes, arbitrary positive-width BitVec qualifier and ordinary Nat numeric binders. Full types freshly captured. Unchanged original local statements/proofs replayed with exact original temporary simplifier setup from script10/12 (lift_disj_eq/lift_imp_disj/NORMEQ_CONV removed), producing full statement/type/zero hypotheses/kernel reproof12rows. No source changes, arbitrary carrier specialization, target evaluation or relation premise. These are genuine filter_correct669 prerequisites, not full simulation completion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "loc_to_pc_adjust_pc_append",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/LocationLookup.lean",
+    "lean_name": "locToPcAdjustPcAppend",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.5.1): Original522 all section/label/code/PC/appended-section binders and sole original successful locToPc guard retained; conclusion entire adjustPc equality before/after append. Native actual locToPc functional induction follows the real successful locator, including section-entry zero, matching and skipped labels, empty sections and nonlabel increments; no bound, append-safety or alignment premise. Full original alpha word-indexed sec/line carriers translated constructor-for-constructor with fixed8 encoded bytes, arbitrary positive-width BitVec qualifier and ordinary Nat numeric binders. Full types freshly captured. Unchanged original local statements/proofs replayed with exact original temporary simplifier setup from script10/12 (lift_disj_eq/lift_imp_disj/NORMEQ_CONV removed), producing full statement/type/zero hypotheses/kernel reproof12rows. No source changes, arbitrary carrier specialization, target evaluation or relation premise. These are genuine filter_correct669 prerequisites, not full simulation completion."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Step/UpdatePC.lean",
     "lean_name": "update_pc",
     "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
