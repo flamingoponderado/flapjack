@@ -7595,3 +7595,10 @@ existential original callee parameter context. Call/DecCall remain open.
 `convert_code_locals_upd` statement and unchanged simp proof, captures its
 closed statement, quantified types and kernel truth. The Lean theorem retains
 arbitrary caller locals update and unconditional whole code-map equality.
+
+`pan_structs_program_deccall_probe` captures full original `compile_correct`,
+its DecCall specialization and complete original `evaluate_ind`, quantified
+types and closed kernel truth. The Lean case retains all ten premises/seven
+conclusions and exactly two original guarded IHs; lookup, return comparisons,
+continuation preconditions and final binding restoration are derived internally.
+Full Call/whole program/compiler correctness remain open.

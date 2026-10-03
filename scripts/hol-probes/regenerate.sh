@@ -7063,3 +7063,7 @@ run_probe pan_structs_lookup_code_fields_probeScript.sml pan_structs_lookup_code
 run_probe pan_structs_convert_code_locals_probeScript.sml pan_structs_convert_code_locals_probe.out \
   convert_code_locals_upd_statement convert_code_locals_upd_proved convert_code_locals_upd_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_deccall_probeScript.sml pan_structs_program_deccall_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_deccall_statement compile_correct_deccall_proved compile_correct_full_types compile_correct_deccall_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
