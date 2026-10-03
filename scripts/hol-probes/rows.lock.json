@@ -7358,6 +7358,12 @@
       "sha256": "4387d8bc43cf7a0b456de66f60b2e627445bf306a86246832b4bcba128e3dfe1"
     },
     {
+      "bytes": 2643,
+      "out": "stack_remove_word_list_memory_probe.out",
+      "rows": 34,
+      "sha256": "3c809c3266466afe35b26f7542ce7cd2b5cd96bca5611753c582b7e6d38b04d2"
+    },
+    {
       "bytes": 177,
       "out": "stack_remove_word_list_reverse_probe.out",
       "rows": 3,

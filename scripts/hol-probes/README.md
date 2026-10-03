@@ -7282,3 +7282,5 @@ Seq/If specializations, closed binder types and kernel proofs, together with
 the original evaluator induction principle. Native cases preserve all ten
 premises/seven conclusions and the genuine source-guarded recursive IHs.
 Seq derives intermediate invariants; If uses the source-word-selected branch.
+
+`stack_remove_word_list_memory_probeScript.sml` captures the full original `mem_val_def` equations and type and replays unchanged original proofs of `MAP_mem_val_MAP_INL`, `word_list_and_rev_join_lemma`, `INSERT_DELETE_EQ_DELETE` (with its local `IN_addresses` prerequisite), `word_list_exists_addresses`, `word_list_wrap` and `fmap_simp_lemma1` (stack_removeProofScript.sml:2631-3046), and prints the stored `word_list_set`, `word_list_seteq`, `word_list_EL_in_memory` and `word_list_in_memory` theorems (3101-3222). Every row has proved=T and zero hypotheses; the two exported replays are also checked `aconv` against the stored theory.

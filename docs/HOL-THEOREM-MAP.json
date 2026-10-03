@@ -79661,5 +79661,109 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "insertDeleteEqDelete",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "INSERT_DELETE_EQ_DELETE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2846-2850: arbitrary element type, x and set s; (x INSERT s) DELETE x = s DELETE x with INSERT as y = x or s y and DELETE as s y and y <> x, the standard predicate-set rendering. No premise. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListAndRevJoinLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_and_rev_join_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2827-2835: arbitrary a,b,xs,ys,p,q,ss,b1; literal conjunction b = a + n2w (LENGTH xs + LENGTH ys) * bytes_in_word, left-associated STAR (p * word_list a (xs ++ REVERSE ys) * q) ss and b1 implies (p * word_list a xs * word_list_rev b ys * q) ss and b1. Actual native wordList/wordListRev over arbitrary payload Type and predicate heaps; proof uses accepted word_list_APPEND and word_list_EQ_rev ports. No no-wrap, distinctness or finiteness premise. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_set",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3101-3164: forall xs a, good_dimindex and w2n a + LENGTH xs * w2n bytes_in_word < dimword imply word_list a xs (set (GENLIST (λi. (a + n2w i * bytes_in_word, EL i xs)) (LENGTH xs))). Both original premises retained; Lean proof derives address distinctness from the bound and good_dimindex. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListSeteq",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_seteq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3166-3178: same premises as word_list_set, conclusion word_list a xs = (λs. s = set (GENLIST ...)), whole predicate equality; proved from wordListSet and accepted word_list_inj port. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListElInMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_EL_in_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3180-3199: arbitrary a,xs,r1,r2,m,dm,i; literal four-conjunct premise good_dimindex, no-wrap bound, (r1 * word_list a xs * r2) (fun2set (m,dm)), i < LENGTH xs; conclusion m (a + n2w i * bytes_in_word) = EL i xs. Memory codomain is the arbitrary payload Type as in HOL m : alpha word -> beta. Lean proof does not need the first two premises but they are retained. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListInMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_in_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3201-3222: premises in original order (r1 * word_list a xs * r2) (fun2set (m,dm)), good_dimindex, no-wrap bound; conclusion memory m (addresses a (LENGTH xs)) = word_list a xs as whole predicate equality using accepted memory_def (memoryHOL) and addresses_def ports. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListExistsAddresses",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_addresses",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2852-2871: forall m1 n a, dimindex DIV 8 * n < dimword and good_dimindex imply word_list_exists a n (fun2set (m1, addresses a n)); m1 arbitrary memory with arbitrary payload Type, base address unrestricted (may wrap), only the original range-size bound. Uses accepted word_list_exists_def, fun2set_def, addresses_def, read_mem_def ports. HOL replay also checks aconv with the stored theorem. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListWrap",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_wrap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2995-3015: forall a ls, good_dimindex and dimword DIV (dimindex DIV 8) < LENGTH ls imply exists x xs y ys b with word_list a ls = word_list a (x::xs) * word_list b (y::ys) and b = a, whole predicate equality. Arbitrary payload Type. HOL replay also checks aconv with the stored theorem. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemVal.lean",
+    "lean_name": "memVal",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "mem_val_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2631-2634, captured type (num |-> alpha word_loc) -> alpha word + num -> alpha word_loc: INL w maps to Word w; INR n maps to regs FAPPLY n, rendered by accepted holFapply whose absent-key value is the opaque unspecified HOL FAPPLY value, no zero default or presence assumption. Register map is the canonical HolFiniteMapExact Nat (WordLocW width) standalone parameter with same-module holFmapAsFiniteSupportParamWitness_memVal_regs; HOL sum is Lean Sum (BitVec width) Nat; local Nonempty instance only records HOL type inhabitedness. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemVal.lean",
+    "lean_name": "mapMemValMapInl",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "MAP_mem_val_MAP_INL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "f"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2811-2815: forall ws f, MAP (mem_val f) (MAP INL ws) = MAP Word ws for arbitrary word list and arbitrary canonical register map f (witness holFmapAsFiniteSupportParamWitness_mapMemValMapInl_f); uses the reviewed memVal port. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/FmapSimp.lean",
+    "lean_name": "fmapSimpLemma1",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "fmap_simp_lemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_equality",
+    "fmap_as_finite_support_equality": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3041-3046 fmap_as_finite_support_equality: forall g x y z over num-keyed maps with arbitrary value Type, g |+ (0,x) |+ (5,y) |+ (0,z) = g |+ (0,z) |+ (5,y). HOL |+ is HolFiniteMapExact.updateEq (HOL key equality via DecidableEq); single map equality witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fmapSimpLemma1, whose two sides are exactly the theorem sides applied to the same universally bound key. Captured HOL statement prints updates latest-first. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]
