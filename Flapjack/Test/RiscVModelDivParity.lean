@@ -33,29 +33,29 @@ def divState (a b : Word 64) : State 64 :=
 
 example : readRegister (execute (divState (-7) 2) (.divU 5 2 3)) 5 =
     (0xFFFFFFFFFFFFFFFD : Word 64) := by
-  native_decide
+  decide
 
 example : readRegister (execute (divState 7 (-2)) (.divU 5 2 3)) 5 =
     (0xFFFFFFFFFFFFFFFD : Word 64) := by
-  native_decide
+  decide
 
 example : readRegister (execute (divState (-7) (-2)) (.divU 5 2 3)) 5 =
     (3 : Word 64) := by
-  native_decide
+  decide
 
 example : readRegister (execute (divState (-7) 0) (.divU 5 2 3)) 5 =
     (0xFFFFFFFFFFFFFFFF : Word 64) := by
-  native_decide
+  decide
 
 example : readRegister
     (execute (divState (0x8000000000000000 : Word 64) (-1)) (.divU 5 2 3)) 5 =
     (0x8000000000000000 : Word 64) := by
-  native_decide
+  decide
 
 /-- The Euclidean rounding that the model previously used gives a different
 result on this corner, documenting the corrected discrepancy. -/
 example : BitVec.sdiv (-7 : Word 64) (2 : Word 64) ≠
     BitVec.ofInt 64 ((-7 : Word 64).toInt.ediv (2 : Word 64).toInt) := by
-  native_decide
+  decide
 
 end Flapjack.Test.RiscVModelDivParity
