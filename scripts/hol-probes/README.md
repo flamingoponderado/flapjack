@@ -6447,3 +6447,4 @@ codec definitions and 490 observations over every single-bit basis vector,
 zero, all ones, alternating bits and mixed patterns. Independent calculations
 check both packed words and every decoded field, including discontiguous
 reserved-bit segments. Full CSR transitions and Run/Next remain open.
+`word_to_stack_state_rel_probe.out` captures the complete original state_rel equation, zero hypotheses and full polymorphic type. The Lean relation preserves all compiler/oracle/code-domain/stub/resource/stack/local conjuncts and the source num×config vs target config callback carriers. Canonical source/target map codec witnesses cover only named finite-map fields; sptrees remain native. This definition does not prove simulation or full compiler correctness.
