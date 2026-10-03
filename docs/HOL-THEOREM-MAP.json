@@ -72114,5 +72114,267 @@
     "hol_name": "inter_union_left",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.6.2.2: original2678-2685 arbitrary s,t Spt payload, sole wf s hypothesis, conclusion inter(union s t)s=s. Native exact four-constructor Spt, sptWf Boolean truth retains original predicate, sptUnion left bias and sptInter mkBN/mkBS normalization compared clause-wise. No BEq/DecidableEq or extra target equality premise. Structural induction proves full equation including original empty-branch exclusion. Original literal proof replay captured in word_to_stack_inter_union_left_probe.out. Source comparison recorded by flapjack-sol-b; acceptance tracked on shared bead .6.2.2."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleResidues.lean",
+    "lean_name": "oracleTie_shiftGen",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_shift_gen",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7453-7470: !mc_conf mc2 ms1 s1 ms2 l. oracle_tie mc_conf ms1 s1, the shifted find_next_interference equality for all k, mc2.target/callee_saved_regs/ptr_reg equalities imply oracle_tie mc2 ms2 s1 (generic s1 config). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OracleResidues.lean",
+    "lean_name": "oracleTie_ccacheResidues",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_ccache_residues",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7472-7524: binders mc_conf mc2 ms1 s1 ms2 l t1; oracle_tie, shifted search equality, mc2 target/ptr_reg/len_reg/ccache_interfer equalities, get_pc ms2 notin prog_addresses DIFF set ffi_entry_pcs, <> halt_pc, = ccache_pc; conclusion the two function equalities for get_reg_value (s1.cc_regs 0 a) (t1.regs a) I (I as id) and s1.cc_fp_regs 0. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "ffiEntryPcs_not_ccache_or_halt",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "ffi_entry_pcs_NOT_ccache_OR_halt_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7159-7169: find_index pc mc_conf.ffi_entry_pcs 0 = SOME index, halt_pc <> EL index, ccache_pc <> EL index imply pc <> ccache_pc /\\ pc <> halt_pc. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "noShareMem_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_share_mem_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7243-7256: mmio_pcs_min_index ffi_names = SOME i, asm_fetch_aux pc code = SOME (LabAsm Install c l n), no_install_or_no_share_mem code ffi_names imply i = LENGTH ffi_names. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "el_getFfiIndex_mem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EL_get_ffi_index_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:3101-3107: MEM s ls ==> EL (get_ffi_index ls s) ls = s, generic element type (Nonempty only for total holEl). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "ffiName_not_mapped",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "ffi_name_NOT_Mapped",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7202-7224: mmio_pcs_min_index ffi_names = SOME i, (?str. s = ExtCall str), MEM s ffi_names imply get_ffi_index ffi_names s < i. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "noShareMem_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_share_mem_APPEND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7331-7346: no_share_mem_inst code /\\ no_share_mem_inst secs ==> no_share_mem_inst (code ++ secs). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "noInstall_append_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_install_APPEND_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7348-7362: no_install (code ++ secs) ==> no_install code /\\ no_install secs. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSafetyFacts.lean",
+    "lean_name": "noShareMem_getShmemInfo",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_share_mem_IMP_get_shmem_info",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:7413-7438: !code p ffi_names shmem_info. no_share_mem_inst code ==> get_shmem_info code p ffi_names shmem_info = (ffi_names,shmem_info), reviewed ShmemInfoNum carrier. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiEntryDisjoint.lean",
+    "lean_name": "imp_ffiEntryPcsDisjoint_asm",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_ffi_entry_pcs_disjoint_Asm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:6570-6598: !^s1 mc_conf with free code2 labs ffi_names instr _bytes _len p bytes' t1; code_similar, all_enc_ok ... 0 code2, asm_fetch_aux s1.pc s1.code = SOME (Asm instr _bytes _len), !op re a. instr <> ShareMem op re a, share_mem_domain_code_rel mc_conf p code2 s1.shared_mem_domain (Bool domain via truth predicate), bytes_in_mem ..., pos_val successor, t1.pc equation imply ffi_entry_pcs_disjoint mc_conf t1 (LENGTH bytes'). All eight hypotheses kept. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiEntryDisjoint.lean",
+    "lean_name": "imp_ffiEntryPcsDisjoint_labAsm",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_ffi_entry_pcs_disjoint_LabAsm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:6600-6627: as the Asm lemma for LabAsm instr _pos _bytes _len (no ShareMem guard needed in source); all seven hypotheses kept. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordCmp.lean",
+    "lean_name": "even_add_and",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "EVEN_add_AND",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:2983-3002: (1w && p) = 0w /\\ EVEN x ==> (1w && (p + n2w x)) = 0w; EVEN as x % 2 = 0. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordCmp.lean",
+    "lean_name": "wordCmp_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "word_cmp_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:3004-3025: state_rel (mc_conf,code2,labs,p) s1 t1 ms1 /\\ word_cmp cmp (read_reg rr s1) (reg_imm ri s1) = SOME x ==> x = word_cmp cmp (read_reg rr t1) (reg_imm ri t1); source word_cmp is the reviewed wordSem wordSemWordCmp, labSem read_reg the s.regs overload, target asmSem read_reg/reg_imm. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeAppend.lean",
+    "lean_name": "listAddIfFresh_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "list_add_if_fresh_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:3044-3050: list_add_if_fresh s l = if MEM s l then l else l ++ [s], generic element type. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeAppend.lean",
+    "lean_name": "findFfiNames_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_ffi_names_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:6526-6539: !l1 l2. find_ffi_names (l1++l2) = find_ffi_names l2 ++ FILTER (\\n. ~MEM n (find_ffi_names l2)) (find_ffi_names l1); FILTER predicate as Bool !decide membership. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeAppend.lean",
+    "lean_name": "locToPc_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "loc_to_pc_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:6344-6364: !l1 l2 c1 c2 conf labs ffis pos. EVERY sec_labels_ok (c1++c2) ==> loc_to_pc l1 l2 (c1++c2) = case loc_to_pc l1 l2 c1 of SOME x => SOME x | NONE => case loc_to_pc l1 l2 c2 of SOME x => SOME (x + SUM (MAP (len_no_lab o Section_lines) c1)) | NONE => NONE. The binders conf labs ffis pos do not occur in the statement (vacuous, polymorphic in the probe) and are omitted, documented beside the theorem. Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AlignedPosVal.lean",
+    "lean_name": "lineLength_mod_zero",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "line_length_MOD_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:2934-2947: encoder_correct mc_conf.target /\\ (~EVEN p ==> code_alignment = 0) /\\ line_ok mc_conf.target.config labs ffi_names p h ==> line_length h MOD 2 ** code_alignment = 0; all three hypotheses kept (EVEN as p % 2). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay). Inherits reals_as_rational_cuts and the docs/SOUNDNESS.md item 8 assumption through the reviewed encoder_correct (asm_step FP semantics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/AlignedPosVal.lean",
+    "lean_name": "allEncOk_aligned_posVal",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "all_enc_ok_aligned_pos_val",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.5): original lab_to_targetProofScript.sml:6541-6548: !mc_conf labs code2 pc ffi_names. all_enc_ok ... 0 code2 /\\ (has_odd_inst code2 ==> code_alignment = 0) /\\ encoder_correct mc_conf.target ==> aligned code_alignment (n2w (pos_val pc 0 code2)); proof via the untagged general-offset posVal_mod_zero_gen (HOL's unnamed val pos_val_MOD_0). Only the HOL word dimension translates to positive BitVec width (where the statement has words); native carriers are the reviewed MachineConfig/AsmState/LabSem.State/LabProgHOL; HOL sets as predicates, MEM as List membership, EL as total holEl. No hypothesis added or conclusion weakened; no target run/post-state assumed. Original statement and inferred types captured in lab_to_target_code_helpers_probe.out (re-elaborated statement text, not theorem replay). Inherits reals_as_rational_cuts and the docs/SOUNDNESS.md item 8 assumption through the reviewed encoder_correct (asm_step FP semantics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/Control.lean",
+    "lean_name": "compileCorrect_jump",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.6): original lab_to_targetProofScript.sml:7528-7558 compile_correct, Jump case, source 7967-8050; IH: get_pc_value l s1 = SOME p ==> P (upd_pc p (dec_clock s1)). Each piece concludes the original compile_correct statement for the fetched instruction through CompileCorrectFor (CompileCorrect/Common.lean): binders res mc_conf s2 code2 labs t1 ms1 and the free p, hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel; conclusion exists k ms2 with target evaluate at s1.clock + k equal to (res, ms2, s2.ffi). The original existential's unused t2 (a free type, see lab_to_target_compile_correct_probe.out) is omitted. Case guards are exactly the evaluate_ind guards (s.clock <> 0, the asm_fetch shape) and the only extra hypotheses are the evaluate_ind induction hypotheses for this instruction's recursive calls (captured lab_evaluate_ind row); no target run, post-state relation or oracle fact is assumed. Proof follows the source case script via asm_step_IMP_evaluate_step_find_next / asm_step_IMP_evaluate_step_nop, state_rel frame/shift transport and oracle_tie_step. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/Control.lean",
+    "lean_name": "compileCorrect_jumpCmp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.6): original lab_to_targetProofScript.sml:7528-7558 compile_correct, JumpCmp case, source 8052-8197; IHs: word_cmp ... = SOME v /\\ v /\\ get_pc_value = SOME p ==> P (upd_pc p (dec_clock s1)) and word_cmp ... = SOME v /\\ ~v ==> P (inc_pc (dec_clock s1)); comparison transport via word_cmp_lemma. Each piece concludes the original compile_correct statement for the fetched instruction through CompileCorrectFor (CompileCorrect/Common.lean): binders res mc_conf s2 code2 labs t1 ms1 and the free p, hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel; conclusion exists k ms2 with target evaluate at s1.clock + k equal to (res, ms2, s2.ffi). The original existential's unused t2 (a free type, see lab_to_target_compile_correct_probe.out) is omitted. Case guards are exactly the evaluate_ind guards (s.clock <> 0, the asm_fetch shape) and the only extra hypotheses are the evaluate_ind induction hypotheses for this instruction's recursive calls (captured lab_evaluate_ind row); no target run, post-state relation or oracle fact is assumed. Proof follows the source case script via asm_step_IMP_evaluate_step_find_next / asm_step_IMP_evaluate_step_nop, state_rel frame/shift transport and oracle_tie_step. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/Control.lean",
+    "lean_name": "compileCorrect_call",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.6): original lab_to_targetProofScript.sml:7528-7558 compile_correct, Call case, source 8199-8212; IH (unused, as in source): get_pc_value = SOME p /\\ get_ret_Loc s1 = SOME k ==> P (upd_pc p (dec_clock (upd_reg link_reg k s1))); closed by line_ok rejecting Call (IMP_bytes_in_memory_Call). Each piece concludes the original compile_correct statement for the fetched instruction through CompileCorrectFor (CompileCorrect/Common.lean): binders res mc_conf s2 code2 labs t1 ms1 and the free p, hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel; conclusion exists k ms2 with target evaluate at s1.clock + k equal to (res, ms2, s2.ffi). The original existential's unused t2 (a free type, see lab_to_target_compile_correct_probe.out) is omitted. Case guards are exactly the evaluate_ind guards (s.clock <> 0, the asm_fetch shape) and the only extra hypotheses are the evaluate_ind induction hypotheses for this instruction's recursive calls (captured lab_evaluate_ind row); no target run, post-state relation or oracle fact is assumed. Proof follows the source case script via asm_step_IMP_evaluate_step_find_next / asm_step_IMP_evaluate_step_nop, state_rel frame/shift transport and oracle_tie_step. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/Control.lean",
+    "lean_name": "compileCorrect_locValue",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.6): original lab_to_targetProofScript.sml:7528-7558 compile_correct, LocValue case, source 8214-8290; IH: get_pc_value lab s1 <> NONE ==> P (inc_pc (dec_clock (upd_reg r (lab_to_loc lab) s1))). Each piece concludes the original compile_correct statement for the fetched instruction through CompileCorrectFor (CompileCorrect/Common.lean): binders res mc_conf s2 code2 labs t1 ms1 and the free p, hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel; conclusion exists k ms2 with target evaluate at s1.clock + k equal to (res, ms2, s2.ffi). The original existential's unused t2 (a free type, see lab_to_target_compile_correct_probe.out) is omitted. Case guards are exactly the evaluate_ind guards (s.clock <> 0, the asm_fetch shape) and the only extra hypotheses are the evaluate_ind induction hypotheses for this instruction's recursive calls (captured lab_evaluate_ind row); no target run, post-state relation or oracle fact is assumed. Proof follows the source case script via asm_step_IMP_evaluate_step_find_next / asm_step_IMP_evaluate_step_nop, state_rel frame/shift transport and oracle_tie_step. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/Control.lean",
+    "lean_name": "compileCorrect_halt",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.6): original lab_to_targetProofScript.sml:7528-7558 compile_correct, Halt case, source 9282-9351; no recursive call; target reaches halt_pc and returns the source Halt result from the related ptr_reg. Each piece concludes the original compile_correct statement for the fetched instruction through CompileCorrectFor (CompileCorrect/Common.lean): binders res mc_conf s2 code2 labs t1 ms1 and the free p, hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel; conclusion exists k ms2 with target evaluate at s1.clock + k equal to (res, ms2, s2.ffi). The original existential's unused t2 (a free type, see lab_to_target_compile_correct_probe.out) is omitted. Case guards are exactly the evaluate_ind guards (s.clock <> 0, the asm_fetch shape) and the only extra hypotheses are the evaluate_ind induction hypotheses for this instruction's recursive calls (captured lab_evaluate_ind row); no target run, post-state relation or oracle fact is assumed. Proof follows the source case script via asm_step_IMP_evaluate_step_find_next / asm_step_IMP_evaluate_step_nop, state_rel frame/shift transport and oracle_tie_step. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "initOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "init_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead183 source9357-9362, complete existential semantic entry over original concrete Config: arbitrary pair(mc,p), source state/target state, existential whole code2/labs/asm state and full stateRel AND oracleTie. Fresh full HOL type confirms Config is fixed here, no arbitrary compiler-carrier specialization. Body retains both entire relations and unrestricted witnesses, no successful simulation premise. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "oracleTie_makeInit",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_make_init",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead184 source9579-9584, unconditional entire four-function oracle tie for actual initializer. Fresh full HOL type confirms arbitrary compiler configuration C independent of machine/state/projection/FFI host and all twelve original input families. Definitional actual constructed-oracle equality proves all4clauses with no assumed oracle/targetrun/result fact. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "makeInit_simp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "make_init_simp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead185 source10516-10522, whole unconditional conjunction actual FFI equality AND PC=0 AND code equality. All twelve original inputs/generic independent compiler configuration remain; no conjunct dropped or selected source state. Actual makeInit body supplies all3equations. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "prefix_chain_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "prefixChain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. HOL full arbitrary alpha list set; native predicate-backed set and List.IsPrefix retain both universally quantified members and the membership antecedent, curried equivalently. No word/FFI/map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "prefix_chain_lprefix_chain",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "prefixChain_lprefixChain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha list set and sole prefix_chain antecedent. IMAGE fromList is exactly the existential preimage membership predicate. Native lprefix_fromList equates the reviewed HolLList prefix with ordinary List.IsPrefix; neither members nor witnesses are restricted."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "prefix_chain_FILTER",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "prefixChain_filter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha, arbitrary Boolean P and arbitrary list set; sole prefix_chain antecedent. IMAGE FILTER is exactly the existential preimage membership predicate. List.IsPrefix.filter proves each original prefix alternative for the same P; no decidability premise or membership restriction is added."
   }
 ]
