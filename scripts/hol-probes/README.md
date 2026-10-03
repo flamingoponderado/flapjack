@@ -7104,3 +7104,13 @@ All seven hypotheses and three conclusions remain intact, with zero open assumpt
 `lab_filter_return_labels_probeScript.sml` replays unchanged original local proofs416/425/468 with original simplifier setup. Twelve rows capture complete next-label and guarded skipped-run return-label equalities, full binder types, zero hypotheses and kernel reproofs.
 
 `lab_sem_independent_navigation_probeScript.sml` captures full original next-label, after-label and return-location definitions, including independent code/state and result word dimensions, zero hypotheses and kernel reproofs. Native navigation binds both positive widths independently.
+
+`pan_structs_exp_rfield_faithful_probe` captures the whole original expression
+theorem, its RField specialization, and the original evaluator induction theorem.
+The native case retains all seven hypotheses and three conclusions, with only
+the recursive child induction hypothesis; source success supplies the index lookup.
+
+`pan_structs_exp_rstruct_faithful_probe` captures the full original theorem,
+RStruct specialization, and evaluator induction theorem. Native list induction
+retains all seven hypotheses and all three conclusions, using only the original
+member-expression induction hypotheses.

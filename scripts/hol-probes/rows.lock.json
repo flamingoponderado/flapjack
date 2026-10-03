@@ -4640,6 +4640,18 @@
       "sha256": "291ca0773724dcec4dfab40e6295f2b555384ee4097abda2d1ba89134b60991a"
     },
     {
+      "bytes": 2385,
+      "out": "pan_structs_exp_rfield_faithful_probe.out",
+      "rows": 5,
+      "sha256": "6d6cdaf2a4cd015f132388a68b5f0ec3df0012c6f4beabf9e400008b0a1f2741"
+    },
+    {
+      "bytes": 2370,
+      "out": "pan_structs_exp_rstruct_faithful_probe.out",
+      "rows": 5,
+      "sha256": "d3ead46583a64d773503f2ba8fe49893abbe264dc1a9258a0746e4e2105528b0"
+    },
+    {
       "bytes": 1216,
       "out": "pan_structs_exp_var_faithful_probe.out",
       "rows": 4,
