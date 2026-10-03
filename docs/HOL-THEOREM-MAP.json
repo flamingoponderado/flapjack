@@ -68028,15 +68028,6 @@
     "reviewer": "flapjack-sol-c literal pinned source7506-7554: full fixed word1 aq/rl and word5 rd/rs1 arguments, arbitrary complete riscv_state; original unused order bits retained. in32BitMode first and forwards returned state to Illegal_Instr or subsequent GPR virtual address calculation; low3 virtual alignment failure AMO_Misaligned precedes any translation. Aligned route exact Data/Read; fault Load_Fault retains returned translation state and original virtual address; success rawReadData entire64word from returned state, writeGPR then reserve original virtual address on resulting state. No mode/alignment/success/core premise. Mechanically rendered full40-declaration closure0failed; definition and unconditional complete-state normal form kernel checked. Fresh pinned original definition/type+18 whole-state observations independently matched, all7misalignment residues, earlyRV32/RV128, orderbit combinations, register0/core255,totalCore1/Sv32 fault retention/Sv39 PTE3111 returned read, complete reservation/frame. No whole atomic/Run/Next or compiler theorem claim."
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExtractLabels.lean",
-    "lean_name": "extractLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
-    "hol_name": "extract_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison 2026-10-02: complete source771-787 five clauses on reviewed HolProg with shared positive word dimension. Both optional tuple arities, return/handler label-before-body ordering, duplicates and ignored NONE-return handler retained; target/immediate/instruction/mlstring payloads ignored exactly as source. No finite map/list-array/default substitution. Fresh original56 ordered list observations at widths1/8/64/80 independently kernel replayed."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/GcFunOk.lean",
     "lean_name": "wordGcFunOk",
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
