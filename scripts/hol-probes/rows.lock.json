@@ -6362,6 +6362,12 @@
       "sha256": "4d37e878994fbfb13154b624aae3ecb2a3c9099a67628ee1d17aa6b89dcacaae"
     },
     {
+      "bytes": 318,
+      "out": "stack_remove_init_code_relation_probe.out",
+      "rows": 3,
+      "sha256": "866cde928af7e2d8b363e4466936ce86900e9724c518d39204572884bf01d5bb"
+    },
+    {
       "bytes": 124,
       "out": "stack_remove_init_probe.out",
       "rows": 8,

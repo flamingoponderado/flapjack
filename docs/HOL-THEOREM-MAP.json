@@ -70178,5 +70178,14 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison2026-10-03 original3882-3891 local theorem: all gen_gc/max_heap/k/source/result/post/replacement-clock parameters, sole actual evaluate(init_code,s)=(res,t) premise and original same result/post with replaced clock conclusion. Uses source-reviewed actual native initializer and evaluator, arbitrary positive word width and independent compile/FFI host types. Initializer structural neutrality proved from literal full instruction list, both conditional branches, init_memory and full store-list neutrality; accepted original generic evaluate_clock_neutral supplies commutation, not an assumed target run. regs/fpRegs/store canonical owner StackSemStateFiniteExact is imported and same-module real broad/exact roundtrip checked; code remains Spt. Inherits reals_as_rational_cuts SOUNDNESS item8 through actual evaluator; no new FP correspondence. Complete unchanged original local proof replay, generalized statement0hyp. Full initialization and compiler theorem remain on dependency-linked beads."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitCodeRelation.lean",
+    "lean_name": "impCodeRel",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "IMP_code_rel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source comparison2026-10-03 original local3988-4010: arbitrary actual source association list and target Spt, original EVERY(reg_bound p k AND stack_num_stubs<=name+1) and target=fromAList(compile...) conjunction; conclusion full code_rel, both lookup program bounds/actual comp result and complete domain equality with {0,1,2}. Actual native compileHOL/initStubs/progComp/codeRelHOL/Spt used. Original num_stubs is stackNumStubs (5), not three initializer entries or wordNumStubs. First-match duplicate/unsorted-label behavior retained with no distinctness or wf premise; original bound excludes initializer labels internally. Domain equality derives from full actual prefix plus value-map keys, not assumed as hypothesis. Only positive-word qualifier, no finite-map qualifier for Spt code tables and no evaluator/FP carrier involved. Full unchanged original local proof replay and generalized zero-hypothesis statement recorded. Initializer/compiler theorem remains dependency-linked and open."
   }
 ]
