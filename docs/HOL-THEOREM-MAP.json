@@ -83263,5 +83263,15 @@
     "lean_name": "split_immediate_reconstruction",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c author source comparison2026-10-03 original60-64/112-118: full fixed64 signed immediate reconstruction. lem4 retains both signed -2048..2047 limits and full original twelve-bit MSB-first Boolean list at word12 sign-extended64. Kernel extensional bit-list equality then core sign-extension/balanced-mod bounded identity. Split proof derives bit1 mask from original alignment and proves all signed cases with pure modular arithmetic; no native trust tactic. lem12b retains signed -2147483648..2147481599 limits AND original (1><0)c resultword64=0 (low2 extract zero-extended64). Full original c + (-1)*signExtend low12, high20 slice offset12, concatenate zero12=>word32 then signExtend64, plus signExtended low12 masked complement2. No added target-run/evaluation/decoder premise, no accepted-opcode or range narrowing. Native source stepping tactics consume these exact arithmetic obligations at286/378. Fresh literal original BBLAST proofs full generic c:word64/type/hyp0/T; capture regression is not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SemanticsCompileFinal.lean",
+    "lean_name": "semanticsCompile",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "semantics_compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison11247-11316: all fifteen original guards in source order, including good_code asm_conf c.labels, actual native Config and successful compile, independent machine-state/projection/FFI types, MMIO boundary and complete entry/address/exit tuples, no-install/no-share alternative, strict byte-buffer bound and every provided name ExtCall. Final singleton implements-prime T conclusion preserves both canonical dm and sdm intersections with source byte_aligned. Actual source proof composition follows outer DM and inner SDM refinements plus accepted full compile lemma; initializer projections are definitional and good_code specialization follows only original config equalities. Generic empty-label value parameter of the prerequisite lemma is instantiated internally at actual Config Nat carrier, not added to final source signature. No target result/execution/simulation premise, no narrowed scope or extra defaults, no LOG2zero/HD/EL/runtime policy change. Standard positive type-indexed words/Type0 host translation only; native FP evaluator inherits reals_as_rational_cuts assumption SOUNDNESS item8, not full real closure or HOL-to-Lean equivalence. Fresh mechanically extracted verbatim original final proof replay captures full typed statement, hypotheses0 and kernel T. Whole compiler/machine/end-to-end correctness remains open."
   }
 ]

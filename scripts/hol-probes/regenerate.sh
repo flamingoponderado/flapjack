@@ -7128,3 +7128,6 @@ run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_help
 run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.out \
   lem4_statement lem4_types lem4_hypotheses lem4_proved lem12b_statement lem12b_types lem12b_hypotheses lem12b_proved lem12b_intermediate_types \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_semantics_compile_final_probe.out \
+  semantics_compile semantics_compile_types semantics_compile_hypotheses semantics_compile_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
