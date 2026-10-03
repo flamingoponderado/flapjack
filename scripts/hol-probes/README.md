@@ -6769,3 +6769,15 @@ inputs and states. Coverage includes zero divisors, signed truncation/overflow,
 word widths, register zero/aliases, RV32 illegal routes through the reviewed
 helper, and sixteen symbolic invalid-mode equations with both prior-exception
 seeds. Canonical ARB stays unspecified; full original equations are preserved.
+
+### Native FP sign injection and register moves
+
+`l3_fp_bits_probeScript.sml` captures 1920 whole-state FSGNJ/FSGNJN/FSGNJX
+S/D and FMV_X_S/FMV_S_X/FMV_X_D/FMV_D_X equations. `check-l3-fp-bits.py`
+requires the complete label set and every value T; `L3FPBitsParity` checks
+matching inputs in Lean. Independent raw numeric results cover sign combinations,
+NaN/infinity/subnormal payloads, register aliases and zero in all four
+architecture selectors. Whole-state expected routes use the reviewed
+writeFPRS/writeFPRD/writeGPR helpers, including their Dirty status and Delta
+updates and S upper32 preservation. FPRzero is writable; GPRzero is suppressed.
+These bit-only instructions perform no mode query or real rounding.

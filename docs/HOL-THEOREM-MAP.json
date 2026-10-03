@@ -72290,5 +72290,85 @@
     "hol_name": "dfn'REMUW_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.30): full literal DIV6590/REM6611/DIVU6634/REMU6675/DIVW6698/REMW6731/DIVUW6763/REMUW6796 fixed word5 registers and arbitrary reviewed native state. DIV/REM/REMU use full64 without mode checks; DIVU retains two state-threaded queries, RV32 low32 zeroextension, first state dividend and second state divisor/write. W forms signal Illegal_Instr in RV32, otherwise low32 arithmetic with signed extension of every result, including unsigned quotient/remainder. Zero-divisor quotient is signextended1-bit one; remainder returns original dividend, signextended low32 for W. Signed primitives match words word_quot355 and word_rem370 sign cases with truncation and dividend-signed remainder, including modular min/-1 overflow. Canonical ARB and error retention remain unspecified/literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures all1456 whole-state equations PASS:1440 numeric/illegal routes and sixteen symbolic invalid-mode equations with both NoException/prior UNDEFINED seeds. Illegal routes compare reviewed signalException without invented trap defaults. Fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FSGNJ_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJ_S_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FSGNJ_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJ_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FSGNJN_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJN_S_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FSGNJN_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJN_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FSGNJX_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJX_S_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FSGNJX_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSGNJX_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FMV_X_S»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_X_S_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FMV_S_X»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_S_X_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FMV_X_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_X_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPBits.lean",
+    "lean_name": "«dfn'FMV_D_X»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FMV_D_X_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FM V_S_X9284/FM V_X_D10205/FM V_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
   }
 ]
