@@ -185,6 +185,7 @@ import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.WordAllocGetDeltaInstParity
+import Flapjack.Test.WordAllocInstructionProducerParity
 import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity

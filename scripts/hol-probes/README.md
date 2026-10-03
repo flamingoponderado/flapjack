@@ -6252,3 +6252,10 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 `stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
+
+`word_alloc_instruction_producer_probe.out` captures four original
+`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
+offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
+and executed deltas; the complete accepted-instruction producer relation uses
+the real instruction encoder, retaining every ordered operand. No whole
+allocator or source-program producer correctness is claimed.

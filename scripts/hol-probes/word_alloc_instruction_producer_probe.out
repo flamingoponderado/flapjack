@@ -1,0 +1,4 @@
+gdi_load16_zero=T
+gdi_store16_zero=T
+gdi_load16_offset=T
+gdi_store16_offset=T
