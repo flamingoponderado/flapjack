@@ -37,6 +37,44 @@ def compile? {width : Nat} [NeZero width] (jump : Bool)
   let native ← nativeInputs? programs
   compileNative? jump bounds generateGc maximumHeap pointer start names native
 
+/-- Successful native whole-list output decodes to every literal original
+section, including the initializer prefix. This is Flapjack codec infrastructure:
+there is no standalone HOL theorem, and no evaluator simulation is claimed. -/
+theorem compileNative_recover {width : Nat} [NeZero width] (jump : Bool)
+    (bounds : BitVec width × BitVec width) (generateGc : Bool)
+    (maximumHeap pointer start : Nat) (names : Spt Nat)
+    (native : List (Nat × HolProg width)) (outputs : List (LabSection (BitVec width)))
+    (accepted : compileNative? jump bounds generateGc maximumHeap pointer start names native = some outputs) :
+    ExecutedCodec.mapCodec? ExecutedCodec.sectionFromExecuted? outputs = some
+      ((Flapjack.Compiler.Backend.StackNames.compileHOL names
+        (Flapjack.Compiler.Backend.StackRemove.compileHOL
+          jump bounds generateGc maximumHeap pointer start native)).map progToSectionHOL) := by
+  have lowered : ExecutedCodec.mapCodec? ExecutedInput.sectionToExecuted?
+      (Flapjack.Compiler.Backend.StackNames.compileHOL names
+        (Flapjack.Compiler.Backend.StackRemove.compileHOL jump bounds generateGc
+          maximumHeap pointer start native)) = some outputs := accepted
+  clear accepted
+  generalize hrenamed : Flapjack.Compiler.Backend.StackNames.compileHOL names
+    (Flapjack.Compiler.Backend.StackRemove.compileHOL jump bounds generateGc
+      maximumHeap pointer start native) = renamed at lowered ⊢
+  clear hrenamed
+  induction renamed generalizing outputs with
+  | nil =>
+    simp [ExecutedCodec.mapCodec?] at lowered
+    subst outputs
+    rfl
+  | cons first rest ih =>
+    cases headAccepted : ExecutedInput.sectionToExecuted? first with
+    | none => simp [ExecutedCodec.mapCodec?, headAccepted] at lowered
+    | some head =>
+      cases tailAccepted : ExecutedCodec.mapCodec? ExecutedInput.sectionToExecuted? rest with
+      | none => simp [ExecutedCodec.mapCodec?, headAccepted, tailAccepted] at lowered
+      | some tail =>
+        simp [ExecutedCodec.mapCodec?, headAccepted, tailAccepted] at lowered
+        subst outputs
+        simp [ExecutedCodec.mapCodec?, ExecutedInput.section_recover _ _ headAccepted,
+          ih _ tailAccepted]
+
 /-- Recover the literal native sections of every accepted whole-list lowering.
 The premise is codec success, not a target evaluation; this is not pass correctness. -/
 theorem compile_recover {width : Nat} [NeZero width] (jump : Bool)
@@ -52,32 +90,8 @@ theorem compile_recover {width : Nat} [NeZero width] (jump : Bool)
   cases converted : nativeInputs? (width := width) programs with
   | none => simp [compile?, converted] at accepted
   | some native =>
-    have lowered : ExecutedCodec.mapCodec? ExecutedInput.sectionToExecuted?
-        (Flapjack.Compiler.Backend.StackNames.compileHOL names
-          (Flapjack.Compiler.Backend.StackRemove.compileHOL jump bounds generateGc
-            maximumHeap pointer start native)) = some outputs := by
-      simpa [compile?, compileNative?, converted] using accepted
-    clear accepted
-    refine ⟨native, rfl, ?_⟩
-    generalize hrenamed : Flapjack.Compiler.Backend.StackNames.compileHOL names
-      (Flapjack.Compiler.Backend.StackRemove.compileHOL jump bounds generateGc
-        maximumHeap pointer start native) = renamed at lowered ⊢
-    clear hrenamed
-    induction renamed generalizing outputs with
-    | nil =>
-      simp [ExecutedCodec.mapCodec?] at lowered
-      subst outputs
-      rfl
-    | cons first rest ih =>
-      cases headAccepted : ExecutedInput.sectionToExecuted? first with
-      | none => simp [ExecutedCodec.mapCodec?, headAccepted] at lowered
-      | some head =>
-        cases tailAccepted : ExecutedCodec.mapCodec? ExecutedInput.sectionToExecuted? rest with
-        | none => simp [ExecutedCodec.mapCodec?, headAccepted, tailAccepted] at lowered
-        | some tail =>
-          simp [ExecutedCodec.mapCodec?, headAccepted, tailAccepted] at lowered
-          subst outputs
-          simp [ExecutedCodec.mapCodec?, ExecutedInput.section_recover _ _ headAccepted,
-            ih _ tailAccepted]
+    have lowered : compileNative? jump bounds generateGc maximumHeap pointer start names native = some outputs := by
+      simpa [compile?, converted] using accepted
+    exact ⟨native, rfl, compileNative_recover jump bounds generateGc maximumHeap pointer start names native outputs lowered⟩
 
 end Flapjack.Compiler.Backend.StackToLab.InitializedProduction

@@ -50,4 +50,13 @@ private def undersizedProgram : LabProgram (Word 64) :=
 #guard (compileLabProgramLinkedWithNativeInitialization relocationContext
   ([] : LabProgram (Word 64))).isSome
 
+/-! The actual runtime-image boundary retains the complete native initializer
+and rejects byte-observable names outside the supported codec. These finite
+guards supplement the universal output-recovery theorem; they are not a
+compiler simulation or a proof that every upstream program is supported. -/
+#guard (initializedRuntimeLab? (width := 64) false (-2048, 2047) 23 3 32
+  [(3, .skip)]).isSome
+#guard (initializedRuntimeLab? (width := 64) false (-2048, 2047) 23 3 32
+  [(3, .ffi "Ā" 0 0 0 0 0)]).isNone
+
 end Flapjack.Test.LabInitialLabelSlots
