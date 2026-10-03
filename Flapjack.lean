@@ -2049,6 +2049,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
