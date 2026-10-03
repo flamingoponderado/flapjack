@@ -81949,5 +81949,41 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison5132-5147: entire state_rel arbitrary k/f/frame/lens/extra, arbitrary v/x and sole v!=Handler guard, simultaneous source/target set_store full relation conclusion. Canonical updateEq/eraseEq commute for nonHandler and preserve handler lookup; all original relation conjuncts retained. Same-module genuine source/target canonical codec witnesses and all five named finite-map fields; positive words qualified. No targetrun/postrelation/new bound assumptions. Structural closure has no evaluator reals_as_rational_cuts dependency; no numerical FP or cross-language equivalence claim. Fresh unchanged original statement and literal proof replay provides regression evidence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmShared.lean",
+    "lean_name": "alignSdmAligned",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_aligned",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps1064-1173 and fresh all4 fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_shared_probe.out: complete original good_dimindex-guarded domain membership iff or conjunction of NONE equivalence and SOME-result/poststate preservation. Generic native word/address/register/arbitrary request size/state/C/FFI result carriers retained. Load/store NONE orientation aligned-state first, dispatcher original-state first preserved. Actual native mapped FFI request bytes, all returned bytes, final outcomes, register/FFI/PC/clock updates and all8 load/store sizes retained. Private unconditional native transition projection equations derive full source laws without success callback or desired-result premises. Numerical/canonical alignment agreement uses only original32/64 guard, no LOG2zero choice/runtime changes. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmShared.lean",
+    "lean_name": "shareMemLoadAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "share_mem_load_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps1064-1173 and fresh all4 fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_shared_probe.out: complete original good_dimindex-guarded domain membership iff or conjunction of NONE equivalence and SOME-result/poststate preservation. Generic native word/address/register/arbitrary request size/state/C/FFI result carriers retained. Load/store NONE orientation aligned-state first, dispatcher original-state first preserved. Actual native mapped FFI request bytes, all returned bytes, final outcomes, register/FFI/PC/clock updates and all8 load/store sizes retained. Private unconditional native transition projection equations derive full source laws without success callback or desired-result premises. Numerical/canonical alignment agreement uses only original32/64 guard, no LOG2zero choice/runtime changes. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmShared.lean",
+    "lean_name": "shareMemStoreAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "share_mem_store_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps1064-1173 and fresh all4 fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_shared_probe.out: complete original good_dimindex-guarded domain membership iff or conjunction of NONE equivalence and SOME-result/poststate preservation. Generic native word/address/register/arbitrary request size/state/C/FFI result carriers retained. Load/store NONE orientation aligned-state first, dispatcher original-state first preserved. Actual native mapped FFI request bytes, all returned bytes, final outcomes, register/FFI/PC/clock updates and all8 load/store sizes retained. Private unconditional native transition projection equations derive full source laws without success callback or desired-result premises. Numerical/canonical alignment agreement uses only original32/64 guard, no LOG2zero choice/runtime changes. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmShared.lean",
+    "lean_name": "shareMemOpAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "share_mem_op_align_sdm_simp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps1064-1173 and fresh all4 fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_shared_probe.out: complete original good_dimindex-guarded domain membership iff or conjunction of NONE equivalence and SOME-result/poststate preservation. Generic native word/address/register/arbitrary request size/state/C/FFI result carriers retained. Load/store NONE orientation aligned-state first, dispatcher original-state first preserved. Actual native mapped FFI request bytes, all returned bytes, final outcomes, register/FFI/PC/clock updates and all8 load/store sizes retained. Private unconditional native transition projection equations derive full source laws without success callback or desired-result premises. Numerical/canonical alignment agreement uses only original32/64 guard, no LOG2zero choice/runtime changes. Full evaluator/refinement remains open."
   }
 ]
