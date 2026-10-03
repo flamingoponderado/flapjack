@@ -72010,5 +72010,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2.1: full original2488-2570 arbitrary bs/wstack/sstack/lens/stack/h/wrest/k/len, sole count bound/source LASTN equation/actual abstraction success/full auxiliary relation. Both suffix decoder success and full suffix auxiliary relation conclusions retained. Native structural induction covers normal/handler decoding, tail suffix and whole-stack boundaries; actual successful abstraction derives frame/lens lengths and handler offsets. Auxiliary suffix relation derives from original tail clauses, not supplied as a premise. Decoder/aux relation together unify source-frame/raw-stack word dimension; one positive BitVec width with NeZero. Native literal list/Option/frame/tree carriers preserved, no BEq/safety/range assumptions. Literal original proof and all unexported local prerequisites replayed unchanged with original simplifier context; capture statements/T/hyp0 and inferred carrier types. Source comparison recorded; acceptance tracked on shared bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/EnvironmentIdentity.lean",
+    "lean_name": "envToListIdentityImp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "env_to_list_K_I_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead flapjack-word-stack-env-identity-sort: original1291-1310 arbitrary env native Spt word_loc/list/output oracle; sole actual env_to_list(env)(K I)=(l,oracle) premise. Full descending adjacent key SORTED, function identity oracle, complete toAList PERM conclusions retained. Native actual listRearrange identity proven without bijection premise; actual sortSorted and sortPerm with original comparator transitivity/totality, tree unique keys propagated through permutation derive strict order. Original comparator payload/signed order unchanged; only positive word dimension translation, no map qualifier for Spt. No extra desired sorting/permutation/evaluation assumption. Literal original local proof replay reconstructs source-local SORTS_SORT and list_rearrange_I unchanged; source comparison recorded, acceptance on bead."
   }
 ]

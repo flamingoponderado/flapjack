@@ -6379,3 +6379,7 @@ run_probe word_to_stack_inter_union_left_probeScript.sml word_to_stack_inter_uni
 run_probe word_to_stack_abs_stack_prefix_drop_probeScript.sml word_to_stack_abs_stack_prefix_drop_probe.out \
   abs_stack_prefix_drop_statement abs_stack_prefix_drop_proved abs_stack_prefix_drop_hypotheses abs_stack_prefix_drop_wstack_type abs_stack_prefix_drop_sstack_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_env_identity_probeScript.sml word_to_stack_env_identity_probe.out \
+  env_to_list_identity_statement env_to_list_identity_proved env_to_list_identity_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
