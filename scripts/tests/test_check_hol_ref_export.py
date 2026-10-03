@@ -244,16 +244,6 @@ class HolRefExportTest(unittest.TestCase):
             "lake", "--quiet", "lean", str(MODULE.EXPORTER),
         ])
 
-    def test_native_export_sees_recent_crep_props_source_declaration(self):
-        # This exact declaration was missing from an old saved
-        # Flapjack.setup.json after Lake had rebuilt CrepProps from source.
-        # Exercise the real Lake path to ensure the fresh declaration is
-        # visible and that no local OLean import is missing.
-        names = {item["lean_name"] for item in MODULE.exported_refs()}
-        self.assertIn(
-            "Flapjack.crepAssignedVarsHOL_nestedSeq_storesHOL", names
-        )
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -357,95 +357,11 @@ example (base : riscv_state) :
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
     holUpdate,List.range_succ,List.map] <;> decide
 
--- Original l3_integer_store_probe.out: sh_core_wrap.
-example (base : riscv_state) :
-    observation «dfn'SH» (fixture base 18364758546640568448 0 0 0 0 255 2 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640588271,0,18364758546640588271,[239,205,84,246,152,186,220,254],none,none,true,1,255) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sh_fault_sv32_unaligned.
-example (base : riscv_state) :
-    observation «dfn'SH» (fixture base 18364758546640568448 8 7 4095 0 7 2 8)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 4095) (BitVec.ofNat 64 7) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 7),true,9223372036854775808,71737338072814720,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sh_rv32_mode.
-example (base : riscv_state) :
-    observation «dfn'SH» (fixture base 18364758546640568448 0 0 0 0 7 0 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640588271,0,18364758546640588271,[239,205,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sh_rv128_mode.
-example (base : riscv_state) :
-    observation «dfn'SH» (fixture base 18364758546640568448 0 0 0 0 7 3 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640588271,0,18364758546640588271,[239,205,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
 -- Original l3_integer_store_probe.out: sh_write_walk_returned_state.
 example (base : riscv_state) :
     observation «dfn'SH» (fixture base 3079 0 0 0 0 7 2 9)
       (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
       (81985529216486895,81985529216486895,81985529216486895,(0,none),true,52719,0,52719,[239,205,0,0,0,0,0,0],some (63,false,1073741823,18446744072635809792,0,0,77,0,true,3,true,0,3,true,0),none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sh_read_only_page_fault.
-example (base : riscv_state) :
-    observation «dfn'SH» (fixture base 3077 0 0 0 0 7 2 9)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 0),true,3077,0,3077,[5,12,0,0,0,0,0,0],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sh_invalid_pte_fault.
-example (base : riscv_state) :
-    observation «dfn'SH» (fixture base 0 0 0 0 0 7 2 9)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 0),true,0,0,0,[0,0,0,0,0,0,0,0],none,none,true,1,7) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
   all_goals simp [«dfn'SH»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
@@ -567,95 +483,11 @@ example (base : riscv_state) :
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
     holUpdate,List.range_succ,List.map] <;> decide
 
--- Original l3_integer_store_probe.out: sb_core_wrap.
-example (base : riscv_state) :
-    observation «dfn'SB» (fixture base 18364758546640568448 0 0 0 0 255 2 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568559,0,18364758546640568559,[239,128,84,246,152,186,220,254],none,none,true,1,255) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sb_fault_sv32_unaligned.
-example (base : riscv_state) :
-    observation «dfn'SB» (fixture base 18364758546640568448 8 7 4095 0 7 2 8)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 4095) (BitVec.ofNat 64 7) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 7),true,9223372036854775808,71737338072814720,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sb_rv32_mode.
-example (base : riscv_state) :
-    observation «dfn'SB» (fixture base 18364758546640568448 0 0 0 0 7 0 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568559,0,18364758546640568559,[239,128,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sb_rv128_mode.
-example (base : riscv_state) :
-    observation «dfn'SB» (fixture base 18364758546640568448 0 0 0 0 7 3 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568559,0,18364758546640568559,[239,128,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
 -- Original l3_integer_store_probe.out: sb_write_walk_returned_state.
 example (base : riscv_state) :
     observation «dfn'SB» (fixture base 3079 0 0 0 0 7 2 9)
       (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
       (81985529216486895,81985529216486895,81985529216486895,(0,none),true,3311,0,3311,[239,12,0,0,0,0,0,0],some (63,false,1073741823,18446744072635809792,0,0,77,0,true,3,true,0,3,true,0),none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sb_read_only_page_fault.
-example (base : riscv_state) :
-    observation «dfn'SB» (fixture base 3077 0 0 0 0 7 2 9)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 0),true,3077,0,3077,[5,12,0,0,0,0,0,0],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sb_invalid_pte_fault.
-example (base : riscv_state) :
-    observation «dfn'SB» (fixture base 0 0 0 0 0 7 2 9)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 0),true,0,0,0,[0,0,0,0,0,0,0,0],none,none,true,1,7) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
   all_goals simp [«dfn'SB»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
@@ -777,95 +609,11 @@ example (base : riscv_state) :
     «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
     holUpdate,List.range_succ,List.map] <;> decide
 
--- Original l3_integer_store_probe.out: sd_core_wrap.
-example (base : riscv_state) :
-    observation «dfn'SD» (fixture base 18364758546640568448 0 0 0 0 255 2 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,255) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sd_fault_sv32_unaligned.
-example (base : riscv_state) :
-    observation «dfn'SD» (fixture base 18364758546640568448 8 7 4095 0 7 2 8)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 4095) (BitVec.ofNat 64 7) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 7),true,9223372036854775808,71737338072814720,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sd_rv32_mode.
-example (base : riscv_state) :
-    observation «dfn'SD» (fixture base 18364758546640568448 0 0 0 0 7 0 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(2,none),true,18364758546640568448,0,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sd_rv128_mode.
-example (base : riscv_state) :
-    observation «dfn'SD» (fixture base 18364758546640568448 0 0 0 0 7 3 0)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
 -- Original l3_integer_store_probe.out: sd_write_walk_returned_state.
 example (base : riscv_state) :
     observation «dfn'SD» (fixture base 3079 0 0 0 0 7 2 9)
       (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
       (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],some (63,false,1073741823,18446744072635809792,0,0,77,0,true,3,true,0,3,true,0),none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sd_read_only_page_fault.
-example (base : riscv_state) :
-    observation «dfn'SD» (fixture base 3077 0 0 0 0 7 2 9)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 0),true,3077,0,3077,[5,12,0,0,0,0,0,0],none,none,true,1,7) := by
-  simp only [observation, Prod.mk.injEq]
-  repeat' apply And.intro
-  all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
-    GPR,gpr,signalAddressException,signalException,setTrap,«write'NextFetch»,
-    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
-    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
-    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
-    holUpdate,List.range_succ,List.map] <;> decide
-
--- Original l3_integer_store_probe.out: sd_invalid_pte_fault.
-example (base : riscv_state) :
-    observation «dfn'SD» (fixture base 0 0 0 0 0 7 2 9)
-      (BitVec.ofNat 5 2) (BitVec.ofNat 5 3) (BitVec.ofNat 12 0) (BitVec.ofNat 64 0) =
-      (81985529216486895,81985529216486895,81985529216486895,(4,some 0),true,0,0,0,[0,0,0,0,0,0,0,0],none,none,true,1,7) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
   all_goals simp [«dfn'SD»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,

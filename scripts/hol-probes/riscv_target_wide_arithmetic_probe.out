@@ -1,0 +1,10 @@
+wide_mul_long_statement=∀a b. n2w (w2n a * w2n b DIV 18446744073709551616) = (127 >< 64) (w2w a * w2w b)
+wide_mul_long_types=a : :word64, b : :word64
+wide_mul_long_hypotheses=0
+wide_mul_long_proved=T
+wide_product_type=:word128
+wide_slice_type=:word64
+wide_ror_statement=∀w n. n < 64 ⇒ w ≪ (64 − n) ‖ w ⋙ n = w ⇄ n
+wide_ror_types=w : :word64, n : :num
+wide_ror_hypotheses=0
+wide_ror_proved=T
