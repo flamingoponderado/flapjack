@@ -7114,6 +7114,10 @@ run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_pr
   inst_correct_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_to_lab_flatten_correct_probeScript.sml stack_to_lab_flatten_correct_probe.out \
+  flatten_correct_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
   flatten_leq_statement no_ret_correct_statement compile_jump_correct_statement result_view_nchotomy_statement result_view_def_statement halt_word_view_def_statement halt_view_def_statement stack_to_lab_lab_pres_statement stack_to_lab_lab_pres_T_statement flatten_T_F_statement prog_to_section_labels_ok_statement NOT_MEM_find_lab_IMP_statement is_some_loc_to_pc_prefix_statement every_is_some_loc_to_pc_prefix_statement NOT_bad_fun_return_IMP_SOME_statement next_lab_non_zero_1022_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
