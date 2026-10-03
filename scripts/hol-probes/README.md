@@ -7943,3 +7943,8 @@ scoped original Run observations; no new HOL declaration identity is claimed.
 independent word/configuration/FFI carrier. Regenerate with
 `HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
 composes all six reviewed pass paths; production routing remains separate.
+
+`pan_globals_shape_localised_probeScript.sml` captures both universally
+quantified original `localised_exp_shape_val` conjuncts as a closed typed
+kernel theorem, plus both mutual shape-expression types. Regenerate with
+`HOL_PROBE_ONLY=pan_globals_shape_localised_probeScript.sml`.

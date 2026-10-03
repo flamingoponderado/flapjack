@@ -79387,10 +79387,11 @@
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
     "lean_name": "shapeValLocalised",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack infrastructure: shape_val expressions are localised; no HOL original."
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "localised_exp_shape_val",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_globalsProofScript3207-3212 localised_exp_shape_val, both original universal conjuncts and no hypotheses, native HOL ShapeHOL/list and exact ExpHOL width with positive NeZero width. Uses reviewed mutual shapeValHOL/shapeValsHOL directly; localisedExpHOL Boolean true and List.all= true are the literal localised_exp/EVERY interpretation. Standard words_as_type_indexed_bitvec only translates original alpha word dimension; no generic production Exp substitution or added bound. Fresh closed typed original statement/proof/mutual expression types in pan_globals_shape_localised_probe.out. Existing helper is the genuine first conjunct, full localisedExpShapeValHOL proves both. Corrects the previous inaccurate no-HOL-original infrastructure classification. This row is the first genuine conjunct only.",
+    "words_as_type_indexed_bitvec": true
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
@@ -89462,5 +89463,14 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-03: original529-684 and fresh closed fully typed original statement/proof/types in pan_to_word_semantics_probe.out. All24 source conjuncts retained, including memory on original source domain, no_labels on target domain, start main, exact shape/context globals-size sum, distinct_params, domain union/shared domain, be/FFI, CurrHeap and native word HeapLength, top-address subtraction, distinct function names, alignment/allocation, four empty source maps, target compiled native Spt code, size_eids<dimword, entry local0 Loc1 0, gooddimindex, source nonFail. HeapLen:BitVec width retains original alpha word; independent target configuration C and FFI sigma:Type0 retained; width positive NeZero. Conclusion is actual WordSem semantics target firstLoopName = faithful PanSem declaration semantics source start code. Reviewed compiler chain PanSimp/Structs/Globals/Crep/Loop/Word used directly, all intermediate states/size/allocation/memory/code/parameter guards derived, no target-run/trace-equality/IH/simulation premise added. Canonical finite-map qualifier names only four traversed Pan maps and observed Word store; code/locals target stay native Spt, both owner witnesses are genuine two-way roundtrips. HOL set membership is the existing reviewed Bool-domain predicate boundary (b=true); no domain behavior change. Standard word qualifier translates only positive dimension/Type0 host. Original distinct_params premise retained even though stronger accepted downstream parameter theorem proves the needed target guard without it. Production route .19.3 and broader WordSem assurance remain separately OPEN; not executed whole-compiler completion. Inherits the existing WordSem/IEEE reals_as_rational_cuts assumption through actual observational semantics, as verified by the elaborated declaration closure; no direct additional real-carrier qualifier or independent real-equivalence claim. Broader IEEE assurance stays open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileLocalised.lean",
+    "lean_name": "localisedExpShapeValHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
+    "hol_name": "localised_exp_shape_val",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_globalsProofScript3207-3212 localised_exp_shape_val, both original universal conjuncts and no hypotheses, native HOL ShapeHOL/list and exact ExpHOL width with positive NeZero width. Uses reviewed mutual shapeValHOL/shapeValsHOL directly; localisedExpHOL Boolean true and List.all= true are the literal localised_exp/EVERY interpretation. Standard words_as_type_indexed_bitvec only translates original alpha word dimension; no generic production Exp substitution or added bound. Fresh closed typed original statement/proof/mutual expression types in pan_globals_shape_localised_probe.out. Existing helper is the genuine first conjunct, full localisedExpShapeValHOL proves both. Corrects the previous inaccurate no-HOL-original infrastructure classification. This row is the complete original conjunction."
   }
 ]

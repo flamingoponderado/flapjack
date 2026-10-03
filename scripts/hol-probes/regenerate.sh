@@ -7594,3 +7594,7 @@ run_probe pan_to_target_option_lt_source_replay_probeScript.sml pan_to_target_op
 run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_division_probe.out \
   division_typed division_proved division_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_globals_shape_localised_probeScript.sml pan_globals_shape_localised_probe.out \
+  localised_exp_shape_val_statement localised_exp_shape_val_proved localised_exp_shape_val_types \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
