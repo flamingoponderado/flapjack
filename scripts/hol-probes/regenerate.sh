@@ -6940,3 +6940,14 @@ run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_registe
 run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoration_probe.out \
   res_var_FMAP_MAP2_rev_statement res_var_FMAP_MAP2_rev_types res_var_FMAP_MAP2_rev_hypotheses res_var_FMAP_MAP2_rev_proved FEVERY_res_var_statement FEVERY_res_var_types FEVERY_res_var_hypotheses FEVERY_res_var_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_arithmetic_probeScript.sml riscv_target_arithmetic_probe.out \
+  arithmetic_lem5_statement arithmetic_lem5_types arithmetic_lem5_hypotheses arithmetic_lem5_proved \
+  arithmetic_lem8_statement arithmetic_lem8_types arithmetic_lem8_hypotheses arithmetic_lem8_proved \
+  arithmetic_lem9_statement arithmetic_lem9_types arithmetic_lem9_sum_type arithmetic_lem9_hypotheses arithmetic_lem9_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_wide_arithmetic_probeScript.sml riscv_target_wide_arithmetic_probe.out \
+  wide_mul_long_statement wide_mul_long_types wide_mul_long_hypotheses wide_mul_long_proved wide_product_type wide_slice_type \
+  wide_ror_statement wide_ror_types wide_ror_hypotheses wide_ror_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

@@ -7373,3 +7373,28 @@ native enclosing constructor assembles checked tail/NONE/SOME cases with every
 original quantifier and result/resource conclusion. These captures are statement
 evidence via the original full theorem, not a replay of the local case proof or
 a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.
+
+## Native RISC-V encoder arithmetic prerequisites
+
+`riscv_target_arithmetic_probeScript.sml` replays the unchanged local `lem5`,
+`lem8` and `lem9` proofs from original `riscv_targetProofScript.sml:67–100`.
+The closed statements retain every free/quantified operand, the original sole
+alignment premise, the fixed word64 input and word65 carry-expression types,
+and both carry equivalences (with and without carry-in). Each replay has zero
+hypotheses and a kernel `EQT_INTRO` result `T`. The strict checker compares the
+literal replay terms/proofs to the pinned original, and rejects captured
+statement, type, hypothesis or proof-result drift. Lean ports live beneath the
+existing source counterpart in `RiscV/CorrectnessEncoding/Arithmetic.lean`;
+their generic consumers use the full statements. This source review and these
+kernel proofs do not establish cross-assistant equivalence or the full
+`riscv_encoder_correct` theorem; its target-state/step obligations remain open.
+
+`riscv_target_wide_arithmetic_probeScript.sml` replays unchanged original
+`mul_long` and `ror` proofs (`riscv_targetProofScript.sml:120–160`). Closed
+statements retain both word64 product operands, the actual word128 product and
+word64 slice, and the sole original natural rotate-amount bound `n < 64`.
+The strict checker validates complete statements/types/zero hypotheses/kernel
+`T` and the literal original term/proof replay. Lean arithmetic ports and full
+generic consumers preserve these carriers and conclusions. These two original
+rewrite prerequisites do not discharge target-state/step correctness or assert
+HOL-to-Lean equivalence from a finite fixture.

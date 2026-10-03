@@ -17,7 +17,25 @@ def check_replay(original, probe):
                 for a, b in zip(source.groups(), replay.groups())):
             raise ValueError("original literal arithmetic proof replay drift: " + name)
 
+def check_driver(text):
+    """Require both complete arithmetic replay commands, including every old sentinel."""
+    import shlex
+    logical = text.replace("\\\n", " ")
+    for stem in ("riscv_target_arithmetic", "riscv_target_wide_arithmetic"):
+        commands = [shlex.split(line) for line in logical.splitlines()
+                    if line.startswith("run_probe " + stem + "_probeScript.sml ")]
+        if len(commands) != 1:
+            raise ValueError("missing or duplicate arithmetic probe registration: " + stem)
+        labels = [line.split("=", 1)[0] for line in
+                  Path(__file__).with_name(stem + "_probe.out").read_text().splitlines()]
+        expected = ["run_probe", stem + "_probeScript.sml", stem + "_probe.out"] + labels + [
+            "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+            "$cake_dir/compiler/encoders/riscv/proofs"]
+        if commands[0] != expected:
+            raise ValueError("incomplete arithmetic probe registration or labels: " + stem)
+
 if __name__ == "__main__":
+    check_driver(Path(__file__).with_name("regenerate.sh").read_text())
     check(Path(__file__).with_name("riscv_target_wide_arithmetic_probe.out").read_text())
     check_replay((ROOT / "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml").read_text(),
                  Path(__file__).with_name("riscv_target_wide_arithmetic_probeScript.sml").read_text())

@@ -9,6 +9,21 @@ SPEC.loader.exec_module(M)
 
 
 class TargetWideArithmeticTests(unittest.TestCase):
+    def test_driver_retains_both_complete_registrations(self):
+        text = (ROOT / "scripts/hol-probes/regenerate.sh").read_text()
+        M.check_driver(text)
+        for stem in ("riscv_target_arithmetic", "riscv_target_wide_arithmetic"):
+            start = text.index("run_probe " + stem + "_probeScript.sml ")
+            end = text.find("\n\n", start)
+            if end == -1:
+                end = len(text)
+            block = text[start:end]
+            label = "arithmetic_lem9_sum_type" if stem == "riscv_target_arithmetic" else "wide_slice_type"
+            for changed in (text[:start] + text[end:], text + "\n" + block,
+                            text.replace(label, ""), text.replace(block, block.splitlines()[0].rstrip("\\"))):
+                with self.subTest(stem=stem), self.assertRaises(ValueError):
+                    M.check_driver(changed)
+
     def test_full_original_proofs(self):
         M.check((ROOT / "scripts/hol-probes/riscv_target_wide_arithmetic_probe.out").read_text())
         M.check_replay(
