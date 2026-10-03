@@ -1,0 +1,27 @@
+init_ok_def=∀(mc_conf :(α, β, γ) machine_config) (p :α word)
+    (s :(α, config, δ) labSem$state) (ms :β).
+  init_ok (mc_conf,p) s ms ⇔
+  ∃(code2 :α sec list) (labs :num sptree$num_map sptree$num_map)
+      (t1 :α asm_state).
+    (state_rel (mc_conf,code2,labs,p) s t1 ms :bool) ∧
+    oracle_tie mc_conf ms s
+init_ok_def_types=(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;(p :α word)::α word;(s :(α, config, δ) labSem$state)::(α, config, δ) labSem$state;(ms :β)::β;
+init_ok_def_hypotheses=0
+init_ok_def_proved=T
+oracle_tie_make_init=oracle_tie (mc_conf :(α, β, γ) machine_config) (ms :β)
+  (make_init mc_conf (ffi :ε ffi_state) (t :α asm_state)
+     (m :α word -> α word_loc) (dm :α word -> bool) (sdm :α word -> bool) ms
+     (code :α sec list) (cmp :δ -> α sec list -> (word8 list # δ) option)
+     (cbpos :α word) (cbspace :num) (coracle :num -> δ # α sec list))
+oracle_tie_make_init_types=(coracle :num -> δ # α sec list)::num -> δ # α sec list;(cbspace :num)::num;(cbpos :α word)::α word;(cmp :δ -> α sec list -> (word8 list # δ) option)::δ -> α sec list -> (word8 list # δ) option;(code :α sec list)::α sec list;(sdm :α word -> bool)::α word -> bool;(dm :α word -> bool)::α word -> bool;(m :α word -> α word_loc)::α word -> α word_loc;(t :α asm_state)::α asm_state;(ffi :ε ffi_state)::ε ffi_state;(ms :β)::β;(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;
+oracle_tie_make_init_hypotheses=0
+oracle_tie_make_init_proved=T
+make_init_simp=(make_init (a :(β, δ, ε) machine_config) (b :α ffi_state) (f :β asm_state)
+   (g :β word -> β word_loc) (h :β word -> bool) (i :β word -> bool) (j :δ)
+   (k :β sec list) (l :γ -> β sec list -> (word8 list # γ) option)
+   (m :β word) (n :num) (p :num -> γ # β sec list)).ffi = b ∧
+(make_init a b f g h i j k l m n p).pc = (0 :num) ∧
+(make_init a b f g h i j k l m n p).code = k
+make_init_simp_types=(p :num -> γ # β sec list)::num -> γ # β sec list;(n :num)::num;(m :β word)::β word;(l :γ -> β sec list -> (word8 list # γ) option)::γ -> β sec list -> (word8 list # γ) option;(k :β sec list)::β sec list;(j :δ)::δ;(i :β word -> bool)::β word -> bool;(h :β word -> bool)::β word -> bool;(g :β word -> β word_loc)::β word -> β word_loc;(f :β asm_state)::β asm_state;(b :α ffi_state)::α ffi_state;(a :(β, δ, ε) machine_config)::(β, δ, ε) machine_config;
+make_init_simp_hypotheses=0
+make_init_simp_proved=T

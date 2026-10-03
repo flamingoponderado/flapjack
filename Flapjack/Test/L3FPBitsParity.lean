@@ -5,6 +5,8 @@ open Flapjack.RiscV.L3
 private def fixture (s : riscv_state) (mode : BitVec 2) (a b : BitVec 64) : riscv_state :=
  {s with procID := 7, c_MCSR := fun id => {s.c_MCSR id with mcpuid := {(s.c_MCSR id).mcpuid with ArchBase := mode}}, c_fpr := fun _id r => if r = 1 then a else if r = 2 then b else 16045690983407144431, c_gpr := fun _id r => if r = 1 then a else if r = 2 then b else 16045690983407144431}
 
+-- Prevent tactic reduction of the reviewed large state writers; the kernel
+-- still checks the numeric congruence proof and its full state equality.
 attribute [local irreducible] writeFPRS writeFPRD
 
 -- fp_bits_FSGNJ_S_0_0_0
@@ -9671,28 +9673,28 @@ example (s : riscv_state) : «dfn'FMV_S_X» (7,1) (fixture s 0 13117684648677212
 example (s : riscv_state) : «dfn'FMV_S_X» (0,0) (fixture s 0 1311768467011010851 18364758542507835392) = writeFPRS (0, 0) (fixture s 0 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (0, v) (fixture s 0 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_0_9_1
 example (s : riscv_state) : «dfn'FMV_S_X» (1,0) (fixture s 0 1311768467011010851 18364758542507835392) = writeFPRS (1, 0) (fixture s 0 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (1, v) (fixture s 0 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_0_9_2
 example (s : riscv_state) : «dfn'FMV_S_X» (2,0) (fixture s 0 1311768467011010851 18364758542507835392) = writeFPRS (2, 0) (fixture s 0 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (2, v) (fixture s 0 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_0_9_7
 example (s : riscv_state) : «dfn'FMV_S_X» (7,0) (fixture s 0 1311768467011010851 18364758542507835392) = writeFPRS (7, 0) (fixture s 0 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (7, v) (fixture s 0 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_0_10_0
@@ -10007,28 +10009,28 @@ example (s : riscv_state) : «dfn'FMV_S_X» (7,1) (fixture s 1 13117684648677212
 example (s : riscv_state) : «dfn'FMV_S_X» (0,0) (fixture s 1 1311768467011010851 18364758542507835392) = writeFPRS (0, 0) (fixture s 1 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (0, v) (fixture s 1 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_1_9_1
 example (s : riscv_state) : «dfn'FMV_S_X» (1,0) (fixture s 1 1311768467011010851 18364758542507835392) = writeFPRS (1, 0) (fixture s 1 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (1, v) (fixture s 1 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_1_9_2
 example (s : riscv_state) : «dfn'FMV_S_X» (2,0) (fixture s 1 1311768467011010851 18364758542507835392) = writeFPRS (2, 0) (fixture s 1 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (2, v) (fixture s 1 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_1_9_7
 example (s : riscv_state) : «dfn'FMV_S_X» (7,0) (fixture s 1 1311768467011010851 18364758542507835392) = writeFPRS (7, 0) (fixture s 1 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (7, v) (fixture s 1 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_1_10_0
@@ -10343,28 +10345,28 @@ example (s : riscv_state) : «dfn'FMV_S_X» (7,1) (fixture s 2 13117684648677212
 example (s : riscv_state) : «dfn'FMV_S_X» (0,0) (fixture s 2 1311768467011010851 18364758542507835392) = writeFPRS (0, 0) (fixture s 2 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (0, v) (fixture s 2 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_2_9_1
 example (s : riscv_state) : «dfn'FMV_S_X» (1,0) (fixture s 2 1311768467011010851 18364758542507835392) = writeFPRS (1, 0) (fixture s 2 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (1, v) (fixture s 2 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_2_9_2
 example (s : riscv_state) : «dfn'FMV_S_X» (2,0) (fixture s 2 1311768467011010851 18364758542507835392) = writeFPRS (2, 0) (fixture s 2 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (2, v) (fixture s 2 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_2_9_7
 example (s : riscv_state) : «dfn'FMV_S_X» (7,0) (fixture s 2 1311768467011010851 18364758542507835392) = writeFPRS (7, 0) (fixture s 2 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (7, v) (fixture s 2 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_2_10_0
@@ -10679,28 +10681,28 @@ example (s : riscv_state) : «dfn'FMV_S_X» (7,1) (fixture s 3 13117684648677212
 example (s : riscv_state) : «dfn'FMV_S_X» (0,0) (fixture s 3 1311768467011010851 18364758542507835392) = writeFPRS (0, 0) (fixture s 3 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (0, v) (fixture s 3 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_3_9_1
 example (s : riscv_state) : «dfn'FMV_S_X» (1,0) (fixture s 3 1311768467011010851 18364758542507835392) = writeFPRS (1, 0) (fixture s 3 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (1, v) (fixture s 3 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_3_9_2
 example (s : riscv_state) : «dfn'FMV_S_X» (2,0) (fixture s 3 1311768467011010851 18364758542507835392) = writeFPRS (2, 0) (fixture s 3 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (2, v) (fixture s 3 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_3_9_7
 example (s : riscv_state) : «dfn'FMV_S_X» (7,0) (fixture s 3 1311768467011010851 18364758542507835392) = writeFPRS (7, 0) (fixture s 3 1311768467011010851 18364758542507835392) := by
  have numeric : (holWordExtract 32 31 0 (0 : BitVec 64)) = (0 : BitVec 32) := by decide
  unfold «dfn'FMV_S_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRS (7, v) (fixture s 3 1311768467011010851 18364758542507835392)) numeric
 
 -- fp_bits_FMV_S_X_3_10_0
@@ -12359,28 +12361,28 @@ example (s : riscv_state) : «dfn'FMV_D_X» (7,1) (fixture s 0 1 922337203685477
 example (s : riscv_state) : «dfn'FMV_D_X» (0,0) (fixture s 0 9221120237041090851 0) = writeFPRD (0, 0) (fixture s 0 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (0, v) (fixture s 0 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_0_9_1
 example (s : riscv_state) : «dfn'FMV_D_X» (1,0) (fixture s 0 9221120237041090851 0) = writeFPRD (1, 0) (fixture s 0 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (1, v) (fixture s 0 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_0_9_2
 example (s : riscv_state) : «dfn'FMV_D_X» (2,0) (fixture s 0 9221120237041090851 0) = writeFPRD (2, 0) (fixture s 0 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (2, v) (fixture s 0 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_0_9_7
 example (s : riscv_state) : «dfn'FMV_D_X» (7,0) (fixture s 0 9221120237041090851 0) = writeFPRD (7, 0) (fixture s 0 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (7, v) (fixture s 0 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_0_10_0
@@ -12695,28 +12697,28 @@ example (s : riscv_state) : «dfn'FMV_D_X» (7,1) (fixture s 1 1 922337203685477
 example (s : riscv_state) : «dfn'FMV_D_X» (0,0) (fixture s 1 9221120237041090851 0) = writeFPRD (0, 0) (fixture s 1 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (0, v) (fixture s 1 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_1_9_1
 example (s : riscv_state) : «dfn'FMV_D_X» (1,0) (fixture s 1 9221120237041090851 0) = writeFPRD (1, 0) (fixture s 1 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (1, v) (fixture s 1 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_1_9_2
 example (s : riscv_state) : «dfn'FMV_D_X» (2,0) (fixture s 1 9221120237041090851 0) = writeFPRD (2, 0) (fixture s 1 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (2, v) (fixture s 1 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_1_9_7
 example (s : riscv_state) : «dfn'FMV_D_X» (7,0) (fixture s 1 9221120237041090851 0) = writeFPRD (7, 0) (fixture s 1 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (7, v) (fixture s 1 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_1_10_0
@@ -13031,28 +13033,28 @@ example (s : riscv_state) : «dfn'FMV_D_X» (7,1) (fixture s 2 1 922337203685477
 example (s : riscv_state) : «dfn'FMV_D_X» (0,0) (fixture s 2 9221120237041090851 0) = writeFPRD (0, 0) (fixture s 2 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (0, v) (fixture s 2 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_2_9_1
 example (s : riscv_state) : «dfn'FMV_D_X» (1,0) (fixture s 2 9221120237041090851 0) = writeFPRD (1, 0) (fixture s 2 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (1, v) (fixture s 2 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_2_9_2
 example (s : riscv_state) : «dfn'FMV_D_X» (2,0) (fixture s 2 9221120237041090851 0) = writeFPRD (2, 0) (fixture s 2 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (2, v) (fixture s 2 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_2_9_7
 example (s : riscv_state) : «dfn'FMV_D_X» (7,0) (fixture s 2 9221120237041090851 0) = writeFPRD (7, 0) (fixture s 2 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (7, v) (fixture s 2 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_2_10_0
@@ -13367,28 +13369,28 @@ example (s : riscv_state) : «dfn'FMV_D_X» (7,1) (fixture s 3 1 922337203685477
 example (s : riscv_state) : «dfn'FMV_D_X» (0,0) (fixture s 3 9221120237041090851 0) = writeFPRD (0, 0) (fixture s 3 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (0, v) (fixture s 3 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_3_9_1
 example (s : riscv_state) : «dfn'FMV_D_X» (1,0) (fixture s 3 9221120237041090851 0) = writeFPRD (1, 0) (fixture s 3 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (1, v) (fixture s 3 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_3_9_2
 example (s : riscv_state) : «dfn'FMV_D_X» (2,0) (fixture s 3 9221120237041090851 0) = writeFPRD (2, 0) (fixture s 3 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (2, v) (fixture s 3 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_3_9_7
 example (s : riscv_state) : «dfn'FMV_D_X» (7,0) (fixture s 3 9221120237041090851 0) = writeFPRD (7, 0) (fixture s 3 9221120237041090851 0) := by
  have numeric : ((0 : BitVec 64)) = (0 : BitVec 64) := by decide
  unfold «dfn'FMV_D_X»
- simp [GPR, gpr, fixture]
+ simp [GPR, fixture]
  all_goals exact congrArg (fun v => writeFPRD (7, v) (fixture s 3 9221120237041090851 0)) numeric
 
 -- fp_bits_FMV_D_X_3_10_0
