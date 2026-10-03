@@ -1622,6 +1622,12 @@
       "sha256": "fbc0e648d577585b21a9c29138a91cf2f649177b5ba1c112ccf30f37c8e481ea"
     },
     {
+      "bytes": 1823,
+      "out": "l3_fetch_theorems_probe.out",
+      "rows": 11,
+      "sha256": "66365eacdb6646e9fe3ccabe15937d7529597f5d1e6759f6590addbfe938d0b0"
+    },
+    {
       "bytes": 47168,
       "out": "l3_fp_bits_probe.out",
       "rows": 1920,
@@ -3710,6 +3716,12 @@
       "sha256": "ee876a1f70ae0285c7c168158c126c58e046ee59f02191fe5725ae5bc2c16030"
     },
     {
+      "bytes": 348,
+      "out": "pan_globals_compile_top_names_probe.out",
+      "rows": 1,
+      "sha256": "eed7bd1cc3628a05d28381b2268abd87e5008eee508e267bec4fbb5223a18272"
+    },
+    {
       "bytes": 1397,
       "out": "pan_globals_compile_top_probe.out",
       "rows": 7,
@@ -3750,6 +3762,12 @@
       "out": "pan_globals_fresh_name_probe.out",
       "rows": 5,
       "sha256": "c9b23f9ea85d60ee1f90644514b6b17c25334fe527e3384ff0a3aa62d3e56900"
+    },
+    {
+      "bytes": 1686,
+      "out": "pan_globals_localised_probe.out",
+      "rows": 6,
+      "sha256": "7f891263d5176370b5f72f0b8043fe4dc1c67c6db5e942d76c841f136994781a"
     },
     {
       "bytes": 115,
@@ -4682,6 +4700,18 @@
       "sha256": "ac6e91eab736ae83d2f0d3aec684fa79304117e359c27009c5f8da781a162a23"
     },
     {
+      "bytes": 2361,
+      "out": "pan_structs_exp_load32_faithful_probe.out",
+      "rows": 5,
+      "sha256": "4f9085538b3f7e0870cee18ca127330d053f2a90d027ddb61427f3c0524c538f"
+    },
+    {
+      "bytes": 2373,
+      "out": "pan_structs_exp_load_byte_faithful_probe.out",
+      "rows": 5,
+      "sha256": "b21d6a5ad34d90706560439cfecfb5b236d25ce7a37b0b835d4e92da452aaf74"
+    },
+    {
       "bytes": 2377,
       "out": "pan_structs_exp_nfield_faithful_probe.out",
       "rows": 5,
@@ -4718,10 +4748,10 @@
       "sha256": "13a093f192c867994eb660357b493e06b0dcc5a5390d3a609b1f0726cf13843b"
     },
     {
-      "bytes": 3023,
+      "bytes": 3155,
       "out": "pan_structs_leaves_probe.out",
-      "rows": 11,
-      "sha256": "7cf376651ef47d838820596aa737e7ff38c66b4aad771b88ac6c22e9b2e26aab"
+      "rows": 12,
+      "sha256": "32ee10f09e3eb0db6515a72a9d2d3e3d152bfde87a91728eb86188b0f43ef1f3"
     },
     {
       "bytes": 422,
@@ -4782,6 +4812,12 @@
       "out": "pan_to_crep_comp_func_probe.out",
       "rows": 3,
       "sha256": "2fead1ae3b94458488de41606f67d5ed979e9253f3f52fd78177dd5cb52d7d9f"
+    },
+    {
+      "bytes": 43,
+      "out": "pan_to_crep_first_compile_oracle_probe.out",
+      "rows": 2,
+      "sha256": "d7fb5d36d231faff2e08867856413ea44c3e4a5296aab6045010ca20ca7962e3"
     },
     {
       "bytes": 290,

@@ -109,4 +109,31 @@ theorem decsStcnamesInfosOk {width : Nat} [NeZero width] {β : Type} :
     | function f => exact ih acc res c ⟨h, hok⟩
     | exnDecl n sh => exact ih acc res c ⟨h, hok⟩
 
+/-- Exact HOL `compile_decs_no_names` (`pan_structsProofScript.sml:1570-1576`,
+local in HOL); `EVERY` is membership quantification over the Boolean
+classifiers. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_decs_no_names"
+  (words_as_type_indexed_bitvec)]
+theorem compileDecsNoNames {width : Nat} [NeZero width] :
+    ∀ (ctxt : ContextExact) (decs : List (DeclHOL width)),
+      ∀ d ∈ (compileDeclsExact ctxt decs).1,
+        isFunctionHOL d = true ∨ isDeclHOL d = true ∨ isExnDeclHOL d = true := by
+  intro ctxt decs
+  induction decs generalizing ctxt with
+  | nil => simp [compileDeclsExact]
+  | cons d ds ih =>
+    cases d <;> simp only [compileDeclsExact, List.mem_cons, forall_eq_or_imp]
+    all_goals first
+      | exact ih _
+      | exact ⟨by simp [isFunctionHOL, isDeclHOL, isExnDeclHOL], ih _⟩
+
+/-- Exact HOL `compile_top_no_names` (`pan_structsProofScript.sml:1578-1582`);
+the free `pan_code` is bound explicitly. -/
+@[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_top_no_names"
+  (words_as_type_indexed_bitvec)]
+theorem compileTopNoNames {width : Nat} [NeZero width] (pan_code : List (DeclHOL width)) :
+    ∀ d ∈ compileTopExact pan_code,
+      isFunctionHOL d = true ∨ isDeclHOL d = true ∨ isExnDeclHOL d = true :=
+  compileDecsNoNames _ pan_code
+
 end Flapjack.Pancake.PanStructs.CompileShapeExact
