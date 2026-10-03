@@ -11,7 +11,7 @@ open Flapjack Flapjack.Compiler.Backend.WordAlloc
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
 theorem ssaCcTrans_preAllocSkip {width : Nat} [NeZero width]
-    
+
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
     (_h : isAllocVar next ∧ ssaMapOK next ssa) :
     let (output, _, _) : WordLangProgHOL (BitVec width) × Spt Nat × Nat :=
@@ -121,7 +121,7 @@ theorem ssaCcTrans_preAllocReturn {width : Nat} [NeZero width]
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
 theorem ssaCcTrans_preAllocTick {width : Nat} [NeZero width]
-    
+
     (ssa : Spt Nat) (next : Nat) (tables : List (Spt Nat × Spt Unit × Spt Unit))
     (_h : isAllocVar next ∧ ssaMapOK next ssa) :
     let (output, _, _) : WordLangProgHOL (BitVec width) × Spt Nat × Nat :=
