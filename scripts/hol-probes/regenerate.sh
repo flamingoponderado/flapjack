@@ -7523,3 +7523,6 @@ run_probe riscv_const_run_probeScript.sml riscv_const_run_probe.out \
   const_run_small_zero const_run_small_positive const_run_small_negative const_run_small_all_ones const_run_medium_positive const_run_medium_positive_max const_run_medium_negative const_run_medium_negative_low11 const_run_wide_or const_run_wide_or_high11 const_run_wide_xor const_run_wide_xor_low11_high11 \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe word_to_stack_store_reg1_zero_probeScript.sml word_to_stack_store_reg1_zero_probe.out \
+  storeReg1Zero_typed storeReg1Zero_proved storeReg1Zero_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
