@@ -6862,3 +6862,11 @@ statement, closed kernel proof, and zero hypotheses.
 `pan_structs_decs_stcnames_compile_decs_probe` replays the whole original theorem
 and unchanged induction proof. It universally closes the source's free accumulator
 and records the closed statement, kernel proof and zero hypotheses.
+
+`pan_structs_convert_eshapes_probe` captures the complete kernel definition/type
+and proves the unconditional original finite-map lookup correspondence at arbitrary
+context, map and key.
+
+`pan_structs_shape_field_polymorphism_probe` captures the original full mutual
+shape definition and polymorphic field-name types, and replays the unchanged whole
+`compile_shapes_eq_map` proof with its free context universally closed.

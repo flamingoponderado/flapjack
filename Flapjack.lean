@@ -1167,6 +1167,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
+import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence

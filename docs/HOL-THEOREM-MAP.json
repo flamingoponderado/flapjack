@@ -2703,7 +2703,7 @@
     "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
     "lean_name": "compileShapeExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:37-67. One returns One; Comb maps the mutually recursive compile_shapes over its children; Named uses HOL first-match dropWhile by structural MlString equality, compiles the selected fields in the returned suffix context, and returns One on no match. The List.dropWhile expression is direct; dropWhile_suffix_length_lt is termination evidence only. Inputs/results use the exact MlString and ShapeHOL carriers. Direct HOL rows One, Comb, forward nested lookup, backward suffix, and missing-name fallback are replayed under #guard and kernel-checked in Test/PanStructsCompileShapeParity. This tagged definition now lives in the Pancake PanStructs source counterpart and does not claim production structCompileShapeWF routing."
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:37-67. One returns One; Comb maps the mutually recursive compile_shapes over its children; Named uses HOL first-match dropWhile by structural MlString equality, compiles the selected fields in the returned suffix context, and returns One on no match. The List.dropWhile expression is direct; dropWhile_suffix_length_lt is termination evidence only. Inputs/results use the exact MlString and ShapeHOL carriers. Direct HOL rows One, Comb, forward nested lookup, backward suffix, and missing-name fallback are replayed under #guard and kernel-checked in Test/PanStructsCompileShapeParity. This tagged definition now lives in the Pancake PanStructs source counterpart and does not claim production structCompileShapeWF routing. flapjack-sol2026-10-03 full original type audit: ignored field names are polymorphic alpha, not fixed MlS. Existing declarations now bind arbitrary alpha : Type with identical equations and original theorem. ContextExact production callers specialize alpha=MlS; structure names remain MlS. Original generic kernel types captured, whole compile_shapes_eq_map unchanged proof replayed."
   },
   {
     "hol_path": "cakeml/pancake/pan_structsScript.sml",
@@ -2711,7 +2711,7 @@
     "lean_path": "Flapjack/Pancake/PanStructs/CompileShapeExact.lean",
     "lean_name": "compileShapesExact",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:44-46. Nil returns nil; cons compiles the head with exact compileShapeExact and recursively compiles the tail with the same fields-only context, preserving list order and the exact MlString/ShapeHOL carriers. This mutual definition is tagged at the source Definition declaration line 37. Direct HOL compile_shape rows are replayed under #guard in Test/PanStructsCompileShapeParity."
+    "reviewer": "flapjack-luna-a clause comparison (2026-09-29; bead flapjack-pxn.18.5.3.77.1.1) against pan_structsScript.sml:44-46. Nil returns nil; cons compiles the head with exact compileShapeExact and recursively compiles the tail with the same fields-only context, preserving list order and the exact MlString/ShapeHOL carriers. This mutual definition is tagged at the source Definition declaration line 37. Direct HOL compile_shape rows are replayed under #guard in Test/PanStructsCompileShapeParity. flapjack-sol2026-10-03 full original type audit: ignored field names are polymorphic alpha, not fixed MlS. Existing declarations now bind arbitrary alpha : Type with identical equations and original theorem. ContextExact production callers specialize alpha=MlS; structure names remain MlS. Original generic kernel types captured, whole compile_shapes_eq_map unchanged proof replayed."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -2719,7 +2719,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeExact.lean",
     "lean_name": "compileShapesExact_eq_map",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-luna-a statement comparison (2026-09-30; bead flapjack-pxn.18.5.3.77.1.1.1.1) against pan_structsProofScript.sml:310-314. HOL explicitly quantifies the fields-only context and shape list and states compile_shapes sctxt shs = MAP (compile_shape sctxt) shs. Lean uses the same explicit context and shapes binders and pointwise equality over the exact list carriers, with no added hypotheses, fuel, or production context. The kernel proof is in CompileShapeExact.lean."
+    "reviewer": "flapjack-luna-a statement comparison (2026-09-30; bead flapjack-pxn.18.5.3.77.1.1.1.1) against pan_structsProofScript.sml:310-314. HOL explicitly quantifies the fields-only context and shape list and states compile_shapes sctxt shs = MAP (compile_shape sctxt) shs. Lean uses the same explicit context and shapes binders and pointwise equality over the exact list carriers, with no added hypotheses, fuel, or production context. The kernel proof is in CompileShapeExact.lean. flapjack-sol2026-10-03 full original type audit: ignored field names are polymorphic alpha, not fixed MlS. Existing declarations now bind arbitrary alpha : Type with identical equations and original theorem. ContextExact production callers specialize alpha=MlS; structure names remain MlS. Original generic kernel types captured, whole compile_shapes_eq_map unchanged proof replayed."
   },
   {
     "hol_path": "cakeml/pancake/pan_to_crepScript.sml",
@@ -74300,5 +74300,22 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source review 2026-10-03: original1435-1444 entire theorem compared with exact CompileDeclsExact/decsStcnamesHOLExact. Arbitrary compile context, source declarations and initial struct-info accumulator (original free acc universally closed); no premises or declaration-kind assumptions. Name constructors removed by compiler; other compiled constructors skipped by faithful scan. MlS identifiers, exact List/StructInfoHOLExact/ContextExact, positive word-indexed DeclHOL only translation. Original unchanged compile_decs_ind proof kernel-replayed, full closed theorem/T/hyp0 captured. Direct prerequisite for whole compile_top_semantics_decls; that parent remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "convert_eshapes_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertEshapes.lean",
+    "lean_name": "convertEshapesExact",
+    "statement_status": "reviewed_fmap_as_finite_support_result",
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: original49-51 full polymorphic FMAP_MAP2 equation and kernel type (mlstring # (alpha # shape) list) list -> (beta |-> shape) -> beta map. Arbitrary Type alpha field names/beta map keys retained; only structure names fixed MlS by source. ShapeHOL, List, generalized existing compileShapeExact; canonical map2 preserves every key/domain and compiles each present shape. Finite-support result only representation difference; no word/String/rangedness or equality typeclass restriction. Independent raw Option lookup witness unconditional at arbitrary key. Original complete definition/type/hyp0 and arbitrary-key lookup equation kernel checked. Prior narrowed draft superseded before delivery."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertEshapes.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_convertEshapesExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical-to-raw exception map lookup codec witness, not an independent HOL declaration. Compares tagged output lookup against independent raw Option.map operation with no desired-relation premise."
   }
 ]
