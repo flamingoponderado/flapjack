@@ -551,6 +551,289 @@ theorem lr_store (temp v : Nat) (e : WordLangExpHOL (BitVec width))
       obtain ⟨rfl, rfl⟩ := he
       exact ⟨loc, ⟨rfl, rfl⟩, by rw [(memStoreConst a w st s1 hm).1]; exact hl⟩
 
+/-- Error results are excluded by the `res ≠ SOME Error` premise. -/
+local macro "lr_err" : tactic =>
+  `(tactic| (simp only [Prod.mk.injEq] at *; exact absurd (by assumption : _ = _).1.symm ‹_ ≠ _›))
+
+theorem lr_opCurrHeap (temp : Nat) (b : BinOp) (dst src : Nat)
+    (st : WordSemStateFiniteExact width C F) : LrGoal temp (.opCurrHeap b dst src) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  have hx : everyVarExpHOL (fun x => decide (x < temp))
+      (.op b [.var src, .lookup .currHeap] : WordLangExpHOL (BitVec width)) = true := by
+    simp [everyVarExpHOL, everyVarExpsHOL, hv.2]
+  rw [locals_rel_word_exp_simp temp loc st _ ⟨hx, hl⟩]
+  cases hw : wordExp st (.op b [.var src, .lookup .currHeap]) with
+  | none => rw [hw] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some w =>
+      rw [hw] at he
+      simp only [Prod.mk.injEq] at he ⊢
+      obtain ⟨rfl, rfl⟩ := he
+      exact ⟨sptInsert dst w loc, ⟨rfl, rfl⟩, locals_rel_set_var temp w dst _ _ hl⟩
+
+theorem lr_locValue (temp r l1 : Nat) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.locValue r l1) st := by
+  intro res rst loc he herr _ hl
+  rw [evaluate] at he ⊢
+  by_cases hc : sptMem l1 st.code
+  · have hc' : sptMem l1 ({ st with locals := loc } : WordSemStateFiniteExact width C F).code := hc
+    rw [if_pos hc] at he
+    rw [if_pos hc']
+    simp only [Prod.mk.injEq] at he ⊢
+    obtain ⟨rfl, rfl⟩ := he
+    exact ⟨sptInsert r (.loc l1 0) loc, ⟨rfl, rfl⟩, locals_rel_set_var temp _ r _ _ hl⟩
+  · rw [if_neg hc] at he
+    simp only [Prod.mk.injEq] at he
+    exact absurd he.1.symm herr
+
+theorem lr_move (temp pri : Nat) (moves : List (Nat × Nat))
+    (st : WordSemStateFiniteExact width C F) : LrGoal temp (.move pri moves) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  by_cases hd : (moves.map Prod.fst).Nodup
+  · rw [if_pos hd] at he ⊢
+    rw [locals_rel_get_vars_simp _ temp st loc ⟨hv.2, hl⟩]
+    cases hg : getVars (moves.map Prod.snd) st with
+    | none => rw [hg] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+    | some vs =>
+        rw [hg] at he
+        simp only [Prod.mk.injEq] at he ⊢
+        obtain ⟨rfl, rfl⟩ := he
+        exact ⟨LoopSemStateFiniteExact.sptAlistInsert (moves.map Prod.fst) vs loc, ⟨rfl, rfl⟩,
+          locals_rel_alist_insert temp _ vs _ _ ⟨hl, hv.1⟩⟩
+  · rw [if_neg hd] at he
+    simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+
+theorem lr_raise (temp n : Nat) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.raise n) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp n temp st loc ⟨hv, hl⟩, jumpExc_withLocals]
+  cases hg : getVar n st with
+  | none => rw [hg] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some w =>
+      rw [hg] at he
+      simp only at he ⊢
+      cases hj : jumpExc st with
+      | none => rw [hj] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+      | some j =>
+          obtain ⟨s1, l1, l2⟩ := j
+          rw [hj] at he
+          simp only [Prod.mk.injEq] at he ⊢
+          obtain ⟨rfl, rfl⟩ := he
+          exact ⟨s1.locals, ⟨rfl, rfl⟩, rfl⟩
+
+theorem lr_return (temp n : Nat) (ms : List Nat) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.return n ms) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp n temp st loc ⟨hv.1, hl⟩,
+    locals_rel_get_vars_simp ms temp st loc ⟨hv.2, hl⟩, flushState_withLocals]
+  rcases hg : getVar n st with _ | (_ | ⟨l1, l2⟩) <;> rcases hgs : getVars ms st with _ | ys <;>
+    rw [hg, hgs] at he <;> simp only [Prod.mk.injEq] at he <;>
+    first | exact absurd he.1.symm herr | skip
+  simp only [Prod.mk.injEq] at he ⊢
+  obtain ⟨rfl, rfl⟩ := he
+  exact ⟨(flushState false st).locals, ⟨rfl, rfl⟩, rfl⟩
+
+theorem lr_codeBufferWrite (temp r1 r2 : Nat) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.codeBufferWrite r1 r2) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp r1 temp st loc ⟨hv.1, hl⟩,
+    locals_rel_get_var_simp r2 temp st loc ⟨hv.2, hl⟩]
+  rcases hg1 : getVar r1 st with _ | (w1 | _) <;> rcases hg2 : getVar r2 st with _ | (w2 | _) <;>
+    rw [hg1, hg2] at he <;> simp only [Prod.mk.injEq] at he <;>
+    first | exact absurd he.1.symm herr | skip
+  simp only at he ⊢
+  cases hb : wordSemBufferWrite st.codeBuffer w1 (w2.setWidth 8) with
+  | none => rw [hb] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some cb =>
+      rw [hb] at he
+      simp only [Prod.mk.injEq] at he ⊢
+      obtain ⟨rfl, rfl⟩ := he
+      exact ⟨loc, ⟨rfl, rfl⟩, hl⟩
+
+theorem lr_dataBufferWrite (temp r1 r2 : Nat) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.dataBufferWrite r1 r2) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp r1 temp st loc ⟨hv.1, hl⟩,
+    locals_rel_get_var_simp r2 temp st loc ⟨hv.2, hl⟩]
+  rcases hg1 : getVar r1 st with _ | (w1 | _) <;> rcases hg2 : getVar r2 st with _ | (w2 | _) <;>
+    rw [hg1, hg2] at he <;> simp only [Prod.mk.injEq] at he <;>
+    first | exact absurd he.1.symm herr | skip
+  simp only at he ⊢
+  cases hb : wordSemBufferWrite st.dataBuffer w1 w2 with
+  | none => rw [hb] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some db =>
+      rw [hb] at he
+      simp only [Prod.mk.injEq] at he ⊢
+      obtain ⟨rfl, rfl⟩ := he
+      exact ⟨loc, ⟨rfl, rfl⟩, hl⟩
+
+theorem lr_storeConsts (temp t1 t2 addr offset : Nat) (words : List (Bool × BitVec width))
+    (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.storeConsts t1 t2 addr offset words) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp addr temp st loc ⟨hv.1.2, hl⟩,
+    locals_rel_get_var_simp offset temp st loc ⟨hv.2, hl⟩]
+  rcases hg1 : getVar addr st with _ | (a | _) <;> rcases hg2 : getVar offset st with _ | (off | _) <;>
+    rw [hg1, hg2] at he <;> simp only [Prod.mk.injEq] at he <;>
+    first | exact absurd he.1.symm herr | skip
+  simp only at he ⊢
+  have hd : wordSemConstAddresses a words
+      ({ st with locals := loc } : WordSemStateFiniteExact width C F).mdomain =
+      wordSemConstAddresses a words st.mdomain := rfl
+  rw [hd]
+  by_cases hc : ¬ wordSemConstAddresses a words st.mdomain = true
+  · rw [if_pos hc] at he
+    simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  · rw [if_neg hc] at he ⊢
+    simp only [Prod.mk.injEq] at he ⊢
+    obtain ⟨rfl, rfl⟩ := he
+    refine ⟨_, ⟨rfl, rfl⟩, ?_⟩
+    simp only [setVar, unsetVar]
+    exact locals_rel_set_var temp _ _ _ _ (locals_rel_set_var temp _ _ _ _
+      (locals_rel_delete temp _ _ _ (locals_rel_delete temp _ _ _ hl)))
+
+theorem instReads_lt (temp : Nat) (i : WordLangInst (BitVec width))
+    (h : everyVarInstHOL (fun x => decide (x < temp)) i = true) :
+    ∀ x ∈ WordAlloc.instReads i, x < temp := by
+  intro x hx
+  unfold WordAlloc.instReads at hx
+  split at hx
+  all_goals first
+    | (simp at hx; done)
+    | (simp only [everyVarInstHOL, everyVarImmHOL, Bool.and_eq_true, decide_eq_true_eq] at h
+       (try split at hx) <;> (try split at h) <;>
+         simp only [List.mem_cons, List.not_mem_nil, or_false] at hx <;>
+         (try simp only [Bool.and_eq_true, decide_eq_true_eq] at h) <;>
+         omega)
+
+theorem lr_inst (temp : Nat) (i : WordLangInst (BitVec width))
+    (st : WordSemStateFiniteExact width C F) : LrGoal temp (.inst i) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL] at hv
+  rw [evaluate] at he ⊢
+  cases hi : inst i st with
+  | none => rw [hi] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some s1 =>
+      rw [hi] at he
+      simp only [Prod.mk.injEq] at he
+      obtain ⟨rfl, rfl⟩ := he
+      obtain ⟨t', ht, hfr, hwr, hst⟩ := WordAlloc.instCongr i st s1 loc st.store hi
+        (fun x v hx hv' => by rw [← hl x (instReads_lt temp i hv x hx)]; exact hv')
+      have e : ({ st with locals := loc, store := st.store } : WordSemStateFiniteExact width C F) =
+          { st with locals := loc } := rfl
+      rw [e] at ht
+      rw [ht]
+      refine ⟨t', ?_, ?_⟩
+      · rw [← hst]
+      · intro k hk
+        by_cases hw : k ∈ WordAlloc.instWrites i
+        · exact (hwr k hw).symm
+        · obtain ⟨h1, h2⟩ := hfr k hw
+          rw [h1, h2]
+          exact hl k hk
+
+theorem lr_alloc (temp n : Nat) (names : WordLangCutsetsHOL)
+    (st : WordSemStateFiniteExact width C F) : LrGoal temp (.alloc n names) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp n temp st loc ⟨hv.1, hl⟩]
+  rcases hg : getVar n st with _ | (w | _) <;> rw [hg] at he <;> simp only at he ⊢ <;>
+    first | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr) | skip
+  cases hc : wordSemCutEnvs names st.locals with
+  | none =>
+      unfold alloc at he
+      rw [hc] at he
+      simp only [Prod.mk.injEq] at he
+      exact absurd he.1.symm herr
+  | some e =>
+      have hc' := locals_rel_cut_envs temp st.locals loc names e ⟨hl, hv.2, hc⟩
+      rw [alloc_withLocals w names st loc (hc'.trans hc.symm), he]
+      exact ⟨rst.locals, rfl, lrPost_refl temp res rst.locals⟩
+
+theorem lr_install (temp ptr len dptr dlen : Nat) (names : WordLangCutsetsHOL)
+    (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.install ptr len dptr dlen names) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  cases hc : wordSemCutEnv names st.locals with
+  | none => rw [hc] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some env =>
+      rw [locals_rel_cut_env temp st.locals loc names env ⟨hl, hv.2, hc⟩]
+      rw [hc] at he
+      simp only at he ⊢
+      rw [locals_rel_get_var_simp ptr temp st loc ⟨hv.1.1.1.1, hl⟩,
+        locals_rel_get_var_simp len temp st loc ⟨hv.1.1.1.2, hl⟩,
+        locals_rel_get_var_simp dptr temp st loc ⟨hv.1.1.2, hl⟩,
+        locals_rel_get_var_simp dlen temp st loc ⟨hv.1.2, hl⟩]
+      refine ⟨rst.locals, ?_, lrPost_refl temp res rst.locals⟩
+      change _ = (res, rst)
+      repeat' split at he
+      all_goals first
+        | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr)
+        | (rw [← he]; simp only [*, and_self, if_true])
+
+theorem lr_ffi (temp : Nat) (idx : Basis.Pure.MlString.MlString) (ptr1 len1 ptr2 len2 : Nat)
+    (names : WordLangCutsetsHOL) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.ffi idx ptr1 len1 ptr2 len2 names) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_get_var_simp len1 temp st loc ⟨hv.1.1.1.2, hl⟩,
+    locals_rel_get_var_simp ptr1 temp st loc ⟨hv.1.1.1.1, hl⟩,
+    locals_rel_get_var_simp len2 temp st loc ⟨hv.1.2, hl⟩,
+    locals_rel_get_var_simp ptr2 temp st loc ⟨hv.1.1.2, hl⟩]
+  refine ⟨rst.locals, ?_, lrPost_refl temp res rst.locals⟩
+  change _ = (res, rst)
+  repeat' split at he
+  all_goals first
+    | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr)
+    | skip
+  all_goals
+    have hc' := locals_rel_cut_env temp st.locals loc names _
+      ⟨hl, hv.2, ‹wordSemCutEnv names st.locals = some _›⟩
+    try simp only at he
+    rw [← he]
+    simp only [*, flushState_withLocals]
+
+set_option linter.unusedSimpArgs false in
+theorem lr_shareInst (temp : Nat) (op : WordMemOp) (v : Nat) (exp : WordLangExpHOL (BitVec width))
+    (st : WordSemStateFiniteExact width C F) : LrGoal temp (.shareInst op v exp) st := by
+  intro res rst loc he herr hv hl
+  simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+  rw [evaluate] at he ⊢
+  rw [locals_rel_word_exp_simp temp loc st exp ⟨hv.2, hl⟩]
+  have hg := locals_rel_get_var_simp v temp st loc ⟨hv.1, hl⟩
+  rcases hw : wordExp st exp with _ | (ad | _) <;> rw [hw] at he <;> simp only at he ⊢ <;>
+    first | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr) | skip
+  cases op <;>
+    simp only [shareInst, shMemSetVar, shMemLoad, shMemLoadByte, shMemLoad16, shMemLoad32,
+      shMemStore, shMemStoreByte, shMemStore16, shMemStore32, hg] at he ⊢
+  all_goals (repeat' split at he)
+  all_goals first
+    | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr)
+    | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+       exact ⟨_, by simp only [*, flushState_withLocals, if_true], rfl⟩)
+    | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+       exact ⟨loc, by simp only [*, if_true], hl⟩)
+    | (obtain ⟨rfl, rfl⟩ := Prod.mk.inj he
+       refine ⟨_, ?_, locals_rel_set_var temp _ _ _ _ hl⟩
+       simp only [*, setVar, if_true])
+
 end EvaluateCases
 
 end WordSemStateFiniteExact
