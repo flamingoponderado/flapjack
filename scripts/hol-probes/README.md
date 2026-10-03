@@ -7311,3 +7311,18 @@ unconditional flatten conversion derive the identical target memory operation.
 with its unchanged source proof, closed binder types, zero hypotheses and
 kernel proof. Native update neutrality keeps arbitrary key/value types and
 uses canonical finite-support maps with HOL equality and no comparison premise.
+## Native RISC-V inline-helper relations
+
+`riscv_target_helper_links_probeScript.sml` proves three universal equations
+from original `riscv_ast_def`: immediate binops retain the priority Sub clause;
+immediate and register shifts retain the explicit Ror expansion before using
+the partial helper tables. Every original register and word64 operand remains
+quantified, and each captured theorem has zero hypotheses. The strict checker
+`check-riscv-target-helper-links.py` rejects statement, hypothesis, or proof-row
+drift. The corresponding Lean congruences and all fifteen non-encode legacy
+configuration projections are in `Target/HelperLinks.lean`; they are untagged
+Flapjack relations between different Lean implementations, not separately
+named source declarations. The existing full native configuration probe checks
+all source field values and every immediate-policy operator boundary. These
+captures and kernel proofs remain evidence for source review, not a proof of
+HOL-to-Lean equivalence or full target execution correctness.
