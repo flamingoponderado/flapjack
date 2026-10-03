@@ -1,0 +1,21 @@
+function_names_structs_compile_top=∀(pan_code :α decl list).
+  MAP
+    (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+          mlstring) (functions (compile_top pan_code :α decl list)) =
+  MAP
+    (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+          mlstring) (functions pan_code)
+functions_FILTER_nil=functions (FILTER (is_exn_decl :α decl -> bool) (xs :α decl list)) =
+([] :(mlstring # (mlstring # shape) list # α panLang$prog # shape) list)
+semantics_decls_decl_structs=semantics_decls (s :(α, β) panSem$state) (start :mlstring)
+  (pan_code :α decl list) ≠ Fail ⇒
+∃(s_ctxt :(mlstring # struct_info) list).
+  decs_stcnames ([] :(mlstring # struct_info) list) pan_code = SOME s_ctxt
+functions_compile_decs_exns=functions
+  (FST
+     (SND
+        (SND
+           (compile_decs (ctxt :α pan_globals$context) (prog :α decl list) :
+            α panLang$prog list #
+            α decl list # α decl list # α pan_globals$context)))) =
+([] :(mlstring # (mlstring # shape) list # α panLang$prog # shape) list)
