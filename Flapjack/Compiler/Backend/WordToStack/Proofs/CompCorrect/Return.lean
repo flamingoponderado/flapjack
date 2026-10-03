@@ -248,5 +248,3 @@ theorem compCorrectReturn {width : Nat} [NeZero width] {C F : Type}
             simpa only [post, freeSpace] using placements
 
 end Flapjack.WordToStackProofs.CompCorrect.Return
-
-
