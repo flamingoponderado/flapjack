@@ -2012,6 +2012,12 @@
       "sha256": "d044e51b7562ec71de6195c31587e522a45291a3937450c69043fe49cb4028cb"
     },
     {
+      "bytes": 11201,
+      "out": "lab_to_target_initializer_full_relation_probe.out",
+      "rows": 8,
+      "sha256": "ab5fa6eb3a2c1768beddacf1b4e817da08dfed4f0164d9d5123c8aff24b859a7"
+    },
+    {
       "bytes": 16358,
       "out": "lab_to_target_initializer_interference_probe.out",
       "rows": 16,

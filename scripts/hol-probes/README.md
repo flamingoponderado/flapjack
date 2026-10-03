@@ -6704,3 +6704,19 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml
 `stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
 
 `word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
+
+### Complete original initializer state relation
+
+`lab_to_target_initializer_full_relation_probeScript.sml` captures the whole
+original local `IMP_state_rel_make_init` after Finalise, every variable type,
+zero hypotheses and kernel proof T. It also captures the complete original
+`state_rel_def`, its variable types, zero hypotheses and all53conjunct count.
+Native `makeInit_stateRel` retains all14 original guards/all binders and proves
+the complete actual initialized relation by internally applying all17 checked
+source cases plus original direct configuration/initial-state/removal facts.
+No case proof, target relation or new success/bound/output premise is passed
+by the caller. A native fullguard consumer derives actual compile equality
+and aligned target-memory bytes through the complete relation.
+Machine/compile semantics and end-to-end correctness remain open; inherited
+real-rendering assurance and totalHD/EL holds are unchanged.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
