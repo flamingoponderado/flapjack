@@ -1,4 +1,4 @@
-"""Fail-closed tests for the narrowly approved gc_fun_ok alias inheritance."""
+"""Fail-closed tests for the narrowly approved gc predicate alias inheritance."""
 import runpy
 import json
 import tempfile
@@ -8,6 +8,9 @@ from pathlib import Path
 CHECKER = runpy.run_path(str(Path(__file__).resolve().parents[1] / "check-hol-refs.py"))
 OWNER = "Flapjack.Compiler.Backend.Semantics.WordSem.State"
 TAG = '@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "gc_fun_ok_def" (fmap_as_finite_support_function := [argument_4, result_3]) (words_as_type_indexed_bitvec)]'
+CONST_REFERENCE = ("cakeml/compiler/backend/proofs/word_simpProofScript.sml", "gc_fun_const_ok_def")
+CONST_TAG = TAG.replace("cakeml/compiler/backend/semantics/wordPropsScript.sml",
+                        CONST_REFERENCE[0]).replace('"gc_fun_ok_def"', '"gc_fun_const_ok_def"')
 PREDICATE = "def gcOk {width : Nat} [NeZero width] (f : WordSemGcFun width) : Prop := True"
 ALIAS = """@[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "gc_fun_type" 193
 (fmap_as_finite_support_function := [argument_4, result_3]) (words_as_type_indexed_bitvec)]
@@ -22,7 +25,7 @@ theorem holFmapAsFiniteSupportWitness : True := by trivial
 class GcPredicateInheritanceTest(unittest.TestCase):
     def check(self, alias=ALIAS, predicate=PREDICATE, positions=("argument_4", "result_3"),
               reference=("cakeml/compiler/backend/semantics/wordPropsScript.sml", "gc_fun_ok_def"),
-              extra="", words=False, reviewed=True, words_qualifier=True):
+              extra="", words=False, reviewed=True, words_qualifier=True, tag=TAG):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "docs").mkdir()
@@ -39,11 +42,11 @@ class GcPredicateInheritanceTest(unittest.TestCase):
             owner = root / (OWNER.replace(".", "/") + ".lean")
             owner.parent.mkdir(parents=True)
             owner.write_text(alias)
-            source = "import " + OWNER + "\n" + extra + "\n" + TAG + "\n" + predicate
+            source = "import " + OWNER + "\n" + extra + "\n" + tag + "\n" + predicate
             (root / "Fixture.lean").write_text(source)
             if words:
                 return CHECKER["words_as_type_indexed_bitvec_errors"](
-                    TAG + "\n" + predicate, "gcOk", "Fixture", str(root),
+                    tag + "\n" + predicate, "gcOk", "Fixture", str(root),
                     source.splitlines())
             return CHECKER["fmap_as_finite_support_function_errors"](
                 source.splitlines(), predicate, "gcOk", positions, module="Fixture",
@@ -94,3 +97,35 @@ class GcPredicateInheritanceTest(unittest.TestCase):
         for predicate in (PREDICATE.replace("[NeZero width]", ""),
                           PREDICATE.replace("[NeZero width]", "[NeZero 0]")):
             self.assertTrue(self.check(predicate=predicate))
+
+    def const_check(self, **kwargs):
+        kwargs.setdefault("reference", CONST_REFERENCE)
+        return self.check(tag=CONST_TAG, **kwargs)
+
+    def test_accepts_word_simp_gc_fun_const_ok_at_both_guards(self):
+        self.assertEqual(self.const_check(), [])
+        self.assertEqual(self.const_check(words=True), [])
+
+    def test_gc_fun_const_ok_keeps_slot_carrier_and_binder_guards(self):
+        self.assertTrue(self.const_check(positions=("argument_3", "result_3")))
+        self.assertTrue(self.const_check(words_qualifier=False))
+        self.assertTrue(self.const_check(reviewed=False))
+        self.assertTrue(self.const_check(extra="abbrev WordSemGcFun := Nat"))
+        self.assertTrue(self.const_check(extra="abbrev WordSemGcFun := Nat", words=True))
+        self.assertTrue(self.const_check(extra="variable (h : True)"))
+        self.assertTrue(self.const_check(
+            predicate=PREDICATE.replace("[NeZero width]", "")))
+        self.assertTrue(self.const_check(
+            predicate=PREDICATE.replace("[NeZero width]", "[NeZero 0]")))
+
+    def test_rejects_other_word_simp_predicates(self):
+        other = ("cakeml/compiler/backend/proofs/word_simpProofScript.sml", "gc_fun_sf_gc_consts")
+        tag = CONST_TAG.replace('"gc_fun_const_ok_def"', '"gc_fun_sf_gc_consts"')
+        self.assertTrue(self.check(tag=tag, reference=other))
+        self.assertTrue(self.check(tag=tag, reference=other, words=True))
+
+    def test_rejects_multi_argument_gc_theorem_signature(self):
+        multi = ("def gcOk {width : Nat} [NeZero width] (f : WordSemGcFun width) "
+                 "(s : List Nat) : Prop := True")
+        self.assertTrue(self.const_check(predicate=multi))
+        self.assertTrue(self.const_check(predicate=multi, words=True))

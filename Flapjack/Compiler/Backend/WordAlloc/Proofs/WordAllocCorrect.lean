@@ -36,7 +36,7 @@ end WordAllocCorrectWitnesses
 
 /-- A colouring that is twice the half of every physical register fixes those registers
 (Flapjack infrastructure). -/
-private theorem totalColour_phys (col : Spt Nat)
+theorem totalColour_phys (col : Spt Nat)
     (h : ∀ x v, sptLookup x col = some v → isPhyVar x = true → 2 * v = x) :
     ∀ n, isPhyVar n = true → totalColour col n = n := fun n hn => by
   unfold totalColour
@@ -45,7 +45,7 @@ private theorem totalColour_phys (col : Spt Nat)
   | some v => exact h n v hl hn
 
 /-- Even starting locals are related to themselves under such a colouring. -/
-private theorem strongLocals_self {width : Nat} [NeZero width] (f : Nat → Nat)
+theorem strongLocals_self {width : Nat} [NeZero width] (f : Nat → Nat)
     (locals : Spt (WordLocW width)) (live : Nat → Prop) (hesl : evenStartingLocals locals)
     (hf : ∀ n, isPhyVar n = true → f n = n) : strongLocalsRel f live locals locals := by
   intro n v ⟨_, hl⟩
@@ -56,7 +56,7 @@ private theorem strongLocals_self {width : Nat} [NeZero width] (f : Nat → Nat)
 open Classical in
 /-- From `evaluate_apply_colour` at the empty live set and loop stack to the conclusion of
 `word_alloc_correct` (Flapjack infrastructure). -/
-private theorem post_to_goal {width : Nat} [NeZero width] {C F : Type} (f : Nat → Nat)
+theorem post_to_goal {width : Nat} [NeZero width] {C F : Type} (f : Nat → Nat)
     (prog prog' : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
     (hp : prog' = applyColour f prog) (h : applyColourPost f prog .ln [] st st) :
     ∃ perm',
