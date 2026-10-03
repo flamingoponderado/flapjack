@@ -1,0 +1,8 @@
+evaluate_add_clock_io_events_mono=∀(s :(α, β, γ) labSem$state).
+  (SND (evaluate s :machine_result # (α, β, γ) labSem$state)).ffi.io_events ≼
+  (SND
+     (evaluate (s with clock := s.clock + (extra :num)) :
+      machine_result # (α, β, γ) labSem$state)).ffi.io_events
+evaluate_add_clock_io_events_mono_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(extra :num)::num;
+evaluate_add_clock_io_events_mono_hypotheses=0
+evaluate_add_clock_io_events_mono_proved=T

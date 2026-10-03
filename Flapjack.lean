@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.LabProps.ClockSupport
+import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InitialStateContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
@@ -19,6 +22,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitProp
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -332,6 +336,11 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
+import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
+import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
@@ -344,6 +353,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -634,6 +644,10 @@ import Flapjack.Compiler.Backend.LabToTarget.AlignedPosVal
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Common
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Control
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Asm
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Cbw
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.ShareMem
+import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
