@@ -2,9 +2,11 @@ import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.WordToWord.Config
+import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoopHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
@@ -667,6 +669,8 @@ import Flapjack.Compiler.Backend.WordCse.CanonicalFp
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreFacts
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
 import Flapjack.Compiler.Backend.WordCse.ProductionGet
+import Flapjack.Compiler.Backend.WordCse.ProductionSet
+import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
@@ -689,6 +693,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
 import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
@@ -1344,6 +1349,8 @@ import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
