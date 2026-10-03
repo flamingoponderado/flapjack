@@ -6656,3 +6656,7 @@ run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
 run_probe l3_next_step_probeScript.sml l3_next_step_probe.out \
   NextRISCV_type NextRISCV_hypotheses NextRISCV_equation NextRISCV_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
+  nextEval_binders nextEval_statement nextEval_hypotheses nextEval_proof nextBranch_binders nextBranch_statement nextBranch_hypotheses nextBranch_proof nextCond_binders nextCond_statement nextCond_hypotheses nextCond_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"

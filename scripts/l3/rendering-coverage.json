@@ -351,6 +351,7 @@
     "scripts/hol-probes/check-l3-immediate-alu.py",
     "scripts/hol-probes/check-l3-immediate-shift.py",
     "scripts/hol-probes/check-l3-multiply.py",
+    "scripts/hol-probes/check-l3-next-evaluation.py",
     "scripts/hol-probes/check-l3-next-step.py",
     "scripts/hol-probes/check-l3-register-alu.py",
     "scripts/hol-probes/check-l3-register-shift.py",
