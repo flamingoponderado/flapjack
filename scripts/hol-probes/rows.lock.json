@@ -4910,6 +4910,18 @@
       "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
     },
     {
+      "bytes": 2392,
+      "out": "pan_structs_program_store_probe.out",
+      "rows": 6,
+      "sha256": "3980b15fbf9603f36c03dc275b50e5a0e0c7f62c6e1d7dc82726096dd4b921d7"
+    },
+    {
+      "bytes": 3645,
+      "out": "pan_structs_program_store_words_probe.out",
+      "rows": 9,
+      "sha256": "8e3df5a1cf3a61ddb0b5b7efb9686b46450700c4d19e5b4b95789ea6b54f6230"
+    },
+    {
       "bytes": 3200,
       "out": "pan_structs_program_tick_annot_probe.out",
       "rows": 6,
