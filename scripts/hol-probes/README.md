@@ -6409,3 +6409,14 @@ premise is assumed; these regressions do not establish whole Run/Next correctnes
 
 
 `stack_rel_aux_definition_probe.out` captures the complete original generated equations, zero hypotheses and polymorphic type. Three independent source-frame/location/saved-handler word dimensions are retained; total HOL EL applies without an invented source bound. All four clauses including catch-all mismatches remain.
+
+`stack_code_bitmaps_nonrecursive_probeScript.sml` replays the literal complete
+original `evaluate_code_bitmaps` proof (stackPropsScript.sml:421–440), checks
+that its full statement has no hypotheses or free variables, and captures
+all 23 remaining nonrecursive constructor statements. Each Lean case retains
+the sole source evaluation premise and all three existential conclusions over
+compile oracle, code and bitmaps. Shared-memory preservation comes from the
+actual helper execution and original `sh_mem_op_const`; no preserved field is
+assumed. The native consumer module kernel-checks all 23 generic statements.
+These captures provide source regression evidence, not cross-language equivalence
+or full evaluator/pass/compiler correctness.
