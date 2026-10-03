@@ -7109,3 +7109,7 @@ run_probe lab_props_alignment_dm_memory_probeScript.sml lab_props_alignment_dm_m
 run_probe lab_props_alignment_dm_evaluate_probeScript.sml lab_props_alignment_dm_evaluate_probe.out \
   evaluate_align_dm evaluate_align_dm_types evaluate_align_dm_hypotheses evaluate_align_dm_proved implements_align_dm implements_align_dm_types implements_align_dm_hypotheses implements_align_dm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_probe.out \
+  inst_correct_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
