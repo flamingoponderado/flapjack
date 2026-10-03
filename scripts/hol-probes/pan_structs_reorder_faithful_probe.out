@@ -1,0 +1,4 @@
+fields_in_order_reorder_noop_statement=∀ctxt eflds info_fields. MAP FST info_fields = MAP FST eflds ∧ ALL_DISTINCT (MAP FST info_fields) ⇒ FLAT (MAP (λ(nm',sh). case ALOOKUP (compile_fields ctxt eflds) nm' of NONE => [] | SOME e => [e]) info_fields) = MAP (compile_exp ctxt ∘ SND) eflds
+fields_in_order_reorder_noop_types=ctxt::context;eflds::(mlstring # α panLang$exp) list;info_fields::(mlstring # β) list
+fields_in_order_reorder_noop_hypotheses=0
+fields_in_order_reorder_noop_proved=T
