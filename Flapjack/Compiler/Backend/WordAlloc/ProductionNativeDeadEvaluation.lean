@@ -28,7 +28,7 @@ theorem nativeDead_evaluation {width : Nat} [NeZero width] {C F : Type}
       ∃ targetLocals : Spt (WordLocW width),
         evaluate (removeDeadProg native) state =
           (result, {finalState with locals := targetLocals}) ∧
-        match result with
+        match (generalizing := false) result with
         | none => True
         | some (.break _) => True
         | some (.continue _) => True

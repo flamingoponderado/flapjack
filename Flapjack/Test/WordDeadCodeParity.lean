@@ -78,16 +78,16 @@ def selectedNegativeStore : WordProg (BitVec 64) :=
   | _ => false
 #guard allocatorMemorySupported selectedNegativeStore
 
-/-- Universal equation for the actual production negative-offset Store branch.
+/-- Universal equation for the actual production valid-offset Store branch.
 This is Flapjack-specific selection infrastructure, not a tagged HOL port. -/
-theorem selectedStoreOpcode (temp address value : Nat)
-    (expression : WordExp (BitVec 64)) (prelude : WordProg (BitVec 64))
-    (offset : BitVec 64)
-    (selected : wordInstSelectAddressAtom temp (wordInstNormalizeExp expression) =
-      (prelude, .op .add [.var address, .const offset]))
-    (negative : WordInstSelectImmediate.negativeAddressOffset offset = true) :
+theorem selectedStoreOpcode (temp value : Nat)
+    (expression base : WordExp (BitVec 64)) (prelude : WordProg (BitVec 64))
+    (selectedBase : WordExp (BitVec 64)) (offset : BitVec 64)
+    (normalized : wordInstNormalizeExp expression = .op .add [base, .const offset])
+    (selected : wordInstSelectAtom temp base = (prelude, selectedBase))
+    (allowed : wordInstSelectShareOffsetAllowed .store offset = true) :
     wordInstSelectProgram temp (.store expression value) =
-      wordDeadSelectSeq prelude (.inst (.memOffset .store value address offset)) := by
-  simp [wordInstSelectProgram, selected, negative]
+      wordDeadSelectSeq prelude (.inst (.memOffset .store value temp offset)) := by
+  simp [wordInstSelectProgram, wordInstSelectStoreCake, normalized, selected, allowed]
 
 end Flapjack.Test.WordDeadCodeParity

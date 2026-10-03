@@ -18,9 +18,10 @@ operator is `Classical.epsilon` and propositions are decided classically.
 
 The theorems prove that at `x = Real.sqrt r` these literal renderings coincide
 with the sqrt-specialised real renderings, so by `holFloatSqrt_agreement` the
-executed rational-cut `holFloatSqrt`/`holFp64Sqrt` equal the literal real
-`holFloatSqrtR`/`holFp64SqrtR` for every rounding mode and input, with no
-supplied agreement, radicand, success or target premise.
+executed rational-cut `holFloatSqrt` equals the literal real `holFloatSqrtR`
+for every rounding mode and input, with no supplied agreement, radicand,
+success or target premise. The generated `fp64_sqrt` over this carrier and its
+agreement are in `Flapjack.Misc.MachineIeee.SqrtReal`.
 
 Everything is proved inside Lean; no HOL-to-Lean equivalence is assumed or
 established (Mathlib `ℝ` as HOL `real` is the standard carrier reading). Since
@@ -166,6 +167,29 @@ noncomputable def holRealToFloatWithFlagsR {t : Nat} {w : Nat} [NeZero t] [NeZer
     (r : ℝ) : HolFloatFlags × HolFloat t w :=
   holFloatRoundWithFlagsR mode (decide (mode = .roundTowardNegative)) r
 
+/-- HOL `float_to_int_def` (`binary_ieeeScript.sml:555-572`) over `ℝ`: a finite
+float `Float r` is converted by the mode (ties-to-even takes `f = INT_FLOOR r`
+when `abs (r - real_of_int f) < 1/2`, or `= 1/2` with `EVEN (Num (ABS f))`, and
+`INT_CEILING r` otherwise; toward positive the ceiling; toward negative the
+floor; toward zero the ceiling for sign `1w`, else the floor); infinities and
+NaNs give `NONE`. HOL `INT_FLOOR`/`INT_CEILING` are `Int.floor`/`Int.ceil` on
+`ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_to_int_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatToIntR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (x : HolFloat t w) : Option Int :=
+  match holFloatValueR x with
+  | .float r =>
+      some (match mode with
+        | .roundTiesToEven =>
+            let f := ⌊r⌋
+            let df := |r - (f : ℝ)|
+            if df < 1 / 2 ∨ (df = 1 / 2 ∧ f.natAbs % 2 = 0) then f else ⌈r⌉
+        | .roundTowardPositive => ⌈r⌉
+        | .roundTowardNegative => ⌊r⌋
+        | .roundTowardZero => if x.sign = 1 then ⌈r⌉ else ⌊r⌋)
+  | _ => none
+
 /-- HOL `float_sqrt_def` (`binary_ieeeScript.sml:574-585`) over `ℝ`, with HOL `sqrt`
 as `Real.sqrt`. -/
 @[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_sqrt_def"
@@ -179,20 +203,6 @@ noncomputable def holFloatSqrtR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode 
     | .float r => holFloatRoundWithFlagsR mode false (Real.sqrt r)
   else if x = holFloatMinusZero t w then (holClearFlags, holFloatMinusZero t w)
   else (holInvalidopFlags, holFloatSomeQnan (.fpSqrt mode x))
-
-/-- Source-reviewed generated HOL `machine_ieee$fp64_sqrt` at the literal
-52/11/64 factory invocation. Its unary flag-dropping lift is
-`float_to_fp64 (SND (float_sqrt mode (fp64_to_float a)))`.
-The reachable real specification retains all original rounding, flag, choice,
-signed-zero and NaN clauses over Mathlib `ℝ`; the cut-to-real equality below
-requires no assumed cut criterion. The conservative IEEE qualifier remains
-because the codecs and real/zero/classification helpers are in the reviewed
-rendering family; it does not claim an independent HOL-to-Lean equivalence
-proof. Generic real helpers are infrastructure, not generic HOL ports. -/
-@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "fp64_sqrt_def" 16
-  (reals_as_rational_cuts)]
-noncomputable def holFp64SqrtR (mode : HolRounding) (a : BitVec 64) : BitVec 64 :=
-  holFloatToFp64 (holFloatSqrtR mode (holFp64ToFloat a)).2
 
 /-! ## The real carrier at `Real.sqrt r` is the sqrt-specialised real rendering -/
 
@@ -313,13 +323,6 @@ theorem holFloatSqrt_eq_holFloatSqrtR {t : Nat} {w : Nat} [NeZero t] [NeZero w] 
     holFloatSqrt mode x = holFloatSqrtR mode x :=
   (holFloatSqrt_agreement mode x).trans (holFloatSqrtR_eq_real mode x).symm
 
-/-- The executed rational-cut `fp64_sqrt` equals the literal real-carrier HOL
-`fp64_sqrt`, for every rounding mode and input (no premise). -/
-theorem holFp64Sqrt_eq_holFp64SqrtR (mode : HolRounding) (a : BitVec 64) :
-    holFp64Sqrt mode a = holFp64SqrtR mode a := by
-  unfold holFp64Sqrt holFp64SqrtR
-  rw [holFloatSqrt_eq_holFloatSqrtR]
-
 /-! ## At rational arguments the real carrier is the `Rat` rendering
 
 The executed `Rat` renderings of `round`, `float_round`,
@@ -387,5 +390,36 @@ theorem holRealToFloatWithFlagsR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero 
     (holRealToFloatWithFlagsR mode (q : ℝ) : HolFloatFlags × HolFloat t w) =
       holFloatRoundWithFlags mode (decide (mode = .roundTowardNegative)) q :=
   holFloatRoundWithFlagsR_ratCast mode _ q
+
+/-- The arbitrary-real `float_to_int` equals the executed `Rat` rendering
+`holFloatToInt` on every float and mode (float values are rational). -/
+theorem holFloatToIntR_eq {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (x : HolFloat t w) :
+    holFloatToIntR mode x = holFloatToInt mode x := by
+  unfold holFloatToIntR holFloatToInt
+  rw [holFloatValueR_eq]
+  cases holFloatValue x with
+  | nan => rfl
+  | infinity => rfl
+  | float q =>
+      have hd : |(q : ℝ) - ((⌊q⌋ : ℤ) : ℝ)| = ((holRatAbs (q - (⌊q⌋ : ℚ)) : ℚ) : ℝ) := by
+        rw [holRatAbs_cast]; push_cast; rfl
+      have c : (1 / 2 : ℝ) = ((1 / 2 : ℚ) : ℝ) := by push_cast; rfl
+      have h1 : (((holRatAbs (q - (⌊q⌋ : ℚ)) : ℚ) : ℝ) < 1 / 2) ↔
+          (holRatAbs (q - (⌊q⌋ : ℚ)) < 1 / 2) := by
+        rw [c, Rat.cast_lt]
+      have h2 : (((holRatAbs (q - (⌊q⌋ : ℚ)) : ℚ) : ℝ) = 1 / 2) ↔
+          (holRatAbs (q - (⌊q⌋ : ℚ)) = 1 / 2) := by
+        rw [c, Rat.cast_inj]
+      have hf : ⌊q⌋ = q.floor := rfl
+      have hc : ⌈q⌉ = q.ceil := by
+        rw [Rat.ceil_eq_neg_floor_neg, show (-q).floor = ⌊-q⌋ from rfl, Int.floor_neg, neg_neg]
+      cases mode with
+      | roundTiesToEven =>
+          simp only [Rat.floor_cast, Rat.ceil_cast, hd, h1, h2]
+          rw [hf, hc]
+      | roundTowardPositive => simp only [Rat.ceil_cast, hc]
+      | roundTowardNegative => simp only [Rat.floor_cast, hf]
+      | roundTowardZero => simp only [Rat.floor_cast, Rat.ceil_cast, hf, hc]
 
 end Flapjack

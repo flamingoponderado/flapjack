@@ -2385,7 +2385,7 @@ operand. FPFromInt covers the 64-bit low-32-bit read (`0x0000000000000003` ->
 missing-operand failure. `Flapjack/Test/StackSemFpRegisterInstParity.lean`
 kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
 `Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
-`holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
+`holIntToFp64_rte` from `Flapjack/Misc/MachineIeee/ConvertInt.lean`, and the FPToInt
 rows use the computable `holFp64ToInt`. The untagged partial case helper
 `Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
 not the whole HOL `inst_def`. Regenerate read-only using
@@ -7311,6 +7311,22 @@ unconditional flatten conversion derive the identical target memory operation.
 with its unchanged source proof, closed binder types, zero hypotheses and
 kernel proof. Native update neutrality keeps arbitrary key/value types and
 uses canonical finite-support maps with HOL equality and no comparison premise.
+## Native RISC-V inline-helper relations
+
+`riscv_target_helper_links_probeScript.sml` proves three universal equations
+from original `riscv_ast_def`: immediate binops retain the priority Sub clause;
+immediate and register shifts retain the explicit Ror expansion before using
+the partial helper tables. Every original register and word64 operand remains
+quantified, and each captured theorem has zero hypotheses. The strict checker
+`check-riscv-target-helper-links.py` rejects statement, hypothesis, or proof-row
+drift. The corresponding Lean congruences and all fifteen non-encode legacy
+configuration projections are in `Target/HelperLinks.lean`; they are untagged
+Flapjack relations between different Lean implementations, not separately
+named source declarations. The existing full native configuration probe checks
+all source field values and every immediate-policy operator boundary. These
+captures and kernel proofs remain evidence for source review, not a proof of
+HOL-to-Lean equivalence or full target execution correctness.
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
 
 `pan_structs_program_assign_probe` captures the full original `compile_correct`
 and its `Assign vk v e` specialization, with all quantified binder types and
@@ -7318,6 +7334,15 @@ closed kernel proofs. The Lean case retains all ten original premises and seven
 conclusions for both local and global assignment, deriving target validity and
 shape-map neutrality internally from source validity and full value conversion.
 
+`word_to_stack_comp_handler_full_probe.out` records the full original SOME-handler
+returning Call specialization of comp_correct, its closed kernel theorem
+(proved=T, hypotheses=0), and the complete original evaluate_ind Call obligation.
+The native constructor retains the three literal guarded returning IHs; the
+fixed SOME return makes the fourth tail IH impossible. Header/argument/callee
+allocation, zero clock, all body results and normal/exception continuations are
+assembled with the entire original result/resource conclusion. This capture is
+statement evidence from the original full theorem, not a replay of the local
+9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
 `pan_structs_program_primitive_probe` captures the full original program theorem
 and its `Primitive v pop es` specialization, with binder types and closed kernel
 proofs. The Lean case retains all ten premises and seven conclusions, executes

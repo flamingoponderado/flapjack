@@ -1,9 +1,9 @@
 import Flapjack.Compiler.Backend.Semantics.StackSem.StateOps
 import Flapjack.Misc.MachineIeee
-import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.MachineIeee.Arith
 import Flapjack.Misc.BinaryIeeeSqrt
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
-import Flapjack.Misc.BinaryIeeeConvert
+import Flapjack.Misc.MachineIeee.ConvertInt
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
 
 /-! StackSem inst_def FP movement/sign, FP comparison/arithmetic and FP real
