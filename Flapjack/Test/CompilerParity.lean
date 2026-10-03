@@ -1,3 +1,4 @@
+import Flapjack.Test.L3ControlFetchParity
 import Flapjack.Test.L3FPBitsParity
 import Flapjack.Test.L3DivideParity
 import Flapjack.Test.L3MultiplyParity

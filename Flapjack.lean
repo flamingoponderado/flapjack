@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.ControlFetch
 import Flapjack.RiscV.L3.Defs.FPBits
 import Flapjack.RiscV.L3.Defs.Divide
 import Flapjack.RiscV.L3.Defs.Multiply

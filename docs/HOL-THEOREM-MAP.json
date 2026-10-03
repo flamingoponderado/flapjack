@@ -73196,5 +73196,37 @@
     "hol_name": "dfn'FMV_D_X_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.2.11): full literal bit-only FSGNJ/FSGNJN/FSGNJX S9214/9232/9251 D10147/10165/10184 and FMV_X_S9272/FMV_S_X9284/FMV_X_D10205/FMV_D_X10217 fixed word5 registers and arbitrary reviewed native state. Sign injection concatenates the original rs2 sign, its negation or XOR with rs1 sign to raw rs1 magnitude. Singleton holV2w follows original bool-to-word cast; S/D widths32/64 and payload bits remain exact. FP-to-GPR S signextends32; D retains literal signextension64. GPR-to-FP S extracts low32, D uses64. Exact reviewed writeFPRS/writeFPRD routes preserve upper32 S destination bits, Dirty MFS/MSD and Delta.data1, FPRzero writable; writeGPR suppresses zero. No mode checks, real arithmetic, rounding or additional hypotheses. Fresh original and kernel fixtures all1920 whole-state equations PASS: four selectors including invalid1 x12 sign/zero/NaN/infinity/subnormal/alias inputs x4 destinations x10operations. Expected numeric values are independent; whole-state oracle routes compare already-reviewed write helpers, not an independently reimplemented transition. Fixtures are finite regression evidence, not cross-language equivalence. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ControlFetch.lean",
+    "lean_name": "«write'SCSR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'SCSR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.1.31 literal line1315: entire fixedword64 address/full riscv_state/SupervisorCSR clause, same quantifiers/no premises. writeSCSR currentcore function update. MRTS source-ordered scause from mcause, sbadaddr from mbadaddr, sepc from mepc writes, then MCSR.mstatus.MPRV privLevel Supervisor1 and NextFetch SOME Mrts. Fetch routes signalAddressException retaining SOME full address and exact Fetch_Misaligned/Fetch_Fault; only NextFetch currentcore changes, arbitrary prior exception/core/otherstate retained. Canonical unspecified trap overwritten at both fields, no default or targetrun/mode premise. Existing reviewed helper owners imported, not duplicated. Fresh original39 whole-state T rows with independent direct record-update expected states and matching kernel fixtures. Run remains OPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ControlFetch.lean",
+    "lean_name": "«dfn'MRTS»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MRTS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.1.31 literal line10408: entire fixedword64 address/full riscv_state/SupervisorCSR clause, same quantifiers/no premises. writeSCSR currentcore function update. MRTS source-ordered scause from mcause, sbadaddr from mbadaddr, sepc from mepc writes, then MCSR.mstatus.MPRV privLevel Supervisor1 and NextFetch SOME Mrts. Fetch routes signalAddressException retaining SOME full address and exact Fetch_Misaligned/Fetch_Fault; only NextFetch currentcore changes, arbitrary prior exception/core/otherstate retained. Canonical unspecified trap overwritten at both fields, no default or targetrun/mode premise. Existing reviewed helper owners imported, not duplicated. Fresh original39 whole-state T rows with independent direct record-update expected states and matching kernel fixtures. Run remains OPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ControlFetch.lean",
+    "lean_name": "«dfn'FETCH_MISALIGNED»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FETCH_MISALIGNED_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.1.31 literal line10735: entire fixedword64 address/full riscv_state/SupervisorCSR clause, same quantifiers/no premises. writeSCSR currentcore function update. MRTS source-ordered scause from mcause, sbadaddr from mbadaddr, sepc from mepc writes, then MCSR.mstatus.MPRV privLevel Supervisor1 and NextFetch SOME Mrts. Fetch routes signalAddressException retaining SOME full address and exact Fetch_Misaligned/Fetch_Fault; only NextFetch currentcore changes, arbitrary prior exception/core/otherstate retained. Canonical unspecified trap overwritten at both fields, no default or targetrun/mode premise. Existing reviewed helper owners imported, not duplicated. Fresh original39 whole-state T rows with independent direct record-update expected states and matching kernel fixtures. Run remains OPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ControlFetch.lean",
+    "lean_name": "«dfn'FETCH_FAULT»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FETCH_FAULT_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.1.31 literal line10745: entire fixedword64 address/full riscv_state/SupervisorCSR clause, same quantifiers/no premises. writeSCSR currentcore function update. MRTS source-ordered scause from mcause, sbadaddr from mbadaddr, sepc from mepc writes, then MCSR.mstatus.MPRV privLevel Supervisor1 and NextFetch SOME Mrts. Fetch routes signalAddressException retaining SOME full address and exact Fetch_Misaligned/Fetch_Fault; only NextFetch currentcore changes, arbitrary prior exception/core/otherstate retained. Canonical unspecified trap overwritten at both fields, no default or targetrun/mode premise. Existing reviewed helper owners imported, not duplicated. Fresh original39 whole-state T rows with independent direct record-update expected states and matching kernel fixtures. Run remains OPEN."
   }
 ]

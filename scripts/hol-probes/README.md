@@ -6807,3 +6807,14 @@ and end-to-end correctness remain open. Regenerate with
 `stack_rawcall_seq_probe` freshly captures the complete original comp_correct, zero hypotheses, full Seq64/80 specializations and the exact closed Seq evaluate_ind obligation, plus all three optimized compiler forms at64/80. Five full paired theorem consumers cover arbitrary positive and1/8/64/80 widths. Three generic kernel compiler fixtures and six axiom-free executable guards independently replay the optimized forms. The full theorem retains only actual first and NONE-run guarded second IH, derives target Call execution, and covers equal/less/greater sizes, zero clock, allocation failure and every body outcome. EmptyEnv retains stackspace; original timeout/HaltWord2 exceptions remain. Greater failure uses no extra clock, successful body execution one extra Tick. Captures are regression evidence, not cross-language equivalence.
 
 `stack_rawcall_call_tail_probe` freshly captures original comp_correct, zero hypotheses, full NONE-return Call64/80 specializations, the closed complete Call evaluate_ind clause and four direct/indirect compiler trees. Five full paired case consumers cover arbitrary positive and1/8/64/80 widths. The tail callee IH is guarded by handler NONE, actual findCode and nonzero clock; target compTop execution is derived from that IH, and outer frames from actual evaluation monotonicity. All bad-return/timeout outcomes and original stackspace exceptions remain. The NONE-return compiler leaves even an invalid optional handler unchanged. Returning Call and whole pass remain open; captures are regression evidence, not cross-language equivalence.
+
+### Native supervisor transfer and fetch exceptions
+
+`l3_control_fetch_probeScript.sml` and `L3ControlFetchParity` compare 39
+whole-state equations against independent direct record-update expected states.
+Three current cores (0/7/255), arbitrary prior state, zero/sign/high/full address
+and PC boundaries cover full writeSCSR, ordered MRTS cause/address/PC transfer,
+Supervisor MPRV and Mrts NextFetch, and both fetch exception trap/address fields.
+`check-l3-control-fetch.py` requires all unique labels and every original row T.
+These finite regressions supplement source comparison, not a cross-language
+transition equivalence theorem. Full Run and Next remain open.
