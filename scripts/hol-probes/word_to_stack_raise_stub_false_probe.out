@@ -1,0 +1,3 @@
+raise_stub_false_statement=∀k. raise_stub F k = Seq (Get k Handler) (Seq (StackSetSize k) (Seq Skip (Seq (StackLoad k 2) (Seq (Set Handler k) (Seq (StackLoad k 1) (Seq (StackFree 3) (Raise k)))))))
+raise_stub_false_proved=T
+raise_stub_false_hypotheses=0

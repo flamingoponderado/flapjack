@@ -2,6 +2,7 @@ permute_swap_lemma2_statement=∀prog st perm stack. (let (res,rst) = evaluate (
 list_rel_lastn_statement=∀f l1 l2 n. n ≤ LENGTH l1 ∧ LIST_REL f l1 l2 ⇒ LIST_REL f (LASTN n l1) (LASTN n l2)
 PERM_list_rearrange_statement=∀f xs. ALL_DISTINCT xs ⇒ PERM xs (list_rearrange f xs)
 PERM_list_rearrange_hypotheses=0
+ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_types=∀(y :β) (xs :(α # β) list) (x :α). ALL_DISTINCT (MAP (FST :α # β -> α) xs) ∧ MEM (x,y) xs ⇒ ALOOKUP xs x = SOME y
 ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_statement=∀y xs x. ALL_DISTINCT (MAP FST xs) ∧ MEM (x,y) xs ⇒ ALOOKUP xs x = SOME y
 ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME_hypotheses=0
 env_to_list_ALL_DISTINCT_statement=∀y vs perm other. env_to_list y perm = (vs,other) ⇒ ALL_DISTINCT (MAP FST vs)
