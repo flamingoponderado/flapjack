@@ -1265,6 +1265,7 @@ import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes

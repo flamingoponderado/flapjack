@@ -7317,3 +7317,9 @@ and its `Assign vk v e` specialization, with all quantified binder types and
 closed kernel proofs. The Lean case retains all ten original premises and seven
 conclusions for both local and global assignment, deriving target validity and
 shape-map neutrality internally from source validity and full value conversion.
+
+`pan_structs_program_primitive_probe` captures the full original program theorem
+and its `Primitive v pop es` specialization, with binder types and closed kernel
+proofs. The Lean case retains all ten premises and seven conclusions, executes
+the original argument mmap and AddCarry operation, and derives local validity
+and update postconditions internally from the full Assign case.

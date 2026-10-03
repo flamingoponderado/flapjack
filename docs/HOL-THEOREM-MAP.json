@@ -80528,5 +80528,28 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectPrimitive.lean",
+    "lean_name": "compileCorrectPrimitive",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and Primitive1133-1167: all ten premises/seven conclusions, actual Primitive name/operator/list syntax and no recursive IH. Source argument mmap/primop failures excluded solely by original no-Error premise. Full original expression correctness derives every target argument run, original mmap helper derives converted result list. Actual AddCarry successful pattern is three word values with original wordAddCarry output two-word RStruct; converted arguments/value are definitionally identical. An internal RStruct expression of the two result constants evaluates to precisely the actual primitive value in both source and compiled target, so original full Assign local case derives validity/update simulation and all source postconditions; no target evaluation/validity/shape/update premise or different evaluator introduced. Original state/code/struct/map fields and source clock unchanged. Imported full canonical four-map roundtrip and positive indexed words/Type0 host translation only. Original full/case statements/binder types/closed kernel proof captured. Full program and executable compiler correctness remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectPrimitive.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]
