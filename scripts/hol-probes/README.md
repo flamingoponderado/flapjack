@@ -7306,3 +7306,13 @@ unconditional flatten conversion derive the identical target memory operation.
 `stack_remove_init_make_probeScript.sml` captures the full original equations and constant types of `get_stack_heap_limit'_def`, `get_stack_heap_limit_def`, `read_pointers_def`, `make_init_opt_def`, `init_pre_def`, `make_init_any_def`, `discharge_these_def` and `propagate_these_def` (stack_removeProofScript.sml:3053-3089, 3839-3854, 4007-4067), the argument types of `get_stack_heap_limit'` (its first two pointers have independent word types; only the last pointer shares the arithmetic width), and 13 EVAL rows of both limit functions over 16/32/64-bit words, including heap-bound overflow, midpoint selection and wrapped pointers. `Flapjack.Test.StackRemoveInitLimits` kernel-replays every EVAL row.
 
 `stack_remove_init_any_probeScript.sml` replays the unchanged local originals `MOD_EQ_IMP_MULT`, `star_move_lemma` and `memory_addresses` (with its local `IN_addresses` prerequisite; stack_removeProofScript.sml:2727-2803) and prints the stored `make_init_any_bitmaps`, `make_init_any_use_stack`, `make_init_any_use_store`, `make_init_any_use_alloc`, `make_init_any_code`, `make_init_any_stack_limit` and `make_init_any_compile_oracle` theorems (4100-4157). All statements are closed with zero hypotheses; `memory_addresses` keeps its `'a word_loc` memory codomain.
+
+`word_to_stack_comp_handler_full_probe.out` records the full original SOME-handler
+returning Call specialization of comp_correct, its closed kernel theorem
+(proved=T, hypotheses=0), and the complete original evaluate_ind Call obligation.
+The native constructor retains the three literal guarded returning IHs; the
+fixed SOME return makes the fourth tail IH impossible. Header/argument/callee
+allocation, zero clock, all body results and normal/exception continuations are
+assembled with the entire original result/resource conclusion. This capture is
+statement evidence from the original full theorem, not a replay of the local
+9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
