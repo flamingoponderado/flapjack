@@ -2150,4 +2150,69 @@ theorem savedCallerGCSlots {width handlerWidth : Nat}
   refine ⟨lower, by omega, ?_⟩
   rwa [show frame - (key / 2 - k + 1) = frame - 1 - (key / 2 - k) by omega] at optional
 
+/-- Optional-index observations of the actual return-copy/free execution.
+The original copy bounds imply every index used here is in range; the proof
+converts total HOL EL only after deriving those bounds. No chosen out-of-range
+value or assumed target execution is used. This is case-local infrastructure
+for transporting caller locals, not a separate HOL correctness declaration. -/
+theorem evaluateReturnCopyFreeLookup {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (values : List Nat) (target : StackSemStateFiniteExact width C F)
+    (useStack : target.useStack = true) (positive : f ≠ 0)
+    (bound : f ≤ target.stack.length -
+      (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values)) :
+    let count := Compiler.Backend.WordToStack.numStackRet k values
+    ∃ (restored : StackSemStateFiniteExact width C F)
+      (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+      StackSemEvaluate.evaluate (copyRetNative false false (k, f, frame) values .skip, target) =
+        (none, restored) ∧
+      restored = {target with stack := stack, regs := regs, stackSpace := target.stackSpace + count} ∧
+      stack.length = target.stack.length ∧
+      stack.drop (f + count + target.stackSpace) = target.stack.drop (f + count + target.stackSpace) ∧
+      (∀ register, register ≠ k → regs.lookup register = target.regs.lookup register) ∧
+      (∀ index, index < f - count →
+        (stack.drop (count + target.stackSpace))[index]? =
+          (target.stack.drop (count + target.stackSpace))[index]?) ∧
+      (∀ index, index < count →
+        (stack.drop target.stackSpace)[index + f]? =
+          (target.stack.drop target.stackSpace)[index]?) := by
+  dsimp only
+  let count := Compiler.Backend.WordToStack.numStackRet k values
+  obtain ⟨restored, stack, regs, execution, shape, length, tail, registers, live, returns⟩ :=
+    evaluateReturnCopyFree k f frame values target useStack positive bound
+  refine ⟨restored, stack, regs, execution, shape, length, tail, registers, ?_, ?_⟩
+  · intro index indexBound
+    have sourceBound : index < (target.stack.drop (count + target.stackSpace)).length := by
+      rw [List.length_drop]; dsimp [count] at *; omega
+    have targetBound : index < (stack.drop (count + target.stackSpace)).length := by
+      rw [List.length_drop, length]; dsimp [count] at *; omega
+    rw [List.getElem?_eq_getElem targetBound, List.getElem?_eq_getElem sourceBound]
+    have observation := live index indexBound
+    change holEl index (stack.drop (count + target.stackSpace)) =
+      holEl index (target.stack.drop (count + target.stackSpace)) at observation
+    rw [holEl_eq_getElem index _ targetBound, holEl_eq_getElem index _ sourceBound] at observation
+    exact congrArg some observation
+  · intro index indexBound
+    have sourceBound : index < (target.stack.drop target.stackSpace).length := by
+      rw [List.length_drop]; dsimp [count] at *; omega
+    have targetBound : index + f < (stack.drop target.stackSpace).length := by
+      rw [List.length_drop, length]; dsimp [count] at *; omega
+    rw [List.getElem?_eq_getElem targetBound, List.getElem?_eq_getElem sourceBound]
+    exact congrArg some (by
+      simpa only [holEl_eq_getElem (index + f) _ targetBound,
+        holEl_eq_getElem index _ sourceBound] using returns index indexBound)
+
+/-- An original physical caller key absent from the canonical return names
+lies beyond every return name. This is the arithmetic/name fact used by the
+normal-return restoration proof to select the unchanged frame region; it has
+no separate HOL declaration and assumes no target observation. -/
+theorem callerKeyPastReturns (values : List Nat) (key : Nat)
+    (canonical : values = (List.range values.length).map (fun index => 2 * (index + 1)))
+    (physical : key % 2 = 0) (positive : 0 < key) (absent : key ∉ values) :
+    values.length < key / 2 := by
+  by_contra outside
+  have keyEq : 2 * (key / 2 - 1 + 1) = key := by omega
+  apply absent
+  rw [canonical]
+  exact List.mem_map.mpr ⟨key / 2 - 1, List.mem_range.mpr (by omega), keyEq⟩
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
