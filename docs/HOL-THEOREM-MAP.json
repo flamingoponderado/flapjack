@@ -68641,5 +68641,14 @@
     "hol_name": "dfn'UnknownInstruction_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source10728-10735, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BytesInMemory/Domain.lean",
+    "lean_name": "bytesInMemoryInDomain",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_memory_in_domain",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source/type comparison2026-10-03 miscScript4238-4248 and original exported type0hyp: same arbitrary address, fixed word8 list/memory, arbitrary predicate domain and Nat index. Exactly original bytes_in_memory AND index<len premises imply domain(address+n2w index). Existing reviewed bytesInMemoryHOL used, positive arbitrary BitVec width/NeZero translation only. No no-wrap, bounded byte-region length, alignment, memory correctness or target premise. Induction retains wrapped word addition including regions longer than address space; fixed word8 data remains8. Fresh literal original proof plus16 original wrap/invalid-domain/byte/index observations at widths1/8/64/80; native kernel/runtime observations and12 whole theorem consumers. Independent prerequisite of fetched-byte FFI exclusion/initializer, not initializer/fullcompiler completion."
   }
 ]

@@ -6389,3 +6389,11 @@ The literal MPRV privilege selector, existing internal exception, core255 with
 totalCore1, overwritten Ereturn and unchanged other-core transfer are retained.
 Lean replays compare the whole frame outside only c_NextFetch; these regressions
 do not establish whole Run/Next or compiler correctness.
+`bytes_in_memory_domain_probeScript.sml` replays the full original
+`bytes_in_memory_in_domain` proof (miscScript.sml:4238–4248), including its
+arbitrary address width, fixed word8 memory and bytes, and sole predicate/index
+premises. Two rows record the complete statement and successful original proof;
+16 independent observations cover widths 1/8/64/80, wrapped addresses, an empty
+list, a domain hole, a wrong byte and a past-end index. The Lean parity module
+checks all observations and twelve applications of the full theorem. These
+fixtures provide regression evidence, not a cross-language equivalence proof.
