@@ -81045,5 +81045,61 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive assert alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "arithUpdAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "arith_upd_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "fpUpdAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "fp_upd_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open. Native FP imports inherit reals_as_rational_cuts assumption of SOUNDNESS item8, including sqrt cut; no full real-number closure or HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "addrAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "addr_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "arithUpdAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "arith_upd_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "fpUpdAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "fp_upd_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open. Native FP imports inherit reals_as_rational_cuts assumption of SOUNDNESS item8, including sqrt cut; no full real-number closure or HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "addrAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "addr_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
   }
 ]
