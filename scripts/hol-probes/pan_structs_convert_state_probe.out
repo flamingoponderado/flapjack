@@ -1,0 +1,6 @@
+convert_state_definition=∀ctxt s. convert_s ctxt s = s with <|locals := FMAP_MAP2 (λ(nm,v). convert_v v) s.locals; globals := FMAP_MAP2 (λ(nm,v). convert_v v) s.globals; structs := []; code := convert_code ctxt s.code; eshapes := convert_eshapes ctxt.structs s.eshapes|>
+convert_state_type=:context -> (α, β) state -> (α, β) state
+convert_state_hypotheses=0
+convert_value_definition=(∀x. convert_v (Val x) = Val x) ∧ (∀xs. convert_v (RStruct xs) = RStruct (MAP (λa. convert_v a) xs)) ∧ ∀nm flds. convert_v (NStruct nm flds) = (let vs = MAP (λ(nm',v). convert_v v) flds in RStruct vs)
+convert_value_type=:α v -> α v
+convert_value_hypotheses=0
