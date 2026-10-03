@@ -1,0 +1,16 @@
+prefix_chain_def=∀(ls :α list -> bool).
+  prefix_chain ls ⇔
+  ∀(l1 :α list) (l2 :α list). l1 ∈ ls ∧ l2 ∈ ls ⇒ l1 ≼ l2 ∨ l2 ≼ l1
+prefix_chain_def_types=(ls :α list -> bool)::α list -> bool;
+prefix_chain_def_hypotheses=0
+prefix_chain_def_proved=T
+prefix_chain_lprefix_chain=prefix_chain (ls :α list -> bool) ⇒
+lprefix_chain (IMAGE (fromList :α list -> α llist) ls)
+prefix_chain_lprefix_chain_types=(ls :α list -> bool)::α list -> bool;
+prefix_chain_lprefix_chain_hypotheses=0
+prefix_chain_lprefix_chain_proved=T
+prefix_chain_FILTER=prefix_chain (ls :α list -> bool) ⇒
+prefix_chain (IMAGE (FILTER (P :α -> bool)) ls)
+prefix_chain_FILTER_types=(P :α -> bool)::α -> bool;(ls :α list -> bool)::α list -> bool;
+prefix_chain_FILTER_hypotheses=0
+prefix_chain_FILTER_proved=T

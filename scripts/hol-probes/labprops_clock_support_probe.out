@@ -1,0 +1,37 @@
+reg_imm_with_clock=(reg_imm (r :α reg_imm)
+   ((s :(α, β, γ) labSem$state) with clock := (z :num)) :α word_loc) =
+(reg_imm r s :α word_loc)
+reg_imm_with_clock_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(z :num)::num;(r :α reg_imm)::α reg_imm;
+reg_imm_with_clock_hypotheses=0
+reg_imm_with_clock_proved=T
+asm_inst_with_clock=asm_inst (i :α inst) ((s :(α, β, γ) labSem$state) with clock := (z :num)) =
+asm_inst i s with clock := z
+asm_inst_with_clock_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(z :num)::num;(i :α inst)::α inst;
+asm_inst_with_clock_hypotheses=0
+asm_inst_with_clock_proved=T
+addr_add_clock_eq=(addr (a :α addr)
+   ((s :(α, β, γ) labSem$state) with clock := (extra :num) + s.clock) :
+ α word option) = (addr a s :α word option)
+addr_add_clock_eq_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(extra :num)::num;(a :α addr)::α addr;
+addr_add_clock_eq_hypotheses=0
+addr_add_clock_eq_proved=T
+share_mem_op_add_clock_same=((s :(α, β, γ) labSem$state).clock ≠ (0 :num) ∧
+ share_mem_op (m :memop) (n :num) (a :α addr) s =
+ (NONE :(γ ffi_result # (α, β, γ) labSem$state) option) ⇒
+ share_mem_op m n a (s with clock := (extra :num) + s.clock) =
+ (NONE :(γ ffi_result # (α, β, γ) labSem$state) option)) ∧
+(s.clock ≠ (0 :num) ∧
+ share_mem_op m n a s =
+ SOME
+   (FFI_return (f :γ ffi_state) (l' :word8 list),(r :(α, β, γ) labSem$state)) ⇒
+ share_mem_op m n a (s with clock := extra + s.clock) =
+ SOME (FFI_return f l',r with clock := extra + r.clock)) ∧
+(s.clock ≠ (0 :num) ∧
+ share_mem_op m n a s =
+ SOME
+   ((FFI_final (f2 :final_event) :γ ffi_result),(r2 :(α, β, γ) labSem$state)) ⇒
+ share_mem_op m n a (s with clock := extra + s.clock) =
+ SOME ((FFI_final f2 :γ ffi_result),r2 with clock := extra + r2.clock))
+share_mem_op_add_clock_same_types=(r2 :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(f2 :final_event)::final_event;(r :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(l' :word8 list)::word8 list;(f :γ ffi_state)::γ ffi_state;(extra :num)::num;(a :α addr)::α addr;(n :num)::num;(m :memop)::memop;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+share_mem_op_add_clock_same_hypotheses=0
+share_mem_op_add_clock_same_proved=T

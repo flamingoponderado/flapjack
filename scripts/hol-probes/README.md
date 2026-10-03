@@ -6584,6 +6584,12 @@ regressions; fullRun/Next/pass correctness remains open.
 
 `word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
 
+`stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
+
+`stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
+
+`stack_remove_init_code_pre_probeScript.sml` exports the complete original kernel definition and generic type of the initializer precondition (2953–2978), with zero stored hypotheses. The native port retains all four pointer witnesses, header words, characteristic-function sets, unsigned word capacity checks and the original three separated heap factors. This is the precondition definition, not the initializer execution proof.
+
 
 
 `wordsem_inst_const_full_probe.out` replays the unchanged original wordProps inst_const_full proof against its complete generic statement. All thirteen preserved fields and the sole successful native instruction premise are retained; replay=T, hypotheses=0, no free variables. The structural invariant is not numerical floating-point correspondence or full evaluator resource-family completion.
@@ -6640,6 +6646,7 @@ supplement source review; full Run/Next correctness remains open.
 
 `wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.
 
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
 `stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
 
 `stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
@@ -6687,3 +6694,111 @@ actual remaining buffer; the native full-guard consumer observes that exclusion.
 No extra successful lookup, overflow bound, exclusion premise or arbitrary
 EL/default policy is used. ISR16 and the full initializer remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
+
+`stack_remove_stack_heap_limit_probeScript.sml` exports the complete original paired stack/heap limit predicate, generic type and zero stored hypotheses (2906–2911). The native definition preserves the store word, natural byte-capacity comparison and actual stack length as separate original conjuncts; it supplies a prerequisite of the full initializer property.
+### Full initializer shared-memory code domain
+
+`lab_to_target_initializer_domain_probeScript.sml` captures the complete
+original initializer theorem/types0hyp and original fullguard state relation
+conjunct51 (ISR16), with zero hypotheses and kernel proof T. The original
+pre-Suspend proof replay in the basic-cases probe confirms its case mapping.
+Native proof retains all fourteen guards and derives actual full FFI search,
+name, MMIO descriptor and complete nonshared-byte exclusion from the reviewed
+extraction/offset/word-search/prefix-exclusion dependencies. All bounds and
+no-wrap facts follow from original guards; no default/EL policy is changed.
+Native fullguard consumers observe valid FFI index/descriptor and all fetched
+nonshared byte exclusions. Full initializer assembly remains open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml`.
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
+
+`word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
+
+### Complete original initializer state relation
+
+`lab_to_target_initializer_full_relation_probeScript.sml` captures the whole
+original local `IMP_state_rel_make_init` after Finalise, every variable type,
+zero hypotheses and kernel proof T. It also captures the complete original
+`state_rel_def`, its variable types, zero hypotheses and all53conjunct count.
+Native `makeInit_stateRel` retains all14 original guards/all binders and proves
+the complete actual initialized relation by internally applying all17 checked
+source cases plus original direct configuration/initial-state/removal facts.
+No case proof, target relation or new success/bound/output premise is passed
+by the caller. A native fullguard consumer derives actual compile equality
+and aligned target-memory bytes through the complete relation.
+Machine/compile semantics and end-to-end correctness remain open; inherited
+real-rendering assurance and totalHD/EL holds are unchanged.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
+`stack_rawcall_install_probe` freshly captures the full original comp_correct with zero hypotheses and full Install specializations at64/80, plus old-entry collision and new-entry union observations. Five full paired final-theorem consumers cover arbitrary positive and1/8/64/80 widths. Independent kernel/runtime union fixtures replay both observations. The native proof derives oracle/compiler/buffer success and full postrelation from the original three premises; old code wins the union and new entries use empty information. Captures are regression/statement evidence, not HOL-to-Lean equivalence.
+### Native register-shift equations
+
+`l3_register_shift_probeScript.sml` checks735 full-state original SLL/SLLW/SRL/SRLW/SRA/SRAW equations with matching kernel fixtures. Sixinstructions, selectors0/2/3, ten source/count groups and destinations0/1/2/7 cover countmask0/31/32/63/64/65/127/129, signs/high32/wrap/sourcezero/sourcealiases/rdzero. RV32Willegal routes compare the original exact signalException helper. Twelve ordinary invalidselector1 equations preserve exact error/priorretention; three W equations retain a symbolic architecture-dependent illegal branch, without selecting canonical ARB. The strict checker requires every unique label to be T. RV32SLL full64 source, SRLlow32zeroextend, SRAlow32signextend and Wsignextension remain literal. FullRun/Next is open.
+`word_to_stack_inter_union_left_probeScript.sml` replays the literal original
+`inter_union_left` proof (word_to_stackProof2678–2685), preserving its essential
+`wf s` premise and arbitrary Spt payload carrier. Statement, proved=T, and zero
+hypotheses are captured; this is original HOL evidence, not a cross-assistant
+equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
+
+### Original initializer semantic entry contracts
+
+`lab_to_target_initial_entry_contracts_probeScript.sml` freshly captures all
+three original `init_ok_def`, `oracle_tie_make_init` and `make_init_simp`
+statements, complete variable types, zero hypotheses and kernel proof T.
+The original semantic entry fixes compiler Config, while the two initializer
+theorems keep arbitrary compiler configuration and all twelve inputs.
+Native ports retain the unrestricted code/labels/asm-state witnesses, whole
+relation/oracle tie, four oracle functions and all three field equations.
+The same-module native composition derives actual initOk from full original
+initializer guards with concrete witnesses; it receives no initialized relation
+or desired machine run. Full machine/compile semantics remain open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initial_entry_contracts_probeScript.sml`.
+
+### Original finite-list prefix-chain prerequisites
+
+`lprefix_lub_finite_prefix_chain_probeScript.sml` loads the original HOL
+lprefix_lub theory and captures the complete generic `prefix_chain_def`,
+`prefix_chain_lprefix_chain` and `prefix_chain_FILTER` statements, all variable
+types, zero hypotheses and kernel proof T (twelve rows). Native List and
+predicate-backed sets preserve all members, and both image predicates retain
+their existential witnesses. This independently supplies the lazy-list image
+chain used by original machine_sem_EQ_sem; full compiler simulation and machine
+semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
+`list_last_probeScript.sml` captures the complete original `LAST_DEF`, its generic type and zero hypotheses, replays the complete `LAST_CONS` proof, and checks the total case equation retaining the original unspecified `LAST []`. The primitive-recursive specification constrains cons lists only; the single shared `holLast` in `Flapjack/Misc/ListEl.lean` uses a dedicated opaque residual value, without asserting an equality to `HD []` or `ARB` or choosing a concrete missing value. This accessor is a prerequisite of the full StackRemove initializer state predicate.
+
+
+### Full native Lab evaluator event monotonicity
+
+`labprops_evaluate_io_events_mono_probeScript.sml` freshly captures the complete
+original `evaluate_io_events_mono` statement, full variable types, zero
+hypotheses and kernel proof T. The native proof follows all36 evaluator
+branches, including all eight shared-memory operators, Install validity/failure,
+and final/returning external FFI paths, with arbitrary compiler configuration
+and FFI host. Existing full `labsem_evaluate_probeScript.sml` execution fixtures
+are independently replayed against original HOL. FP dependencies retain the
+inherited real-rendering assumption (SOUNDNESS item8); full clock extension,
+compiler simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_io_events_mono_probeScript.sml`.
+
+### Full native Lab instruction and shared-memory clock laws
+
+`labprops_clock_support_probeScript.sml` freshly captures all four original
+reg_imm/asm_inst/addr/shared-op clock declarations, complete generic types,
+zero hypotheses and kernel proof T (sixteen rows). Native proofs retain all
+arbitrary compiler configurations and FFI hosts, all instruction constructors
+and all eight shared operators. The shared law keeps all three NONE/return/final
+conjuncts and each original nonzero-clock guard. Instruction FP dependencies
+retain inherited real-rendering assurance (SOUNDNESS item8); these laws supply
+actual prerequisites of clock-event monotonicity, not a machine simulation.
+Regenerate with `HOL_PROBE_ONLY=labprops_clock_support_probeScript.sml`.
+
+### Full native Lab clock-extension event theorem
+
+`labprops_evaluate_add_clock_io_events_mono_probeScript.sml` freshly captures
+original whole statement, complete arbitrary state/extra types, zero hypotheses
+and kernel proof T. Native functional induction retains all36 evaluator
+branches with unconditional event-prefix conclusion, including zero-clock,
+Install and all shared/FFI outcomes. The derived native two-clock comparability
+consequence supplies actual observational trace-chain inputs. This retains
+inherited real rendering (SOUNDNESS item8); whole machine/compile simulation
+and end-to-end correctness remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_add_clock_io_events_mono_probeScript.sml`.
