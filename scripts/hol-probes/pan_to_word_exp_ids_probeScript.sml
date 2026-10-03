@@ -1,0 +1,14 @@
+load "bossLib";
+load "preamble";
+load "pan_to_wordProofTheory";
+open bossLib HolKernel Parse preamble pan_to_wordProofTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "map_map2_fst_lemma" (DB.fetch "pan_to_wordProof" "map_map2_fst_lemma");
+val _ = capture "exp_ids_nested_seq" (DB.fetch "pan_to_wordProof" "exp_ids_nested_seq");
+val _ = capture "exp_ids_compile_globals" (DB.fetch "pan_to_wordProof" "exp_ids_compile_globals");
+val _ = capture "exp_ids_fperm" (DB.fetch "pan_to_wordProof" "exp_ids_fperm");
+val _ = capture "compile_decs_exp_ids" (DB.fetch "pan_to_wordProof" "compile_decs_exp_ids");
+val _ = capture "fperm_exp_ids" (DB.fetch "pan_to_wordProof" "fperm_exp_ids");
+val _ = capture "compile_decs_no_exp_ids_main" (DB.fetch "pan_to_wordProof" "compile_decs_no_exp_ids_main");
+val _ = capture "functions_resort_decls" (DB.fetch "pan_to_wordProof" "functions_resort_decls");

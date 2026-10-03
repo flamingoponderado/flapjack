@@ -1228,6 +1228,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
 import Flapjack.Pancake.Proofs.PanStructs.FieldsInOrderReorderNoop
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -1552,6 +1554,7 @@ import Flapjack.PanHProgStoreMem
 import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.PanToWord
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
@@ -2126,6 +2129,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Calls
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Program
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Full
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.PrimitiveInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ShareInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.AllocationInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions

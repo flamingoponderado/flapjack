@@ -7130,6 +7130,13 @@ quantified types, zero hypotheses and kernel proof. Ignored info-field payload
 remains independently polymorphic; native theorem uses faithful MlS, ContextExact
 and actual compileFieldsExact, preserving both original premises.
 
+`pan_structs_exp_cmp_shift_faithful_probe` captures the full original theorem,
+both Cmp/Shift specializations and eval_ind. Both native cases retain all seven
+hypotheses and three conclusions, using only the two original child IHs.
+
+## Original native Next evaluation theorem group
+
+`l3_next_evaluation_probeScript.sml` proves universally quantified copies of original `NextRISCV`, `NextRISCV_branch` and `NextRISCV_cond_branch` using the pinned original theorems. Captures include every binder type, all original conjunction premises and complete result records, zero proof assumptions and proof markers. Lean preserves those literal premises; it does not assume the resulting Next transition. The conditional false path derives the full control-update identity from the original empty-control premise. `check-l3-next-evaluation.py` rejects carrier narrowing, circular-premise substitution, dropped premises or lost record updates. Original stepLib uses all three rules; encoder and compiler correctness remain further work. Full Run/Next inherit the rational-cuts IEEE assumption (SOUNDNESS item 8).
 ## Original native Next evaluation theorem group
 
 `l3_next_evaluation_probeScript.sml` proves universally quantified copies of original `NextRISCV`, `NextRISCV_branch` and `NextRISCV_cond_branch` using the pinned original theorems. Captures include every binder type, all original conjunction premises and complete result records, zero proof assumptions and proof markers. Lean preserves those literal premises; it does not assume the resulting Next transition. The conditional false path derives the full control-update identity from the original empty-control premise. `check-l3-next-evaluation.py` rejects carrier narrowing, circular-premise substitution, dropped premises or lost record updates. Original stepLib uses all three rules; encoder and compiler correctness remain further work. Full Run/Next inherit the rational-cuts IEEE assumption (SOUNDNESS item 8).
@@ -7138,10 +7145,15 @@ and actual compileFieldsExact, preserving both original premises.
 ## Original native decoder transport rules
 
 `l3_decode_transport_probeScript.sml` proves universally quantified copies of original `Decode_IMP_DecodeAny` and `DecodeRVC_IMP_DecodeAny`, with full word32/word16 and instruction binder types, literal decoder equality premises and complete raw-selector conclusions. Strict captures record all binder types, statements, zero proof assumptions and proof markers. Lean uses the original equality premise after definitional selector reduction; no accepted-opcode or simplified decoder premise is added. Both rules are called by the original symbolic step library; target encoder and compiler correctness remain separate work.
+`pan_structs_exp_nstruct_faithful_probe` captures the original full theorem,
+NStruct specialization and eval_ind. Native NStruct retains all seven hypotheses
+and three conclusions, with only the original guarded member-expression IH;
+source evaluation and structInfosOk supply shape checks and reordering premises.
 
 ## Original native step word-bit rewrite group
 
 `l3_step_bit_rewrites_probeScript.sml` proves full universally quantified copies of `word_bit_1_0`, `word_bit_0_lemmas`, `v2w_0_rwts` and `word_bit_add_lsl_simp`. Captures preserve all binder types, word8/word5 list carriers, original conjunctions, zero proof assumptions and proof markers. Lean retains each source domain and conjunction, uses kernel low-bit arithmetic/FCP lemmas and exhaustive Boolean cases, and adds no opcode fixture premise. `holV2w` follows the original most-significant-first testbit/FCP definitions. The original step library uses these rewrites; the whole encoder and compiler theorem remain open.
+
 
 ## Original complete native Fetch16 and Fetch32 theorems
 

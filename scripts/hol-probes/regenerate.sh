@@ -1583,6 +1583,21 @@ run_probe ret_to_tail_probeScript.sml ret_to_tail_probe.out \
   "$cake_dir/pancake/pan_simpScript.sml"
 run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
   skip seq_skip_tick tail_call "$cake_dir/pancake/pan_simpScript.sml"
+run_probe pan_to_word_get_eids_probeScript.sml pan_to_word_get_eids_probe.out \
+  get_eids_pan_simp_compile_eq size_of_eids_compile_top \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_structs_names_probeScript.sml pan_to_word_structs_names_probe.out \
+  function_names_structs_compile_top functions_compile_decs_exns \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_exp_ids_probeScript.sml pan_to_word_exp_ids_probe.out \
+  map_map2_fst_lemma functions_resort_decls \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_structural_probeScript.sml pan_to_word_structural_probe.out \
+  wloc_wlab_wlab_wloc no_names_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_definitions_probeScript.sml pan_to_word_definitions_probe.out \
+  compile_prog_def globals_allocatable_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_simp_semantics_statement_probeScript.sml pan_simp_semantics_statement_probe.out \
   compile_correct state_rel_imp_semantics_decls_types \
   "$cake_dir/pancake/proofs/pan_simpProofScript.sml" "$cake_dir/pancake/proofs"
@@ -6693,6 +6708,10 @@ run_probe pan_structs_reorder_faithful_probeScript.sml pan_structs_reorder_faith
   fields_in_order_reorder_noop_statement fields_in_order_reorder_noop_types fields_in_order_reorder_noop_hypotheses fields_in_order_reorder_noop_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe pan_structs_exp_cmp_shift_faithful_probeScript.sml pan_structs_exp_cmp_shift_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_cmp_statement compile_exp_correct_cmp_proved eval_ind_full_statement compile_exp_correct_shift_statement compile_exp_correct_shift_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
   nextEval_binders nextEval_statement nextEval_hypotheses nextEval_proof nextBranch_binders nextBranch_statement nextBranch_hypotheses nextBranch_proof nextCond_binders nextCond_statement nextCond_hypotheses nextCond_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
@@ -6700,6 +6719,9 @@ run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
 run_probe l3_decode_transport_probeScript.sml l3_decode_transport_probe.out \
   decodeWord_binders decodeWord_statement decodeWord_hypotheses decodeWord_proof decodeHalf_binders decodeHalf_statement decodeHalf_hypotheses decodeHalf_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe pan_structs_exp_nstruct_faithful_probeScript.sml pan_structs_exp_nstruct_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nstruct_statement compile_exp_correct_nstruct_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe l3_step_bit_rewrites_probeScript.sml l3_step_bit_rewrites_probe.out \
   bit10_binders bit10_statement bit10_hypotheses bit10_proof bit0_binders bit0_statement bit0_hypotheses bit0_proof v2w0_binders v2w0_statement v2w0_hypotheses v2w0_proof bitShift_binders bitShift_statement bitShift_hypotheses bitShift_proof v2w8_type v2w5_type \
