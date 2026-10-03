@@ -8576,6 +8576,12 @@
       "sha256": "7b232144353ce6e6ded1685f39f2bccb55dcce0a3d95d7271531005a8a2ce843"
     },
     {
+      "bytes": 3604,
+      "out": "word_to_stack_call_return_handler_probe.out",
+      "rows": 16,
+      "sha256": "31809cde7d06059d7725a1e3227605c6d8e994d9bfba348ea4513f47cdffc3a8"
+    },
+    {
       "bytes": 202,
       "out": "word_to_stack_chunk_to_bitmap_probe.out",
       "rows": 7,

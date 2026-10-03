@@ -6998,3 +6998,10 @@ Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
 ### Full native fromList2 domain evenness
 
 `misc_even_from_list2_probeScript.sml` fetches the original Misc `EVEN_fromList2` kernel theorem (miscScript.sml367-375), capturing the full arbitrary-list/key membership-to-evenness statement, proved=T and zero hypotheses. Lean derives that full statement from the checked literal even-key domain generator, without a WF, index bound, payload restriction or execution premise. Original returning-call entry consumers are8503/9340. This is source comparison and original theorem evidence, not cross-language equivalence.
+`word_to_stack_call_return_handler_probeScript.sml` replays the literal original
+local proofs for handler frame length/removal, setup evaluation and clock law,
+including their original local prerequisite proofs. It captures all seven full
+statements with zero HOL hypotheses and the full setup theorem at64/80 widths.
+Lean consumers apply all seven full statements at arbitrary/1/8/64/80 widths.
+The complete final state relation is derived; these captures are regression
+evidence, not a HOL-to-Lean equivalence proof or whole compiler completion.
