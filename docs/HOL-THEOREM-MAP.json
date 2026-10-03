@@ -78319,5 +78319,47 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison wordConvsProofScript.sml:1417-1430, original complete Inst constructor case. Retains original source flat_exp_conventions premise and literal SSA output conclusion for all native instruction constructors, FP width branches and fallback. No target premise or restricted instruction subset. Native WordLang/Spt/List and positive word carrier; words_as_type_indexed_bitvec records only HOL dimension translation."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
+    "lean_name": "ssaCcTrans_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1417-1465: Original complete recursive arbitrary-program/map/counter/context implication. Sole source flat_exp_conventions premise. Native mutual induction includes nested return/exception handlers; complete Inst, Share and Loop/Break/Continue cases. Literal source setup/reconciliation outputs proven by original helpers; no remaining induction premise, target run or desired output assumption. Native WordLang/Spt/List carriers; words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatFull.lean",
+    "lean_name": "fullSsaCcTrans_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1467-1475: Original complete arbitrary-program/count wrapper with sole source flat_exp_conventions premise and literal fullSSA output conclusion. Native setup producer is a Move; complete recursive SSA preservation supplies output body. No target assumption or restricted program. Native WordLang/Spt/List carriers; words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
+    "lean_name": "fixFlat",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private proof factoring of literal fix_inconsistencies output projections from original fake_moves flat convention theorem; no separately named HOL declaration. No assumption added to the assembled original theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
+    "lean_name": "fixFlatLeft",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private proof factoring of literal fix_inconsistencies output projections from original fake_moves flat convention theorem; no separately named HOL declaration. No assumption added to the assembled original theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatProgram.lean",
+    "lean_name": "fixFlatRight",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private proof factoring of literal fix_inconsistencies output projections from original fake_moves flat convention theorem; no separately named HOL declaration. No assumption added to the assembled original theorem."
   }
 ]
