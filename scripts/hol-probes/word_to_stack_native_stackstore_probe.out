@@ -1,0 +1,4 @@
+native_stackstore_full_definition=⊢ (∀x. wStackStore [] x = x) ∧ ∀x r ps i. wStackStore ((r,i)::ps) x = Seq (wStackStore ps x) (StackStore r i)
+native_stackstore_empty=⊢ wStackStore [] Skip = Skip
+native_stackstore_reverse=⊢ wStackStore [(3,4); (5,6)] Skip = Seq (Seq Skip (StackStore 5 6)) (StackStore 3 4)
+native_stackstore_repeated_slot=⊢ wStackStore [(3,4); (5,4)] Tick = Seq (Seq Tick (StackStore 5 4)) (StackStore 3 4)

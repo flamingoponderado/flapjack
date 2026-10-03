@@ -1,0 +1,6 @@
+store_reg1_full=⊢ ∀x t_stack_space t s r' r lens k f' f c ac LENGTH_t_stack. wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ r < 2 * f' + 2 * k ∧ state_rel ac k f f' s t lens 0 ∧ LENGTH t.stack = LENGTH_t_stack ∧ t.stack_space = t_stack_space ⇒ ∃t'. evaluate (wStackStore x Skip,set_var r' c t) = (NONE,t') ∧ state_rel ac k f f' (set_var r c s) t' lens 0 ∧ LENGTH t'.stack = LENGTH_t_stack ∧ t'.stack_space = t_stack_space
+store_reg1_hypotheses=0
+store_reg1_proved=T
+write_seq_full=⊢ ∀t r k g f' f. evaluate (wRegWrite1 g r (k,f,f'),t) = (let (l,n) = wReg1 r (k,f,f') in evaluate (Seq (g n) (wStackStore l Skip),t))
+write_seq_hypotheses=0
+write_seq_proved=T

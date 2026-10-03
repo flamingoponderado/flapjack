@@ -1,0 +1,17 @@
+evaluate_align_dm=good_dimindex (:α) ⇒
+∀(s :(α, γ, 'ffi) labSem$state).
+  (evaluate (align_dm s) :machine_result # (α, γ, 'ffi) labSem$state) =
+  (let
+     ((r :machine_result),(s' :(α, γ, 'ffi) labSem$state)) =
+       (evaluate s :machine_result # (α, γ, 'ffi) labSem$state)
+   in
+     (r,align_dm s'))
+evaluate_align_dm_types=
+evaluate_align_dm_hypotheses=0
+evaluate_align_dm_proved=T
+implements_align_dm=good_dimindex (:α) ⇒
+implements' T {(semantics (s :(α, γ, 'ffi) labSem$state) :behaviour)}
+  {(semantics (align_dm s) :behaviour)}
+implements_align_dm_types=(s :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;
+implements_align_dm_hypotheses=0
+implements_align_dm_proved=T
