@@ -83,7 +83,12 @@ The following are open review or verification obligations:
    the executed `holRealToFloat` (likewise `round`, `float_round` and
    `float_round_with_flags`, in `Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean`).
    The one wordSem
-   use, `int_to_fp64`, applies them to integers, which are in scope. Irrational square-root rounding
+   use, `int_to_fp64`, applies them to integers, which are in scope. The
+   WordSem and StackSem `FPSqrt`/`FPToInt`/`FPFromInt` instruction clauses
+   are proved equal, with no premise, to the same clauses over the tagged
+   Mathlib-real `fp64_sqrt`, `fp64_to_int` and `real_to_fp64` ports
+   (`WordSem/Inst/RealSqrtAgreement.lean`, `WordSem/Inst/RealConvertAgreement.lean`,
+   `StackSem/FpRegisterInstructions/RealAgreement.lean`). Irrational square-root rounding
    is not covered by these rational-input theorems, and is handled
    separately below.
 

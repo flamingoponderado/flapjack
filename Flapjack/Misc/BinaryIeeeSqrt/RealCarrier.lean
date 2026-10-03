@@ -167,6 +167,29 @@ noncomputable def holRealToFloatWithFlagsR {t : Nat} {w : Nat} [NeZero t] [NeZer
     (r : ℝ) : HolFloatFlags × HolFloat t w :=
   holFloatRoundWithFlagsR mode (decide (mode = .roundTowardNegative)) r
 
+/-- HOL `float_to_int_def` (`binary_ieeeScript.sml:555-572`) over `ℝ`: a finite
+float `Float r` is converted by the mode (ties-to-even takes `f = INT_FLOOR r`
+when `abs (r - real_of_int f) < 1/2`, or `= 1/2` with `EVEN (Num (ABS f))`, and
+`INT_CEILING r` otherwise; toward positive the ceiling; toward negative the
+floor; toward zero the ceiling for sign `1w`, else the floor); infinities and
+NaNs give `NONE`. HOL `INT_FLOOR`/`INT_CEILING` are `Int.floor`/`Int.ceil` on
+`ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_to_int_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatToIntR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (x : HolFloat t w) : Option Int :=
+  match holFloatValueR x with
+  | .float r =>
+      some (match mode with
+        | .roundTiesToEven =>
+            let f := ⌊r⌋
+            let df := |r - (f : ℝ)|
+            if df < 1 / 2 ∨ (df = 1 / 2 ∧ f.natAbs % 2 = 0) then f else ⌈r⌉
+        | .roundTowardPositive => ⌈r⌉
+        | .roundTowardNegative => ⌊r⌋
+        | .roundTowardZero => if x.sign = 1 then ⌈r⌉ else ⌊r⌋)
+  | _ => none
+
 /-- HOL `float_sqrt_def` (`binary_ieeeScript.sml:574-585`) over `ℝ`, with HOL `sqrt`
 as `Real.sqrt`. -/
 @[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_sqrt_def"
@@ -367,5 +390,36 @@ theorem holRealToFloatWithFlagsR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero 
     (holRealToFloatWithFlagsR mode (q : ℝ) : HolFloatFlags × HolFloat t w) =
       holFloatRoundWithFlags mode (decide (mode = .roundTowardNegative)) q :=
   holFloatRoundWithFlagsR_ratCast mode _ q
+
+/-- The arbitrary-real `float_to_int` equals the executed `Rat` rendering
+`holFloatToInt` on every float and mode (float values are rational). -/
+theorem holFloatToIntR_eq {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (x : HolFloat t w) :
+    holFloatToIntR mode x = holFloatToInt mode x := by
+  unfold holFloatToIntR holFloatToInt
+  rw [holFloatValueR_eq]
+  cases holFloatValue x with
+  | nan => rfl
+  | infinity => rfl
+  | float q =>
+      have hd : |(q : ℝ) - ((⌊q⌋ : ℤ) : ℝ)| = ((holRatAbs (q - (⌊q⌋ : ℚ)) : ℚ) : ℝ) := by
+        rw [holRatAbs_cast]; push_cast; rfl
+      have c : (1 / 2 : ℝ) = ((1 / 2 : ℚ) : ℝ) := by push_cast; rfl
+      have h1 : (((holRatAbs (q - (⌊q⌋ : ℚ)) : ℚ) : ℝ) < 1 / 2) ↔
+          (holRatAbs (q - (⌊q⌋ : ℚ)) < 1 / 2) := by
+        rw [c, Rat.cast_lt]
+      have h2 : (((holRatAbs (q - (⌊q⌋ : ℚ)) : ℚ) : ℝ) = 1 / 2) ↔
+          (holRatAbs (q - (⌊q⌋ : ℚ)) = 1 / 2) := by
+        rw [c, Rat.cast_inj]
+      have hf : ⌊q⌋ = q.floor := rfl
+      have hc : ⌈q⌉ = q.ceil := by
+        rw [Rat.ceil_eq_neg_floor_neg, show (-q).floor = ⌊-q⌋ from rfl, Int.floor_neg, neg_neg]
+      cases mode with
+      | roundTiesToEven =>
+          simp only [Rat.floor_cast, Rat.ceil_cast, hd, h1, h2]
+          rw [hf, hc]
+      | roundTowardPositive => simp only [Rat.ceil_cast, hc]
+      | roundTowardNegative => simp only [Rat.floor_cast, hf]
+      | roundTowardZero => simp only [Rat.floor_cast, Rat.ceil_cast, hf, hc]
 
 end Flapjack
