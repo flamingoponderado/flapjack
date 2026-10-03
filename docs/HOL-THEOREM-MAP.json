@@ -68150,5 +68150,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.2: full original evaluate_code_bitmaps421-440 Seq case. CodeBitmaps is definitionally literal original existential shifted oracle/code union left-fold/bitmap append flatten. Actual native Seq evaluation sole execution premise; first IH only at source, second IH only after actual first NONE at native fixClock-clamped middle; no universal arbitrary-state recursive assumption. Early result retains clamped first prefix. Success composes count a+b, source oracle shifts, GENLIST/range split, original left-fold order and flattened append; no prefix/count/postcondition assumptions. Imported canonical regs/fpRegs/store witness, positive BitVec/NeZero,C/F Type0, inherited reals_as_rational_cuts assumption retained. Alignment field-preservation assessment does not claim numeric LOG2zero or FP equivalence; no runtime rewrite. Whole theorem assembly remains open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/If.lean",
+    "lean_name": "evaluateCodeBitmapsIf",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.4: original evaluate_code_bitmaps421-440 If constructor. CodeBitmaps definitionally retains full original three-conjunct existential shifted oracle/code union left-fold/bitmap append flatten. Sole execution premise actual native If evaluate. Recursive IHs only at source and guarded by actual successful getVar/getVarImm operands and original comparison true/false selecting that branch. Failed register/immediate reads and failed comparison retain source/count0; selected branch supplies original result without extra success/postfield/count assumptions. Canonical imported regs/fpRegs/store same-module witness; positive BitVec/NeZero,C/F Type0, tree-map code excluded. Inherited reals_as_rational_cuts assumption explicitly retained; no numeric byte-alignment or FP equivalence claim and no runtime rewrite. Full theorem and other cases remain open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
