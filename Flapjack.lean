@@ -1447,6 +1447,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee

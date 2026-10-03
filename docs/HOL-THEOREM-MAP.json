@@ -26044,6 +26044,20 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateDecClock.lean",
+    "lean_name": "evaluate_dec_clock",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_dec_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.1): HOL evaluate_dec_clock (wordPropsScript.sml:1475-1478): ∀prog st res rst. evaluate(prog,st) = (res,rst) ⇒ evaluate(prog,st with clock:=st.clock-rst.clock) = (res,rst with clock:=0). Binders prog st res rst in HOL order, the single evaluation premise and the conclusion are as in HOL, over the tagged exact wordSem evaluate and WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemEvaluateDecClockSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). No extra premise; natural-number subtraction as in HOL. Proof follows HOL's recInduct evaluate_ind: untagged evaluate_dec_clock_aux recurses on HOL's termination measure (termdep, clock, size); Seq, Loop and the returning Call re-extend a completed first phase with the tagged evaluate_add_clock, as HOL does, and constant-clock constructors use the clock-constancy lemmas. Kernel-checked. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "strong_locals_rel_set_vars_dom",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
