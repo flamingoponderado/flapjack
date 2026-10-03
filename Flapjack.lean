@@ -47,6 +47,7 @@ import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Install
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq.Standard
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Seq
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call.Tail
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Call
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
@@ -346,6 +347,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionSuffix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.EnvironmentIdentity
+import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerTransition
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Stubs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel

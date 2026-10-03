@@ -6460,3 +6460,21 @@ run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
 run_probe stack_remove_init_limits_double_probeScript.sml stack_remove_init_limits_double_probe.out \
   init_limits_double_definition init_limits_double_type init_limits_double_hypotheses init_limits_double_store_count \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_call_return_probeScript.sml stack_rawcall_call_return_probe.out \
+  call_return_full_statement call_return_full_hypotheses call_return_case64 call_return_case80 call_return_evaluate_ind_obligation call_return_whole_case64 call_return_direct64 call_return_handler64 call_return_link_erased64 call_return_other_link64 call_return_whole_case80 call_return_direct80 call_return_handler80 call_return_link_erased80 call_return_other_link80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_abs_stack_prefix_drop_probeScript.sml word_to_stack_abs_stack_prefix_drop_probe.out \
+  abs_stack_prefix_drop_statement abs_stack_prefix_drop_proved abs_stack_prefix_drop_hypotheses abs_stack_prefix_drop_wstack_type abs_stack_prefix_drop_sstack_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_env_identity_probeScript.sml word_to_stack_env_identity_probe.out \
+  env_to_list_identity_statement env_to_list_identity_proved env_to_list_identity_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_handler_transition_probeScript.sml word_to_stack_handler_transition_probe.out \
+  stack_rel_raise_statement stack_rel_raise_proved stack_rel_raise_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_raise_stub_false_probeScript.sml word_to_stack_raise_stub_false_probe.out \
+  raise_stub_false_statement raise_stub_false_proved raise_stub_false_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
