@@ -6854,3 +6854,13 @@ construct actual PCs, and preserve full fetched shared-memory exclusion.
 These supply observational prerequisites of semantics_compile; the whole
 machine/compiler simulation remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_filter_skip_probeScript.sml`.
+### Native supervisor transfer and fetch exceptions
+
+`l3_control_fetch_probeScript.sml` and `L3ControlFetchParity` compare 39
+whole-state equations against independent direct record-update expected states.
+Three current cores (0/7/255), arbitrary prior state, zero/sign/high/full address
+and PC boundaries cover full writeSCSR, ordered MRTS cause/address/PC transfer,
+Supervisor MPRV and Mrts NextFetch, and both fetch exception trap/address fields.
+`check-l3-control-fetch.py` requires all unique labels and every original row T.
+These finite regressions supplement source comparison, not a cross-language
+transition equivalence theorem. Full Run and Next remain open.

@@ -1,4 +1,10 @@
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
+import Flapjack.RiscV.L3.Defs.ControlFetch
+import Flapjack.RiscV.L3.Defs.FPBits
+import Flapjack.RiscV.L3.Defs.Divide
+import Flapjack.RiscV.L3.Defs.Multiply
+import Flapjack.RiscV.L3.Defs.WordArithmetic
+import Flapjack.RiscV.L3.Defs.ImmediateShift
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
 import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
