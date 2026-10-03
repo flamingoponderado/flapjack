@@ -88839,5 +88839,13 @@
     "hol_name": "max_depth_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison 2026-10-04: original word_depthScript14-20 datatype has Leaf/Unknown/Const num call_tree/Call num call_tree/Branch call_tree call_tree, all five constructors and payloads retained. Original max_depthScript24-33 full inferred type num num_map -> call_tree -> num option and all five typed recursive clauses captured in word_depth_probe.out. Exact Spt Nat frame map with reviewed sptLookup; Nat and Option identity carriers. Const maps left addition n+d, Branch OPTION_MAP2 MAX, Call OPTION_MAP2 addition of lookup n and recursive depth; missing lookup or unknown propagates NONE. Generic optionMap2 helper is Flapjack infrastructure with no HOL declaration port tag. Twelve fresh original EVAL rows include misses, unknown branches and nested calls. No word carrier, dimension qualifier, invented bound, pass assumption, production routing or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "optionLt",
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "option_lt_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: original pan_to_targetProofScript1157-1160 standalone three-clause option_lt definition. Option Nat/Bool render HOL num option/bool directly. Any left option compared with NONE gives true, NONE compared with SOME gives false, and SOME n1/SOME n2 uses strict Nat comparison n1<n2; no bound or default introduced. Original proof theory is unavailable in the compiled pinned oracle toolchain. With coordinator direction, pan_to_target_option_lt_source_replay_probe.out records a literal source-definition replay in a separate scratch HOL theory, explicitly named local replay: inferred num option -> num option -> bool, full typed equation and six boundary EVAL rows. It is not a DB fetch/exported original-theory capture or independent cross-language equivalence proof. Lean kernel replays exactly these six cases. No target evaluation premise, word qualifier, production routing or full compile_prog_max/final correctness claim."
   }
 ]
