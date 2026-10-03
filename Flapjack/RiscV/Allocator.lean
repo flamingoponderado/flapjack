@@ -1920,8 +1920,8 @@ def wordClashTree : WordProg α → List (List Nat × List Nat) → WordClashTre
       .seq (.delta [] [dataLength, dataBuffer, codeLength, codeBuffer])
         (.seq (.set (wordClashTreeCallSet nonGc gc))
           (.delta [codeBuffer] []))
-  | .codeBufferWrite address value, _ => .delta [] [address, value]
-  | .dataBufferWrite address value, _ => .delta [] [address, value]
+  | .codeBufferWrite address value, _ => .delta [] [value, address]
+  | .dataBufferWrite address value, _ => .delta [] [value, address]
   | .ffi _ configuration configurationLength array arrayLength (nonGc, gc), _ =>
       .seq (.delta [] [configuration, configurationLength, array, arrayLength])
         (.set (wordClashTreeCallSet nonGc gc))
