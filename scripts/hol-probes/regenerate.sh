@@ -5949,3 +5949,9 @@ run_probe misc_find_index_shift_probeScript.sml misc_find_index_shift_probe.out 
   find_index_shift find_index_shift_types find_index_shift_hypotheses \
   first nonzero shift duplicate empty missing large strings \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_word_search_probeScript.sml lab_to_target_word_search_probe.out \
+  find_index_MAP_w2n find_index_MAP_w2n_types find_index_MAP_w2n_hypotheses \
+  first mapped duplicates absent empty wrapped wide \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

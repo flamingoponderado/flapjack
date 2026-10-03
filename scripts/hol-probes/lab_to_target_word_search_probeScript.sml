@@ -1,0 +1,22 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open bossLib HolKernel Parse preamble lab_to_targetProofTheory lab_to_targetTheory labLangTheory labPropsTheory labSemTheory sptreeTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "="); print_term(concl th); print "\n");
+fun types label th = (print(label ^ "="); app (fn v => print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";")) (fst(strip_forall(concl th)) @ free_vars(concl th)); print "\n");
+open miscTheory wordsTheory;
+val t=prove(``!l (x:'a word) n. find_index (w2n x) (MAP w2n l) n = find_index x l n``,
+  Induct >> simp[find_index_def] >> rw[] >> fs[w2n_11]);
+val _=capture "find_index_MAP_w2n" t;
+val _=types "find_index_MAP_w2n_types" t;
+val _=print("find_index_MAP_w2n_hypotheses="^Int.toString(length(hyp t))^"\n");
+val _=show_types:=false;
+fun observe label q=(print(label^"=");print_term(rconc((EVAL THENC QCONV(SIMP_CONV bool_ss [])) q));print"\n");
+val _=observe "first" ``find_index (7w:8 word) [7w;13w] 0 = SOME 0``;
+val _=observe "mapped" ``find_index (w2n(13w:8 word)) (MAP w2n ([7w;13w]:8 word list)) 10 = find_index (13w:8 word) [7w;13w] 10``;
+val _=observe "duplicates" ``find_index (7w:8 word) [7w;7w] 10 = SOME 10``;
+val _=observe "absent" ``find_index (8w:8 word) [7w;13w] 10 = NONE``;
+val _=observe "empty" ``find_index (7w:8 word) [] 10 = NONE``;
+val _=observe "wrapped" ``find_index (257w:8 word) [1w;2w] 10 = SOME 10``;
+val _=observe "wide" ``find_index (w2n((n2w(2**70+3)):80 word)) (MAP w2n ([0w;(n2w(2**70+3))]:80 word list)) 99 = SOME 100``;

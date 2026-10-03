@@ -68320,5 +68320,14 @@
     "hol_name": "find_index_shift",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 full original source1259 and fulltype0hyp comparison: generic alpha list/target and arbitrary k/j offsets retained, original successful find_index=SOME guard implies complete conjunction j>=k and forall n successful find_index=SOME(j-k+n). Propositional equality with DecidableEq preserves original equality; no Nodup, bound, target execution or assumed desired shifted result. Original zero-offset theorem and Option case inversion plus Nat arithmetic prove both source conclusions, with no HD/EL/default/provenance dependency. Fresh original generic fulltype0hyp and eight closed observations cover nonzero/large offsets, duplicate first-match, missing/empty searches and generic string carrier; generic native statement and actual arbitrary-query extracted shared-memory PC consumer use full150 actual fetch witness. Evidence is regression/source review, not cross-language equivalence or full initializer/compiler closure."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/WordSearch.lean",
+    "lean_name": "findIndex_mapToNat",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_index_MAP_w2n",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original local source10127 and literal statement/proof replay fulltypes0hyp: local HOL declaration not exported in theory DB (DB.fetch fails), so registered original probe replays exactly its source statement AND proof in pinned HOL before capturing full type. Complete forall same-dimension word list/target/arbitrary Nat offset, unconditional exact Option equality between natural-projection search and original word search. Positive BitVec width with own NeZero is sole words_as_type_indexed_bitvec carrier translation; no success/Nodup/length bound or totalHD/EL/default premise. Native structural induction with BitVec.toNat injectivity mirrors original w2n injectivity. Fresh original seven closed observations/native cases cover first/mapped/duplicate/missing/empty/wrapped8/wide80 searches; full generic consumer and arbitrary base/listDROP/offset initializer-facing consumer. Regression/source comparison evidence, not HOL-to-Lean equivalence or full initializer/compiler closure."
   }
 ]
