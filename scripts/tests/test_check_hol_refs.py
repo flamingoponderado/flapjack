@@ -3797,10 +3797,6 @@ class FmapResultObservationAmbiguityTest(unittest.TestCase):
             self.assertTrue(any("ambiguous" in error for error in errors))
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class PanSemGeneratedEvalIndTest(unittest.TestCase):
     def test_real_source_and_bounded_negative_cases(self):
         path = CHECKER["ROOT"] / CHECKER["PANSEM_EVAL_IND_PATH"]
@@ -3819,3 +3815,7 @@ class PanSemGeneratedEvalIndTest(unittest.TestCase):
         self.assertIsNone(recognize(Path("other/pancake/semantics/panSemScript.sml"), source))
         block = source[source.index("Definition eval_def:"):]
         self.assertIsNone(recognize(path, source + "\n" + block))
+
+
+if __name__ == "__main__":
+    unittest.main()

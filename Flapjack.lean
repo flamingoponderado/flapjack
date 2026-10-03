@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ListSubset
 import Flapjack.RiscV.Encoding.NativeInstruction.Agreement
 import Flapjack.RiscV.Encoding.NativeInstruction
 import Flapjack.Test.RiscVNativeInstructionParity
