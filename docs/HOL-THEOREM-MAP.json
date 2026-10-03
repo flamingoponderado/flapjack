@@ -72535,5 +72535,56 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.3): full original comp_correct goal 5719-5751 specialized at Call with ret = NONE (HOL's Call_tail suspension, 7935-8164); arbitrary dest/args/handler/frame/states/result/bitmap parameters and all eleven original premises; full existential target clock/run/result conclusion with compCorrectResult. The induction hypothesis is exactly the WordSem evaluator's guarded hypothesis for the callee body (get_vars SOME xs, ~bad_dest_args, find_code dest (add_ret_loc NONE xs) = SOME (args1,prog,ss), handler = NONE, clock <> 0) quantified over the complete original simulation motive (Seq.Simulation, the factored 5719-5751 statement), as HOL's evaluate_ind provides; no target run or simulation law is assumed. Proof follows HOL: call_dest_lemma, evaluate_SeqStackFree, timeout branch, stack-limit Halt (Word 2w) branch via compile_result_NOT_2/evaluate_io_events_mono/evaluate_stack_limit/evaluate_stack_max, and the callee state_rel for call_env args1 ss (dec_clock s) at frame (fs, stack_var_count) before applying the IH with evaluate_add_clock. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through the evaluator closure; no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "llookupTake",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LLOOKUP_TAKE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 308-312: n < f implies LLOOKUP (TAKE f xs) n = LLOOKUP xs n; HOL LLOOKUP (oEL) is native optional indexing as in the reviewed llookup and LLOOKUP_cons_SUC ports; arbitrary payload."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stateRelImpLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_IMP_LENGTH",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5260-5268: state_rel ac k f f' s t lens extra implies LENGTH lens = LENGTH s.stack, all parameters arbitrary. Full literal stateRel over imported carriers with same-module relation witnesses; positive BitVec width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stackRelConsLenNone",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_cons_LEN_NONE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5409-5423: stack_rel on a handler-free head frame at lens f'::lens implies f'+1 <= LENGTH sstack. HOL free variables explicit; over the reviewed stackRel with the target handler word at its own independent dimension, as stack_rel_def leaves it; positive BitVec widths with NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stackRelConsLocalsSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_cons_locals_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5425-5440: stack_rel on head frame StackFrame n l0 l opt (arbitrary opt) at f'::lens implies the (f'+1) n = f'+1, as n.getD (f'+1). HOL free variables explicit; over the reviewed stackRel with the target handler word at its own independent dimension, as stack_rel_def leaves it; positive BitVec widths with NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stackRelDropNone",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_DROP_NONE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5368-5396: stack_rel on a handler-free head frame at f'::lens implies stack_rel of the tail on DROP (f'+1) sstack at lens. HOL free variables explicit; over the reviewed stackRel with the target handler word at its own independent dimension, as stack_rel_def leaves it; positive BitVec widths with NeZero."
   }
 ]
