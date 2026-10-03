@@ -4,9 +4,9 @@ import Flapjack.Pancake.WordLang
 /-!
 # `word_remove`: removing `MustTerminate`
 
-Counterpart of `cakeml/compiler/backend/word_removeScript.sml`. This is a
-proof-side port; whether the executed compiler needs this pass is tracked
-separately.
+Counterpart of `cakeml/compiler/backend/word_removeScript.sml`. The executed
+allocator pipeline runs this native pass after allocation through its codec.
+Totality of that codec on native allocator output remains tracked separately.
 -/
 
 namespace Flapjack.Compiler.Backend.WordRemove
