@@ -6995,6 +6995,32 @@ inherit the documented SOUNDNESS item 8 real-rendering assumption.
 
 Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
 `regenerate.sh`, then run the strict checker.
+### Full native fromList2 domain evenness
+
+`misc_even_from_list2_probeScript.sml` fetches the original Misc `EVEN_fromList2` kernel theorem (miscScript.sml367-375), capturing the full arbitrary-list/key membership-to-evenness statement, proved=T and zero hypotheses. Lean derives that full statement from the checked literal even-key domain generator, without a WF, index bound, payload restriction or execution premise. Original returning-call entry consumers are8503/9340. This is source comparison and original theorem evidence, not cross-language equivalence.
+`word_to_stack_call_return_handler_probeScript.sml` replays the literal original
+local proofs for handler frame length/removal, setup evaluation and clock law,
+including their original local prerequisite proofs. It captures all seven full
+statements with zero HOL hypotheses and the full setup theorem at64/80 widths.
+Lean consumers apply all seven full statements at arbitrary/1/8/64/80 widths.
+The complete final state relation is derived; these captures are regression
+evidence, not a HOL-to-Lean equivalence proof or whole compiler completion.
+
+### Full native Lab evaluator clock stability
+
+`labprops_evaluate_ADD_clock_probeScript.sml` captures the original full theorem312, all quantified carriers, zero hypotheses and a kernel reproof of its entire statement. Four rows preserve the sole non-TimeOut guard and complete result/poststate clock equality.
+
+`pan_structs_convert_eshapes_probe` captures the complete kernel definition/type
+and proves the unconditional original finite-map lookup correspondence at arbitrary
+context, map and key.
+
+`pan_structs_shape_field_polymorphism_probe` captures the original full mutual
+shape definition and polymorphic field-name types, and replays the unchanged whole
+`compile_shapes_eq_map` proof with its free context universally closed.
+
+`pan_structs_convert_code_probe` captures the complete original kernel definition,
+polymorphic map-key/program-carrier type and zero hypotheses. Parameters keep
+source names; body compilation scopes original parameters rather than compiled ones.
 
 ## Complete native Decode and DecodeRVC
 

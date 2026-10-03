@@ -15,7 +15,9 @@ import Flapjack.RiscV.L3.Defs.Divide
 import Flapjack.RiscV.L3.Defs.Multiply
 import Flapjack.RiscV.L3.Defs.WordArithmetic
 import Flapjack.RiscV.L3.Defs.ImmediateShift
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect
+import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
 import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
@@ -691,6 +693,8 @@ import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
+import Flapjack.Pancake.Proofs.PanSimp.SeqAssocAssembly
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailAssembly
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
@@ -1199,6 +1203,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
+import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
+import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
