@@ -1,0 +1,55 @@
+compile_prog_def=∀(arch :architecture) (prog :α decl list).
+  (compile_prog arch prog :(num # num # α prog) list) =
+  (let
+     (prog :α decl list) = (compile_prog prog :α decl list);
+     (prog :α decl list) = (compile_top prog :α decl list);
+     (prog :α decl list) = (compile_top prog «main» :α decl list);
+     (prog :(mlstring # num list # α crepLang$prog) list) =
+       (compile_prog prog :(mlstring # num list # α crepLang$prog) list);
+     (prog :(num # num list # α loopLang$prog) list) =
+       (compile_prog arch prog :(num # num list # α loopLang$prog) list)
+   in
+     (compile prog :(num # num # α prog) list))
+crep_state_def=∀(s :(α, β) panSem$state) (pan_code :α decl list)
+    (mem :α word -> α word_lab).
+  crep_state s pan_code mem =
+  <|locals := (FEMPTY :num |-> α word_lab);
+    globals := (FEMPTY :word5 |-> α word_lab);
+    code :=
+      alist_to_fmap
+        (compile_prog pan_code :(mlstring # num list # α crepLang$prog) list);
+    memory := mem; memaddrs := s.memaddrs; sh_memaddrs := s.sh_memaddrs;
+    clock := s.clock; be := s.be; ffi := s.ffi; top_addr := s.top_addr;
+    base_addr := s.base_addr|>
+wloc_wlab_def=∀(w :α word). wloc_wlab (Word w :α word_loc) = (Word w :α word_lab)
+no_labels_def=∀(mem :α -> β word_loc) (dom :α -> bool).
+  no_labels mem dom ⇔
+  ∀(a :α). a ∈ dom ⇒ ∃(w :β word). mem a = (Word w :β word_loc)
+loop_state_def=∀(s :(α, 'ffi) crepSem$state) (c :architecture)
+    (crep_code :(mlstring # num list # α crepLang$prog) list) (ck :num)
+    (mem :α word -> α word_loc).
+  loop_state s c crep_code ck mem =
+  <|locals := (LN :α word_loc sptree$num_map);
+    globals := (FEMPTY :word5 |-> α word_loc); memory := mem;
+    mdomain := s.memaddrs; sh_mdomain := s.sh_memaddrs;
+    code :=
+      fromAList
+        (compile_prog c crep_code :(num # num list # α loopLang$prog) list);
+    clock := ck; be := s.be; ffi := s.ffi; top_addr := s.top_addr;
+    base_addr := s.base_addr|>
+distinct_params_def=∀(prog :(α # β list # γ) list).
+  distinct_params prog ⇔
+  EVERY (λ((name :α),(params :β list),(body :γ)). ALL_DISTINCT params) prog
+globals_allocatable_def=∀(s :(α, 'ffi) panSem$state) (pan_code :β decl list).
+  globals_allocatable s pan_code ⇔
+  (let
+     (dec_shs :shape list) = dec_shapes pan_code;
+     (struct_ctxt :(mlstring # struct_info) list option) =
+       decs_stcnames ([] :(mlstring # struct_info) list) pan_code;
+     (sz :num) =
+       (SUM (MAP (size_of_sh_with_ctxt (THE struct_ctxt)) dec_shs) :num)
+   in
+     struct_ctxt ≠ (NONE :(mlstring # struct_info) list option) ∧
+     DISJOINT s.memaddrs (addresses s.top_addr sz) ∧
+     s.top_addr + (bytes_in_word :α word) * (n2w sz :α word) ∉ s.memaddrs ∧
+     sz * w2n (bytes_in_word :α word) < dimword (:α))

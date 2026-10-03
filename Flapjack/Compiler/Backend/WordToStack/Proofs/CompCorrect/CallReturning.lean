@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Pancake.WordConvs.MaxVarIntro
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
@@ -1673,5 +1674,127 @@ theorem completePreludeClockFree {width : Nat} [NeZero width] {C F : Type}
   exact CallReturnEval.clockFree_seq _ _ destClock
     (CallReturnEval.clockFree_seq _ _ savedClock
       (stackArgumentsClockFree k f frame destination (args.length + 1)))
+
+/-- Flapjack source-frame recovery at the original normal-return branch
+(8660 onward). The full evaluate_stack_swap theorem derives the returned
+caller's frame, its original non-GC values and size, and its preserved GC
+keys from the actual callee Result run. The actual pop_env result is then
+computed. No returned frame, restored locals, or target run is assumed;
+there is no separate HOL declaration for this case-local recovery. -/
+theorem returnedCallerFrame {width : Nat} [NeZero width] {C F : Type}
+    (prog : WordLangProgHOL (BitVec width))
+    (source bodyPost : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (args1 : List (WordLocW width)) (ss : Option Nat)
+    (location : WordLocW width) (returned : List (WordLocW width))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.result location returned), bodyPost)) :
+    ∃ (gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width)),
+      bodyPost.stack = .stackFrame source.localsSize (sptToAList envs.1) gc none :: tail ∧
+      ((wordSemEnvToList envs.2 source.permute).1).map Prod.fst = gc.map Prod.fst ∧
+      WordSemStackEq.sKeyEq source.stack tail ∧ bodyPost.handler = source.handler ∧
+      WordSemStateFiniteExact.popEnv bodyPost = some {bodyPost with
+        locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+        stack := tail, localsSize := source.localsSize} ∧
+      sptDomainEqUnion
+        (sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1))) envs.1 envs.2 := by
+  have invariant := WordSemStackEq.evaluateStackSwap prog
+    (WordSemStateFiniteExact.callEnv args1 ss
+      (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source)))
+  unfold WordSemStackEq.stackSwapPost at invariant
+  rw [bodyRun] at invariant
+  obtain ⟨keys, handler, _⟩ := invariant
+  have pushedKeys : WordSemStackEq.sKeyEq
+      (WordSemStateFiniteExact.pushEnv envs none
+        (WordSemStateFiniteExact.decClock source)).stack bodyPost.stack := keys
+  obtain ⟨_, _, _, _, _, popped, poppedRun, _, domain, _⟩ :=
+    WordSemStackEq.pushEnvPopEnvSKeyEq envs none
+      (WordSemStateFiniteExact.decClock source) bodyPost pushedKeys
+  change WordSemStackEq.sKeyEq
+    (.stackFrame source.localsSize (sptToAList envs.1)
+      (wordSemEnvToList envs.2 source.permute).1 none :: source.stack) bodyPost.stack at keys
+  cases stackEq : bodyPost.stack with
+  | nil => simp only [stackEq, WordSemStackEq.sKeyEq] at keys
+  | cons frame tail =>
+    cases frame with
+    | stackFrame size nonGc gc opt =>
+      rw [stackEq] at keys
+      obtain ⟨tailKeys, frameKeys⟩ := keys
+      rw [WordSemStackEq.sFrameKeyEqDef2] at frameKeys
+      obtain ⟨gcKeys, rfl, rfl, rfl⟩ := frameKeys
+      have popRun : WordSemStateFiniteExact.popEnv bodyPost = some {bodyPost with
+          locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+          stack := tail, localsSize := source.localsSize} := by
+        rw [WordSemStateFiniteExact.popEnv, stackEq]
+      have same := Option.some.inj (poppedRun.symm.trans popRun)
+      subst popped
+      refine ⟨gc, tail, rfl, gcKeys, tailKeys, handler, popRun, ?_⟩
+      intro key
+      have equality := congrFun domain key
+      simpa only [sptMem, sptDomain, or_comm] using (Eq.to_iff equality.symm)
+
+/-- Flapjack assembly of the source normal-return restoration and original
+continuation IH (8660 onward). The actual non-error whole Call proves the
+return location/length tests; evaluate_stack_swap and push/pop semantics prove
+the saved frame and restored local-domain check. The continuation is the
+actual source execution, and its simulation is the original guarded IH.
+There is no target run or restored-state relation premise and no separate
+HOL declaration; target return-copy/state_rel assembly remains unfinished. -/
+theorem sourceReturningContinuation {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (location : WordLocW width) (returned : List (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args source)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost)) (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.result location returned), bodyPost)) :
+    ∃ (gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+      (popped : WordSemStateFiniteExact width (Nat × C) F),
+      bodyPost.stack = .stackFrame source.localsSize (sptToAList envs.1) gc none :: tail ∧
+      ((wordSemEnvToList envs.2 source.permute).1).map Prod.fst = gc.map Prod.fst ∧
+      WordSemStackEq.sKeyEq source.stack tail ∧ bodyPost.handler = source.handler ∧
+      popped = {bodyPost with
+        locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+        stack := tail, localsSize := source.localsSize} ∧
+      WordSemStateFiniteExact.popEnv bodyPost = some popped ∧
+      sptDomainEqUnion popped.locals envs.1 envs.2 ∧
+      ¬ (location ≠ .loc l1 l2 ∨ returned.length ≠ values.length) ∧
+      WordSemStateFiniteExact.evaluate retCode (WordSemStateFiniteExact.setVars values returned popped) =
+        (result, sourcePost) ∧
+      Seq.Simulation ac retCode (WordSemStateFiniteExact.setVars values returned popped) := by
+  obtain ⟨gc, tail, frame, gcKeys, tailKeys, handler, popRun, domain⟩ :=
+    returnedCallerFrame prog source bodyPost envs args1 ss location returned bodyRun
+  let popped : WordSemStateFiniteExact width (Nat × C) F := {bodyPost with
+    locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)),
+    stack := tail, localsSize := source.localsSize}
+  have originalGuards := guards
+  obtain ⟨get, bad, find, valid, cut⟩ := originalGuards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only at execution
+  by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
+  · rw [if_pos invalid] at execution
+    exact False.elim (notError (Prod.mk.inj execution).1.symm)
+  rw [if_neg invalid, popRun] at execution
+  simp only at execution
+  rw [if_pos domain] at execution
+  refine ⟨gc, tail, popped, frame, gcKeys, tailKeys, handler, rfl, popRun, domain,
+    invalid, execution, ?_⟩
+  exact ih.1 xs args1 prog ss envs location returned bodyPost popped
+    ⟨guards, nonzero, bodyRun, invalid, popRun, domain⟩
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
