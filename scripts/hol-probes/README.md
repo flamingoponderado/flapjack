@@ -6584,6 +6584,12 @@ regressions; fullRun/Next/pass correctness remains open.
 
 `word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
 
+`stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
+
+`stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
+
+`stack_remove_init_code_pre_probeScript.sml` exports the complete original kernel definition and generic type of the initializer precondition (2953–2978), with zero stored hypotheses. The native port retains all four pointer witnesses, header words, characteristic-function sets, unsigned word capacity checks and the original three separated heap factors. This is the precondition definition, not the initializer execution proof.
+
 
 
 `wordsem_inst_const_full_probe.out` replays the unchanged original wordProps inst_const_full proof against its complete generic statement. All thirteen preserved fields and the sole successful native instruction premise are retained; replay=T, hypotheses=0, no free variables. The structural invariant is not numerical floating-point correspondence or full evaluator resource-family completion.
@@ -6640,6 +6646,7 @@ supplement source review; full Run/Next correctness remains open.
 
 `wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.
 
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
 `stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
 
 `stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
@@ -6688,6 +6695,7 @@ No extra successful lookup, overflow bound, exclusion premise or arbitrary
 EL/default policy is used. ISR16 and the full initializer remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
 
+`stack_remove_stack_heap_limit_probeScript.sml` exports the complete original paired stack/heap limit predicate, generic type and zero stored hypotheses (2906–2911). The native definition preserves the store word, natural byte-capacity comparison and actual stack length as separate original conjuncts; it supplies a prerequisite of the full initializer property.
 ### Full initializer shared-memory code domain
 
 `lab_to_target_initializer_domain_probeScript.sml` captures the complete
@@ -6755,55 +6763,4 @@ their existential witnesses. This independently supplies the lazy-list image
 chain used by original machine_sem_EQ_sem; full compiler simulation and machine
 semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
-
-### Native immediate shifts
-
-`l3_immediate_shift_probeScript.sml` captures 558 whole-state original HOL
-SLLI/SRLI/SRAI/SLLIW/SRLIW/SRAIW equations. Run
-`python3 scripts/hol-probes/check-l3-immediate-shift.py` to require every row
-to reduce to T. The matching Lean fixtures are `L3ImmediateShiftParity`.
-Coverage includes numeric/count boundaries, RV32 illegal routes using the
-reviewed signalException helper, twelve invalid-mode error/prior-exception
-cases and six symbolic ARB branches seeded with NoException. ARB is unspecified.
-The complete definitions retain arbitrary states and original hypotheses.
-
-### Native word arithmetic
-
-`l3_word_arithmetic_probeScript.sml` captures 363 whole-state ADDIW/ADDW/SUBW
-equations from original HOL. `check-l3-word-arithmetic.py` requires every
-registered row to reduce to T. `L3WordArithmeticParity` checks the same
-inputs/states independently in Lean, including wrap/sign/zero/alias boundaries,
-RV32 Illegal_Instr routes through the reviewed helper and symbolic invalid-mode
-ARB branches seeded NoException. The full definitions retain arbitrary states.
-
-### Native multiplication
-
-`l3_multiply_probeScript.sml` captures 730 whole-state equations for
-MUL/MULH/MULHU/MULHSU/MULW. `check-l3-multiply.py` requires the complete
-label set and every result T; `L3MultiplyParity` kernel-checks matching inputs
-and states. Signed/unsigned/mixed high products, word widths, zero/aliases,
-RV32 Illegal_Instr and symbolic invalid-mode branches with both prior-exception
-seeds are covered. The complete definitions retain all three mode queries for
-high products and leave canonical ARB unspecified.
-
-### Native division and remainder
-
-`l3_divide_probeScript.sml` captures 1456 whole-state equations for
-DIV/REM/DIVU/REMU/DIVW/REMW/DIVUW/REMUW. `check-l3-divide.py` requires
-exact label coverage and every value T; `L3DivideParity` kernel-checks the same
-inputs and states. Coverage includes zero divisors, signed truncation/overflow,
-word widths, register zero/aliases, RV32 illegal routes through the reviewed
-helper, and sixteen symbolic invalid-mode equations with both prior-exception
-seeds. Canonical ARB stays unspecified; full original equations are preserved.
-
-### Native FP sign injection and register moves
-
-`l3_fp_bits_probeScript.sml` captures 1920 whole-state FSGNJ/FSGNJN/FSGNJX
-S/D and FMV_X_S/FMV_S_X/FMV_X_D/FMV_D_X equations. `check-l3-fp-bits.py`
-requires the complete label set and every value T; `L3FPBitsParity` checks
-matching inputs in Lean. Independent raw numeric results cover sign combinations,
-NaN/infinity/subnormal payloads, register aliases and zero in all four
-architecture selectors. Whole-state expected routes use the reviewed
-writeFPRS/writeFPRD/writeGPR helpers, including their Dirty status and Delta
-updates and S upper32 preservation. FPRzero is writable; GPRzero is suppressed.
-These bit-only instructions perform no mode query or real rounding.
+`list_last_probeScript.sml` captures the complete original `LAST_DEF`, its generic type and zero hypotheses, replays the complete `LAST_CONS` proof, and checks the total case equation retaining the original unspecified `LAST []`. The primitive-recursive specification constrains cons lists only; the single shared `holLast` in `Flapjack/Misc/ListEl.lean` uses a dedicated opaque residual value, without asserting an equality to `HD []` or `ARB` or choosing a concrete missing value. This accessor is a prerequisite of the full StackRemove initializer state predicate.

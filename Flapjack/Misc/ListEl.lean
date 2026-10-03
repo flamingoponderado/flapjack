@@ -28,6 +28,37 @@ noncomputable def holHd {α : Type} [Nonempty α] : List α → α
   | [] => holHdNil α
   | h :: _ => h
 
+/-- Representation infrastructure for the independently unspecified `LAST []`.
+There is no separate HOL declaration for this residual value: the primitive
+recursive specification `LAST_DEF` constrains only cons lists. This dedicated
+opaque constant retains its per-type identity without equating it to `HD []`
+or the distinct HOL `ARB` constant. -/
+noncomputable opaque holLastNil (α : Type) [Nonempty α] : α
+
+/-- Exact HOL `LAST_DEF` (`listScript.sml:2052-2054`). The cons equation is
+implemented by singleton/longer-cons matching; the unspecified empty-list
+value is retained independently, without a concrete or shared `ARB` default. -/
+@[hol "HOL/src/list/src/listScript.sml" "LAST_DEF"]
+noncomputable def holLast {α : Type} [Nonempty α] : List α → α
+  | [] => holLastNil α
+  | [h] => h
+  | _ :: t@(_ :: _) => holLast t
+
+/-- Flapjack equation relating constructor matching to HOL's equality-guarded
+cons clause; this is comparison infrastructure for `LAST_DEF`, not a separately
+named upstream theorem. -/
+theorem holLast_cons {α : Type} [Nonempty α] (h : α) (t : List α) :
+    holLast (h :: t) = if t = [] then h else holLast t := by
+  classical
+  cases t <;> simp [holLast]
+
+/-- Complete original singleton and longer-cons conjunction. -/
+@[hol "HOL/src/list/src/listScript.sml" "LAST_CONS"]
+theorem holLastCons {α : Type} [Nonempty α] :
+    (∀ x : α, holLast [x] = x) ∧
+    (∀ (x y : α) (z : List α), holLast (x :: y :: z) = holLast (y :: z)) := by
+  constructor <;> intros <;> simp only [holLast]
+
 /-- Exact HOL `EL_def` (`listScript.sml:225-228`). -/
 @[hol "HOL/src/list/src/listScript.sml" "EL_def"]
 noncomputable def holEl {α : Type} [Nonempty α] : Nat → List α → α
