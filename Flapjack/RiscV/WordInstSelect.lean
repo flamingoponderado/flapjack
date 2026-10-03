@@ -440,7 +440,8 @@ def wordInstSelectAtom [Sub α] [Add α] [DecidableEq α] [OfNat α 0] [OfNat α
       let code := wordDeadSelectSeq leftPrelude rightPrelude
       (wordDeadSelectSeq code
         (.inst (.arith (.shift operator temp temp (.reg (temp + 1))))), .var temp)
-  | expression => (.assign temp expression, .var temp)
+  -- Original inst_select_exp is total: unmatched expressions select Skip.
+  | _ => (.skip, .var temp)
 termination_by expression => sizeOf expression
 decreasing_by
   all_goals first | decreasing_trivial | (simp [sizeOf] <;> omega)
@@ -674,7 +675,8 @@ def wordInstSelectProgram [Sub α] [Add α] [AndOp α] [OrOp α] [HXor α α α]
           wordDeadSelectSeq leftPrelude
             (wordDeadSelectSeq rightPrelude body)
       | .var source => .move 0 [(destination, source)]
-      | value => .assign destination value
+      -- Assign delegates unmatched normalized shapes to the same total Skip case.
+      | _ => .skip
   | .store address value => wordInstSelectStoreCake temp address value
   | .ite operator condition right thenBranch elseBranch =>
       .ite operator condition right
