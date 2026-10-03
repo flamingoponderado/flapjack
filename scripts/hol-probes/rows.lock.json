@@ -1586,6 +1586,12 @@
       "sha256": "75d37e258cceb89acb73dd0775ff0d185c39e03d43a72da128700d9f4c68ffe4"
     },
     {
+      "bytes": 2970,
+      "out": "l3_immediate_alu_probe.out",
+      "rows": 120,
+      "sha256": "0aad7d683153417a2632ea1538b72729dd3282ba56c70e46cfae353adf14ca56"
+    },
+    {
       "bytes": 913,
       "out": "l3_integer_load_mode_probe.out",
       "rows": 10,
@@ -1764,6 +1770,12 @@
       "out": "l3_scw_probe.out",
       "rows": 21,
       "sha256": "e203ae296995a60a7037a6d9c2185412b38958be0f72693edc82cbd9692ebd7f"
+    },
+    {
+      "bytes": 9658,
+      "out": "l3_set_less_probe.out",
+      "rows": 436,
+      "sha256": "5314604e00a91739b302f7d35e6f72a66e0c2cf0ad5cf9d2a41bb2dc472898b0"
     },
     {
       "bytes": 304,
@@ -1998,6 +2010,12 @@
       "out": "lab_to_target_initializer_interference_probe.out",
       "rows": 16,
       "sha256": "d3df4bf7537c9ae6e027859d4d9be10bb2cc7195cbe115b3084f38c62903492f"
+    },
+    {
+      "bytes": 8203,
+      "out": "lab_to_target_initializer_memory_separation_probe.out",
+      "rows": 10,
+      "sha256": "97be4f38ca69c8bd19d4457e5ed41d8adefbfa1f0ad53850a965f2bd0c3e1622"
     },
     {
       "bytes": 1110,
@@ -8330,6 +8348,12 @@
       "sha256": "ccad70f3042fde9b248da94ea847bb8e9c517464fd84d67cac0dd18fcf1f88db"
     },
     {
+      "out": "word_to_stack_comp_seq_full_probe.out",
+      "bytes": 9979,
+      "rows": 6,
+      "sha256": "bc585f75aa9f15d9e07507c9ad4c3c5c605ff672250ee000d77dd60654a8acdf"
+    },
+    {
       "out": "word_to_stack_comp_seq_non_none_probe.out",
       "bytes": 10011,
       "rows": 6,
@@ -9008,6 +9032,12 @@
       "sha256": "bf1d9991a783c4b5c14b719db78df835174fe15469bcece33ef5717230aa52c0"
     },
     {
+      "bytes": 1187,
+      "out": "wordsem_evaluate_consts_probe.out",
+      "rows": 6,
+      "sha256": "5e3e417abea37bebca00ebeb998b838b259db4e37147507e0302c2fdac9b9a06"
+    },
+    {
       "bytes": 2197,
       "out": "wordsem_evaluate_stack_max_probe.out",
       "rows": 21,
@@ -9038,10 +9068,22 @@
       "sha256": "487ce3607c0663f5f9892d76fd0bfb7a13e23930d69021ccf115ef091e9f1121"
     },
     {
+      "bytes": 814,
+      "out": "wordsem_no_install_code_probe.out",
+      "rows": 8,
+      "sha256": "4b6e08568782f16bba6708eb5eba31aa6ebdb4b924657f29f31e14e509408e4f"
+    },
+    {
       "out": "wordsem_pop_env_const_probe.out",
       "bytes": 617,
       "rows": 3,
       "sha256": "0bb9553a915ca459f5d986a7a4aee20f17d9249de93fb02c6f13ff1d7801b1a3"
+    },
+    {
+      "bytes": 4967,
+      "out": "wordsem_state_laws_probe.out",
+      "rows": 20,
+      "sha256": "0b385cc73030b1cedace843a139a6d2150785c9ca34e8a364cab4dbf5a5e48c4"
     },
     {
       "bytes": 106,
