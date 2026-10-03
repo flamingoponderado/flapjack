@@ -2516,6 +2516,12 @@
       "sha256": "756a35331f2d70e3a600d5d3704f0962fffd1f9cfcedc874d8e1abae6e422c85"
     },
     {
+      "bytes": 3324,
+      "out": "lab_to_target_semantics_make_init_probe.out",
+      "rows": 4,
+      "sha256": "44e16448826e95f776b84891799d56a1616849f0b46f49b5da53b57f1bb2c912"
+    },
+    {
       "bytes": 1511,
       "out": "lab_to_target_share_mem_domain_probe.out",
       "rows": 4,

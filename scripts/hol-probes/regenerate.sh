@@ -6538,3 +6538,7 @@ run_probe lab_filter_skip_runs_probeScript.sml lab_filter_skip_runs_probe.out \
 run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine_sem_eq_sem_probe.out \
   machine_sem_EQ_sem machine_sem_EQ_sem_types machine_sem_EQ_sem_hypotheses machine_sem_EQ_sem_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_semantics_make_init_probeScript.sml lab_to_target_semantics_make_init_probe.out \
+  semantics_make_init semantics_make_init_types semantics_make_init_hypotheses semantics_make_init_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

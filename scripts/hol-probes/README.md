@@ -6910,3 +6910,16 @@ is supplied. Existing total EL/HD and inherited FP real-rendering assurance
 (SOUNDNESS item8) remain unchanged. Full initializer/final-pass composition
 remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_machine_sem_eq_sem_probeScript.sml`.
+
+### Full native initializer semantics
+
+`lab_to_target_semantics_make_init_probeScript.sml` freshly captures the
+complete original derived theorem10524–10537, every original free variable
+type, zero hypotheses and kernel proof T. The native theorem retains all
+sixteen guards and the independent empty-label-tree value type G. Its complete
+empty-tree invariant is proved independent of the value type; actual full
+initializer state/oracle witnesses feed the whole machine behavior theorem.
+The conclusion retains exact initialized source semantics and machine
+behavior equality, with inherited real rendering (SOUNDNESS item8). Whole
+filtering/final-pass composition remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_semantics_make_init_probeScript.sml`.

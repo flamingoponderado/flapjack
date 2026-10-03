@@ -7,7 +7,11 @@ open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProp
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 /-- Full original initializer relation: complete seventeen-case assembly,
 all original binders/fourteen guards and the whole actual stateRel conclusion.
-No target relation or case proof is supplied by the caller. -/
+No target relation or case proof is supplied by the caller. The original
+independent gamma value type occurs only in the literal empty goodCode label
+tree; its two domains are empty and the value type is vacuous. It is normalized
+to Nat here; Initialization/Semantics.lean proves the complete guard
+independent of that empty-tree value type, retaining generic G in the consumer. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "IMP_state_rel_make_init" (words_as_type_indexed_bitvec)]
 theorem makeInit_stateRel {width : Nat} [NeZero width] {S Q : Type} {F : Type}
