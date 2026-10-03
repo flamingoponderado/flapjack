@@ -1,0 +1,11 @@
+"""Reject drift in original HOL universal equation captures."""
+from pathlib import Path
+EXPECTED = ['Fetch16_binders=s::riscv_state;xs::bool list;x0::bool;x1::bool;x2::bool;x3::bool;x4::bool;x5::bool;x6::bool;x7::bool;x8::bool;x9::bool;xA::bool;xB::bool;xC::bool;xD::bool;xE::bool;xF::bool;', 'Fetch16_statement=∀s xs x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF.', '  xs = [x0; x1; x2; x3; x4; x5; x6; x7; x8; x9; xA; xB; xC; xD; xE; xF] ∧', '  (s.c_MCSR s.procID).mstatus.VM = 0w ∧', '  s.MEM8 (s.c_PC s.procID + 1w) = v2w [x0; x1; x2; x3; x4; x5; x6; x7] ∧', '  s.MEM8 (s.c_PC s.procID) = v2w [x8; x9; xA; xB; xC; xD; xE; xF] ∧', '  ¬(xE ∧ xF) ⇒', '  Fetch s = (Half (v2w xs),s with c_Skip := s.c_Skip⦇s.procID ↦ 2w⦈)', 'Fetch16_hypotheses=0', 'Fetch16_proof=T', 'Fetch32_binders=s::riscv_state;xs::bool list;x0::bool;x1::bool;x2::bool;x3::bool;x4::bool;x5::bool;x6::bool;x7::bool;x8::bool;x9::bool;xA::bool;xB::bool;xC::bool;xD::bool;xE::bool;xF::bool;y0::bool;y1::bool;y2::bool;y3::bool;y4::bool;y5::bool;y6::bool;y7::bool;y8::bool;y9::bool;yA::bool;yB::bool;yC::bool;yD::bool;yE::bool;yF::bool;', 'Fetch32_statement=∀s xs x0 x1 x2 x3 x4 x5 x6 x7 x8 x9 xA xB xC xD xE xF y0 y1 y2 y3 y4 y5 y6 y7', '    y8 y9 yA yB yC yD yE yF.', '  xs =', '  [y0; y1; y2; y3; y4; y5; y6; y7; y8; y9; yA; yB; yC; yD; yE; yF; x0; x1;', '   x2; x3; x4; x5; x6; x7; x8; x9; xA; xB; xC; xD; xE; xF] ∧', '  (s.c_MCSR s.procID).mstatus.VM = 0w ∧', '  s.MEM8 (s.c_PC s.procID + 3w) = v2w [y0; y1; y2; y3; y4; y5; y6; y7] ∧', '  s.MEM8 (s.c_PC s.procID + 2w) = v2w [y8; y9; yA; yB; yC; yD; yE; yF] ∧', '  s.MEM8 (s.c_PC s.procID + 1w) = v2w [x0; x1; x2; x3; x4; x5; x6; x7] ∧', '  s.MEM8 (s.c_PC s.procID) = v2w [x8; x9; xA; xB; xC; xD; xE; xF] ∧ xE ∧ xF ⇒', '  Fetch s = (Word (v2w xs),s with c_Skip := s.c_Skip⦇s.procID ↦ 4w⦈)', 'Fetch32_hypotheses=0', 'Fetch32_proof=T', 'v2w8_type=:bool list -> word8', 'v2w16_type=:bool list -> word16', 'v2w32_type=:bool list -> word32']
+
+def check(text):
+    if text.splitlines() != EXPECTED:
+        raise ValueError("original HOL equation capture differs from reviewed full statements")
+
+if __name__ == "__main__":
+    check(Path(__file__).with_name("l3_fetch_theorems_probe.out").read_text())
+    print("fetch_theorems: exact original HOL types, hypotheses and universal equations PASS")

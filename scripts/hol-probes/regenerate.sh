@@ -6743,6 +6743,17 @@ run_probe pan_structs_exp_operators_faithful_probeScript.sml pan_structs_exp_ope
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_op_statement compile_exp_correct_op_proved eval_ind_full_statement compile_exp_correct_panop_statement compile_exp_correct_panop_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe pan_structs_exp_load_byte_faithful_probeScript.sml pan_structs_exp_load_byte_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_load_byte_statement compile_exp_correct_load_byte_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe l3_fetch_theorems_probeScript.sml l3_fetch_theorems_probe.out \
+  Fetch16_binders Fetch16_statement Fetch16_hypotheses Fetch16_proof Fetch32_binders Fetch32_statement Fetch32_hypotheses Fetch32_proof v2w8_type v2w16_type v2w32_type \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe pan_structs_exp_load32_faithful_probeScript.sml pan_structs_exp_load32_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_load32_statement compile_exp_correct_load32_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe lab_filter_map_probeScript.sml lab_filter_map_probe.out \
   not_skip_def_statement not_skip_def_types not_skip_def_hypotheses not_skip_def_proved filter_skip_def_statement filter_skip_def_types filter_skip_def_hypotheses filter_skip_def_proved filter_skip_MAP_statement filter_skip_MAP_types filter_skip_MAP_hypotheses filter_skip_MAP_proved \
   "$cake_dir/compiler/backend/lab_filterScript.sml" "$cake_dir/compiler/backend/proofs"

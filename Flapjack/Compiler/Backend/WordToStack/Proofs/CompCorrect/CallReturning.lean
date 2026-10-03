@@ -7,6 +7,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.FilterBitmap
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
@@ -2027,5 +2029,47 @@ theorem restoredCallerLookup {width : Nat} [NeZero width] {C F : Type}
     simp only [WordSemStateFiniteExact.setVars, lookup_alist_insert_any,
       sptLookup_sptUnion, sptLookup_sptFromAList, savedLookup]
     cases holAlookup (values.zip returned) key <;> cases sptAListLookup key gc <;> rfl
+
+/-- Recover the actual saved NONE frame's GC and non-GC slot observations
+from the complete stack relation. The bitmap and concrete frame are derived
+from successful abstraction; GC membership is derived from the actual bitmap
+filter. No slot correspondence or bounds are added as premises. This is
+case-local factoring of the normal-return restoration proof, not a separate
+HOL declaration or a completed caller relation. -/
+theorem savedCallerFrameSlots {width handlerWidth : Nat}
+    [NeZero width] [NeZero handlerWidth]
+    (k handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (targetHandler : Option (WordLocW handlerWidth)) (stack : List (WordLocW width))
+    (length : Nat) (bitmaps : List (BitVec width)) (frame : Nat) (lens : List Nat)
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      targetHandler stack length bitmaps (frame :: lens)) :
+    ∃ bitmap rest bits, stack = bitmap :: rest ∧
+      StackSem.fullReadBitmap bitmaps bitmap = some bits ∧
+      bits.length = frame ∧ frame ≤ rest.length ∧
+      (∀ key value, sptAListLookup key gc = some value →
+        key / 2 - k < (rest.take frame).length ∧
+        (rest.take frame)[(rest.take frame).length - (key / 2 - k + 1)]? = some value) ∧
+      (∀ key value, nonGC.lookup key = some value → gc.lookup key = none →
+        adjustNames key < k + bits.length ∧
+        bits[k + bits.length - (adjustNames key + 1)]? = some false ∧
+        (indexList (rest.take frame) k).lookup (key / 2) = some value) := by
+  obtain ⟨_, abstract, decoded, _, auxiliary⟩ := relation
+  obtain ⟨bitmap, rest, bits, ys, shape, read, bitsLength, bound, _, abstractShape⟩ :=
+    CallReturnSupport.absStack_cons_none bitmaps size nonGC gc tail stack frame lens abstract decoded
+  rw [abstractShape] at auxiliary
+  simp only [stackRelAux] at auxiliary
+  refine ⟨bitmap, rest, bits, shape, read, bitsLength, bound, ?_, auxiliary.1⟩
+  intro key value lookup
+  have member := sptAListLookup_mem key gc value lookup
+  have mapped : (adjustNames key, value) ∈ gc.map (fun p => (adjustNames p.1, p.2)) :=
+    List.mem_map.mpr ⟨(key, value), member, rfl⟩
+  have indexMember := Compiler.Backend.WordToStack.filterBitmapMem bits
+    (indexList (rest.take frame) k) _ (adjustNames key, value) auxiliary.2.1 mapped
+  have indexBound := memIndexListLim (rest.take frame) (adjustNames key) value k indexMember
+  have slot := memIndexListEl (rest.take frame) (adjustNames key) value k indexMember
+  simp only [adjustNames] at indexBound slot
+  refine ⟨indexBound, ?_⟩
+  rw [List.getElem?_eq_getElem (by omega), slot]
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
