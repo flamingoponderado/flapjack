@@ -8054,10 +8054,10 @@
       "sha256": "e7b441b17671ce6b63eb6c478b30cf7d56a149d8bb6e09818a40d615487ff738"
     },
     {
-      "bytes": 1731,
+      "bytes": 3943,
       "out": "stack_to_lab_encoding_init_state_probe.out",
-      "rows": 6,
-      "sha256": "e4b8ce2bf1be55a600c2bfa0d75f9ea41e47540bf1f084c4b6225980b6a1c81a"
+      "rows": 9,
+      "sha256": "a751075bcfea33d2b7b0950cbd8eefe78fbc1ffc63cd63ae12827a0c43ab747d"
     },
     {
       "bytes": 718,

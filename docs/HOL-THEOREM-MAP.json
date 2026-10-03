@@ -88163,6 +88163,15 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_to_lab_compile_all_enc_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "stackToLabCompileAllEncOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3678-3703. Statement as captured by the stack_to_lab_encoding_init_state probe: the twenty premises in HOL order (EVERY stack_asm_name/stack_asm_remove over prog as membership quantifiers; names_ok c1.reg_names c.reg_count c.avoid_regs as namesOkSptHOL; fixed_names; addr_offset_ok c 0w; good_dimindex; byte_offset_ok c 0w; the max_stack_alloc valid_imm family with n2w (n * (dimindex (:'a) DIV 8)) as BitVec.ofNat width (n * (width / 8)); valid_imm (INL Add) 1w/(INL Sub) 1w/(INL Add) 4w/8w; store offsets; reg_name 10, sp+2, sp+1, sp; conf_ok (:'a) c2 as DataToWord.confOk width c2; sp ≠ 0) ⇒ all_enc_ok_pre c (compile c1 c2 c3 sp c.addr_offset prog), the HOL overload all_enc_ok_pre rendered by the untagged allEncOkPreHOL (EVERY sec_ok_pre) over the reviewed StackToLab.compile; c : 'a asm_config shares the program width (probe types); free variables implicit. The proof composes the ported compile_all_enc_ok_pre, stack_names_stack_asm_ok, stack_remove_stack_asm_name, stack_allocProof stack_alloc_stack_asm_convs and stack_rawcallProof stack_alloc_stack_asm_convs, as HOL does. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
     "hol_name": "stack_get_handler_labels_comp",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/HandlerLabels.lean",

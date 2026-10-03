@@ -35,3 +35,6 @@ val _ = type_list "EVERY_sec_ends_with_label_MAP_prog_to_section_statement_types
 val _ = checked "full_make_init_has_fp_ops_statement" full_make_init_has_fp_ops;
 val _ = typed_statement "full_make_init_has_fp_ops_statement_typed" full_make_init_has_fp_ops;
 val _ = type_list "full_make_init_has_fp_ops_statement_types" full_make_init_has_fp_ops;
+val _ = checked "stack_to_lab_compile_all_enc_ok_statement" stack_to_lab_compile_all_enc_ok;
+val _ = typed_statement "stack_to_lab_compile_all_enc_ok_statement_typed" stack_to_lab_compile_all_enc_ok;
+val _ = type_list "stack_to_lab_compile_all_enc_ok_statement_types" stack_to_lab_compile_all_enc_ok;
