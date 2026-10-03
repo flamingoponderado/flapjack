@@ -7431,3 +7431,6 @@ The strict checker validates complete statements/types/zero hypotheses/kernel
 generic consumers preserve these carriers and conclusions. These two original
 rewrite prerequisites do not discharge target-state/step correctness or assert
 HOL-to-Lean equivalence from a finite fixture.
+`word_to_stack_register_update_probeScript.sml` replays the unchanged original
+state_rel_set_var statement and literal proof2930–2951, with closed hypothesis
+and proved sentinels. This is regression evidence, not cross-language equivalence.

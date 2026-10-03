@@ -81394,5 +81394,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelRegisterUpdate.lean",
+    "lean_name": "stateRelSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: original2930-2951 retains full state_rel, x<k and simultaneous source set_var(2*x)/target set_var x, arbitrary extra/value/all state fields. Canonical five finite-map fields and positive width translation as qualified. Spt locals insertion preserves wf and exact lookup; evenness derives unchanged register identities. Inherited reals_as_rational_cuts remains unchanged; no numerical FP claim. Fresh original statement and literal proof replay passed with zero hypotheses; qualification records only the named translations."
   }
 ]
