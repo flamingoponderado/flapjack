@@ -6799,3 +6799,6 @@ run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tic
 run_probe pan_structs_value_shape_conversion_probeScript.sml pan_structs_value_shape_conversion_probe.out \
   shape_of_convert_v_statement shape_of_convert_v_types shape_of_convert_v_hypotheses shape_of_convert_v_proved shape_of_convert_v_ind_statement shape_of_convert_v_ind_types shape_of_convert_v_ind_proved shape_of_convert_v_rev_statement shape_of_convert_v_rev_types shape_of_convert_v_rev_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_filter_semantics_probeScript.sml lab_filter_semantics_probe.out \
+  state_rel_IMP_sem_EQ_sem state_rel_IMP_sem_EQ_sem_types state_rel_IMP_sem_EQ_sem_hypotheses state_rel_IMP_sem_EQ_sem_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
