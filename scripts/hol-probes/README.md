@@ -7163,3 +7163,8 @@ Op/Panop specializations and eval_ind. Both native cases retain all seven
 hypotheses and three conclusions, using only original per-member IHs. Source
 success supplies the word guard, discharging conversion identity before the
 original operation is evaluated on the converted list.
+
+`pan_structs_exp_load_byte_faithful_probe` captures the full original theorem,
+LoadByte specialization and eval_ind. Native case retains all seven hypotheses
+and three conclusions, deriving the byte load from source success and actual
+preservation of memory/domain/byte order, using only the original child IH.

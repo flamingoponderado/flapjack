@@ -1233,6 +1233,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
