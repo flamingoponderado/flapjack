@@ -1862,6 +1862,12 @@
       "sha256": "015666c06f36623bcced63df602032686148a245b615e188de66cb9baa8f9204"
     },
     {
+      "bytes": 20455,
+      "out": "lab_to_target_bytes_in_memory_fetch_probe.out",
+      "rows": 32,
+      "sha256": "adb1e2806992e3d0798847f6d2215b7ba79f41128fd20c07e2af983b96b4e10c"
+    },
+    {
       "bytes": 701,
       "out": "lab_to_target_code_label_position_padding_probe.out",
       "rows": 12,
@@ -2030,6 +2036,18 @@
       "sha256": "97be4f38ca69c8bd19d4457e5ed41d8adefbfa1f0ad53850a965f2bd0c3e1622"
     },
     {
+      "bytes": 12134,
+      "out": "lab_to_target_inst_helpers_probe.out",
+      "rows": 54,
+      "sha256": "487144be39ac821ea1d153b5aab673e30b5b541d2aa821d373a87b98723344cb"
+    },
+    {
+      "bytes": 1315,
+      "out": "lab_to_target_inst_lemma_probe.out",
+      "rows": 2,
+      "sha256": "bf550623d5c85709a4a0f475a3629f80d85e6a5e8ec2e9fcc86ad257034266df"
+    },
+    {
       "bytes": 1110,
       "out": "lab_to_target_label_existence_domain_probe.out",
       "rows": 16,
@@ -2184,6 +2202,12 @@
       "out": "lab_to_target_nop_padding_probe.out",
       "rows": 13,
       "sha256": "4f377ea21375473118e3f1bd2f7a64a7b636b90f276b8885f4f98ad4ccf37184"
+    },
+    {
+      "bytes": 5494,
+      "out": "lab_to_target_nop_steps_probe.out",
+      "rows": 12,
+      "sha256": "fa415c05558f90c0fa2304cdc93b4db4d1e5b302bc6799ea664e1c1effeca0c1"
     },
     {
       "bytes": 1531,

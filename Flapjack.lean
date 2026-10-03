@@ -590,6 +590,7 @@ import Flapjack.Compiler.Encoders.AsmProps.Assertions
 import Flapjack.Compiler.Backend.StackProps.LabelSafety
 import Flapjack.Compiler.Backend.Parmove.FstepMapInj
 import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
+import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
 import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
@@ -606,6 +607,15 @@ import Flapjack.Compiler.Backend.LabToTarget.AsmUpdates
 import Flapjack.Compiler.Backend.BackendProps
 import Flapjack.Compiler.Backend.LabToTarget.Interference
 import Flapjack.Compiler.Backend.LabToTarget.NopEncoding
+import Flapjack.Compiler.Backend.LabToTarget.NopSteps
+import Flapjack.Compiler.Backend.LabToTarget.BytesInMemoryFetch
+import Flapjack.Byte.GetSetByte
+import Flapjack.Misc.GetByteSetByte
+import Flapjack.Compiler.Backend.LabToTarget.InstAlignment
+import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
+import Flapjack.Compiler.Backend.LabToTarget.InstFrame
+import Flapjack.Compiler.Backend.LabToTarget.InstMem
+import Flapjack.Compiler.Backend.LabToTarget.InstLemma
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
