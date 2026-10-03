@@ -72432,5 +72432,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): full original comp_correct goal 5719-5751 specialized only at Alloc (source proof 5798-5852), same statement shape as the reviewed compCorrectAssign/Store rows: arbitrary register/cutsets/frame/state/result/bitmap parameters; all eleven original premises retained (native WordSem evaluation, result <> SOME Error, state_rel k f f', post_alloc_conventions, flat_exp_conventions, native comp equation, three bitmap-counter/isPREFIX guards, get_labels/loc_check, max_var bound); conclusion is the full existential target clock/run/result with compCorrectResult. Proof follows HOL: conventions give register 2 and even stack-placed cutset names; state_rel_get_var_imp' moves variable 2 to register 1; f >= 1 uses evaluate_wLive then alloc_IMP_alloc, f = 0 derives empty cutset domains from max_var and uses alloc_IMP_alloc2; clock 0. No target run, simulation law or successful-execution premise added. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through the evaluator closure; no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/FFI.lean",
+    "lean_name": "compCorrectFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.8): full original comp_correct goal 5719-5751 specialized only at FFI (source proof 7125-7171), same statement shape as the reviewed compCorrectAssign/Store/Alloc rows: arbitrary ffi index, argument registers, cutsets, frame, states, result and bitmap parameters; all eleven original premises retained; full existential target clock/run/result conclusion with compCorrectResult. Proof follows HOL: post_alloc_conventions fixes ptr1/len1/ptr2/len2 = 2/4/6/8 and puts cutset names on the stack; state_rel moves source variables 2/4/6/8 to target registers 1-4; memory/mdomain/be/ffi agree so the byte reads and call_FFI coincide; FinalFFI gives equal ffi/clock; the returning branch relates the cut environment (stack-placed names only, so the restricted target registers are unobservable) with clock 0. No target run, simulation law or successful-execution premise added. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through the evaluator closure; no numerical FP assertion."
   }
 ]
