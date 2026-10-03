@@ -7342,6 +7342,13 @@ run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.ou
   compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_decl_statement compile_decls_correct_decl_proved compile_decls_correct_decl_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_shapes_wf_probe.out \
+  is_wf_shape_compile_shape_statement is_wf_shape_compile_shape_proved is_wf_shape_compile_shape_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
+  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \
   lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \

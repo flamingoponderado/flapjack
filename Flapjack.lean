@@ -1,6 +1,7 @@
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.Loc
 import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningFull
@@ -705,6 +706,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
 import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
 import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
+import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
@@ -1389,6 +1391,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
+import Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion

@@ -4928,6 +4928,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 418,
+      "out": "pan_structs_compiled_shapes_wf_probe.out",
+      "rows": 3,
+      "sha256": "f97845d48ae0f269843dcaabe3e7fce16276b3a09c112061d98778e13b917b64"
+    },
+    {
       "bytes": 319,
       "out": "pan_structs_convert_code_locals_probe.out",
       "rows": 3,
@@ -10050,6 +10056,12 @@
       "out": "word_to_stack_map_fst_probe.out",
       "rows": 4,
       "sha256": "e53cb678e1fdbd30b25d31353606b3625bace978dcb211004bf07d2db5dabf93"
+    },
+    {
+      "out": "word_to_stack_move_aux_probe.out",
+      "sha256": "fe5139f7754e6f481b09947a69d883b22e5b52a8008178f4c0a370629090f479",
+      "bytes": 204,
+      "rows": 3
     },
     {
       "out": "word_to_stack_move_div2_probe.out",

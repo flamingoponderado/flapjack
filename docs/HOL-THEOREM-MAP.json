@@ -86158,6 +86158,79 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CanonicalRegs.lean",
+    "lean_name": "canonicalRegsCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-canonical-regs-correct): word_cseProof95-104 retains arbitrary knowledge/register/state and exactly data_inv as premise, concluding get_var canonicalRegs = get_var original. Missing/default and present canonical bindings both covered; proof uses only original sem_inv alias conjunct. Faithful WordSemStateFiniteExact and complete native dataInv preserve original Spt locals/knowledge, full positive-width WordLocW and universe-zero configuration/FFI parameters. Canonical fpRegs/store fields use same-module genuine broad/exact owning-state roundtrip, standard words qualifier only; imported dataInv declaration closure inherits the existing IEEE reals_as_rational_cuts dependency under docs/SOUNDNESS.md item 8, explicitly recorded without an extra theorem hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CanonicalRegs.lean",
+    "lean_name": "canonicalRegsAvoidCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs'_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-canonical-regs-correct): word_cseProof106-110 retains arbitrary avoid/data/register/state and exactly data_inv, with full avoid-branch get_var equality, no avoid inequality or successful binding premise. Faithful WordSemStateFiniteExact and complete native dataInv preserve original Spt locals/knowledge, full positive-width WordLocW and universe-zero configuration/FFI parameters. Canonical fpRegs/store fields use same-module genuine broad/exact owning-state roundtrip, standard words qualifier only; imported dataInv declaration closure inherits the existing IEEE reals_as_rational_cuts dependency under docs/SOUNDNESS.md item 8, explicitly recorded without an extra theorem hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CanonicalRegs.lean",
+    "lean_name": "canonicalRegsCorrectBis",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_correct_bis",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-canonical-regs-correct): word_cseProof112-119 retains arbitrary data/register/state and soledata_inv input, concluding exact Spt locals lookup equality including absent/Word/Loc values; derives by original get_var definition, with no Word-only or target-run premise. Faithful WordSemStateFiniteExact and complete native dataInv preserve original Spt locals/knowledge, full positive-width WordLocW and universe-zero configuration/FFI parameters. Canonical fpRegs/store fields use same-module genuine broad/exact owning-state roundtrip, standard words qualifier only; imported dataInv declaration closure inherits the existing IEEE reals_as_rational_cuts dependency under docs/SOUNDNESS.md item 8, explicitly recorded without an extra theorem hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompiledShapesWf.lean",
+    "lean_name": "compiledWf",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private mutual-induction infrastructure; single-shape projection supports full original theorem, no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompiledShapesWf.lean",
+    "lean_name": "isWfShapeCompileShape",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "is_wf_shape_compile_shape",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol compared full original298-308 and compiler213-independent shape definition/induction. Both unconditional conjuncts retained: arbitrary MlS x alpha target context, original MlS x List(MlS x shape) compilation context, single compiled shape and EVERY over compiled shape list. Generic target payload alpha retained after accepted in-place PanLang predicate repair; no source-WF or target-result premise, no String/cache carrier. HOL EVERY encoded by forall list member, BOOL truth by equality true. Mutual compile_shape induction handles scalar/comb/named dropWhile hit/miss and list nil/cons; named expansion strictly removes names. Full source nested bound types/closed theorem capture accompany port. Production routing remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveAux.lean",
+    "lean_name": "wMoveAuxThm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wMoveAux_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 Move evaluator prerequisite: full original wMoveAux_thm2856-2867. Both original empty and cons evaluator equalities retain arbitrary formatted moves/frame/targetstate and every result including failure. Native singleton is literal wMoveSingle; trailing Skip equality derives actual evaluateClock bound, not a supplied successful evaluation or postclock premise. Canonical imported target finite-map fields with same-module genuine codec roundtrip; List/Sum/Nat products unchanged, positive type-indexed words/Type0 host. Inherits reals_as_rational_cuts evaluator closure limit, no new FP correspondence or cross-language equivalence. Fresh literal original whole HOL proof replay with full statement/closed hypotheses. Entire move-list simulation remains open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "riscv_encoder_correct",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Loc.lean",

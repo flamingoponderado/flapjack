@@ -7718,6 +7718,13 @@ empty-locals initializer and declared-shape guarded tail IH. Final-context code
 transport and global update conversion are derived internally. Whole declaration
 correctness and executed compiler routing remain separately open.
 
+`pan_structs_compiled_shapes_wf_probe` captures the entire original mutual
+compiled-shape well-formedness theorem, kernel truth, and quantified types from
+both nested conjuncts. The target context retains arbitrary payload alpha;
+the compilation context retains original MlS field names. Both unconditional
+single-shape and EVERY list conclusions are ported without source-WF premises.
+This is a prerequisite for original Function/ExnDecl declaration minors.
+
 ### Native Loc and upper-immediate decoder evidence
 
 `riscv_upper_decode_probeScript.sml` captures eight original HOL LUI/AUIPC Encode/Decode boundary EVALs (zero, all ones, sign bit, positive maximum). All are `T`; these finite oracles supplement the unconditional Lean proofs over every intrinsic register/immediate bitvector, and do not constitute a universal HOL proof.
