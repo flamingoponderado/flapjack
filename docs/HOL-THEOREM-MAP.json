@@ -84989,5 +84989,21 @@
     "hol_name": "default_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: clos_to_bvlScript687-705 literal seven-field config retains Nat next_loc/start/max_app, Bool do_mti/do_call, Option actual ClosKnown.Config and call_state num_set # (num,num # ClosLang.Exp) alist. NumSet=Spt Unit, alist=List(Nat x (Nat x Exp)); no raw finite-map or generic syntax parameter. Exact default next_loc0/start1/do_mtiT/known_conf SOME(clos_known default_config10)/do_callT/call_state(LN,[])/max_app10. Full source/default types captured; no omitted unused fields, extra defaults or executed production-adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Bvl/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/bvlScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: complete original bvl exp datatype, all 9 constructors in original order, literal Nat/Option Nat/List Exp and actual ClosLang.Op. BVL Handle retained; BVI Call optional handler and full multi-value LetCall/Return retained; Force has two Nat payloads. No arbitrary Op parameter, omitted case, changed recursive carrier or evaluator/wholecompiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Bvi/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/bviScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: complete original bvi exp datatype, all 10 constructors in original order, literal Nat/Option Nat/List Exp and actual ClosLang.Op. BVL Handle retained; BVI Call optional handler and full multi-value LetCall/Return retained; Force has two Nat payloads. No arbitrary Op parameter, omitted case, changed recursive carrier or evaluator/wholecompiler claim."
   }
 ]
