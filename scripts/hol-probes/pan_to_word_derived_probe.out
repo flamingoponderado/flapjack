@@ -1,0 +1,6 @@
+ALL_DISTINCT_MAP_INJ_o=∀(f :α -> β).
+  (∀(x :α) (y :α).
+     MEM x (MAP (FST :α # ε -> α) (xs :(α # ε) list)) ∧
+     MEM y (MAP (FST :α # ε -> α) xs) ∧ f x = f y ⇒
+     x = y) ∧ ALL_DISTINCT (MAP (FST :α # ε -> α) xs) ⇒
+  ALL_DISTINCT (MAP (λ(x :α # ε). f (FST x)) xs)

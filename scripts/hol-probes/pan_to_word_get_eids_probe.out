@@ -15,6 +15,35 @@ lookup_first_name_compile_prog_main=FLOOKUP
        (compile_prog (c :architecture) crep_code :
         (num # num list # α loopLang$prog) list)) =
   SOME (([] :num list),prog)
+FLOOKUP_make_funcs_main=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
+SOME (([] :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
+FLOOKUP
+  (make_funcs
+     (compile_prog (compile_top pan_code main :α decl list) :
+      (mlstring # num list # α crepLang$prog) list) :mlstring |-> num # num)
+  main = SOME (first_name,(0 :num))
+pan_to_word_compile_shape_no_name=∀(ctxt :(mlstring # (α # shape) list) list) (n :num) (sh :shape).
+  is_wf_shape_nil (compile_shape_n ctxt n sh)
+size_decs_stcnames_compile_decs_structs=∀(s :(α, β) panSem$state) (pan_code :α decl list) (ctxt :pan_structs$context)
+    (s' :(α, β) panSem$state) (code' :α decl list)
+    (ctxt' :pan_structs$context).
+  evaluate_decls s pan_code = SOME s' ∧
+  (compile_decs ctxt pan_code :α decl list # pan_structs$context) =
+  (code',ctxt') ∧ struct_infos_ok s.structs ∧
+  FEVERY (λ((nm :mlstring),(v :α panSem$v)). is_wf_shape_v s.structs v)
+    s.globals ∧
+  ctxt.structs =
+  MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) s.structs ⇒
+  MAP size_of_shape (dec_shapes code') =
+  MAP (size_of_sh_with_ctxt s.structs) (dec_shapes pan_code)
+semantics_size_decs_stcnames_compile_structs=semantics_decls (s :(α, β) panSem$state) (nm :mlstring)
+  (pan_code :α decl list) ≠ Fail ∧
+s.globals = (FEMPTY :mlstring |-> α panSem$v) ⇒
+MAP size_of_shape (dec_shapes (compile_top pan_code :α decl list)) =
+MAP
+  (size_of_sh_with_ctxt
+     (THE (decs_stcnames ([] :(mlstring # struct_info) list) pan_code)))
+  (dec_shapes pan_code)
 size_of_eids_compile_top=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
 SOME ((args :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
 size_of_eids (compile_top pan_code main :α decl list) = size_of_eids pan_code
