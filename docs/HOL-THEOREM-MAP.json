@@ -84789,5 +84789,22 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5994-6051 full arbitrary-length copy_words_correct. Arbitrary words/prefix/suffix/address/offset/domain/memory; retains exactly const_addresses and good_dimindex guards. Complete actual copyWordsExact on native constWordsToBitmapW words LENGTH words equals SOME modular address plus bytes_in_word*n2w total length and whole const_writes memory. No chunk-length restriction, target-run assumption or simplified evaluator. Native TAKE/DROP recursion and accepted full shortchunk/pattern/MSB and const_addresses/const_writes append laws used. Prop-domain set maps via decide to native Bool addresses; word_loc memory is total function. Only words_as_type_indexed_bitvec word translation. Kernel checked and original literal full proof replay."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",
+    "lean_name": "addToData",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "add_to_data_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-native-add-wrapper): word_cseScript385-389 computes instToNumList adjusted then add_to_data_aux data r key (Inst original), retaining arbitrary adjusted and original instructions and the complete knowledge/program result. Lean uses the reviewed full HolInst width carrier and its constructor-for-constructor toWordLangInst codec for the WordLangProgHOL Inst payload, preserving Skip/Const/Arith/Mem/Fp without successful codec, eligibility, parity, invariant or evaluation premises. Positive BitVec width/NeZero is the standard HOL word dimension translation; no other statement or behavior differences. This is the native definition only; executed producer correspondence and complete CSE route remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/IntersectionInvariant.lean",
+    "lean_name": "invariantBmInterEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "invariant_bm_inter_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-intersection-invariant): word_cseProof611-619 quantifies arbitrary two balanced maps and assumes exactly their native listCmp invariants, concluding the invariant of bm_inter_eq. Lean retains the generic payload alpha (not Nat), both original input invariants, original numeral-list key comparator, cached-size/native tree carrier and full output invariant. DecidableEq alpha implements HOL payload equality for the reviewed literal intersection; no additional proposition or run, lookup, output-relation assumption is imposed. The private invariant-only structural induction traverses right then left and uses original insertThm; it is not tagged as bm_inter_eq_acc_thm, whose arbitrary semantic-key lookup conclusion remains open. Native invariants preserve all original cached-size, ordering, balance and recursive conjuncts."
   }
 ]

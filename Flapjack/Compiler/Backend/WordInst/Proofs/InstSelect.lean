@@ -964,7 +964,7 @@ theorem instSel_aux (c : AsmConfigExact width) (temp : Nat) :
         rw [e1, e2]
         by_cases hz : st.clock = 0
         · have hz' : ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
-          rw [if_pos hz'] 
+          rw [if_pos hz']
           rw [if_pos hz, Prod.mk.injEq] at he
           obtain ⟨rfl, rfl⟩ := he
           exact ⟨_, rfl, lrPost_refl temp _ _⟩

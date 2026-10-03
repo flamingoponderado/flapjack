@@ -671,6 +671,7 @@ import Flapjack.Compiler.Backend.WordCse.Knowledge
 import Flapjack.Compiler.Backend.WordCse.RegisterData
 import Flapjack.Compiler.Backend.WordCse.ProductionKnowledge
 import Flapjack.Compiler.Backend.WordCse.ProductionFactInsert
+import Flapjack.Compiler.Backend.WordCse.ProductionConst
 import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
 import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
@@ -683,6 +684,7 @@ import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
