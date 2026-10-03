@@ -6843,3 +6843,17 @@ eight-command non-instrumented sequence, proved=T, and zero hypotheses are
 captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
 registers and order; this equation neither assumes nor proves target execution
 or full Raise correctness.
+
+### Native FP memory instructions
+
+`l3_fp_memory_probeScript.sml` and `L3FPMemoryParity` compare 256 whole-state
+FLW/FLD/FSW/FSD equations with independently calculated addresses and payloads.
+Eight inputs cover signed offsets, wrapping/misaligned addresses, sourcezero,
+raw upper32 bits and zero/high/all-one byte memory; four FP registers include
+zero and aliases, on cores7/255. Both Mbare bypass and Mbb/User fault routes
+retain arbitrary prior exception/unrelated state. Expected success routes use
+reviewed raw memory/direct FPR writers, not arithmetic Dirty wrappers.
+The complete definitions additionally preserve arbitrary translation outcomes,
+TLB/pagewalk updates and invalid-mode ARB; these are outside this finite sample.
+`check-l3-fp-memory.py` requires every unique label and original value T.
+This regression evidence supplements source review, not full equivalence.

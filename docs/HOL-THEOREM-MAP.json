@@ -74512,5 +74512,37 @@
     "hol_name": "dfn'FETCH_FAULT_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.1.31 literal line10745: entire fixedword64 address/full riscv_state/SupervisorCSR clause, same quantifiers/no premises. writeSCSR currentcore function update. MRTS source-ordered scause from mcause, sbadaddr from mbadaddr, sepc from mepc writes, then MCSR.mstatus.MPRV privLevel Supervisor1 and NextFetch SOME Mrts. Fetch routes signalAddressException retaining SOME full address and exact Fetch_Misaligned/Fetch_Fault; only NextFetch currentcore changes, arbitrary prior exception/core/otherstate retained. Canonical unspecified trap overwritten at both fields, no default or targetrun/mode premise. Existing reviewed helper owners imported, not duplicated. Fresh original39 whole-state T rows with independent direct record-update expected states and matching kernel fixtures. Run remains OPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPMemory.lean",
+    "lean_name": "«dfn'FLW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.2.12 literal line8566: complete full native riscv_state word5 registers/word12 offset clauses; all quantified parameters and branches preserved with no extra premise. Full GPR original-state plus signExtend12to64 offset, translateAddr Data Read/Write, success forwards returned state to direct writeFPRS(low32 rawReadData)/writeFPRD(raw64) for loads, not arithmetic Dirty wrappers. Stores read FPRS/FPRD from translation-returned state, zeroextend S32to64 then rawWriteData4 or fullD64 rawWriteData8. NONE signals original virtual address Load_Fault/Store_AMO_Fault on returned state. No mode/alignment/core/success/targetrun hypothesis; canonical undefined MMU modes retain ARB. All42 closure owners reviewed except four newly added roots. Fresh256 original whole-state T rows with matching kernel fixtures, independent numeric address/payload expected through reviewed memory/FPR writer helpers; helper reuse is not an independent transition equivalence theorem. Numeric fixtures bypass/fault include FPRzero and arbitrary prior state; full clauses retain TLB/pagewalk and invalid-mode paths outside finite fixture sample. Full Run/Next remainOPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPMemory.lean",
+    "lean_name": "«dfn'FSW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.2.12 literal line8597: complete full native riscv_state word5 registers/word12 offset clauses; all quantified parameters and branches preserved with no extra premise. Full GPR original-state plus signExtend12to64 offset, translateAddr Data Read/Write, success forwards returned state to direct writeFPRS(low32 rawReadData)/writeFPRD(raw64) for loads, not arithmetic Dirty wrappers. Stores read FPRS/FPRD from translation-returned state, zeroextend S32to64 then rawWriteData4 or fullD64 rawWriteData8. NONE signals original virtual address Load_Fault/Store_AMO_Fault on returned state. No mode/alignment/core/success/targetrun hypothesis; canonical undefined MMU modes retain ARB. All42 closure owners reviewed except four newly added roots. Fresh256 original whole-state T rows with matching kernel fixtures, independent numeric address/payload expected through reviewed memory/FPR writer helpers; helper reuse is not an independent transition equivalence theorem. Numeric fixtures bypass/fault include FPRzero and arbitrary prior state; full clauses retain TLB/pagewalk and invalid-mode paths outside finite fixture sample. Full Run/Next remainOPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPMemory.lean",
+    "lean_name": "«dfn'FLD»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FLD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.2.12 literal line9458: complete full native riscv_state word5 registers/word12 offset clauses; all quantified parameters and branches preserved with no extra premise. Full GPR original-state plus signExtend12to64 offset, translateAddr Data Read/Write, success forwards returned state to direct writeFPRS(low32 rawReadData)/writeFPRD(raw64) for loads, not arithmetic Dirty wrappers. Stores read FPRS/FPRD from translation-returned state, zeroextend S32to64 then rawWriteData4 or fullD64 rawWriteData8. NONE signals original virtual address Load_Fault/Store_AMO_Fault on returned state. No mode/alignment/core/success/targetrun hypothesis; canonical undefined MMU modes retain ARB. All42 closure owners reviewed except four newly added roots. Fresh256 original whole-state T rows with matching kernel fixtures, independent numeric address/payload expected through reviewed memory/FPR writer helpers; helper reuse is not an independent transition equivalence theorem. Numeric fixtures bypass/fault include FPRzero and arbitrary prior state; full clauses retain TLB/pagewalk and invalid-mode paths outside finite fixture sample. Full Run/Next remainOPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/FPMemory.lean",
+    "lean_name": "«dfn'FSD»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'FSD_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.2.12 literal line9489: complete full native riscv_state word5 registers/word12 offset clauses; all quantified parameters and branches preserved with no extra premise. Full GPR original-state plus signExtend12to64 offset, translateAddr Data Read/Write, success forwards returned state to direct writeFPRS(low32 rawReadData)/writeFPRD(raw64) for loads, not arithmetic Dirty wrappers. Stores read FPRS/FPRD from translation-returned state, zeroextend S32to64 then rawWriteData4 or fullD64 rawWriteData8. NONE signals original virtual address Load_Fault/Store_AMO_Fault on returned state. No mode/alignment/core/success/targetrun hypothesis; canonical undefined MMU modes retain ARB. All42 closure owners reviewed except four newly added roots. Fresh256 original whole-state T rows with matching kernel fixtures, independent numeric address/payload expected through reviewed memory/FPR writer helpers; helper reuse is not an independent transition equivalence theorem. Numeric fixtures bypass/fault include FPRzero and arbitrary prior state; full clauses retain TLB/pagewalk and invalid-mode paths outside finite fixture sample. Full Run/Next remainOPEN."
   }
 ]

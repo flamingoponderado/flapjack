@@ -267,6 +267,7 @@
     {"bytes": 179, "out": "l3_ext_status_probe.out", "rows": 6, "sha256": "76352b17c4519093cfacd43daafdab4714c06e12b90906e82a6339dbe3f4dd31"},
     {"bytes": 10113, "out": "l3_fetch_primitives_probe.out", "rows": 282, "sha256": "fbc0e648d577585b21a9c29138a91cf2f649177b5ba1c112ccf30f37c8e481ea"},
     {"bytes": 47168, "out": "l3_fp_bits_probe.out", "rows": 1920, "sha256": "849f18688ab3694e86d51da4a734ba133050e8c8e67be857f15b0f2c388d5d65"},
+    {"bytes": 5632, "out": "l3_fp_memory_probe.out", "rows": 256, "sha256": "eabfae7e529e47fb7da658ab84cfe2479f6550db5345ddade6952d40b6f664c0"},
     {"bytes": 2739, "out": "l3_fpcsr_codec_probe.out", "rows": 80, "sha256": "75d37e258cceb89acb73dd0775ff0d185c39e03d43a72da128700d9f4c68ffe4"},
     {"bytes": 2970, "out": "l3_immediate_alu_probe.out", "rows": 120, "sha256": "0aad7d683153417a2632ea1538b72729dd3282ba56c70e46cfae353adf14ca56"},
     {"bytes": 16545, "out": "l3_immediate_shift_probe.out", "rows": 558, "sha256": "136ee00065f27dc5d29b8b0708e9e3d81b78f24ced4c49d67e08606bc542658b"},
