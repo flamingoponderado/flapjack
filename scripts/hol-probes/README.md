@@ -6730,7 +6730,6 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScr
 hypotheses are captured; this is original HOL evidence, not a cross-assistant
 equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
 
-
 ### Original initializer semantic entry contracts
 
 `lab_to_target_initial_entry_contracts_probeScript.sml` freshly captures all
@@ -6756,6 +6755,7 @@ their existential witnesses. This independently supplies the lazy-list image
 chain used by original machine_sem_EQ_sem; full compiler simulation and machine
 semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
+
 
 ### Full native Lab evaluator event monotonicity
 
