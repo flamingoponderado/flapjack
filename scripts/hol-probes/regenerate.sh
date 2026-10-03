@@ -6538,3 +6538,15 @@ run_probe stack_remove_word_list_reverse_probeScript.sml stack_remove_word_list_
 run_probe stack_remove_word_list_inj_probeScript.sml stack_remove_word_list_inj_probe.out \
   word_list_inj_statement word_list_inj_proved word_list_inj_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_filter_skip_runs_probeScript.sml lab_filter_skip_runs_probe.out \
+  adjust_pc_def adjust_pc_def_types adjust_pc_def_hypotheses adjust_pc_def_proved \
+  all_skips_def all_skips_def_types all_skips_def_hypotheses all_skips_def_proved \
+  is_Label_not_skip is_Label_not_skip_types is_Label_not_skip_hypotheses is_Label_not_skip_proved \
+  asm_fetch_aux_eq asm_fetch_aux_eq_types asm_fetch_aux_eq_hypotheses asm_fetch_aux_eq_proved \
+  state_rw state_rw_types state_rw_hypotheses state_rw_proved \
+  all_skips_evaluate all_skips_evaluate_types all_skips_evaluate_hypotheses all_skips_evaluate_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine_sem_eq_sem_probe.out \
+  machine_sem_EQ_sem machine_sem_EQ_sem_types machine_sem_EQ_sem_hypotheses machine_sem_EQ_sem_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

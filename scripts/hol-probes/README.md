@@ -6847,6 +6847,7 @@ eight-command non-instrumented sequence, proved=T, and zero hypotheses are
 captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
 registers and order; this equation neither assumes nor proves target execution
 or full Raise correctness.
+
 ### Native skip-filter observations
 
 `lab_to_target_filter_skip_probeScript.sml` freshly captures nine complete
@@ -6892,3 +6893,30 @@ This regression evidence supplements source review, not full equivalence.
 `stack_remove_word_list_reverse_probeScript.sml` replays the unchanged full original `word_list_EQ_rev` statement and SNOC induction proof (stack_removeProofScript.sml:2817-2825), with the original simplifier context. Captures complete predicate equality, proved=T and zero hypotheses; preserves arbitrary payloads and modular addresses without no-wrap assumptions.
 
 `stack_remove_word_list_inj_probeScript.sml` replays the unchanged full original `word_list_inj` statement and induction/DIFF partition proof (stack_removeProofScript.sml:3089-3098) using the original simplifier context. Captures arbitrary-heap uniqueness, proved=T and zero hypotheses; no numeric, finiteness or no-wrap premise.
+
+### Native skip-run alignment and execution
+
+`lab_filter_skip_runs_probeScript.sml` freshly captures six original
+lab_filterProof declarations, full variable types, zero hypotheses and kernel
+proof T (24 rows). Non-exported local statements and proofs are replayed
+unchanged from original source. Native alignment constructs the skip count,
+all actual fetched Skip witnesses and stopping-position exclusion, retaining
+empty/label/beyond-end behavior. The native full evaluator equality retains
+its original not-failed guard and arbitrary count/state/extra clock binders.
+Evaluator FP closure retains inherited real rendering (SOUNDNESS item8).
+Whole filtering simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=lab_filter_skip_runs_probeScript.sml`.
+
+### Full native source-to-machine behavior equality
+
+`lab_to_target_machine_sem_eq_sem_probeScript.sml` freshly captures original
+machine_sem_EQ_sem9364, its complete generic machine/source types, zero
+hypotheses and kernel proof T. Native proof retains the three original guards
+and exact singleton behavior conclusion. Actual compileCorrect derives every
+clock-indexed matching target run; completed clock stability preserves halt
+outcomes and excludes errors, and cofinal all-clock source/target prefix chains
+give the exact infinite divergence trace LUB. No simulation/run/trace premise
+is supplied. Existing total EL/HD and inherited FP real-rendering assurance
+(SOUNDNESS item8) remain unchanged. Full initializer/final-pass composition
+remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_machine_sem_eq_sem_probeScript.sml`.
