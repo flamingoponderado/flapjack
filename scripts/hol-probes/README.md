@@ -7787,3 +7787,16 @@ separately named HOL composition identity exists. They do not establish the
 full Const encoder theorem's fetch, Next, interference, or assertions.
 `check-riscv-const32-value.py` pins the unrestricted signatures and original
 evidence; mutation tests reject an added run premise or a lost oracle row.
+
+## Native wide Const value reconstruction
+
+`riscv_const_wide_value_probeScript.sml` evaluates the literal wide branches of
+`riscv_ast_def` at riscv_targetScript.sml:111-122. Twelve original word64
+boundaries cover low and high sign bits, zero, and all ones. Every row is `T`.
+`CorrectnessEncoding/ConstWide.lean` proves the same OR/XOR reconstruction for
+every word64 without range or target-run premises. The high sign extension is
+shifted by32; the low sign bit determines complement/XOR versus ordinary OR.
+This is untagged infrastructure because HOL has no separately named identity.
+It does not establish full native fetch/Next/interference/assertion execution.
+`check-riscv-const-wide-value.py` and its mutation regressions protect the
+unrestricted signature, original evidence, and all driver labels.
