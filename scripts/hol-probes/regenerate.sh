@@ -7266,15 +7266,15 @@ run_probe stack_to_lab_make_init_probeScript.sml stack_to_lab_make_init_probe.ou
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_compile_probeScript.sml stack_to_lab_compile_probe.out \
-  is_gen_gc_def_statement config_accessors_statement compile_def_statement compile_no_stubs_def_statement data_num_stubs_def_statement AllocGlobal_location_def_statement CopyGlobals_location_def_statement InitGlobals_location_def_statement \
+  is_gen_gc_def_statement config_accessors_statement compile_def_statement compile_no_stubs_def_statement data_num_stubs_def_statement AllocGlobal_location_def_statement CopyGlobals_location_def_statement InitGlobals_location_def_statement is_gen_gc_type compile_type compile_no_stubs_type \
   "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
 
 run_probe stack_to_lab_good_code_probeScript.sml stack_to_lab_good_code_probe.out \
-  good_code_def_statement contain_def_statement \
+  good_code_def_statement contain_def_statement good_code_type contain_type \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_full_make_init_probeScript.sml stack_to_lab_full_make_init_probe.out \
-  full_make_init_def_statement full_make_init_buffer_statement full_make_init_ffi_statement full_make_init_compile_statement \
+  full_make_init_def_statement full_make_init_buffer_statement full_make_init_ffi_statement full_make_init_compile_statement full_make_init_type \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_compile_lab_pres_probeScript.sml stack_to_lab_compile_lab_pres_probe.out \
