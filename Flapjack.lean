@@ -347,6 +347,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionSuffix
+import Flapjack.Compiler.Backend.WordToStack.Proofs.EnvironmentIdentity
+import Flapjack.Compiler.Backend.WordToStack.Proofs.HandlerTransition
+import Flapjack.Compiler.Backend.WordToStack.Proofs.Stubs
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel

@@ -6812,3 +6812,34 @@ and end-to-end correctness remain open. Regenerate with
 
 `stack_remove_init_limits_double_probeScript.sml` captures the complete original word-free numeric initializer limit definition, its curried natural input/product output type, zero hypotheses, and the actual store-list length. The native counterpart retains left-associated truncated natural subtraction and total division by two; it adds no address bound or word-dimension premise.
 `stack_rawcall_call_return_probe` freshly captures original comp_correct, zero hypotheses, full returning and arbitrary Call64/80 specializations, the closed actual Call induction clause, four complete compiled returning/handler trees and four erased-link lookup observations. Ten full returning/assembled theorem consumers cover arbitrary positive and1/8/64/80 widths. Lookup after link erasure and exact Result/Exception location guards remain; callee/continuation target runs are derived from original IHs and native clock composition. Terminal outcomes retain original stackspace exceptions. This completes the Call constructor family, not whole-pass assembly or cross-language equivalence.
+
+`word_to_stack_abs_stack_prefix_drop_probe` replays the full original local
+suffix theorem and its unexported local prerequisites using unchanged source
+statements/proofs. The original context disables NORMEQ_CONV and diminishes
+ABBREV. Five rows record the entire theorem, proof=T, zero hypotheses, and both
+inferred stack carrier types. Native StackAbstractionSuffix retains all four
+premises and both conclusions; this does not establish full Raise correctness
+or HOL-to-Lean equivalence.
+
+`word_to_stack_env_identity_probe` replays the full original local
+`env_to_list_K_I_IMP`, reconstructing the unchanged local comparator SORTS and
+identity rearrangement proofs. It captures the complete statement, proved=T,
+and zero hypotheses. Native EnvironmentIdentity derives all three conclusions
+from the actual output equation; it supplies neither desired sorting nor
+permutation as a premise. Full handler/Raise correctness remains separate.
+
+`word_to_stack_handler_transition_probe` replays the full original local
+`stack_rel_raise` proof with unchanged statements and source-local prerequisite
+proofs. It captures all six premises and the complete existential handler
+header, saved-handler, cleared relation and decoder conclusions, proved=T,
+and zero hypotheses. Local theorem lookup is restored after constituent probe
+opens to resolve the original induction theorem in word_to_stackProof. Native
+HandlerTransition retains the original positive word dimension and total EL;
+this slice does not establish full comp_correct Raise or HOL-to-Lean equivalence.
+
+`word_to_stack_raise_stub_false_probe` replays the literal original
+`raise_stub_F` syntax equality and proof (word_to_stackProof74–86). The complete
+eight-command non-instrumented sequence, proved=T, and zero hypotheses are
+captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
+registers and order; this equation neither assumes nor proves target execution
+or full Raise correctness.
