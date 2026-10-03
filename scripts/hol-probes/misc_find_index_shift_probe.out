@@ -1,0 +1,13 @@
+find_index_shift=∀(ls :α list) (x :α) (k :num) (j :num).
+  find_index x ls k = SOME j ⇒
+  j ≥ k ∧ ∀(n :num). find_index x ls n = SOME (j − k + n)
+find_index_shift_types=(ls :α list)::α list;(x :α)::α;(k :num)::num;(j :num)::num;
+find_index_shift_hypotheses=0
+first=T
+nonzero=T
+shift=T
+duplicate=T
+empty=T
+missing=T
+large=T
+strings=T

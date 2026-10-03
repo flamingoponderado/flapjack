@@ -68266,5 +68266,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full source10101 and original fulltype0hyp comparison: retains all configuration/labels/FFI/independent validity-position/code binders, both allEncOk and encOk guards, exact EVERY strict Nat entryPc bound across full FLAT GENLIST original lineToInfo enumeration at zero query position. Standard words_as_type_indexed_bitvec carrier translation only, exact native constructor carriers/fixed word8 bytes and positive dimension with NeZero. Actual enumerated member inversion and original strict position-order theorem prove bound; no desired maximum, extra successful fetch/size premise or totalHD/EL/default change. Fresh original observations and generic/actual native consumers supplement source review, not cross-language equivalence or full initializer/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/Shift.lean",
+    "lean_name": "findIndexShift",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_shift",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full original source1259 and fulltype0hyp comparison: generic alpha list/target and arbitrary k/j offsets retained, original successful find_index=SOME guard implies complete conjunction j>=k and forall n successful find_index=SOME(j-k+n). Propositional equality with DecidableEq preserves original equality; no Nodup, bound, target execution or assumed desired shifted result. Original zero-offset theorem and Option case inversion plus Nat arithmetic prove both source conclusions, with no HD/EL/default/provenance dependency. Fresh original generic fulltype0hyp and eight closed observations cover nonzero/large offsets, duplicate first-match, missing/empty searches and generic string carrier; generic native statement and actual arbitrary-query extracted shared-memory PC consumer use full150 actual fetch witness. Evidence is regression/source review, not cross-language equivalence or full initializer/compiler closure."
   }
 ]

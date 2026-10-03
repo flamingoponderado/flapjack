@@ -2936,6 +2936,12 @@
       "sha256": "027136120f48a95073b598d0ccfcd72f2c83b060c217769b867afdf4ab775b44"
     },
     {
+      "bytes": 351,
+      "out": "misc_find_index_shift_probe.out",
+      "rows": 11,
+      "sha256": "96e50f15eeccd8bca7fa7ceaff895b2fd0b38fcb6236e1ab6caf8b75efeec7d6"
+    },
+    {
       "bytes": 137,
       "out": "misc_find_index_shift_zero_probe.out",
       "rows": 10,

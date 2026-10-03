@@ -1,3 +1,4 @@
+import Flapjack.Misc.FindIndex.Shift
 import Flapjack.Compiler.Backend.LabToTarget.ShmemEntryMax
 import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
 import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
