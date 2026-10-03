@@ -4541,6 +4541,31 @@ run_probe ssa_cc_trans_correct_inst_longmul_probeScript.sml ssa_cc_trans_correct
 run_probe word_inst_three_to_two_probeScript.sml word_inst_three_to_two_probe.out \
   three_to_two_reg_Loop_statement three_to_two_reg_Loop_hypotheses three_to_two_reg_correct_statement three_to_two_reg_correct_hypotheses evaluate_three_to_two_reg_prog_statement evaluate_three_to_two_reg_prog_hypotheses three_to_two_reg_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_instProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe wordsem_state_const_group_probeScript.sml wordsem_state_const_group_probe.out \
+  PAIR_MAP_EQ_PAIR_statement PAIR_MAP_EQ_PAIR_hypotheses OPTION_CASE_OPTION_MAP_statement OPTION_CASE_OPTION_MAP_hypotheses OPTION_CASE_MAP_statement \
+  OPTION_CASE_MAP_hypotheses get_var_with_const_statement get_var_with_const_hypotheses get_vars_with_const_statement get_vars_with_const_hypotheses \
+  unset_var_with_const_statement unset_var_with_const_hypotheses set_vars_with_const_statement set_vars_with_const_hypotheses get_store_with_const_statement \
+  get_store_with_const_hypotheses set_store_with_const_statement set_store_with_const_hypotheses push_env_with_const_statement push_env_with_const_hypotheses \
+  pop_env_with_const_statement pop_env_with_const_hypotheses call_env_with_const_statement call_env_with_const_hypotheses flush_state_with_const_statement \
+  flush_state_with_const_hypotheses has_space_with_const_statement has_space_with_const_hypotheses gc_with_const_statement gc_with_const_hypotheses \
+  alloc_with_const_statement alloc_with_const_hypotheses get_fp_var_with_const_statement get_fp_var_with_const_hypotheses set_fp_var_with_const_statement \
+  set_fp_var_with_const_hypotheses mem_load_with_const_statement mem_load_with_const_hypotheses mem_store_with_const_statement mem_store_with_const_hypotheses \
+  word_exp_with_const_statement word_exp_with_const_hypotheses assign_with_const_statement assign_with_const_hypotheses inst_with_const_statement \
+  inst_with_const_hypotheses jump_exc_with_const_statement jump_exc_with_const_hypotheses get_var_imm_with_const_statement get_var_imm_with_const_hypotheses \
+  sh_mem_set_var_with_const_statement sh_mem_set_var_with_const_hypotheses sh_mem_load_with_const_statement sh_mem_load_with_const_hypotheses sh_mem_load_byte_with_const_statement \
+  sh_mem_load_byte_with_const_hypotheses sh_mem_load16_with_const_statement sh_mem_load16_with_const_hypotheses sh_mem_load32_with_const_statement sh_mem_load32_with_const_hypotheses \
+  sh_mem_store_with_const_statement sh_mem_store_with_const_hypotheses sh_mem_store_byte_with_const_statement sh_mem_store_byte_with_const_hypotheses sh_mem_store16_with_const_statement \
+  sh_mem_store16_with_const_hypotheses sh_mem_store32_with_const_statement sh_mem_store32_with_const_hypotheses share_inst_with_const_statement share_inst_with_const_hypotheses \
+  cut_state_with_const_statement cut_state_with_const_hypotheses unset_var_const_statement unset_var_const_hypotheses set_vars_const_statement \
+  set_vars_const_hypotheses push_env_const_statement push_env_const_hypotheses call_env_const_statement call_env_const_hypotheses \
+  flush_state_const_statement flush_state_const_hypotheses set_fp_var_const_statement set_fp_var_const_hypotheses state_const_statement \
+  state_const_hypotheses dec_clock_const_statement dec_clock_const_hypotheses assign_const_full_statement assign_const_full_hypotheses \
+  assign_const_statement assign_const_hypotheses sh_mem_set_var_const_statement sh_mem_set_var_const_hypotheses sh_mem_store_const_statement \
+  sh_mem_store_const_hypotheses sh_mem_store_byte_const_statement sh_mem_store_byte_const_hypotheses sh_mem_store16_const_statement sh_mem_store16_const_hypotheses \
+  sh_mem_store32_const_statement sh_mem_store32_const_hypotheses get_var_set_store_statement get_var_set_store_hypotheses get_var_set_fp_var_statement \
+  get_var_set_fp_var_hypotheses get_store_set_store_statement get_store_set_store_hypotheses get_fp_var_set_fp_var_statement get_fp_var_set_fp_var_hypotheses \
+  inst_const_statement inst_const_hypotheses get_var_with_const_typed sh_mem_set_var_const_typed \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7147,6 +7172,10 @@ run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_pr
   inst_correct_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_to_lab_flatten_correct_probeScript.sml stack_to_lab_flatten_correct_probe.out \
+  flatten_correct_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcurrheap_probe.out \
   comp_correct_opcurrheap_full_statement comp_correct_opcurrheap_full_proved comp_correct_opcurrheap_full_hypotheses \
   comp_correct_opcurrheap_whole_statement comp_correct_opcurrheap_whole_proved comp_correct_opcurrheap_whole_hypotheses \
@@ -7155,8 +7184,13 @@ run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcur
 run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.out \
   cut_state_full cut_state_hypotheses cut_state_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe stack_to_lab_flatten_correct_probeScript.sml stack_to_lab_flatten_correct_probe.out \
-  flatten_correct_statement \
+
+run_probe stack_to_lab_flatten_semantics_probeScript.sml stack_to_lab_flatten_semantics_probe.out \
+  flatten_call_correct_statement halt_assum_def_statement flatten_semantics_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_make_init_probeScript.sml stack_to_lab_make_init_probe.out \
+  make_init_def_statement make_init_semantics_statement memory_assumption_def_statement halt_assum_lemma_statement FLOOKUP_regs_statement state_rel_make_init_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
@@ -7190,6 +7224,15 @@ run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.
   comp_correct_loop_whole_statement comp_correct_loop_whole_proved comp_correct_loop_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe riscv_addi_decode_probeScript.sml riscv_addi_decode_probe.out \
+  addi_decode_zero addi_decode_all_ones addi_decode_sign_bit addi_decode_positive_max \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_target_jumpReg_probeScript.sml riscv_target_jumpReg_probe.out \
+  riscv_encoder_correct_jumpReg_statement riscv_encoder_correct_jumpReg_types \
+  riscv_encoder_correct_jumpReg_hypotheses riscv_encoder_correct_jumpReg_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe stack_to_lab_no_ret_review_probeScript.sml stack_to_lab_no_ret_review_probe.out \
   no_ret_correct no_ret_correct_types no_ret_correct_hypotheses no_ret_correct_proved stack_regs_type stack_fp_regs_type stack_store_type stack_code_type \
@@ -7213,11 +7256,6 @@ run_probe word_to_stack_chunk_msb_full_probeScript.sml word_to_stack_chunk_msb_f
 run_probe word_to_stack_copy_short_full_probeScript.sml word_to_stack_copy_short_full_probe.out \
   short_full short_hypotheses short_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe riscv_target_jumpReg_probeScript.sml riscv_target_jumpReg_probe.out \
-  riscv_encoder_correct_jumpReg_statement riscv_encoder_correct_jumpReg_types \
-  riscv_encoder_correct_jumpReg_hypotheses riscv_encoder_correct_jumpReg_proved \
-  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
-  "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe pres_lang_config_probeScript.sml pres_lang_config_probe.out \
   default_tap_config default_tap_config_types default_tap_config_hypotheses default_tap_config_proved default_tap_config_type tap_config_explore_flag_type tap_config_component_equality \
   "$cake_dir/compiler/backend/presLangScript.sml" "$cake_dir/compiler/backend"
@@ -7240,6 +7278,13 @@ run_probe source_to_flat_config_probeScript.sml source_to_flat_config_probe.out 
 
 run_probe word_to_stack_copy_words_correct_full_probeScript.sml word_to_stack_copy_words_correct_full_probe.out \
   copy_full copy_hypotheses copy_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_lang_generic_wf_shape_probeScript.sml pan_lang_generic_wf_shape_probe.out \
+  is_wf_shape_def_statement is_wf_shape_def_proved is_wf_shape_def_types is_wf_flds_def_statement is_wf_flds_def_proved is_wf_flds_def_types nat_zero_present bool_false_present bool_false_nested nat_nested_missing generic_fields_present generic_fields_missing \
+  "$cake_dir/pancake/panLangScript.sml" "$cake_dir/pancake"
+
+run_probe word_to_stack_comp_storeconsts_probeScript.sml word_to_stack_comp_storeconsts_probe.out \
+  comp_correct_storeconsts_full_statement comp_correct_storeconsts_full_proved comp_correct_storeconsts_full_hypotheses comp_correct_storeconsts_whole_statement comp_correct_storeconsts_whole_proved comp_correct_storeconsts_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe ast_backend_operators_probeScript.sml ast_backend_operators_probe.out \
