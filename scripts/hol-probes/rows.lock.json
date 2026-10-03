@@ -797,6 +797,7 @@
     {"bytes": 316, "out": "pan_structs_shape_map_codec_probe.out", "rows": 7, "sha256": "5ad064943706d8f62e4fc9d36731f55a742b991b32bacf1714d34c4c51f42ab4"},
     {"bytes": 411, "out": "pan_structs_value_validity_probe.out", "rows": 15, "sha256": "5920bd2c77b143b184fac5b81524e62d8e3d1dbcefee1ae5e7fcd0f3b2acdf2a"},
     {"bytes": 120, "out": "pan_to_crep_comp_func_probe.out", "rows": 3, "sha256": "2fead1ae3b94458488de41606f67d5ed979e9253f3f52fd78177dd5cb52d7d9f"},
+    {"bytes": 43, "out": "pan_to_crep_first_compile_oracle_probe.out", "rows": 2, "sha256": "d7fb5d36d231faff2e08867856413ea44c3e4a5296aab6045010ca20ca7962e3"},
     {"bytes": 290, "out": "pan_to_crep_first_compile_probe.out", "rows": 1, "sha256": "28f6aa3feba662177a1096cefe40596bf32624ff7553b4ffa45530aa3e5a267e"},
     {"bytes": 94, "out": "pan_to_crep_is_wf_shape_nil_probe.out", "rows": 7, "sha256": "0ad46567d3f40f61536727be45c419bc8dd8ee11d1b9f2f16c1ba34dced64cf1"},
     {"bytes": 705, "out": "pan_to_crep_ret_inst2_probe.out", "rows": 7, "sha256": "45ccf2032cc1545e90e6ff2b0c948a78896c10478ba41783d3b5a053344a56f9"},
