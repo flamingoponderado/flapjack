@@ -1,0 +1,12 @@
+length_riscv_encode_statement=∀i. LENGTH (riscv_encode i) = 4
+length_riscv_encode_types=i : :instruction
+length_riscv_encode_hypotheses=0
+length_riscv_encode_proved=T
+riscv_encode_not_nil_statement=∀i. riscv_encode i ≠ []
+riscv_encode_not_nil_types=i : :instruction
+riscv_encode_not_nil_hypotheses=0
+riscv_encode_not_nil_proved=T
+riscv_encoding_statement=∀i. LENGTH (LIST_BIND (riscv_ast i) riscv_encode) MOD 4 = 0 ∧ LIST_BIND (riscv_ast i) riscv_encode ≠ []
+riscv_encoding_types=i : :64 asm
+riscv_encoding_hypotheses=0
+riscv_encoding_proved=T

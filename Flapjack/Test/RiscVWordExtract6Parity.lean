@@ -6,7 +6,7 @@ import Flapjack.RiscV.CorrectnessEncoding
     `riscv_targetProof$word_extract_6`. -/
 
 namespace Flapjack.Test.NativeBytesConsumers
-open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target
+open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target Compiler.Encoders.Asm
 
 example {α : Type} (_w : α) (s : AsmState 64) (state : riscv_state)
     (a b c d : BitVec 8)
@@ -51,6 +51,16 @@ example
       pc ∈ Compiler.Encoders.AsmProps.allPcs xs.length a 0 →
         (env i ms').MEM8 pc = ms'.MEM8 pc :=
   RiscV.TargetProof.bytes_in_memory_IMP_all_pcs_MEM8 env a xs m dm h
+
+example (i : instruction) : (riscvEncode i).length = 4 :=
+  RiscV.TargetProof.length_riscv_encode i
+
+example (i : instruction) : riscvEncode i ≠ [] :=
+  RiscV.TargetProof.riscv_encode_not_nil i
+
+example (i : HolAsm 64) :
+    (riscvEnc i).length % 4 = 0 ∧ riscvEnc i ≠ [] :=
+  RiscV.TargetProof.riscv_encoding i
 
 end Flapjack.Test.NativeBytesConsumers
 

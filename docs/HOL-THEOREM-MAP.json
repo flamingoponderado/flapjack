@@ -82043,5 +82043,29 @@
     "lean_name": "invalidateRegs",
     "hol_name": "invalidate_regs_def",
     "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines102-105: exact equations data/[] returns data; data/(r::rs) recurses on invalidate_data data r then rs, left to right for arbitrary lists. No early-exit rewrite or source restriction. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "length_riscv_encode",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Length.lean",
+    "lean_name": "length_riscv_encode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full original454-475source comparison2026-10-03: full nativeinstruction carrier/all163constructors, fixednative64ASM full constructor tree. Original length_riscv_encode=4 and originalencode_not_nil retain arbitraryinstruction. Fullriscv_encoding originalQ.prove thenSIMP_RULE unfolds riscvEnc to LIST_BIND nativeAST nativeEncode: exactList.flatMap, fullmod4=0 AND nonempty for EVERY HolAsm64 without asmOK/opcode/targetrun premise. StructuralAST proof includes all sourceconstantconditions/fullnestedconstructors and originalfailinstructions; listfold derives4timesASTlength. Fresh unchanged original3proofs/fullbindertypes/hyp0/T; guardsretain fulluniversalcontract and reject validitypremise/narrowing."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encode_not_nil",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Length.lean",
+    "lean_name": "riscv_encode_not_nil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full original454-475source comparison2026-10-03: full nativeinstruction carrier/all163constructors, fixednative64ASM full constructor tree. Original length_riscv_encode=4 and originalencode_not_nil retain arbitraryinstruction. Fullriscv_encoding originalQ.prove thenSIMP_RULE unfolds riscvEnc to LIST_BIND nativeAST nativeEncode: exactList.flatMap, fullmod4=0 AND nonempty for EVERY HolAsm64 without asmOK/opcode/targetrun premise. StructuralAST proof includes all sourceconstantconditions/fullnestedconstructors and originalfailinstructions; listfold derives4timesASTlength. Fresh unchanged original3proofs/fullbindertypes/hyp0/T; guardsretain fulluniversalcontract and reject validitypremise/narrowing."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoding",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Length.lean",
+    "lean_name": "riscv_encoding",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full original454-475source comparison2026-10-03: full nativeinstruction carrier/all163constructors, fixednative64ASM full constructor tree. Original length_riscv_encode=4 and originalencode_not_nil retain arbitraryinstruction. Fullriscv_encoding originalQ.prove thenSIMP_RULE unfolds riscvEnc to LIST_BIND nativeAST nativeEncode: exactList.flatMap, fullmod4=0 AND nonempty for EVERY HolAsm64 without asmOK/opcode/targetrun premise. StructuralAST proof includes all sourceconstantconditions/fullnestedconstructors and originalfailinstructions; listfold derives4timesASTlength. Fresh unchanged original3proofs/fullbindertypes/hyp0/T; guardsretain fulluniversalcontract and reject validitypremise/narrowing."
   }
 ]

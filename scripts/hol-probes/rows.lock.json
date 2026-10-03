@@ -5774,6 +5774,12 @@
       "sha256": "571d37e96f2f6a61d4ed5b3bfdaf430d635696f9253dd00c915b87798a59d915"
     },
     {
+      "bytes": 556,
+      "out": "riscv_target_length_probe.out",
+      "rows": 12,
+      "sha256": "52c2f7648ec6bf1e8257a77011cc1c2c06304713b15801ecf44e90e83998e1d7"
+    },
+    {
       "bytes": 113,
       "out": "riscv_target_memop_probe.out",
       "rows": 8,
