@@ -14,6 +14,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono

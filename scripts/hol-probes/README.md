@@ -6545,3 +6545,4 @@ both branches, arbitrary annotation payloads and unchanged exact HolFfiName
 lists. Neither alternative is strengthened or discarded, and no target safety
 premise/default/HD/EL dependency is introduced. The single original capture is
 regenerated in full; prior shared-memory transport rows remain unchanged.
+`stack_rawcall_jumplower_case_probe` freshly captures original paired comp_correct/zero hypotheses, the complete JumpLower case statement and exact evaluate_ind callee guards. Six independent original unsigned comparisons at widths1/8/64/80 are replayed in the kernel and runtime; five full theorem consumers retain both existential simulations. Captures do not prove cross-language equivalence or the full pass theorem.
