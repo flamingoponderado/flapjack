@@ -75419,5 +75419,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source review 2026-10-03: original1435-1444 entire theorem compared with exact CompileDeclsExact/decsStcnamesHOLExact. Arbitrary compile context, source declarations and initial struct-info accumulator (original free acc universally closed); no premises or declaration-kind assumptions. Name constructors removed by compiler; other compiled constructors skipped by faithful scan. MlS identifiers, exact List/StructInfoHOLExact/ContextExact, positive word-indexed DeclHOL only translation. Original unchanged compile_decs_ind proof kernel-replayed, full closed theorem/T/hyp0 captured. Direct prerequisite for whole compile_top_semantics_decls; that parent remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/MaxVarIntro.lean",
+    "lean_name": "maxVarIntro",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "max_var_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead9.4.2.2: wordConvsScript.sml473-493 forall arbitrary P and prog, P0 and every_var P prog imply P(max_var prog), retained as Bool=true conjunction and conclusion. Complete max_var/every_var equation families wordLangScript.sml127 onward compared: all source operands and both Spt cut-set key lists retained; recursive Call return body and handler only under SOME return; Seq, MustTerminate, If and Loop use actual body hypotheses. Instruction subproof retains width=64 FP transfer branch and all integer operand maxima; zero/empty-list cases use original P0, no bounds, conventions, successful-run or target assumptions. Original exported HOL kernel theorem captured via DB.fetch, closed forall P/prog, proved=T hypotheses=0; source comparison rather than cross-language equivalence. Only dimension translation BitVec width with NeZero is qualified."
   }
 ]

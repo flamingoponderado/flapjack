@@ -6979,3 +6979,4 @@ statement, closed kernel proof, and zero hypotheses.
 `pan_structs_decs_stcnames_compile_decs_probe` replays the whole original theorem
 and unchanged induction proof. It universally closes the source's free accumulator
 and records the closed statement, kernel proof and zero hypotheses.
+The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.

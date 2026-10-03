@@ -6565,6 +6565,7 @@ run_probe l3_boolify_provenance_probeScript.sml l3_boolify_provenance_probe.out 
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 run_probe word_convs_max_var_exp_intro_probeScript.sml word_convs_max_var_exp_intro_probe.out \
   max_var_exp_intro_statement max_var_exp_intro_proved max_var_exp_intro_hypotheses \
+  max_var_intro_statement max_var_intro_proved max_var_intro_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe lab_to_target_semantics_make_init_probeScript.sml lab_to_target_semantics_make_init_probe.out \
   semantics_make_init semantics_make_init_types semantics_make_init_hypotheses semantics_make_init_proved \
