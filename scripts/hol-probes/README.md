@@ -7642,3 +7642,15 @@ closed kernel truth. The Lean case keeps all ten premises/seven conclusions
 and exactly the original body/exception-handler guarded IHs. Actual target
 lookup, return comparisons/bindings and handler execution are derived internally.
 Whole program/compiler correctness remain open.
+
+### Native encoder correctness JumpReg case
+
+`riscv_target_jumpReg_probeScript.sml` specializes the complete original
+`riscv_encoder_correct` only at `JumpReg r`, retaining arbitrary `r : num`
+and both complete assertion/interference conclusions. Four rows record the
+full statement, native types, zero stored hypotheses and proved `T`. Lean
+derives register restrictions and alignment from the original source step,
+actual native byte fetch/decode/JALR/branch Next, and full post-relation under
+every projection-preserving environment. `check-riscv-target-jumpReg.py` pins
+the unrestricted statement and complete original evidence; these checks do
+not themselves prove cross-language equivalence.
