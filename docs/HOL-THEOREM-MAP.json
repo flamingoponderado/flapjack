@@ -70187,5 +70187,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol full source comparison2026-10-03 original local3988-4010: arbitrary actual source association list and target Spt, original EVERY(reg_bound p k AND stack_num_stubs<=name+1) and target=fromAList(compile...) conjunction; conclusion full code_rel, both lookup program bounds/actual comp result and complete domain equality with {0,1,2}. Actual native compileHOL/initStubs/progComp/codeRelHOL/Spt used. Original num_stubs is stackNumStubs (5), not three initializer entries or wordNumStubs. First-match duplicate/unsorted-label behavior retained with no distinctness or wf premise; original bound excludes initializer labels internally. Domain equality derives from full actual prefix plus value-map keys, not assumed as hypothesis. Only positive-word qualifier, no finite-map qualifier for Spt code tables and no evaluator/FP carrier involved. Full unchanged original local proof replay and generalized zero-hypothesis statement recorded. Initializer/compiler theorem remains dependency-linked and open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitCodePre.lean",
+    "lean_name": "initCodePre",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_code_pre_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source/body comparison2026-10-03 original2953-2978: complete actual native initializer precondition, all arbitrary k/bitmaps/data_sp/source parameters and four existential word pointers retained. Original good_dimindex32-or64, k>=8, code label1 membership, three-element ffi_save_regs subset and negated use_stack/store/alloc; exact lookups2/3/4 and five memory header positions with original word-scaled bitmap/data lengths and code buffer bounds. Both unsigned comparisons retain word arithmetic before toNat, including modular1024w*bytes_in_word and ptr4-ptr2; all three original byte alignments, empty code buffer and complete three-factor LEFT-associated STAR retained, original bitmaps mapped Word, heap existential length w2n(ptr4-ptr2) DIV w2n(bytes_in_word). Actual Bool domain/save-register characteristic functions used via true membership; no finite-domain, alignment, successful-evaluation, target-state or separation premise added/omitted. Original List/Spt/WordLoc/word-buffer carriers retained. Positive word translation and actual imported canonical regs/fpRegs/store owner StackSemStateFiniteExact with local genuine broad/exact codec roundtrip; Spt code and sets excluded from map qualifier. Fresh original complete kernel definition/type/zero stored hypotheses exported. Proof-side precondition only, full init_code_thm/init semantics and executed compiler correctness remain dependency-linked open."
   }
 ]

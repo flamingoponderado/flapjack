@@ -6199,3 +6199,7 @@ run_probe stack_remove_init_clock_probeScript.sml stack_remove_init_clock_probe.
 run_probe stack_remove_init_code_relation_probeScript.sml stack_remove_init_code_relation_probe.out \
   init_code_relation_statement init_code_relation_hypotheses init_code_relation_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_pre_probeScript.sml stack_remove_init_code_pre_probe.out \
+  init_code_pre_definition init_code_pre_type init_code_pre_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

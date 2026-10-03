@@ -6570,3 +6570,5 @@ regressions; fullRun/Next/pass correctness remains open.
 `stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
 
 `stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
+
+`stack_remove_init_code_pre_probeScript.sml` exports the complete original kernel definition and generic type of the initializer precondition (2953–2978), with zero stored hypotheses. The native port retains all four pointer witnesses, header words, characteristic-function sets, unsigned word capacity checks and the original three separated heap factors. This is the precondition definition, not the initializer execution proof.
