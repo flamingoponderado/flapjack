@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.StackAlloc.Compile
+import Flapjack.Compiler.Backend.StackRawCall
 import Flapjack.Compiler.Backend.WordToStack.NativeStubs
 import Flapjack.RiscV.Lab
 import Flapjack.Compiler.Backend.StackToLab.RuntimeLabels
@@ -21,12 +22,14 @@ def initializedRuntimeDataConfig : Flapjack.Compiler.Backend.DataToWord.Config :
     be := false, callEmptyFfi := false, gcKind := .none }
 
 /-- RV64 Pancake runtime composition, including the original three entry stubs.
-The source bodies arrive through the existing broad allocation/raw-call/long-div
-preparation. Their legacy support entries are replaced by native None-GC,
-Raise and StoreConsts definitions, and global labels are injectively normalized.
-The native allocation pass then builds the original GC support and feeds the
-whole native StackRemove/name/section composition. This boundary does not claim
-to replace the upstream broad compiler passes or establish their simulation. -/
+The source bodies are the Word-to-Stack function sections, before any stack
+allocation. Global labels are injectively normalized to the original namespace
+and the native Raise and StoreConsts stubs are prepended, as Word-to-Stack does.
+Then, exactly as `stack_to_lab$compile_def`, the tagged native
+`stack_rawcall$compile`, `stack_alloc$compile` (with Pancake's `GC = None`
+data configuration), `stack_remove$compile` and `stack_names$compile` run on the
+whole list before `prog_to_section`. Section codecs fail explicitly; this
+boundary is not a simulation theorem for the upstream passes. -/
 def initializedRuntimeLab? {width : Nat} [NeZero width]
     (jump : Bool) (bounds : BitVec width × BitVec width) (pointer start registerCount : Nat)
     (programs : List (Nat × StackProg Nat)) : Option (LabProgram (Word width)) := do
@@ -37,7 +40,8 @@ def initializedRuntimeLab? {width : Nat} [NeZero width]
     [(Flapjack.raiseStubLocation, Flapjack.Compiler.Backend.WordToStack.Native.raiseStubNative false registerCount),
      (Flapjack.storeConstsStubLocation, Flapjack.Compiler.Backend.WordToStack.Native.storeConstsStubNative registerCount)]
   let native := Flapjack.Compiler.Backend.StackAlloc.compile
-    initializedRuntimeDataConfig (support ++ source)
+    initializedRuntimeDataConfig
+    (Flapjack.Compiler.Backend.StackRawCall.compile (support ++ source))
   let heap := 2 * Flapjack.Compiler.Backend.DataToWord.maxHeapLimit width
     initializedRuntimeDataConfig - 1
   Flapjack.Compiler.Backend.StackToLab.InitializedProduction.compileNative?
@@ -62,7 +66,8 @@ theorem initializedRuntimeLab_recover {width : Nat} [NeZero width]
         [(Flapjack.raiseStubLocation, Flapjack.Compiler.Backend.WordToStack.Native.raiseStubNative false registerCount),
          (Flapjack.storeConstsStubLocation, Flapjack.Compiler.Backend.WordToStack.Native.storeConstsStubNative registerCount)]
       let allocated := Flapjack.Compiler.Backend.StackAlloc.compile
-        initializedRuntimeDataConfig (support ++ source)
+        initializedRuntimeDataConfig
+        (Flapjack.Compiler.Backend.StackRawCall.compile (support ++ source))
       let heap := 2 * Flapjack.Compiler.Backend.DataToWord.maxHeapLimit width
         initializedRuntimeDataConfig - 1
       Flapjack.Compiler.Backend.StackToLab.ExecutedCodec.mapCodec?
