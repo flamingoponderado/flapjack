@@ -6406,6 +6406,11 @@ run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq
   comp_correct_seq_obligation_statement comp_correct_seq_obligation_proved comp_correct_seq_obligation_hypotheses comp_correct_seq_first_non_none_statement comp_correct_seq_first_non_none_proved comp_correct_seq_first_non_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_comp_call_full_probeScript.sml word_to_stack_comp_call_full_probe.out \
+  comp_correct_call_full_statement comp_correct_call_full_proved comp_correct_call_full_hypotheses \
+  comp_correct_call_whole_statement comp_correct_call_whole_proved comp_correct_call_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_handler_full_probeScript.sml word_to_stack_comp_handler_full_probe.out \
   comp_correct_handler_full_statement comp_correct_handler_full_proved \
   comp_correct_handler_full_hypotheses comp_correct_call_induction_obligation \

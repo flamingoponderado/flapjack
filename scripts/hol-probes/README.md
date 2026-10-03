@@ -7321,3 +7321,12 @@ allocation, zero clock, all body results and normal/exception continuations are
 assembled with the entire original result/resource conclusion. This capture is
 statement evidence from the original full theorem, not a replay of the local
 9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
+
+`word_to_stack_comp_call_full_probe.out` records the complete original Call
+constructor induction obligation with all four literal guarded IHs, plus the
+whole arbitrary-ret/arbitrary-handler Call specialization of comp_correct.
+Both statements are closed kernel theorems, proved=T and hypotheses=0. The
+native enclosing constructor assembles checked tail/NONE/SOME cases with every
+original quantifier and result/resource conclusion. These captures are statement
+evidence via the original full theorem, not a replay of the local case proof or
+a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.

@@ -9104,6 +9104,12 @@
       "sha256": "da868a9e87fcb4af4689997e0d64a9d875b11abe42c21139955615f5e6de52fa"
     },
     {
+      "bytes": 12632,
+      "out": "word_to_stack_comp_call_full_probe.out",
+      "rows": 6,
+      "sha256": "e7925f0b4bd8c3135be25f83659e656cf1dc8fb62935cc3e131128775cfa7c32"
+    },
+    {
       "bytes": 3675,
       "out": "word_to_stack_comp_clock_probe.out",
       "rows": 9,
