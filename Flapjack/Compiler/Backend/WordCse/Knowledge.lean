@@ -5,8 +5,9 @@ import Flapjack.Pancake.WordLang
 /-! Source-shaped native CSE knowledge. Both register maps retain the literal
 sparse-tree carrier, both fact maps retain every balanced-tree constructor and
 cached size, and store facts retain the source association-list order. This
-native port is a prerequisite for full CSE; the distinct executed knowledge
-carrier and its routing correspondence remain separate open work. -/
+native port is a prerequisite for full CSE. `ProductionKnowledge` and
+`ProductionRegisterData` establish transports to the executed knowledge carrier;
+full CSE correctness remains open. -/
 namespace Flapjack.Compiler.Backend.WordCse
 open Flapjack
 
@@ -29,7 +30,7 @@ def emptyData : Knowledge :=
   ⟨.ln, .ln, [], Misc.BalancedMap.empty, Misc.BalancedMap.empty⟩
 
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "keep_data_def"]
-def keepData (canon : Spt Nat) (written : Nat) : Bool :=
+def keepData {α : Type} (canon : Spt α) (written : Nat) : Bool :=
   (sptLookup written canon).isNone
 
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "invalidate_data_def"]

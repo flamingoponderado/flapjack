@@ -6358,8 +6358,11 @@ do not claim full Run/Next or compiler correctness.
 `stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
 
 `l3_amo_arithmetic_probe.out` captures all eight complete original AMOADD,
-AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 observations.
-Independent byte/register expectations cover every alignment residue, all order
+AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 captured observations.
+Lean kernel-replays 86 distinct observations, including each of the eight
+instructions at rd=rs2, rd=x0 and rd=rs1. Other genuinely shared-path duplicate
+rows remain captured but are not separately replayed; those retained cases
+cover the same dispatch paths. Independent byte/register expectations cover every alignment residue, all order
 bits, arithmetic overflow, overlapping and zero registers, architecture values,
 and returned-state write translations/faults. Lean replays retain arbitrary
 unrelated state. This is regression evidence, not whole Run/Next correctness.
@@ -6367,7 +6370,10 @@ unrelated state. This is regression evidence, not whole Run/Next correctness.
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
 
 `l3_amo_minmax_probe.out` captures eight original AMOMIN/MAX/MINU/MAXU W/D
-definitions/types and 224 state observations. Independent calculations cover
+definitions/types and 224 captured state observations. Lean kernel-replays
+134 distinct observations, including each of the eight instructions at rd=rs2,
+rd=x0 and rd=rs1. Other genuinely shared-path duplicate rows remain captured
+but are not separately replayed. Independent calculations cover
 signed extrema, unsigned ordering, equality, zero, upper source-register bits
 in W comparisons, overlapping registers, all misalignment residues/order bits,
 and returned translation states/faults. Matching Lean replays retain arbitrary
@@ -7632,3 +7638,32 @@ Full Call/whole program/compiler correctness remain open.
 ### Signed native immediate reconstruction
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+
+`pan_structs_program_call_probe` captures full original `compile_correct`, its
+Call specialization and complete original `evaluate_ind`, quantified types and
+closed kernel truth. The Lean case keeps all ten premises/seven conclusions
+and exactly the original body/exception-handler guarded IHs. Actual target
+lookup, return comparisons/bindings and handler execution are derived internally.
+Whole program/compiler correctness remain open.
+### Native encoder correctness Skip case
+
+`riscv_target_skip_probeScript.sml` specializes the complete original
+`riscv_encoder_correct` theorem only at `Inst Skip`, recording its entire
+source premise, existential step count, every interference environment, both
+assertion predicates, native types, zero stored hypotheses, and proved `T`.
+Lean derives actual native Fetch/DecodeAny/Run/Next and post-relation before
+using the original zero assertion witness. The fixture is original evidence,
+not a cross-language equivalence proof.
+# Polymorphic CSE definition signatures
+
+`word_cse_polymorphic_probeScript.sml` captures the original equations and
+inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
+is arbitrary, not restricted to register numbers. These signatures are review
+and regression evidence, not a HOL-to-Lean equivalence proof.
+
+`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
+its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
+types and closed kernel truth. Lean retains all eight original hypotheses and
+the full target evaluation/existential globals/context/fields/WF/structs/locals/
+shape-map conclusion; Name uses precisely the same-state tail IH. Whole
+declaration correctness and production compiler routing remain open.
