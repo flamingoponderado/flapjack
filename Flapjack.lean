@@ -1,8 +1,10 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
 import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Compiler.Backend.WordDepth
+import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext

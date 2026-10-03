@@ -7981,3 +7981,9 @@ Const `asserts` intermediate/final source-state relation remains open.
 statements. Mutation tests reject a pure replacement iterator, wrong index or
 PC increment, added target-run premise, changed domain premise, wrong assertion
 counter, and reversed outside-domain observation.
+
+`pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
+`pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
+independent word/configuration/FFI carrier. Regenerate with
+`HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
+composes all six reviewed pass paths; production routing remains separate.

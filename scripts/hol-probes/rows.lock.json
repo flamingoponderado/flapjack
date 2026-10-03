@@ -5402,6 +5402,12 @@
       "sha256": "6557188c43bb7a9c3afcdc04d107679f43e67c77b43844f134072457fdd724d0"
     },
     {
+      "bytes": 2177,
+      "out": "pan_to_word_semantics_probe.out",
+      "rows": 3,
+      "sha256": "258b57880f9c0d856727ef4a75c66f51eb8e82756bad2ba8325f0ffa7ba4c7ea"
+    },
+    {
       "bytes": 1078,
       "out": "pan_to_word_structs_names_probe.out",
       "rows": 4,
@@ -9362,6 +9368,12 @@
       "sha256": "0a43512ef74c87542e249fe0ec2a7a001a11efd7ad57b13ea3183e21a2eb2682"
     },
     {
+      "bytes": 9940,
+      "out": "word_depth_graph_probe.out",
+      "rows": 40,
+      "sha256": "55285867daab1d09eacd88db58b45d703dc34a73488d8b7b3bf8125c5a691e24"
+    },
+    {
       "bytes": 1128,
       "out": "word_depth_probe.out",
       "rows": 14,
@@ -10235,6 +10247,12 @@
       "out": "word_to_stack_inst_long_arithmetic_probe.out",
       "sha256": "7615f314589ad1834f14791f519e32e55ee303d144ffbb38ffacff83051b65c2",
       "bytes": 2651,
+      "rows": 6
+    },
+    {
+      "out": "word_to_stack_inst_shift_probe.out",
+      "sha256": "a43fe13b1418d449db8b0c15b1b102193f11c9d3805fcf5b59d2d0336588d72d",
+      "bytes": 2568,
       "rows": 6
     },
     {
