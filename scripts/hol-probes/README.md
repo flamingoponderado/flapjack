@@ -6545,6 +6545,23 @@ both branches, arbitrary annotation payloads and unchanged exact HolFfiName
 lists. Neither alternative is strengthened or discarded, and no target safety
 premise/default/HD/EL dependency is introduced. The single original capture is
 regenerated in full; prior shared-memory transport rows remain unchanged.
+`word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
+
+### Full initializer basic case group
+
+`lab_to_target_initializer_basic_cases_probeScript.sml` captures the complete
+original local `IMP_state_rel_make_init`, every free-variable type and zero
+hypotheses, then projects genuine state relation conjuncts19/20/22/23/31/32/35/41/48/53
+under its unchanged full guard. These are original ISR4/5/6/7/9/10/11/13/14/17.
+The original proof prefix is also replayed to capture all17 actual residual
+Suspend goals. ISR10 is remaining-buffer-space membership/exclusion (conjunct32);
+the earlier buffer-position equality (conjunct34) did not cover that case.
+Residual goal terms are proof-state observations, not standalone theorems.
+Every projected implication is kernel checked and has zero hypotheses; no
+separate guard or successful target state is assumed. Remaining cases and the
+full initializer are open. The native consumer derives actual target memory
+bytes and initial PC from these cases and full source guards.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_basic_cases_probeScript.sml`.
 `stack_rawcall_jumplower_case_probe` freshly captures original paired comp_correct/zero hypotheses, the complete JumpLower case statement and exact evaluate_ind callee guards. Six independent original unsigned comparisons at widths1/8/64/80 are replayed in the kernel and runtime; five full theorem consumers retain both existential simulations. Captures do not prove cross-language equivalence or the full pass theorem.
 
 
@@ -6564,3 +6581,59 @@ CSR3 replaces fullword32 although its read exposes low8. These are model-section
 regressions; fullRun/Next/pass correctness remains open.
 
 `word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
+
+
+
+`wordsem_inst_const_full_probe.out` replays the unchanged original wordProps inst_const_full proof against its complete generic statement. All thirteen preserved fields and the sole successful native instruction premise are retained; replay=T, hypotheses=0, no free variables. The structural invariant is not numerical floating-point correspondence or full evaluator resource-family completion.
+
+
+`wordsem_pop_env_const_probe.out` freshly replays the unchanged original full wordProps pop_env_const proof. The closed statement preserves the sole successful pop premise and all nineteen original field equalities, including both handler branches; replay=T and hypotheses=0. This prerequisite does not establish the full evaluator resource family.
+
+### Complete native CSR instructions
+
+`l3_csr_instruction_probeScript.sml` captures all six literal original
+register/immediate equations and 102 independently stated whole-state fixtures.
+`check-l3-csr-instructions.py` requires the full unique label set and `T` for
+every fixture. Kernel counterparts live in `L3CSRInstructionsParity`. Cases
+cover zero/nonzero operands, rd0 and source alias, read-only and privilege
+traps, selectors0RV32/2RV64/3RV128 and selector1 unspecified, arbitrary prior exceptions and remaining state. The
+literal original CSRRWI zero-immediate path reads and skips writes. These
+checks supplement source review; full Run/Next correctness remains open.
+
+`stack_remove_compile_semantics_full_probeScript.sml` replays the complete unchanged original `compile_semantics` proof (2418–2615). The original non-exported `comp_correct` and `state_rel_with_clock` prerequisites are freshly replayed through the existing complete comp-correct probe using HOL's quotation-aware loader, retaining the original local simplifier settings. Its two rows record the universally closed full statement and kernel proof success. Lean retains exactly the native state relation and source non-Fail premises, deriving target failure exclusion, termination-choice equivalence, and both divergence-family prefix directions from actual entry simulations and accepted native clock/IO theorems. The inherited rational-cut FP carrier is explicit. This is full StackRemove observational preservation; remaining initialization and whole compiler correctness are separate obligations.
+
+
+`stack_rawcall_memory_ffi_probe` freshly captures the original full comp_correct/zero hypotheses and four ShMemOp/buffer-write/FFI specializations (original541-560). Four full paired native simulations retain only the original three premises; twenty final-theorem consumers check arbitrary positive and1/8/64/80 widths. Actual code transport includes all eight memory operations, timeout, errors and FFI final/return behavior. Captured statements are regression evidence, not cross-language equivalence.
+### Full initializer interference cases
+
+`lab_to_target_initializer_interference_probeScript.sml` freshly captures the
+complete original local initializer theorem/types/zero hypotheses and genuine
+state relation conjuncts16/17/24/50: original ISR2 normal FFI, ISR3 cache clear,
+ISR8 name/search layout and ISR15 shared-memory interference. Every projection
+retains the full fourteen source guards, has zero hypotheses and is kernel
+checked. Native proofs derive return-byte length, empty-name identity and full
+post-state facts, with all bounds obtained from original boundary/length
+guards. The native consumer observes the actual target cache-return PC.
+No arbitrary EL/default policy or full initializer completion is claimed.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_interference_probeScript.sml`.
+
+`wordsem_gc_const_probe.out` freshly replays the unchanged original full wordProps gc_const proof. The closed theorem keeps the sole successful-collection premise, arbitrary callbacks and all thirteen preserved field equalities; replay=T and hypotheses=0. No callback law or resource-safety assumption is supplied. Full evaluator resource induction remains open.
+
+
+`wordsem_mem_store_const_probe.out` freshly replays the unchanged original full wordProps mem_store_const proof before generalization. The closed theorem retains the sole successful-store premise and all eighteen original field equalities for arbitrary address/value/states; replay=T and hypotheses=0. No alignment/domain/safety premise is added. Full evaluator resource induction remains open.
+### Native upper-immediate and jump family
+
+`l3_upper_jump_probeScript.sml` captures the full original Skip, branchTo,
+LUI, AUIPC, JAL and JALR equations and 71 independent whole-state fixtures.
+`check-l3-upper-jump.py` requires every unique expected label to reduce to T.
+Kernel counterparts in L3UpperJumpParity cover signed immediate boundaries,
+PC wrap, Skip2/4, rd0, source alias and source0, the literal targetbit0 trap
+and JALR mask, while preserving arbitrary other state and prior exceptions.
+Successful jumps change NextFetch and link GPR, not PC or Delta. These probes
+supplement source review; full Run/Next correctness remains open.
+
+
+`wordsem_jump_exc_const_probe.out` freshly replays the unchanged full original wordProps jump_exc_const proof before generalization. The closed theorem retains the sole successful-jump premise, arbitrary state/label pair and all fourteen field equalities; replay=T and hypotheses=0. No valid-handler or frame-shape premise is supplied. Full evaluator resource induction remains open.
+
+
+`wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.

@@ -1,7 +1,14 @@
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
+import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.RiscV.L3.Defs.CSRDispatch
+import Flapjack.RiscV.L3.Defs.CSRInstructions
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
+import Flapjack.RiscV.L3.Defs.UpperJump
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
@@ -15,8 +22,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
-import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.MemoryFfi
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
@@ -1023,6 +1030,12 @@ import Flapjack.Pancake.PanStructs.CompileProgTraversal
 import Flapjack.Pancake.PanStructs.CompileExpProduction
 import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PopEnvConst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.MemStoreConst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.JumpExcConst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.AllocConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame
