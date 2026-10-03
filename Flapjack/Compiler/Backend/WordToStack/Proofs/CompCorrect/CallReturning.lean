@@ -3754,4 +3754,45 @@ theorem bodyExceptionResult {width : Nat} [NeZero width] {C F : Type}
   rw [dropEq] at bodyConclusion
   exact bodyConclusion
 
+/-- Exhaustive source callee outcome split derived from the original whole
+Call non-error premise. NONE, Break, Continue and Error are rejected by the
+actual source Call evaluator; Return, Exception and every terminal constructor
+remain. This is untagged case-local evaluator factoring, not a restriction
+added to the full correctness theorem. -/
+theorem calleeOutcomeCases {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (notError : result ≠ some .error) :
+    (∃ location returned, bodyResult = some (.result location returned)) ∨
+    (∃ location value, bodyResult = some (.exception location value)) ∨
+    bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
+    ∃ event, bodyResult = some (.finalFfi event) := by
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  cases bodyResult with
+  | none => exact False.elim (notError (Prod.mk.inj execution).1.symm)
+  | some value =>
+    cases value
+    case result location returned => exact Or.inl ⟨location, returned, rfl⟩
+    case exception location value => exact Or.inr (Or.inl ⟨location, value, rfl⟩)
+    case timeOut => exact Or.inr (Or.inr (Or.inl rfl))
+    case notEnoughSpace => exact Or.inr (Or.inr (Or.inr (Or.inl rfl)))
+    case finalFfi event => exact Or.inr (Or.inr (Or.inr (Or.inr ⟨event, rfl⟩)))
+    all_goals exact False.elim (notError (Prod.mk.inj execution).1.symm)
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
