@@ -6956,3 +6956,16 @@ The three Lean ports and full Decode/Run/Next remain open.
 ### Full generic WordConvs expression maximum introduction
 
 `word_convs_max_var_exp_intro_probeScript.sml` replays wordConvsScript.sml460-471 local `max_var_exp_IMP` with its unchanged proof and GEN_ALL closing the original free predicate. Captures the full arbitrary-predicate/P0 statement, proved=T and zero hypotheses. Lean mutual induction retains constants, lookup, variables, load, shift and empty/nested Op argument lists. This is original theorem evidence plus source comparison, not cross-language equivalence.
+
+### Full native initializer semantics
+
+`lab_to_target_semantics_make_init_probeScript.sml` freshly captures the
+complete original derived theorem10524–10537, every original free variable
+type, zero hypotheses and kernel proof T. The native theorem retains all
+sixteen guards and the independent empty-label-tree value type G. Its complete
+empty-tree invariant is proved independent of the value type; actual full
+initializer state/oracle witnesses feed the whole machine behavior theorem.
+The conclusion retains exact initialized source semantics and machine
+behavior equality, with inherited real rendering (SOUNDNESS item8). Whole
+filtering/final-pass composition remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_semantics_make_init_probeScript.sml`.

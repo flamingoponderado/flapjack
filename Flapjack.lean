@@ -1,4 +1,5 @@
 import Flapjack.Pancake.WordConvs.MaxVarIntro
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
 import Flapjack.Compiler.Backend.LabFilter.Proofs
 import Flapjack.RiscV.L3.Defs.DecodeImmediates
