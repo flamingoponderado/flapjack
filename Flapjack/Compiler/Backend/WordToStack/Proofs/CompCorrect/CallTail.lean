@@ -1,0 +1,243 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallLocalRecovery
+import Flapjack.Compiler.Backend.WordToStack.Proofs.NativeInsertWf
+import Flapjack.Compiler.Backend.StackProps.OrderedLabels
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
+
+/-!
+# Word-to-Stack `comp_correct`: the tail-call case
+
+`word_to_stackProofScript.sml:7935-8164` (`Call_tail`). The arguments are
+already in place; the caller's frame is freed down to the stack arguments, the
+callee's frame is allocated on top of them, and the callee body is simulated
+by the source-shaped induction hypothesis.
+-/
+
+namespace Flapjack.WordToStackProofs.CompCorrect.CallTail
+open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
+open Flapjack.Compiler.Backend.WordToStack.Native
+
+/-- Genuine canonical source codec re-export for the relation qualifier. -/
+theorem holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+/-- Genuine canonical target codec re-export for the relation qualifier. -/
+theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
+      (StackSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : StackSemStateFiniteExact width C F,
+      StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  StackSemStateSupport.holFmapAsFiniteSupportWitness
+
+/-- What a successful WordSem `find_code` returns. Flapjack helper; no separate
+HOL original. -/
+theorem findCode_facts {width : Nat} [NeZero width] (dest : Option Nat)
+    (xs : List (WordLocW width)) (code : Spt (Nat × WordLangProgHOL (BitVec width)))
+    (ssize : Spt Nat) (args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (h : wordSemFindCode dest xs code ssize = some (args1, prog, ss)) :
+    ∃ p, sptLookup p code = some (args1.length, prog) ∧ ss = sptLookup p ssize ∧
+      (dest = none → args1 = xs.dropLast) ∧ (dest ≠ none → args1 = xs) := by
+  rcases dest with _ | p
+  · simp only [wordSemFindCode] at h
+    split at h
+    · cases h
+    rename_i hne
+    rcases hv : xs.getLast hne with w | ⟨q, off⟩
+    · rw [hv] at h; cases h
+    rw [hv] at h
+    rcases off with _ | off
+    · rcases hp : sptLookup q code with _ | ⟨arity, body⟩
+      · simp only [hp] at h; cases h
+      simp only [hp] at h
+      split at h
+      · rename_i hl
+        simp only [Option.some.injEq, Prod.mk.injEq] at h
+        obtain ⟨rfl, rfl, rfl⟩ := h
+        refine ⟨q, ?_, rfl, fun _ => rfl, fun h => absurd rfl h⟩
+        rw [hp, List.length_dropLast, hl]; rfl
+      · cases h
+    · simp at h
+  · simp only [wordSemFindCode] at h
+    rcases hp : sptLookup p code with _ | ⟨arity, body⟩
+    · rw [hp] at h; cases h
+    rw [hp] at h
+    simp only at h
+    split at h
+    · rename_i hl
+      simp only [Option.some.injEq, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl, rfl⟩ := h
+      exact ⟨p, by rw [hp, hl], rfl, ⟨fun h => absurd h (by simp), fun _ => rfl⟩⟩
+    · cases h
+
+/-- Full original comp_correct tail-call case (`word_to_stackProofScript.sml:7935-8164`).
+The induction hypothesis is the source evaluator's own guarded hypothesis for
+the callee body (`get_vars`, `bad_dest_args`, `find_code`, `ret = NONE`,
+`handler = NONE`, nonzero clock), quantified over the full original simulation.
+All original premises and the complete target clock/run/result/resource
+conclusion are retained. Evaluator closure inherits reals_as_rational_cuts; no
+numerical FP assertion. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (ih : ∀ (xs : List (WordLocW width)) (args1 : List (WordLocW width))
+        (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat),
+      WordSemStateFiniteExact.getVars args source = some xs ∧
+        ¬ wordSemBadDestArgs dest args = true ∧
+        wordSemFindCode dest (wordSemAddRetLoc none xs) source.code source.stackSize =
+          some (args1, prog, ss) ∧
+        handler = none ∧ source.clock ≠ 0 →
+      Seq.Simulation ac prog
+        (WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock source)))
+    (k f frame : Nat) (sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F)
+    (result : Option (WordSemResult width))
+    (bs bsPost : AppList (BitVec width)) (n nPost : Nat)
+    (compiled : HolProg width) (lens : List Nat)
+    (premises : WordSemStateFiniteExact.evaluate (.call none dest args handler) source =
+        (result, sourcePost) ∧
+      result ≠ some .error ∧ stateRel ac k f frame source target lens 0 ∧
+      postAllocConventionsHOL k
+        ((.call none dest args handler) : WordLangProgHOL (BitVec width)) = true ∧
+      flatExpConventions ((.call none dest args handler) : WordLangProgHOL (BitVec width)) = true ∧
+      compNative ac false (.call none dest args handler) (bs, n) (k, f, frame) =
+        (compiled, (bsPost, nPost)) ∧
+      (appListAppend bs).length ≤ n ∧
+      n - (appListAppend bs).length ≤ target.bitmaps.length ∧
+      List.IsPrefix (appListAppend bsPost) (target.bitmaps.drop (n - (appListAppend bs).length)) ∧
+      (∀ loc, StackSem.getLabelsExact compiled loc → StackSem.locCheckExact target.code loc) ∧
+      maxVarHOL ((.call none dest args handler) : WordLangProgHOL (BitVec width)) <
+        2 * frame + 2 * k) :
+    ∃ (extraClock : Nat) (targetPost : StackSemStateFiniteExact width C F)
+      (targetResult : Option (StackSemResult width)),
+      StackSemEvaluate.evaluate (compiled, {target with clock := target.clock + extraClock}) =
+        (targetResult, targetPost) ∧
+      compCorrectResult ac k f frame source sourcePost targetPost result targetResult lens := by
+  obtain ⟨execution, notError, related, conventions, flat, compilation, hbsn, hbsl, hpre,
+    labels, maxVar⟩ := premises
+  simp only [compNative] at compilation
+  rcases hcd : callDestNative (width := width) dest args (k, f, frame) with ⟨q0, dest'⟩
+  rw [hcd] at compilation
+  simp only [Prod.mk.injEq] at compilation
+  obtain ⟨rfl, rfl, rfl⟩ := compilation
+  -- the source run
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  rcases hgv : WordSemStateFiniteExact.getVars args source with _ | xs
+  · simp only [hgv, Prod.mk.injEq] at execution; exact absurd execution.1.symm notError
+  simp only [hgv] at execution
+  by_cases hbad : wordSemBadDestArgs dest args = true
+  · simp only [hbad, if_true, Prod.mk.injEq] at execution
+    exact absurd execution.1.symm notError
+  simp only [hbad, Bool.false_eq_true, if_false] at execution
+  rcases hfc : wordSemFindCode dest (wordSemAddRetLoc none xs) source.code source.stackSize with
+    _ | ⟨args1, prog, ss⟩
+  · simp only [hfc, Prod.mk.injEq] at execution; exact absurd execution.1.symm notError
+  simp only [hfc] at execution
+  rcases handler with _ | hnd
+  swap
+  · simp only [Prod.mk.injEq] at execution; exact absurd execution.1.symm notError
+  simp only at execution
+  -- the compiled destination finds the compiled callee
+  obtain ⟨t4, hev4, hrel4, hlen4, hsp4, hcode⟩ :=
+    CallDest.callDestLemma ac k f frame dest args source target lens q0 dest' xs none
+      ⟨hbad, related, hcd, hgv⟩
+  obtain ⟨bs0, i0, bs2, i2, fs, stackProg, hcomp, hb1, hb2, hb3, hss, hfind⟩ :=
+    hcode args1 prog ss hfc
+  have hrel4' := hrel4
+  unfold stateRel at hrel4'
+  obtain ⟨r1, -, r3, r4, r5, -, -, -, -, r10, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -,
+    r28, -, -, -, -, r33, -, r35, -, r37, r38, rloc⟩ := hrel4'
+  -- argument conventions and the frame bound on the arguments
+  have hargs : args = (List.range args.length).map (fun x => 2 * x) := by
+    simp only [postAllocConventionsHOL, callArgConventionHOL, Bool.and_eq_true,
+      beq_iff_eq] at conventions
+    exact conventions.2.2
+  have hxslen : xs.length = args.length :=
+    WordSemStateFiniteExact.getVarsLengthLemma args source xs hgv
+  have hargbound : ∀ i, i < args.length → i < frame + k := by
+    intro i hi
+    have hmem : 2 * i ∈ args := by
+      rw [hargs]; exact List.mem_map.mpr ⟨i, List.mem_range.mpr hi, rfl⟩
+    have := maxList_ge_of_mem args (2 * i) hmem
+    simp only [maxVarHOL] at maxVar
+    omega
+  -- the freed caller frame keeps exactly the callee's stack arguments
+  set sac := Compiler.Backend.WordToStack.stackArgCount dest' args.length k with hsac
+  have hlenb : args.length ≤ frame + k := by
+    rcases Nat.eq_zero_or_pos args.length with h | h
+    · omega
+    · have := hargbound (args.length - 1) (by omega); omega
+  have hsacf : sac ≤ f := by
+    have : sac ≤ args.length - k := by
+      simp only [hsac, Compiler.Backend.WordToStack.stackArgCount]; split <;> omega
+    by_cases h0 : frame = 0
+    · rw [if_pos h0] at r35; omega
+    · rw [if_neg h0] at r35; omega
+  obtain ⟨pLoc, hpLoc, hssLoc, hnone, hsome⟩ :=
+    findCode_facts dest _ source.code source.stackSize args1 prog ss hfc
+  have hsac1 : sac = args1.length - k := by
+    rcases dest with _ | p
+    · have hne : args ≠ [] := by rintro rfl; simp [wordSemBadDestArgs] at hbad
+      have hlen0 : ¬ args.length = 0 := by simpa using hne
+      simp only [callDestNative, dif_neg hlen0, Prod.mk.injEq] at hcd
+      obtain ⟨-, rfl⟩ := hcd
+      rw [hnone rfl]
+      simp only [hsac, Compiler.Backend.WordToStack.stackArgCount, wordSemAddRetLoc,
+        List.length_dropLast, hxslen]
+    · simp only [callDestNative, Prod.mk.injEq] at hcd
+      obtain ⟨-, rfl⟩ := hcd
+      rw [hsome (by simp)]
+      simp only [hsac, Compiler.Backend.WordToStack.stackArgCount, wordSemAddRetLoc, hxslen]
+  have huse4 : t4.useStack = true := r5
+  have hfree : t4.stackSpace + Compiler.Backend.WordToStack.stackFree dest' args.length k f frame ≤
+      t4.stack.length := by
+    simp only [Compiler.Backend.WordToStack.stackFree]
+    omega
+  have hcall : ∀ extra : Nat,
+      StackSemEvaluate.evaluate
+          (Compiler.Backend.StackLang.Prog.seq q0
+            (seqStackFreeNative (Compiler.Backend.WordToStack.stackFree dest' args.length k f frame)
+              (Compiler.Backend.StackLang.Prog.call none dest' none)),
+            {target with clock := target.clock + extra}) =
+        StackSemEvaluate.evaluate (Compiler.Backend.StackLang.Prog.call none dest' none,
+          {t4 with
+            stackSpace := t4.stackSpace +
+              Compiler.Backend.WordToStack.stackFree dest' args.length k f frame
+            clock := t4.clock + extra}) := by
+    intro extra
+    have hev4' := Compiler.Backend.StackProps.evaluateAddClock extra q0 target none t4
+      ⟨hev4, by simp⟩
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, hev4']
+    simp only
+    rw [CallHelpers.evaluateSeqStackFree _ _ {t4 with clock := t4.clock + extra}
+        ⟨huse4, by simp only; omega⟩, StackSemEvaluate.evaluate_seq,
+      StackSemEvaluate.evaluate_stackFree, if_neg (by simp [huse4]), if_neg (by simp; omega)]
+    simp only [StackSemControl.fixClock, Nat.min_self]
+  by_cases hclk : source.clock = 0
+  · -- the clock runs out at the call
+    rw [dif_pos hclk] at execution
+    simp only [Prod.mk.injEq] at execution
+    obtain ⟨rfl, rfl⟩ := execution
+    have hrun := hcall 0
+    rw [StackSemEvaluate.evaluate_call] at hrun
+    simp only [hfind, Nat.add_zero, r1.symm.trans hclk, if_true] at hrun
+    refine ⟨0, _, _, hrun, ?_⟩
+    · unfold compCorrectResult
+      simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, if_false]
+      exact ⟨r4.symm, hclk⟩
+  · sorry
+
+end Flapjack.WordToStackProofs.CompCorrect.CallTail

@@ -18,7 +18,7 @@ private theorem foldIndex {α : Type} (ls : List α) (start : Nat) (t : Spt α) 
 
 /-- Flapjack infrastructure: optional observations of the native tagged fold,
 including odd keys and indices past the list. No total EL default is used. -/
-private theorem fromList2Lookup {α : Type} (ls : List α) (n : Nat) :
+theorem fromList2Lookup {α : Type} (ls : List α) (n : Nat) :
     sptLookup n (sptFromList2 ls) = if n%2=0 then ls[n/2]? else none := by
   induction ls using List.reverseRecOn with
   | nil => simp [sptFromList2]

@@ -245,4 +245,47 @@ theorem callDestLemma {width : Nat} [NeZero width] {C F : Type}
       exact ⟨bs, i, bs2, i2, fs, sp, by rw [hlen]; exact hc, h1, h2, h3, h4, h5⟩
     · cases hfind
 
+/-- The call-destination preamble only loads a register: bitmaps and code are
+unchanged. Flapjack helper; no separate HOL original. -/
+theorem callDest_preserves {width : Nat} [NeZero width] {C F : Type}
+    (dest : Option Nat) (args : List Nat) (kf : Nat × Nat × Nat) (q0 : HolProg width)
+    (dest' : Sum Nat Nat) (t t4 : StackSemStateFiniteExact width C F)
+    (hcd : callDestNative dest args kf = (q0, dest'))
+    (hev : StackSemEvaluate.evaluate (q0, t) = (none, t4)) :
+    t4.bitmaps = t.bitmaps ∧ t4.code = t.code := by
+  have hskip : q0 = .skip → t4.bitmaps = t.bitmaps ∧ t4.code = t.code := by
+    rintro rfl
+    rw [StackSemEvaluate.evaluate_skip] at hev
+    cases hev
+    exact ⟨rfl, rfl⟩
+  rcases dest with _ | p
+  · simp only [callDestNative] at hcd
+    split at hcd
+    · simp only [Prod.mk.injEq] at hcd; exact hskip hcd.1.symm
+    · simp only [Prod.mk.injEq] at hcd
+      obtain ⟨rfl, -⟩ := hcd
+      simp only [wReg2] at hev
+      split at hev
+      · rename_i hlt
+        exact hskip (by simp [wStackLoadNative, wReg2, hlt])
+      · simp only [wStackLoadNative] at hev
+        rw [StackSemEvaluate.evaluate_seq] at hev
+        rcases hl : StackSemEvaluate.evaluate
+            ((.stackLoad (kf.1 + 1) (kf.2.1 - 1 - (args.getLast (by simpa using ‹¬args.length = 0›) / 2 - kf.1)) :
+              HolProg width), t) with ⟨r, tl⟩
+        have hpres : tl.bitmaps = t.bitmaps ∧ tl.code = t.code := by
+          rw [StackSemEvaluate.evaluate_stackLoad] at hl
+          split at hl
+          · cases hl; exact ⟨rfl, rfl⟩
+          split at hl <;> (cases hl; exact ⟨rfl, rfl⟩)
+        rw [hl] at hev
+        rcases r with _ | r
+        · simp only [StackSemControl.fixClock] at hev
+          rw [StackSemEvaluate.evaluate_skip] at hev
+          cases hev
+          exact hpres
+        · simp [StackSemControl.fixClock] at hev
+  · simp only [callDestNative, Prod.mk.injEq] at hcd
+    exact hskip hcd.1.symm
+
 end Flapjack.WordToStackProofs.CallDest
