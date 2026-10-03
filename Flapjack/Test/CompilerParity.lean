@@ -4,10 +4,12 @@ import Flapjack.Test.L3SystemSignalsParity
 import Flapjack.Test.L3AMOMinMaxParity
 import Flapjack.Test.L3AMOArithmeticParity
 import Flapjack.Test.BytesInMemoryDomainParity
+import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.L3AMOSwapParity
 import Flapjack.Test.MiscBytesInMemImpParity
 import Flapjack.Test.LabToTargetWordSearchParity
 import Flapjack.Test.MiscFindIndexMemParity
+import Flapjack.Test.MiscFindIndexSuccessfulMemParity
 import Flapjack.Test.MiscFindIndexShiftParity
 import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity

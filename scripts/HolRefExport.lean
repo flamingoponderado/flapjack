@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
 import Flapjack.Misc.BytesInMemory.Domain
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.FFI
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
