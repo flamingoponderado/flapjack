@@ -88877,5 +88877,41 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison of full evaluate_wInst Div branch4801-4819. All five original inst/everyVar/maxVar/argument-convention/full stateRel guards and entire existential actual native wInst run/full source-post-target-post relation/stack length-space conclusion retained. Source success derives actual word numerator/denominator, nonzero divisor and complete source post. Reused accepted actual Reg1/Reg2 load theorem (now public untagged infrastructure) preserves both operand values, relation and resources, including aliases/spills. Native wordQuot and BitVec.sdiv implementations have an unconditional kernel proof by all four sign cases; no external assumption or restricted divisor premise. Actual primitive and native register/spill destination write derived internally with original bound/even guards. No targetrun/postrelation/extra success/IH premise. Source/target/result share positive alpha word width; host and FFI remain independent beta/gamma. Fresh typed original kernel specialization regenerated and reviewed: T, hypotheses 0, all five guards and full conclusion retained, not literal local replay or cross-language equivalence. Five canonical map fields use genuine local source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators, no new agreement claim. Other instruction cases/full Inst/compiler remain unfinished.",
     "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Shift.lean",
+    "lean_name": "evaluateWInstShiftReg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688 Shift branch4823-4869. All five original guards retained and full native wInst existential, entire stateRel and target stack length/space. Actual source Shift success derives word operand reads and original successful wordShiftHOL; actual native Reg1/Reg2 loads and register/spill destination write are internally proved with arbitrary aliasing and all positive widths. Immediate case retains arbitrary BitVec operand. Canonical source fpRegs/store and target regs/fpRegs/store qualified, sptree locals/code unchanged; common source/instruction/target/result word width and independent host/FFI types. Inherited reals_as_rational_cuts remains SOUNDNESS item8 external boundary. Fresh typed original kernel specializations regenerated and reviewed: both T/hypotheses0 with complete guards/result and independent carriers; neither probes nor Lean kernel establish HOL-to-Lean equivalence.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Shift.lean",
+    "lean_name": "evaluateWInstShiftImm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688 Shift branch4823-4869. All five original guards retained and full native wInst existential, entire stateRel and target stack length/space. Actual source Shift success derives word operand reads and original successful wordShiftHOL; actual native Reg1/Reg2 loads and register/spill destination write are internally proved with arbitrary aliasing and all positive widths. Immediate case retains arbitrary BitVec operand. Canonical source fpRegs/store and target regs/fpRegs/store qualified, sptree locals/code unchanged; common source/instruction/target/result word width and independent host/FFI types. Inherited reals_as_rational_cuts remains SOUNDNESS item8 external boundary. Fresh typed original kernel specializations regenerated and reviewed: both T/hypotheses0 with complete guards/result and independent carriers; neither probes nor Lean kernel establish HOL-to-Lean equivalence.",
+    "hol_line": 4688
   }
 ]

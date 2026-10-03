@@ -7562,3 +7562,7 @@ run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_wor
 run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_division_probe.out \
   division_typed division_proved division_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_shift_probeScript.sml word_to_stack_inst_shift_probe.out \
+  shiftReg_typed shiftReg_proved shiftReg_hypotheses shiftImm_typed shiftImm_proved shiftImm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
