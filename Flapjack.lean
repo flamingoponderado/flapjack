@@ -1,7 +1,9 @@
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
 import Flapjack.RiscV.CorrectnessEncoding.Loc
 import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
-import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningFull
@@ -732,6 +734,13 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCallCorrect
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenSemantics
 import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
+import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
+import Flapjack.Compiler.Backend.StackToLab.Compile
+import Flapjack.Compiler.Backend.BvlToBvi
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
@@ -1392,6 +1401,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
 import Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectFunctionExn
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion

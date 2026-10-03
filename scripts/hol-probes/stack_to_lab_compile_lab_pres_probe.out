@@ -1,0 +1,5 @@
+MAP_FST_compile_compile_statement=MAP FST (compile jump off gen max_heap k InitGlobals_location (compile c (compile code))) = 0::1::2::gc_stub_location::MAP FST code
+next_lab_non_zero_3211_statement=∀p. 1 ≤ next_lab p 1 ∧ 2 ≤ next_lab p 2
+MAP_prog_to_section_FST_3272_statement=MAP (λs. case s of Section n v => n) (MAP prog_to_section prog) = MAP FST prog
+extract_label_store_list_code_statement=∀a t ls. extract_labels (store_list_code a t ls) = []
+stack_to_lab_compile_lab_pres_statement=EVERY (λn. n ≠ 0 ∧ n ≠ 1 ∧ n ≠ 2 ∧ n ≠ gc_stub_location) (MAP FST prog) ∧ EVERY (λ(n,p). (let labs = extract_labels p in EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) labs ∧ ALL_DISTINCT labs)) prog ∧ ALL_DISTINCT (MAP FST prog) ⇒ labels_ok (compile c c2 c3 sp offset prog)
