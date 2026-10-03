@@ -1,0 +1,17 @@
+genlist_line_to_info_entry_pc_max=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis :ffiname list) (p' :num) (code2 :α sec list) ∧ enc_ok c ⇒
+EVERY
+  (λ(x :ffiname # shmem_info_num).
+       (SND x).entry_pc < pos_val (num_pcs code2) (0 :num) code2)
+  (FLAT
+     (GENLIST
+        (λ(i :num). line_to_info code2 (0 :num) (i,asm_fetch_aux i code2))
+        (num_pcs code2)))
+genlist_line_to_info_entry_pc_max_types=(code2 :α sec list)::α sec list;(p' :num)::num;(ffis :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+genlist_line_to_info_entry_pc_max_hypotheses=0
+actual_max=T
+actual_entries=T
+actual_end=T
+empty=T
+valid_guard=T
+strict_failure=T

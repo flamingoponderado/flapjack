@@ -6237,6 +6237,14 @@ predicate and the complete separated-heap conclusion. The native counterpart
 uses the reviewed `memoryHOL` and SetSep carriers; the capture is regression
 evidence, not a cross-language equivalence proof.
 
+`stack_remove_comp_ffi_probeScript.sml` replays the complete original FFI case
+of `comp_correct` (2081–2098), with the original register, byte-read and full
+byte-write frame prerequisite proofs. Its two rows record the complete case
+statement and kernel proof success. The returning FFI length law justifies
+the replacement-byte read premise; no target run or writeback frame is assumed.
+This evidence does not establish cross-language equivalence or full pass
+correctness.
+
 `stack_remove_comp_shmem_probeScript.sml` replays the complete original
 `comp_correct` ShMemOp case (1998–2022), including its literal local register
 and clock-relation prerequisites. The two rows record the full quantified
@@ -6347,7 +6355,31 @@ do not claim full Run/Next or compiler correctness.
 `stack_code_bitmaps_seq_probe.out` captures complete original evaluate_code_bitmaps, zero hypotheses and native Seq specialization. The native case keeps only actual source-path recursive hypotheses, derives fixClock clamping and concatenates oracle prefixes in original left-fold/bitmap order. Whole evaluator assembly remains open.
 `stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
 
+`l3_amo_arithmetic_probe.out` captures all eight complete original AMOADD,
+AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 observations.
+Independent byte/register expectations cover every alignment residue, all order
+bits, arithmetic overflow, overlapping and zero registers, architecture values,
+and returned-state write translations/faults. Lean replays retain arbitrary
+unrelated state. This is regression evidence, not whole Run/Next correctness.
 
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
 
 `stack_remove_comp_install_probeScript.sml` replays the complete literal original `comp_correct` Install case (1932–1997) after introducing its original four premises; the local original `state_rel_get_var` is replayed unchanged. Two rows capture the full specialized statement and kernel proof success, with no open hypotheses or free variables. The native Lean case derives target execution and the full oracle/code/register/buffer/heap post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
+
+`l3_amo_minmax_probe.out` captures eight original AMOMIN/MAX/MINU/MAXU W/D
+definitions/types and 224 state observations. Independent calculations cover
+signed extrema, unsigned ordering, equality, zero, upper source-register bits
+in W comparisons, overlapping registers, all misalignment residues/order bits,
+and returned translation states/faults. Matching Lean replays retain arbitrary
+unrelated state; this does not establish whole Run/Next or compiler correctness.
+
+`stack_code_bitmaps_alloc_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Alloc specialization. Native rejected dispatch and actual allocation/GC results derive count zero from full alloc_const, retaining all three original existential conclusions. Whole evaluator assembly remains open.
+
+`stack_remove_copy_loop_full_probeScript.sml` replays the complete literal original `copy_loop_thm` proof (1334–1471), retaining every original premise, arbitrary bitmap recursion, clock allowance, temporary-register alternative and full framed memory result. Two rows capture its full statement and kernel proof success. The native Lean theorem derives execution by the source induction and accepted full CopyEach theorem. This proof-only slice makes no executed compiler parity claim.
+
+
+`stack_code_bitmaps_install_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Install specialization. Native complete dispatch derives count zero on all failures and count one on actual success, retaining original oracle shift/code left-union/bitmap append conclusions. Whole evaluator assembly remains open.
+
+`stack_code_bitmaps_ffi_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and native FFI specialization. All four word reads, both bytearray reads and final/return outcomes preserve oracle/code/bitmaps with count zero; no name/alignment or poststate premise is introduced. Whole evaluator assembly remains open.
+
+`stack_code_bitmaps_rawcall_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and RawCall specialization. The recursive IH follows only actual lookup/destSeq/nonzero-clock dispatch at decClock source; errors and timeout preserve fields/count zero, bad-function-return changes result only. Whole evaluator assembly remains open.
