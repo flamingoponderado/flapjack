@@ -7499,3 +7499,7 @@ run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bi
 run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_probe.out \
   evaluateWInstConst_typed evaluateWInstConst_proved evaluateWInstConst_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_store_reg1_zero_probeScript.sml word_to_stack_store_reg1_zero_probe.out \
+  storeReg1Zero_typed storeReg1Zero_proved storeReg1Zero_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
