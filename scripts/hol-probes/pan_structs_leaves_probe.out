@@ -1,0 +1,38 @@
+compile_shape_n_def=(∀(sctxt :(mlstring # (α # shape) list) list) (n :num).
+   compile_shape_n sctxt n One = One) ∧
+(∀(shs :shape list) (sctxt :(mlstring # (α # shape) list) list) (n :num).
+   compile_shape_n sctxt n (Comb shs) =
+   Comb (MAP (λ(a :shape). compile_shape_n sctxt n a) shs)) ∧
+∀(sctxt :(mlstring # (α # shape) list) list) (nm :mlstring) (n :num).
+  compile_shape_n sctxt n (Named nm) =
+  case afindi nm (DROP n sctxt) of
+    (NONE :num option) => One
+  | SOME j =>
+    (let
+       ((nm' :mlstring),(flds :(α # shape) list)) = sctxt❲n + j❳
+     in
+       Comb
+         (MAP (λ(a :shape). compile_shape_n sctxt (n + j + (1 :num)) a)
+            (MAP (SND :α # shape -> shape) flds)))
+decs_stcnames_to_get_names=∀(acc :(mlstring # struct_info) list) (code :α decl list)
+    (res :(mlstring # struct_info) list) (ctxt :context).
+  decs_stcnames acc code = SOME res ∧
+  ctxt.structs =
+  MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) acc ⇒
+  get_names ctxt code =
+  ctxt with
+  structs :=
+    MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) res
+decs_stcnames_to_get_names_types=(acc :(mlstring # struct_info) list)::(mlstring # struct_info) list;(code :α decl list)::α decl list;(res :(mlstring # struct_info) list)::(mlstring # struct_info) list;(ctxt :context)::context;
+decs_stcnames_infos_ok=∀(acc :(mlstring # struct_info) list) (code :α decl list)
+    (res :(mlstring # struct_info) list) (ctxt :β).
+  decs_stcnames acc code = SOME res ∧ struct_infos_ok acc ⇒
+  struct_infos_ok res
+decs_stcnames_infos_ok_types=(acc :(mlstring # struct_info) list)::(mlstring # struct_info) list;(code :α decl list)::α decl list;(res :(mlstring # struct_info) list)::(mlstring # struct_info) list;(ctxt :β)::β;
+size_of_shape_compile_pass_eq=struct_infos_ok (s :(α, β) state).structs ∧
+is_wf_shape s.structs (shape :shape) ∧
+(str_ctxt :(mlstring # (mlstring # shape) list) list) =
+MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) s.structs ⇒
+size_of_shape (compile_shape str_ctxt shape) =
+size_of_sh_with_ctxt s.structs shape
+size_of_shape_compile_pass_eq_types=(str_ctxt :(mlstring # (mlstring # shape) list) list)::(mlstring # (mlstring # shape) list) list;(shape :shape)::shape;(s :(α, β) state)::(α, β) state;

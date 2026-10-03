@@ -77239,5 +77239,39 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: crep_to_loop make_funcs maps the first entry's name to (first_name, its arity), first binding wins; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
+    "lean_name": "decsStcnamesToGetNames",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "decs_stcnames_to_get_names",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the elaborated statement captured with types by pan_structs_leaves_probe: !acc code res ctxt. decs_stcnames acc code = SOME res /\\ ctxt.structs = MAP (\\(nm,info). (nm,info.fields)) acc ==> get_names ctxt code = ctxt with structs := MAP (...) res, over decsStcnamesHOLExact, getNamesExact and ContextExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
+    "lean_name": "decsStcnamesInfosOk",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "decs_stcnames_infos_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the elaborated statement captured with types by pan_structs_leaves_probe: !acc code res ctxt. decs_stcnames acc code = SOME res /\\ struct_infos_ok acc ==> struct_infos_ok res; the formula-absent ctxt : 'b binder is retained as {β : Type} (_ctxt : β); struct_infos_ok is the reviewed structInfosOkHOLExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
+    "lean_name": "structContextLookupHOL_none_not_mem",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: an absent struct lookup means the name is not a context key; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
+    "lean_name": "isWfShapesExactHOL_eq_all",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: list shape well-formedness is EVERY of the single-shape check; no HOL original."
   }
 ]
