@@ -45,6 +45,7 @@ import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb

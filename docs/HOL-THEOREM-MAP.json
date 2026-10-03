@@ -90660,5 +90660,71 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.47): HOL compile_single_lem (word_to_wordProofScript.sml:32-157). Full statement kept: free t k a c name col as leading binders, ∀prog n st, premises domain st.locals = set (even_list n) (sptDomain as the predicate of membership in the tagged evenList, as in the accepted full_ssa_cc_trans_correct) ∧ gc_fun_const_ok st.gc_fun (tagged gcFunConstOk); conclusion ∃perm' with HOL's let-pairs, the cprog of the tagged compileSingle, if res = SOME Error then T (decided classically, as in the accepted word_alloc_correct) else res = res' ∧ word_state_eq_rel (tagged wordStateEqRel) ∧ the HOL case on res (Break/Continue → T, other SOME → locals equal), over the faithful wordSem evaluate on WordSemStateFiniteExact width C F (HOL (α,β,γ) state). Proof follows HOL: word_alloc_correct then full_ssa_cc_trans_correct (witness), compile_exp_thm, inst_select_thm (locals_rel reflexive), evaluate_remove_dead_prog, word_common_subexp_elim_correct, evaluate_copy_prop, evaluate_three_to_two_reg_prog, evaluate_remove_unreach, evaluate_remove_dead_prog, with the syntactic premises from the tagged convention theorems (inst_select/full_ssa/remove_dead/word_cse/copy_prop/three_to_two/remove_unreach flat_exp_conventions, wf_cutsets and every_inst distinct_tar_reg); the reviewed distinct_tar_reg through HolInst.ofWordLangInst is shown pointwise equal to the executed distinctTarReg used by evaluate_three_to_two_reg_prog. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Typed capture in word_to_word_compile_single. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "rm_perm",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "rm_perm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL rm_perm (159-163): s with permute := s.permute = s over WordSemStateFiniteExact width C F; structure update; rfl. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "find_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "find_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL find_code_thm (167-189): free st l o1 o' x args prog locsize explicit; premise conjunction (the inline code relation on st.code with ∃t k a c col, and find_code o1 (add_ret_loc o' x) st.code st.stack_size = SOME (args,prog,locsize)); conclusion ∃t k a c col n prog' with SND (compile_single ...) = (LENGTH args, prog') and find_code over l, over the tagged wordSemFindCode/wordSemAddRetLoc/compileSingle. Only st.code/st.stackSize of the state occur. Proof: both find_code clauses, compile_single preserving the arity. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "pop_env_termdep",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "pop_env_termdep",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL pop_env_termdep (191-195): pop_env rst = SOME x ⇒ x.termdep = rst.termdep, over the tagged popEnv; proof by its clauses. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "codeRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): Exact HOL code_rel_def (198-203): code_rel stc ttc ⇔ ∀n v. lookup n stc = SOME v ⇒ ∃col t k a c. lookup n ttc = SOME (SND (compile_single t k a c ((n,v),col))); (num # 'a prog) num_map as Spt (Nat × WordLangProgHOL (BitVec width)), existential binders in HOL order with c : AsmConfigExact width, over the tagged compileSingle. Typed capture in word_to_word_code_rel. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_eta",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "compile_single_eta",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL compile_single_eta (205-210): compile_single t k a c ((p,x),y) = (p, SND (compile_single t k a c ((p,x),y))); free variables explicit; rfl. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "code_rel_union_fromAList",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "code_rel_union_fromAList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL code_rel_union_fromAList (213-233): free t k a c leading; ∀s l ls. code_rel s l ∧ domain s = domain l ⇒ code_rel (union s (fromAList ls)) (union l (fromAList (MAP (λp. compile_single t k a c (p,NONE)) ls))), domain as sptDomain, union/fromAList as sptUnion/sptFromAList. Proof via lookup_union, fromAList lookup as first-match alist lookup and compile_single preserving the key (HOL ALOOKUP_MAP_2). HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
   }
 ]
