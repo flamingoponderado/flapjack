@@ -15,7 +15,7 @@ def OperandEven {width : Nat} (operand : WordRegImm (BitVec width)) : Prop :=
 
 /-- Flapjack-only factoring of the literal evaluate_ind If source guards.
 Both recursive conclusions retain the entire original comp_correct motive.
-This is infrastructure for the pending full constructor, not a HOL port or
+This is infrastructure for the full constructor theorem below, not a HOL port or
 an assumption of a target run, result relation, or unconditional branch IH. -/
 def OriginalInductionHypotheses {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (comparison : Cmp) (register : Nat)
