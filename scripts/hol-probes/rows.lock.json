@@ -2348,6 +2348,12 @@
       "sha256": "094e81cbf1690807b736e16eb77f21eb6aa775792f473c12d10e85c3cbb717cd"
     },
     {
+      "bytes": 325,
+      "out": "lab_to_target_word_search_probe.out",
+      "rows": 10,
+      "sha256": "f5fe94b08bb62467245ad2a1363a54b258837b30866b0651b134370cea61f1a5"
+    },
+    {
       "bytes": 2118,
       "out": "lab_to_target_zero_label_existence_probe.out",
       "rows": 25,
@@ -2934,6 +2940,12 @@
       "out": "misc_asm_write_bytearray_probe.out",
       "rows": 4,
       "sha256": "7d52f82bcd1d6224d7c237c70ff3904239ff20500d83a6c22595d6729966f8e7"
+    },
+    {
+      "bytes": 477,
+      "out": "misc_bytes_in_mem_imp_probe.out",
+      "rows": 10,
+      "sha256": "314d02d1421fd1301d7957fd2a612c805a424c4a6eee1df1d6d46edfc6784d84"
     },
     {
       "bytes": 401,

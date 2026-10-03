@@ -5972,3 +5972,13 @@ run_probe stack_code_bitmaps_ffi_probeScript.sml stack_code_bitmaps_ffi_probe.ou
 run_probe stack_code_bitmaps_rawcall_probeScript.sml stack_code_bitmaps_rawcall_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_rawcall_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_word_search_probeScript.sml lab_to_target_word_search_probe.out \
+  find_index_MAP_w2n find_index_MAP_w2n_types find_index_MAP_w2n_hypotheses \
+  first mapped duplicates absent empty wrapped wide \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe misc_bytes_in_mem_imp_probeScript.sml misc_bytes_in_mem_imp_probe.out \
+  bytes_in_mem_IMP bytes_in_mem_IMP_types bytes_in_mem_IMP_hypotheses \
+  empty singleton wrap excluded missing_domain wrong_value one_bit \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
