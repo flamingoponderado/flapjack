@@ -6212,3 +6212,7 @@ run_probe wordsem_jump_exc_const_probeScript.sml wordsem_jump_exc_const_probe.ou
 run_probe wordsem_alloc_const_probeScript.sml wordsem_alloc_const_probe.out \
   alloc_const_statement alloc_const_proved alloc_const_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq_non_none_probe.out \
+  comp_correct_seq_obligation_statement comp_correct_seq_obligation_proved comp_correct_seq_obligation_hypotheses comp_correct_seq_first_non_none_statement comp_correct_seq_first_non_none_proved comp_correct_seq_first_non_none_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -6583,3 +6583,5 @@ regressions; fullRun/Next/pass correctness remains open.
 
 
 `wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.
+
+`word_to_stack_comp_seq_non_none_probe.out` freshly captures the complete original Seq `evaluate_ind` obligation at the full `comp_correct` motive, and the first-source non-NONE branch selected by HOL’s own case split. Both statements are derived using the original full `comp_correct`, with closed binders and zero open hypotheses; this is statement evidence, not replay of the literal original case proof or cross-language equivalence. The native proof retains the fixed first-source and actual-run/result-NONE guarded second IH, all original premises and the entire target clock/run/resource/result conclusion. Full Seq first-NONE resource composition and pass assembly remain open.
