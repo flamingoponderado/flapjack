@@ -87829,5 +87829,32 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 full original comp_correct Move6132–6313 under original motive5719–5751. Arbitrary priority/move list/source, all original quantified source evaluation/nonerror/stateRel/conventions/flat/compilation/bitmap-prefix/labels/max-variable guards retained; entire existential actual native target evaluation and result-dependent relation/resources conclude. No recursive IH for this leaf. Internally derive original source successful reads/distinct destinations/even endpoints, scheduled scratch/read/frame guards, native wMove run and ENTIRE source-state equality from actual parmove_correct/fullDIV2/native alist_insert_REVERSE/alistInsertGetVars. Locals WF comes from original stateRel, no extra premise. Choose actual extra clock0 as HOL does. Original full guards kept even when unused on this leaf. Five canonical finite maps and positive words qualified with genuine same-module source/target codec witnesses; inherits reals_as_rational_cuts evaluator assurance. Original typed kernel specialization of full comp_correct provides statement/regression evidence only, not a local proof replay or HOL-to-Lean equivalence claim. No target-run/scheduler success/desired relation assumption or total HD/EL/default change. Whole compiler remains unfinished.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromLab",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_lab_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_lab preserves independent arbitrary bitmap payload Type, full native LabProgHOL width and AsmConfigExact width, exact compile then attachBitmaps with all NONE/SOME behavior. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromStack",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_stack preserves independent arbitrary bitmap payload Type, full native stack program list, exact 2 * maxHeapLimit width dataConf - 1 and regCount - (avoidRegs.length + 3) saturating natural subtraction, both addrOffset words and full StackToLab.compile then fromLab. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromWord",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_word preserves the actual native word program list and word bitmap result, complete compileNative tuple including unused frame list, perfCalls flag, only wordConf update, and fromStack; from_word_0 and WordToWord/CSE are separate source declarations. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
   }
 ]
