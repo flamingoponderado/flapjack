@@ -88,7 +88,14 @@ The following are open review or verification obligations:
    are proved equal, with no premise, to the same clauses over the tagged
    Mathlib-real `fp64_sqrt`, `fp64_to_int` and `real_to_fp64` ports
    (`WordSem/Inst/RealSqrtAgreement.lean`, `WordSem/Inst/RealConvertAgreement.lean`,
-   `StackSem/FpRegisterInstructions/RealAgreement.lean`). Irrational square-root rounding
+   `StackSem/FpRegisterInstructions/RealAgreement.lean`). Likewise the executed
+   `float_add`/`float_sub`/`float_mul`/`float_div`/`float_mul_add`/`float_compare`
+   and their generated fp64 lifts and comparisons are proved equal, for every mode
+   and input, to literal Mathlib-real transcriptions
+   (`Misc/BinaryIeeeArith/RealCarrier.lean`, `Misc/MachineIeee/ArithReal.lean`), so
+   no executed binary64 operation relies on an unproved `Rat`-versus-real step; the
+   reading of Mathlib `ℝ` as HOL `real` remains the standard carrier assumption.
+   Irrational square-root rounding
    is not covered by these rational-input theorems, and is handled
    separately below.
 

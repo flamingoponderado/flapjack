@@ -2078,6 +2078,30 @@
       "sha256": "bdc12e7c62ef0db37f2c9bb0eb313056b6c6b85afb2b5be57f7e836c81e3b236"
     },
     {
+      "bytes": 718,
+      "out": "lab_props_alignment_sdm_evaluate_probe.out",
+      "rows": 8,
+      "sha256": "f776109b9afe8f239414d399e423a387ab38b21e8f741592256b5bb0e5d9a3c9"
+    },
+    {
+      "bytes": 2630,
+      "out": "lab_props_alignment_sdm_memory_probe.out",
+      "rows": 32,
+      "sha256": "9dd4f47c2d240b2bc88c549170f5d164e70c3e50a38c13c2efc6897ff404a2f0"
+    },
+    {
+      "bytes": 2212,
+      "out": "lab_props_alignment_sdm_navigation_probe.out",
+      "rows": 28,
+      "sha256": "a85a7a5ee9801ead3d2462066ae32cc6f2a4e89ef509486616e5c4da511c814e"
+    },
+    {
+      "bytes": 2676,
+      "out": "lab_props_alignment_sdm_shared_probe.out",
+      "rows": 16,
+      "sha256": "fd1666b752741f7be49730883a2c17b085d39121bc1af857b2e4a5d19cd2be8a"
+    },
+    {
       "bytes": 762,
       "out": "lab_props_alignment_word_memory_probe.out",
       "rows": 8,
@@ -4808,6 +4832,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 319,
+      "out": "pan_structs_convert_code_locals_probe.out",
+      "rows": 3,
+      "sha256": "f90182b8adcbbb23305a6be9f4f7ad1494a681bcc7ee65f5dbff34ac278b74f9"
+    },
+    {
       "bytes": 392,
       "out": "pan_structs_convert_code_probe.out",
       "rows": 3,
@@ -4928,6 +4958,12 @@
       "sha256": "32ee10f09e3eb0db6515a72a9d2d3e3d152bfde87a91728eb86188b0f43ef1f3"
     },
     {
+      "bytes": 1386,
+      "out": "pan_structs_lookup_code_fields_probe.out",
+      "rows": 3,
+      "sha256": "906487498b5e2bbbd0d0979c977d3b66adfef86a296bf82f361930bc1ed318f3"
+    },
+    {
       "bytes": 580,
       "out": "pan_structs_map_restoration_probe.out",
       "rows": 8,
@@ -4976,6 +5012,12 @@
       "sha256": "a1b4febf0ea831a86065b2aa4898b03ba86382b2dfc2e524a667a6531f76b1ca"
     },
     {
+      "bytes": 2484,
+      "out": "pan_structs_program_extcall_probe.out",
+      "rows": 6,
+      "sha256": "8abcb3851fbd5ddc4524a425fa90a19a15a7191e8b4e0aba374f4e8edbcde9ca"
+    },
+    {
       "bytes": 2431,
       "out": "pan_structs_program_primitive_probe.out",
       "rows": 6,
@@ -4992,6 +5034,12 @@
       "out": "pan_structs_program_seq_if_probe.out",
       "rows": 11,
       "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
+    },
+    {
+      "bytes": 2454,
+      "out": "pan_structs_program_shmem_load_probe.out",
+      "rows": 6,
+      "sha256": "08b835025babba905c44c2c10ffb12cd3dbd54531ff81e1ab0ecf9d98f64cfe3"
     },
     {
       "bytes": 2448,
@@ -5732,10 +5780,22 @@
       "sha256": "c45afa36b2efab2cb3d75da61ab12f321162178cd70df3396a8f3e292c16bc90"
     },
     {
+      "bytes": 2186,
+      "out": "riscv_target_bytes_probe.out",
+      "rows": 12,
+      "sha256": "05506bbe778a3c53964a19e96738a99a5cdbe2048594ee84eae2a0b4e03a7821"
+    },
+    {
       "bytes": 960,
       "out": "riscv_target_helper_links_probe.out",
       "rows": 9,
       "sha256": "571d37e96f2f6a61d4ed5b3bfdaf430d635696f9253dd00c915b87798a59d915"
+    },
+    {
+      "bytes": 556,
+      "out": "riscv_target_length_probe.out",
+      "rows": 12,
+      "sha256": "52c2f7648ec6bf1e8257a77011cc1c2c06304713b15801ecf44e90e83998e1d7"
     },
     {
       "bytes": 113,
@@ -7658,6 +7718,12 @@
       "sha256": "51fa7fbe66ca10a6a2ed3b1489ee6d290546c1bde997de6b68eb02883df26847"
     },
     {
+      "bytes": 7047,
+      "out": "stack_to_lab_code_installed_probe.out",
+      "rows": 41,
+      "sha256": "a5dfb20e032cbc04eeb81cfb7bd23161e7c414ad66fa3b4cd001584fe0ab6ec4"
+    },
+    {
       "bytes": 718,
       "out": "stack_to_lab_executed_codec_probe.out",
       "rows": 9,
@@ -9318,6 +9384,12 @@
       "out": "word_to_stack_comp_handler_full_probe.out",
       "rows": 4,
       "sha256": "6e088b9870b3c6f5f6144b888b6bd86c812f696d980c3d0e4525bdb5d43f2fe0"
+    },
+    {
+      "bytes": 6979,
+      "out": "word_to_stack_comp_if_full_probe.out",
+      "rows": 6,
+      "sha256": "b79c737efbfbcb4e5c61756d45efa6d86d833dd9c657753b68936c2184afc4c4"
     },
     {
       "bytes": 485,

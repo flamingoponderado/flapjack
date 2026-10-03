@@ -1,0 +1,3 @@
+convert_code_locals_upd_statement=∀f ctxt code. convert_code (ctxt with locals updated_by f) code = convert_code ctxt code
+convert_code_locals_upd_proved=T
+convert_code_locals_upd_types=f::(mlstring # shape) list -> (mlstring # shape) list;ctxt::context;code::α |-> (mlstring # shape) list # β panLang$prog # shape
