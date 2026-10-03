@@ -1796,6 +1796,12 @@
       "sha256": "f074c186c4835a90214f1e905db72d1c3ac1628326a17e94ccf3e9ca7d758a00"
     },
     {
+      "bytes": 368,
+      "out": "lab_to_target_code_safety_transport_probe.out",
+      "rows": 5,
+      "sha256": "d188292d36c455b3ff9490e07b6328a3910ab4bb52ba1d2c6ce117be0c3db0bb"
+    },
+    {
       "bytes": 1060,
       "out": "lab_to_target_compile_probe.out",
       "rows": 21,

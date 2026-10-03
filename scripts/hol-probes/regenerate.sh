@@ -6133,3 +6133,8 @@ run_probe target_good_init_state_probeScript.sml target_good_init_state_probe.ou
 run_probe word_to_stack_comp_clock_probeScript.sml word_to_stack_comp_clock_probe.out \
   comp_correct_tick_statement comp_correct_tick_proved comp_correct_tick_hypotheses comp_correct_mustterminate_statement comp_correct_mustterminate_proved comp_correct_mustterminate_hypotheses state_rel_dec_clock_statement state_rel_dec_clock_proved state_rel_dec_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code_safety_transport_probe.out \
+  code_similar_IMP_both_no_share_mem code_similar_IMP_both_no_share_mem_types code_similar_IMP_both_no_share_mem_hypotheses \
+  changed_bytes_length_safe instruction_change_rejected \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -69950,5 +69950,14 @@
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.3: fresh full closed original statements and literal unchanged proof replays T/hyp0. Full goal5719-5751/MustTerminate6422-6427 with arbitrary body program. Exactly original all execution/errorfree/stateRel/convention/nativecompiler/bitmapbounds/prefix/labelsubset/maxvar premises and complete existential/conditional conclusion. Original full stateRel entails source termdep=0; native MustTerminate returns Error, contradicting original res!=Error. No added impossible guard or restricted body/execution hypothesis; no recursive IH required by this stronger original-premise case. Does not claim an actual target-run example on this unreachable branch. Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. All5 named original fmap fields use actual imported canonical owners and genuine same-module roundtrip witnesses; Spt locals/code/frames untouched. Source config Nat#C/target C and universe0 FFI F retain source types, shared positive BitVec width/NeZero. No executable compiler changes.",
     "hol_line": 5756,
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/CodeSafety.lean",
+    "lean_name": "codeSimilar_noShareMem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_IMP_both_no_share_mem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original7364-7378 and fresh original theorem/fulltype0hyp: complete two free source program variables at alpha sec list, arbitrary positive word dimension, actual reviewed line/section/ASM/memory operation/address/mlstring/fixedword8 byte carriers retained. Sole original conjunctive premise codeSimilar code secList and noShareMemInst code proves complete noShareMemInst secList with all six position/instruction-payload binders; no target safety/success callback or extra bounds. Accepted native codeSimilar_asmFetchAux gives complete Option.Rel lineSimilar at each original PC; successful target shared-memory constructor forces same source constructor/operands, contradicting actual source exclusion at its original encoded bytes/length. No default/HD/EL consumption or hold change. Original full theorem/type0hyp plus actual width8 Skip encoding bytes/length change with source guard kernel-discharged and instruction-change rejection allT; native arbitrary-width full forward/reverse consumers, arbitrary-byte/length Skip transport and generic instruction-change rejection. True full151 ISR4 prerequisite only; whole initializer/machine/compiler/end-to-end remain open, no HOL-to-Lean equivalence claim."
   }
 ]
