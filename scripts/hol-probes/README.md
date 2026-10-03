@@ -6404,3 +6404,10 @@ Independent expectations cover ASID zero/nonzero, global entries, optional maske
 addresses, empty entries, surviving arbitrary records, register-zero semantics,
 other-core tables and the entire frame outside c_tlb. No entry-validity/core-bound
 premise is assumed; these regressions do not establish whole Run/Next correctness.
+
+`l3_csr_access_probe.out` captures seven complete CSR privilege/access definitions
+and types, 285 boundary observations across RV32/RV64/RV128 with eight privilege/
+access combinations each, and 18 unspecified-mode exception/frame observations.
+Original signed word12 range comparisons, unsigned privilege comparison, MPRV,
+ignored rs1 and returned states are preserved. Arbitrary architecture remains
+arbitrary. These regressions do not establish whole Run/Next/compiler correctness.

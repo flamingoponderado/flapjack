@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.CSRAccess
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
 import Flapjack.Misc.BytesInMem.Imp

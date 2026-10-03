@@ -68674,5 +68674,61 @@
     "hol_name": "dfn'SFENCE_VM_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source10709-10727. Fullword6 ASID/optionalword64 address/arbitraryword4 function TLB map, exact native state. Original5022 TLBEntries=16 and FORinclusive0..15 retained. ASID0 clears global and nonglobal matching addresses; nonzeroASID clears only sameASID/nonglobal. Address match is e.vAddr=(va AND e.vMatchMask), no entry-validity premise. SFENCE logicalGPR0 omits addressfilter; othersread GPRrs1, currentASID andcurrentTLB, write onlycurrentcore. Existing reviewed helper/carrier owners used. Complete10definition closure0fail and unconditional SFENCE whole-state normalform kernelchecked. Fresh original64mixedentry observations independently compared: differingASIDs/global/empty/invalidmaskedaddress andslot15; survivingentries exactlyequal original arbitrary records; othercore andfullframe outsidec_tlb unchanged,core255 totalCore1. Independent check caught earlier mistaken slot15 note; corrected from literal source constant, rendered behavior unchanged. No wholeRun/Next/compiler equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "privLevel",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "privLevel_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "is_CSR_defined",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "is_CSR_defined_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "curPrivilege",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curPrivilege_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "csrPR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "csrPR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "csrRW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "csrRW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "check_CSR_access",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "check_CSR_access_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "checkCSROp",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "checkCSROp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
   }
 ]
