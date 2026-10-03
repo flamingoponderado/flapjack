@@ -151,7 +151,10 @@ def holFloatNegate {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) 
 def holFloatAbs {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := 0 }
 
-/-- HOL `float_compare = LT | EQ | GT | UN` (`binary_ieeeScript.sml:755`). -/
+/-- HOL `float_compare = LT | EQ | GT | UN` (`binary_ieeeScript.sml:755`).
+    Constructor-for-constructor equal to HOL, but untagged: HOL declares it
+    in the single-line `Datatype:  float_compare = ...` form, which
+    `scripts/check-hol-refs.py` does not index yet. -/
 inductive HolFloatCompare where
   | lt
   | eq
@@ -165,6 +168,8 @@ inductive HolFloatCompare where
     * two infinities compare by sign;
     * one infinity is below or above every finite value according to its sign;
     * two finite values compare by their values. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_compare_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatCompare {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : HolFloatCompare :=
   match holFloatValue x, holFloatValue y with
   | .nan, _ => .un
@@ -177,11 +182,15 @@ def holFloatCompare {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t 
 
 /-- HOL `float_less_than_def` (`binary_ieeeScript.sml:779-782`):
     `float_compare x y = LT`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_less_than_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatLessThan {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   holFloatCompare x y == .lt
 
 /-- HOL `float_less_equal_def` (`binary_ieeeScript.sml:784-790`): `LT` or
     `EQ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_less_equal_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatLessEqual {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   match holFloatCompare x y with
   | .lt => true
@@ -190,11 +199,15 @@ def holFloatLessEqual {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat 
 
 /-- HOL `float_greater_than_def` (`binary_ieeeScript.sml:792-795`):
     `float_compare x y = GT`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_greater_than_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatGreaterThan {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   holFloatCompare x y == .gt
 
 /-- HOL `float_greater_equal_def` (`binary_ieeeScript.sml:797-803`): `GT` or
     `EQ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_greater_equal_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatGreaterEqual {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   match holFloatCompare x y with
   | .gt => true
@@ -203,6 +216,8 @@ def holFloatGreaterEqual {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFlo
 
 /-- HOL `float_equal_def` (`binary_ieeeScript.sml:805-808`):
     `float_compare x y = EQ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_equal_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatEqual {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   holFloatCompare x y == .eq
 

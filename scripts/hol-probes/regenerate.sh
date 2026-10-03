@@ -1531,6 +1531,9 @@ run_probe binary_ieee_carrier_probeScript.sml binary_ieee_carrier_probe.out \
 run_probe binary_ieee_round_probeScript.sml binary_ieee_round_probe.out \
   clear_flags_def check_for_signalling_def \
   "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_arith_probeScript.sml binary_ieee_arith_probe.out \
+  float_add_def float_equal_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
   distinct_names duplicate_names \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"
