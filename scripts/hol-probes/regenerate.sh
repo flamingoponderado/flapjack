@@ -5908,3 +5908,8 @@ run_probe stack_remove_comp_call_full_probeScript.sml stack_remove_comp_call_ful
 run_probe stack_code_bitmaps_seq_probeScript.sml stack_code_bitmaps_seq_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_seq_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_shmem_correctness_probeScript.sml lab_to_target_shmem_correctness_probe.out \
+  get_shmem_info_ok_lemma get_shmem_info_ok_lemma_types get_shmem_info_ok_lemma_hypotheses \
+  full_instance first_index last_index prefixed_load_name prefixed_store_name load_record store_record nonshared_intervals \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
