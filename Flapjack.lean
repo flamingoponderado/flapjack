@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.BvlToBvi.Config
 import Flapjack.Compiler.Backend.Bvi.Syntax
 import Flapjack.Compiler.Backend.Bvl.Syntax
 import Flapjack.Compiler.Backend.ClosToBvl.Config

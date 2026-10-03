@@ -7269,3 +7269,7 @@ run_probe bvl_syntax_probeScript.sml bvl_syntax_probe.out \
 run_probe bvi_syntax_probeScript.sml bvi_syntax_probe.out \
   exp_case_def exp_nchotomy \
   "$cake_dir/compiler/backend/bviScript.sml" "$cake_dir/compiler/backend"
+
+run_probe bvl_to_bvi_config_probeScript.sml bvl_to_bvi_config_probe.out \
+  config_component_equality inline_size_limit_type exp_cut_type split_main_at_seq_type next_name1_type next_name2_type next_name3_type do_tailrec_type do_tmc_type inlines_type bvi_inlines_type \
+  "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
