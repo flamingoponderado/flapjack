@@ -7180,3 +7180,7 @@ run_probe word_to_stack_copy_short_full_probeScript.sml word_to_stack_copy_short
 run_probe word_to_stack_copy_words_correct_full_probeScript.sml word_to_stack_copy_words_correct_full_probe.out \
   copy_full copy_hypotheses copy_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_storeconsts_probeScript.sml word_to_stack_comp_storeconsts_probe.out \
+  comp_correct_storeconsts_full_statement comp_correct_storeconsts_full_proved comp_correct_storeconsts_full_hypotheses comp_correct_storeconsts_whole_statement comp_correct_storeconsts_whole_proved comp_correct_storeconsts_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
