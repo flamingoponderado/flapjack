@@ -75316,5 +75316,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03: wordConvsScript.sml460-471 arbitrary predicate P, P0 and every_var_exp P exp imply P(max_var_exp exp), retained exactly as Bool=true conjunction. All six expression constructors and mutual argument-list traversal match exact WordLang carrier and max_var_exp_def, including empty Op lists and zero-valued Const/Lookup maxima. Only positive type-indexed word dimension translates to BitVec width with NeZero; no numeric-bound premise, extra predicate restriction, or target execution assumption. Original local statement and unchanged induction proof replay captured with GEN_ALL closing P, proved=T and hypotheses=0; cross-language source comparison, not an equivalence proof."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/MaxVarIntro.lean",
+    "lean_name": "maxVarIntro",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "max_var_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead9.4.2.2: wordConvsScript.sml473-493 forall arbitrary P and prog, P0 and every_var P prog imply P(max_var prog), retained as Bool=true conjunction and conclusion. Complete max_var/every_var equation families wordLangScript.sml127 onward compared: all source operands and both Spt cut-set key lists retained; recursive Call return body and handler only under SOME return; Seq, MustTerminate, If and Loop use actual body hypotheses. Instruction subproof retains width=64 FP transfer branch and all integer operand maxima; zero/empty-list cases use original P0, no bounds, conventions, successful-run or target assumptions. Original exported HOL kernel theorem captured via DB.fetch, closed forall P/prog, proved=T hypotheses=0; source comparison rather than cross-language equivalence. Only dimension translation BitVec width with NeZero is qualified."
   }
 ]

@@ -6926,3 +6926,5 @@ remains open. Regenerate with
 ### Full generic WordConvs expression maximum introduction
 
 `word_convs_max_var_exp_intro_probeScript.sml` replays wordConvsScript.sml460-471 local `max_var_exp_IMP` with its unchanged proof and GEN_ALL closing the original free predicate. Captures the full arbitrary-predicate/P0 statement, proved=T and zero hypotheses. Lean mutual induction retains constants, lookup, variables, load, shift and empty/nested Op argument lists. This is original theorem evidence plus source comparison, not cross-language equivalence.
+
+The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.

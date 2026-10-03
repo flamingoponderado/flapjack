@@ -6556,4 +6556,5 @@ run_probe word_to_stack_stack_move_clock_probeScript.sml word_to_stack_stack_mov
 
 run_probe word_convs_max_var_exp_intro_probeScript.sml word_convs_max_var_exp_intro_probe.out \
   max_var_exp_intro_statement max_var_exp_intro_proved max_var_exp_intro_hypotheses \
+  max_var_intro_statement max_var_intro_proved max_var_intro_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
