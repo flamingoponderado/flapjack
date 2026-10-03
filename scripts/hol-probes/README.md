@@ -7232,3 +7232,8 @@ replayed by the Lean kernel in `RiscVNativeTargetParity.lean`. The checker rejec
 nonconcrete AST payloads, wrong carriers, unreduced bytes and capture drift.
 These finite checks do not establish universal cross-language equivalence.
 The executed compiler configuration replacement remains a separate dependency.
+
+`pan_structs_program_atomic_probe` captures the complete original program
+correctness theorem and Skip/Break/Continue specializations, all closed and
+kernel-proved. Native cases preserve all ten premises and seven conclusions,
+including actual compiled evaluation, state invariants and result validity.
