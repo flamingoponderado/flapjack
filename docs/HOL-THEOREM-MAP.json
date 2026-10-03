@@ -70192,5 +70192,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.5 wordProps794-815: complete original arbitrary address/value/native input/output, sole mem_store=SOME premise and all18 conjuncts in original order locals/clock/be/gcFun/mdomain/shMdomain/ffi/handler/code/codeBuffer/dataBuffer/compile/compileOracle/stack/localsSize/stackLimit/stackMax/stackSize. Actual native memStore283-288 tests original domain and updates memory only; domain false contradicts original success premise, true branch preserves every named field. No extra alignment/domain/safety/callback/target-run premise. Imported actual positive-width state with C/F:Type, exact Spt fields, canonical fpRegs/store and genuine same-module codec witness; Bool equivalence rendered as Bool equality. No evaluator/numeric FP assertion. Original resource max4331 and limit4415 use this contract. Fresh unchanged complete proof replay before GEN_ALL/full generalized statement check; resource evaluator/Seq/full pass remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/JumpExcConst.lean",
+    "lean_name": "jumpExcConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "jump_exc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.6 wordProps943-963: complete original arbitrary native source/post and returned Nat#Nat label, sole jump_exc=SOME premise, all14 conclusions in original order be/gcFun/mdomain/shMdomain/code/codeBuffer/dataBuffer/compile/compileOracle/clock/ffi/stackLimit/stackMax/stackSize. Actual jumpExc565-576 retains original handler<stacklength/LASTN(handler+1)/stackframe-with-handler dispatch and only restores handler/locals/localsSize/stack; all success fields preserved, failure contradicts sole premise. No extra handler validity/frame shape/safety/target-run premise. Imported actual positive-width state C/F:Type, exact Spt fields and canonical fpRegs/store owner/genuine same-module codec; Bool equivalence as Bool equality. No evaluator or numericFP assertion. Original Raise max4335 and limit4415 use this invariant. Fresh unchanged full original proof replay before GEN_ALL and generalized conclusion check; fullresource/Seq/pass unfinished."
   }
 ]

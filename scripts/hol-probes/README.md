@@ -6577,3 +6577,6 @@ regressions; fullRun/Next/pass correctness remains open.
 
 
 `wordsem_mem_store_const_probe.out` freshly replays the unchanged original full wordProps mem_store_const proof before generalization. The closed theorem retains the sole successful-store premise and all eighteen original field equalities for arbitrary address/value/states; replay=T and hypotheses=0. No alignment/domain/safety premise is added. Full evaluator resource induction remains open.
+
+
+`wordsem_jump_exc_const_probe.out` freshly replays the unchanged full original wordProps jump_exc_const proof before generalization. The closed theorem retains the sole successful-jump premise, arbitrary state/label pair and all fourteen field equalities; replay=T and hypotheses=0. No valid-handler or frame-shape premise is supplied. Full evaluator resource induction remains open.
