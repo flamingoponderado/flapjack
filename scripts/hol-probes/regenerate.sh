@@ -110,6 +110,12 @@ run_probe() {
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_stack_access_probeScript.sml stack_rawcall_stack_access_probe.out \
+  stack_access_full_statement stack_access_full_hypotheses stack_access_locValue stack_access_stackAlloc stack_access_stackFree stack_access_stackLoad stack_access_stackLoadAny stack_access_stackStore stack_access_stackStoreAny stack_access_stackGetSize stack_access_stackSetSize stack_access_bitmapLoad \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_rawcall_case_probeScript.sml stack_rawcall_rawcall_case_probe.out \
+  rawcall_full_statement rawcall_full_hypotheses rawcall_case_statement rawcall_evaluate_ind_obligation \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_loop_case_probeScript.sml stack_rawcall_loop_case_probe.out \
   loop_full_statement loop_full_hypotheses loop_case_statement loop_evaluate_ind_obligation \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6075,6 +6081,7 @@ run_probe l3_machine_csr_codec_probeScript.sml l3_machine_csr_codec_probe.out \
 run_probe word_to_stack_state_rel_probeScript.sml word_to_stack_state_rel_probe.out \
   state_rel_definition state_rel_hypotheses state_rel_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe lab_to_target_make_init_probeScript.sml lab_to_target_make_init_probe.out \
   make_init_def make_init_def_types make_init_def_hypotheses \
   regs fp_regs mem mem_domain shared_mem_domain pc be ffi io_regs io_fp_regs cc_regs cc_fp_regs code clock failed ptr_reg len_reg ptr2_reg len2_reg link_reg compile code_buffer compile_oracle \
@@ -6094,6 +6101,9 @@ run_probe lab_to_target_compiler_oracle_ok_probeScript.sml lab_to_target_compile
   compiler_oracle_ok_def compiler_oracle_ok_def_types compiler_oracle_ok_def_hypotheses \
   full_contract all_good_code all_no_share_mem zero_config \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_props_evaluate_io_events_mono_probeScript.sml stack_props_evaluate_io_events_mono_probe.out \
+  single_run_events_statement single_run_events_proved \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe lab_to_target_mc_conf_ok_probeScript.sml lab_to_target_mc_conf_ok_probe.out \
   mc_conf_ok_def mc_conf_ok_def_types mc_conf_ok_def_hypotheses \
@@ -6104,11 +6114,25 @@ run_probe target_start_pc_ok_probeScript.sml target_start_pc_ok_probe.out \
   start_pc_ok_def start_pc_ok_def_types start_pc_ok_def_hypotheses \
   lengths entry_bound halt_cache \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_to_stack_semantics_helpers_probeScript.sml word_to_stack_semantics_helpers_probe.out \
+  state_rel_with_clock_statement state_rel_with_clock_proved state_rel_with_clock_hypotheses word_Call_NONE_not_Break_Continue_statement word_Call_NONE_not_Break_Continue_proved word_Call_NONE_not_Break_Continue_hypotheses stack_Call_NONE_not_Break_Continue_statement stack_Call_NONE_not_Break_Continue_proved stack_Call_NONE_not_Break_Continue_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_results_probeScript.sml word_to_stack_comp_results_probe.out \
+  compile_result_definition compile_result_hypotheses compile_result_type push_locals_definition push_locals_hypotheses push_locals_type halt_eq_compile_result_statement halt_eq_compile_result_proved halt_eq_compile_result_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_control_probeScript.sml word_to_stack_comp_control_probe.out \
+  comp_correct_skip_statement comp_correct_skip_proved comp_correct_skip_hypotheses comp_correct_break_statement comp_correct_break_proved comp_correct_break_hypotheses comp_correct_continue_statement comp_correct_continue_proved comp_correct_continue_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe target_good_init_state_probeScript.sml target_good_init_state_probe.out \
   good_init_state_def good_init_state_def_types good_init_state_def_hypotheses \
   word_memory entry_bound space_bound space_overflow_rejected \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe word_to_stack_comp_clock_probeScript.sml word_to_stack_comp_clock_probe.out \
+  comp_correct_tick_statement comp_correct_tick_proved comp_correct_tick_hypotheses comp_correct_mustterminate_statement comp_correct_mustterminate_proved comp_correct_mustterminate_hypotheses state_rel_dec_clock_statement state_rel_dec_clock_proved state_rel_dec_clock_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code_safety_transport_probe.out \
   code_similar_IMP_both_no_share_mem code_similar_IMP_both_no_share_mem_types code_similar_IMP_both_no_share_mem_hypotheses \
