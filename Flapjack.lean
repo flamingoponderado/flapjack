@@ -775,6 +775,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCountMap
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCounterJoin
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicSelfCall
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCondition
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCachePreservation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicInstructions
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
