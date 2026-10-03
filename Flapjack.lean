@@ -1,4 +1,8 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
@@ -955,7 +959,9 @@ import Flapjack.Pancake.LoopToWord.ProductionAllocatorMemoryImage
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallEntryEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSSAEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeDeadEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeUnreachEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeSsaFirstDeadEvaluation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionSourceSsaFirstDeadEvaluation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSACanonicalImage
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCanonicalCutsetCodec
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeColouringEvaluation
@@ -1293,6 +1299,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemStore
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
@@ -2272,6 +2280,7 @@ import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
 import Flapjack.Compiler.Backend.WordUnreach.ProductionMemoryDomain
 import Flapjack.Compiler.Backend.WordUnreach.Production
+import Flapjack.Compiler.Backend.WordUnreach.ProductionCanonicalImage
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordInst

@@ -7544,3 +7544,22 @@ kernel proof truth. The final source Q.prove and SIMP_RULE are unchanged.
 Lean proves full native AST nonemptiness structurally, including original
 fail encodings; no asm_ok or accepted-opcode premise is introduced.
 This is regression evidence, not whole target/encoder correctness.
+
+`pan_structs_program_extcall_probe` captures the original full `compile_correct`
+and its ExtCall specialization, all quantified types and closed kernel truth.
+The Lean case retains all ten premises/seven conclusions without an IH or
+additional FFI agreement premise; full compiler correctness remains open.
+`word_to_stack_comp_get_probeScript.sml` captures the complete original Get
+evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
+both closed hyp0/T. These are original statement regression captures, not
+literal local-case proof replay or cross-language equivalence.
+
+`word_to_stack_comp_locvalue_probeScript.sml` captures the full original
+LocValue induction obligation and arbitrary full specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+
+`pan_structs_program_shmem_load_probe` captures full original `compile_correct`
+and its ShMemLoad specialization, quantified types and closed kernel truth.
+The Lean case preserves all ten premises/seven conclusions, derives the actual
+mapped-read FFI and returned-word assignment internally, and adds no IH or
+oracle agreement premise. Full compiler correctness remains open.

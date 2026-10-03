@@ -2078,6 +2078,18 @@
       "sha256": "bdc12e7c62ef0db37f2c9bb0eb313056b6c6b85afb2b5be57f7e836c81e3b236"
     },
     {
+      "bytes": 2630,
+      "out": "lab_props_alignment_sdm_memory_probe.out",
+      "rows": 32,
+      "sha256": "9dd4f47c2d240b2bc88c549170f5d164e70c3e50a38c13c2efc6897ff404a2f0"
+    },
+    {
+      "bytes": 2212,
+      "out": "lab_props_alignment_sdm_navigation_probe.out",
+      "rows": 28,
+      "sha256": "a85a7a5ee9801ead3d2462066ae32cc6f2a4e89ef509486616e5c4da511c814e"
+    },
+    {
       "bytes": 762,
       "out": "lab_props_alignment_word_memory_probe.out",
       "rows": 8,
@@ -4976,6 +4988,12 @@
       "sha256": "a1b4febf0ea831a86065b2aa4898b03ba86382b2dfc2e524a667a6531f76b1ca"
     },
     {
+      "bytes": 2484,
+      "out": "pan_structs_program_extcall_probe.out",
+      "rows": 6,
+      "sha256": "8abcb3851fbd5ddc4524a425fa90a19a15a7191e8b4e0aba374f4e8edbcde9ca"
+    },
+    {
       "bytes": 2431,
       "out": "pan_structs_program_primitive_probe.out",
       "rows": 6,
@@ -4992,6 +5010,12 @@
       "out": "pan_structs_program_seq_if_probe.out",
       "rows": 11,
       "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
+    },
+    {
+      "bytes": 2454,
+      "out": "pan_structs_program_shmem_load_probe.out",
+      "rows": 6,
+      "sha256": "08b835025babba905c44c2c10ffb12cd3dbd54531ff81e1ab0ecf9d98f64cfe3"
     },
     {
       "bytes": 2448,
@@ -9308,6 +9332,12 @@
       "sha256": "7a2e8f8127c405e4c65330d0f9580eeff061516a87985183bb82b496dabf667e"
     },
     {
+      "bytes": 3505,
+      "out": "word_to_stack_comp_get_probe.out",
+      "rows": 6,
+      "sha256": "95a4f6287db0b7832e219949f9f2150dd4ec0d413e0a584f4c6df14ed65c9b37"
+    },
+    {
       "bytes": 12927,
       "out": "word_to_stack_comp_handler_full_probe.out",
       "rows": 4,
@@ -9318,6 +9348,12 @@
       "out": "word_to_stack_comp_length_probe.out",
       "rows": 18,
       "sha256": "45468de39ef9c6d1be497bd407ea2f612de9aa148eee3e34919eb673ad8fc364"
+    },
+    {
+      "bytes": 3597,
+      "out": "word_to_stack_comp_locvalue_probe.out",
+      "rows": 6,
+      "sha256": "fbe6440d1b91c04c25a1047f94c52885beed89862a78ae0c038ac0bb3617b857"
     },
     {
       "bytes": 305,
