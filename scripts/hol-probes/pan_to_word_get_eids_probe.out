@@ -22,6 +22,8 @@ FLOOKUP
      (compile_prog (compile_top pan_code main :α decl list) :
       (mlstring # num list # α crepLang$prog) list) :mlstring |-> num # num)
   main = SOME (first_name,(0 :num))
+pan_to_word_compile_shape_no_name=∀(ctxt :(mlstring # (α # shape) list) list) (n :num) (sh :shape).
+  is_wf_shape_nil (compile_shape_n ctxt n sh)
 size_of_eids_compile_top=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
 SOME ((args :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
 size_of_eids (compile_top pan_code main :α decl list) = size_of_eids pan_code

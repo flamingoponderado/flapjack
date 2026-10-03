@@ -8,4 +8,5 @@ val _ = capture "get_eids_pan_simp_compile_eq" (DB.fetch "pan_to_wordProof" "get
 val _ = capture "FDOM_get_eids_pan_globals_compile_eq" (DB.fetch "pan_to_wordProof" "FDOM_get_eids_pan_globals_compile_eq");
 val _ = capture "lookup_first_name_compile_prog_main" (DB.fetch "pan_to_wordProof" "lookup_first_name_compile_prog_main");
 val _ = capture "FLOOKUP_make_funcs_main" (DB.fetch "pan_to_wordProof" "FLOOKUP_make_funcs_main");
+val _ = capture "pan_to_word_compile_shape_no_name" (DB.fetch "pan_to_wordProof" "compile_shape_no_name");
 val _ = capture "size_of_eids_compile_top" (DB.fetch "pan_to_wordProof" "size_of_eids_compile_top");

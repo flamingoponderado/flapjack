@@ -18,6 +18,7 @@ import Flapjack.Pancake.Semantics.PanProps.HasMain
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 
@@ -696,5 +697,14 @@ theorem flookupMakeFuncsMainHOL {width : Nat} [NeZero width] (pan_code : List (D
     CrepInlineCanonical.compileInlTopHOLExact, CrepInlineCanonical.compileInlProgHOLExactWithSupport]
   rw [crepToLoopMakeFuncsExactHOL_head]
   simp [crepVarsHOL, sizeOfShapeHOL]
+
+/-- Exact HOL `compile_shape_no_name` (`pan_to_wordProofScript.sml:445-458`),
+over pan_structsProof's `compile_shape_n` (`compileShapeNHOL`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "compile_shape_no_name"]
+theorem compileShapeNoNamePanToWordHOL {α : Type} :
+    ∀ (ctxt : List (MlS × List (α × ShapeHOL))) (n : Nat) (sh : ShapeHOL),
+      isWfShapeExactHOL [] (Pancake.PanStructs.CompileShapeExact.compileShapeNHOL ctxt n sh) =
+        true :=
+  Pancake.PanStructs.CompileShapeExact.compileShapeNNoName
 
 end Flapjack

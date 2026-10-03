@@ -77273,5 +77273,53 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: list shape well-formedness is EVERY of the single-shape check; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "compileShapeNHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shape_n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the statement captured with types by pan_structs_leaves_probe: the three clauses (One, Comb via MAP, Named via afindi on DROP n sctxt with EL (n+j) and recursion at n+j+1) over the polymorphic field-name type α; EL is holEl; MAP is the list helper compileShapesNHOL (same tag), as for compileShapeExact; termination follows HOL's measure."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "compileShapesNHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shape_n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the statement captured with types by pan_structs_leaves_probe: list helper rendering the Comb clause's MAP (compile_shape_n sctxt n); same HOL definition."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "compileShapeNNoName",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shape_n_no_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the statement captured with types by pan_structs_leaves_probe: !ctxt n sh. is_wf_shape_nil (compile_shape_n ctxt n sh), with is_wf_shape_nil = is_wf_shape [] (isWfShapeExactHOL [])."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "compileShapeNEq",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shape_n_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the statement captured with types by pan_structs_leaves_probe: !sctxt n sh. compile_shape_n sctxt n sh = compile_shape (DROP n sctxt) sh, over the reviewed compileShapeExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "compileShapeNoName",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_shape_no_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78) against the statement captured with types by pan_structs_leaves_probe: !ctxt sh. is_wf_shape_nil (compile_shape ctxt sh)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "compileShapeNoNamePanToWordHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "compile_shape_no_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !ctxt n sh. is_wf_shape_nil (compile_shape_n ctxt n sh) over the pan_structsProof compileShapeNHOL; statement captured with types by pan_to_word_get_eids_probe."
   }
 ]
