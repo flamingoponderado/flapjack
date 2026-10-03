@@ -1,3 +1,4 @@
+import Flapjack.RiscV.Encoding.NativeInstruction.Agreement
 import Flapjack.RiscV.Encoding.NativeInstruction
 import Flapjack.Test.RiscVNativeInstructionParity
 import Flapjack.RiscV.L3.Step.FetchTheorems

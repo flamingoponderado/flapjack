@@ -1,4 +1,4 @@
-import Flapjack.RiscV.Encoding.NativeInstruction
+import Flapjack.RiscV.Encoding.NativeInstruction.Agreement
 
 /-! Finite full-constructor regressions for the production/native codec.
 These checks do not prove universal encoding agreement or cross-language
@@ -190,4 +190,16 @@ example : encodeInstruction (width := 64) (Instruction.load32Offset (0 : Fin 32)
 example : encodeInstruction (width := 64) (Instruction.store32Offset (0 : Fin 32) (0 : Fin 32) (0 : BitVec 64)) = L3.Encode (nativeInstruction (Instruction.store32Offset (0 : Fin 32) (0 : Fin 32) (0 : BitVec 64))) := by decide
 example : encodeInstruction (width := 64) (Instruction.store32Offset (0 : Fin 32) (31 : Fin 32) (0xffffffffffffffff : BitVec 64)) = L3.Encode (nativeInstruction (Instruction.store32Offset (0 : Fin 32) (31 : Fin 32) (0xffffffffffffffff : BitVec 64))) := by decide
 example : encodeInstruction (width := 64) (Instruction.store32Offset (0 : Fin 32) (31 : Fin 32) (0x8123456789abcdef : BitVec 64)) = L3.Encode (nativeInstruction (Instruction.store32Offset (0 : Fin 32) (31 : Fin 32) (0x8123456789abcdef : BitVec 64))) := by decide
+
+-- Universal statements and proof axioms, independent of the finite fixtures.
+example (i : Instruction 64) : encodeInstruction i = L3.Encode (nativeInstruction i) :=
+  encodeInstruction_native i
+example (is : List (Instruction 64)) :
+    encodeInstructions is = is.flatMap
+      (fun i => Compiler.Encoders.RiscV.Target.riscvEncode (nativeInstruction i)) :=
+  encodeInstructions_native is
+#print axioms encodeInstruction_native
+#print axioms encodeInstructionBytes_native
+#print axioms encodeInstructions_native
+
 end Flapjack.RiscV
