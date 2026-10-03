@@ -1237,25 +1237,35 @@ def compileFlapjackEntryCake {width : Nat} [NeZero width]
       (∀ declaration ∈ declarations, DeclByteRanged declaration)) := none) :
     Option (FlapjackPipelineResult (BitVec width)) :=
   let moved := panTargetMoveStartToFront start declarations
-  let simplified := panSimpDecls moved
+  -- PanSimp runs once: the reviewed routed pass when the parser proof is
+  -- present (equal to `panSimpDecls` by `panSimpDeclsRouted_eq`), and its
+  -- result is both the simplified tap and the struct-compilation input.
+  let simplified :=
+    match hdeclarations with
+    | some (.isTrue hinput) =>
+        panSimpDeclsRouted moved (panTargetMoveStartToFront_byteRanged start declarations hinput)
+    | _ => panSimpDecls moved
+  have simplified_eq : simplified = panSimpDecls moved := by
+    simp only [simplified]
+    split <;> simp [panSimpDeclsRouted_eq]
   let structured :=
     match hdeclarations with
     | some (.isTrue hinput) =>
         let hmoved := panTargetMoveStartToFront_byteRanged start declarations hinput
-        let hsimplified := panSimpDecls_byteRanged moved hmoved
-        let routed := panSimpDeclsRouted moved hmoved
-        let hrouted : ∀ declaration ∈ routed, DeclByteRanged declaration := by
-          simpa only [routed, panSimpDeclsRouted_eq] using hsimplified
-        structCompileTopHOLExactOfByteRanged routed hrouted
+        let hrouted : ∀ declaration ∈ simplified, DeclByteRanged declaration := by
+          rw [simplified_eq]
+          exact panSimpDecls_byteRanged moved hmoved
+        structCompileTopHOLExactOfByteRanged simplified hrouted
     | _ => structCompileTop simplified
   let compiled :=
     match hproof : hdeclarations with
     | some (.isTrue hinput) =>
         let hmoved := panTargetMoveStartToFront_byteRanged start declarations hinput
-        let hsimplified := panSimpDecls_byteRanged moved hmoved
+        let hsimplified : ∀ declaration ∈ simplified, DeclByteRanged declaration := by
+          rw [simplified_eq]
+          exact panSimpDecls_byteRanged moved hmoved
         let hstructured : ∀ declaration ∈ structured, DeclByteRanged declaration := by
-          simpa only [structured, hproof, structCompileTopHOLExact_eq_legacyOfByteRanged,
-            panSimpDeclsRouted_eq]
+          simpa only [structured, hproof, structCompileTopHOLExact_eq_legacyOfByteRanged]
             using structCompileTop_byteRanged simplified hsimplified
         let cakeDeclarations := globalCompileTopCakeRouted structured start hstructured
         let hcake := globalCompileTopCakeRouted_byteRanged structured start hstructured

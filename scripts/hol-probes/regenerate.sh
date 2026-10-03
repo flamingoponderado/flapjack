@@ -7007,6 +7007,7 @@ run_probe riscv_target_bytes_probeScript.sml riscv_target_bytes_probe.out \
   bytes_in_memory_thm_statement bytes_in_memory_thm_types bytes_in_memory_thm_hypotheses bytes_in_memory_thm_proved bytes_in_memory_thm2_statement bytes_in_memory_thm2_types bytes_in_memory_thm2_hypotheses bytes_in_memory_thm2_proved bytes_in_memory_IMP_all_pcs_MEM8_statement bytes_in_memory_IMP_all_pcs_MEM8_types bytes_in_memory_IMP_all_pcs_MEM8_hypotheses bytes_in_memory_IMP_all_pcs_MEM8_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
 
+
 run_probe word_to_stack_register_spill_update_probeScript.sml word_to_stack_register_spill_update_probe.out \
   register_spill_update_full register_spill_update_hypotheses register_spill_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7016,4 +7017,19 @@ run_probe lab_props_alignment_word_memory_probeScript.sml lab_props_alignment_wo
 
 run_probe word_to_stack_register_write_probeScript.sml word_to_stack_register_write_probe.out \
   register_write_full register_write_hypotheses register_write_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+
+run_probe riscv_target_state_probeScript.sml riscv_target_state_probe.out \
+  riscv_next_statement riscv_next_hypotheses riscv_next_proved riscv_next_type riscv_ok_statement riscv_ok_hypotheses riscv_ok_proved riscv_ok_type riscv_proj_statement riscv_proj_hypotheses riscv_proj_proved riscv_proj_type riscv_target_statement riscv_target_hypotheses riscv_target_proved riscv_target_type riscv_target_fp_field riscv_target_fp_type \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+run_probe stack_remove_init_semantics_probeScript.sml stack_remove_init_semantics_probe.out \
+  evaluate_init_code_statement evaluate_init_code_hypotheses init_semantics_statement init_semantics_hypotheses make_init_opt_SOME_semantics_statement make_init_opt_SOME_semantics_hypotheses make_init_semantics_statement make_init_semantics_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_ffi_probeScript.sml stack_remove_init_ffi_probe.out \
+  evaluate_init_code_ffi_statement evaluate_init_code_ffi_hypotheses make_init_any_ffi_statement make_init_any_ffi_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
+  load_clock_statement load_clock_proved load_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

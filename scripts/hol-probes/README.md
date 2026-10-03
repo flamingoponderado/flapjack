@@ -7474,6 +7474,16 @@ word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
 BitVec64/32 carriers and proves all three equations without premises.
 This is regression evidence; it does not prove HOL-to-Lean equivalence.
 
+`word_to_stack_register_spill_update_probeScript.sml` freshly replays the full
+original state_rel_set_var2 statement and literal proof2962–2997, including
+st/sp equalities, with zero open hypotheses and proved sentinel. This is
+regression evidence rather than HOL-to-Lean equivalence.
+
+`word_to_stack_register_write_probeScript.sml` replays the unchanged full
+wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
+continuation premise and full run/relation/resources. Closed hyp0/T captures
+provide regression evidence rather than cross-language equivalence.
+
 ## Full native target state definition group
 
 `riscv_target_state_probeScript.sml` captures all four original definition
@@ -7511,3 +7521,15 @@ The native byte probe additionally retains the complete original
 environment, byte list and domain. Its four new rows preserve all old eight
 rows and labels. Domain coverage is derived through the full generic
 `bytes_in_memory_all_pcs`, rather than assumed at instruction PCs.
+
+`stack_remove_init_semantics_probeScript.sml` prints the stored `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and `make_init_semantics` theorems (3856-4086), all closed with zero hypotheses.
+
+`stack_remove_init_ffi_probeScript.sml` prints the stored original `evaluate_init_code_ffi` and `make_init_any_ffi` (stack_removeProofScript.sml:3893-3902, 4088-4098) with zero hypotheses; the Lean ports derive them from the accepted `evaluate_ffi_neutral` and the initializer's clock-neutrality.
+### Full load-prefix clock law
+
+`word_to_stack_load_clock_probe.out` freshly replays the unchanged original
+local proof4470–4476 with all load lists and target states, including invalid
+stack use and out-of-range failures. The whole evaluation pair is retained;
+the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
+This is original-source evidence, not cross-assistant equivalence or full
+compiler correctness.
