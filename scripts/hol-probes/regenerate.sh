@@ -7507,3 +7507,7 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
   from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
+run_probe binary_ieee_two_dimensions_probeScript.sml binary_ieee_two_dimensions_probe.out \
+  largest_type largest_def_typed threshold_type threshold_def_typed \
+  "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"

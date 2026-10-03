@@ -140,6 +140,12 @@
       "sha256": "9e7a6e3bab7cd7bd395f9888d3047b1f46d58bd1bfc9d5c903c7aeb7d392ad5f"
     },
     {
+      "bytes": 1698,
+      "out": "backend_lower_pipeline_probe.out",
+      "rows": 6,
+      "sha256": "0ed2469e403995e9e75a886329bd33f9b0dca3a9a991ed39fedc070551363e1f"
+    },
+    {
       "bytes": 203,
       "out": "backend_restrict_zero_probe.out",
       "rows": 8,
@@ -408,6 +414,12 @@
       "out": "binary_ieee_round_probe.out",
       "rows": 13,
       "sha256": "2568949fab64d29bfc38e41c18259047e2eb05e90ab7ec663383fd61600dcf9e"
+    },
+    {
+      "out": "binary_ieee_two_dimensions_probe.out",
+      "sha256": "dac324b1ba6bab4a5f355e7a8aa5ef7ede95445de4ac5b3d27ab2fe956196373",
+      "bytes": 424,
+      "rows": 4
     },
     {
       "bytes": 4729,
@@ -10836,12 +10848,6 @@
       "out": "wrap_rt_probe.out",
       "rows": 5,
       "sha256": "34b4dc9b2384c56cae695cdda57731febdbd5d7d19b90a6c6004b6c39bdf87cd"
-    },
-    {
-      "bytes": 1698,
-      "out": "backend_lower_pipeline_probe.out",
-      "rows": 6,
-      "sha256": "0ed2469e403995e9e75a886329bd33f9b0dca3a9a991ed39fedc070551363e1f"
     }
   ]
 }
