@@ -7306,3 +7306,7 @@ run_probe clos_known_config_probeScript.sml clos_known_config_probe.out \
 run_probe clos_to_bvl_config_probeScript.sml clos_to_bvl_config_probe.out \
   config_component_equality default_config_def next_loc_type start_type do_mti_type known_conf_type do_call_type call_state_type max_app_type \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
+
+run_probe wordsem_find_code_generic_probeScript.sml wordsem_find_code_generic_probe.out \
+  find_code_type find_code_def_typed find_code_map_I_typed find_code_map_I_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordSemScript.sml" "$cake_dir/compiler/backend/proofs"

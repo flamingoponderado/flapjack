@@ -10514,6 +10514,12 @@
       "sha256": "efdd71ae05e34b8d74c876081a09f8c239506987e5713f1bfa65f02f57edac3e"
     },
     {
+      "bytes": 1697,
+      "out": "wordsem_find_code_generic_probe.out",
+      "rows": 4,
+      "sha256": "3ce9109a90188864f7fcff8c6c424fec109222fc8ac4d2ca65907a54a7fc7f08"
+    },
+    {
       "bytes": 451,
       "out": "wordsem_gc_const_probe.out",
       "rows": 3,
