@@ -85879,5 +85879,39 @@
     "hol_name": "lookup_bm_inter_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-sola-cse-intersection-lookup): HOL lookup_bm_inter_eq (word_cseProof:621-638). Arbitrary payload alpha, native maps m1 m2, key k : List Nat and value v, in HOL order. The sole premise is invariant listCmp m1 and invariant listCmp m2; the conclusion is the iff between lookup listCmp k (bm_inter_eq m1 m2) = SOME v and both input lookups being SOME v. There is no output-relation or run assumption and no finite-map carrier in the statement. The proof, as in HOL, applies bm_inter_eq_acc_thm with the empty accumulator and lookup_thm. Kernel-checked; the word_cse_intersection_acc probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/CallReturningFull.lean",
+    "lean_name": "compCorrectCallReturning",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 bead9.4: full original returning Call case8166-10048 and comp_correct motive5719-5751. Arbitrary optional handler; literal original three guarded evaluate_ind IHs retain all intermediate tuple/result/descriptor equalities, actual source get/find/cut/clock and normal/exception/pop/domain guards. Fourth tail IH is vacuous under fixed SOME return and omitted. Kernel NONE grouping translation only instantiates original identities; SOME uses accepted full literal-IH theorem. Both accepted complete case executions retain full Seq.Simulation hypotheses and existential target clock/run with every original result/resource conclusion. No targetrun/postrelation/outcome assumptions or strengthened IH. Canonical imported finite-map owners with same-module roundtrip witnesses, positive type-indexed words and Type0 host types; inherited reals_as_rational_cuts evaluator closure limit retained. Fresh original theorem specialization plus original evaluate_ind obligation capture are statement evidence, not a literal local proof replay or cross-language equivalence proof. Whole pass/compiler remains unfinished.",
+    "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveDiv2.lean",
+    "lean_name": "times2Div2Lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "TIMES2_DIV2_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 Move prerequisite14.1: full local declaration at3451-3482 /3496-3546. Original windmill unique destinations and EVERY EVEN on both endpoint projections retained, DIV2 rendered Nat division2. Full original IS_SOME-filtered scheduled destination/value list equality, arbitrary environment value carrier; no scheduler result, global injection or final relation premise. THE rendered getD0 only on values filtered by IS_SOME, so none default is unobservable and no total HD/EL hold is invoked. Canonical List/Option/Nat/Prod carriers unchanged, no words or finite-map fields. Kernel derives endpoint-restricted injection and uses accepted full parmove_MAP_INJ /parsem_MAP_INJ and destination membership; source guards are not strengthened. Fresh literal original local proof replay recorded separately; kernel/probes do not claim cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveDiv2.lean",
+    "lean_name": "parsemParmoveDiv2Lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "parsem_parmove_DIV2_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 Move prerequisite14.1: full local declaration at3451-3482 /3496-3546. Original windmill unique destinations and EVERY EVEN on both endpoint projections retained, DIV2 rendered Nat division2. Full original IS_SOME-filtered scheduled destination/value list equality, arbitrary environment value carrier; no scheduler result, global injection or final relation premise. THE rendered getD0 only on values filtered by IS_SOME, so none default is unobservable and no total HD/EL hold is invoked. Canonical List/Option/Nat/Prod carriers unchanged, no words or finite-map fields. Kernel derives endpoint-restricted injection and uses accepted full parmove_MAP_INJ /parsem_MAP_INJ and destination membership; source guards are not strengthened. Fresh literal original local proof replay recorded separately; kernel/probes do not claim cross-language equivalence."
   }
 ]

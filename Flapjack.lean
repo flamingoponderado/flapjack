@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningFull
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
