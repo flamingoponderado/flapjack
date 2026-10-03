@@ -6015,3 +6015,6 @@ run_probe misc_find_index_mem_probeScript.sml misc_find_index_mem_probe.out \
   find_index_MEM find_index_MEM_types find_index_MEM_hypotheses \
   first last offset duplicate large strings words missing_guard empty_guard \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_code_bitmaps_callreturn_probeScript.sml stack_code_bitmaps_callreturn_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_callreturn_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
