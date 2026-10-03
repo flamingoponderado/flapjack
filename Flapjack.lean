@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyLoop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemorySubset
 import Flapjack.Compiler.Backend.StackRemove.Proofs.ProgCompEta

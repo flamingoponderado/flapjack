@@ -5906,3 +5906,7 @@ run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_prob
   first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_copy_loop_full_probeScript.sml stack_remove_copy_loop_full_probe.out \
+  copy_loop_statement copy_loop_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
