@@ -7871,3 +7871,14 @@ kernel truth and quantified types. Its Lean port retains four original premises,
 faithful declaration semantics and the original eshapes update. Executed routing
 is independent. Regenerate with
 `HOL_PROBE_ONLY=pan_structs_compile_top_semantics_decls_probeScript.sml`.
+
+The five WordToStack `move_single`, `move_aux`, `move_aux_seqsem`, `move_div2`,
+and `comp_returning_full` probes also print complete original terms under
+`Globals.show_types`. These typed rows supplement the unchanged statement and
+proof rows: they expose the shared word dimension, independent host/FFI types,
+polymorphic DIV2 environment, and every guarded Call induction hypothesis.
+The Move local proofs still replay their original HOL proof scripts; the returning
+Call row is an original kernel theorem specialization, and its induction row is
+the original `evaluate_ind` obligation instantiated with the full compiler
+motive. Printing the obligation does not prove its compiler case, and none of
+these captures establishes HOL-to-Lean equivalence.

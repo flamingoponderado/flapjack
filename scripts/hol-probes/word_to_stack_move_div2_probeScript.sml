@@ -91,3 +91,7 @@ val _ = if null(hyp parsem_parmove_DIV2_lemma) andalso null(free_vars(concl pars
 val _ = (print "parsem_parmove_div2_statement="; print_term(concl parsem_parmove_DIV2_lemma); print "\n");
 val _ = print("parsem_parmove_div2_proved=" ^ term_to_string(rhs(concl(EQT_INTRO parsem_parmove_DIV2_lemma))) ^ "\n");
 val _ = print("parsem_parmove_div2_hypotheses=" ^ Int.toString(length(hyp parsem_parmove_DIV2_lemma)) ^ "\n");
+
+(* Full typed original terms for source/carrier review; original replay is unchanged. *)
+val _ = (print "times2_div2_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl TIMES2_DIV2_lemma); print "\n");
+val _ = (print "parsem_parmove_div2_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl parsem_parmove_DIV2_lemma); print "\n");
