@@ -103,6 +103,36 @@ example (s : AsmState 8) :
     (t.regs 0 |>.toNat, t.regs 1 |>.toNat, t.regs 4 |>.toNat, t.failed, t.regs 2 |>.toNat, t.regs 3 |>.toNat) = (99, 99, 99, false, 4, 5) := by
   simp +decide [arithUpd, readReg, updReg, assertState]
 
+-- Original row asm_div_neg_dividend (signed word_quot).
+example (s : AsmState 8) :
+    let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then 233 else if r = 3 then 5 else 99, failed := false }
+    (t.regs 0 |>.toNat, t.regs 1 |>.toNat, t.regs 4 |>.toNat, t.failed, t.regs 2 |>.toNat, t.regs 3 |>.toNat) = (252, 99, 99, false, 233, 5) := by
+  simp +decide [arithUpd, readReg, updReg, assertState]
+
+-- Original row asm_div_neg_divisor.
+example (s : AsmState 8) :
+    let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then 23 else if r = 3 then 251 else 99, failed := false }
+    (t.regs 0 |>.toNat, t.regs 1 |>.toNat, t.regs 4 |>.toNat, t.failed, t.regs 2 |>.toNat, t.regs 3 |>.toNat) = (252, 99, 99, false, 23, 251) := by
+  simp +decide [arithUpd, readReg, updReg, assertState]
+
+-- Original row asm_div_both_neg.
+example (s : AsmState 8) :
+    let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then 233 else if r = 3 then 251 else 99, failed := false }
+    (t.regs 0 |>.toNat, t.regs 1 |>.toNat, t.regs 4 |>.toNat, t.failed, t.regs 2 |>.toNat, t.regs 3 |>.toNat) = (4, 99, 99, false, 233, 251) := by
+  simp +decide [arithUpd, readReg, updReg, assertState]
+
+-- Original row asm_div_min_by_minus_one.
+example (s : AsmState 8) :
+    let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then 128 else if r = 3 then 255 else 99, failed := false }
+    (t.regs 0 |>.toNat, t.regs 1 |>.toNat, t.regs 4 |>.toNat, t.failed, t.regs 2 |>.toNat, t.regs 3 |>.toNat) = (128, 99, 99, false, 128, 255) := by
+  simp +decide [arithUpd, readReg, updReg, assertState]
+
+-- Original row asm_div_neg_source_alias.
+example (s : AsmState 8) :
+    let t := arithUpd (.div 2 2 3) { s with regs := fun r => if r = 2 then 233 else if r = 3 then 5 else 99, failed := false }
+    (t.regs 0 |>.toNat, t.regs 1 |>.toNat, t.regs 4 |>.toNat, t.failed, t.regs 2 |>.toNat, t.regs 3 |>.toNat) = (99, 99, 99, false, 252, 5) := by
+  simp +decide [arithUpd, readReg, updReg, assertState]
+
 -- Original row asm_longmul.
 example (s : AsmState 8) :
     let t := arithUpd (.longMul 0 1 2 3) { s with regs := fun r => if r = 2 then 255 else if r = 3 then 255 else 99, failed := false }
