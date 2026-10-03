@@ -1,0 +1,3 @@
+convert_code_definition=∀ctxt. convert_code ctxt = FMAP_MAP2 (λ(nm,params,prog,rshape). (MAP (I ## compile_shape ctxt.structs) params,compile (ctxt with locals := params) prog,compile_shape ctxt.structs rshape))
+convert_code_type=:context -> (α |-> (mlstring # shape) list # β panLang$prog # shape) -> (α |-> (mlstring # shape) list # β panLang$prog # shape)
+convert_code_hypotheses=0
