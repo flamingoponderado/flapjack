@@ -7380,3 +7380,7 @@ additive expression and exact value conjunct with only the four original
 premises. Bounds and spilled values are derived from actual source lookup and
 state relation. This is transcription/regression evidence, not a cross-language
 equivalence proof or full instruction/If/compiler correctness claim.
+
+`word_to_stack_register_update_probeScript.sml` replays the unchanged original
+state_rel_set_var statement and literal proof2930–2951, with closed hypothesis
+and proved sentinels. This is regression evidence, not cross-language equivalence.
