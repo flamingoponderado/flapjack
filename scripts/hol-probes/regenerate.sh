@@ -7477,6 +7477,9 @@ run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_revers
   alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 
+run_probe word_to_stack_comp_move_probeScript.sml word_to_stack_comp_move_probe.out \
+  compCorrectMove_typed compCorrectMove_proved compCorrectMove_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 
 

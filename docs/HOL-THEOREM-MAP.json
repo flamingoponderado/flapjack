@@ -87811,5 +87811,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol compared original1931-1954 and PanSem semantics785-809. Exact no-premise equality over faithful PanSemStateFiniteExact.semantics and evaluateHOLFiniteState, original TailCall as Call NONE start [], every overwritten clock, TimeOut→Incomplete/FinalFFI→CompleteResult FFI_outcome/Return→CompleteResult Success/other→RunError and ffi.io_events projection. No evaluator hook, supplied chain/LUB/successful-run/target-observation premise. Forbidden/termination predicates shown equivalent by all result constructors, then identical holOptionSome predicate and divergence image; no cross-assistant choice equality claimed. Canonical imported owning state4maps with full same-module state/broad roundtrip and positive indexed words/Type0 FFI host; no shadow state carrier. Fresh closed original theorem/full quantified types/kernelT. Full PanStructs semantics correspondence and executed production inventory remain independent obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/MoveFull.lean",
+    "lean_name": "compCorrectMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 full original comp_correct Move6132–6313 under original motive5719–5751. Arbitrary priority/move list/source, all original quantified source evaluation/nonerror/stateRel/conventions/flat/compilation/bitmap-prefix/labels/max-variable guards retained; entire existential actual native target evaluation and result-dependent relation/resources conclude. No recursive IH for this leaf. Internally derive original source successful reads/distinct destinations/even endpoints, scheduled scratch/read/frame guards, native wMove run and ENTIRE source-state equality from actual parmove_correct/fullDIV2/native alist_insert_REVERSE/alistInsertGetVars. Locals WF comes from original stateRel, no extra premise. Choose actual extra clock0 as HOL does. Original full guards kept even when unused on this leaf. Five canonical finite maps and positive words qualified with genuine same-module source/target codec witnesses; inherits reals_as_rational_cuts evaluator assurance. Original typed kernel specialization of full comp_correct provides statement/regression evidence only, not a local proof replay or HOL-to-Lean equivalence claim. No target-run/scheduler success/desired relation assumption or total HD/EL/default change. Whole compiler remains unfinished.",
+    "hol_line": 5756
   }
 ]
