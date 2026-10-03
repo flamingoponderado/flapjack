@@ -1413,6 +1413,8 @@ import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.MachineIeee.Arith
+import Flapjack.Misc.MachineIeee.ArithReal
+import Flapjack.Misc.BinaryIeeeArith.RealCarrier
 import Flapjack.Misc.MachineIeee.Convert
 import Flapjack.Misc.MachineIeee.ConvertInt
 import Flapjack.Misc.MachineIeee.ConvertReal
