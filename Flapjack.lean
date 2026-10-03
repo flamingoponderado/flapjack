@@ -777,6 +777,9 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionColouringCutsets
 import Flapjack.Compiler.Backend.WordAlloc.ProductionColouringInstructions
 import Flapjack.Compiler.Backend.WordAlloc.ProductionColouringProgram
 import Flapjack.Compiler.Backend.WordAlloc.ProductionTotalColourOutput
+import Flapjack.Compiler.Backend.WordAlloc.ProductionMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNormalizedMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
