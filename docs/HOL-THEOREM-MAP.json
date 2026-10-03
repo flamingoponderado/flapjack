@@ -77076,5 +77076,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, complete original ShareInst case. Same source every_var bound/is_alloc_var/ssa_map_ok/full_inst_ok_less premises and full same-config actual native compiler-output validity. Source validity establishes actual exp_to_addr witness; original exp_to_addr_ShareInst characterization and literal ssa_cc_trans_exp preserve its offset through both address forms. All native memop constructors retained, including source store partition; no target-run, target-convention or address-subset premise. Native config/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/AllocationInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Alloc constructor case. Same every_var bounds/is_alloc_var/ssa_map_ok/full_inst_ok_less source hypotheses and complete same-config actual SSA output validity. Literal native renaming producers and Move/Alloc/Install/FFI sequences establish the entire conclusion; no output assumption or narrowed evaluator. Native WordLang/Spt/List and original FFI Basis.Pure.MlString.MlString carriers retained. words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive theorem remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/AllocationInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Install constructor case. Same every_var bounds/is_alloc_var/ssa_map_ok/full_inst_ok_less source hypotheses and complete same-config actual SSA output validity. Literal native renaming producers and Move/Alloc/Install/FFI sequences establish the entire conclusion; no output assumption or narrowed evaluator. Native WordLang/Spt/List and original FFI Basis.Pure.MlString.MlString carriers retained. words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive theorem remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/AllocationInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original FFI constructor case. Same every_var bounds/is_alloc_var/ssa_map_ok/full_inst_ok_less source hypotheses and complete same-config actual SSA output validity. Literal native renaming producers and Move/Alloc/Install/FFI sequences establish the entire conclusion; no output assumption or narrowed evaluator. Native WordLang/Spt/List and original FFI Basis.Pure.MlString.MlString carriers retained. words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive theorem remains open."
   }
 ]
