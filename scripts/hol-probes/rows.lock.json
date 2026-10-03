@@ -8570,6 +8570,12 @@
       "sha256": "38dc741d662b1a343818d68b64b83cfdae7383516f4679eceef07fbe726c3328"
     },
     {
+      "out": "word_to_stack_inter_union_left_probe.out",
+      "bytes": 124,
+      "rows": 3,
+      "sha256": "a82a8adc3b73356883540b9e6adfea09ae4caf233867747d351f8ac1d95c5dbf"
+    },
+    {
       "bytes": 29074,
       "out": "word_to_stack_key_value_order_probe.out",
       "rows": 364,

@@ -72106,5 +72106,13 @@
     "hol_name": "dfn'SRAW_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRAW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InterUnionLeft.lean",
+    "lean_name": "interUnionLeft",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "inter_union_left",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.6.2.2: original2678-2685 arbitrary s,t Spt payload, sole wf s hypothesis, conclusion inter(union s t)s=s. Native exact four-constructor Spt, sptWf Boolean truth retains original predicate, sptUnion left bias and sptInter mkBN/mkBS normalization compared clause-wise. No BEq/DecidableEq or extra target equality premise. Structural induction proves full equation including original empty-branch exclusion. Original literal proof replay captured in word_to_stack_inter_union_left_probe.out. Source comparison recorded by flapjack-sol-b; acceptance tracked on shared bead .6.2.2."
   }
 ]
