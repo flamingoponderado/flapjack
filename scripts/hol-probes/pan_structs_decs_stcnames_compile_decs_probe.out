@@ -1,0 +1,3 @@
+decs_stcnames_compile_decs_statement=∀acc ctxt decs. decs_stcnames acc (FST (compile_decs ctxt decs)) = SOME acc
+decs_stcnames_compile_decs_proved=T
+decs_stcnames_compile_decs_hypotheses=0
