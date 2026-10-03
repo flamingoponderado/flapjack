@@ -6534,3 +6534,7 @@ run_probe stack_remove_word_list_inj_probeScript.sml stack_remove_word_list_inj_
 run_probe word_to_stack_stack_move_clock_probeScript.sml word_to_stack_stack_move_clock_probe.out \
   evaluate_stack_move_clock_statement evaluate_stack_move_clock_proved evaluate_stack_move_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_max_var_exp_intro_probeScript.sml word_convs_max_var_exp_intro_probe.out \
+  max_var_exp_intro_statement max_var_exp_intro_proved max_var_exp_intro_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"

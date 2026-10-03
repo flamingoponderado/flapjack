@@ -6888,3 +6888,7 @@ This regression evidence supplements source review, not full equivalence.
 `stack_remove_word_list_inj_probeScript.sml` replays the unchanged full original `word_list_inj` statement and induction/DIFF partition proof (stack_removeProofScript.sml:3089-3098) using the original simplifier context. Captures arbitrary-heap uniqueness, proved=T and zero hypotheses; no numeric, finiteness or no-wrap premise.
 
 `word_to_stack_stack_move_clock_probeScript.sml` replays the unchanged local `evaluate_stack_move_clock` Q.prove statement/proof and SIMP_RULE (word_to_stackProofScript.sml:5349-5359), with original simplifier context. GEN_ALL explicitly closes original free replacement clock. Captures unconditional whole evaluator result/poststate equality, proved=T and zero hypotheses, including failures rather than a successful-stack-move specialization.
+
+### Full generic WordConvs expression maximum introduction
+
+`word_convs_max_var_exp_intro_probeScript.sml` replays wordConvsScript.sml460-471 local `max_var_exp_IMP` with its unchanged proof and GEN_ALL closing the original free predicate. Captures the full arbitrary-predicate/P0 statement, proved=T and zero hypotheses. Lean mutual induction retains constants, lookup, variables, load, shift and empty/nested Op argument lists. This is original theorem evidence plus source comparison, not cross-language equivalence.
