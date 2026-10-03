@@ -77910,5 +77910,51 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original ReturningCall case with both exception-handler options. Same source every_var bound/is_alloc_var/ssa_map_ok/source full_inst_ok_less hypotheses and full same-config actual SSA output conclusion. Only genuine generalized return/exception source-subprogram IH added. Original source occurrence predicate supplies handler bounds, native renaming/SSA counter properties and bound monotonicity derive actual later input hypotheses; actual fake_moves_conventions2 proves reconciliation validity. Arbitrary source metadata/optional handlers retained; no target-run, target validity or narrowed evaluator premise. Native config/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Native Inst and full recursive assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "compileExpCorrectOp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 Op case, original766-783 proof: all seven original source hypotheses and three conclusions; only original full per-member child IHs. Actual source evalList success supplies values, word guard and operation success. Original full faithful mmap helper derives converted list evaluation; source word guard proves map convertV identity; exact original wordOpHOL/panOpHOL evaluation and result retained, deriving result shape/validity/target evaluation. No target run, compatibility, extra bounds/ranges/memory-adapter premise. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/constructor specialization/eval_ind kernel captured. Whole expression/compiler assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "compileExpCorrectPanop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 Panop case, original766-783 proof: all seven original source hypotheses and three conclusions; only original full per-member child IHs. Actual source evalList success supplies values, word guard and operation success. Original full faithful mmap helper derives converted list evaluation; source word guard proves map convertV identity; exact original wordOpHOL/panOpHOL evaluation and result retained, deriving result shape/validity/target evaluation. No target run, compatibility, extra bounds/ranges/memory-adapter premise. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/constructor specialization/eval_ind kernel captured. Whole expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "convert_word_arguments",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
   }
 ]

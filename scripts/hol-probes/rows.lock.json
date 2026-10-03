@@ -4694,6 +4694,12 @@
       "sha256": "5d121fe711b1bf817af03e700fb8d9fabd4116c6bcafed03879a3c7cfffd2cb3"
     },
     {
+      "bytes": 2989,
+      "out": "pan_structs_exp_operators_faithful_probe.out",
+      "rows": 7,
+      "sha256": "117e0cbdab581042964d0afc4cb4c624008259e3cd8ee884f4f2b585bd72ad87"
+    },
+    {
       "bytes": 2385,
       "out": "pan_structs_exp_rfield_faithful_probe.out",
       "rows": 5,

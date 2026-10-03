@@ -7157,3 +7157,9 @@ source evaluation and structInfosOk supply shape checks and reordering premises.
 statement and unchanged induction proof, then captures its full closed statement,
 quantified types, zero hypotheses and kernel proof. Native theorem preserves
 both original hypotheses and the mapped converted-list result on faithful carriers.
+
+`pan_structs_exp_operators_faithful_probe` captures the whole original theorem,
+Op/Panop specializations and eval_ind. Both native cases retain all seven
+hypotheses and three conclusions, using only original per-member IHs. Source
+success supplies the word guard, discharging conversion identity before the
+original operation is evaluated on the converted list.
