@@ -5666,6 +5666,12 @@
       "sha256": "15cbe3769187816460a6ec7478b0b2224efe576c3e43688c52d00e6f79e1dc14"
     },
     {
+      "out": "stack_code_bitmaps_call_probe.out",
+      "bytes": 657,
+      "rows": 3,
+      "sha256": "70aa5cabe85dff671736c3c95ff02b9080a550d6ae69158b43e3f4fcc640b287"
+    },
+    {
       "out": "stack_code_bitmaps_callreturn_probe.out",
       "bytes": 684,
       "rows": 3,
