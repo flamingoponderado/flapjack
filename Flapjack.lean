@@ -1229,6 +1229,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
 import Flapjack.Pancake.Proofs.PanStructs.FieldsInOrderReorderNoop
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction

@@ -7153,3 +7153,7 @@ source evaluation and structInfosOk supply shape checks and reordering premises.
 ## Original native step word-bit rewrite group
 
 `l3_step_bit_rewrites_probeScript.sml` proves full universally quantified copies of `word_bit_1_0`, `word_bit_0_lemmas`, `v2w_0_rwts` and `word_bit_add_lsl_simp`. Captures preserve all binder types, word8/word5 list carriers, original conjunctions, zero proof assumptions and proof markers. Lean retains each source domain and conjunction, uses kernel low-bit arithmetic/FCP lemmas and exhaustive Boolean cases, and adds no opcode fixture premise. `holV2w` follows the original most-significant-first testbit/FCP definitions. The original step library uses these rewrites; the whole encoder and compiler theorem remain open.
+`pan_structs_mmap_faithful_probe` replays the original local list helper’s
+statement and unchanged induction proof, then captures its full closed statement,
+quantified types, zero hypotheses and kernel proof. Native theorem preserves
+both original hypotheses and the mapped converted-list result on faithful carriers.

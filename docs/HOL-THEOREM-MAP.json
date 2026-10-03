@@ -77869,5 +77869,28 @@
     "hol_name": "word_bit_add_lsl_simp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison2026-10-03 original line559: arbitrary word64 x/w and exact low bit of x plus (w shifted left1), preserving original operator associativity. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct_mmap_helper",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpMmapHelper.lean",
+    "lean_name": "compileExpCorrectMmapHelper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original206-216 full local theorem: actual evalListHOLFinite/compileExpsExact/ContextExact/convertStateExact/convertV. Original source-list success and per-member source-eval implication to converted target eval preserved; full actual converted list evaluation with map convertV conclusion, no additional field-validity/shape/invariant/compatibility premise. Original local statement and unchanged induction proof replayed independently in HOL, full generic state/context/expression/value types captured, closed hyp0/proved. Native list induction decomposes successful head/tail and uses exactly original per-member premise. Actual imported canonical state owner/full local roundtrip, four map fields and positive-width/Type0 FFI qualifiers only. This faithfully replaces scope of old documented production mismatch .38; executable production routing and whole expression assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpMmapHelper.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation infrastructure: re-export actual imported canonical state two-way roundtrip, no separate HOL original."
   }
 ]
