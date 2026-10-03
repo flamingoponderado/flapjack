@@ -6831,3 +6831,7 @@ run_probe pan_structs_structs_code_invariant_probeScript.sml pan_structs_structs
 run_probe pan_structs_program_seq_if_probeScript.sml pan_structs_program_seq_if_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_seq_statement compile_correct_seq_proved compile_correct_if_statement compile_correct_if_proved compile_correct_full_types compile_correct_seq_types compile_correct_if_types evaluate_ind_statement evaluate_ind_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_flatten_conversion_probeScript.sml pan_structs_flatten_conversion_probe.out \
+  flatten_convert_v_statement flatten_convert_v_types flatten_convert_v_hypotheses flatten_convert_v_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

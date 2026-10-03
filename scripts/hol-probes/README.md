@@ -7282,3 +7282,8 @@ Seq/If specializations, closed binder types and kernel proofs, together with
 the original evaluator induction principle. Native cases preserve all ten
 premises/seven conclusions and the genuine source-guarded recursive IHs.
 Seq derives intermediate invariants; If uses the source-word-selected branch.
+
+`pan_structs_flatten_conversion_probe` captures unconditional full
+`flatten_convert_v`, its binder type, zero hypotheses and closed kernel proof.
+The native theorem preserves flattened words for arbitrary nested records and
+named structs; erasing names retains field order and requires no validity guard.

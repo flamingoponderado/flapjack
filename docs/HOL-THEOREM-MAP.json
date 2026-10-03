@@ -79661,5 +79661,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FlattenConversion.lean",
+    "lean_name": "flattenConvertV",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "flatten_convert_v",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original888-899: unconditional forall value, flatten(convert_v value)=flatten value, identical actual convertV/flattenHOL definitions and ValueHOL constructors. Arbitrary nested records/named structs retained, no size/context/info/wf or source-evaluation premise. Original named-field MAP SND and conversion erase names but preserve order; nested native recursor and membership IHs establish each map equality before flattening. Positive type-indexed word carrier is the only translation, no finite-map qualifier or String carrier. Fresh original closed whole statement/binder/hyp0/kernelT reviewed. Memory/shared-memory compiler cases remain separate."
   }
 ]
