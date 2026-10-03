@@ -1128,6 +1128,7 @@ import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
