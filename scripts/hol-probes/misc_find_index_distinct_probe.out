@@ -1,0 +1,15 @@
+find_index_ALL_DISTINCT_EL_eq=∀(ls :α list).
+  ALL_DISTINCT ls ⇒
+  ∀(x :α) (m :num) (i :num).
+    find_index x ls m = SOME i ⇔
+    ∃(j :num). i = m + j ∧ j < LENGTH ls ∧ x = ls❲j❳
+find_index_ALL_DISTINCT_EL_eq_types=(ls :α list)::α list;
+find_index_ALL_DISTINCT_EL_eq_hypotheses=0
+first=T
+last=T
+offset=T
+large_offset=T
+missing=T
+duplicate_guard=T
+empty=T
+actual_extracted_pcs=T

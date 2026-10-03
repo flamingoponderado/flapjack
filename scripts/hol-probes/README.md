@@ -6297,3 +6297,17 @@ the current reservation, while faults/misalignment retain it. All order bits,
 rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
 are covered. Independent byte-wise expectations and arbitrary-base Lean state
 frames provide regressions only, not whole atomic/runtime correctness.
+
+`l3_scd_probe.out` captures the complete original SC_D definition/type and
+24 whole-state observations: RV32 rejects before address/reservation/VM checks,
+all seven virtual misalignment residues, all order bits, reservation failures
+skipping translation, literal Data/Read on read-only pages, eight-byte stores,
+zero registers, core255/totalCore1, RV128, Sv32 faults and returned Sv39 state.
+Complete unaffected frames and other-core reservations are retained. This is
+source-clause regression evidence, not whole atomic/runtime/compiler correctness.
+`word_alloc_instruction_producer_probe.out` captures four original
+`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
+offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
+and executed deltas; the complete accepted-instruction producer relation uses
+the real instruction encoder, retaining every ordered operand. No whole
+allocator or source-program producer correctness is claimed.
