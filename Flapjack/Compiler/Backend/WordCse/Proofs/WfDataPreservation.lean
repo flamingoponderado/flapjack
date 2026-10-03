@@ -651,7 +651,7 @@ theorem canonicalRegs_self_or_fresh_wf {width : Nat} [NeZero width] (data : Know
   | none => right; simpa using hx
   | some c => left; simpa using (h.1 x c hx).1
 
-/-- Exact HOL local `canonicalRegs'_self_or_fresh_wf` (`word_cseProof:2845-2859`). -/
+/-- Exact HOL local `canonicalRegs'_self_or_fresh_wf` (`word_cseProof:2846`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "canonicalRegs'_self_or_fresh_wf"
   (words_as_type_indexed_bitvec)]
 theorem canonicalRegs'_self_or_fresh_wf {width : Nat} [NeZero width] (data : Knowledge)

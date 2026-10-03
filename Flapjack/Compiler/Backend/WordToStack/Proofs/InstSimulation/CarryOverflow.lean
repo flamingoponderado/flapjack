@@ -119,7 +119,7 @@ private theorem sourceSuccess {width : Nat} [NeZero width] {C F : Type}
 /-- Flapjack infrastructure: actual consecutive Reg1/Reg2 native loads
 retain the entire source relation and resource equalities and expose both
 operand values. The original load theorems derive every frame bound. -/
-private theorem loadOperands {width : Nat} [NeZero width] {C F : Type}
+theorem loadOperands {width : Nat} [NeZero width] {C F : Type}
     (ac : AsmConfigExact width) (k f frame left right regLeft regRight : Nat)
     (loadsLeft loadsRight : List (Nat × Nat))
     (source : WordSemStateFiniteExact width (Nat × C) F)
