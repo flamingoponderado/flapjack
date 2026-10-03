@@ -3638,4 +3638,120 @@ theorem bodyTerminalResult {width : Nat} [NeZero width] {C F : Type}
   rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
     simpa only [compCorrectResult, matching, ne_eq, not_true_eq_false, ↓reduceIte] using bodyConclusion
 
+/-- Derive the original no-handler exception depth bound from the actual
+callee exception run. evaluate_stack_swap locates a SOME-handler frame;
+the newly pushed NONE frame cannot be that frame. No depth bound or handler
+frame is assumed. Case-local factoring of original lines 8998-9020. -/
+theorem exceptionHandlerBelowSavedFrame {width : Nat} [NeZero width] {C F : Type}
+    (prog : WordLangProgHOL (BitVec width))
+    (source bodyPost : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (args1 : List (WordLocW width)) (ss : Option Nat)
+    (location value : WordLocW width)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value), bodyPost)) :
+    source.handler < source.stack.length := by
+  have invariant := WordSemStackEq.evaluateStackSwap prog
+    (WordSemStateFiniteExact.callEnv args1 ss
+      (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source)))
+  unfold WordSemStackEq.stackSwapPost at invariant
+  rw [bodyRun] at invariant
+  obtain ⟨bound, nonGC, gc, handler, tail, size, locals, head, _⟩ := invariant
+  change source.handler <
+    (.stackFrame source.localsSize (sptToAList envs.1)
+      (wordSemEnvToList envs.2 source.permute).1 none :: source.stack).length at bound
+  change wordSemLastN (source.handler + 1)
+    (.stackFrame source.localsSize (sptToAList envs.1)
+      (wordSemEnvToList envs.2 source.permute).1 none :: source.stack) =
+    .stackFrame size nonGC gc (some handler) :: tail at head
+  by_contra outside
+  have depth : source.handler = source.stack.length := by
+    simp only [List.length_cons] at bound
+    omega
+  rw [WordSemStackEq.lastNLengthCond _ _ (by simp only [List.length_cons]; omega)] at head
+  simp only [List.cons.injEq, WordSemStackFrame.stackFrame.injEq, reduceCtorEq,
+    and_false, false_and] at head
+
+/-- The actual NONE source Call propagates an exception without changing its
+post-state or evaluating a continuation. This is evaluator clause factoring,
+not a separate HOL declaration. -/
+theorem sourceCallException {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width)) (location value : WordLocW width)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value), bodyPost)) :
+    result = some (.exception location value) ∧ sourcePost = bodyPost := by
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
+
+/-- Full original NONE exception result contract from the matching callee IH.
+The actual source run derives the exception frame depth; the original caller
+state relation derives the lens length. Removing the pushed NONE frame from
+LASTN therefore preserves every pushLocals relation, local-union and register-1
+obligation. No exception relation or depth bound is added. Untagged case-local
+assembly for 8998-9020; actual enclosing target Call is assembled separately. -/
+theorem bodyExceptionResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width)) (location value : WordLocW width)
+    (initial targetPost : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source initial lens 0)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value), bodyPost))
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source)))
+      bodyPost targetPost (some (.exception location value)) (some (.exception location))
+      (callerFrame :: lens)) :
+    compCorrectResult ac k callerSize callerFrame source sourcePost targetPost result
+      (some (.exception location)) lens := by
+  have bound := exceptionHandlerBelowSavedFrame prog source bodyPost envs args1 ss location value bodyRun
+  have lengthEq := CallReturnSupport.stateRelImpLength ac k callerSize callerFrame source initial
+    lens 0 callerRelation
+  have depth : source.handler + 1 ≤ lens.length := by omega
+  have dropEq : (callerFrame :: lens).drop
+      ((callerFrame :: lens).length - (source.handler + 1)) =
+      lens.drop (lens.length - (source.handler + 1)) := by
+    have subtract : lens.length + 1 - (source.handler + 1) =
+        (lens.length - (source.handler + 1)) + 1 := by omega
+    simp only [List.length_cons, subtract, List.drop_succ_cons]
+  obtain ⟨rfl, postEq⟩ := sourceCallException values names retCode l1 l2 dest args source sourcePost
+    bodyPost result location value xs args1 prog ss envs guards nonzero execution bodyRun
+  subst sourcePost
+  simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
+    not_true_eq_false, ↓reduceIte] at bodyConclusion ⊢
+  change (∃ nonGC gc, stateRel ac k 0 0 (pushLocals nonGC gc bodyPost) targetPost
+      ((callerFrame :: lens).drop ((callerFrame :: lens).length - (source.handler + 1))) 0 ∧
+      bodyPost.locals = sptUnion (sptFromAList gc) (sptFromAList nonGC) ∧
+      targetPost.regs.lookup 1 = some value) at bodyConclusion
+  rw [dropEq] at bodyConclusion
+  exact bodyConclusion
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
