@@ -7527,3 +7527,7 @@ Statement regression evidence, not literal local proof replay or equivalence.
 `word_to_stack_comp_codebufferwrite_probeScript.sml` freshly captures the full
 original CodeBufferWrite obligation and arbitrary whole specialization, hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
+
+`word_to_stack_comp_databufferwrite_probeScript.sml` captures the full original
+DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
