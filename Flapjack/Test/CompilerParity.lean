@@ -204,6 +204,7 @@ import Flapjack.Test.ByteWordSliceAlt
 import Flapjack.Test.MmioIndex
 import Flapjack.Test.LabInitialLabelSlots
 import Flapjack.Test.StackRemoveInitMemory
+import Flapjack.Test.StackRemoveInitLimits
 import Flapjack.Test.TargetRegisterOraclesParity
 import Flapjack.Test.TargetInterferenceSequenceParity
 import Flapjack.Test.TargetFindNextInterferenceParity
