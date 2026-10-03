@@ -68119,5 +68119,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03; bead flapjack-pxn.18.5.15.4.17.5: original evaluate_code_bitmaps421-440 Inst constructor case, literal full three-conjunct existential compile_oracle shift/code FOLDL union/bitmap append FLAT retained. Sole premise actual native evaluate equality; primitive success is derived internally and full original inst_const323-345 supplies code/bitmap/oracle preservation; failure returns source state. Both derive count0 without exposed success/field-invariant/target-run hypotheses. Minimal EvaluateDef/InstructionConstants imports avoid incomplete sibling cases. Canonical imported regs/fpRegs/store roundtrip witness; positive BitVec/NeZero and C/F Type0; Spt code not claimed finite-map translation. Inherited reals_as_rational_cuts explicitly retained. Byte-alignment dependency assessed by closed flapjack-wordsem-byte-align-total: this preservation proof is independent of alignment result and does not assert cross-language numeric LOG2-zero equivalence or alter runtime. Parent whole evaluator and other cases remain open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Seq.lean",
+    "lean_name": "evaluateCodeBitmapsSeq",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.2: full original evaluate_code_bitmaps421-440 Seq case. CodeBitmaps is definitionally literal original existential shifted oracle/code union left-fold/bitmap append flatten. Actual native Seq evaluation sole execution premise; first IH only at source, second IH only after actual first NONE at native fixClock-clamped middle; no universal arbitrary-state recursive assumption. Early result retains clamped first prefix. Success composes count a+b, source oracle shifts, GENLIST/range split, original left-fold order and flattened append; no prefix/count/postcondition assumptions. Imported canonical regs/fpRegs/store witness, positive BitVec/NeZero,C/F Type0, inherited reals_as_rational_cuts assumption retained. Alignment field-preservation assessment does not claim numeric LOG2zero or FP equivalence; no runtime rewrite. Whole theorem assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

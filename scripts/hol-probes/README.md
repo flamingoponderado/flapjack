@@ -6298,3 +6298,5 @@ are covered. Independent byte-wise expectations and arbitrary-base Lean state
 frames provide regressions only, not whole atomic/runtime correctness.
 
 `stack_code_bitmaps_inst_probe.out` freshly captures the complete original evaluate_code_bitmaps theorem, zero open hypotheses, and its native Inst specialization. The Lean case retains all three existential conjuncts and derives count zero on primitive success and failure; inherited rational-cut limits remain, with no numeric byte-alignment equivalence claim.
+
+`stack_code_bitmaps_seq_probe.out` captures complete original evaluate_code_bitmaps, zero hypotheses and native Seq specialization. The native case keeps only actual source-path recursive hypotheses, derives fixClock clamping and concatenates oracle prefixes in original left-fold/bitmap order. Whole evaluator assembly remains open.
