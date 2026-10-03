@@ -12,6 +12,9 @@ import Flapjack.RiscV.CorrectnessEncoding.ConstNext
 import Flapjack.RiscV.CorrectnessEncoding.ConstInterference
 import Flapjack.RiscV.CorrectnessEncoding.ConstStep
 import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
+import Flapjack.RiscV.CorrectnessEncoding.ConstPost
+import Flapjack.RiscV.CorrectnessEncoding.ConstRelation
+import Flapjack.RiscV.CorrectnessEncoding.ConstAssertions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
 import Flapjack.RiscV.CorrectnessEncoding.ConstRun
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull

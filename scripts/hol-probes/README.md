@@ -7972,6 +7972,8 @@ untagged. Emitted-list byte availability and full original Const assertions
 remain separate open work; this complete pure-step list result does not assume
 or claim their assembly.
 
+
+
 `pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
 `pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
 independent word/configuration/FFI carrier. Regenerate with
@@ -8008,6 +8010,40 @@ statements. Mutation tests reject a pure replacement iterator, wrong index or
 PC increment, added target-run premise, changed domain premise, wrong assertion
 counter, and reversed outside-domain observation.
 
+`pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
+`pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
+independent word/configuration/FFI carrier. Regenerate with
+`HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
+composes all six reviewed pass paths; production routing remains separate.
+
+### Complete native Const control and register post-state
+
+`CorrectnessEncoding/ConstPost.lean` proves that each of the seven literal
+native register `Run` clauses commutes with current-core PC/Skip updates under
+original `riscv_ok`. It lifts the equation to arbitrary instruction lists,
+including the unchanged empty-list state. For nonempty lists the complete
+native step fold is the original register `Run` fold with Skip4 and PC advanced
+by four times the list length. The full Const specialization uses original
+`asm_ok` and `riscv_ok` only and retains the accepted wide-constant scratch31
+write. No target execution or post-state relation is assumed.
+
+These are untagged composition lemmas, not separately named HOL declarations.
+Source comparison uses the literal seven register clauses and Const lowering
+at `riscv_targetScript.sml:103-126`; the full original Const constructor at
+`riscv_targetProofScript.sml:533-545` remains open until its intermediate and
+final source-state assertions are assembled. Existing oracle captures retain
+their original scope; this addition does not claim a new full-Next oracle.
+
+`CorrectnessEncoding/ConstRelation.lean` derives the literal source Const
+post-state using the original encoded byte length, then proves the final
+`targetStateRel` for the complete native step fold. Its public relation lemma
+assumes only original `asmStep` and the initial `targetStateRel`. Register
+bounds and nonzero destination follow from `asm_ok`; scratch31 is retained in
+the native post-state and excluded from source observations by the original
+`avoidRegs`. The memory domain and exact PC increment are preserved. These
+untagged composition lemmas have no separately named HOL original; the full
+original interference/assertions constructor remains open.
+
 ## Full typed Word-to-Stack proof captures
 
 The five WordToStack `move_single`, `move_aux`, `move_aux_seqsem`, `move_div2`,
@@ -8020,3 +8056,27 @@ Call row is an original kernel theorem specialization, and its induction row is
 the original `evaluate_ind` obligation instantiated with the full compiler
 motive. Printing the obligation does not prove its compiler case, and none of
 these captures establishes HOL-to-Lean equivalence.
+
+### Full original native Const constructor
+
+`CorrectnessEncoding/ConstAssertions.lean` now assembles the full original
+`riscv_encoder_correct` Const constructor from original `asmStep` and initial
+`targetStateRel` only. The existential witness is the nonempty emitted-list
+length minus one. Every environment satisfying the original projection
+condition is retained. Actual prefix execution derives all intermediate native
+validity, equality of every code byte, and modular PC coverage; whole execution
+transports the exact final source relation, and original `asserts2` preserves
+outside-domain bytes for each native transition. All signed12/32/wide constant
+branches remain, including the native scratch31 write. No target execution,
+post-state relation, narrowed constant range or stronger environment premise
+is added. Full encoder correctness for other constructors and the final compiler
+remains open.
+
+Fresh `riscv_target_const_probe.out` specializes the original theorem only to
+`Inst (Const r c)`, prints unrestricted original binders/types and the entire
+assertion conclusion, reports zero stored hypotheses and proved `T`. It was
+regenerated against the committed HOL/CakeML revisions using their same-revision
+prebuilt original theory cache. This is original theorem regression evidence,
+not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
+full Lean statement, original assertion definition and all four probe rows;
+its mutation tests reject extra premises, false oracle evidence and lost rows.
