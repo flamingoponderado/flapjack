@@ -7544,3 +7544,7 @@ run_probe word_to_stack_inst_carry_overflow_probeScript.sml word_to_stack_inst_c
 run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_compile_top_semantics_decls_probe.out \
   compile_top_semantics_decls_statement compile_top_semantics_decls_proved compile_top_semantics_decls_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_long_arithmetic_probe.out \
+  longMul_typed longMul_proved longMul_hypotheses longDiv_typed longDiv_proved longDiv_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
