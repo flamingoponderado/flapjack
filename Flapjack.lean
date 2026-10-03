@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.Run
 import Flapjack.RiscV.L3.Defs.DecodeBits
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics

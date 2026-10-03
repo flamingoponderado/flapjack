@@ -6956,3 +6956,18 @@ The three Lean ports and full Decode/Run/Next remain open.
 ### Full generic WordConvs expression maximum introduction
 
 `word_convs_max_var_exp_intro_probeScript.sml` replays wordConvsScript.sml460-471 local `max_var_exp_IMP` with its unchanged proof and GEN_ALL closing the original free predicate. Captures the full arbitrary-predicate/P0 statement, proved=T and zero hypotheses. Lean mutual induction retains constants, lookup, variables, load, shift and empty/nested Op argument lists. This is original theorem evidence plus source comparison, not cross-language equivalence.
+
+## Complete native Run dispatcher
+
+`l3_run_dispatch_probeScript.sml` captures the original full `Run` type and
+zero hypotheses, then proves all 163 constructor dispatch equations for
+arbitrary payloads and native states using the original `Run_def` only.
+`check-l3-run-dispatch.py` requires all 328 exact rows, including FENCE,
+FENCE_I and WFI identity clauses. The Lean counterpart is
+`Flapjack/RiscV/L3/Defs/Run.lean`, with generic kernel clause checks for
+every constructor. This checks dispatch, not independent correctness of
+the reviewed handler bodies or end-to-end compilation. FP handler calls
+inherit the documented SOUNDNESS item 8 real-rendering assumption.
+
+Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
+`regenerate.sh`, then run the strict checker.

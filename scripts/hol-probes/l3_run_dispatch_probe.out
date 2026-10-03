@@ -1,0 +1,328 @@
+Run_type=:instruction -> riscv_state -> riscv_state
+Run_hypotheses=0
+Run_AMOADD_D_equation=∀x s. Run (AMO (AMOADD_D x)) s = dfn'AMOADD_D x s
+Run_AMOADD_D_proof=T
+Run_AMOADD_W_equation=∀x s. Run (AMO (AMOADD_W x)) s = dfn'AMOADD_W x s
+Run_AMOADD_W_proof=T
+Run_AMOAND_D_equation=∀x s. Run (AMO (AMOAND_D x)) s = dfn'AMOAND_D x s
+Run_AMOAND_D_proof=T
+Run_AMOAND_W_equation=∀x s. Run (AMO (AMOAND_W x)) s = dfn'AMOAND_W x s
+Run_AMOAND_W_proof=T
+Run_AMOMAXU_D_equation=∀x s. Run (AMO (AMOMAXU_D x)) s = dfn'AMOMAXU_D x s
+Run_AMOMAXU_D_proof=T
+Run_AMOMAXU_W_equation=∀x s. Run (AMO (AMOMAXU_W x)) s = dfn'AMOMAXU_W x s
+Run_AMOMAXU_W_proof=T
+Run_AMOMAX_D_equation=∀x s. Run (AMO (AMOMAX_D x)) s = dfn'AMOMAX_D x s
+Run_AMOMAX_D_proof=T
+Run_AMOMAX_W_equation=∀x s. Run (AMO (AMOMAX_W x)) s = dfn'AMOMAX_W x s
+Run_AMOMAX_W_proof=T
+Run_AMOMINU_D_equation=∀x s. Run (AMO (AMOMINU_D x)) s = dfn'AMOMINU_D x s
+Run_AMOMINU_D_proof=T
+Run_AMOMINU_W_equation=∀x s. Run (AMO (AMOMINU_W x)) s = dfn'AMOMINU_W x s
+Run_AMOMINU_W_proof=T
+Run_AMOMIN_D_equation=∀x s. Run (AMO (AMOMIN_D x)) s = dfn'AMOMIN_D x s
+Run_AMOMIN_D_proof=T
+Run_AMOMIN_W_equation=∀x s. Run (AMO (AMOMIN_W x)) s = dfn'AMOMIN_W x s
+Run_AMOMIN_W_proof=T
+Run_AMOOR_D_equation=∀x s. Run (AMO (AMOOR_D x)) s = dfn'AMOOR_D x s
+Run_AMOOR_D_proof=T
+Run_AMOOR_W_equation=∀x s. Run (AMO (AMOOR_W x)) s = dfn'AMOOR_W x s
+Run_AMOOR_W_proof=T
+Run_AMOSWAP_D_equation=∀x s. Run (AMO (AMOSWAP_D x)) s = dfn'AMOSWAP_D x s
+Run_AMOSWAP_D_proof=T
+Run_AMOSWAP_W_equation=∀x s. Run (AMO (AMOSWAP_W x)) s = dfn'AMOSWAP_W x s
+Run_AMOSWAP_W_proof=T
+Run_AMOXOR_D_equation=∀x s. Run (AMO (AMOXOR_D x)) s = dfn'AMOXOR_D x s
+Run_AMOXOR_D_proof=T
+Run_AMOXOR_W_equation=∀x s. Run (AMO (AMOXOR_W x)) s = dfn'AMOXOR_W x s
+Run_AMOXOR_W_proof=T
+Run_LR_D_equation=∀x s. Run (AMO (LR_D x)) s = dfn'LR_D x s
+Run_LR_D_proof=T
+Run_LR_W_equation=∀x s. Run (AMO (LR_W x)) s = dfn'LR_W x s
+Run_LR_W_proof=T
+Run_SC_D_equation=∀x s. Run (AMO (SC_D x)) s = dfn'SC_D x s
+Run_SC_D_proof=T
+Run_SC_W_equation=∀x s. Run (AMO (SC_W x)) s = dfn'SC_W x s
+Run_SC_W_proof=T
+Run_ADDI_equation=∀x s. Run (ArithI (ADDI x)) s = dfn'ADDI x s
+Run_ADDI_proof=T
+Run_ADDIW_equation=∀x s. Run (ArithI (ADDIW x)) s = dfn'ADDIW x s
+Run_ADDIW_proof=T
+Run_ANDI_equation=∀x s. Run (ArithI (ANDI x)) s = dfn'ANDI x s
+Run_ANDI_proof=T
+Run_AUIPC_equation=∀x s. Run (ArithI (AUIPC x)) s = dfn'AUIPC x s
+Run_AUIPC_proof=T
+Run_LUI_equation=∀x s. Run (ArithI (LUI x)) s = dfn'LUI x s
+Run_LUI_proof=T
+Run_ORI_equation=∀x s. Run (ArithI (ORI x)) s = dfn'ORI x s
+Run_ORI_proof=T
+Run_SLTI_equation=∀x s. Run (ArithI (SLTI x)) s = dfn'SLTI x s
+Run_SLTI_proof=T
+Run_SLTIU_equation=∀x s. Run (ArithI (SLTIU x)) s = dfn'SLTIU x s
+Run_SLTIU_proof=T
+Run_XORI_equation=∀x s. Run (ArithI (XORI x)) s = dfn'XORI x s
+Run_XORI_proof=T
+Run_ADD_equation=∀x s. Run (ArithR (ADD x)) s = dfn'ADD x s
+Run_ADD_proof=T
+Run_ADDW_equation=∀x s. Run (ArithR (ADDW x)) s = dfn'ADDW x s
+Run_ADDW_proof=T
+Run_AND_equation=∀x s. Run (ArithR (AND x)) s = dfn'AND x s
+Run_AND_proof=T
+Run_OR_equation=∀x s. Run (ArithR (OR x)) s = dfn'OR x s
+Run_OR_proof=T
+Run_SLT_equation=∀x s. Run (ArithR (SLT x)) s = dfn'SLT x s
+Run_SLT_proof=T
+Run_SLTU_equation=∀x s. Run (ArithR (SLTU x)) s = dfn'SLTU x s
+Run_SLTU_proof=T
+Run_SUB_equation=∀x s. Run (ArithR (SUB x)) s = dfn'SUB x s
+Run_SUB_proof=T
+Run_SUBW_equation=∀x s. Run (ArithR (SUBW x)) s = dfn'SUBW x s
+Run_SUBW_proof=T
+Run_XOR_equation=∀x s. Run (ArithR (XOR x)) s = dfn'XOR x s
+Run_XOR_proof=T
+Run_BEQ_equation=∀x s. Run (Branch (BEQ x)) s = dfn'BEQ x s
+Run_BEQ_proof=T
+Run_BGE_equation=∀x s. Run (Branch (BGE x)) s = dfn'BGE x s
+Run_BGE_proof=T
+Run_BGEU_equation=∀x s. Run (Branch (BGEU x)) s = dfn'BGEU x s
+Run_BGEU_proof=T
+Run_BLT_equation=∀x s. Run (Branch (BLT x)) s = dfn'BLT x s
+Run_BLT_proof=T
+Run_BLTU_equation=∀x s. Run (Branch (BLTU x)) s = dfn'BLTU x s
+Run_BLTU_proof=T
+Run_BNE_equation=∀x s. Run (Branch (BNE x)) s = dfn'BNE x s
+Run_BNE_proof=T
+Run_JAL_equation=∀x s. Run (Branch (JAL x)) s = dfn'JAL x s
+Run_JAL_proof=T
+Run_JALR_equation=∀x s. Run (Branch (JALR x)) s = dfn'JALR x s
+Run_JALR_proof=T
+Run_FADD_D_equation=∀x s. Run (FArith (FADD_D x)) s = dfn'FADD_D x s
+Run_FADD_D_proof=T
+Run_FADD_S_equation=∀x s. Run (FArith (FADD_S x)) s = dfn'FADD_S x s
+Run_FADD_S_proof=T
+Run_FDIV_D_equation=∀x s. Run (FArith (FDIV_D x)) s = dfn'FDIV_D x s
+Run_FDIV_D_proof=T
+Run_FDIV_S_equation=∀x s. Run (FArith (FDIV_S x)) s = dfn'FDIV_S x s
+Run_FDIV_S_proof=T
+Run_FEQ_D_equation=∀x s. Run (FArith (FEQ_D x)) s = dfn'FEQ_D x s
+Run_FEQ_D_proof=T
+Run_FEQ_S_equation=∀x s. Run (FArith (FEQ_S x)) s = dfn'FEQ_S x s
+Run_FEQ_S_proof=T
+Run_FLE_D_equation=∀x s. Run (FArith (FLE_D x)) s = dfn'FLE_D x s
+Run_FLE_D_proof=T
+Run_FLE_S_equation=∀x s. Run (FArith (FLE_S x)) s = dfn'FLE_S x s
+Run_FLE_S_proof=T
+Run_FLT_D_equation=∀x s. Run (FArith (FLT_D x)) s = dfn'FLT_D x s
+Run_FLT_D_proof=T
+Run_FLT_S_equation=∀x s. Run (FArith (FLT_S x)) s = dfn'FLT_S x s
+Run_FLT_S_proof=T
+Run_FMADD_D_equation=∀x s. Run (FArith (FMADD_D x)) s = dfn'FMADD_D x s
+Run_FMADD_D_proof=T
+Run_FMADD_S_equation=∀x s. Run (FArith (FMADD_S x)) s = dfn'FMADD_S x s
+Run_FMADD_S_proof=T
+Run_FMAX_D_equation=∀x s. Run (FArith (FMAX_D x)) s = dfn'FMAX_D x s
+Run_FMAX_D_proof=T
+Run_FMAX_S_equation=∀x s. Run (FArith (FMAX_S x)) s = dfn'FMAX_S x s
+Run_FMAX_S_proof=T
+Run_FMIN_D_equation=∀x s. Run (FArith (FMIN_D x)) s = dfn'FMIN_D x s
+Run_FMIN_D_proof=T
+Run_FMIN_S_equation=∀x s. Run (FArith (FMIN_S x)) s = dfn'FMIN_S x s
+Run_FMIN_S_proof=T
+Run_FMSUB_D_equation=∀x s. Run (FArith (FMSUB_D x)) s = dfn'FMSUB_D x s
+Run_FMSUB_D_proof=T
+Run_FMSUB_S_equation=∀x s. Run (FArith (FMSUB_S x)) s = dfn'FMSUB_S x s
+Run_FMSUB_S_proof=T
+Run_FMUL_D_equation=∀x s. Run (FArith (FMUL_D x)) s = dfn'FMUL_D x s
+Run_FMUL_D_proof=T
+Run_FMUL_S_equation=∀x s. Run (FArith (FMUL_S x)) s = dfn'FMUL_S x s
+Run_FMUL_S_proof=T
+Run_FNMADD_D_equation=∀x s. Run (FArith (FNMADD_D x)) s = dfn'FNMADD_D x s
+Run_FNMADD_D_proof=T
+Run_FNMADD_S_equation=∀x s. Run (FArith (FNMADD_S x)) s = dfn'FNMADD_S x s
+Run_FNMADD_S_proof=T
+Run_FNMSUB_D_equation=∀x s. Run (FArith (FNMSUB_D x)) s = dfn'FNMSUB_D x s
+Run_FNMSUB_D_proof=T
+Run_FNMSUB_S_equation=∀x s. Run (FArith (FNMSUB_S x)) s = dfn'FNMSUB_S x s
+Run_FNMSUB_S_proof=T
+Run_FSQRT_D_equation=∀x s. Run (FArith (FSQRT_D x)) s = dfn'FSQRT_D x s
+Run_FSQRT_D_proof=T
+Run_FSQRT_S_equation=∀x s. Run (FArith (FSQRT_S x)) s = dfn'FSQRT_S x s
+Run_FSQRT_S_proof=T
+Run_FSUB_D_equation=∀x s. Run (FArith (FSUB_D x)) s = dfn'FSUB_D x s
+Run_FSUB_D_proof=T
+Run_FSUB_S_equation=∀x s. Run (FArith (FSUB_S x)) s = dfn'FSUB_S x s
+Run_FSUB_S_proof=T
+Run_FCLASS_D_equation=∀x s. Run (FConv (FCLASS_D x)) s = dfn'FCLASS_D x s
+Run_FCLASS_D_proof=T
+Run_FCLASS_S_equation=∀x s. Run (FConv (FCLASS_S x)) s = dfn'FCLASS_S x s
+Run_FCLASS_S_proof=T
+Run_FCVT_D_L_equation=∀x s. Run (FConv (FCVT_D_L x)) s = dfn'FCVT_D_L x s
+Run_FCVT_D_L_proof=T
+Run_FCVT_D_LU_equation=∀x s. Run (FConv (FCVT_D_LU x)) s = dfn'FCVT_D_LU x s
+Run_FCVT_D_LU_proof=T
+Run_FCVT_D_S_equation=∀x s. Run (FConv (FCVT_D_S x)) s = dfn'FCVT_D_S x s
+Run_FCVT_D_S_proof=T
+Run_FCVT_D_W_equation=∀x s. Run (FConv (FCVT_D_W x)) s = dfn'FCVT_D_W x s
+Run_FCVT_D_W_proof=T
+Run_FCVT_D_WU_equation=∀x s. Run (FConv (FCVT_D_WU x)) s = dfn'FCVT_D_WU x s
+Run_FCVT_D_WU_proof=T
+Run_FCVT_LU_D_equation=∀x s. Run (FConv (FCVT_LU_D x)) s = dfn'FCVT_LU_D x s
+Run_FCVT_LU_D_proof=T
+Run_FCVT_LU_S_equation=∀x s. Run (FConv (FCVT_LU_S x)) s = dfn'FCVT_LU_S x s
+Run_FCVT_LU_S_proof=T
+Run_FCVT_L_D_equation=∀x s. Run (FConv (FCVT_L_D x)) s = dfn'FCVT_L_D x s
+Run_FCVT_L_D_proof=T
+Run_FCVT_L_S_equation=∀x s. Run (FConv (FCVT_L_S x)) s = dfn'FCVT_L_S x s
+Run_FCVT_L_S_proof=T
+Run_FCVT_S_D_equation=∀x s. Run (FConv (FCVT_S_D x)) s = dfn'FCVT_S_D x s
+Run_FCVT_S_D_proof=T
+Run_FCVT_S_L_equation=∀x s. Run (FConv (FCVT_S_L x)) s = dfn'FCVT_S_L x s
+Run_FCVT_S_L_proof=T
+Run_FCVT_S_LU_equation=∀x s. Run (FConv (FCVT_S_LU x)) s = dfn'FCVT_S_LU x s
+Run_FCVT_S_LU_proof=T
+Run_FCVT_S_W_equation=∀x s. Run (FConv (FCVT_S_W x)) s = dfn'FCVT_S_W x s
+Run_FCVT_S_W_proof=T
+Run_FCVT_S_WU_equation=∀x s. Run (FConv (FCVT_S_WU x)) s = dfn'FCVT_S_WU x s
+Run_FCVT_S_WU_proof=T
+Run_FCVT_WU_D_equation=∀x s. Run (FConv (FCVT_WU_D x)) s = dfn'FCVT_WU_D x s
+Run_FCVT_WU_D_proof=T
+Run_FCVT_WU_S_equation=∀x s. Run (FConv (FCVT_WU_S x)) s = dfn'FCVT_WU_S x s
+Run_FCVT_WU_S_proof=T
+Run_FCVT_W_D_equation=∀x s. Run (FConv (FCVT_W_D x)) s = dfn'FCVT_W_D x s
+Run_FCVT_W_D_proof=T
+Run_FCVT_W_S_equation=∀x s. Run (FConv (FCVT_W_S x)) s = dfn'FCVT_W_S x s
+Run_FCVT_W_S_proof=T
+Run_FMV_D_X_equation=∀x s. Run (FConv (FMV_D_X x)) s = dfn'FMV_D_X x s
+Run_FMV_D_X_proof=T
+Run_FMV_S_X_equation=∀x s. Run (FConv (FMV_S_X x)) s = dfn'FMV_S_X x s
+Run_FMV_S_X_proof=T
+Run_FMV_X_D_equation=∀x s. Run (FConv (FMV_X_D x)) s = dfn'FMV_X_D x s
+Run_FMV_X_D_proof=T
+Run_FMV_X_S_equation=∀x s. Run (FConv (FMV_X_S x)) s = dfn'FMV_X_S x s
+Run_FMV_X_S_proof=T
+Run_FSGNJN_D_equation=∀x s. Run (FConv (FSGNJN_D x)) s = dfn'FSGNJN_D x s
+Run_FSGNJN_D_proof=T
+Run_FSGNJN_S_equation=∀x s. Run (FConv (FSGNJN_S x)) s = dfn'FSGNJN_S x s
+Run_FSGNJN_S_proof=T
+Run_FSGNJX_D_equation=∀x s. Run (FConv (FSGNJX_D x)) s = dfn'FSGNJX_D x s
+Run_FSGNJX_D_proof=T
+Run_FSGNJX_S_equation=∀x s. Run (FConv (FSGNJX_S x)) s = dfn'FSGNJX_S x s
+Run_FSGNJX_S_proof=T
+Run_FSGNJ_D_equation=∀x s. Run (FConv (FSGNJ_D x)) s = dfn'FSGNJ_D x s
+Run_FSGNJ_D_proof=T
+Run_FSGNJ_S_equation=∀x s. Run (FConv (FSGNJ_S x)) s = dfn'FSGNJ_S x s
+Run_FSGNJ_S_proof=T
+Run_FENCE_equation=∀x s. Run (FENCE x) s = s
+Run_FENCE_proof=T
+Run_FENCE_I_equation=∀x s. Run (FENCE_I x) s = s
+Run_FENCE_I_proof=T
+Run_FLD_equation=∀x s. Run (FPLoad (FLD x)) s = dfn'FLD x s
+Run_FLD_proof=T
+Run_FLW_equation=∀x s. Run (FPLoad (FLW x)) s = dfn'FLW x s
+Run_FLW_proof=T
+Run_FSD_equation=∀x s. Run (FPStore (FSD x)) s = dfn'FSD x s
+Run_FSD_proof=T
+Run_FSW_equation=∀x s. Run (FPStore (FSW x)) s = dfn'FSW x s
+Run_FSW_proof=T
+Run_FETCH_FAULT_equation=∀x s. Run (Internal (FETCH_FAULT x)) s = dfn'FETCH_FAULT x s
+Run_FETCH_FAULT_proof=T
+Run_FETCH_MISALIGNED_equation=∀x s. Run (Internal (FETCH_MISALIGNED x)) s = dfn'FETCH_MISALIGNED x s
+Run_FETCH_MISALIGNED_proof=T
+Run_LB_equation=∀x s. Run (Load (LB x)) s = dfn'LB x s
+Run_LB_proof=T
+Run_LBU_equation=∀x s. Run (Load (LBU x)) s = dfn'LBU x s
+Run_LBU_proof=T
+Run_LD_equation=∀x s. Run (Load (LD x)) s = dfn'LD x s
+Run_LD_proof=T
+Run_LH_equation=∀x s. Run (Load (LH x)) s = dfn'LH x s
+Run_LH_proof=T
+Run_LHU_equation=∀x s. Run (Load (LHU x)) s = dfn'LHU x s
+Run_LHU_proof=T
+Run_LW_equation=∀x s. Run (Load (LW x)) s = dfn'LW x s
+Run_LW_proof=T
+Run_LWU_equation=∀x s. Run (Load (LWU x)) s = dfn'LWU x s
+Run_LWU_proof=T
+Run_DIV_equation=∀x s. Run (MulDiv ($DIV x)) s = dfn'DIV x s
+Run_DIV_proof=T
+Run_DIVU_equation=∀x s. Run (MulDiv (DIVU x)) s = dfn'DIVU x s
+Run_DIVU_proof=T
+Run_DIVUW_equation=∀x s. Run (MulDiv (DIVUW x)) s = dfn'DIVUW x s
+Run_DIVUW_proof=T
+Run_DIVW_equation=∀x s. Run (MulDiv (DIVW x)) s = dfn'DIVW x s
+Run_DIVW_proof=T
+Run_MUL_equation=∀x s. Run (MulDiv (MUL x)) s = dfn'MUL x s
+Run_MUL_proof=T
+Run_MULH_equation=∀x s. Run (MulDiv (MULH x)) s = dfn'MULH x s
+Run_MULH_proof=T
+Run_MULHSU_equation=∀x s. Run (MulDiv (MULHSU x)) s = dfn'MULHSU x s
+Run_MULHSU_proof=T
+Run_MULHU_equation=∀x s. Run (MulDiv (MULHU x)) s = dfn'MULHU x s
+Run_MULHU_proof=T
+Run_MULW_equation=∀x s. Run (MulDiv (MULW x)) s = dfn'MULW x s
+Run_MULW_proof=T
+Run_REM_equation=∀x s. Run (MulDiv (REM x)) s = dfn'REM x s
+Run_REM_proof=T
+Run_REMU_equation=∀x s. Run (MulDiv (REMU x)) s = dfn'REMU x s
+Run_REMU_proof=T
+Run_REMUW_equation=∀x s. Run (MulDiv (REMUW x)) s = dfn'REMUW x s
+Run_REMUW_proof=T
+Run_REMW_equation=∀x s. Run (MulDiv (REMW x)) s = dfn'REMW x s
+Run_REMW_proof=T
+Run_SLL_equation=∀x s. Run (Shift (SLL x)) s = dfn'SLL x s
+Run_SLL_proof=T
+Run_SLLI_equation=∀x s. Run (Shift (SLLI x)) s = dfn'SLLI x s
+Run_SLLI_proof=T
+Run_SLLIW_equation=∀x s. Run (Shift (SLLIW x)) s = dfn'SLLIW x s
+Run_SLLIW_proof=T
+Run_SLLW_equation=∀x s. Run (Shift (SLLW x)) s = dfn'SLLW x s
+Run_SLLW_proof=T
+Run_SRA_equation=∀x s. Run (Shift (SRA x)) s = dfn'SRA x s
+Run_SRA_proof=T
+Run_SRAI_equation=∀x s. Run (Shift (SRAI x)) s = dfn'SRAI x s
+Run_SRAI_proof=T
+Run_SRAIW_equation=∀x s. Run (Shift (SRAIW x)) s = dfn'SRAIW x s
+Run_SRAIW_proof=T
+Run_SRAW_equation=∀x s. Run (Shift (SRAW x)) s = dfn'SRAW x s
+Run_SRAW_proof=T
+Run_SRL_equation=∀x s. Run (Shift (SRL x)) s = dfn'SRL x s
+Run_SRL_proof=T
+Run_SRLI_equation=∀x s. Run (Shift (SRLI x)) s = dfn'SRLI x s
+Run_SRLI_proof=T
+Run_SRLIW_equation=∀x s. Run (Shift (SRLIW x)) s = dfn'SRLIW x s
+Run_SRLIW_proof=T
+Run_SRLW_equation=∀x s. Run (Shift (SRLW x)) s = dfn'SRLW x s
+Run_SRLW_proof=T
+Run_SB_equation=∀x s. Run (Store (SB x)) s = dfn'SB x s
+Run_SB_proof=T
+Run_SD_equation=∀x s. Run (Store (SD x)) s = dfn'SD x s
+Run_SD_proof=T
+Run_SH_equation=∀x s. Run (Store (SH x)) s = dfn'SH x s
+Run_SH_proof=T
+Run_SW_equation=∀x s. Run (Store (SW x)) s = dfn'SW x s
+Run_SW_proof=T
+Run_CSRRC_equation=∀x s. Run (System (CSRRC x)) s = dfn'CSRRC x s
+Run_CSRRC_proof=T
+Run_CSRRCI_equation=∀x s. Run (System (CSRRCI x)) s = dfn'CSRRCI x s
+Run_CSRRCI_proof=T
+Run_CSRRS_equation=∀x s. Run (System (CSRRS x)) s = dfn'CSRRS x s
+Run_CSRRS_proof=T
+Run_CSRRSI_equation=∀x s. Run (System (CSRRSI x)) s = dfn'CSRRSI x s
+Run_CSRRSI_proof=T
+Run_CSRRW_equation=∀x s. Run (System (CSRRW x)) s = dfn'CSRRW x s
+Run_CSRRW_proof=T
+Run_CSRRWI_equation=∀x s. Run (System (CSRRWI x)) s = dfn'CSRRWI x s
+Run_CSRRWI_proof=T
+Run_EBREAK_equation=∀s. Run (System EBREAK) s = dfn'EBREAK s
+Run_EBREAK_proof=T
+Run_ECALL_equation=∀s. Run (System ECALL) s = dfn'ECALL s
+Run_ECALL_proof=T
+Run_ERET_equation=∀s. Run (System ERET) s = dfn'ERET s
+Run_ERET_proof=T
+Run_MRTS_equation=∀s. Run (System MRTS) s = dfn'MRTS s
+Run_MRTS_proof=T
+Run_SFENCE_VM_equation=∀x s. Run (System (SFENCE_VM x)) s = dfn'SFENCE_VM x s
+Run_SFENCE_VM_proof=T
+Run_WFI_equation=∀s. Run (System WFI) s = s
+Run_WFI_proof=T
+Run_UnknownInstruction_equation=∀s. Run UnknownInstruction s = dfn'UnknownInstruction s
+Run_UnknownInstruction_proof=T
