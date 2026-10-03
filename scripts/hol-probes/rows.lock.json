@@ -5936,10 +5936,10 @@
       "sha256": "a969c65031a10268edf6af779a5d645a886ca203ace1a4d7657561c1ddfa28a6"
     },
     {
-      "bytes": 92,
+      "bytes": 493,
       "out": "riscv_addi_decode_probe.out",
-      "rows": 4,
-      "sha256": "d140d2daf5d41250d06f795e36239942e1f05a1a5a0c23656cb8fc283434ce71"
+      "rows": 7,
+      "sha256": "8c979e259abedf2de19f1d7f93869163fc86b0423fb02b4aad80dde4cdffea69"
     },
     {
       "bytes": 553,
@@ -5948,16 +5948,16 @@
       "sha256": "a2f077766405c3dbc59675c90d87a607af763e7c4a62e67455b298f2ad1361ba"
     },
     {
-      "bytes": 369,
+      "bytes": 995,
       "out": "riscv_const32_value_probe.out",
-      "rows": 12,
-      "sha256": "2305750df6f37cc98908a3ff47ef52784f484116b0f740a97fba14f1de3a816d"
+      "rows": 15,
+      "sha256": "2cfc2ae53e517fab43e948e33d0ee751fef489649cad104a83c2ae7eba533238"
     },
     {
-      "bytes": 444,
+      "bytes": 1350,
       "out": "riscv_const_decode_probe.out",
-      "rows": 20,
-      "sha256": "b9650b527d94b68ea367eeb2863383e81af20d62a0e3436a624525ba047ccf1d"
+      "rows": 23,
+      "sha256": "3be7ba7060808bb2060b670f1ed3e73a88b6971fe17a6a8fb6090bb07ed6f3ef"
     },
     {
       "bytes": 328,
@@ -5966,10 +5966,10 @@
       "sha256": "d3d15bc4bd24057561c00de5830e94832a6344535c3d09069792b6b112eef229"
     },
     {
-      "bytes": 410,
+      "bytes": 988,
       "out": "riscv_const_wide_value_probe.out",
-      "rows": 12,
-      "sha256": "5497c1363cc17094cf426fa6bd2621e856fd7e9b4bac00f959db21fe12e413c5"
+      "rows": 15,
+      "sha256": "c09916790795103f6f92b55f4efd4e9bcf2de03a894ecc9119ab759b448b132b"
     },
     {
       "bytes": 290,
@@ -6080,10 +6080,10 @@
       "sha256": "e2dab84bec2eac5803f6294714e76114861caf28dd4209091a361220afb89d87"
     },
     {
-      "bytes": 184,
+      "bytes": 661,
       "out": "riscv_upper_decode_probe.out",
-      "rows": 8,
-      "sha256": "8421bc51c10b6d98630daa4a4161fdbf6c782ccdcf6550cfb8a2ec07b075e519"
+      "rows": 11,
+      "sha256": "70334bcadc792d436a05be6513be2af1315163838ec35582ddfaabc017058c75"
     },
     {
       "bytes": 70,
