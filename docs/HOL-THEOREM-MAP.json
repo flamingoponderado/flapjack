@@ -82712,5 +82712,60 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmMemory.lean",
+    "lean_name": "memLoad32AlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load32_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmMemory.lean",
+    "lean_name": "memLoadByteAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load_byte_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmMemory.lean",
+    "lean_name": "memStore32AlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store32_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmMemory.lean",
+    "lean_name": "memStoreByteAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store_byte_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmMemory.lean",
+    "lean_name": "memOpAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_op_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmMemory.lean",
+    "lean_name": "asmInstAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "asm_inst_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open. Native FP dispatch inherits reals_as_rational_cuts assumption of SOUNDNESS item8; no full real-carrier closure/equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
