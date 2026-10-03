@@ -1,0 +1,21 @@
+evaluate_stack_max_le_statement=∀c s1 res s2. evaluate (c,s1) = (res,s2) ⇒ option_le s1.stack_max s2.stack_max
+evaluate_stack_max_le_hypotheses=0
+evaluate_stack_limit_statement=∀c s1 res s2. evaluate (c,s1) = (res,s2) ⇒ s2.stack_limit = s1.stack_limit
+evaluate_stack_limit_hypotheses=0
+evaluate_stack_max_statement=∀c s1 res s2. evaluate (c,s1) = (res,s2) ⇒ case s1.stack_max of NONE => s2.stack_max = NONE | SOME stack_max => the stack_max s2.stack_max ≥ stack_max
+evaluate_stack_max_hypotheses=0
+evaluate_stack_max_IS_SOME_statement=∀c s1 res s2. evaluate (c,s1) = (res,s2) ∧ IS_SOME s2.stack_max ⇒ IS_SOME s1.stack_max
+evaluate_stack_max_IS_SOME_hypotheses=0
+evaluate_stack_limit_stack_max_eq_statement=∀c s1 res s2. evaluate (c,s1) = (res,s2) ∧ the s1.stack_limit s1.stack_max ≥ s1.stack_limit ⇒ the s2.stack_limit s2.stack_max ≥ s2.stack_limit
+evaluate_stack_limit_stack_max_eq_hypotheses=0
+evaluate_stack_limit_stack_max_statement=∀c s1 res s2. evaluate (c,s1) = (res,s2) ∧ the (s1.stack_limit + 1) s1.stack_max > s1.stack_limit ⇒ the (s2.stack_limit + 1) s2.stack_max > s2.stack_limit
+evaluate_stack_limit_stack_max_hypotheses=0
+share_inst_const_statement=∀v s' s res op c. share_inst op v c s = (res,s') ⇒ (s'.be ⇔ s.be) ∧ s'.gc_fun = s.gc_fun ∧ s'.mdomain = s.mdomain ∧ s'.sh_mdomain = s.sh_mdomain ∧ s'.code = s.code ∧ s'.code_buffer = s.code_buffer ∧ s'.data_buffer = s.data_buffer ∧ s'.compile = s.compile ∧ s'.compile_oracle = s.compile_oracle ∧ s'.permute = s.permute ∧ s'.clock = s.clock ∧ s'.handler = s.handler ∧ s'.stack_limit = s.stack_limit ∧ s'.stack_max = s.stack_max
+share_inst_const_hypotheses=0
+cut_state_const_statement=∀x s' s. cut_state x s = SOME s' ⇒ ∃l. s' = s with locals := l
+cut_state_const_hypotheses=0
+option_le_trans_statement=∀x y z. option_le x y ∧ option_le y z ⇒ option_le x z
+option_le_trans_hypotheses=0
+option_le_max_right_statement=∀x n m. option_le x (OPTION_MAP2 MAX n m) ⇔ option_le x n ∨ option_le x m
+option_le_max_right_hypotheses=0
+option_le_def=(option_le v0 NONE ⇔ T) ∧ (option_le NONE (SOME v1) ⇔ F) ∧ (option_le (SOME n1) (SOME n2) ⇔ n1 ≤ n2)

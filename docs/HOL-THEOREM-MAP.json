@@ -70409,5 +70409,173 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.4 wordProps649-666: complete original arbitrary allocation word/cutsets/native source/result/post, sole allocation=(result,post) premise, all10 conjuncts in order clock/ffi/code/be/codeBuffer/dataBuffer/compile/compileOracle/stackLimit/stackSize. Native alloc671-698 preserves original cutEnv/pushEnv/setStore/gc/popEnv/getStore/hasSpace dispatch and every failure/Error/NotEnoughSpace/flush/success outcome. Complete gcConst/popEnvConst contracts supply fields; explicit equality chains show original field preservation, no callback law/targetrun/successful-allocation/resource-safety premise. Imported actual positivewidth state C/F:Type, exact Spt fields, canonical fpRegs/store and genuine same-module witness; Bool equivalence as Bool equality. No evaluator or numericFP assertion. Original limit4415 requires alloc_const, full resource/Seq/pass remains open. Fresh unchanged literal full original proof before GEN_ALL/generalized statement check."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionLe",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_le_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 backendProps: all three original clauses (option_le _ NONE = T, NONE (SOME _) = F, SOME n1 SOME n2 = n1<=n2) on num option; HOL bool rendered as decidable Prop with equivalent truth table. Fresh probe captures the definition."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionLe_refl",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_le_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 backendProps: original !x. option_le x x, no extra premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionLe_trans",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_le_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 backendProps: original !x y z. option_le x y /\\ option_le y z ==> option_le x z, conjunctive premise kept. Fresh probe statement capture, 0 hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionLe_max_right",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_le_max_right",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 backendProps: original option_le x (OPTION_MAP2 MAX n m) <=> option_le x n \\/ option_le x m; HOL free x n m are explicit binders and OPTION_MAP2 MAX is Option.map2 max (SOME exactly when both SOME). Fresh probe statement capture."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "shareInstConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "share_inst_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 1161-1180 arbitrary op/v/c/s/res/s' with sole share_inst=(res,s') premise and all14 field conjuncts in source order (be,gc_fun,mdomain,sh_mdomain,code,code_buffer,data_buffer,compile,compile_oracle,permute,clock,handler,stack_limit,stack_max); HOL result word width is the state width 'a so the native result width parameter is instantiated to width. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "cutStateConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "cut_state_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 1293-1299 cut_state x s = SOME s' ==> ?l. s' = s with locals := l, no extra premise. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "callEnv_optionLe_stackMax",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "call_env_option_le_stack_max",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original local 4298-4301 option_le s.stack_max (call_env args1 ss s).stack_max for arbitrary args/size/state. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "callPushEnv_optionLe_stackMax",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "call_push_env_option_le_stack_max",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original local 4303-4310 for arbitrary args/size/envs/handler/state, both handler shapes. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "evaluate_stack_max_le",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_max_le",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4312-4370 arbitrary program/state/result/post, sole evaluate=(res,s2) premise, conclusion option_le s1.stack_max s2.stack_max; no resource monotonicity, safety or success premise. Proof: untagged stackRel_evaluate recursion on HOL termination measure covering every evaluate_ind clause with gc_const/pop_env_const/push_env/inst_const_full/mem_store_const/jump_exc_const/share_inst_const/cut_state_const/call_env helpers as HOL. Fresh probe captures the closed statement (0 hypotheses). Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "evaluate_stack_max",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_max",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4372-4384 case s1.stack_max of NONE => s2.stack_max = NONE | SOME m => the m s2.stack_max >= m, the as tagged miscThe. Fresh literal original proof replayed, statement aconv, 0 hypotheses. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "evaluate_stack_max_IS_SOME",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_max_IS_SOME",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4386-4393 conjunctive premise evaluate=(res,s2) /\\ IS_SOME s2.stack_max, conclusion IS_SOME s1.stack_max (Option.isSome = true). Fresh literal proof replay. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "evaluate_stack_limit",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_limit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4395-4417 sole evaluate premise, s2.stack_limit = s1.stack_limit for every program. Fresh probe closed statement capture. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "evaluate_stack_limit_stack_max_eq",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_limit_stack_max_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4419-4429 premise evaluate /\\ the s1.stack_limit s1.stack_max >= s1.stack_limit, same-shape conclusion on s2. Fresh literal proof replay. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/EvaluateStackMax.lean",
+    "lean_name": "evaluate_stack_limit_stack_max",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_stack_limit_stack_max",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 resource4.2 wordProps: original 4431-4441 strict form premise the (s1.stack_limit+1) s1.stack_max > s1.stack_limit, same conclusion on s2, exactly as used by Word-to-Stack Seq. Fresh literal proof replay. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemEvaluateStackMaxSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement mentions the native evaluate whose Inst clause calls the reals_as_rational_cuts-qualified inst; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
