@@ -6864,3 +6864,7 @@ Supervisor MPRV and Mrts NextFetch, and both fetch exception trap/address fields
 `check-l3-control-fetch.py` requires all unique labels and every original row T.
 These finite regressions supplement source comparison, not a cross-language
 transition equivalence theorem. Full Run and Next remain open.
+
+`word_to_stack_comp_raise_full_probeScript.sml` captures the complete original evaluate_ind Raise obligation of comp_correct, including the entire clock/resource/result motive, by specialization of the original complete theorem. Closed statement/proved/hypothesis rows are statement evidence; this is not literal Raise proof replay or a HOL-to-Lean equivalence proof. Read-only original backend/proofs theory; proof-only Lean case.
+
+`stack_remove_init_mod_order_probeScript.sml` replays local original `MOD_LESS_EQ_MOD_IMP` (stack_removeProofScript.sml:2805-2809) with its unchanged complete natural-number conjunction implication and `rw []`/`fs []` proof. Full closed statement, proved=T and zero-hypothesis rows are captured against the read-only original backend proof theory; no extra positive-divisor premise.

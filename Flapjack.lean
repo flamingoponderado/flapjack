@@ -29,6 +29,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitModOrder
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -365,6 +366,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Raise
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc

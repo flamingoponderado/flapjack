@@ -74667,5 +74667,31 @@
     "hol_name": "dfn'FETCH_FAULT_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.1.31 literal line10745: entire fixedword64 address/full riscv_state/SupervisorCSR clause, same quantifiers/no premises. writeSCSR currentcore function update. MRTS source-ordered scause from mcause, sbadaddr from mbadaddr, sepc from mepc writes, then MCSR.mstatus.MPRV privLevel Supervisor1 and NextFetch SOME Mrts. Fetch routes signalAddressException retaining SOME full address and exact Fetch_Misaligned/Fetch_Fault; only NextFetch currentcore changes, arbitrary prior exception/core/otherstate retained. Canonical unspecified trap overwritten at both fields, no default or targetrun/mode premise. Existing reviewed helper owners imported, not duplicated. Fresh original39 whole-state T rows with independent direct record-update expected states and matching kernel fixtures. Run remains OPEN."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Raise.lean",
+    "lean_name": "compCorrectRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6: complete original comp_correct motive5719-5751 and Raise6627-6747. Simulation retains every original source execution/nonError/full stateRel/convention/bitmap/label/max bound premise and full existential clock/actual target run/compCorrectResult conclusion, with no extra IH or target-run/postrelation/resource assumption. Source getVar then jumpExc succeeds from nonError; postAllocConventions forces register2. Actual LASTN handler frame and full stackRel derive strict gc sorting, handler pointer, raw width/index/space bounds, location/saved-handler reads. Native comp emits Call NONE raiseStubLocation NONE; exact eight-command raiseStubFalse and actual call evaluator derive extraClock1, unchanged returned clock, Handler update and three-slot free. Full stackRelRaise, environment identity and decoder/aux suffix facts derive cleared stack relation including conditional saved-handler pointer; LASTN_stack_size_SOME and full aux size derive all optional stackSizeRel/max branches. Empty pushed locals discharge original wf/placement; erased Handler update preserves original store, all other state fields/oracle/code conventions unchanged. Original source handler count determines LASTN lens, exception value preserved in reg1 from actual getVar2 and k>4. Original gc existential chosen directly because reviewed sorted env identity proves original env_to_list output equals gc. Imported canonical source/target owners retain actual five fmap fields, Spt code/locals and List fields unchanged; same-module genuine codec roundtrips, positive BitVec width NeZero and C/F Type0 retained. Evaluator closure inherits reals_as_rational_cuts assurance limit; no numerical FP correspondence claim. Original capture specializes original complete comp_correct to its evaluate_ind Raise obligation: statement evidence, not literal case replay or cross-language equivalence. Proof-only, no executed compiler change; coordinator acceptance tracked on bead.",
+    "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitModOrder.lean",
+    "lean_name": "modLessEqModImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "MOD_LESS_EQ_MOD_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original2805-2809: full universally quantified natural m,k,n, sole original conjunction m MOD k <= n and m < k, conclusion m <= n unchanged. Nat modulo and order have original total natural semantics; m<k derives modulus identity without extra divisor positivity. Zero divisor remains quantified (original premise is impossible there), no word/FFI/map or representation qualifier. Original literal rw[] then fs[] proof replay captured closed full statement/T/hyp0. Kernel proof uses Nat.mod_eq_of_lt only; proof-only prerequisite, no executed compiler behavior change. Coordinator acceptance tracked on bead."
   }
 ]
