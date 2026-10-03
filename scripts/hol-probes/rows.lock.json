@@ -1802,6 +1802,12 @@
       "sha256": "d64f9df1e4562474b66a9e685fa401d450b0a4468cf3eb246195356647f904c0"
     },
     {
+      "bytes": 922,
+      "out": "lab_to_target_compiler_oracle_ok_probe.out",
+      "rows": 7,
+      "sha256": "72d096a3ea2edc699c8ddf50fadc50b5111eb19cb47a0f0b531e8b9f4ecbb19c"
+    },
+    {
       "bytes": 700,
       "out": "lab_to_target_computed_label_domain_probe.out",
       "rows": 8,

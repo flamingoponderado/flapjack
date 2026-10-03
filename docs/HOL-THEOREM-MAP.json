@@ -69551,5 +69551,14 @@
     "hol_name": "wf_mapi",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source/carrier comparison completed (2026-10-03), bead flapjack-sola-sptree-mapi-wf. HOL1844: wf(mapi f pt) unconditionally. Arbitrary source and target payload types, function Nat->alpha->beta, arbitrary raw Spt input. No input-wf premise; exact mapi0 smart normalization and numeric index increments retained. HOL proof induction helper sptWfMapi0 is untagged, no separately declared original. Imported Spt/mkBN/mkBS/mapi/wf reviewed constructor-for-constructor, no representation qualifier. No runtime change or full compiler result claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitializationContracts.lean",
+    "lean_name": "compilerOracleOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compiler_oracle_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison9588-9598 and original complete fulltype0hyp: all five arguments retained, actual concrete word-free Config oracle and independent natural-valued nested Spt initial labels, arbitrary positive source word width, fixed word8 code bytes and exact HolFfiName list. Every index keeps good_code and no_share_mem_inst, index zero keeps labels/pos/SOME ffi-name equalities. Imported reviewed goodCode generic label-value carrier is genuinely instantiated at Nat by the original concrete Config labels, not arbitrarily specialized. Pair destructuring and unused zero code component preserved; no extra successful compiler/desired target state premise or default/hold change. Fresh original definition and four full generic kernel consumers are compared with native generic consumers. Full151 initializer simulation remains open; this source comparison does not close that theorem. This is a proof-script contract, not an executed compiler replacement or cross-language equivalence claim."
   }
 ]

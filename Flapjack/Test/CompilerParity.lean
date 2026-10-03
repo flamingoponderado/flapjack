@@ -17,6 +17,7 @@ import Flapjack.Test.MiscFindIndexSuccessfulMemParity
 import Flapjack.Test.LabToTargetMmioClassificationParity
 import Flapjack.Test.LabToTargetFfiEntryExclusionParity
 import Flapjack.Test.LabToTargetInitializationParity
+import Flapjack.Test.LabToTargetInitializationContractsParity
 import Flapjack.Test.MiscFindIndexShiftParity
 import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity

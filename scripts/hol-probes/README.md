@@ -6467,3 +6467,13 @@ codec/lift/lower definitions and 862 independently calculated observations:
 interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
+
+The LabToTarget compiler-oracle contract probe captures the full original
+`compiler_oracle_ok_def` at9588, every quantified carrier and zero hypotheses.
+Four original HOL kernel consumers check the complete iff, both invariants at
+all indices, and all three zero-index configuration equalities. Native generic
+consumers retain the same arbitrary positive word dimension, concrete Config,
+actual oracle, label trees and FFI names. This proof-script contract neither
+replaces an executable compiler nor establishes initializer simulation or
+HOL-to-Lean equivalence. Selector:
+`HOL_PROBE_ONLY=lab_to_target_compiler_oracle_ok_probeScript.sml`.

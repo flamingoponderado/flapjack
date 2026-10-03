@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
 import Flapjack.RiscV.L3.Defs.SupervisorCSR
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
