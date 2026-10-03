@@ -6942,3 +6942,7 @@ run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoratio
 run_probe word_to_stack_comp_return_probeScript.sml word_to_stack_comp_return_probe.out \
   return_full_original_simulation return_full_original_proved return_full_original_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_const_instruction_probeScript.sml word_to_stack_const_instruction_probe.out \
+  const_full_transport const_full_clock const_transport_closed const_clock_closed \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

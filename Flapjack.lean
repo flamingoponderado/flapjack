@@ -2293,3 +2293,5 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction

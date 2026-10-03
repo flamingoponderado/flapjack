@@ -7379,3 +7379,14 @@ case retains every quantified original premise and the complete existential
 execution/result/resource contract; it derives all source reads, frame/free
 bounds, postrelation and physical returned-value placements internally.
 This constructor port does not establish full pass or runtime correctness.
+
+### Full constant-instruction laws
+
+`word_to_stack_const_instruction_probe.out` freshly replays the unchanged
+original local proofs at word_to_stackProofScript.sml6743–6765. The local
+4470 stack-load clock rewrite is replayed first because HOL does not export it.
+Both full polymorphic statements have no open kernel hypotheses; EQT_INTRO
+records their proved equivalence to T. Transport retains arbitrary extra and
+all six conclusions. Clock transport retains the whole evaluation pair.
+This is source statement/proof evidence, not a cross-assistant equivalence
+theorem or completion of the full compiler proof.
