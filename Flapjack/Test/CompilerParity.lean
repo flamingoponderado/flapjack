@@ -1,3 +1,4 @@
+import Flapjack.Test.L3SCWParity
 import Flapjack.Test.L3LRDParity
 import Flapjack.Test.L3LRWParity
 import Flapjack.Test.L3IntegerLoadParity
