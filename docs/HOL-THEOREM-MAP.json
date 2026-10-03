@@ -76905,5 +76905,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJump",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: full labelled Jump including missing target. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpRegLoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: JumpReg location-valued operand, including missing target. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpRegWord",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: JumpReg word-valued operand failure. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
   }
 ]
