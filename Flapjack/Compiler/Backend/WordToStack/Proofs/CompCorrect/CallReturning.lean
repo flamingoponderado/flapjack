@@ -1527,4 +1527,151 @@ theorem simulateCalleeBody {width : Nat} [NeZero width] {C F : Type}
   exact ⟨moved, entry, extraClock, targetPost, targetResult, moveRun, allocationRun,
     targetRun, calleeRun, conclusion⟩
 
+/-- Flapjack assembly of the original zero-clock returning Call branch.
+The argument allocation succeeds under the original space split, then the
+actual compiled Call times out before entering the callee. The complete
+source result and FFI/clock conclusion follow from its actual evaluate_def
+clause. No separate HOL declaration; full-case assembly remains unfinished. -/
+theorem compiledCallTimeout {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width))
+    (n savedIndex finalIndex : Nat) (destinationCode savedCode returnCode : HolProg width)
+    (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, f, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (compiled : HolProg width)
+    (compilation : compNative ac false
+      (.call (some (values, names, retCode, l1, l2)) dest args none) (bs, n) (k, f, frame) =
+      (compiled, (finalBitmaps, finalIndex)))
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost))
+    (space : Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k ≤
+      target.stackSpace)
+    (zero : source.clock = 0)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length))) :
+    ∃ targetPost : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (compiled, target) = (some .timeOut, targetPost) ∧
+      compCorrectResult ac k f frame source sourcePost targetPost result
+        (some .timeOut) lens := by
+  have savedPrefix := (compImpIsPrefix ac false retCode (savedBitmaps, savedIndex)
+    (k, f, frame) returnCode (finalBitmaps, finalIndex) returnCompile).trans bitmapPrefix
+  obtain ⟨destinationTarget, saved, moved, _, _, _, _, _, _, destinationRun, savedRun,
+    moveRun, savedRelation, _, _, _, _, _, _, found, _, stack, regs, movedState⟩ :=
+    prepareCalleeDestination ac k f frame values names retCode l1 l2 dest args source target lens
+      xs args1 prog ss envs bs savedBitmaps n savedIndex destinationCode savedCode destination
+      guards related conventions maximum destinationCompile savedCompile lengthBound bitmapBound
+      savedPrefix space
+  have savedClock : saved.clock = 0 := savedRelation.1.symm.trans zero
+  have ffi : saved.ffi = source.ffi := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  subst moved
+  let moved : StackSemStateFiniteExact width C F := {saved with
+    stackSpace := saved.stackSpace -
+      Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k,
+    stack := stack, regs := regs}
+  have callRun : StackSemEvaluate.evaluate
+      (.call (some (.seq .skip (copyRetNative false false (k, f, frame) values returnCode),
+        0, l1, l2)) destination none, moved) =
+      (some .timeOut, StackSemStateOps.emptyEnv moved) := by
+    rw [StackSemEvaluate.evaluate_call]
+    simp only
+    rw [found]
+    simp only
+    rw [if_pos (show moved.clock = 0 from savedClock)]
+  simp only [compNative, destinationCompile, savedCompile, returnCompile,
+    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+  obtain ⟨rfl, _⟩ := compilation
+  refine ⟨StackSemStateOps.emptyEnv moved, ?_, ?_⟩
+  · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, destinationRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, savedRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, moveRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      StackSemEvaluate.evaluate_skip]
+    exact callRun
+  · obtain ⟨get, bad, find, valid, cut⟩ := guards
+    rw [WordSemStateFiniteExact.evaluate] at execution
+    simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+    rw [dif_pos zero] at execution
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+    simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
+      not_true_eq_false, ↓reduceIte]
+    exact ⟨ffi.symm, zero.trans savedClock.symm⟩
+
+/-- Flapjack clock transport for the complete native StackArgs program.
+Every success/error/resource outcome is retained, with no bounds or successful
+run premise. This composes the original stack_move clock lemma with the
+literal allocation clause; there is no separate HOL declaration. -/
+theorem stackArgumentsClockFree {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (destination : Sum Nat Nat) (argCount : Nat) :
+    CallReturnEval.ClockFree (C := C) (F := F)
+      (stackArgsNative (width := width) destination argCount (k, f, frame)) := by
+  let count := Compiler.Backend.WordToStack.stackArgCount destination argCount k
+  have allocation : CallReturnEval.ClockFree (C := C) (F := F)
+      (.stackAlloc count : HolProg width) := by
+    intro target clock
+    simp only [StackSemEvaluate.evaluate_stackAlloc]
+    split_ifs <;> rfl
+  have move : CallReturnEval.ClockFree (C := C) (F := F)
+      (stackMoveNative (width := width) count 0 f k .skip) := by
+    intro target clock
+    simpa only [Prod.map, id_eq] using
+      CallReturnStackMoveClock.evaluateStackMoveClock count 0 f k target clock
+  intro target clock
+  rw [stackArgsNative, CallReturnEval.evaluateStackMoveSeq,
+    CallReturnEval.evaluateStackMoveSeq]
+  exact CallReturnEval.clockFree_seq _ _ allocation move target clock
+
+/-- Flapjack unconditional clock transport for the actual destination/save/
+argument Call prelude. Compiler equations identify the actual programs;
+all evaluator outcomes are retained. This case-local composition has no
+separate HOL declaration and assumes no target run. -/
+theorem completePreludeClockFree {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (dest : Option Nat) (args : List Nat)
+    (names : WordLangCutsetsHOL) (bs bsPost : AppList (BitVec width) × Nat)
+    (destinationCode savedCode : HolProg width) (destination : Sum Nat Nat)
+    (destinationCompile : callDestNative dest args (k, f, frame) =
+      (destinationCode, destination))
+    (savedCompile : wLiveNative names bs (k, f, frame) = (savedCode, bsPost)) :
+    CallReturnEval.ClockFree (C := C) (F := F)
+      (.seq destinationCode (.seq savedCode
+        (stackArgsNative destination (args.length + 1) (k, f, frame)))) := by
+  have destClock : CallReturnEval.ClockFree (C := C) (F := F) destinationCode := by
+    intro target clock
+    simpa only [Prod.map, id_eq] using
+      CallReturnEval.evaluateCallDestClock dest args k f frame destinationCode destination
+        target clock destinationCompile
+  have savedClock : CallReturnEval.ClockFree (C := C) (F := F) savedCode := by
+    intro target clock
+    exact CallReturnEval.evaluateWLiveClock (C := C) (F := F) (k, f, frame) clock names
+      target savedCode bs bsPost savedCompile
+  exact CallReturnEval.clockFree_seq _ _ destClock
+    (CallReturnEval.clockFree_seq _ _ savedClock
+      (stackArgumentsClockFree k f frame destination (args.length + 1)))
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
