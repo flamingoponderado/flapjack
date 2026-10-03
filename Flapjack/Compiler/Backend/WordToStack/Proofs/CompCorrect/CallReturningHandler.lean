@@ -3888,4 +3888,226 @@ theorem simulateHandlerExceptionContinuation {width : Nat} [NeZero width] {C F :
   simp only [WordSemStateFiniteExact.setVar,handlerEq] at conclusion
   exact conclusion
 
+/-- Lift callee-body observations through the actual whole SOME Call source
+evaluation. Every body result, invalid return, failed pop/domain test and
+continuation outcome is retained. The trace lift and conditional resource lift
+use the original evaluator monotonicity/resource theorems, without a target
+run or narrowed successful-return premise. Case-local infrastructure for the
+original returning-handler unmatched-body branch. -/
+theorem handlerSourceCallBodyPost {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost)) :
+    bodyPost.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents ∧
+      (miscThe (bodyPost.stackLimit + 1) bodyPost.stackMax > bodyPost.stackLimit →
+        miscThe (sourcePost.stackLimit + 1) sourcePost.stackMax > sourcePost.stackLimit) := by
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  cases bodyResult with
+  | none =>
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+      exact ⟨List.prefix_refl _, fun overflow => overflow⟩
+  | some bodyResult =>
+    cases bodyResult <;> try (
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+      exact ⟨List.prefix_refl _, fun overflow => overflow⟩)
+    case result location returned =>
+      simp only at execution
+      by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
+      · rw [if_pos invalid] at execution
+        obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+        exact ⟨List.prefix_refl _, fun overflow => overflow⟩
+      rw [if_neg invalid] at execution
+      cases pop : WordSemStateFiniteExact.popEnv bodyPost with
+      | none =>
+          rw [pop] at execution
+          obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+          exact ⟨List.prefix_refl _, fun overflow => overflow⟩
+      | some popped =>
+        rw [pop] at execution
+        simp only at execution
+        have properties := WordSemStateFiniteExact.popEnvConst bodyPost popped pop
+        have poppedFfi : popped.ffi = bodyPost.ffi := by
+          aesop (config := { enableSimp := false })
+        have poppedLimit : popped.stackLimit = bodyPost.stackLimit := by
+          aesop (config := { enableSimp := false })
+        have poppedMaximum : popped.stackMax = bodyPost.stackMax := by
+          aesop (config := { enableSimp := false })
+        by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
+        · rw [if_pos domain] at execution
+          constructor
+          · have events := WordSemStateFiniteExact.evaluate_io_events_mono retCode
+              (WordSemStateFiniteExact.setVars values returned popped) result sourcePost execution
+            change popped.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents at events
+            rwa [poppedFfi] at events
+          · intro overflow
+            apply WordSemStateFiniteExact.evaluate_stack_limit_stack_max retCode
+              (WordSemStateFiniteExact.setVars values returned popped) result sourcePost
+            refine ⟨execution, ?_⟩
+            change miscThe (popped.stackLimit + 1) popped.stackMax > popped.stackLimit
+            rwa [poppedLimit, poppedMaximum]
+        · rw [if_neg domain] at execution
+          obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+          rw [poppedFfi, poppedLimit, poppedMaximum]
+          exact ⟨List.prefix_refl _, fun overflow => overflow⟩
+
+    case exception location value =>
+      simp only at execution
+      by_cases invalid : location ≠ .loc h1 h2
+      · rw [if_pos invalid] at execution
+        obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
+        exact ⟨List.prefix_refl _,fun overflow => overflow⟩
+      rw [if_neg invalid] at execution
+      by_cases domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2
+      · rw [if_pos domain] at execution
+        constructor
+        · exact WordSemStateFiniteExact.evaluate_io_events_mono handlerCode
+            (WordSemStateFiniteExact.setVar handlerVar value bodyPost) result sourcePost execution
+        · intro overflow
+          exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max handlerCode
+            (WordSemStateFiniteExact.setVar handlerVar value bodyPost) result sourcePost
+            ⟨execution,overflow⟩
+      · rw [if_neg domain] at execution
+        obtain ⟨rfl,rfl⟩ := Prod.mk.inj execution
+        exact ⟨List.prefix_refl _,fun overflow => overflow⟩
+
+/-- Lift the unmatched callee-body branch through the actual SOME source
+Call. The body contract supplies Halt 2, its trace prefix and exceeded
+resource; handlerSourceCallBodyPost transports both observations through every
+source continuation outcome. This is the original returning-handler resource branch factoring,
+not a full comp_correct port or an assumption of whole target execution. -/
+theorem handlerBodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (initial targetPost : StackSemStateFiniteExact width C F)
+    (targetResult : Option (StackSemResult width)) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source initial lens 0)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)))
+      bodyPost targetPost bodyResult targetResult (callerFrame :: lens))
+    (bodyMismatch : bodyResult.map compileResult ≠ targetResult) :
+    compCorrectResult ac k callerSize callerFrame source sourcePost targetPost
+      result targetResult lens := by
+  unfold compCorrectResult at bodyConclusion
+  rw [if_pos bodyMismatch] at bodyConclusion
+  obtain ⟨halt, events, overflow⟩ := bodyConclusion
+  obtain ⟨traceLift, resourceLift⟩ := handlerSourceCallBodyPost values names retCode handlerCode l1 l2 handlerVar h1 h2 dest args
+    source sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution bodyRun
+  have bodyOverflow : miscThe (bodyPost.stackLimit + 1) bodyPost.stackMax > bodyPost.stackLimit := by
+    cases maximum : bodyPost.stackMax <;>
+      simpa only [maximum, miscThe, Option.getD_some, Option.getD_none] using overflow
+  have finalOverflow := resourceLift bodyOverflow
+  unfold stateRel at callerRelation
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+    dimension, _⟩ := callerRelation
+  have mismatch : result.map compileResult ≠ targetResult := by
+    rw [halt]
+    cases result with
+    | none => simp
+    | some value =>
+      intro same
+      exact CallHelpers.compileResultNot2 value dimension (Option.some.inj same)
+  unfold compCorrectResult
+  rw [if_pos mismatch]
+  refine ⟨halt, events.trans traceLift, ?_⟩
+  cases maximum : sourcePost.stackMax <;>
+    simpa only [maximum, miscThe, Option.getD_some, Option.getD_none] using finalOverflow
+
+/-- Actual source Call propagation for the original terminal callee branches.
+Timeout, resource halt and final FFI retain the exact source post-state; no
+continuation is executed. This is case-local evaluator factoring for the
+returning-handler comp_correct split, with no standalone HOL declaration. -/
+theorem handlerSourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
+      ∃ event, bodyResult = some (.finalFfi event)) :
+    result = bodyResult ∧ sourcePost = bodyPost := by
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
+    exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
+
+/-- Lift the matching terminal body IH to the entire original caller result
+predicate. Exact source terminal propagation discharges the whole Call result
+and post-state; the unchanged FFI/clock contract is obtained from the original
+body IH. Mismatches use handlerBodyMismatchResult separately. This is an untagged
+branch component, not the full native Call execution theorem. -/
+theorem handlerBodyTerminalResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (targetPost : StackSemStateFiniteExact width C F)
+    (targetResult : Option (StackSemResult width)) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
+      ∃ event, bodyResult = some (.finalFfi event))
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)))
+      bodyPost targetPost bodyResult targetResult (callerFrame :: lens))
+    (matching : bodyResult.map compileResult = targetResult) :
+    compCorrectResult ac k callerSize callerFrame source sourcePost targetPost result targetResult lens := by
+  obtain ⟨rfl, rfl⟩ := handlerSourceCallTerminal values names retCode handlerCode l1 l2 handlerVar h1 h2 dest args
+    source sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution bodyRun terminal
+  rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
+    simpa only [compCorrectResult, matching, ne_eq, not_true_eq_false, ↓reduceIte] using bodyConclusion
+
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler

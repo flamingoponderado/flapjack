@@ -350,6 +350,12 @@
       "sha256": "7145b829f4bed66ced675507b779c15d232b44bee6fb67e74e0a3102688c76ab"
     },
     {
+      "bytes": 815,
+      "out": "binary_ieee_real_probe.out",
+      "rows": 3,
+      "sha256": "ee1bcb9a7f40d75e314077d881ac33e945ea38e414e91f455f55e59c3f06ad2a"
+    },
+    {
       "bytes": 665,
       "out": "binary_ieee_round_constants_probe.out",
       "rows": 3,
@@ -2000,6 +2006,12 @@
       "sha256": "8529a95e2b964f082d5ce9f123dd41787fc414e5f93103d67681df57a24a6386"
     },
     {
+      "bytes": 334,
+      "out": "lab_filter_section_end_probe.out",
+      "rows": 4,
+      "sha256": "44b7cb1fe35fd9dea94d6855647b7f955d06849ebede1481e12e0e5863a22fd6"
+    },
+    {
       "bytes": 383,
       "out": "lab_filter_semantics_probe.out",
       "rows": 4,
@@ -2228,10 +2240,22 @@
       "sha256": "bb6c0c13b4412c765d1a8ac584906a8b8932ca4380a63701dcf86fbca4d1cb50"
     },
     {
+      "bytes": 311,
+      "out": "lab_to_target_filter_preconditions_probe.out",
+      "rows": 4,
+      "sha256": "00545ce6bfed2ca1dec279b641d31faeab3178715dca0443a3af6c283acbffeb"
+    },
+    {
       "bytes": 2723,
       "out": "lab_to_target_filter_skip_probe.out",
       "rows": 36,
       "sha256": "b19f629e740308a4cd407d297fad1feafe116d7e9861093257d47df8fbfa24ea"
+    },
+    {
+      "bytes": 314,
+      "out": "lab_to_target_find_ffi_every_probe.out",
+      "rows": 4,
+      "sha256": "70db9eaa62888238898dad7f631946c64c6d32c8f021628ab568d828930f058d"
     },
     {
       "bytes": 1175,
@@ -4820,6 +4844,12 @@
       "sha256": "13a093f192c867994eb660357b493e06b0dcc5a5390d3a609b1f0726cf13843b"
     },
     {
+      "bytes": 158,
+      "out": "pan_structs_flatten_conversion_probe.out",
+      "rows": 4,
+      "sha256": "2876138350d93f552f09dbdcf888a895fa70f108947846133516a0b3dd57273e"
+    },
+    {
       "bytes": 3155,
       "out": "pan_structs_leaves_probe.out",
       "rows": 12,
@@ -4866,6 +4896,12 @@
       "out": "pan_structs_program_seq_if_probe.out",
       "rows": 11,
       "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
+    },
+    {
+      "bytes": 3645,
+      "out": "pan_structs_program_store_words_probe.out",
+      "rows": 9,
+      "sha256": "8e3df5a1cf3a61ddb0b5b7efb9686b46450700c4d19e5b4b95789ea6b54f6230"
     },
     {
       "bytes": 3200,

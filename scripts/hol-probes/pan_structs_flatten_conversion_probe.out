@@ -1,0 +1,4 @@
+flatten_convert_v_statement=∀v. flatten (convert_v v) = flatten v
+flatten_convert_v_types=v::α v
+flatten_convert_v_hypotheses=0
+flatten_convert_v_proved=T

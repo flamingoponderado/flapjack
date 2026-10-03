@@ -4153,8 +4153,12 @@ def hol_declaration_lines(
         # line(s) (``name = ...``) and terminate with a top-level ``End``.  A
         # type name may also sit on its own line with the ``=`` beginning the
         # following line (for example ``shmem_info_num``), so a bare name is
-        # remembered and indexed once its ``=`` line is seen.
+        # remembered and indexed once its ``=`` line is seen.  The one-line
+        # header form ``Datatype: name = ...`` (for example binary_ieee's
+        # ``float_value`` and ``float_compare``) declares ``name`` on the
+        # header line itself and still ends with ``End``.
         datatype_header = re.compile(r"^Datatype\s*:?\s*$")
+        datatype_inline = re.compile(r"^Datatype\s*:\s*([A-Za-z0-9_']+)\s*=")
         datatype_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*=")
         datatype_bare_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*$")
         datatype_equals = re.compile(r"^\s*=")
@@ -4185,6 +4189,11 @@ def hol_declaration_lines(
                                 pending_datatype_name = (bare.group(1), number)
                     continue
                 if datatype_header.match(line):
+                    in_datatype = True
+                    continue
+                inline = datatype_inline.match(line)
+                if inline:
+                    names.setdefault(inline.group(1), []).append(number)
                     in_datatype = True
                     continue
                 match = header.match(line) or sml_val.match(line)
