@@ -6278,3 +6278,7 @@ run_probe wordsem_jump_exc_const_probeScript.sml wordsem_jump_exc_const_probe.ou
 run_probe wordsem_alloc_const_probeScript.sml wordsem_alloc_const_probe.out \
   alloc_const_statement alloc_const_proved alloc_const_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_remove_init_reduce_probeScript.sml stack_remove_init_reduce_probe.out \
+  init_reduce_definition init_reduce_type init_reduce_hypotheses init_reduce_stack_space_statement init_reduce_stack_space_hypotheses init_reduce_stack_space_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

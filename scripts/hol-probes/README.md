@@ -6645,3 +6645,5 @@ supplement source review; full Run/Next correctness remains open.
 
 
 `wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.
+
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
