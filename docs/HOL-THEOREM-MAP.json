@@ -69111,5 +69111,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full original source/type comparison2026-10-03 stackProps442-452: all arbitrary program/source/post/result binders retained, sole actual source evaluation premise implies BOTH original bitmap isPREFIX and code subspt. No nonError/success/preservedlookup/postcode/desired target run premise. Source uses evaluate_code_bitmaps and subspt_FOLDL_union; actual full native whole theorem ordinary-consumed from checked peer48bb07622 via verified merge400a55396, all3count/oracle/code/bitmap conclusions preserved, count not assumed. List.IsPrefix is ordinary HOL list prefix translation, code actual Spt with native sptSubspt and left-biased sptUnion fold, every preexisting lookup retained regardless result. Actual canonical state regs/fpRegs/store with local genuine imported codec roundtrip, arbitrary positive word width/independent compile and FFI Type0 carriers. Fresh literal full original evaluate_mono proof/0hyp/fullstatement plus4 independent union collision/fresh key/prefix append/truncate observations, kernel/runtime replay and five generic consumers including Error/TimeOut/NONE and successful code lookup consequence. Native evaluator closure inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP agreement, default/HOLD/production change or full RawCall/compiler completion. Actual rawcall original404 prerequisite; acceptance metadata edges preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/RawCall.lean",
+    "lean_name": "compCorrectRawCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original382-407/full135-149: genuine RawCall case preserves both compTop/comp existential results and original source evaluation/nonError/stateRel premises. Actual fixed-source callee IH is guarded only by original Seq code lookup and nonzero source clock; unused compTop motive component omitted. Target lookup and per-entry info derived from literal stateRel; compTop Seq preserves compiled first/body. Timeout derives emptyEnv relation and equal clocks. Nonzero case derives actual decClock target run from callee IH, original bad_fun_return dispatch from source nonError, and decClock additive-clock identity. Outer postframe stateOk derived using full evaluateMono and subsptLookup, not supplied as premise. Original stackSpace guard retained unchanged. Canonical actual owning regs/fpRegs/store roundtrip witness; code native Spt, stacks native List, positive type-indexed words and Type0 configuration/FFI; inherited reals_as_rational_cuts SOUNDNESS8. No target-run/postrelation/success assumption or individual hold release."
   }
 ]

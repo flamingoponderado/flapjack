@@ -6444,3 +6444,5 @@ five generic theorem consumers include Error, TimeOut and successful results,
 and preservation of a source code lookup. The theorem retains its sole source
 execution premise and both original conclusions. These captures are regression
 evidence, not cross-language equivalence or whole compiler correctness.
+
+`stack_rawcall_rawcall_case_probe` freshly captures the original full paired `comp_correct`, zero external hypotheses, width64 RawCall specialization and original evaluate_ind RawCall obligation. The Lean case retains arbitrary positive width and only the actual callee IH; this is source-statement evidence, not a HOL-to-Lean equivalence proof.
