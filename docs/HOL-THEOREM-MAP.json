@@ -87796,5 +87796,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL evaluate_Move1 (word_cseProof:1154). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/PanSemIsWrapper.lean",
+    "lean_name": "panPropsPanSemIsWrapper",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "pan_sem_is_wrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared original1931-1954 and PanSem semantics785-809. Exact no-premise equality over faithful PanSemStateFiniteExact.semantics and evaluateHOLFiniteState, original TailCall as Call NONE start [], every overwritten clock, TimeOut→Incomplete/FinalFFI→CompleteResult FFI_outcome/Return→CompleteResult Success/other→RunError and ffi.io_events projection. No evaluator hook, supplied chain/LUB/successful-run/target-observation premise. Forbidden/termination predicates shown equivalent by all result constructors, then identical holOptionSome predicate and divergence image; no cross-assistant choice equality claimed. Canonical imported owning state4maps with full same-module state/broad roundtrip and positive indexed words/Type0 FFI host; no shadow state carrier. Fresh closed original theorem/full quantified types/kernelT. Full PanStructs semantics correspondence and executed production inventory remain independent obligations."
   }
 ]
