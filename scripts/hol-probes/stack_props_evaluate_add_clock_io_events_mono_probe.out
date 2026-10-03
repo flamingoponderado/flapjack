@@ -1,0 +1,2 @@
+extra_clock_events_statement=∀extra e s. (SND (evaluate (e,s))).ffi.io_events ≼ (SND (evaluate (e,s with clock := s.clock + extra))).ffi.io_events
+extra_clock_events_proved=T

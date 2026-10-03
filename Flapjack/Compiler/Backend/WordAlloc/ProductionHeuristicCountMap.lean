@@ -165,7 +165,7 @@ private theorem toAListMap {α β : Type} (f : α → β) (tree : Spt α) :
       (sptToAList tree).map (fun entry => (entry.1, f entry.2)) :=
   toAListMapAux f tree 0 []
 
-private theorem unitProjection (counts : WordHeuristicCountMap) :
+theorem heuristicCountMap_unitProjection (counts : WordHeuristicCountMap) :
     stackNamesTree counts.entries.keys =
       sptMap (fun _ => ()) (heuristicCountMapToNative counts) := by
   apply (sptEqThm _ _ ⟨sptWfFromAList _,
@@ -179,7 +179,7 @@ private theorem unitProjection (counts : WordHeuristicCountMap) :
 /-- The actual key producer retains the original Patricia traversal order. -/
 theorem heuristicCountMap_keys (counts : WordHeuristicCountMap) :
     counts.keys = (sptToAList (heuristicCountMapToNative counts)).map Prod.fst := by
-  rw [WordHeuristicCountMap.keys, canonicalKeys, unitProjection, toAListMap]
+  rw [WordHeuristicCountMap.keys, canonicalKeys, heuristicCountMap_unitProjection, toAListMap]
   simp only [List.map_map, Function.comp_def]
 
 private theorem renderEntries {α : Type} (entries : List (Nat × α))
