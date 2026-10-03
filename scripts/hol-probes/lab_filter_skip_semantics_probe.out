@@ -1,0 +1,15 @@
+filter_skip_semantics=∀(s :(α, β, γ) labSem$state) (t :(α, β, γ) labSem$state).
+  t.pc = (0 :num) ∧ ¬t.failed ∧
+  (∃(scompile :β -> α sec list -> (word8 list # β) option).
+     s =
+     t with
+     <|code := filter_skip t.code;
+       compile_oracle :=
+         (λ((a :β),(b :α sec list)). (a,filter_skip b)) ∘ t.compile_oracle;
+       compile := scompile|> ∧
+     t.compile = (λ(c :β) (p :α sec list). scompile c (filter_skip p))) ∧
+  ¬t.failed ⇒
+  (semantics s :behaviour) = (semantics t :behaviour)
+filter_skip_semantics_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(t :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+filter_skip_semantics_hypotheses=0
+filter_skip_semantics_proved=T
