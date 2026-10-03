@@ -3398,4 +3398,198 @@ theorem handlerReturningCompilationContext {width : Nat} [NeZero width] {C F : T
     simp only [getLabelsCopyRet,popHandlerF,StackSem.getLabelsExact,false_or]
     aesop (config := { enableSimp := false })
 
+/-- Clock extension commutes with the actual returning-Call callee entry
+when its original input clock is nonzero. Link-register initialization and
+saturating clock decrement are retained. Flapjack native Call composition,
+with no standalone HOL declaration and no evaluation premise. -/
+theorem returningCallEntryClock {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (link l1 l2 extra : Nat)
+    (nonzero : target.clock ≠ 0) :
+    StackSemStateOps.decClock (StackSemStateOps.setVar link (.loc l1 l2)
+      {target with clock := target.clock+extra}) =
+    {StackSemStateOps.decClock (StackSemStateOps.setVar link (.loc l1 l2) target) with
+      clock := (StackSemStateOps.decClock target).clock+extra} := by
+  have subtract : target.clock+extra-1 = target.clock-1+extra := by omega
+  simp only [StackSemStateOps.decClock,StackSemStateOps.setVar,subtract]
+
+/-- Unconditional body-outcome dispatch after the actual clock-extended
+returning Call entry. The only guards are its successful code lookup and
+original nonzero clock; no target body run or chosen body result is supplied.
+Every normal/exception location test, missing handler, invalid return, timeout,
+halt and final-FFI outcome retains the native evaluator clause. Flapjack
+normal form for whole Call clock composition, not a pass-correctness port. -/
+theorem returningCallDispatchClock {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (link l1 l2 extra : Nat)
+    (destination : Sum Nat Nat) (body continuation : HolProg width)
+    (handler : Option (HolProg width × Nat × Nat))
+    (found : StackSemControl.findCode destination (target.regs.eraseEq link) target.code = some body)
+    (nonzero : target.clock ≠ 0) :
+    StackSemEvaluate.evaluate
+      (.call (some (continuation,link,l1,l2)) destination handler,
+        {target with clock := target.clock+extra}) =
+    match StackSemEvaluate.evaluate
+      (body,{StackSemStateOps.decClock (StackSemStateOps.setVar link (.loc l1 l2) target) with
+        clock := (StackSemStateOps.decClock target).clock+extra}) with
+    | (some (.result location),post) =>
+        if location ≠ .loc l1 l2 then (some .error,post)
+        else StackSemEvaluate.evaluate (continuation,post)
+    | (some (.exception location),post) =>
+        match handler with
+        | none => (some (.exception location),post)
+        | some (code,h1,h2) =>
+            if location ≠ .loc h1 h2 then (some .error,post)
+            else StackSemEvaluate.evaluate (code,post)
+    | (none,post) => (some .error,post)
+    | (some (.break _),post) => (some .error,post)
+    | (some (.continue _),post) => (some .error,post)
+    | (result,post) => (result,post) := by
+  rw [StackSemEvaluate.evaluate_call]
+  simp only [found]
+  rw [if_neg (show target.clock+extra ≠ 0 by omega),
+    StackSemEvaluateClock.fixClockEvaluate,returningCallEntryClock target link l1 l2 extra nonzero]
+  rfl
+
+/-- The original unmatched callee resource result survives the actual
+normal-return source continuation. Its exceeded maximum and event prefix come
+from the original body IH, not an added overflow or trace premise. The whole
+source Call supplies the real pop/length/domain guards and continuation run.
+No target run or chosen final relation is assumed. Flapjack resource-branch
+composition; whole native Call execution remains to be assembled separately. -/
+theorem handlerBodyReturnResourceResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k frame payload : Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (originalTarget target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (prior : stateRel ac k frame payload source originalTarget lens 0)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source)
+    (nonzero : source.clock ≠ 0) (result : Option (WordSemResult width))
+    (wholeRun : WordSemStateFiniteExact.evaluate
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) source = (result,sourcePost))
+    (notError : result ≠ some .error)
+    (location : WordLocW width) (returnedValues : List (WordLocW width))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) =
+      (some (.result location returnedValues),bodyPost))
+    (calleeSize calleeFrame : Nat)
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) bodyPost target
+      (some (.result location returnedValues)) (some (.halt (.word 2))) (payload::lens)) :
+    compCorrectResult ac k frame payload source sourcePost target result (some (.halt (.word 2))) lens := by
+  have bodyFacts : target.ffi.ioEvents.IsPrefix bodyPost.ffi.ioEvents ∧
+      bodyPost.stackMax.getD (bodyPost.stackLimit+1) > bodyPost.stackLimit := by
+    simpa only [compCorrectResult,compileResult,Option.map_some,Option.some.injEq,ne_eq,reduceCtorEq,
+      not_false_eq_true,↓reduceIte,true_and] using bodyConclusion
+  obtain ⟨gc,rest,popped,sourceFrame,keys,tailKeys,handlerEq,poppedEq,popRun,domain,
+    valid,sourceContinuation,continuationIH⟩ := sourceHandlerReturningContinuation
+      ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source sourcePost bodyPost
+      result xs args1 prog ss envs location returnedValues guards ih nonzero wholeRun notError bodyRun
+  have events := WordSemStateFiniteExact.evaluate_io_events_mono retCode
+    (WordSemStateFiniteExact.setVars values returnedValues popped) result sourcePost sourceContinuation
+  have currentResource : miscThe
+      ((WordSemStateFiniteExact.setVars values returnedValues popped).stackLimit+1)
+      (WordSemStateFiniteExact.setVars values returnedValues popped).stackMax >
+      (WordSemStateFiniteExact.setVars values returnedValues popped).stackLimit := by
+    rw [poppedEq]
+    cases maximum : bodyPost.stackMax <;>
+      simpa only [WordSemStateFiniteExact.setVars,maximum,miscThe,Option.getD_none,Option.getD_some]
+        using bodyFacts.2
+  have finalResource := WordSemStateFiniteExact.evaluate_stack_limit_stack_max retCode
+    (WordSemStateFiniteExact.setVars values returnedValues popped) result sourcePost
+    ⟨sourceContinuation,currentResource⟩
+  have dimension : goodDimindex width := prior.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have mismatch : result.map compileResult ≠ some (.halt (.word (2 : BitVec width))) := by
+    cases result with
+    | none => simp
+    | some value =>
+      intro equal
+      exact CallHelpers.compileResultNot2 value dimension (Option.some.inj equal)
+  unfold compCorrectResult
+  rw [if_pos mismatch]
+  refine ⟨rfl,?_,?_⟩
+  · have sourceEvents : bodyPost.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents := by
+      simpa only [WordSemStateFiniteExact.setVars,poppedEq] using events
+    exact bodyFacts.1.trans sourceEvents
+  · cases maximum : sourcePost.stackMax <;>
+      simpa only [maximum,miscThe,Option.getD_none,Option.getD_some] using finalResource
+
+/-- Lift the original body IH resource alternative through the actual matching
+exception handler. The whole source Call derives its location/domain guards and
+handler execution; event monotonicity and overflow persistence retain the full
+caller resource conclusion without assuming either. Flapjack handler-case
+composition, not the still-unassembled whole Call theorem. -/
+theorem handlerBodyExceptionResourceResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k frame payload : Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (originalTarget target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (prior : stateRel ac k frame payload source originalTarget lens 0)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source)
+    (nonzero : source.clock ≠ 0) (result : Option (WordSemResult width))
+    (wholeRun : WordSemStateFiniteExact.evaluate
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) source = (result,sourcePost))
+    (notError : result ≠ some .error)
+    (location value : WordLocW width)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value),bodyPost))
+    (calleeSize calleeFrame : Nat)
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) bodyPost target
+      (some (.exception location value)) (some (.halt (.word 2))) (payload::lens)) :
+    compCorrectResult ac k frame payload source sourcePost target result (some (.halt (.word 2))) lens := by
+  have bodyFacts : target.ffi.ioEvents.IsPrefix bodyPost.ffi.ioEvents ∧
+      bodyPost.stackMax.getD (bodyPost.stackLimit+1) > bodyPost.stackLimit := by
+    simpa only [compCorrectResult,compileResult,Option.map_some,Option.some.injEq,ne_eq,reduceCtorEq,
+      not_false_eq_true,↓reduceIte,true_and] using bodyConclusion
+  obtain ⟨valid,domain,sourceContinuation,continuationIH⟩ := sourceHandlerExceptionContinuation
+    ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source sourcePost bodyPost
+    result xs args1 prog ss envs location value guards ih nonzero wholeRun notError bodyRun
+  have events := WordSemStateFiniteExact.evaluate_io_events_mono handlerCode
+    (WordSemStateFiniteExact.setVar handlerVar value bodyPost) result sourcePost sourceContinuation
+  have currentResource : miscThe
+      ((WordSemStateFiniteExact.setVar handlerVar value bodyPost).stackLimit+1)
+      (WordSemStateFiniteExact.setVar handlerVar value bodyPost).stackMax >
+      (WordSemStateFiniteExact.setVar handlerVar value bodyPost).stackLimit := by
+    cases maximum : bodyPost.stackMax <;>
+      simpa only [WordSemStateFiniteExact.setVar,maximum,miscThe,Option.getD_none,Option.getD_some]
+        using bodyFacts.2
+  have finalResource := WordSemStateFiniteExact.evaluate_stack_limit_stack_max handlerCode
+    (WordSemStateFiniteExact.setVar handlerVar value bodyPost) result sourcePost
+    ⟨sourceContinuation,currentResource⟩
+  have dimension : goodDimindex width := prior.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have mismatch : result.map compileResult ≠ some (.halt (.word (2 : BitVec width))) := by
+    cases result with
+    | none => simp
+    | some value =>
+      intro equal
+      exact CallHelpers.compileResultNot2 value dimension (Option.some.inj equal)
+  unfold compCorrectResult
+  rw [if_pos mismatch]
+  refine ⟨rfl,?_,?_⟩
+  · have sourceEvents : bodyPost.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents := by
+      simpa only [WordSemStateFiniteExact.setVar] using events
+    exact bodyFacts.1.trans sourceEvents
+  · cases maximum : sourcePost.stackMax <;>
+      simpa only [maximum,miscThe,Option.getD_none,Option.getD_some] using finalResource
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
