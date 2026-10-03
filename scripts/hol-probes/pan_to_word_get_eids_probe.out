@@ -15,6 +15,13 @@ lookup_first_name_compile_prog_main=FLOOKUP
        (compile_prog (c :architecture) crep_code :
         (num # num list # α loopLang$prog) list)) =
   SOME (([] :num list),prog)
+FLOOKUP_make_funcs_main=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
+SOME (([] :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
+FLOOKUP
+  (make_funcs
+     (compile_prog (compile_top pan_code main :α decl list) :
+      (mlstring # num list # α crepLang$prog) list) :mlstring |-> num # num)
+  main = SOME (first_name,(0 :num))
 size_of_eids_compile_top=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
 SOME ((args :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
 size_of_eids (compile_top pan_code main :α decl list) = size_of_eids pan_code

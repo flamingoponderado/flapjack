@@ -77220,5 +77220,24 @@
       "crepToLoopMakeFuncsExactHOL"
     ],
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): FLOOKUP (make_funcs crep_code) «main» = SOME (first_name,0) ==> ?prog. lookup first_name (fromAList (crep_to_loop$compile_prog c crep_code)) = SOME ([],prog). make_funcs is the reviewed crepToLoopMakeFuncsExactHOL producer, first_name is firstLoopName, fromAList/lookup are sptFromAList/sptLookup, «main» is ofString \"main\", and the free c and crep_code are bound explicitly. Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "flookupMakeFuncsMainHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FLOOKUP_make_funcs_main",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "crepToLoopMakeFuncsExactHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): ALOOKUP (functions pan_code) main = SOME ([],body,rshape) ==> FLOOKUP (make_funcs (pan_to_crep$compile_prog (pan_globals$compile_top pan_code main))) main = SOME (first_name,0). make_funcs is crep_to_loop's reviewed crepToLoopMakeFuncsExactHOL (mlstring |-> num # num, as the capture shows), compile_prog is compileProgDeclsHOLW, compile_top is compileTopExactHOL, ALOOKUP is List.lookup, and free variables are bound explicitly. Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "crepToLoopMakeFuncsExactHOL_head",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: crep_to_loop make_funcs maps the first entry's name to (first_name, its arity), first binding wins; no HOL original."
   }
 ]

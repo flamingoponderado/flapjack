@@ -657,4 +657,44 @@ theorem lookupFirstNameCompileProgMainHOL {width : Nat} [NeZero width] (c : AsmA
       List.zipWith_cons_cons, sptFromAList]
     exact ⟨_, sptLookup_sptInsert_same _ _ _⟩
 
+
+/-- `make_funcs` maps the name of the first program entry to the first label
+and that entry's arity (first binding wins). Flapjack infrastructure; no HOL
+original. -/
+theorem crepToLoopMakeFuncsExactHOL_head {α β γ : Type} (k : α) (params : List β) (b : γ)
+    (rest : List (α × List β × γ)) :
+    (crepToLoopMakeFuncsExactHOL ((k, params, b) :: rest)).lookup k =
+      some (firstLoopName, params.length) := by
+  classical
+  rw [holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL]
+  simp only [List.length_cons, List.range_succ_eq_map, List.zip_cons_cons, List.map_cons,
+    List.reverse_cons, FUPDATE_LIST_HOL, List.foldl_append, List.foldl_cons, List.foldl_nil]
+  simp [FUPDATE_HOL]
+
+/-- Exact HOL `FLOOKUP_make_funcs_main` (`pan_to_wordProofScript.sml:419-443`):
+`make_funcs` (crep_to_loop) of `pan_to_crep$compile_prog (compile_top pan_code
+main)` maps `main` to `(first_name, 0)`. `ALOOKUP` is `List.lookup`; the free
+variables are bound explicitly. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "FLOOKUP_make_funcs_main"
+  (fmap_as_finite_support_result_observations := [crepToLoopMakeFuncsExactHOL])]
+theorem flookupMakeFuncsMainHOL {width : Nat} [NeZero width] (pan_code : List (DeclHOL width))
+    (main : MlS) (body : ProgHOL width) (rshape : ShapeHOL) :
+    List.lookup main (functionsHOL pan_code) = some ([], body, rshape) →
+    (crepToLoopMakeFuncsExactHOL (compileProgDeclsHOLW (compileTopExactHOL pan_code main))).lookup
+      main = some (firstLoopName, 0) := by
+  intro hl
+  have hfun : ∃ b' rest, functionsHOL (compileTopExactHOL pan_code main) =
+      (main, [], b', rshape) :: rest := by
+    unfold compileTopExactHOL
+    rw [compileTopFunctionLookup_eq_lookup, hl]
+    simp only
+    rw [PanGlobalsCompileDecsStructural.compile_decs_exns_are_exnsHOL _ _ _ _ _ _ rfl,
+      functionsHOL_append, functionsFilterNilHOL]
+    exact ⟨_, _, rfl⟩
+  obtain ⟨b', rest, hf⟩ := hfun
+  simp only [compileProgDeclsHOLW, compileToCrepExactHOLW, hf, List.map_cons,
+    CrepInlineCanonical.compileInlTopHOLExact, CrepInlineCanonical.compileInlProgHOLExactWithSupport]
+  rw [crepToLoopMakeFuncsExactHOL_head]
+  simp [crepVarsHOL, sizeOfShapeHOL]
+
 end Flapjack
