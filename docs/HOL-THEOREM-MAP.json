@@ -75888,5 +75888,140 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.2): original lab_filterProofScript.sml614-644 and fresh complete original HOL type capture preserve independent alpha word/beta arbitrary configuration/gamma FFI carriers, all t/count/op/register/address/sourceCompile/ffi/bytes/sourcePost binders, actual native filtered-state transition plus allSkips/nonzero-clock/compiler-transform/nonfailed guards. Conclusion retains original exists targetPost then forall extra scope over all five clauses: actual original-PC return transition, entire stateRel, both nonfailed facts, and whole clock-extended return transition with targetPost.clock+extra in original extra+clock order. Native all8 shared operators/address constructors derive concrete returning load/store states; source primitive equality determines sourcePost, real adjustPcAllSkips211 establishes complete successor relation, existential compiler witness proves full stateRel, and accepted full shareMemOpAddClockSame supplies arbitrary-clock transition. No supplied target state/run, desired relation, poststate fact, clock bound, result equality or outcome premise beyond original source transition. Positive-width BitVec translation qualified; fixed8 byte and unchanged function/oracle/config/FFI carriers. Fresh original complete statement/types/zero hypotheses/kernel reproof4rows. Together with checked NONE578/final646 this completes the original shared-memory filter prerequisite group, not full filter_correct669 or filter semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Skip constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Move constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original StoreConsts constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Assign constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocGet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Get constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Store constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Raise constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original OpCurrHeap constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Return constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Tick constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Set constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original LocValue constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original CodeBufferWrite constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original DataBufferWrite constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original ShareInst constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
   }
 ]
