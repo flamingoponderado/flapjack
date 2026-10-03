@@ -6929,3 +6929,7 @@ run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantic
 run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_register_probe.out \
   wload_full_register_transport wload_full_continuation wload_original_definition wload_original_register_compiler \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoration_probe.out \
+  res_var_FMAP_MAP2_rev_statement res_var_FMAP_MAP2_rev_types res_var_FMAP_MAP2_rev_hypotheses res_var_FMAP_MAP2_rev_proved FEVERY_res_var_statement FEVERY_res_var_types FEVERY_res_var_hypotheses FEVERY_res_var_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

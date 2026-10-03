@@ -4904,6 +4904,12 @@
       "sha256": "32ee10f09e3eb0db6515a72a9d2d3e3d152bfde87a91728eb86188b0f43ef1f3"
     },
     {
+      "bytes": 580,
+      "out": "pan_structs_map_restoration_probe.out",
+      "rows": 8,
+      "sha256": "f08e2530fb19f5bb922b121583913fbea40ab397c9f39bad227e12cdcd100ba5"
+    },
+    {
       "bytes": 422,
       "out": "pan_structs_mem_load_conversion_probe.out",
       "rows": 4,

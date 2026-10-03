@@ -80925,5 +80925,35 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1. Source comparison is recorded here; fleet acceptance is tracked separately on the open bead. Original4512-4523: unconditional equality for every load list, continuation and whole state, including invalid indices, disabled stack and all non-NONE outcomes. Lean list induction uses unconditional native Seq clock identity; no success/range premise. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator reals_as_rational_cuts assurance remains; no new IEEE equivalence claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MapRestoration.lean",
+    "lean_name": "resVarFmapMap2Rev",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "res_var_FMAP_MAP2_rev",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fmap"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-10-03 original816-833: Full arbitrary key/value/result types, map, callback, key and optional restored value; unconditional map2/res_var equality, exact optional callback keyed by restored name. NONE deletes that key and SOME updates that key; every other lookup preserved. No arbitrary BEq/DecidableEq parameter or extra premise. Only canonical finite-support bare fmap parameter translation; no word/name/state carrier changes. Classical HOL equality internally selected. Fresh original whole theorem/binder types/hyp0/closed kernelT source reviewed; Dec/DecCall/full compiler consumers remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MapRestoration.lean",
+    "lean_name": "feveryResVar",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "FEVERY_res_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fmap"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-10-03 original816-833: Full arbitrary map/predicate/key/optional value; original FEVERY equivalence to conjunction of restricted old map FEVERY and universal optional restored-binding predicate. Bool-returning P and FEVERY truth use established pointwise rendering. DRESTRICT fmap (COMPL {k}) represented by restrictExcept with unconditional checked lookup if query=k then NONE else FLOOKUP fmap query, exactly the original singleton exclusion/DOMSUB semantics. Neither restricted-map validity nor restored-value validity is assumed in a premise. Only canonical finite-support bare fmap parameter translation; no word/name/state carrier changes. Classical HOL equality internally selected. Fresh original whole theorem/binder types/hyp0/closed kernelT source reviewed; Dec/DecCall/full compiler consumers remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MapRestoration.lean",
+    "lean_name": "restrictExceptLookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-support lookup witness for external finite_map complement-singleton DRESTRICT; no independent CakeML declaration. Exact unconditional singleton-exclusion lookup, not a premise assuming restriction correspondence."
   }
 ]
