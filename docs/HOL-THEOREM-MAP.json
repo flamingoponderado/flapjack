@@ -66785,6 +66785,21 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.2: original stack_allocProofScript.sml:5297-5894. Free HOL anything and compile_rest implicit; !p s r t m n c regs explicit in source order. All twelve premises retained in order: evaluate (p,s) = (r,t), r <> SOME Error, alloc_arg p, code-table keys <> gc_stub_location with alloc_arg, compile_oracle entries likewise (bound variables renamed i k q since HOL reuses n p), s.gc_fun = word_gc_fun c, s.use_alloc, stack byte bound, s.regs SUBMAP regs, s.use_stack, data-buffer/bitmaps bound, s.compile = (λcfg. compile_rest cfg o MAP prog_comp). Conclusion exists ck regs1 with the actual native evaluate of FST (comp n m p) from the full source override (use_store/use_stack T, use_alloc F, clock s.clock+ck, regs, gc_fun anything, compile_oracle (I ## MAP prog_comp ## I) o s.compile_oracle rendered Prod.map id (Prod.map (List.map progComp) id) ∘ oracle, compile compile_rest, code fromAList (compile c (toAList s.code))) equal to (r, t with the same override and regs1), t.regs SUBMAP regs1, the bound for t, and the stack bound for t when r is not Halt. No supplied target evaluation, simulation or success premise. Proof by induction on the evaluator's own (clock, size) measure (HOL recInduct evaluate_ind), with untagged per-constructor case lemmas under CompCorrect/ using exactly the recursive obligations of evaluate_def, alloc_correct, alloc_length_stack, inst_correct, the ProgComp lookup lemmas, evaluate_consts, evaluate_code_bitmaps, evaluate_add_clock, fix_clock_evaluate and spt_eq_thm. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CompileSemantics.lean",
+    "lean_name": "compile_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.12: original stack_allocProofScript.sml:5909-6066. Free HOL s c compile_rest start anything implicit. All nine premises retained in order: code keys <> gc_stub_location with alloc_arg, compile_oracle entries likewise (bound vars renamed i k q), s.gc_fun = word_gc_fun c, data-buffer/bitmaps bound, stack byte bound, s.use_stack, s.use_alloc, s.compile = (λcfg. compile_rest cfg o MAP prog_comp), semantics start s <> Fail. Conclusion: semantics start of s with code := fromAList (compile c (toAList s.code)), gc_fun := anything, compile := compile_rest, compile_oracle := (I ## MAP prog_comp ## I) o s.compile_oracle (Prod.map rendering), use_store/use_stack T, use_alloc F equals semantics start s, over the tagged native StackSem semantics. Proof as HOL: comp_correct at every clock of Call NONE (INL start) NONE with regs := s.regs (comp_correct_thm), evaluate_add_clock, evaluate_add_clock_io_events_mono, and IMP_build_lprefix_lub_EQ for the divergence chains (via an untagged clock-shift lemma semanticsAux_shift). No extra premise. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits reals_as_rational_cuts through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
     "hol_name": "dest_case_def",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
