@@ -76907,6 +76907,59 @@
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
+    "lean_name": "fakeSeq_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_seq_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10449-10454: original full_inst_ok_less instruction-validity helper, arbitrary native assembler config/source list/maps/counters. fake_seq is unconditional; loop_setup retains only actual producer equality. Literal original fake const and Move/Seq clauses establish the complete predicate; no register bound, target-run or convention premise. Native AsmConfigExact/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
+    "lean_name": "loopSetup_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "loop_setup_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10495-10505: original full_inst_ok_less instruction-validity helper, arbitrary native assembler config/source list/maps/counters. fake_seq is unconditional; loop_setup retains only actual producer equality. Literal original fake const and Move/Seq clauses establish the complete predicate; no register bound, target-run or convention premise. Native AsmConfigExact/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
+    "lean_name": "fakeMoves_instructionConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "fake_moves_conventions2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10997-11010: Same sole actual fake_moves producer equality and complete four conclusions: both full_inst_ok_less config outputs and both every_inst distinct_tar_reg outputs. Arbitrary maps, counters, lists and priority; no register bound/map validity premise. Native exact instruction conversion supplies the source distinctness predicate. Native AsmConfigExact/WordLang/Spt/List/BitVec carriers reviewed against source. words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
+    "lean_name": "expToAddr_shareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "exp_to_addr_ShareInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10984-10995: Same complete iff characterizing arbitrary source expression extraction as Var with zero offset or Op Add [Var; Const]. All expression cases retained, no address-subset premise or target-run assumption. Native AsmConfigExact/WordLang/Spt/List/BitVec carriers reviewed against source. words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FieldsInOrderReorderNoop.lean",
+    "lean_name": "fieldsInOrderReorderNoopExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "fields_in_order_reorder_noop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original218-239: full theorem on ContextExact/MlS/ExpHOL and actual compileFieldsExact/compileExpExact. Both original premises name-list equality and ALL_DISTINCT retained; full first-match flatMap selection equals map compiled payload. Original kernel type confirms ignored info_fields payload is independently polymorphic beta; Lean preserves alpha:Type instead of fixing ShapeHOL. Only positive-width word translation for original polymorphic exp, no String or production context substitution. List induction removes absent prefix keys using original distinctness; proved internal bridge discharges matcher elaboration without adding a premise. Original full theorem/type/hyp0/kernel proved capture checked. Faithful prerequisite for genuine NStruct, broader assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FieldsInOrderReorderNoop.lean",
+    "lean_name": "selectFields_skip",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match field selection representation infrastructure; no independent HOL original. Local factoring and absent-prefix law preserve exact MlS equality and arbitrary payload."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
     "hol_name": "filter_correct",
     "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
