@@ -71970,7 +71970,7 @@
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
     "hol_name": "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 72-81 ALL_DISTINCT (MAP FST xs) /\\ MEM (x,y) xs ==> ALOOKUP xs x = SOME y over Nat keys (all wordProps uses are num-keyed alists). Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+    "reviewer": "flapjack-main PR1204 review repair: original wordPropsScript72-81 quantifies generic key and value types. Lean preserves both via {κ α : Type}[DecidableEq κ], List (κ × α), exact key equality through lawful List.lookup, key Nodup and pair membership imply lookup=some y. Fresh original literal proof replay and show_types capture verify generic carriers; no Nat specialization or extra semantic premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
