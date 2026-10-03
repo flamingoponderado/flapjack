@@ -1,0 +1,79 @@
+semantics_compile_lemma_prime=mc_conf_ok (mc_conf :(α, β, γ) machine_config) ∧
+(no_share_mem_inst (code :α sec list) ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list) (c' :config).labels
+   (LENGTH (bytes :word8 list)) (asm_conf :α asm_config) mc_conf.ffi_names) ∧
+good_code mc_conf.target.config (LN :δ sptree$num_map sptree$num_map) code ∧
+asm_conf = mc_conf.target.config ∧ isEmpty (c :config).labels ∧
+c.pos = (0 :num) ∧
+(compile asm_conf c code :(word8 list # config) option) = SOME (bytes,c') ∧
+c'.ffi_names = SOME mc_conf.ffi_names ∧
+good_init_state mc_conf (ms :β) bytes (cbspace :num) (t :α asm_state)
+  (m :α word -> α word_loc) (dm :α word -> bool) (sdm :α word -> bool) ∧
+MAP (λ(rec :shmem_info_num). w2n (mc_conf.target.get_pc ms) + rec.entry_pc)
+  c'.shmem_extra =
+DROP (i :num) (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH c'.shmem_extra),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word) + mc_conf.target.get_pc ms))
+     c'.shmem_extra) ∧ no_install_or_no_share_mem code mc_conf.ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+cbspace + LENGTH bytes + ffi_offset * (i + (3 :num)) < dimword (:α) ∧
+(∀(ffis :ffiname list).
+   c.ffi_names = SOME ffis ⇒
+   EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) ffis) ∧
+(semantics
+   (make_init mc_conf (ffi :ε ffi_state) t m dm sdm ms code
+      (compile asm_conf :config -> α sec list -> (word8 list # config) option)
+      (mc_conf.target.get_pc ms + (n2w (LENGTH bytes) :α word)) cbspace
+      coracle) :behaviour) ≠ Fail ⇒
+machine_sem mc_conf ffi ms =
+{(semantics
+    (make_init mc_conf ffi t m dm sdm ms code
+       (compile asm_conf :
+        config -> α sec list -> (word8 list # config) option)
+       (mc_conf.target.get_pc ms + (n2w (LENGTH bytes) :α word)) cbspace
+       coracle) :behaviour)}
+semantics_compile_lemma_prime_types=(ffi :ε ffi_state)::ε ffi_state;(i :num)::num;(sdm :α word -> bool)::α word -> bool;(dm :α word -> bool)::α word -> bool;(m :α word -> α word_loc)::α word -> α word_loc;(t :α asm_state)::α asm_state;(cbspace :num)::num;(ms :β)::β;(c :config)::config;(asm_conf :α asm_config)::α asm_config;(bytes :word8 list)::word8 list;(c' :config)::config;(coracle :num -> config # α sec list)::num -> config # α sec list;(code :α sec list)::α sec list;(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;
+semantics_compile_lemma_prime_hypotheses=0
+semantics_compile_lemma_prime_proved=T
+semantics_compile_lemma=mc_conf_ok (mc_conf :(α, β, γ) machine_config) ∧
+(no_share_mem_inst (code :α sec list) ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list) (c' :config).labels
+   (LENGTH (bytes :word8 list)) (asm_conf :α asm_config) mc_conf.ffi_names) ∧
+good_code mc_conf.target.config (LN :δ sptree$num_map sptree$num_map) code ∧
+asm_conf = mc_conf.target.config ∧ isEmpty (c :config).labels ∧
+c.pos = (0 :num) ∧
+(compile asm_conf c code :(word8 list # config) option) = SOME (bytes,c') ∧
+c'.ffi_names = SOME mc_conf.ffi_names ∧
+good_init_state mc_conf (ms :β) bytes (cbspace :num) (t :α asm_state)
+  (m :α word -> α word_loc) (dm :α word -> bool) (sdm :α word -> bool) ∧
+MAP (λ(rec :shmem_info_num). w2n (mc_conf.target.get_pc ms) + rec.entry_pc)
+  c'.shmem_extra =
+DROP (i :num) (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH c'.shmem_extra),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word) + mc_conf.target.get_pc ms))
+     c'.shmem_extra) ∧ no_install_or_no_share_mem code mc_conf.ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+cbspace + LENGTH bytes + ffi_offset * (i + (3 :num)) < dimword (:α) ∧
+(∀(ffis :ffiname list).
+   c.ffi_names = SOME ffis ⇒
+   EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) ffis) ⇒
+implements' T (machine_sem mc_conf (ffi :ε ffi_state) ms)
+  {(semantics
+      (make_init mc_conf ffi t m dm sdm ms code
+         (compile asm_conf :
+          config -> α sec list -> (word8 list # config) option)
+         (mc_conf.target.get_pc ms + (n2w (LENGTH bytes) :α word)) cbspace
+         coracle) :behaviour)}
+semantics_compile_lemma_types=(ffi :ε ffi_state)::ε ffi_state;(i :num)::num;(sdm :α word -> bool)::α word -> bool;(dm :α word -> bool)::α word -> bool;(m :α word -> α word_loc)::α word -> α word_loc;(t :α asm_state)::α asm_state;(cbspace :num)::num;(ms :β)::β;(c :config)::config;(asm_conf :α asm_config)::α asm_config;(bytes :word8 list)::word8 list;(c' :config)::config;(coracle :num -> config # α sec list)::num -> config # α sec list;(code :α sec list)::α sec list;(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;
+semantics_compile_lemma_hypotheses=0
+semantics_compile_lemma_proved=T
