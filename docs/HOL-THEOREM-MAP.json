@@ -88141,7 +88141,8 @@
     "lean_name": "fullMakeInitHasFpOps",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3789-3798. Statement as captured by the probe: full_make_init stack_conf (dconf with <|has_fp_ops := b1; has_fp_tern := b2|>) mheap sp offset bitmaps code s save_regs dsp cor = full_make_init stack_conf dconf …, over the reviewed FullMakeInit.fullMakeInit; HOL's oracle and lab-state type variables 'b 'c are the host types C F : Type; 'a word is BitVec width with [NeZero width]; all eleven arguments explicit in HOL's order, free variables implicit. The proof uses the ported word_gc_fun_has_fp_ops, as HOL does through its simpset. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3789-3798. Statement as captured by the probe: full_make_init stack_conf (dconf with <|has_fp_ops := b1; has_fp_tern := b2|>) mheap sp offset bitmaps code s save_regs dsp cor = full_make_init stack_conf dconf …, over the reviewed FullMakeInit.fullMakeInit; HOL's oracle and lab-state type variables 'b 'c are the host types C F : Type; 'a word is BitVec width with [NeZero width]; all eleven arguments explicit in HOL's order, free variables implicit. The proof uses the ported word_gc_fun_has_fp_ops, as HOL does through its simpset. No added premise. Inherits reals_as_rational_cuts: the fullMakeInit closure reaches the reviewed binary64 rendering through the state's semantics (docs/SOUNDNESS.md item 8); the marker propagates that assumption only.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
