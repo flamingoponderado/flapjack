@@ -7348,3 +7348,38 @@ and its `Primitive v pop es` specialization, with binder types and closed kernel
 proofs. The Lean case retains all ten premises and seven conclusions, executes
 the original argument mmap and AddCarry operation, and derives local validity
 and update postconditions internally from the full Assign case.
+`word_to_stack_load_register_probe.out` freshly replays the unchanged original
+local `evaluate_wStackLoad_wReg1` proof (4417–4445) and captures the original
+unconditional `evaluate_wStackLoad_seq` (4512–4523), plus both compiler equations.
+All four theorem rows have zero hypotheses. LoadRegister kernel ports preserve
+the complete source lookup/full relation premises and all preservation conjuncts;
+the continuation law covers arbitrary loads/programs/states and failed loads.
+These proof-side prerequisites do not establish the full Return case or pass.
+
+`pan_structs_map_restoration_probe` captures full original
+`res_var_FMAP_MAP2_rev` and `FEVERY_res_var`, including all binder types, zero
+hypotheses, closedness and kernel proofs. Lean uses canonical finite-support
+maps and classical HOL key equality, with no comparison premise; the
+complement-singleton restriction has a checked unconditional literal lookup
+witness. The Dec and DecCall consumers remain separate obligations.
+
+`word_to_stack_comp_call_full_probe.out` records the complete original Call
+constructor induction obligation with all four literal guarded IHs, plus the
+whole arbitrary-ret/arbitrary-handler Call specialization of comp_correct.
+Both statements are closed kernel theorems, proved=T and hypotheses=0. The
+native enclosing constructor assembles checked tail/NONE/SOME cases with every
+original quantifier and result/resource conclusion. These captures are statement
+evidence via the original full theorem, not a replay of the local case proof or
+a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.
+
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+`stack_remove_word_list_exists_add_probeScript.sml` prints the stored original `word_list_exists_ADD` (stack_removeProofScript.sml:38-47) with zero hypotheses; the Lean port keeps arbitrary payloads and modular addresses.
+
+`stack_remove_init_code_thm_probeScript.sml` prints the stored original `init_code_thm` (stack_removeProofScript.sml:3225-3837) in full with zero hypotheses. The Lean port `Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect.initCodeThm` proves the complete statement over the native stackSem evaluator by symbolically executing the actual `init_code` (InitCodeThm.lean) and establishing the original `state_rel`/`init_prop` conclusions; it adds no premise.
+`pan_structs_program_dec_probe` captures the full original program theorem, its
+`Dec v sh e c1` specialization, and the original `evaluate_ind`, with all binder
+types and closed kernel proofs. The Lean piece retains all ten premises/seven
+conclusions and precisely the initializer-SOME/declared-shape guarded body IH
+at the actual updated local state. Source invariants supply body preconditions;
+restoration handles both absent and shadowed caller bindings.
