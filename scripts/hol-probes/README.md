@@ -6981,6 +6981,23 @@ and unchanged induction proof. It universally closes the source's free accumulat
 and records the closed statement, kernel proof and zero hypotheses.
 The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.
 
+## Complete native Run dispatcher
+
+`l3_run_dispatch_probeScript.sml` captures the original full `Run` type and
+zero hypotheses, then proves all 163 constructor dispatch equations for
+arbitrary payloads and native states using the original `Run_def` only.
+`check-l3-run-dispatch.py` requires all 328 exact rows, including FENCE,
+FENCE_I and WFI identity clauses. The Lean counterpart is
+`Flapjack/RiscV/L3/Defs/Run.lean`, with generic kernel clause checks for
+every constructor. This checks dispatch, not independent correctness of
+the reviewed handler bodies or end-to-end compilation. FP handler calls
+inherit the documented SOUNDNESS item 8 real-rendering assumption.
+
+Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
+`regenerate.sh`, then run the strict checker.
+### Full native fromList2 domain evenness
+
+`misc_even_from_list2_probeScript.sml` fetches the original Misc `EVEN_fromList2` kernel theorem (miscScript.sml367-375), capturing the full arbitrary-list/key membership-to-evenness statement, proved=T and zero hypotheses. Lean derives that full statement from the checked literal even-key domain generator, without a WF, index bound, payload restriction or execution premise. Original returning-call entry consumers are8503/9340. This is source comparison and original theorem evidence, not cross-language equivalence.
 `word_to_stack_call_return_handler_probeScript.sml` replays the literal original
 local proofs for handler frame length/removal, setup evaluation and clock law,
 including their original local prerequisite proofs. It captures all seven full
@@ -6989,6 +7006,21 @@ Lean consumers apply all seven full statements at arbitrary/1/8/64/80 widths.
 The complete final state relation is derived; these captures are regression
 evidence, not a HOL-to-Lean equivalence proof or whole compiler completion.
 
+### Full native Lab evaluator clock stability
+
+`labprops_evaluate_ADD_clock_probeScript.sml` captures the original full theorem312, all quantified carriers, zero hypotheses and a kernel reproof of its entire statement. Four rows preserve the sole non-TimeOut guard and complete result/poststate clock equality.
+
+`pan_structs_convert_eshapes_probe` captures the complete kernel definition/type
+and proves the unconditional original finite-map lookup correspondence at arbitrary
+context, map and key.
+
+`pan_structs_shape_field_polymorphism_probe` captures the original full mutual
+shape definition and polymorphic field-name types, and replays the unchanged whole
+`compile_shapes_eq_map` proof with its free context universally closed.
+
+`pan_structs_convert_code_probe` captures the complete original kernel definition,
+polymorphic map-key/program-carrier type and zero hypotheses. Parameters keep
+source names; body compilation scopes original parameters rather than compiled ones.
 `stack_rawcall_compile_semantics_probeScript.sml` freshly reads the original full
 `compile_semantics` theorem and zero-HOL-hypothesis count, with 1/8/64/80 word
 instances (six rows). The Lean consumers apply the full observational equality
@@ -6996,3 +7028,29 @@ with all four original premises at arbitrary positive/1/8/64/80 widths. The Lean
 proof derives entry simulations and native clock/event-chain obligations; these
 captures are regression evidence, not a HOL-to-Lean equivalence proof or evidence
 of production routing or whole compiler completion.
+
+The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.
+
+`pan_structs_convert_state_probe` captures the entire original state and value
+conversion kernel definitions/types and zero hypotheses. The state record updates
+exactly locals, globals, structs, code and exception shapes.
+
+## Complete native Decode and DecodeRVC
+
+`l3_decode_probeScript.sml` registers the complete original decoder equations,
+evaluates inputs chosen from every feasible original guard leaf, and normalizes
+all word payloads using original `bitstringLib.v2w_n2w_CONV`. The capture stores
+complete original instruction terms, including every register/immediate field.
+`scripts/l3/check-decode-fixtures.py` reconstructs the Boolean literal guard
+paths from the pinned native export, selects varied unguarded payload bits,
+rejects missing/extra rows, changed types/hypotheses, unreduced decoder calls
+and nonnumeric payload helpers, and reproduces the Lean kernel fixtures.
+
+There are 482 word32 observations across all164 feasible leaves and139 word16
+observations across49 feasible leaves. Three compressed paths are unsatisfiable
+in the sampling solver; their original branches remain in the full decoder.
+The solver is a regression-input generator, not a formal unreachable-case
+proof or universal word32 equivalence. Kernel fixture equality includes full
+constructor and numeric payloads. No instruction/mode acceptance assumption
+is added to the definitions. Regenerate with `HOL_PROBE_ONLY=l3_decode_probeScript.sml`
+through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
