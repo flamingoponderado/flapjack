@@ -6601,3 +6601,6 @@ run_probe pan_structs_shape_field_polymorphism_probeScript.sml pan_structs_shape
 run_probe pan_structs_convert_code_probeScript.sml pan_structs_convert_code_probe.out \
   convert_code_definition convert_code_type convert_code_hypotheses \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe stack_rawcall_compile_semantics_probeScript.sml stack_rawcall_compile_semantics_probe.out \
+  rawcall_compile_semantics_full rawcall_compile_semantics_hypotheses rawcall_compile_semantics_width1 rawcall_compile_semantics_width8 rawcall_compile_semantics_width64 rawcall_compile_semantics_width80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

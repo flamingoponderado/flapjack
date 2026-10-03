@@ -75646,5 +75646,20 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_convertCodeExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical-to-raw lookup codec witness. Unconditional independent Option.map expression, no relation premise or self-equality; not an independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompileSemantics.lean",
+    "lean_name": "compileSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "compile_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original625-end: full original ALL_DISTINCT source keys, use_stack true, code fromAList, and non-Fail premises retained; complete target/source semantics equality at arbitrary entry start and positive width/FFI/configuration. Actual native compile collects full code info; initial stateRel and independent per-entry witnesses derived from accepted domain/lookup/collectInfo laws. Full comp_correct derives target entry executions with additional clock and identical whole FFI state from source run and nonError derived from nonFail. Shared Flapjack semanticsAux_shift proof infrastructure derives target nonFail, equality of entire termination predicates, and cofinal native ioEvents chain LUB equality using native clock stability/monotonicity, all obligations discharged inside theorem. No target run, final relation, external IH, event-prefix or simulation premises added. Canonical imported regs/fpRegs/store owner plus checked roundtrip, Spt/List unchanged; evaluator inherits reals_as_rational_cuts SOUNDNESS8. Full consumers arbitrary/1/8/64/80; original probe regression does not establish cross-language equivalence or production-route completion."
   }
 ]

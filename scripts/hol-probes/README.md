@@ -7021,3 +7021,10 @@ shape definition and polymorphic field-name types, and replays the unchanged who
 `pan_structs_convert_code_probe` captures the complete original kernel definition,
 polymorphic map-key/program-carrier type and zero hypotheses. Parameters keep
 source names; body compilation scopes original parameters rather than compiled ones.
+`stack_rawcall_compile_semantics_probeScript.sml` freshly reads the original full
+`compile_semantics` theorem and zero-HOL-hypothesis count, with 1/8/64/80 word
+instances (six rows). The Lean consumers apply the full observational equality
+with all four original premises at arbitrary positive/1/8/64/80 widths. The Lean
+proof derives entry simulations and native clock/event-chain obligations; these
+captures are regression evidence, not a HOL-to-Lean equivalence proof or evidence
+of production routing or whole compiler completion.
