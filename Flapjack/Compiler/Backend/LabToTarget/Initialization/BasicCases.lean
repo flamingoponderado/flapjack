@@ -10,9 +10,15 @@ namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 
+/-- Flapjack word-addition infrastructure for the literal source buffer address;
+there is no independently named HOL declaration being ported. -/
+private theorem initializer_wordAdd_left_comm {width : Nat} (a b c : BitVec width) :
+    a + (b+c) = b+(a+c) := by
+  rw [←BitVec.add_assoc,BitVec.add_comm a b,BitVec.add_assoc]
+
 /-- Ten genuine cases of the complete original initializer theorem: ISR4
 (oracle), ISR5 (labels), ISR6 (FFI names), ISR7 (bytes), ISR9 (memory), ISR10
-(buffer start), ISR11 (empty buffer), ISR13 (initial PC), ISR14 (sections),
+(buffer space), ISR11 (empty buffer), ISR13 (initial PC), ISR14 (sections),
 and ISR17 (safety). Every original binder and all fourteen guards remain.
 The conclusion is precisely these conjuncts of stateRel applied to the actual
 makeInit state. This case group does not establish ISR1/2/3/8/12/15/16 or the
@@ -60,7 +66,9 @@ theorem makeInit_stateRel_basicCases {width : Nat} [NeZero width] {S Q : Type} {
     (∀ a, initial.memDomain (holByteAlign a) = true →
       t.memDomain a ∧ initial.memDomain a = true ∧
       wordLocValByte (mc.target.getPc ms) labs initial.memory a initial.be = some (t.mem a)) ∧
-    initial.codeBuffer.position = mc.target.getPc ms + BitVec.ofNat width (progToBytes code2).length ∧
+    (∀ n, n < initial.codeBuffer.spaceLeft →
+      let address := initial.codeBuffer.position + BitVec.ofNat width (initial.codeBuffer.buffer.length+n)
+      t.memDomain address ∧ ¬ initial.memDomain address = true) ∧
     bytesInMemHOL initial.codeBuffer.position initial.codeBuffer.buffer t.mem t.memDomain
       (fun a => initial.memDomain a = true) ∧
     t.pc = mc.target.getPc ms + BitVec.ofNat width (posVal initial.pc 0 code2) ∧
@@ -101,13 +109,18 @@ theorem makeInit_stateRel_basicCases {width : Nat} [NeZero width] {S Q : Type} {
     obtain ⟨w,hbyte,hmem⟩ := hword a
     refine ⟨hdom a (hclosed a ha),hclosed a ha,?_⟩
     rw [wordLocValByte_word _ _ _ _ _ _ hmem,hbyte]
+  have hbufferSpace : ∀ n, n < cbspace →
+      t.memDomain (mc.target.getPc ms + BitVec.ofNat width (progToBytes code2).length + BitVec.ofNat width n) ∧
+      ¬ dm (mc.target.getPc ms + BitVec.ofNat width (progToBytes code2).length + BitVec.ofNat width n) = true := by
+    intro n hn
+    simpa only [hpc,BitVec.ofNat_add,BitVec.add_assoc,BitVec.add_comm,initializer_wordAdd_left_comm] using hspace n hn
   have hnames : listSubset ((findFfiNames code).filter (fun x => match x with
       | .extCall _ => true | _ => false)) mc.ffiNames = true := by
     simp only [listSubset,List.all_eq_true,decide_eq_true_eq] at hffis ⊢
     intro name hn
     exact List.mem_of_mem_take (hffis name hn)
   dsimp only [makeInit]
-  refine ⟨hor,heven,hnames,hevenBytes,hmemory,rfl,by trivial,?_,hsections,hcodeSafety⟩
+  refine ⟨hor,heven,hnames,hevenBytes,hmemory,by simpa only [List.length_nil,Nat.zero_add] using hbufferSpace,by trivial,?_,hsections,hcodeSafety⟩
   simpa [hzero] using hpc
 
 end Flapjack.Compiler.Backend.LabToTarget

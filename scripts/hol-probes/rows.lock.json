@@ -1976,10 +1976,10 @@
       "sha256": "93feff59d140d2929278342696cc1d26a62f81eb1411bfb801d01beb020db6c4"
     },
     {
-      "bytes": 26552,
+      "bytes": 36091,
       "out": "lab_to_target_initializer_basic_cases_probe.out",
-      "rows": 34,
-      "sha256": "9b3924d255bf3067bb250fac6fe158a336b0242ee496df0dacf0ff4fe67b8138"
+      "rows": 52,
+      "sha256": "5e61baaee154bee585de51267f92442662fb0a5b88911d7ef8687306193a3d94"
     },
     {
       "bytes": 16358,

@@ -6551,8 +6551,12 @@ regenerated in full; prior shared-memory transport rows remain unchanged.
 
 `lab_to_target_initializer_basic_cases_probeScript.sml` captures the complete
 original local `IMP_state_rel_make_init`, every free-variable type and zero
-hypotheses, then projects genuine state relation conjuncts19/20/22/23/31/34/35/41/48/53
+hypotheses, then projects genuine state relation conjuncts19/20/22/23/31/32/35/41/48/53
 under its unchanged full guard. These are original ISR4/5/6/7/9/10/11/13/14/17.
+The original proof prefix is also replayed to capture all17 actual residual
+Suspend goals. ISR10 is remaining-buffer-space membership/exclusion (conjunct32);
+the earlier buffer-position equality (conjunct34) did not cover that case.
+Residual goal terms are proof-state observations, not standalone theorems.
 Every projected implication is kernel checked and has zero hypotheses; no
 separate guard or successful target state is assumed. Remaining cases and the
 full initializer are open. The native consumer derives actual target memory

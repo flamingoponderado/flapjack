@@ -43,7 +43,7 @@ val _ = print("ISR9_hypotheses=" ^ Int.toString(length(hyp ISR9)) ^ "\n");
 val _ = show_types := false;
 val _ = checked "ISR9_proved" ISR9;
 val _ = show_types := true;
-val ISR10 = DISCH guard (List.nth(clauses,33));
+val ISR10 = DISCH guard (List.nth(clauses,31));
 val _ = capture "ISR10_statement" ISR10;
 val _ = print("ISR10_hypotheses=" ^ Int.toString(length(hyp ISR10)) ^ "\n");
 val _ = show_types := false;
@@ -73,3 +73,51 @@ val _ = print("ISR17_hypotheses=" ^ Int.toString(length(hyp ISR17)) ^ "\n");
 val _ = show_types := false;
 val _ = checked "ISR17_proved" ISR17;
 val _ = show_types := true;
+
+(* Literal original proof prefix exposes the actual Suspend case clauses.
+These goal captures are proof-state observations, not separate theorems. *)
+load "proofManagerLib";
+open proofManagerLib lab_to_targetTheory targetSemTheory labSemTheory labPropsTheory;
+val _ = proofManagerLib.chatting := false;
+val _ = set_goal ([],concl full);
+val _ = e (
+rw[] \\ old_drule $ GEN_ALL remove_labels_thm
+  \\ impl_tac >- (
+    fs[good_code_def,mc_conf_ok_def]
+    \\ rw[lab_lookup_def]>>
+    TOP_CASE_TAC>>fs[lookup_def])
+  \\ qabbrev_tac `new_shmem_info=MAP (\rec. rec with
+      <|entry_pc:=w2n (mc_conf.target.get_pc ms) + rec.entry_pc
+       ;exit_pc:=w2n (mc_conf.target.get_pc ms) + rec.exit_pc|>) shmem_info`
+  \\ rw[]
+  \\ fs[state_rel_def,
+        word_loc_val_def,
+        make_init_def,
+        good_init_state_def,
+        mc_conf_ok_def,
+        compiler_oracle_ok_def,
+        target_configured_def,
+        good_code_def,
+        start_pc_ok_def]
+  \\ rfs[]);
+val (_,goal) = hd(top_goals());
+val cases = strip_conj goal;
+val _ = print("original_residual_cases=" ^ Int.toString(length cases) ^ "\n");
+fun capture_goal label goal = (print(label ^ "="); print_term goal; print "\n");
+val _ = capture_goal "ISR1_actual_goal" (List.nth(cases,0));
+val _ = capture_goal "ISR2_actual_goal" (List.nth(cases,1));
+val _ = capture_goal "ISR3_actual_goal" (List.nth(cases,2));
+val _ = capture_goal "ISR4_actual_goal" (List.nth(cases,3));
+val _ = capture_goal "ISR5_actual_goal" (List.nth(cases,4));
+val _ = capture_goal "ISR6_actual_goal" (List.nth(cases,5));
+val _ = capture_goal "ISR7_actual_goal" (List.nth(cases,6));
+val _ = capture_goal "ISR8_actual_goal" (List.nth(cases,7));
+val _ = capture_goal "ISR9_actual_goal" (List.nth(cases,8));
+val _ = capture_goal "ISR10_actual_goal" (List.nth(cases,9));
+val _ = capture_goal "ISR11_actual_goal" (List.nth(cases,10));
+val _ = capture_goal "ISR12_actual_goal" (List.nth(cases,11));
+val _ = capture_goal "ISR13_actual_goal" (List.nth(cases,12));
+val _ = capture_goal "ISR14_actual_goal" (List.nth(cases,13));
+val _ = capture_goal "ISR15_actual_goal" (List.nth(cases,14));
+val _ = capture_goal "ISR16_actual_goal" (List.nth(cases,15));
+val _ = capture_goal "ISR17_actual_goal" (List.nth(cases,16));
