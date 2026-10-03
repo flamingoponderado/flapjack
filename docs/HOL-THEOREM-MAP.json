@@ -77956,5 +77956,15 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SharedMemoryCases.lean",
+    "lean_name": "filterCorrectSharedMemory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.5): Full genuine original filter_correct669 SharedMem evaluator branch817-859. Retains original s1/t1/res/s2 evaluate/stateRel/nonfailed hypotheses, native shareMem constructor fetch guard and full existential target run/result/extra clock/FFI conclusion. All native HolMemop/address/positive word/configuration/FFI carriers remain generic. Explicit primitive split NONE/final/ret retains every outcome; the only IH is full simulation for actual returned source state with shift_seq1 io_regs/io_fp_regs, guarded by its actual source primitive return. Accepted full share_mem_op_NONE/FFI_final/FFI_return_filter_correct helpers derive target primitive, entire native relation and clock extension. Shifted IO successor relation and target/source successor clock equality proved from literal original relation, and all target executions derive from all_skips_evaluate. No target execution, desired postrelation, success narrowing, guessed target primitive or clock law assumed. Full original669 capture/type/hyp0/kernel reproof replayed. words_as_type_indexed_bitvec is the only carrier translation; evaluate inherits reals_as_rational_cuts and SOUNDNESS item8 remains. CallFFI/Install/full assembler/lift still open."
   }
 ]
