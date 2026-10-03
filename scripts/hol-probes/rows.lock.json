@@ -9086,6 +9086,12 @@
       "sha256": "512ce4c6f9d999b50c37ddce4fa536317251b574db296c3760b03c2946dca517"
     },
     {
+      "bytes": 3170,
+      "out": "word_cse_wf_data_preservation_probe.out",
+      "rows": 27,
+      "sha256": "0a43512ef74c87542e249fe0ec2a7a001a11efd7ad57b13ea3183e21a2eb2682"
+    },
+    {
       "bytes": 1029,
       "out": "word_gc_functions_probe.out",
       "rows": 28,
