@@ -7087,3 +7087,7 @@ equivalence or a new representation exception.
 correctness theorem and its genuine Const/BaseAddr/TopAddr specializations. Each
 retains all seven hypotheses and all three conclusions, with no extra assumptions.
 The parent whole expression/declaration/pass proofs remain open.
+
+## Complete native model drift coverage
+
+CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` capture checker, decoder fixtures, captured row locks, native checker tests, and `scripts/l3/check-renderings.py`. The rendering gate covers the full delivered Defs tree including MMU, exception, instruction reader and Step files. `scripts/l3/rendering-coverage.json` records six explicit handwritten/export-root exceptions and three computability-only overrides. The original export deliberately contains the NextRISCV/Fetch dependency closure; three unused CSR codecs are pinned separately with source notes and existing original probes. Adding or removing a delivered definition requires reviewing coverage. No gate establishes universal HOL-to-Lean equivalence or whole compiler correctness.
