@@ -72997,5 +72997,20 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original582-621: domain_fromAList_compile retains unconditional equality of literal Spt domains for actual native compile/fromAList, including duplicate keys; lookup_collect_info retains exactly ALL_DISTINCT(MAP FST code), arbitrary key and arbitrary supplied rest tree, first-match ALOOKUP selecting singleton collectInfo outcome or unchanged rest lookup; state_ok_collect_info retains exactly same distinct-key guard and every original leading Seq(StackAlloc size) entry witness, including zero size and arbitrary body. Native collectInfo left-to-right overwrite behavior and ignored bare/nonleading allocations unchanged. List/Spt carriers identical, arbitrary positive type-indexed BitVec translation only; no fmap qualifier needed for native tree maps. Proof derives absent ALOOKUP from actual membership and handles every head/tail/key/recognition branch, no additional premise. Source compiler/evaluator behavior untouched; no targetrun, restricted code list, executable broad producer or numeric FP correspondence claim. Fresh full original statement/zero hypotheses/64-80 specializations and independent original lookup/compiler-key observations plus actual original state_ok theorem applications are regression evidence, not cross-language equivalence or whole-pass completion. No allowlist/default/individual HOLD change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect.lean",
+    "lean_name": "compCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original135-149 and full proof135-580: arbitrary native program/source/target/info/result/post, exactly source evaluate equality/nonError/literal stateRel premises. Both original compTop and comp existential target runs, postrelation and timeout/HaltWord2 stack-space guards retained. All34 native constructors assembled by clock-first lexicographic induction with no external IH, targetrun, success or postrelation assumption. Structural child measures cover If/Seq/body; actual evaluateClock bounds give unclamped Seq and returning-call continuation decrease, nonzero decClock gives arbitrary callee decrease and actual loop body clock bound gives reentry decrease. Reviewed case proofs reused, selecting compTop versus comp exactly as native dispatch requires. Actual imported canonical state owner regs/fpRegs/store and local codec roundtrip; Spt code/info and List carriers unchanged, positive width BitVec and C/F Type0 translation only. Inherits reals_as_rational_cuts SOUNDNESS8, no numeric FP correspondence or whole compiler claim. Five arbitrary/1/8/64/80 full expanded-statement consumers have only original premises; fresh original full statement, zero HOL hypotheses and arbitrary-program specializations regression evidence, not cross-language equivalence. No allowlist/default/individual HOLD changes."
   }
 ]

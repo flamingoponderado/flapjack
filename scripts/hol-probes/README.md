@@ -6811,3 +6811,9 @@ and end-to-end correctness remain open. Regenerate with
 `stack_rawcall_call_return_probe` freshly captures original comp_correct, zero hypotheses, full returning and arbitrary Call64/80 specializations, the closed actual Call induction clause, four complete compiled returning/handler trees and four erased-link lookup observations. Ten full returning/assembled theorem consumers cover arbitrary positive and1/8/64/80 widths. Lookup after link erasure and exact Result/Exception location guards remain; callee/continuation target runs are derived from original IHs and native clock composition. Terminal outcomes retain original stackspace exceptions. This completes the Call constructor family, not whole-pass assembly or cross-language equivalence.
 
 `stack_rawcall_compile_code_info_probe` captures all three full original code-domain, lookup-collection and collected-frame theorems, zero hypotheses, 64/80 specializations, ten concrete original compiler-key/lookup observations and two actual closed original frame-theorem applications. Fifteen full arbitrary positive/1/8/64/80 consumers and independent executable guards cover duplicate compiler keys, absent/rest lookups, ignored bare allocations, zero frames and a70-bit frame size. Domain preservation is unconditional; lookup/frame laws retain the original distinct-key guard and arbitrary rest tree. This is native proof support for compile_semantics, not production replacement, full-pass completion or cross-language equivalence.
+
+`stack_rawcall_comp_correct_probeScript.sml` captures the full original paired
+`comp_correct` statement, its empty HOL hypothesis list, and arbitrary-program
+specializations at widths 1/8/64/80. Full Lean consumers retain only the three
+original source premises; no induction hypotheses are supplied. These captures
+are regression evidence, not a HOL-to-Lean equivalence proof.

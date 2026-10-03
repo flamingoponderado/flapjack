@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRawCallCompCorrectParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3RegisterShiftParity
