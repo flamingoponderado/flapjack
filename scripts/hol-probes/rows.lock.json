@@ -8936,6 +8936,12 @@
       "sha256": "3d4721236481b492b99e09d76dda11d2c4fb432ffa73611c9e5d83bf4e192800"
     },
     {
+      "out": "wordsem_mem_store_const_probe.out",
+      "bytes": 615,
+      "rows": 3,
+      "sha256": "487ce3607c0663f5f9892d76fd0bfb7a13e23930d69021ccf115ef091e9f1121"
+    },
+    {
       "out": "wordsem_pop_env_const_probe.out",
       "bytes": 617,
       "rows": 3,

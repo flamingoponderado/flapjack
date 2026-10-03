@@ -70179,5 +70179,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.3 wordProps612-630: complete original arbitrary native input/output states and callback, sole gc=SOME premise, all13 conclusions in original order clock/ffi/code/be/codeBuffer/dataBuffer/compile/handler/compileOracle/localsSize/stackLimit/stackMax/stackSize. Actual gc648-661 invokes gcFun on original encStack/memory/domain/store and only installs decoded stack/new store/new memory; every success retains fields, callback/decoder failure contradicts original premise. No callback law/stack shape/safety/target-run assumption. Actual imported positive-width WordSemStateFiniteExact with C/F:Type, exact Spt fields, canonical fpRegs/store owner and genuine same-module codec witness; Bool equivalence as Bool equality. No evaluator or numeric FP assertion. Original max induction4321 and WordSem alloc_const649-666 genuinely need this invariant. Fresh unchanged literal original complete proof replay; full resource/Seq/pass remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/MemStoreConst.lean",
+    "lean_name": "memStoreConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "mem_store_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.5 wordProps794-815: complete original arbitrary address/value/native input/output, sole mem_store=SOME premise and all18 conjuncts in original order locals/clock/be/gcFun/mdomain/shMdomain/ffi/handler/code/codeBuffer/dataBuffer/compile/compileOracle/stack/localsSize/stackLimit/stackMax/stackSize. Actual native memStore283-288 tests original domain and updates memory only; domain false contradicts original success premise, true branch preserves every named field. No extra alignment/domain/safety/callback/target-run premise. Imported actual positive-width state with C/F:Type, exact Spt fields, canonical fpRegs/store and genuine same-module codec witness; Bool equivalence rendered as Bool equality. No evaluator/numeric FP assertion. Original resource max4331 and limit4415 use this contract. Fresh unchanged complete proof replay before GEN_ALL/full generalized statement check; resource evaluator/Seq/full pass remain open."
   }
 ]
