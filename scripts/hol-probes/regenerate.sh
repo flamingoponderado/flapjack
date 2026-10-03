@@ -2883,6 +2883,10 @@ run_probe word_alloc_get_writes_inst_probeScript.sml word_alloc_get_writes_inst_
   writes_const writes_add_carry writes_long_div writes_load16_catchall writes_fp_move64 writes_fp_move32 writes_fp_from_reg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_alloc_instruction_producer_probeScript.sml word_alloc_instruction_producer_probe.out \
+  gdi_load16_zero gdi_store16_zero gdi_load16_offset gdi_store16_offset \
+  "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_alloc_get_delta_inst_probeScript.sml word_alloc_get_delta_inst_probe.out \
   gdi_skip gdi_const gdi_binop_reg gdi_binop_imm gdi_shift_reg gdi_shift_imm gdi_div gdi_addcarry gdi_addoverflow gdi_suboverflow gdi_longmul gdi_longdiv gdi_load gdi_store gdi_load32 gdi_store32 gdi_load8 gdi_store8 gdi_fpless gdi_fpmovtoreg64 gdi_fpmovtoreg32 gdi_fpmovfromreg64 gdi_fpmovfromreg32 gdi_fpneg_catchall \
   "$cake_dir/compiler/backend/word_allocScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5883,6 +5887,15 @@ run_probe stack_remove_copy_each_probeScript.sml stack_remove_copy_each_probe.ou
 run_probe l3_scw_probeScript.sml l3_scw_probe.out \
   scw_definition scw_type scw_negative scw_positive scw_rd_zero scw_core_wrap scw_fault_sv32 scw_rv32_mode scw_rv128_mode scw_walk_returned_state scw_misaligned_1 scw_misaligned_2 scw_misaligned_3 scw_order_0_1 scw_order_1_0 scw_order_1_1 scw_reservation_mismatch scw_reservation_none scw_read_only_page scw_rs2_zero scw_address_four \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe l3_scd_probeScript.sml l3_scd_probe.out \
+  scd_definition scd_type scd_negative scd_positive scd_rd_zero scd_core_wrap scd_fault_sv32 scd_rv32_mode scd_rv128_mode scd_walk_returned_state scd_misaligned_1 scd_misaligned_2 scd_misaligned_3 scd_order_0_1 scd_order_1_0 scd_order_1_1 scd_reservation_mismatch scd_reservation_none scd_read_only_page scd_rs2_zero scd_address_four scd_misaligned_4 scd_misaligned_5 scd_misaligned_6 scd_misaligned_7 scd_rv32_before_misalignment_reservation_vm \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_probe.out \
+  find_index_ALL_DISTINCT_EL_eq find_index_ALL_DISTINCT_EL_eq_types find_index_ALL_DISTINCT_EL_eq_hypotheses \
+  first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_code_bitmaps_inst_probeScript.sml stack_code_bitmaps_inst_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_inst_statement \

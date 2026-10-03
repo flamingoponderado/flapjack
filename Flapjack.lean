@@ -628,6 +628,7 @@ import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
 import Flapjack.Misc.FindIndex
+import Flapjack.Misc.FindIndex.Distinct
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly
 import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
@@ -698,6 +699,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
 import Flapjack.Compiler.Backend.WordAlloc.ProductionBufferClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionExpressionClashTree
+import Flapjack.Compiler.Backend.WordAlloc.ProductionInstructionClashTree
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
