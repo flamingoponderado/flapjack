@@ -86783,5 +86783,58 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL canonicalArith_reads_self_or_fresh (word_cseProof:2881). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "wordCseInst",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "word_cseInst_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL word_cseInst_def (word_cseScript.sml:446-479). All five clauses (Skip, Const, Arith, Mem with the store/load split, FP) with the same invalidation, guards (EVEN r, can_mem_arith a' and not MEM r rds, EVEN r or EVEN a or a = r) and producers (add_to_data_const, add_to_data on register_reads, add_to_load_aux on register_read with loadToNumList) as HOL. Faithful carriers: native Knowledge, WordLangProgHOL (BitVec width), and HolInst width for HOL's asm inst; the reviewed exact inverse codecs HolInst.toWordLangInst/ofWordLangInst (to_of, of_to) are carrier infrastructure only, so every emitted Inst is the input instruction unchanged. EVEN r is r % 2 = 0 as in the reviewed fact producers; lookup_any is Option.getD inside the reviewed getClause/setClause bodies. Kernel-checked; the word_cse_transform probe captures the type.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "wordCse",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "word_cse_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL word_cse_def (word_cseScript.sml:538-632). All 26 clauses in structural recursion, one per program constructor: Move, Inst through word_cseInst, Get/Set through the clause bodies getClause/setClause (compared against HOL 545-573), MustTerminate, Call, Seq, If with merge_data, OpCurrHeap, LocValue (key [48; l]), Skip, Store, Assign, Raise, Return, Tick, Alloc, Install, both buffer writes, FFI, StoreConsts, ShareInst, Loop from empty_data, Break and Continue. Faithful carriers: native Knowledge, WordLangProgHOL (BitVec width), and HolInst width for HOL's asm inst; the reviewed exact inverse codecs HolInst.toWordLangInst/ofWordLangInst (to_of, of_to) are carrier infrastructure only, so every emitted Inst is the input instruction unchanged. EVEN r is r % 2 = 0 as in the reviewed fact producers; lookup_any is Option.getD inside the reviewed getClause/setClause bodies. Kernel-checked; the word_cse_transform probe captures the type.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "wordCommonSubexpElim",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "word_common_subexp_elim_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL word_common_subexp_elim_def (word_cseScript.sml:634-638). SND of word_cse empty_data prog. Faithful carriers: native Knowledge, WordLangProgHOL (BitVec width), and HolInst width for HOL's asm inst; the reviewed exact inverse codecs HolInst.toWordLangInst/ofWordLangInst (to_of, of_to) are carrier infrastructure only, so every emitted Inst is the input instruction unchanged. EVEN r is r % 2 = 0 as in the reviewed fact producers; lookup_any is Option.getD inside the reviewed getClause/setClause bodies. Kernel-checked; the word_cse_transform probe captures the type.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "seqs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "Seqs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL Seqs_def (word_cseScript.sml:642-646). All three equations at an arbitrary payload type. The built word_cseTheory exports Seqs_ind but no Seqs_def, so the comparison is against the script text. Kernel-checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "word_cse_wf_data",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_cse_wf_data",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL word_cse_wf_data (word_cseProof:2912-3302). For all p and data, wf_data (:'a) data implies wf_data (:'a) (FST (word_cse data p)), over the reviewed wfData and wordCse. The proof follows HOL's Induct with a per-constructor case split, using structural recursion over the nested program type, with the Inst case factored into wfData_wordCseInst. Kernel-checked with standard axioms only. The word_cse_transform probe captures the statement (0 hypotheses).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "canMemArith_odd_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "can_mem_arith_ODD_reads",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL can_mem_arith_ODD_reads (word_cseProof:1511-1516). can_mem_arith a implies EVERY ODD (arithReads a), with EVERY as a forall-over-membership and ODD as % 2 = 1, over the HolArith width carrier. HOL local, so there is no probe capture; it was compared against the source text. Kernel-checked.",
+    "words_as_type_indexed_bitvec": true
   }
 ]

@@ -706,6 +706,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
 import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
 import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
+import Flapjack.Compiler.Backend.WordCse.Transform
 import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs

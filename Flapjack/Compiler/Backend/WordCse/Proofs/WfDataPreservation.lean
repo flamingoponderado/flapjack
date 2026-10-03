@@ -9,6 +9,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Misc.LookupAny
 import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
+import Flapjack.Compiler.Backend.WordCse.Transform
 
 /-!
 # `word_cseProof`: preservation of the syntactic knowledge invariant
@@ -736,5 +737,300 @@ theorem canonicalArith_reads_self_or_fresh {width : Nat} [NeZero width] (data : 
   | _ => simp [canonicalArith, canMemArith] at hc
 
 end Moves
+
+section WordCse
+
+/-- Exact HOL local `can_mem_arith_ODD_reads` (`word_cseProof:1511-1516`). -/
+@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "can_mem_arith_ODD_reads"
+  (words_as_type_indexed_bitvec)]
+theorem canMemArith_odd_reads {width : Nat} [NeZero width] (a : Compiler.Encoders.Asm.HolArith width)
+    (h : canMemArith a = true) : ∀ w ∈ arithReads a, w % 2 = 1 := by
+  cases a with
+  | binop op d r1 ri =>
+    cases ri <;> simp_all [canMemArith, arithReads]
+  | shift op d r1 ri =>
+    cases ri <;> simp_all [canMemArith, arithReads]
+  | div d r1 r2 => simp_all [canMemArith, arithReads]
+  | _ => simp [canMemArith] at h
+
+/-- Invalidation leaves the written register untracked (Flapjack
+    infrastructure). -/
+theorem lookup_invalidateData_self (data : Knowledge) (r : Nat) :
+    sptLookup r (invalidateData data r).toCanonical = none := by
+  unfold invalidateData keepData
+  split
+  · rename_i h; simpa using h
+  · rfl
+
+/-- Invalidation keeps untracked registers untracked (Flapjack
+    infrastructure). -/
+theorem lookup_invalidateData_none (data : Knowledge) (r x : Nat)
+    (h : sptLookup x data.toCanonical = none) :
+    sptLookup x (invalidateData data r).toCanonical = none := by
+  unfold invalidateData
+  split
+  · exact h
+  · rfl
+
+theorem lookup_invalidateRegs_none :
+    ∀ (rs : List Nat) (data : Knowledge) (x : Nat), sptLookup x data.toCanonical = none →
+      sptLookup x (invalidateRegs data rs).toCanonical = none
+  | [], _, _, h => h
+  | r :: rs, data, x, h =>
+      lookup_invalidateRegs_none rs _ x (lookup_invalidateData_none data r x h)
+
+theorem lookup_invalidateRegs_mem :
+    ∀ (rs : List Nat) (data : Knowledge) (x : Nat), x ∈ rs →
+      sptLookup x (invalidateRegs data rs).toCanonical = none
+  | [], _, _, h => by simp at h
+  | r :: rs, data, x, h => by
+      simp only [invalidateRegs]
+      rcases List.mem_cons.mp h with rfl | hm
+      · exact lookup_invalidateRegs_none rs _ x (lookup_invalidateData_self data x)
+      · exact lookup_invalidateRegs_mem rs _ x hm
+
+theorem firstRegOfArith_mem_writes {width : Nat} [NeZero width]
+    (a : Compiler.Encoders.Asm.HolArith width) : firstRegOfArith a ∈ arithWrites a := by
+  cases a <;> simp [firstRegOfArith, arithWrites]
+
+theorem wfData_invalidateRegs_loads {width : Nat} [NeZero width] (data : Knowledge) (rs : List Nat)
+    (h : wfData width data) :
+    wfData width { invalidateRegs data rs with loadsMem := Misc.BalancedMap.empty } :=
+  wfData_loads_wipe _ (wfData_invalidate_regs rs data h)
+
+/-- The fresh-destination miss case shared by the instruction fact producers:
+    a fresh odd destination self-mapped and stored under `key` (Flapjack
+    infrastructure). -/
+theorem wfData_fresh_instrs {width : Nat} [NeZero width] (data : Knowledge) (r : Nat) (key : List Nat)
+    (h : wfData width data) (hr : sptLookup r data.toCanonical = none) (odd : r % 2 = 1)
+    (ha : ∀ a : Compiler.Encoders.Asm.HolArith width, instToNumList (.arith a) = key →
+      inNamesSet a (sptInsert r r data.toCanonical) ∧ canMemArith a = true)
+    (hb : ∀ op src, opCurrHeapToNumList op src = key →
+      sptLookup src (sptInsert r r data.toCanonical) = some src) :
+    wfData width
+      { { data with toCanonical := sptInsert r r data.toCanonical } with
+        instrsMem := Misc.BalancedMap.insert listCmp key r
+          ({ data with toCanonical := sptInsert r r data.toCanonical } : Knowledge).instrsMem } :=
+  wfData_insert_instrs_key _ key r
+    (wfData_insert_to_canonical data r r ⟨h, hr, sptLookup_sptInsert_same _ _ _, odd, odd⟩)
+    (sptLookup_sptInsert_same _ _ _) ha hb
+
+/-- A canonical substitute that avoids the destination is never the
+    destination (Flapjack infrastructure). -/
+theorem canonicalRegs'_ne (data : Knowledge) (r a : Nat) (ha : a ≠ r) :
+    canonicalRegs' r data a ≠ r := by
+  unfold canonicalRegs'
+  dsimp only
+  split
+  · exact ha
+  · assumption
+
+/-- The register a canonical substitute names is self-mapped after it is
+    registered (Flapjack infrastructure). -/
+theorem canonicalRegs'_registered {width : Nat} [NeZero width] (data : Knowledge) (r a : Nat)
+    (h : wfData width data) (hr : sptLookup r data.toCanonical = none) (ha : a % 2 = 1) :
+    sptLookup (canonicalRegs' r data a)
+      (registerRead data (canonicalRegs' r data a)).toCanonical = some (canonicalRegs' r data a) := by
+  rw [lookup_register_read]
+  rcases canonicalRegs'_self_or_fresh_wf data r a ⟨h, hr⟩ with hs | hn
+  · rw [if_neg (fun hc => by rw [hs] at hc; exact absurd hc.2.2 (by simp))]; exact hs
+  · have hodd : canonicalRegs' r data a % 2 ≠ 0 := by
+      unfold canonicalRegs' canonicalRegs at hn ⊢
+      dsimp only at hn ⊢
+      split
+      · omega
+      · rename_i hne
+        cases hl : sptLookup a data.toCanonical with
+        | none => simp only [Option.getD_none]; omega
+        | some c =>
+          simp only [hl, Option.getD_some] at hn hne ⊢
+          rw [if_neg hne] at hn
+          exact absurd (h.1 a c hl).1 (by rw [hn]; simp)
+    rw [if_pos ⟨rfl, hodd, hn⟩]
+
+set_option linter.unusedSimpArgs false in
+/-- The instruction clauses of `word_cse` keep `wf_data` (the `Inst` case of
+    HOL `word_cse_wf_data`; Flapjack decomposition of that proof). -/
+theorem wfData_wordCseInst {width : Nat} [NeZero width] (data : Knowledge)
+    (i : Compiler.Encoders.Asm.HolInst width) (h : wfData width data) :
+    wfData width (wordCseInst data i).1 := by
+  cases i with
+  | skip => exact h
+  | const r w =>
+    simp only [wordCseInst]
+    split
+    · exact wfData_invalidate data r h
+    · rename_i hev
+      exact wf_add_to_data_const _ r w _ _
+        ⟨wfData_invalidate data r h, lookup_invalidateData_self data r, hev, rfl⟩
+  | arith a =>
+    simp only [wordCseInst]
+    split
+    · rename_i hc
+      obtain ⟨hcan, hnot⟩ := hc
+      set d1 := invalidateRegs data (arithWrites a) with hd1
+      have w1 : wfData width d1 := wfData_invalidate_regs _ data h
+      have r1 : sptLookup (firstRegOfArith a) d1.toCanonical = none :=
+        lookup_invalidateRegs_mem _ data _ (firstRegOfArith_mem_writes a)
+      set rds := arithReads (canonicalArith d1 a)
+      have w2 : wfData width (registerReads d1 rds) := wfData_register_reads rds d1 w1
+      have r2 : sptLookup (firstRegOfArith a) (registerReads d1 rds).toCanonical = none := by
+        rw [lookup_register_reads]; simp [hnot, r1]
+      refine wf_add_to_data_aux _ _ _ _ _ _ ⟨w2, r2, rfl, fun hev => ?_⟩
+      have odd : firstRegOfArith a % 2 = 1 := by omega
+      have names : inNamesSet (canonicalArith d1 a) (registerReads d1 rds).toCanonical :=
+        inNamesSet_register_reads _ d1 ⟨canMemArith_odd_reads _ hcan,
+          canonicalArith_reads_self_or_fresh d1 a ⟨w1, hcan, r1⟩⟩
+      refine wfData_fresh_instrs _ _ _ w2 r2 odd (fun a2 ha2 => ?_)
+        (fun op src hk => by simp [instToNumList, opCurrHeapToNumList] at hk)
+      simp only [instToNumList, List.cons.injEq, true_and] at ha2
+      obtain ⟨hc2, hreads, -⟩ := arithKeysEq (C := Unit) (F := Unit) _ a2 ⟨hcan, ha2.symm⟩
+      exact ⟨fun reg hreg => (inNamesSet_insert_self _ _ _ names) reg (hreads ▸ hreg), hc2⟩
+    · exact wfData_invalidate_regs _ data h
+  | mem op r ad =>
+    cases ad with
+    | addr a ofs =>
+      simp only [wordCseInst]
+      split
+      · exact wfData_loads_wipe data h
+      · split
+        · exact wfData_invalidate data r h
+        · rename_i hev
+          simp only [not_or] at hev
+          obtain ⟨hr, ha, har⟩ := hev
+          set d1 := invalidateData data r
+          have w1 : wfData width d1 := wfData_invalidate data r h
+          have r1 : sptLookup r d1.toCanonical = none := lookup_invalidateData_self data r
+          set a' := canonicalRegs' r d1 a
+          have hne : a' ≠ r := canonicalRegs'_ne d1 r a har
+          have w2 := wfData_register_read d1 a' w1
+          have r2 : sptLookup r (registerRead d1 a').toCanonical = none := by
+            rw [lookup_register_read, if_neg (fun hc => hne hc.1.symm), r1]
+          have self2 : sptLookup a' (registerRead d1 a').toCanonical = some a' :=
+            canonicalRegs'_registered d1 r a w1 r1 (by omega)
+          refine wf_add_to_load_aux _ _ _ _ _ _ ⟨w2, r2, rfl, fun hev2 => ?_⟩
+          have w3 := wfData_insert_to_canonical _ r r
+            ⟨w2, r2, sptLookup_sptInsert_same _ _ _, by omega, by omega⟩
+          exact wfData_insert_loads _ r op a' ofs
+            ⟨w3, sptLookup_sptInsert_same _ _ _, self_insert_fresh r2 self2⟩
+  | fp f => exact wfData_invalidate_regs _ data h
+
+set_option linter.unusedSimpArgs false in
+/-- Exact HOL `word_cse_wf_data` (`word_cseProof:2912-3302`), by structural
+    recursion on the program as HOL's `Induct`. -/
+@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "word_cse_wf_data"
+  (words_as_type_indexed_bitvec)]
+theorem word_cse_wf_data {width : Nat} [NeZero width] :
+    ∀ (p : WordLangProgHOL (BitVec width)) (data : Knowledge),
+      wfData width data → wfData width (wordCse data p).1
+  | .move r rs, data, h => by simp only [wordCse]; exact wf_canonicalMoveRegs data rs h
+  | .inst i, data, h => by simp only [wordCse]; exact wfData_wordCseInst data _ h
+  | .get r x, data, h => by
+      simp only [wordCse, getClause]
+      have w1 := wfData_invalidate data r h
+      have r1 := lookup_invalidateData_self data r
+      split
+      · rename_i hn
+        split
+        · exact w1
+        · rename_i hev
+          exact wfData_insert_gets _ x r ⟨w1, r1, by omega, hn⟩
+      · rename_i k hk
+        split
+        · exact w1
+        · rename_i hev
+          exact wfData_repoint _ r k w1 r1 (by omega) (w1.2.2.2.2.2.1 x k hk)
+  | .set x e, data, h => by
+      simp only [wordCse, setClause]
+      split
+      · exact wfData_empty
+      · split
+        · exact wfData_filter_gets data x h
+        · rename_i v hv
+          split
+          · exact wfData_filter_gets data x h
+          · rename_i hev
+            have w1 := wfData_filter_gets data x h
+            have w2 := wfData_reinsert_canonical _ v ⟨w1, by omega⟩
+            have e : (sptLookup v data.toCanonical).getD v = lookupAny v data.toCanonical v := by
+              unfold lookupAny; cases sptLookup v data.toCanonical <;> rfl
+            dsimp only
+            rw [e]
+            refine wfData_cons_gets _ x (canonicalRegs data v) ⟨w2, ?_, ?_⟩
+            · refine List.lookup_eq_none_iff.mpr (fun p hp => ?_)
+              have := (List.mem_filter.mp hp).2
+              simp only [decide_eq_true_eq] at this
+              simpa [bne_iff_ne] using (Ne.symm this)
+            · show sptLookup (canonicalRegs data v)
+                (sptInsert v (lookupAny v data.toCanonical v) data.toCanonical) = _
+              unfold canonicalRegs lookupAny
+              cases hl : sptLookup v data.toCanonical with
+              | none => simp [sptLookup_sptInsert_same]
+              | some c =>
+                simp only [Option.getD_some]
+                by_cases hcv : c = v
+                · subst hcv; exact sptLookup_sptInsert_same _ _ _
+                · rw [sptLookup_sptInsert_ne _ _ _ _ hcv]; exact (h.1 v c hl).1
+  | .mustTerminate p, data, h => by
+      simp only [wordCse]; exact word_cse_wf_data p data h
+  | .call _ _ _ _, _, _ => by simp only [wordCse]; exact wfData_empty
+  | .seq p1 p2, data, h => by
+      simp only [wordCse]
+      exact word_cse_wf_data p2 _ (word_cse_wf_data p1 data h)
+  | .ite _ _ _ p1 p2, data, h => by
+      simp only [wordCse]
+      exact wfData_merge _ _ ⟨word_cse_wf_data p1 data h, word_cse_wf_data p2 data h⟩
+  | .opCurrHeap b r1 r2, data, h => by
+      simp only [wordCse]
+      split
+      · exact wfData_invalidate data r1 h
+      · rename_i hev
+        simp only [not_or] at hev
+        obtain ⟨hr2, hne2⟩ := hev
+        set d1 := invalidateData data r1
+        have w1 : wfData width d1 := wfData_invalidate data r1 h
+        have r1n : sptLookup r1 d1.toCanonical = none := lookup_invalidateData_self data r1
+        set a' := canonicalRegs' r1 d1 r2
+        have hne : a' ≠ r1 := canonicalRegs'_ne d1 r1 r2 hne2
+        have w2 := wfData_register_read d1 a' w1
+        have r2n : sptLookup r1 (registerRead d1 a').toCanonical = none := by
+          rw [lookup_register_read, if_neg (fun hc => hne hc.1.symm), r1n]
+        have self2 : sptLookup a' (registerRead d1 a').toCanonical = some a' :=
+          canonicalRegs'_registered d1 r1 r2 w1 r1n (by omega)
+        refine wf_add_to_data_aux _ _ _ _ _ _ ⟨w2, r2n, rfl, fun hev2 => ?_⟩
+        refine wfData_fresh_instrs _ _ _ w2 r2n (by omega)
+          (fun a ha => by simp [instToNumList, opCurrHeapToNumList] at ha) (fun op src hk => ?_)
+        simp only [opCurrHeapToNumList, List.cons.injEq, Nat.add_right_cancel_iff, and_true] at hk
+        rw [hk.2.2]; exact self_insert_fresh r2n self2
+  | .locValue r l, data, h => by
+      simp only [wordCse]
+      have w1 := wfData_invalidate data r h
+      have r1 := lookup_invalidateData_self data r
+      refine wf_add_to_data_aux _ _ _ _ _ _ ⟨w1, r1, rfl, fun hev => ?_⟩
+      exact wfData_fresh_instrs _ _ _ w1 r1 (by omega)
+        (fun a ha => by simp [instToNumList] at ha) (fun op src hk => by simp [opCurrHeapToNumList] at hk)
+  | .skip, _, h => h
+  | .store _ _, data, h => wfData_loads_wipe data h
+  | .assign _ _, _, h => h
+  | .raise _, _, h => h
+  | .return _ _, _, h => h
+  | .tick, _, h => h
+  | .alloc _ _, _, _ => wfData_empty
+  | .install _ _ _ _ _, _, _ => wfData_empty
+  | .codeBufferWrite _ _, _, h => h
+  | .dataBufferWrite _ _, _, h => h
+  | .ffi _ _ _ _ _ _, _, _ => wfData_empty
+  | .storeConsts r1 r2 r3 r4 _, data, h => by
+      simp only [wordCse]; exact wfData_invalidateRegs_loads data _ h
+  | .shareInst op r _, data, h => by
+      simp only [wordCse]
+      split
+      · exact h
+      · exact wfData_invalidate data r h
+  | .loop _ _ _, _, _ => by simp only [wordCse]; exact wfData_empty
+  | .break _, _, h => h
+  | .continue _, _, h => h
+
+end WordCse
 
 end Flapjack.Compiler.Backend.WordCse
