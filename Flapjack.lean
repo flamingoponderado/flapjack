@@ -715,6 +715,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
 import Flapjack.Misc.Sptree.InterEq
+import Flapjack.Misc.Sptree.FilterV
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Misc.Sptree.MapiLookup
@@ -1059,6 +1060,11 @@ import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
+import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
+import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
+import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
+import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFp
+import Flapjack.Compiler.Backend.WordSimp.Proofs.CompileExp
 import Flapjack.Misc.FiniteMapApply
 import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
@@ -2074,6 +2080,7 @@ import Flapjack.Compiler.Backend.WordUnreach
 import Flapjack.Compiler.Backend.WordUnreach.ProductionDecoderDomain
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
+import Flapjack.Compiler.Backend.WordInst
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
