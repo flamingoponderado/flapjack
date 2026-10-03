@@ -9164,10 +9164,10 @@
       "sha256": "4b6e08568782f16bba6708eb5eba31aa6ebdb4b924657f29f31e14e509408e4f"
     },
     {
-      "bytes": 2084,
+      "bytes": 2251,
       "out": "wordsem_permute_swap_stack_probe.out",
-      "rows": 18,
-      "sha256": "354d039b54b232ccf9db4d020ff9f9537657dc1c7222174f139fe9d1cf4a67f2"
+      "rows": 19,
+      "sha256": "004a100e8464eff0dd4cab1a57244c2bebfbf42cb09d4738d81a0ccfbb040db7"
     },
     {
       "out": "wordsem_pop_env_const_probe.out",
