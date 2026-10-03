@@ -6994,3 +6994,7 @@ run_probe pan_structs_program_extcall_probeScript.sml pan_structs_program_extcal
 run_probe pan_structs_program_shmem_load_probeScript.sml pan_structs_program_shmem_load_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_shmem_load_statement compile_correct_shmem_load_proved compile_correct_full_types compile_correct_shmem_load_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_lookup_code_fields_probeScript.sml pan_structs_lookup_code_fields_probe.out \
+  lookup_code_flds_ok_statement lookup_code_flds_ok_proved lookup_code_flds_ok_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

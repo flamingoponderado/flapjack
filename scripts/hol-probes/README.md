@@ -7448,3 +7448,10 @@ and its ShMemLoad specialization, quantified types and closed kernel truth.
 The Lean case preserves all ten premises/seven conclusions, derives the actual
 mapped-read FFI and returned-word assignment internally, and adds no IH or
 oracle agreement premise. Full compiler correctness remains open.
+
+`pan_structs_lookup_code_fields_probe` replays original source-local
+`lookup_code_flds_ok` and its three local helper proofs unchanged, reuses the
+original reverse shape theorem alias, and captures full closed statement,
+quantified types and kernel truth. The Lean theorem retains ten source
+hypotheses and all five conclusions, including actual target lookup and
+existential original callee parameter context. Call/DecCall remain open.
