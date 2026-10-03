@@ -1,0 +1,8 @@
+machine_sem_EQ_sem=∀(mc_conf :(α, 'state, β) machine_config) (p :α word) (ms :'state)
+    (s1 :(α, config, 'ffi) labSem$state).
+  encoder_correct mc_conf.target ∧ init_ok (mc_conf,p) s1 ms ∧
+  (semantics s1 :behaviour) ≠ Fail ⇒
+  machine_sem mc_conf s1.ffi ms = {(semantics s1 :behaviour)}
+machine_sem_EQ_sem_types=(mc_conf :(α, 'state, β) machine_config)::(α, 'state, β) machine_config;(p :α word)::α word;(ms :'state)::'state;(s1 :(α, config, 'ffi) labSem$state)::(α, config, 'ffi) labSem$state;
+machine_sem_EQ_sem_hypotheses=0
+machine_sem_EQ_sem_proved=T
