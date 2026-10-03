@@ -219,6 +219,69 @@ theorem flattenCorrectBreak (s1 : StackSemStateFiniteExact width C F) (k : Nat) 
     rw [hpc] at hw
     exact ⟨(Option.some.inj hw).symm, rel⟩
 
+/-- `LocValue` case. -/
+theorem flattenCorrectLocValue (s1 : StackSemStateFiniteExact width C F) (reg l1 l2 : Nat) :
+    FlattenProp (.locValue reg l1 l2 : HolProg width) s1 := by
+  rintro t r s2 n l cs bs t1 ⟨ev, nerr, rel, -, inst, -⟩
+  rw [StackSemEvaluate.evaluate_locValue] at ev
+  have fetch : asmFetchAux t1.pc t1.code =
+      some (.labAsm (.locValue reg (.lab l1 l2)) 0 [] 0) :=
+    fetchSingle rfl (by simpa [flattenHOL, appList'] using inst)
+  split_ifs at ev with check
+  · simp only [Prod.mk.injEq] at ev
+    obtain ⟨rfl, rfl⟩ := ev
+    obtain ⟨pc, hpc⟩ := StateRel.locCheckImpLocToPc ⟨check, rel⟩
+    refine ⟨1, incPc (updReg reg (.loc l1 l2) t1), fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl,
+      List.prefix_refl _, ?_, StateRel.setVarUpdReg rel⟩
+    · rw [evaluate]
+      simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch, getPcValue,
+        hpc, reduceCtorEq]
+      congr 1
+      simp only [incPc, decClock, updReg, labToLoc]
+      congr 1
+      omega
+    · simp [incPc, updReg, flattenHOL, appList', isLabelHOL]
+  · simp only [Prod.mk.injEq] at ev
+    exact absurd ev.1.symm nerr
+
+theorem stateRelWithCodeBuffer {s : StackSemStateFiniteExact width C F}
+    {t : Flapjack.Compiler.Backend.LabSem.State width C F} (rel : stateRel s t)
+    (cb : WordSemBuffer width 8) :
+    stateRel { s with codeBuffer := cb } { t with codeBuffer := cb } := by
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
+    h19, h20, h21, _, h23, h24, h25, h26, h27, h28, h29⟩ := rel
+  exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18,
+    h19, h20, h21, rfl, h23, h24, h25, h26, h27, h28, h29⟩
+
+/-- `CodeBufferWrite` case. -/
+theorem flattenCorrectCodeBufferWrite (s1 : StackSemStateFiniteExact width C F) (r1 r2 : Nat) :
+    FlattenProp (.codeBufferWrite r1 r2 : HolProg width) s1 := by
+  rintro t r s2 n l cs bs t1 ⟨ev, nerr, rel, -, inst, -⟩
+  rw [StackSemEvaluate.evaluate_codeBufferWrite] at ev
+  have fetch : asmFetchAux t1.pc t1.code = some (.asm (.cbw r1 r2) [] 0) :=
+    fetchSingle rfl (by simpa [flattenHOL, appList'] using inst)
+  have cbEq : s1.codeBuffer = t1.codeBuffer := rel.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  split at ev
+  · rename_i w1 w2 h1 h2
+    split at ev
+    · rename_i cb hcb
+      simp only [Prod.mk.injEq] at ev
+      obtain ⟨rfl, rfl⟩ := ev
+      refine ⟨1, incPc { t1 with codeBuffer := cb }, fun ck1 => ?_, rfl, rfl, rfl, rfl, rfl,
+        List.prefix_refl _, ?_, stateRelWithCodeBuffer rel cb⟩
+      · rw [evaluate]
+        simp only [show t1.clock + 1 + ck1 ≠ 0 by omega, if_false, asmFetch, fetch,
+          InstCorrect.regOfLookup rel h1, InstCorrect.regOfLookup rel h2, ← cbEq, hcb]
+        congr 1
+        simp only [incPc, decClock]
+        congr 1
+        omega
+      · simp [incPc, flattenHOL, appList', isLabelHOL]
+    · simp only [Prod.mk.injEq] at ev
+      exact absurd ev.1.symm nerr
+  · simp only [Prod.mk.injEq] at ev
+    exact absurd ev.1.symm nerr
+
 /-- `Continue` case. -/
 theorem flattenCorrectContinue (s1 : StackSemStateFiniteExact width C F) (k : Nat) :
     FlattenProp (.continue k : HolProg width) s1 := by
