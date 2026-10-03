@@ -306,6 +306,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitSemantics
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitFfi
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders

@@ -7494,3 +7494,6 @@ projection from the arbitrary whole target record. The local nonempty witness
 is only a carrier inhabitation proof and does not define that arbitrary record.
 The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
 These captures/regressions do not establish HOL-to-Lean equivalence.
+`stack_remove_init_semantics_probeScript.sml` prints the stored `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and `make_init_semantics` theorems (3856-4086), all closed with zero hypotheses.
+
+`stack_remove_init_ffi_probeScript.sml` prints the stored original `evaluate_init_code_ffi` and `make_init_any_ffi` (stack_removeProofScript.sml:3893-3902, 4088-4098) with zero hypotheses; the Lean ports derive them from the accepted `evaluate_ffi_neutral` and the initializer's clock-neutrality.
