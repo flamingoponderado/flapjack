@@ -51,7 +51,10 @@ theorem PERM_SWAP_SIMP {α : Type} (A : List α) (B : α) (C : List α) :
   rw [holPerm_iff]
   exact List.perm_middle
 
-/-- Exact HOL local `EL_FILTER` (`word_instProofScript.sml:27-32`). -/
+/-- Exact HOL local `EL_FILTER` (`word_instProofScript.sml:27-32`). The
+    `[Nonempty α]` instance only discharges the inhabitation that the total
+    `holEl` rendering of HOL `EL` needs (every HOL type is inhabited); it adds
+    no hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "EL_FILTER"]
 theorem EL_FILTER {α : Type} [Nonempty α] (P : α → Bool) :
     ∀ (ls : List α) (x : Nat), x < (ls.filter P).length → P (holEl x (ls.filter P)) = true := by
@@ -59,7 +62,7 @@ theorem EL_FILTER {α : Type} [Nonempty α] (P : α → Bool) :
   rw [holEl_eq_getElem _ _ hx]
   exact (List.mem_filter.mp (List.getElem_mem hx)).2
 
-/-- Exact HOL local `PERM_SWAP` (`word_instProofScript.sml:34-51`). -/
+/-- Exact HOL local `PERM_SWAP` (`word_instProofScript.sml:34-47`). -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "PERM_SWAP"]
 theorem PERM_SWAP {α : Type} (A B C : List α) :
     holPerm (A ++ B ++ C) (B ++ (A ++ C)) := by
@@ -392,7 +395,7 @@ theorem word_exp_op_op {width : Nat} [NeZero width] {C : Type} {F : Type}
       rename_i wa wb
       rw [List.foldr_append, foldr_opFold_split op _ w, hf, List.foldr_cons]
 
-/-- Exact HOL local `pull_ops_ok` (`word_instProofScript.sml:176-191`); HOL's free
+/-- Exact HOL local `pull_ops_ok` (`word_instProofScript.sml:176-189`); HOL's free
     `op` and `s` are the outer binders. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "pull_ops_ok"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -574,13 +577,13 @@ theorem optimize_consts_ok {width : Nat} [NeZero width] {C : Type} {F : Type}
       rw [holPerm_iff] at hperm ⊢
       exact (hperm.trans List.perm_append_comm).symm
 
-/-! ## `pull_exp` correctness (`word_instProofScript.sml:272-318`) -/
+/-! ## `pull_exp` correctness (`word_instProofScript.sml:272-317`) -/
 
 /-- Unfold one `pull_exp` clause, discharging the earlier-clause exclusions. -/
 local macro "pull_exp_rw" : tactic =>
   `(tactic| (rw [pullExp]; all_goals (first | (intros; simp_all; done) | skip)))
 
-/-- Exact HOL local `pull_exp_ok` (`word_instProofScript.sml:272-318`), by
+/-- Exact HOL local `pull_exp_ok` (`word_instProofScript.sml:272-317`), by
     recursion on the expression as HOL's `pull_exp_ind`. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "pull_exp_ok"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -745,7 +748,7 @@ theorem pull_ops_every_var_exp {width : Nat} [NeZero width] (P : Nat → Bool) (
           · exact hother
       | _ => exact hother
 
-/-- Exact HOL local `pull_exp_every_var_exp` (`word_instProofScript.sml:348-361`);
+/-- Exact HOL local `pull_exp_every_var_exp` (`word_instProofScript.sml:348-360`);
     HOL's free `P` is the outer binder. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "pull_exp_every_var_exp"
   (words_as_type_indexed_bitvec)]
@@ -897,7 +900,7 @@ decreasing_by
     | (have := List.sizeOf_lt_of_mem ‹_ ∈ _›; simp_all; omega)
     | omega
 
-/-- Exact HOL `binary_branch_exp_def` (`word_instProofScript.sml:397-410`); HOL's
+/-- Exact HOL `binary_branch_exp_def` (`word_instProofScript.sml:397-409`); HOL's
     `EVERY` over the operands is `List.all`, attached for termination. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "binary_branch_exp_def"
   (words_as_type_indexed_bitvec)]
@@ -992,7 +995,7 @@ theorem flatten_exp_every_var_exp_sub {width : Nat} [NeZero width] (P : Nat → 
   obtain ⟨e, _, rfl⟩ := List.mem_map.mp hy
   exact ih e.1 e.2 (hl e.1 e.2)
 
-/-- Exact HOL local `flatten_exp_every_var_exp` (`word_instProofScript.sml:419-424`);
+/-- Exact HOL local `flatten_exp_every_var_exp` (`word_instProofScript.sml:419-425`);
     HOL's free `P` is the outer binder. -/
 @[hol "cakeml/compiler/backend/proofs/word_instProofScript.sml" "flatten_exp_every_var_exp"
   (words_as_type_indexed_bitvec)]

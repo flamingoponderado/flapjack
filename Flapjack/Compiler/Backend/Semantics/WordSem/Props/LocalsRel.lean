@@ -46,7 +46,7 @@ end WordSemLocalsRelSupport
     `locals_rel temp s t ⇔ ∀x. x < temp ⇒ lookup x s = lookup x t`. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_def"
   (words_as_type_indexed_bitvec)]
-def localsRel {width : Nat} [NeZero width] (temp : Nat) (s t : Spt (WordLocW width)) : Prop :=
+def wordLocalsRel {width : Nat} [NeZero width] (temp : Nat) (s t : Spt (WordLocW width)) : Prop :=
   ∀ x, x < temp → sptLookup x s = sptLookup x t
 
 namespace WordSemStateFiniteExact
@@ -77,7 +77,7 @@ theorem the_words_EVERY_IS_SOME {width : Nat} [NeZero width] :
 theorem locals_rel_get_var {width : Nat} [NeZero width] {C : Type} {F : Type}
     (r temp : Nat) (st : WordSemStateFiniteExact width C F) (x : WordLocW width)
     (loc : Spt (WordLocW width)) :
-    r < temp ∧ getVar r st = some x ∧ localsRel temp st.locals loc →
+    r < temp ∧ getVar r st = some x ∧ wordLocalsRel temp st.locals loc →
       getVar r { st with locals := loc } = some x := by
   rintro ⟨hr, hg, hl⟩
   simp only [getVar] at hg ⊢
@@ -89,7 +89,7 @@ theorem locals_rel_get_var {width : Nat} [NeZero width] {C : Type} {F : Type}
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem locals_rel_get_var_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (r temp : Nat) (st : WordSemStateFiniteExact width C F) (loc : Spt (WordLocW width)) :
-    r < temp ∧ localsRel temp st.locals loc →
+    r < temp ∧ wordLocalsRel temp st.locals loc →
       getVar r { st with locals := loc } = getVar r st := by
   rintro ⟨hr, hl⟩
   simp only [getVar]
@@ -102,7 +102,7 @@ theorem locals_rel_get_var_simp {width : Nat} [NeZero width] {C : Type} {F : Typ
 theorem locals_rel_get_vars {width : Nat} [NeZero width] {C : Type} {F : Type}
     (st : WordSemStateFiniteExact width C F) (temp : Nat) (loc : Spt (WordLocW width)) :
     ∀ (ls : List Nat) (vs : List (WordLocW width)),
-      getVars ls st = some vs ∧ (∀ x ∈ ls, x < temp) ∧ localsRel temp st.locals loc →
+      getVars ls st = some vs ∧ (∀ x ∈ ls, x < temp) ∧ wordLocalsRel temp st.locals loc →
         getVars ls { st with locals := loc } = some vs
   | [], vs, ⟨h, _, _⟩ => h
   | v :: ls, vs, ⟨h, hlt, hl⟩ => by
@@ -127,7 +127,7 @@ theorem locals_rel_get_vars {width : Nat} [NeZero width] {C : Type} {F : Type}
 theorem locals_rel_get_vars_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (l : List Nat) (temp : Nat) (st : WordSemStateFiniteExact width C F)
     (loc : Spt (WordLocW width)) :
-    (∀ x ∈ l, x < temp) ∧ localsRel temp st.locals loc →
+    (∀ x ∈ l, x < temp) ∧ wordLocalsRel temp st.locals loc →
       getVars l { st with locals := loc } = getVars l st := by
   rintro ⟨hlt, hl⟩
   induction l with
@@ -144,7 +144,7 @@ theorem locals_rel_get_var_imm {width : Nat} [NeZero width] {C : Type} {F : Type
     (temp : Nat) (r : WordRegImm (BitVec width)) (st : WordSemStateFiniteExact width C F)
     (x : WordLocW width) (loc : Spt (WordLocW width)) :
     everyVarImmHOL (fun x => decide (x < temp)) r = true ∧ getVarImm r st = some x ∧
-      localsRel temp st.locals loc →
+      wordLocalsRel temp st.locals loc →
       getVarImm r { st with locals := loc } = some x := by
   rintro ⟨he, hg, hl⟩
   cases r with
@@ -159,7 +159,7 @@ theorem locals_rel_get_var_imm {width : Nat} [NeZero width] {C : Type} {F : Type
 theorem locals_rel_get_var_imm_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (temp : Nat) (r : WordRegImm (BitVec width)) (st : WordSemStateFiniteExact width C F)
     (loc : Spt (WordLocW width)) :
-    everyVarImmHOL (fun x => decide (x < temp)) r = true ∧ localsRel temp st.locals loc →
+    everyVarImmHOL (fun x => decide (x < temp)) r = true ∧ wordLocalsRel temp st.locals loc →
       getVarImm r { st with locals := loc } = getVarImm r st := by
   rintro ⟨he, hl⟩
   cases r with
@@ -168,13 +168,13 @@ theorem locals_rel_get_var_imm_simp {width : Nat} [NeZero width] {C : Type} {F :
       exact locals_rel_get_var_simp n temp st loc ⟨he, hl⟩
   | imm w => rfl
 
-/-- Exact HOL local `locals_rel_set_var` (`wordPropsScript.sml:3523-3529`); HOL's
+/-- Exact HOL local `locals_rel_set_var` (`wordPropsScript.sml:3524-3530`); HOL's
     free `temp` and `v` are the outer binders. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_set_var"
   (words_as_type_indexed_bitvec)]
 theorem locals_rel_set_var {width : Nat} [NeZero width] (temp : Nat) (v : WordLocW width) :
     ∀ (n : Nat) (s t : Spt (WordLocW width)),
-      localsRel temp s t → localsRel temp (sptInsert n v s) (sptInsert n v t) := by
+      wordLocalsRel temp s t → wordLocalsRel temp (sptInsert n v s) (sptInsert n v t) := by
   intro n s t h x hx
   by_cases hxn : x = n
   · subst hxn; rw [sptLookup_sptInsert_same, sptLookup_sptInsert_same]
@@ -187,7 +187,7 @@ theorem locals_rel_set_var {width : Nat} [NeZero width] (temp : Nat) (v : WordLo
   (words_as_type_indexed_bitvec)]
 theorem locals_rel_delete {width : Nat} [NeZero width] (temp : Nat) :
     ∀ (n : Nat) (s t : Spt (WordLocW width)),
-      localsRel temp s t → localsRel temp (sptDelete n s) (sptDelete n t) := by
+      wordLocalsRel temp s t → wordLocalsRel temp (sptDelete n s) (sptDelete n t) := by
   intro n s t h x hx
   rw [sptLookup_sptDelete, sptLookup_sptDelete]
   split
@@ -200,8 +200,8 @@ theorem locals_rel_delete {width : Nat} [NeZero width] (temp : Nat) :
   (words_as_type_indexed_bitvec)]
 theorem locals_rel_alist_insert {width : Nat} [NeZero width] (temp : Nat) :
     ∀ (ls : List Nat) (vs : List (WordLocW width)) (s t : Spt (WordLocW width)),
-      localsRel temp s t ∧ (∀ x ∈ ls, x < temp) →
-        localsRel temp (LoopSemStateFiniteExact.sptAlistInsert ls vs s)
+      wordLocalsRel temp s t ∧ (∀ x ∈ ls, x < temp) →
+        wordLocalsRel temp (LoopSemStateFiniteExact.sptAlistInsert ls vs s)
           (LoopSemStateFiniteExact.sptAlistInsert ls vs t)
   | [], _, _, _, ⟨h, _⟩ => h
   | _ :: _, [], _, _, ⟨h, _⟩ => h
@@ -209,14 +209,15 @@ theorem locals_rel_alist_insert {width : Nat} [NeZero width] (temp : Nat) :
       locals_rel_set_var temp v l _ _
         (locals_rel_alist_insert temp ls vs s t ⟨h, fun x hx => hlt x (List.mem_cons_of_mem _ hx)⟩)
 
-/-- Exact HOL `locals_rel_word_exp_simp` (`wordPropsScript.sml:3497-3515`); HOL's
-    free `temp` and `loc` are the outer binders. -/
+/-- Exact HOL `locals_rel_word_exp_simp` (`wordPropsScript.sml:3502-3522`); HOL's
+    free `temp` and `loc` are the outer binders. HOL's `∀s exp w` also binds a
+    `w` that occurs nowhere in the statement; that vacuous binder is omitted. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_word_exp_simp"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem locals_rel_word_exp_simp {width : Nat} [NeZero width] {C : Type} {F : Type}
     (temp : Nat) (loc : Spt (WordLocW width)) :
     ∀ (s : WordSemStateFiniteExact width C F) (exp : WordLangExpHOL (BitVec width)),
-      everyVarExpHOL (fun x => decide (x < temp)) exp = true ∧ localsRel temp s.locals loc →
+      everyVarExpHOL (fun x => decide (x < temp)) exp = true ∧ wordLocalsRel temp s.locals loc →
         wordExp { s with locals := loc } exp = wordExp s exp
   | s, .const _, _ => by simp only [wordExp]
   | s, .var v, ⟨he, hl⟩ => by
@@ -249,7 +250,7 @@ decreasing_by
     | (have := List.sizeOf_lt_of_mem ‹_ ∈ _›; omega)
     | omega
 
-/-- Exact HOL `locals_rel_word_exp` (`wordPropsScript.sml:3472-3495`); HOL's free
+/-- Exact HOL `locals_rel_word_exp` (`wordPropsScript.sml:3472-3500`); HOL's free
     `temp` and `loc` are the outer binders. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_word_exp"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -258,7 +259,7 @@ theorem locals_rel_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type}
     ∀ (s : WordSemStateFiniteExact width C F) (exp : WordLangExpHOL (BitVec width))
       (w : WordLocW width),
       everyVarExpHOL (fun x => decide (x < temp)) exp = true ∧ wordExp s exp = some w ∧
-        localsRel temp s.locals loc →
+        wordLocalsRel temp s.locals loc →
         wordExp { s with locals := loc } exp = some w := by
   rintro s exp w ⟨he, hw, hl⟩
   rw [locals_rel_word_exp_simp temp loc s exp ⟨he, hl⟩]
@@ -267,7 +268,7 @@ theorem locals_rel_word_exp {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- One name set of `locals_rel_cut_envs` (Flapjack infrastructure; the HOL proof
     closes it with `lookup_inter`). -/
 theorem localsRel_cutNames {width : Nat} [NeZero width] {γ : Type} (temp : Nat)
-    (names : Spt γ) (loc loc' x : Spt (WordLocW width)) (hr : localsRel temp loc loc')
+    (names : Spt γ) (loc loc' x : Spt (WordLocW width)) (hr : wordLocalsRel temp loc loc')
     (hn : ∀ k, sptDomain names k → k < temp)
     (hc : wordSemCutNames names loc = some x) : wordSemCutNames names loc' = some x := by
   have hsub : LoopSemStateFiniteExact.sptSubsetLive names loc := by
@@ -293,14 +294,14 @@ theorem localsRel_cutNames {width : Nat} [NeZero width] {γ : Type} (temp : Nat)
       have hkd : sptDomain names k := by simp [sptDomain, hk]
       rw [hr k (hn k hkd)]
 
-/-- Exact HOL `locals_rel_cut_envs` (`wordPropsScript.sml:3540-3558`); HOL's free
+/-- Exact HOL `locals_rel_cut_envs` (`wordPropsScript.sml:3540-3559`); HOL's free
     variables are explicit binders. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_cut_envs"
   (words_as_type_indexed_bitvec)]
 theorem locals_rel_cut_envs {width : Nat} [NeZero width] (temp : Nat)
     (loc loc' : Spt (WordLocW width)) (names : WordLangCutsetsHOL)
     (x : Spt (WordLocW width) × Spt (WordLocW width)) :
-    localsRel temp loc loc' ∧ everyNameHOL (fun x => decide (x < temp)) names = true ∧
+    wordLocalsRel temp loc loc' ∧ everyNameHOL (fun x => decide (x < temp)) names = true ∧
       wordSemCutEnvs names loc = some x →
       wordSemCutEnvs names loc' = some x := by
   rintro ⟨hr, hn, hc⟩
@@ -320,13 +321,13 @@ theorem locals_rel_cut_envs {width : Nat} [NeZero width] (temp : Nat)
           rw [localsRel_cutNames temp _ _ _ _ hr hn1 h1, localsRel_cutNames temp _ _ _ _ hr hn2 h2]
           exact hc
 
-/-- Exact HOL `locals_rel_cut_env` (`wordPropsScript.sml:3560-3570`); HOL's free
+/-- Exact HOL `locals_rel_cut_env` (`wordPropsScript.sml:3561-3572`); HOL's free
     variables are explicit binders. -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_cut_env"
   (words_as_type_indexed_bitvec)]
 theorem locals_rel_cut_env {width : Nat} [NeZero width] (temp : Nat)
     (loc loc' : Spt (WordLocW width)) (names : WordLangCutsetsHOL) (x : Spt (WordLocW width)) :
-    localsRel temp loc loc' ∧ everyNameHOL (fun x => decide (x < temp)) names = true ∧
+    wordLocalsRel temp loc loc' ∧ everyNameHOL (fun x => decide (x < temp)) names = true ∧
       wordSemCutEnv names loc = some x →
       wordSemCutEnv names loc' = some x := by
   rintro ⟨hr, hn, hc⟩
@@ -424,9 +425,9 @@ variable {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- The result-dependent conclusion of HOL `locals_rel_evaluate_thm`. -/
 def LrPost (temp : Nat) :
     Option (WordSemResult width) → Spt (WordLocW width) → Spt (WordLocW width) → Prop
-  | none, l, l' => localsRel temp l l'
-  | some (.break _), l, l' => localsRel temp l l'
-  | some (.continue _), l, l' => localsRel temp l l'
+  | none, l, l' => wordLocalsRel temp l l'
+  | some (.break _), l, l' => wordLocalsRel temp l l'
+  | some (.continue _), l, l' => wordLocalsRel temp l l'
   | some _, l, l' => l = l'
 
 theorem lrPost_refl (temp : Nat) (res : Option (WordSemResult width)) (l : Spt (WordLocW width)) :
@@ -440,7 +441,7 @@ def LrGoal (temp : Nat) (p : WordLangProgHOL (BitVec width))
   ∀ (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F)
     (loc : Spt (WordLocW width)),
     evaluate p st = (res, rst) → res ≠ some .error →
-      everyVarHOL (fun x => decide (x < temp)) p = true → localsRel temp st.locals loc →
+      everyVarHOL (fun x => decide (x < temp)) p = true → wordLocalsRel temp st.locals loc →
       ∃ loc', evaluate p { st with locals := loc } = (res, { rst with locals := loc' }) ∧
         LrPost temp res rst.locals loc'
 
@@ -448,7 +449,7 @@ def LrGoal (temp : Nat) (p : WordLangProgHOL (BitVec width))
 theorem lrGoal_of_eq (temp : Nat) (p : WordLangProgHOL (BitVec width))
     (st : WordSemStateFiniteExact width C F)
     (h : ∀ loc, everyVarHOL (fun x => decide (x < temp)) p = true →
-      localsRel temp st.locals loc → evaluate p { st with locals := loc } = evaluate p st) :
+      wordLocalsRel temp st.locals loc → evaluate p { st with locals := loc } = evaluate p st) :
     LrGoal temp p st := by
   intro res rst loc he _ hv hl
   exact ⟨rst.locals, by rw [h loc hv hl, he], lrPost_refl temp res rst.locals⟩
@@ -1055,12 +1056,12 @@ theorem locals_rel_evaluate_thm {width : Nat} [NeZero width] {C : Type} {F : Typ
       (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F)
       (loc : Spt (WordLocW width)) (temp : Nat),
       evaluate prog st = (res, rst) ∧ res ≠ some .error ∧
-        everyVarHOL (fun x => decide (x < temp)) prog = true ∧ localsRel temp st.locals loc →
+        everyVarHOL (fun x => decide (x < temp)) prog = true ∧ wordLocalsRel temp st.locals loc →
       ∃ loc', evaluate prog { st with locals := loc } = (res, { rst with locals := loc' }) ∧
         match res with
-        | none => localsRel temp rst.locals loc'
-        | some (.break _) => localsRel temp rst.locals loc'
-        | some (.continue _) => localsRel temp rst.locals loc'
+        | none => wordLocalsRel temp rst.locals loc'
+        | some (.break _) => wordLocalsRel temp rst.locals loc'
+        | some (.continue _) => wordLocalsRel temp rst.locals loc'
         | some _ => rst.locals = loc' := by
   rintro prog st res rst loc temp ⟨he, herr, hv, hl⟩
   obtain ⟨loc', h1, h2⟩ := lr_aux temp prog st res rst loc he herr hv hl
