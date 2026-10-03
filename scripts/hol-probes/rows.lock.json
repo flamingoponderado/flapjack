@@ -4862,6 +4862,12 @@
       "sha256": "5ad064943706d8f62e4fc9d36731f55a742b991b32bacf1714d34c4c51f42ab4"
     },
     {
+      "bytes": 1183,
+      "out": "pan_structs_value_shape_conversion_probe.out",
+      "rows": 10,
+      "sha256": "3554ff69c11f86edb398d21eaf8541ce818d3386dc6d0b9df20ed6fd91258023"
+    },
+    {
       "bytes": 411,
       "out": "pan_structs_value_validity_probe.out",
       "rows": 15,
