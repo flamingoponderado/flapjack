@@ -6471,3 +6471,29 @@ bound or past-end default is introduced; the individual total-HD/EL hold stays
 unchanged. This contract is a prerequisite of still-open target initialization
 and compiler correctness, not their completion. Selector:
 `HOL_PROBE_ONLY=target_start_pc_ok_probeScript.sml`.
+`stack_rel_definition_probe.out` captures the complete original stack_rel equation, zero hypotheses and polymorphic type. Source frames, rest stack and bitmaps share alpha; the target handler has independent beta. Lean preserves both dimensions and all conjuncts, uses accepted total EL without a chosen default, and represents LASTN by drop(length-n). This proof-side relation is not an executed compiler change or whole pass theorem.
+`l3_machine_csr_codec_probe.out` captures all 14 original machine CSR rec/reg
+codec definitions and 490 observations over every single-bit basis vector,
+zero, all ones, alternating bits and mixed patterns. Independent calculations
+check both packed words and every decoded field, including discontiguous
+reserved-bit segments. Full CSR transitions and Run/Next remain open.
+`word_to_stack_state_rel_probe.out` captures the complete original state_rel equation, zero hypotheses and full polymorphic type. The Lean relation preserves all compiler/oracle/code-domain/stub/resource/stack/local conjuncts and the source num×config vs target config callback carriers. Canonical source/target map codec witnesses cover only named finite-map fields; sptrees remain native. This definition does not prove simulation or full compiler correctness.
+`stack_remove_comp_correct_full_probeScript.sml` replays the entire unchanged original StackRemove `comp_correct` proof (1481–2426), including its original evaluator induction and every constructor case. Its 28 original local helper proofs are replayed in source order; their free-variable form is preserved because the original RawCall branch specializes `find_code_lemma` before generalizing it. The original `write_fun2set2` proof transformation and local stub overload are retained. Two rows record the full closed statement and kernel proof success. Lean assembles the complete native pass theorem using the same clock-first evaluator measure, with exactly the original four premises and no supplied target execution or simulation. Downstream semantics/initialization and whole compiler correctness remain separate goals.
+
+`stack_evaluate_mono_probeScript.sml` replays the literal full original
+`evaluate_mono` proof (stackPropsScript.sml:442–452), checking its fully
+generalized statement and original proof success. Four independent original
+observations cover left-biased union at an overlapping and a fresh key, a bitmap
+prefix extension and a rejected truncation. Native kernel/runtime replays and
+five generic theorem consumers include Error, TimeOut and successful results,
+and preservation of a source code lookup. The theorem retains its sole source
+execution premise and both original conclusions. These captures are regression
+evidence, not cross-language equivalence or whole compiler correctness.
+`word_to_stack_initial_state_rel_probe.out` captures full init_state_ok equation/type and freshly replays the literal complete original init_state_ok_IMP_state_rel proof. Full statements have zero hypotheses/free variables. The Lean family preserves the two stub/code-entry/domain/full-contract premises and derives the complete native initial state relation at frame0/lens[]/extra0. Frame-map and stack arithmetic are proved internally; no post-relation or extra success premise is supplied. This is initialization relation correctness, not whole pass/semantics correctness.
+
+`l3_supervisor_csr_probe.out` captures all 15 complete original supervisor CSR
+codec/lift/lower definitions and 862 independently calculated observations:
+210 codec basis/mixed patterns, 512 VM/status/privilege combinations and 140
+interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
+reserved-bit framing and supervisor-only interrupt replacement are preserved.
+These regressions do not establish whole CSR transitions or Run/Next correctness.

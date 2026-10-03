@@ -1,0 +1,3 @@
+stack_rel_definition=∀k s_handler s_stack t_handler t_rest_of_stack t_stack_length t_bitmaps lens. stack_rel k s_handler s_stack t_handler t_rest_of_stack t_stack_length t_bitmaps lens ⇔ EVERY sorted_env s_stack ∧ ∃stack. abs_stack t_bitmaps s_stack t_rest_of_stack lens = SOME stack ∧ (s_handler < LENGTH s_stack ∧ is_handler_frame s_stack❲LENGTH s_stack − (s_handler + 1)❳ ⇒ t_handler = SOME (Word (n2w (t_stack_length − handler_val (LASTN (s_handler + 1) stack))))) ∧ stack_rel_aux k t_stack_length s_stack stack
+stack_rel_hypotheses=0
+stack_rel_type=:num -> num -> α stack_frame list -> β word_loc option -> α word_loc list -> num -> α word list -> num list -> bool

@@ -1,0 +1,6 @@
+mono_full_statement=∀c s r s1. evaluate (c,s) = (r,s1) ⇒ s.bitmaps ≼ s1.bitmaps ∧ subspt s.code s1.code
+mono_full_proved=T
+mono_union_overlap=SOME 11
+mono_union_fresh=SOME 33
+mono_prefix_append=T
+mono_prefix_truncate=F

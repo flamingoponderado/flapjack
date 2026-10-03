@@ -69202,6 +69202,143 @@
     "reviewer": "flapjack-sol3 complete original source10011 and fresh original fulltype0hyp comparison: all eleven outer/free binders a/line/pos/dm/t/ms/ffi_names/labs/i/machine_config/code retained, arbitrary positive native word width/host state/projection, constructor-exact native Line/Section/AsmState/MachineConfig, fixed word8 bytes/memory, MlString names, canonical Spt labels and HOL sets as predicates. words_as_type_indexed_bitvec records only standard dimension translation; nine original guard families retained in full, including code-byte size, optional MMIO success, equal name/entry lengths, all_enc_ok/enc_ok, every external-address program/shared/halt/cache exclusion plus actual search, actual excluded-domain byte memory, actual successful fetch and in-line byte bound. Whole exclusion from TAKE i actual entry PCs, with original address addition order. Kernel first-match membership lemmas derive bounded EL address equality from actual searches, memory implication/domain and fetched-successor/position-bound lemmas derive program-domain membership, and original external exclusion contradicts it. No desired target/exclusion, extra bound, no-duplicate or successful compiler premise. Every EL is under original take bound/search witness; unchanged default/choice definitions and individual hold. Fresh original seven complete instances discharge all source guards on actual two-instruction encoding, external prefix, memory domains and wrapped/shifted addresses, plus failed byte/fetch guard observations; native full generic and arbitrary underlying MachineConfig/AsmState fixtures with concrete wrapped/shifted PCs match. Unused source guard conjuncts remain stated. Source comparison/oracle evidence is not cross-language equivalence or full initializer/compiler/machine correctness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRel.lean",
+    "lean_name": "stackRel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 xza2: original846-859/full fresh equation/hyp0/type. Alpha source frames/rest/bitmaps coincide via abs_stack and stack_rel_aux; beta target handler INDEPENDENT, retained handlerWidth/own NeZero, not old narrowed one-width draft. Literal EVERY sorted_env via List.all Bool true, existential abs_stack SOME, original conjunction handler guard as equivalent curried implications, full stack_rel_aux. Accepted total holEl retains shared unspecified holArb without concrete default or extra index bound. Original LENGTH subtraction/index/n2w wrap retained; LASTN_DROP_UNCOND implements drop(length-n) including overlength. Accepted absStack and all three stackRelAux dimensions instantiated from actual fields; accepted sortedEnv adjacent strict keys/isHandlerFrame/handlerVal used unchanged. No added success/range/target-state premise. Individually source compared, no restored provisional tag inferred from old delivery. Positive word translation only; proof-side relation, no executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mip»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mcause»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mcause_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mie»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mtdeleg»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mtdeleg_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mstatus»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mimpid»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mimpid_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«reg'mcpuid»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'mcpuid_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mip»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mcause»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mcause_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mie»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mtdeleg»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mtdeleg_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mstatus»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mcpuid»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mcpuid_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MachineCSRCodec.lean",
+    "lean_name": "«rec'mimpid»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'mimpid_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete machine CSR codec section riscvScript590-782: all14 rec/reg equations retain every fixedword field, Boolean bit, reserved slice and concatenation order. Generic native records have no well-formedness premise. Two decoders absent from Run-only export are direct literal source ports. Original basis-bit/zero/ones/alternating/mixed-pattern observations independently derive each extracted field and packed word. This does not establish CSR transitions or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRel.lean",
+    "lean_name": "stateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .29.4: full original895-958/equation/hyp0/type freshly captured. Source state config num#beta, target beta, shared alpha words and gamma FFI preserved width/NeZero,C,F:Type. Every conjunct retained including repeated FFI equality, clock/GC/K I permute, flags/memory/domains/Handler-erased store/gc_fun_ok/termdep/be/Handler domain/fpreg/buffers. Compile lambda uses literal generic native compile_word_to_stack ac false k with Nil,bm0, original OPTION_MAP result and updated index/config; oracle lambda/prefix guards all n/full four EVERY conventions/stub exclusions/n=0bm count. Native spt domain insert union/order, all code-entry existential bs/i/bs2/i2/frame/prog compilation, bounds/prefix/lookup/defaultthe, both exact stubs, good_dimindex/8/2^width and buffer bounds, nonempty bitmap and totalHD4w, stack bound/frame conditional/nativewf/fullstackSizeRel, dropped current/rest stack/fullstackRel and EVEN/DIV/register-or-list local placement including trailing bound only in else. Nat modulo/propositional comparison/Option/list prefix translations compared. Map qualifier lists precisely both original fp-reg maps, both store maps and target regs traversed by relation; original locals/code/stack_size remain Spt, not fmap. Same-module witnesses name actual imported owners and genuine broad/finite roundtrips with no shadow carriers. GC callback inherits accepted canonical argument4/result3 translation. Full definition, no conjunction fragment/added success/range/targetrun or postrelation premise, no numerical FP semantics assertion and no executed compiler change."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization.lean",
     "lean_name": "makeInit",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
@@ -69209,6 +69346,185 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 complete source9549 and fresh exported definition/fulltype0hyp: all12 input arguments and independent generic compile configuration beta/target state/projection/FFI hosts retained, complete23-field literal native LabSem.State constructor. Native AsmState/MachineConfig/LabSem.State/WordLocW/Spt/Line/Section/Boolean domains match reviewed source carriers; positive word width, fixed word8 buffer and fixed word64 FP registers retained. Standard words_as_type_indexed_bitvec only. Total source registers wrapped in Word, same fp registers/memory/domains, pc/clock0/failedFalse, actual target endian, same FFI, four imported reviewed actual target register oracles, same code/compile/compiler oracle, all pointer/length fields, literal Option link-reg SOME n/NONE0 branch, empty code buffer with actual cbpos/cbspace. No substituted configuration/default/target eval/success premise and no hold policy change. Fresh original fullbody/type0hyp and23 generic source field equalities allT; native whole-state constructor and all23 generic field consumers preserve arbitrary C, S, Q, F. This original proof-script initializer constructs the state used by still-open151 initialization simulation, not an operational compiler algorithm; no executed compiler replacement or full initializer/machine/end-to-end closure is inferred. Source comparison/regression is not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect.lean",
+    "lean_name": "compCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-pxn.18.5.15.6.8): complete original StackRemove comp_correct1481–1493, not an assumed simulation or constructor slice. Arbitrary original program/source/result/postsource/target/register bound/word offset pair/jump parameters, exactly source evaluate equality/non-Error/full stateRelHOL/regBound premises; existential extra clock and actual compiled evaluate same result with full Halt/TimeOut/FinalFFI FFI equality versus full postrelation otherwise. Original evaluate_ind is realized through the exact evaluator clock-first lexicographic measure; all 34 constructors use reviewed native case proofs. Seq second, Loop reentry and Call continuations obtain actual source clock bounds through unconditional fixClockEvaluate; structural subterms and guarded callee decrements discharge every induction measure. No supplied target run, desired postrelation, simulation, compiler success, alias restriction, width restriction or recursion premise survives in the theorem. Canonical imported state regs/fpRegs/store relation-map translation has non-vacuous broad/exact codec; code remains Spt; positive type-indexed BitVec and Type FFI carriers match original word/universe translation. Inherits reviewed reals_as_rational_cuts through native evaluator FP closure (SOUNDNESS item8), explicitly retained. Full unchanged original comp_correct proof and original local helper proofs replayed for the entire theorem; kernel native proof uses standard Lean axioms only. This pass theorem does not claim downstream compile_semantics, executable-path replacement or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateMono.lean",
+    "lean_name": "evaluateMono",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full original source/type comparison2026-10-03 stackProps442-452: all arbitrary program/source/post/result binders retained, sole actual source evaluation premise implies BOTH original bitmap isPREFIX and code subspt. No nonError/success/preservedlookup/postcode/desired target run premise. Source uses evaluate_code_bitmaps and subspt_FOLDL_union; actual full native whole theorem ordinary-consumed from checked peer48bb07622 via verified merge400a55396, all3count/oracle/code/bitmap conclusions preserved, count not assumed. List.IsPrefix is ordinary HOL list prefix translation, code actual Spt with native sptSubspt and left-biased sptUnion fold, every preexisting lookup retained regardless result. Actual canonical state regs/fpRegs/store with local genuine imported codec roundtrip, arbitrary positive word width/independent compile and FFI Type0 carriers. Fresh literal full original evaluate_mono proof/0hyp/fullstatement plus4 independent union collision/fresh key/prefix append/truncate observations, kernel/runtime replay and five generic consumers including Error/TimeOut/NONE and successful code lookup consequence. Native evaluator closure inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP agreement, default/HOLD/production change or full RawCall/compiler completion. Actual rawcall original404 prerequisite; acceptance metadata edges preserved."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InitializationStateRel.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initStateOk",
+    "hol_name": "init_state_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "store"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .28.2: complete original10373-10396/full equation/hyp0/type freshly captured. Full k>4/good_dimindex/width>=8, use_stack/store/alloc/gc_fun_ok, stack-space/register0Loc1, bitmap+1/dimword/prefix[4w]/stack-length/drop[Word0]/Handler-domain/data-buffer bounds, complete native compile_oracle lambda and EVERY postalloc/flat/stub exclusions/n0bm-count all preserved. Source oracle Nat×C/targetC and sharedpositiveword/FFI carriers compared. Native compile_word_to_stack ac false k Nil,bm0 and append projection unchanged. Canonical imported target state regs/store map translations have same-module genuine codec roundtrip; tree code remains Spt. No added range/runtime/alignment/run hypothesis. Inherits accepted gc_fun_ok canonical function translation; no numeric FP semantics assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InitializationStateRel.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initStateOkImpliesStateRel",
+    "hol_name": "init_state_ok_IMP_state_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .28.2: complete original10429-10466 literal proof replay kernel T/no hypotheses/free variables. Full ac/k/t/code/coracle and original premise conjunction: both native stub lookups, all source code entry allocation/flat conventions plus compile_prog/prefix/bound/targetcode existential witnesses, exact target domain union and full init_state_ok. Conclusion exact full stateRel ac k0 0 native makeInit t[]0, not fragment/postrelation assumption/extra compiler-success or target evaluation. Frame size agreement derived internally by projection of literal compile_prog definition; accepted total lookup_mapi gives actual initial frame map lookup. Bitmap nonempty/HD derive from original prefix, stack arithmetic from original drop singleton; all locals/stack/GC/compile/oracle/memory/code/bounds conjuncts proved. Source config Nat×C,targetC, sharedwidth/NeZero/universe0FFI; code remains native Spt. Named source fpRegs/store +targetregs/fpRegs/store use actual imported canonical owners, same-module genuine codecs, no shadow or vacuous witness. An explicit conclusion type ascription only names the original makeInit result owner; no type restriction. Proof-side full initialization relation theorem, not simulation/end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "«rec'sip»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lift_mip_sip",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mip_sip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "«reg'sip»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "«rec'sie»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lift_mie_sie",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mie_sie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "«reg'sie»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "«rec'sstatus»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "rec'sstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "extStatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "extStatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lift_mstatus_sstatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lift_mstatus_sstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "«reg'sstatus»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "reg'sstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "isValidVM",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "isValidVM_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "update_mstatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "update_mstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lower_sip_mip",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sip_mip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lower_sie_mie",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sie_mie_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SupervisorCSR.lean",
+    "lean_name": "lower_sstatus_mstatus",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "lower_sstatus_mstatus_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison of complete supervisor CSR codec/lift/lower section: all15 full literal equations, fixedword fields and reserved slices; generic records without validity premises. Original dirty MFS/MXS summary, MPRV1 non-User supervisor projection, 0/1/2/8/9/10/11/12 VM whitelist, rejected VM retention, old reserved fields, and only SSIP/STIP or SSIE/STIE updates preserved. Original probes and independent masks/field arithmetic supplement source comparison; full CSR transitions/Run/Next/compiler correctness remain open."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitializationContracts.lean",
