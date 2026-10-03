@@ -28,7 +28,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 HOL stackLang's const_inst overload is literal Inst(Const register word).
 No target run, output relation or successful-instruction premise is supplied.
 Canonical map and positive word carriers are explicitly qualified.
-Fleet acceptance is tracked separately on the open bead. -/
+-/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_const_inst"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs, WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
@@ -53,7 +53,7 @@ theorem evaluateConstInst {width : Nat} [NeZero width] {C F : Type}
 /-- Full original unconditional clock equation (6758–6765), retaining the
 whole result and post-state for every initial state, register, word and clock.
 Canonical map and positive word carriers are explicitly qualified.
-Fleet acceptance is tracked separately on the open bead. -/
+-/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_const_inst_clock"
   (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs, StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]

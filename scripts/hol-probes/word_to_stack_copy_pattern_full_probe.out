@@ -1,0 +1,3 @@
+pattern_full=⊢ ∀words xs a off ys dm m. LENGTH words < dimindex (:α) ∧ const_addresses a words dm ⇒ copy_words_for_pattern (chunk_to_bits words) (LENGTH xs) a off (xs ++ MAP SND words ++ ys) dm m = SOME (LENGTH xs + LENGTH words,a + bytes_in_word * n2w (LENGTH words),const_writes a off words m)
+pattern_hypotheses=0
+pattern_proved=T
