@@ -3592,4 +3592,300 @@ theorem handlerBodyExceptionResourceResult {width : Nat} [NeZero width] {C F : T
   · cases maximum : sourcePost.stackMax <;>
       simpa only [maximum,miscThe,Option.getD_none,Option.getD_some] using finalResource
 
+/-- Recover the actual source caller after exception unwinding. The callee
+stack-swap invariant selects the newly pushed SOME frame and restores its size,
+handler and non-GC entries, preserving GC and tail keys. No unwound frame or
+postrelation is assumed. Flapjack source obligations for the original handler
+exception case, not a standalone HOL declaration or the full case theorem. -/
+theorem exceptionalHandlerCallerFrame {width : Nat} [NeZero width] {C F : Type}
+    (prog : WordLangProgHOL (BitVec width))
+    (source bodyPost : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (args1 : List (WordLocW width)) (ss : Option Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (location value : WordLocW width)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value),bodyPost)) :
+    ∃ gc : List (Nat × WordLocW width),
+      bodyPost.localsSize = source.localsSize ∧
+      ((wordSemEnvToList envs.2 source.permute).1).map Prod.fst = gc.map Prod.fst ∧
+      bodyPost.locals = sptUnion (sptFromAList gc) (sptFromAList (sptToAList envs.1)) ∧
+      WordSemStackEq.sKeyEq bodyPost.stack source.stack ∧ bodyPost.handler = source.handler := by
+  have invariant := WordSemStackEq.evaluateStackSwap prog
+    (WordSemStateFiniteExact.callEnv args1 ss
+      (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+        (WordSemStateFiniteExact.decClock source)))
+  unfold WordSemStackEq.stackSwapPost at invariant
+  rw [bodyRun] at invariant
+  simp only [WordSemStateFiniteExact.callEnv,WordSemStateFiniteExact.pushEnv,
+    WordSemStateFiniteExact.decClock] at invariant
+  have last : wordSemLastN (source.stack.length+1)
+      (.stackFrame source.localsSize (sptToAList envs.1)
+        (wordSemEnvToList envs.2 source.permute).1 (some (source.handler,h1,h2)) :: source.stack) =
+      (.stackFrame source.localsSize (sptToAList envs.1)
+        (wordSemEnvToList envs.2 source.permute).1 (some (source.handler,h1,h2)) :: source.stack) := by
+    have whole (frames : List (WordSemStackFrame width)) : wordSemLastN frames.length frames = frames := by
+      rw [wordSemLastN,← (show frames.reverse.length = frames.length from List.length_reverse),
+        List.take_length,List.reverse_reverse]
+    simpa only [List.length_cons,Nat.add_comm] using whole
+      (.stackFrame source.localsSize (sptToAList envs.1)
+        (wordSemEnvToList envs.2 source.permute).1 (some (source.handler,h1,h2)) :: source.stack)
+  rw [last] at invariant
+  obtain ⟨_,nonGc,gc,handler,tail,size,restored,frameEq,sizeEq,keys,tailKeys,handlerEq,_⟩ := invariant
+  simp only [List.cons.injEq,WordSemStackFrame.stackFrame.injEq,Option.some.injEq] at frameEq
+  obtain ⟨⟨rfl,rfl,rfl,rfl⟩,rfl⟩ := frameEq
+  exact ⟨restored,sizeEq.symm,keys.1,keys.2,tailKeys,handlerEq⟩
+
+/-- Construct the full caller relation after exception unwinding from the
+original exception IH's dummy NONE frame, local union and return register.
+Original caller conventions, cut and exception domain guard derive physical
+keys and the handler register. Resources and the frame/tail relation come from
+the callee IH, with no target execution or restored relation premise. The
+explicit union/relation/register inputs are the original matching exception
+IH conjuncts, not extra induction hypotheses. Flapjack full-relation factoring
+for the still-unassembled returning-handler case. -/
+theorem restoreExceptionalHandlerCallerStateRel {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k frame payload : Nat)
+    (source bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (originalTarget target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (prior : stateRel ac k frame payload source originalTarget lens 0)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (cut : wordSemCutEnvs names source.locals = some envs)
+    (nonempty : ¬ sptDomainEmpty names.1)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) < 2*payload+2*k)
+    (nonGc gc : List (Nat × WordLocW width)) (value : WordLocW width)
+    (calleeRelated : stateRel ac k 0 0 (pushLocals nonGc gc bodyPost) target (payload::lens) 0)
+    (locals : bodyPost.locals = sptUnion (sptFromAList gc) (sptFromAList nonGc))
+    (domain : sptDomainEqUnion bodyPost.locals envs.1 envs.2)
+    (returned : target.regs.lookup 1 = some value) :
+    stateRel ac k frame payload (WordSemStateFiniteExact.setVar handlerVar value bodyPost)
+      target lens 0 := by
+  have positive := handlerCallerPayloadPositive k payload values names retCode handlerCode
+    l1 l2 h1 h2 handlerVar dest args nonempty conventions maximum
+  have frameShape : if payload = 0 then frame = 0 else frame = payload+1 :=
+    prior.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have payloadNonzero : payload ≠ 0 := by omega
+  have frameEq : frame = payload+1 := by simpa only [if_neg payloadNonzero] using frameShape
+  have handlerEq : handlerVar = 2 := by
+    simp only [postAllocConventionsHOL,everyVarHOL,everyStackVarHOL,
+      callArgConventionHOL,Bool.and_eq_true,beq_iff_eq] at conventions
+    aesop (config := { enableSimp := false })
+  have kBound : 4 < k := prior.2.2.2.2.2.2.2.2.2.1
+  have relation : stackRel k bodyPost.handler
+      (.stackFrame bodyPost.localsSize nonGc gc none :: bodyPost.stack)
+      (target.store.lookup .handler) (target.stack.drop target.stackSpace)
+      target.stack.length target.bitmaps (payload::lens) := by
+    simpa only [pushLocals,Nat.add_zero,List.drop_zero] using
+      calleeRelated.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have resource : stackSizeRel 0 (some 0) bodyPost.stackLimit bodyPost.stackMax
+      (.stackFrame bodyPost.localsSize nonGc gc none :: bodyPost.stack)
+      target.stack target.stackSpace 0 :=
+    calleeRelated.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have room := CallReturnSupport.stackRelConsLenNone k bodyPost.handler bodyPost.localsSize
+    nonGc gc bodyPost.stack (target.store.lookup .handler) (target.stack.drop target.stackSpace)
+    target.stack.length target.bitmaps payload lens relation
+  rw [List.length_drop] at room
+  have callerResource := CallReturning.callerStackSizeAfterPop k bodyPost.handler bodyPost.localsSize
+    nonGc gc bodyPost.stack (target.store.lookup .handler) target.stack target.bitmaps payload lens
+    target.stackSpace 0 (some 0) bodyPost.stackLimit bodyPost.stackMax
+    (by simpa only [Nat.add_zero] using relation) resource
+  have tailRelation := CallReturnSupport.stackRelDropNone k bodyPost.handler bodyPost.localsSize
+    nonGc gc bodyPost.stack (target.store.lookup .handler) (target.stack.drop target.stackSpace)
+    target.stack.length target.bitmaps payload lens relation
+  have physical := handlerPoppedLocalsEven ac k frame payload source originalTarget lens prior
+    names envs bodyPost.locals cut domain
+  have wf : sptWf (sptInsert handlerVar value bodyPost.locals) = true := by
+    rw [locals]
+    exact sptWfInsert handlerVar value _
+      (sptWfUnion _ _ ⟨sptWfFromAList gc,sptWfFromAList nonGc⟩)
+  have update := CallReturning.callerStateRelUpdates ac k 0 0 (pushLocals nonGc gc bodyPost)
+    target (payload::lens) 0 (sptInsert handlerVar value bodyPost.locals) bodyPost.stack
+    bodyPost.localsSize bodyPost.handler target.stack target.regs target.stackSpace frame payload
+    lens 0 calleeRelated rfl
+  apply (show stateRel ac k frame payload
+      (WordSemStateFiniteExact.setVar handlerVar value bodyPost) target lens 0 ↔ _ by
+    simpa only [pushLocals,WordSemStateFiniteExact.setVar] using update).mpr
+  refine ⟨by omega,frameShape,wf,?_,?_,?_⟩
+  · simpa only [pushLocals,frameEq,Nat.add_zero] using callerResource
+  · simpa only [frameEq,Nat.add_zero] using tailRelation
+  · intro key item found
+    by_cases same : key = handlerVar
+    · subst key
+      rw [sptLookup_sptInsert_same] at found
+      have equal := Option.some.inj found
+      subst item
+      simp only [handlerEq]
+      refine ⟨by decide,?_⟩
+      rw [if_pos (by omega)]
+      exact returned
+    · rw [sptLookup_sptInsert_ne _ _ _ _ same] at found
+      have slot := CallReturning.poppedCallerSlot k bodyPost.handler bodyPost.localsSize
+        nonGc gc bodyPost.stack (target.store.lookup .handler) (target.stack.drop target.stackSpace)
+        target.stack.length target.bitmaps payload lens relation key item (by rwa [← locals])
+      refine ⟨physical key item found,?_⟩
+      rw [if_neg (by omega)]
+      simpa only [frameEq,Nat.add_sub_cancel,Nat.add_zero] using ⟨slot.2.2,slot.2.1⟩
+
+/-- Consume the actual source exception and full original matching body IH
+ to construct the handler-entry caller relation and restored source handler.
+ Whole Call guards derive the real exception domain; the original stack length
+ derives the IH lens selection. No target run, saved frame, physical keys or
+ final caller relation are assumed. Flapjack case assembly, not the full Call. -/
+theorem restoreHandlerCallerFromBodyException {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k frame payload : Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (originalTarget target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (prior : stateRel ac k frame payload source originalTarget lens 0)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) < 2*payload+2*k)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source)
+    (nonzero : source.clock ≠ 0) (result : Option (WordSemResult width))
+    (wholeRun : WordSemStateFiniteExact.evaluate
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) source = (result,sourcePost))
+    (notError : result ≠ some .error)
+    (location value : WordLocW width)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value),bodyPost))
+    (calleeSize calleeFrame : Nat)
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) bodyPost target
+      (some (.exception location value)) (some (.exception location)) (payload::lens)) :
+    stateRel ac k frame payload (WordSemStateFiniteExact.setVar handlerVar value bodyPost)
+      target lens 0 ∧ bodyPost.handler = source.handler := by
+  have nonempty : ¬ sptDomainEmpty names.1 := by
+    intro empty
+    exact guards.2.2.2.1 (Or.inl empty)
+  obtain ⟨valid,domain,sourceContinuation,continuationIH⟩ := sourceHandlerExceptionContinuation
+    ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source sourcePost bodyPost
+    result xs args1 prog ss envs location value guards ih nonzero wholeRun notError bodyRun
+  have length := CallReturnSupport.stateRelImpLength ac k frame payload source originalTarget lens 0 prior
+  simp only [compCorrectResult,compileResult,Option.map_some,ne_eq,not_true_eq_false,
+    ↓reduceIte] at bodyConclusion
+  obtain ⟨nonGc,gc,related,locals,returned⟩ := bodyConclusion
+  have relatedFull : stateRel ac k 0 0 (pushLocals nonGc gc bodyPost) target (payload::lens) 0 := by
+    have lensEq : (payload::lens).drop ((payload::lens).length -
+        ((WordSemStateFiniteExact.callEnv args1 ss
+          (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+            (WordSemStateFiniteExact.decClock source))).handler+1)) = payload::lens := by
+      simp only [WordSemStateFiniteExact.callEnv,WordSemStateFiniteExact.pushEnv,
+        WordSemStateFiniteExact.decClock,List.length_cons,length,Nat.sub_self,List.drop_zero]
+    rwa [lensEq] at related
+  have restored := restoreExceptionalHandlerCallerStateRel ac k frame payload source bodyPost
+    originalTarget target lens prior values names retCode handlerCode l1 l2 h1 h2 handlerVar dest args
+    envs guards.2.2.2.2 nonempty conventions maximum nonGc gc value relatedFull locals domain returned
+  obtain ⟨originalGc,sizeEq,gcKeys,sourceLocals,tailKeys,handlerEq⟩ := exceptionalHandlerCallerFrame
+    prog source bodyPost envs args1 ss handlerVar h1 h2 handlerCode location value bodyRun
+  exact ⟨restored,handlerEq⟩
+
+/-- Instantiate the original guarded handler IH after the actual matching
+callee exception. The full caller relation and original source handler are
+constructed from the actual source Call and body IH; handler conventions,
+flatness and maximum follow from the original whole programme guards. Target
+handler execution and its full caller result are derived, not assumptions.
+The explicit compiler/bitmap/label guards are the original handler IH context,
+still to be transported through the whole prelude and body in full assembly.
+Flapjack exception-branch assembly, not the complete Call correctness port. -/
+theorem simulateHandlerExceptionContinuation {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k frame payload : Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (originalTarget target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (prior : stateRel ac k frame payload source originalTarget lens 0)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) = true)
+    (flat : flatExpConventions
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) < 2*payload+2*k)
+    (nonzero : source.clock ≠ 0) (result : Option (WordSemResult width))
+    (wholeRun : WordSemStateFiniteExact.evaluate
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) source = (result,sourcePost))
+    (notError : result ≠ some .error)
+    (location value : WordLocW width)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) =
+      (some (.exception location value),bodyPost))
+    (calleeSize calleeFrame : Nat)
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          (WordSemStateFiniteExact.decClock source))) bodyPost target
+      (some (.exception location value)) (some (.exception location)) (payload::lens))
+    (bs bsPost : AppList (BitVec width)) (n nPost : Nat) (compiled : HolProg width)
+    (compilation : compNative ac false handlerCode (bs,n) (k,frame,payload) = (compiled,(bsPost,nPost)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n-(appListAppend bs).length ≤ target.bitmaps.length)
+    (bitmapPrefix : (appListAppend bsPost).IsPrefix (target.bitmaps.drop (n-(appListAppend bs).length)))
+    (labels : ∀ loc, StackSem.getLabelsExact compiled loc → StackSem.locCheckExact target.code loc) :
+    ∃ extraClock targetPost targetResult,
+      StackSemEvaluate.evaluate
+        (compiled,
+          {target with clock := target.clock+extraClock}) = (targetResult,targetPost) ∧
+      compCorrectResult ac k frame payload source sourcePost targetPost result targetResult lens := by
+  obtain ⟨valid,domain,sourceContinuation,continuationIH⟩ := sourceHandlerExceptionContinuation
+    ac values names retCode l1 l2 dest args handlerVar h1 h2 handlerCode source sourcePost bodyPost
+    result xs args1 prog ss envs location value guards ih nonzero wholeRun notError bodyRun
+  obtain ⟨restoredRelation,handlerEq⟩ := restoreHandlerCallerFromBodyException ac k frame payload
+    source sourcePost bodyPost originalTarget target lens prior values names retCode handlerCode
+    l1 l2 h1 h2 handlerVar dest args conventions maximum xs args1 prog ss envs guards ih nonzero
+    result wholeRun notError location value bodyRun calleeSize calleeFrame bodyConclusion
+  have handlerConventions : postAllocConventionsHOL k handlerCode = true := by
+    simp only [postAllocConventionsHOL,everyVarHOL,everyStackVarHOL,
+      callArgConventionHOL,Bool.and_eq_true] at conventions ⊢
+    aesop (config := { enableSimp := false })
+  have handlerFlat : flatExpConventions handlerCode = true := by
+    simp only [flatExpConventions,Bool.and_eq_true] at flat
+    exact flat.2
+  have handlerMax : maxVarHOL handlerCode < 2*payload+2*k := by
+    simp only [maxVarHOL,Flapjack.WordAlloc.max3Eq] at maximum
+    omega
+  obtain ⟨extraClock,targetPost,targetResult,continuationRun,conclusion⟩ :=
+    continuationIH k frame payload sourcePost target result bs bsPost n nPost compiled lens
+      ⟨sourceContinuation,notError,restoredRelation,handlerConventions,handlerFlat,compilation,
+        lengthBound,bitmapBound,bitmapPrefix,labels,handlerMax⟩
+  refine ⟨extraClock,targetPost,targetResult,continuationRun,?_⟩
+  unfold compCorrectResult at conclusion ⊢
+  change bodyPost.handler = source.handler at handlerEq
+  simp only [WordSemStateFiniteExact.setVar,handlerEq] at conclusion
+  exact conclusion
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
