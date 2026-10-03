@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.StackToLab.Native
 import Mathlib.Tactic.SplitIfs
 import Mathlib.Tactic.Tauto
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
+import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 
 /-! Code-installation lemmas of `stack_to_labProofScript.sml` (lines 102-600):
 `code_installed`, `code_installed'`, `labs_correct` and the `asm_fetch_aux` /
@@ -767,5 +768,78 @@ theorem codeInstalledProgToSection {width : Nat} [NeZero width] :
   simp only at correct
   rw [entry] at correct
   exact labsCorrectAppend _ _ _ pc correct
+
+private theorem appAppend {α : Type} (a b : AppList α) :
+    appListAppend (.append a b) = appListAppend a ++ appListAppend b :=
+  (appListAppend_thm a b []).1
+
+private theorem appList {α : Type} (l : List α) : appListAppend (.list l) = l :=
+  (appListAppend_thm .nil .nil l).2.1
+
+private theorem skipNoLabels {width : Nat} [NeZero width] (p : HolProg width)
+    (l : Nat × Nat) : stackIsSkip p = true → ¬ StackSem.getLabelsExact p l := by
+  cases p <;> simp [stackIsSkip, StackSem.getLabelsExact]
+
+set_option linter.unusedSimpArgs false in
+/-- Every StackSem label of a program is a label line of its flattening. -/
+private theorem flattenLabelsMem {width : Nat} [NeZero width] (l1 l2 sectionId : Nat) :
+    ∀ (tail : Bool) (e : HolProg width) (next : Nat) (conts breaks : List Nat),
+      StackSem.getLabelsExact e (l1, l2) →
+      ∃ x, Line.label l1 l2 x ∈
+        appListAppend (flattenHOL tail e sectionId next conts breaks).1 := by
+  intro tail e next conts breaks
+  induction tail, e, next, conts, breaks using flattenHOL.induct sectionId <;> intro h
+  all_goals (try (simp [StackSem.getLabelsExact] at h; done))
+  case case26 =>
+    exfalso
+    rw [StackSem.getLabelsExact] at h
+    all_goals first | exact h | assumption | skip
+    intro r t hd e
+    subst e
+    rcases r with _ | ⟨_, _, _, _⟩ <;> rcases hd with _ | ⟨_, _, _⟩ <;> solve_by_elim
+  all_goals
+    rw [flattenHOL]
+    simp (config := { zetaDelta := true }) only [*, appAppend, appList] at *
+    simp only [StackSem.getLabelsExact] at h
+  all_goals
+    repeat' obtain h | h := h
+    all_goals (try split_ifs) <;> first
+      | contradiction
+      | (exfalso; refine skipNoLabels _ _ ?_ h; simp only [Bool.and_eq_true] at *; tauto)
+      | (simp only [h, forall_const] at *
+         obtain ⟨x, hx⟩ := ‹∃ x, Line.label l1 l2 x ∈ _›
+         exact ⟨x, by simp [appAppend, appList, hx]⟩)
+      | exact ⟨0, by simp [appAppend, appList]⟩
+
+private theorem codeInstalledLabelMem {width : Nat} [NeZero width] (l1 l2 x : Nat)
+    (code : LabProgHOL width) :
+    ∀ (lines : List (LabLineHOL width)) (pc : Nat), codeInstalled pc lines code →
+      Line.label l1 l2 x ∈ lines → ∃ v, locToPc l1 l2 code = some v := by
+  intro lines
+  induction lines with
+  | nil => simp
+  | cons line rest ih =>
+      intro pc installed mem
+      rw [codeInstalled_cons] at installed
+      rcases List.mem_cons.mp mem with rfl | mem
+      · simp only [isLabelHOL, if_true] at installed
+        exact ⟨pc, installed.1⟩
+      · split_ifs at installed
+        · exact ih pc installed.2 mem
+        · exact ih (pc + 1) installed.2 mem
+
+/-- Every StackSem label of an installed flattened program resolves to a
+position of the installed LabLang code. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
+  "code_installed_get_labels_IMP" (words_as_type_indexed_bitvec)]
+theorem codeInstalledGetLabelsImp {width : Nat} [NeZero width]
+    {c : LabProgHOL width} {l1 l2 : Nat} :
+    ∀ (top : Bool) (e : HolProg width) (n q : Nat) (cs bs : List Nat) (pc : Nat),
+      codeInstalled pc (appListAppend (flattenHOL top e n q cs bs).1) c ∧
+        StackSem.getLabelsExact e (l1, l2) →
+      ∃ v, locToPc l1 l2 c = some v := by
+  rintro top e n q cs bs pc ⟨installed, member⟩
+  obtain ⟨x, mem⟩ := flattenLabelsMem l1 l2 n top e q cs bs member
+  exact codeInstalledLabelMem l1 l2 x c _ pc installed mem
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
