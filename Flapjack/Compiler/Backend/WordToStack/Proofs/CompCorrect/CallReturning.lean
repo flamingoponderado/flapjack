@@ -2397,4 +2397,120 @@ theorem callerStateRelUpdates {width : Nat} [NeZero width] {C F : Type}
     obtain ⟨⟨bm, cfg⟩, progs⟩ := call
     exact oracle.2.2.2.2 zero
 
+/-- Restore the original stack-size relation after popping a saved NONE
+caller frame and freeing the return payload. The full saved stack relation
+derives the Option-sized caller-frame identity. The callee resource relation
+then supplies the actual source stack sum, including its unknown/known maximum
+cases. No target run, new resource relation or frame-size identity is assumed.
+This is case-local infrastructure for normal-return comp_correct restoration. -/
+theorem callerStackSizeAfterPop {width handlerWidth : Nat}
+    [NeZero width] [NeZero handlerWidth]
+    (k handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (targetHandler : Option (WordLocW handlerWidth)) (stack : List (WordLocW width))
+    (bitmaps : List (BitVec width)) (frame : Nat) (lens : List Nat)
+    (space count : Nat) (calleeLocalsSize : Option Nat) (limit : Nat) (maximum : Option Nat)
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      targetHandler (stack.drop (space + count)) stack.length bitmaps (frame :: lens))
+    (resource : stackSizeRel 0 calleeLocalsSize limit maximum
+      (.stackFrame size nonGC gc none :: tail) stack space count) :
+    stackSizeRel (frame + 1) size limit maximum tail stack (space + count) 0 := by
+  have sizeIdentity := CallReturnSupport.stackRelConsLocalsSize k handler size nonGC gc none tail
+    targetHandler (stack.drop (space + count)) stack.length bitmaps frame lens relation
+  obtain ⟨_, limitEq, resourceMaximum⟩ := resource
+  refine ⟨fun _ => sizeIdentity, limitEq, ?_⟩
+  intro knownMaximum known
+  obtain ⟨maximumBound, _, total, stackSum, totalEq⟩ := resourceMaximum knownMaximum known
+  change wordSemOptionAdd size (wordSemStackSize tail) = some total at stackSum
+  cases size with
+  | none => simp only [wordSemOptionAdd] at stackSum; contradiction
+  | some callerSize =>
+    simp only [Option.getD_some] at sizeIdentity
+    rw [sizeIdentity] at stackSum
+    cases tailSize : wordSemStackSize tail with
+    | none => simp only [tailSize, wordSemOptionAdd] at stackSum; contradiction
+    | some tailCount =>
+      simp only [tailSize, wordSemOptionAdd, Option.some.injEq] at stackSum
+      exact ⟨by omega, rfl, tailCount, rfl, by omega⟩
+
+/-- Execute return-copy/free and derive its restored caller stack-size
+relation from the original callee and saved-frame relations. The new stack
+length and space are outputs of the actual wrapper execution, not hypotheses.
+This case-local assembly is not a separate HOL port or the full caller stateRel. -/
+theorem copyReturnRestoresStackSize {width : Nat} [NeZero width] {C F : Type}
+    (k frame handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (values : List Nat) (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (calleeLocalsSize : Option Nat) (limit : Nat) (maximum : Option Nat)
+    (useStack : target.useStack = true)
+    (bound : frame + 1 ≤ target.stack.length -
+      (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      (target.store.lookup .handler)
+      (target.stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+      target.stack.length target.bitmaps (frame :: lens))
+    (resource : stackSizeRel 0 calleeLocalsSize limit maximum
+      (.stackFrame size nonGC gc none :: tail) target.stack target.stackSpace
+      (Compiler.Backend.WordToStack.numStackRet k values)) :
+    ∃ restored, StackSemEvaluate.evaluate
+      (copyRetNative false false (k, frame + 1, frame) values .skip, target) = (none, restored) ∧
+      stackSizeRel (frame + 1) size limit maximum tail restored.stack restored.stackSpace 0 := by
+  obtain ⟨restored, stack, regs, execution, shape, length, _, _, _, _⟩ :=
+    evaluateReturnCopyFree k (frame + 1) frame values target useStack (by omega) bound
+  have caller := callerStackSizeAfterPop k handler size nonGC gc tail
+    (target.store.lookup .handler) target.stack target.bitmaps frame lens target.stackSpace
+    (Compiler.Backend.WordToStack.numStackRet k values) calleeLocalsSize limit maximum relation resource
+  refine ⟨restored, execution, ?_⟩
+  rw [shape]
+  unfold stackSizeRel at caller ⊢
+  simpa only [length] using caller
+
+/-- The same actual return-copy/free run restores both original stack
+relations. Saved-frame removal proves the tail relation, actual copy outputs
+preserve its target suffix, and the resource component derives stack size.
+No restored stack/resource relation or target run is assumed. This remains
+case-local assembly; returned locals and full caller stateRel are separate. -/
+theorem copyReturnRestoresStackRelations {width : Nat} [NeZero width] {C F : Type}
+    (k frame handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (values : List Nat) (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (calleeLocalsSize : Option Nat) (limit : Nat) (maximum : Option Nat)
+    (useStack : target.useStack = true)
+    (bound : frame + 1 ≤ target.stack.length -
+      (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      (target.store.lookup .handler)
+      (target.stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+      target.stack.length target.bitmaps (frame :: lens))
+    (resource : stackSizeRel 0 calleeLocalsSize limit maximum
+      (.stackFrame size nonGC gc none :: tail) target.stack target.stackSpace
+      (Compiler.Backend.WordToStack.numStackRet k values)) :
+    ∃ restored, StackSemEvaluate.evaluate
+      (copyRetNative false false (k, frame + 1, frame) values .skip, target) = (none, restored) ∧
+      stackSizeRel (frame + 1) size limit maximum tail restored.stack restored.stackSpace 0 ∧
+      stackRel k handler tail (restored.store.lookup .handler)
+        ((restored.stack.drop restored.stackSpace).drop (frame + 1))
+        restored.stack.length restored.bitmaps lens := by
+  obtain ⟨restored, stack, regs, execution, shape, length, suffix, _, _, _⟩ :=
+    evaluateReturnCopyFree k (frame + 1) frame values target useStack (by omega) bound
+  obtain ⟨resourceRestored, resourceRun, restoredResource⟩ :=
+    copyReturnRestoresStackSize k frame handler size nonGC gc tail values target lens
+      calleeLocalsSize limit maximum useStack bound relation resource
+  have same : resourceRestored = restored := (Prod.mk.inj (resourceRun.symm.trans execution)).2
+  subst resourceRestored
+  have tailRelation := CallReturnSupport.stackRelDropNone k handler size nonGC gc tail
+    (target.store.lookup .handler)
+    (target.stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+    target.stack.length target.bitmaps frame lens relation
+  refine ⟨restored, execution, restoredResource, ?_⟩
+  rw [shape]
+  simp only [List.drop_drop, length]
+  simp only [List.drop_drop] at tailRelation
+  have suffixEq :
+      stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values + (frame + 1)) =
+        target.stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values + (frame + 1)) := by
+    simpa only [Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using suffix
+  rw [suffixEq]
+  exact tailRelation
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
