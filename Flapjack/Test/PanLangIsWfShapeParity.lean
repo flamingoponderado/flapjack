@@ -1,7 +1,7 @@
 import Flapjack.Pancake.PanLang.Decl
 
 /-! Direct HOL-oracle parity for the exact `is_wf_shape`/`is_wf_flds`/`is_wf_ctxt`
-ports (`scripts/hol-probes/pan_lang_is_wf_shape_probe.out`, nine rows).  The
+ports (`scripts/hol-probes/pan_lang_is_wf_shape_probe.out`, fifteen rows). The
 contexts are the exact MlString-keyed `StructContextExact`. -/
 
 namespace Flapjack.Test.PanLangIsWfShapeParity
@@ -33,6 +33,27 @@ example : isWfCtxtExactHOL ctxtOk = true := by decide
 example : isWfCtxtExactHOL ctxtDup = false := by decide
 example : isWfCtxtExactHOL ctxtFieldMiss = false := by decide
 
+/- Six original generic-payload/key oracle rows from
+pan_lang_generic_wf_shape_probe.out. Presence is independent of payload value. -/
+private def nameX : MlS := Flapjack.Basis.Pure.MlString.ofString "x"
+private def nameY : MlS := Flapjack.Basis.Pure.MlString.ofString "y"
+
+example : isWfShapeExactHOL [(nameX, (0 : Nat))] (.named nameX) = true := by decide
+example : isWfShapeExactHOL [(nameX, false)] (.named nameX) = true := by decide
+example : isWfShapeExactHOL [(nameX, false)] (.comb [.one, .named nameX, .comb []]) = true := by decide
+example : isWfShapeExactHOL [(nameX, (0 : Nat))] (.comb [.named nameX, .named nameY]) = false := by decide
+
+example : isWfFldsExactHOL [(nameX, false)] [((0 : Nat), .named nameX)] = true := by decide
+example : isWfFldsExactHOL [(nameX, false)] [(false, .named nameY)] = false := by decide
+
+private def genericPayloadGuard : Bool :=
+  isWfShapeExactHOL [(nameX, (0 : Nat))] (.named nameX) &&
+  isWfShapeExactHOL [(nameX, false)] (.named nameX) &&
+  isWfShapeExactHOL [(nameX, false)] (.comb [.one, .named nameX, .comb []]) &&
+  !isWfShapeExactHOL [(nameX, (0 : Nat))] (.comb [.named nameX, .named nameY]) &&
+  isWfFldsExactHOL [(nameX, false)] [((0 : Nat), .named nameX)] &&
+  !isWfFldsExactHOL [(nameX, false)] [(false, .named nameY)]
+
 private def isWfShapeGuard : Bool :=
   (isWfShapeExactHOL ctxt .one == true) &&
   (isWfShapeExactHOL ctxt (.comb [.one, .comb [.one]]) == true) &&
@@ -42,13 +63,14 @@ private def isWfShapeGuard : Bool :=
   (isWfFldsExactHOL ctxt [(nameF, .named nameZ)] == false) &&
   (isWfCtxtExactHOL ctxtOk == true) &&
   (isWfCtxtExactHOL ctxtDup == false) &&
-  (isWfCtxtExactHOL ctxtFieldMiss == false)
+  (isWfCtxtExactHOL ctxtFieldMiss == false) &&
+  genericPayloadGuard
 
 #eval isWfShapeGuard
 #guard isWfShapeGuard
 
 def runChecks : IO Bool := do
-  IO.println (if isWfShapeGuard then "PASS panLang is_wf_shape/is_wf_flds/is_wf_ctxt exact carriers match all 9 oracle rows" else "FAIL panLang is_wf_shape parity")
+  IO.println (if isWfShapeGuard then "PASS panLang is_wf_shape/is_wf_flds/is_wf_ctxt exact carriers match all 15 oracle rows" else "FAIL panLang is_wf_shape parity")
   pure isWfShapeGuard
 
 end Flapjack.Test.PanLangIsWfShapeParity

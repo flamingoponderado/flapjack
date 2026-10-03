@@ -2,6 +2,7 @@ name: Lean Action CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   workflow_dispatch:
 
 concurrency:
@@ -10,6 +11,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: first-large
 
     steps:
@@ -36,6 +38,10 @@ jobs:
           python3 scripts/check-hol-refs.py
           python3 scripts/check_hol_theorem_map.py
           python3 scripts/check_hol_ref_export.py
+
+      - name: Check native RISC-V encoder regression guards
+        # These guards read original sources from the initialized CakeML submodule.
+        run: python3 -m unittest discover -s scripts/tests -p 'test_riscv_*.py'
 
       - name: Check complete native L3 rendering and captured oracle gates
         run: python3 scripts/l3/check-native-model.py

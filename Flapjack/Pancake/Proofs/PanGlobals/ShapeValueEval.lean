@@ -70,7 +70,7 @@ theorem evalShapeValNone {width : Nat} {σ : Type} [NeZero width]
 
 /-- Flapjack list-predicate factoring; no separate HOL original. -/
 private theorem wfShapesEqAll (shapes : List ShapeHOL) :
-    isWfShapesExactHOL [] shapes = shapes.all (isWfShapeExactHOL []) := by
+    isWfShapesExactHOL ([] : StructContextExact) shapes = shapes.all (isWfShapeExactHOL ([] : StructContextExact)) := by
   induction shapes with
   | nil => rfl
   | cons shape shapes ih => simp only [isWfShapesExactHOL, List.all_cons, ih]
@@ -80,11 +80,11 @@ private theorem wfShapesEqAll (shapes : List ShapeHOL) :
 private theorem shapeValueShape {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.memaddrs] :
     ∀ shape value, evalHOLExact state (shapeValHOL shape) = some value →
-      isWfShapeExactHOL [] shape = true → shape = shapeOfHOLExact value := by
+      isWfShapeExactHOL ([] : StructContextExact) shape = true → shape = shapeOfHOLExact value := by
   intro shape
   induction shape using ShapeHOL.rec (motive_2 := fun shapes =>
     ∀ values, evalListHOLExact state (shapeValsHOL shapes) = some values →
-      shapes.all (isWfShapeExactHOL []) = true → shapes = values.map shapeOfHOLExact) with
+      shapes.all (isWfShapeExactHOL ([] : StructContextExact)) = true → shapes = values.map shapeOfHOLExact) with
   | one =>
     intro value he _
     simp only [shapeValHOL, evalHOLExact, Option.some.injEq] at he
@@ -102,7 +102,7 @@ private theorem shapeValueShape {width : Nat} {σ : Type} [NeZero width]
       have hv : ValueHOL.rStruct values = value := by
         simpa only [hl, Option.map_some, Option.some.injEq] using he
       subst value
-      have hw' : shapes.all (isWfShapeExactHOL []) = true := by
+      have hw' : shapes.all (isWfShapeExactHOL ([] : StructContextExact)) = true := by
         simpa only [isWfShapeExactHOL, wfShapesEqAll] using hw
       rw [shapeOfHOLExact, ih values hl hw']
   | nil =>
@@ -129,7 +129,7 @@ private theorem shapeValuesShape {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateExact width σ) [DecidablePred state.memaddrs]
     (shapes : List ShapeHOL) (values : List (ValueHOL width))
     (he : evalListHOLExact state (shapeValsHOL shapes) = some values)
-    (hw : shapes.all (isWfShapeExactHOL []) = true) :
+    (hw : shapes.all (isWfShapeExactHOL ([] : StructContextExact)) = true) :
     shapes = values.map shapeOfHOLExact := by
   induction shapes generalizing values with
   | nil =>
@@ -153,7 +153,7 @@ private theorem shapeValuesShape {width : Nat} {σ : Type} [NeZero width]
     canonical shape expressions recovers their original shapes under the
     source empty-context well-formedness test. Both scalar and list clauses,
     their successful-evaluation/wf conjunctions and equality directions are
-    retained. `is_wf_shape_nil` is exactly `isWfShapeExactHOL []`; `EVERY`
+    retained. `is_wf_shape_nil` is exactly `isWfShapeExactHOL ([] : StructContextExact)`; `EVERY`
     is the literal list `all` predicate. No successful target fact is assumed. -/
 @[hol "cakeml/pancake/proofs/pan_globalsProofScript.sml" "eval_shape_val_thm"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
@@ -162,9 +162,9 @@ theorem evalShapeValShape {width : Nat} {σ : Type} [NeZero width]
     (state : PanSemStateFiniteExact width σ) :
     letI : DecidablePred state.memaddrs := fun a => Classical.propDecidable (state.memaddrs a)
     (∀ shape value, evalHOLFinite state (shapeValHOL shape) = some value ∧
-      isWfShapeExactHOL [] shape = true → shape = shapeOfHOLExact value) ∧
+      isWfShapeExactHOL ([] : StructContextExact) shape = true → shape = shapeOfHOLExact value) ∧
     (∀ shapes values, evalListHOLFinite state (shapeValsHOL shapes) = some values ∧
-      shapes.all (isWfShapeExactHOL []) = true → shapes = values.map shapeOfHOLExact) := by
+      shapes.all (isWfShapeExactHOL ([] : StructContextExact)) = true → shapes = values.map shapeOfHOLExact) := by
   classical
   constructor
   · intro shape value h

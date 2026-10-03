@@ -1,0 +1,10 @@
+load "word_instProofTheory";
+open HolKernel Parse bossLib word_instProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "three_to_two_reg_Loop_statement="; print_term(concl three_to_two_reg_Loop));
+val _ = print("three_to_two_reg_Loop_hypotheses=" ^ Int.toString(length(hyp three_to_two_reg_Loop)) ^ "\n");
+val _ = (print "three_to_two_reg_correct_statement="; print_term(concl three_to_two_reg_correct));
+val _ = print("three_to_two_reg_correct_hypotheses=" ^ Int.toString(length(hyp three_to_two_reg_correct)) ^ "\n");
+val _ = (print "evaluate_three_to_two_reg_prog_statement="; print_term(concl evaluate_three_to_two_reg_prog));
+val _ = print("evaluate_three_to_two_reg_prog_hypotheses=" ^ Int.toString(length(hyp evaluate_three_to_two_reg_prog)) ^ "\n");
+val _ = (print "three_to_two_reg_correct_typed="; Lib.with_flag (Globals.show_types, true) print_term (concl three_to_two_reg_correct));

@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordCse.ListOrder
+import Flapjack.FiniteMap.Comparison
 
 namespace Flapjack.Compiler.Backend.WordCse
 
@@ -80,5 +81,17 @@ theorem listCmpEqStdCompare (x y : List Nat) : listCmp x y = compare x y := by
 rather than only fully applied comparator calls. No separate HOL original. -/
 theorem listCmpFunctionEqStdCompare : listCmp = (compare : List Nat → List Nat → Ordering) :=
   funext fun x => funext fun y => listCmpEqStdCompare x y
+
+/-- Original unrestricted total-order conclusion, assembled from the three
+source-reviewed equality, reversal and strict-transitivity laws. -/
+@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "TotOrd_listCmp"]
+theorem totOrdListCmp : Flapjack.FiniteMap.Toto.totOrd listCmp :=
+  ⟨listCmpEqCorrect, antisymListCmp, transitListCmp⟩
+
+/-- Original full seven-clause comparator conclusion, with no sortedness,
+map-invariant, successful-run or desired-output premise. -/
+@[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "good_cmp_listCmp"]
+theorem goodCmpListCmp : Flapjack.FiniteMap.Comparison.goodCmp listCmp :=
+  Flapjack.FiniteMap.Comparison.totOrderImpGoodCmp listCmp totOrdListCmp
 
 end Flapjack.Compiler.Backend.WordCse

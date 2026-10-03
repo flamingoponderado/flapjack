@@ -1,0 +1,7 @@
+three_to_two_reg_Loop_statement=∀s names prog exit_names res s'. (∀v res s'. evaluate (prog,v) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (three_to_two_reg prog,v) = (res,s')) ∧ evaluate (Loop names prog exit_names,s) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (Loop names (three_to_two_reg prog) exit_names,s) = (res,s')
+three_to_two_reg_Loop_hypotheses=0
+three_to_two_reg_correct_statement=∀prog s res s'. every_inst distinct_tar_reg prog ∧ evaluate (prog,s) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (three_to_two_reg prog,s) = (res,s')
+three_to_two_reg_correct_hypotheses=0
+evaluate_three_to_two_reg_prog_statement=evaluate (prog,s) = (res,s') ∧ res ≠ SOME Error ∧ every_inst distinct_tar_reg prog ⇒ evaluate (three_to_two_reg_prog t prog,s) = (res,s')
+evaluate_three_to_two_reg_prog_hypotheses=0
+three_to_two_reg_correct_typed=∀(prog :α prog) (s :(α, β, γ) state) (res :α result option) (s' :(α, β, γ) state). every_inst (distinct_tar_reg :α inst -> bool) prog ∧ evaluate (prog,s) = (res,s') ∧ res ≠ SOME (Error :α result) ⇒ evaluate (three_to_two_reg prog,s) = (res,s')

@@ -1,0 +1,16 @@
+opw_case_def=(∀(v0 :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α).
+   (case Andw of Andw => v0 | Orw => v1 | Xor => v2 | Add => v3 | Sub => v4) =
+   v0) ∧
+(∀(v0 :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α).
+   (case Orw of Andw => v0 | Orw => v1 | Xor => v2 | Add => v3 | Sub => v4) =
+   v1) ∧
+(∀(v0 :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α).
+   (case Xor of Andw => v0 | Orw => v1 | Xor => v2 | Add => v3 | Sub => v4) =
+   v2) ∧
+(∀(v0 :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α).
+   (case Add of Andw => v0 | Orw => v1 | Xor => v2 | Add => v3 | Sub => v4) =
+   v3) ∧
+∀(v0 :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α).
+  (case Sub of Andw => v0 | Orw => v1 | Xor => v2 | Add => v3 | Sub => v4) =
+  v4
+opw_nchotomy=∀(a :opw). a = Andw ∨ a = Orw ∨ a = Xor ∨ a = Add ∨ a = Sub

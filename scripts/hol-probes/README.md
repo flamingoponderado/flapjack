@@ -1,3 +1,5 @@
+`wordsem_find_code_generic_probe.out` captures the complete original inferred find_code type, typed definition and full typed zero-hypothesis find_code_map_I. The code source/target payloads and stack-size payload remain independent; evaluator callers retain their Prog/Nat specialization. This carrier repair changes no source guards or conclusion.
+
 `stack_rawcall_if_case_probe.out` captures complete generic comp_correct, zero open assumptions and its genuine If specialization. The capture also extracts the original evaluate_ind If obligation. Native recursive case uses the two subprogram comp-component induction hypotheses at the fixed source, guarded by successful operand reads and selected comparison; actual guard transport derives branch selection/target evaluation and full paired existential conclusions. Full theorem assembly and runtime correctness remain open.
 
 `stack_rawcall_basic_cases_probe.out` captures the full original comp_correct theorem, zero open assumptions and all six Skip/Halt/Get/Set/OpCurrHeap/Tick specialized paired conclusions. Native positive-width kernel cases keep every source premise and derive complete target execution/postrelation, including Tick timeout. This is a six-case slice; recursive/pass/production correctness remains open.
@@ -17,6 +19,13 @@ correspondence additionally covers arbitrary partner lists.
 `target_search_const_probe.out` captures the complete clocked and unbounded original configuration-preservation statements. Native generic proofs preserve the entire target plus exact callee-saved list and pointer register, without validity or bounds hypotheses.
 
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
+
+`wordsem_state_const_group_probe.out` captures the full zero-hypothesis statements of the 56 exported wordProps `CONST LEMMAS` theorems ported in `WordSem/Props/StateConst.lean` and `InstConst.lean` (`*_with_const`, the remaining `*_const`, `state_const`, `PAIR_MAP_EQ_PAIR`, `OPTION_CASE_*`, `get_*_set_*`), plus fully typed `get_var_with_const` and `sh_mem_set_var_const` showing that the updated `ffi` has an independent type `δ`. Statement evidence for source review only.
+`word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
+
+`word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
+
+`word_remove_group_probe.out` captures, from the original built theories, the full statements (all with zero hypotheses) of wordProps `evaluate_dec_clock`, every exported word_removeProof declaration (`compile_state_def` and its type, the 28 exported commutation lemmas, `word_remove_correct` also with full types) and the sptree `domain_map`, `map_insert`, `map_fromAList` and `map_union` lemmas. The two `[local]` theorems `evaluate_add_clock_compile_state` and `pair_map_I` are not exported from the theory and cannot be captured this way; their statements are reviewed against the script source. These rows are statement evidence for source review, not a HOL-to-Lean equivalence proof.
 
 `target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
 
@@ -7632,9 +7641,74 @@ Full Call/whole program/compiler correctness remain open.
 ### Signed native immediate reconstruction
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+
+`pan_structs_program_call_probe` captures full original `compile_correct`, its
+Call specialization and complete original `evaluate_ind`, quantified types and
+closed kernel truth. The Lean case keeps all ten premises/seven conclusions
+and exactly the original body/exception-handler guarded IHs. Actual target
+lookup, return comparisons/bindings and handler execution are derived internally.
+Whole program/compiler correctness remain open.
+### Native encoder correctness Skip case
+
+`riscv_target_skip_probeScript.sml` specializes the complete original
+`riscv_encoder_correct` theorem only at `Inst Skip`, recording its entire
+source premise, existential step count, every interference environment, both
+assertion predicates, native types, zero stored hypotheses, and proved `T`.
+Lean derives actual native Fetch/DecodeAny/Run/Next and post-relation before
+using the original zero assertion witness. The fixture is original evidence,
+not a cross-language equivalence proof.
 # Polymorphic CSE definition signatures
 
 `word_cse_polymorphic_probeScript.sml` captures the original equations and
 inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
 is arbitrary, not restricted to register numbers. These signatures are review
 and regression evidence, not a HOL-to-Lean equivalence proof.
+
+`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
+its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
+types and closed kernel truth. Lean retains all eight original hypotheses and
+the full target evaluation/existential globals/context/fields/WF/structs/locals/
+shape-map conclusion; Name uses precisely the same-state tail IH. Whole
+declaration correctness and production compiler routing remain open.
+`pan_structs_program_call_probe` captures full original `compile_correct`, its
+Call specialization and complete original `evaluate_ind`, quantified types and
+closed kernel truth. The Lean case keeps all ten premises/seven conclusions
+and exactly the original body/exception-handler guarded IHs. Actual target
+lookup, return comparisons/bindings and handler execution are derived internally.
+Whole program/compiler correctness remain open.
+
+### Native encoder correctness JumpReg case
+
+`riscv_target_jumpReg_probeScript.sml` specializes the complete original
+`riscv_encoder_correct` only at `JumpReg r`, retaining arbitrary `r : num`
+and both complete assertion/interference conclusions. Four rows record the
+full statement, native types, zero stored hypotheses and proved `T`. Lean
+derives register restrictions and alignment from the original source step,
+actual native byte fetch/decode/JALR/branch Next, and full post-relation under
+every projection-preserving environment. `check-riscv-target-jumpReg.py` pins
+the unrestricted statement and complete original evidence; these checks do
+not themselves prove cross-language equivalence.
+
+`pan_lang_generic_wf_shape_probe` captures original payload-polymorphic
+`is_wf_shape_def`, complete quantified types, closed kernel truth and four
+Nat/Bool payload observations plus original independently polymorphic
+`is_wf_flds_def` and two generic Nat/Bool field-key observations. Zero/false
+payloads still give true name presence; nested missing names fail. The executed faithful source predicate is
+the same generalized definition used by existing StructInfoHOLExact states,
+with explicit prior payload types at empty-context calls. The separate
+full generic compiled-shape theorem and production inventory remain open.
+
+### Universal native ADDI decoder roundtrip
+
+`CorrectnessEncoding/DecodeAddi.lean` proves the original Decode/Encode
+composition for every five-bit register field and twelve-bit immediate with
+no input premises, through symbolic bit reconstruction. It is untagged
+infrastructure because there is no separate named original HOL declaration
+for this composition. The original `riscv_addi_decode_probeScript.sml` checks
+four ground boundaries: all zero, all ones, sign-bit-only and positive maximum,
+including register zero and register31. These finite oracle rows are regression
+evidence, not exhaustive equivalence; the universal Lean proof and literal
+source comparison are separate obligations. The guard pins the unrestricted
+signature and all four original sentinels.
+
+`word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
