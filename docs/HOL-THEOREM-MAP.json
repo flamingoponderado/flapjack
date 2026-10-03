@@ -82867,5 +82867,48 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c author source comparison 2026-10-03 original477-498: full target_ok riscv_target, no added hypotheses. Full six enc_ok obligations retain skip length4, alignment4 and nonempty arbitrary ASM, both signed offset implications for Jump/JumpCmp every cmp and reg-or-imm/Call/Loc. Native fixed64 carrier and exact full target record/projection; all four projection consistency conjuncts retain memory-domain restriction, complete register function and five stateOk fields. Original fp_reg_count0 makes fp relation antecedents false without choosing omitted whole-ARB record field. No opcode/asmOK weakening, successful execution premise or target-run assumption. Inherits reals_as_rational_cuts via riscvTarget.next/NextRISCV/Run; SOUNDNESS item8 external rendering assumption, unchanged. Original literal full proof replay and Lean kernel proof provide regression evidence, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalMove.lean",
+    "lean_name": "canonicalMoveRegs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalMoveRegs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-canonical-move-production), word_cseScript155-170: exact register_reads over MAP SND before EVERY keep_data over MAP FST; arbitrary parallel moves retained. Odd/odd FILTER, MAP canonicalRegs on source, tail-first map_insert to_canonical, inverted pairs then tail-first map_insert to_latest, other three fields unchanged; false guard returns empty_data. Native Knowledge preserves Spt Nat, ordered store-name alist with fixed Temp5 and literal balanced-map cached sizes; no output relation or target run assumption. Source self-interference/duplicate order retained. Actual all-five-field transition proved separately; full CSE/routing remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalArith.lean",
+    "lean_name": "canonicalImmReg",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalImmReg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-canonical-arith-production), word_cseScript.sml:135-138: original Reg canonical lookup and unchanged Imm word, arbitrary exact Knowledge; reviewed HolRegImm constructor arity and payload BitVec width retained. Exact Knowledge Spt/alist/balanced carriers retained; only standard positive type-indexed word dimension→BitVec width with NeZero width recorded. Actual operation codec transport is separate infrastructure, including diagnostic5registerAddCarry rejection, without outputsuccess/targetrun assumption. FullCSE/productionroute remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalArith.lean",
+    "lean_name": "canonicalImmReg'",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalImmReg'_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-canonical-arith-production), word_cseScript.sml:140-143: original arbitrary avoid register passed to canonicalRegs' only on Reg, unchanged Imm payload and both original branches. Exact Knowledge Spt/alist/balanced carriers retained; only standard positive type-indexed word dimension→BitVec width with NeZero width recorded. Actual operation codec transport is separate infrastructure, including diagnostic5registerAddCarry rejection, without outputsuccess/targetrun assumption. FullCSE/productionroute remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalArith.lean",
+    "lean_name": "canonicalArith",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalArith_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-canonical-arith-production), word_cseScript.sml:172-189: complete8constructor equations over reviewed HolArith, preserving every destination and fourth carry/overflow field. Binop/Shift use avoid destination for register and immediate; Div/LongMul/LongDiv use ordinary canonicalRegs for original sources; AddCarry/AddOverflow/SubOverflow canonicalize second/third fields with avoid destination and retain fourth. No reordering, rejected native case or extra premise. Exact Knowledge Spt/alist/balanced carriers retained; only standard positive type-indexed word dimension→BitVec width with NeZero width recorded. Actual operation codec transport is separate infrastructure, including diagnostic5registerAddCarry rejection, without outputsuccess/targetrun assumption. FullCSE/productionroute remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalFp.lean",
+    "lean_name": "canonicalFp",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalFp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: canonicalFp_def191-225 all16 equations retain first register and canonicalRegs every remaining register, including Fma and both three-register moves. Imported HolFp/WordLangFp matches asm fp97-119 all16 constructor arities and numeric register payloads; original Knowledge and canonicalRegs retained. Native definition only; executed FP route remains tracked separately."
   }
 ]
