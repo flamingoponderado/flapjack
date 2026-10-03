@@ -76017,5 +76017,76 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure with no independent HOL declaration. Local re-export of actual imported canonical state two-way roundtrip."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "compileExpCorrectNField",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: original686-791 NField case, same all seven hypotheses and three conclusions; only full child IH allowed by eval_ind. Source success forces named child; its original validity supplies source structure lookup, field validity, identical field names/order and shape list. Actual first-match lookup supplies afindi index, identical names align compiler index; shape equality and actual converted evaluation follow indexed map laws. No extra bounds, distinctness, target evaluation, adapter, or compatibility premise. Actual imported canonical state owner and genuine local roundtrip; four map-field/positive-word/Type0 qualifiers. Original full statement/NField specialization/eval_ind independently kernel captured. Full expression assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "fieldsFldsOk_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "lookupField_index",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "lookupField_converted_index",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "namedValidity_fields",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "structFields_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "findSome_afindi",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNField.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
   }
 ]

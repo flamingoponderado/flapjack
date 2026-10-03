@@ -7087,3 +7087,8 @@ the recursive child induction hypothesis; source success supplies the index look
 RStruct specialization, and evaluator induction theorem. Native list induction
 retains all seven hypotheses and all three conclusions, using only the original
 member-expression induction hypotheses.
+
+`pan_structs_exp_nfield_faithful_probe` captures the original full expression
+theorem, NField specialization, and eval_ind. Native NField preserves all seven
+hypotheses and three conclusions with only the original child IH. Validity and
+source lookup derive the shape-list and actual converted index correspondence.
