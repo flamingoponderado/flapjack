@@ -7131,3 +7131,7 @@ run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.ou
 run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_semantics_compile_final_probe.out \
   semantics_compile semantics_compile_types semantics_compile_hypotheses semantics_compile_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_word_config_probeScript.sml word_to_word_config_probe.out \
+  next_n_oracle next_n_oracle_types next_n_oracle_hypotheses next_n_oracle_proved config_reg_alg_type config_col_oracle_type oracle_zero oracle_equal oracle_short oracle_long \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"

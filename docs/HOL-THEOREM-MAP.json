@@ -83273,5 +83273,21 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 full source comparison11247-11316: all fifteen original guards in source order, including good_code asm_conf c.labels, actual native Config and successful compile, independent machine-state/projection/FFI types, MMIO boundary and complete entry/address/exit tuples, no-install/no-share alternative, strict byte-buffer bound and every provided name ExtCall. Final singleton implements-prime T conclusion preserves both canonical dm and sdm intersections with source byte_aligned. Actual source proof composition follows outer DM and inner SDM refinements plus accepted full compile lemma; initializer projections are definitional and good_code specialization follows only original config equalities. Generic empty-label value parameter of the prerequisite lemma is instantiated internally at actual Config Nat carrier, not added to final source signature. No target result/execution/simulation premise, no narrowed scope or extra defaults, no LOG2zero/HD/EL/runtime policy change. Standard positive type-indexed words/Type0 host translation only; native FP evaluator inherits reals_as_rational_cuts assumption SOUNDNESS item8, not full real closure or HOL-to-Lean equivalence. Fresh mechanically extracted verbatim original final proof replay captures full typed statement, hypotheses0 and kernel T. Whole compiler/machine/end-to-end correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
+    "lean_name": "nextNOracle",
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "next_n_oracle_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
   }
 ]
