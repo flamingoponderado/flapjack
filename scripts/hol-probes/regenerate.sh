@@ -110,6 +110,9 @@ run_probe() {
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_allocation_store_probeScript.sml stack_rawcall_allocation_store_probe.out \
+  allocation_store_full_statement allocation_store_full_hypotheses allocation_store_alloc allocation_store_storeConsts allocation_store_stub64 allocation_store_stub80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_memory_ffi_probeScript.sml stack_rawcall_memory_ffi_probe.out \
   memory_ffi_full_statement memory_ffi_full_hypotheses memory_ffi_shMemOp memory_ffi_codeBufferWrite memory_ffi_dataBufferWrite memory_ffi_ffi \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
