@@ -76237,5 +76237,15 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.1): Genuine original evaluate induction669 initial terminal branch asmFetch s1=NONE. Full s1/t1/res/s2 native source binders, evaluate equation/stateRel/nonfailed hypotheses and existential extra clock/t2 actual target evaluate/result/FFI equality retained, plus exactly branch guard. No desired target/simulation premise, no outcome restriction or successful-run assumption; absent fetch derives actual skipped count via asmFetchAuxEq2 and allSkipsEvaluate. Full source theorem capture/type/zero hypotheses/reproof used for comparison, not completion of whole original assembler. Positive-width words translation only; native evaluate inherits reals_as_rational_cuts via asmInst, SOUNDNESS item8 unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/InstructionCases.lean",
+    "lean_name": "filterCorrectInstruction",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open."
   }
 ]
