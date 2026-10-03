@@ -3740,6 +3740,12 @@
       "sha256": "564bd5d118f7cd0746d109b86fc758358e2a313a34352b2638a56a1d4a9dbc62"
     },
     {
+      "bytes": 609,
+      "out": "namespace_carrier_probe.out",
+      "rows": 5,
+      "sha256": "f9a102f5a220866a4776ae35fdff947b3146c4720ff9b722ea58748023b35536"
+    },
+    {
       "bytes": 319,
       "out": "num_set_audit_probe.out",
       "rows": 16,

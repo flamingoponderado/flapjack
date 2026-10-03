@@ -7146,3 +7146,7 @@ run_probe word_to_word_config_probeScript.sml word_to_word_config_probe.out \
 run_probe pres_lang_config_probeScript.sml pres_lang_config_probe.out \
   default_tap_config default_tap_config_types default_tap_config_hypotheses default_tap_config_proved default_tap_config_type tap_config_explore_flag_type tap_config_component_equality \
   "$cake_dir/compiler/backend/presLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe namespace_carrier_probeScript.sml namespace_carrier_probe.out \
+  namespace_case namespace_case_types namespace_case_hypotheses namespace_case_proved namespace_Bind_type \
+  "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"

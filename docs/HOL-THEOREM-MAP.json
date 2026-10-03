@@ -83829,5 +83829,21 @@
     "hol_name": "default_tap_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Alist",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "alist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Namespace",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "namespace",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
   }
 ]
