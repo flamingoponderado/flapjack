@@ -2,6 +2,7 @@ load "preamble"; load "riscvTheory";
 open HolKernel Parse bossLib preamble riscvTheory;
 val _ = computeLib.add_funs [Encode_def, Itype_def, Rtype_def, opc_def, Decode_def, boolify32_def];
 val _ = Globals.linewidth := 1000000;
+val _ = Globals.show_types := true;
 (* Finite boundary oracles supplement unrestricted Lean proofs and source review. *)
 fun out label tm = (print(label ^ "="); print_term(rhs(concl(EVAL tm))); print "\n");
 val _ = out "ori_decode_zero" ``Decode (Encode (ArithI (ORI (0w,0w,0w)))) = ArithI (ORI (0w,0w,0w))``;
@@ -24,4 +25,6 @@ val _ = out "xor_decode_zero" ``Decode (Encode (ArithR (XOR (0w,0w,0w)))) = Arit
 val _ = out "xor_decode_all_ones" ``Decode (Encode (ArithR (XOR (31w,31w,31w)))) = ArithR (XOR (31w,31w,31w))``;
 val _ = out "xor_decode_sign_bit" ``Decode (Encode (ArithR (XOR (1w,0w,16w)))) = ArithR (XOR (1w,0w,16w))``;
 val _ = out "xor_decode_positive_max" ``Decode (Encode (ArithR (XOR (0w,31w,15w)))) = ArithR (XOR (0w,31w,15w))``;
+val _ = (print "const_decode_statement="; print_term ``Decode (Encode (ArithI (ORI (0w,0w,0w)))) = ArithI (ORI (0w,0w,0w))``; print "\n");
+val _ = print ("const_decode_types=" ^ String.concatWith ", " (map (fn (n, t) => n ^ " : " ^ type_to_string t) [("Encode", type_of ``Encode``), ("Decode", type_of ``Decode``), ("ORI", type_of ``ORI``), ("XORI", type_of ``XORI``), ("SLLI", type_of ``SLLI``), ("OR", type_of ``OR``), ("XOR", type_of ``XOR``), ("ArithI", type_of ``ArithI``), ("Shift", type_of ``Shift``), ("ArithR", type_of ``ArithR``), ("Itype", type_of ``Itype``), ("Rtype", type_of ``Rtype``), ("opc", type_of ``opc``)]) ^ "\n");
 val _ = OS.Process.exit OS.Process.success;

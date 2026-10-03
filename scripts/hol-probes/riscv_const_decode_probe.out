@@ -18,3 +18,5 @@ xor_decode_zero=T
 xor_decode_all_ones=T
 xor_decode_sign_bit=T
 xor_decode_positive_max=T
+const_decode_statement=Decode (Encode (ArithI (ORI ((0w :word5),(0w :word5),(0w :word12))))) = ArithI (ORI ((0w :word5),(0w :word5),(0w :word12)))
+const_decode_types=Encode : :instruction -> word32, Decode : :word32 -> instruction, ORI : :word5 # word5 # word12 -> ArithI, XORI : :word5 # word5 # word12 -> ArithI, SLLI : :word5 # word5 # word6 -> Shift, OR : :word5 # word5 # word5 -> ArithR, XOR : :word5 # word5 # word5 -> ArithR, ArithI : :ArithI -> instruction, Shift : :Shift -> instruction, ArithR : :ArithR -> instruction, Itype : :word7 # word3 # word5 # word5 # word12 -> word32, Rtype : :word7 # word3 # word5 # word5 # word5 # word7 -> word32, opc : :word8 -> word7

@@ -6,3 +6,5 @@ auipc_decode_zero=T
 auipc_decode_all_ones=T
 auipc_decode_sign_bit=T
 auipc_decode_positive_max=T
+upper_decode_statement=Decode (Encode (ArithI (LUI ((0w :word5),(0w :word20))))) = ArithI (LUI ((0w :word5),(0w :word20)))
+upper_decode_types=Encode : :instruction -> word32, Decode : :word32 -> instruction, LUI : :word5 # word20 -> ArithI, AUIPC : :word5 # word20 -> ArithI, ArithI : :ArithI -> instruction, Utype : :word7 # word5 # word20 -> word32, opc : :word8 -> word7

@@ -2,3 +2,5 @@ addi_decode_zero=T
 addi_decode_all_ones=T
 addi_decode_sign_bit=T
 addi_decode_positive_max=T
+addi_decode_statement=Decode (Encode (ArithI (ADDI ((0w :word5),(0w :word5),(0w :word12))))) = ArithI (ADDI ((0w :word5),(0w :word5),(0w :word12)))
+addi_decode_types=Encode : :instruction -> word32, Decode : :word32 -> instruction, ADDI : :word5 # word5 # word12 -> ArithI, ArithI : :ArithI -> instruction, Itype : :word7 # word3 # word5 # word5 # word12 -> word32, opc : :word8 -> word7, boolify32 : :word32 -> bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool # bool
