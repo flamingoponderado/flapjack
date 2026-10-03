@@ -6188,3 +6188,11 @@ run_probe l3_csr_unknown_probeScript.sml l3_csr_unknown_probe.out \
 run_probe word_to_stack_comp_flat_probeScript.sml word_to_stack_comp_flat_probe.out \
   comp_correct_assign_statement comp_correct_assign_proved comp_correct_assign_hypotheses comp_correct_store_statement comp_correct_store_proved comp_correct_store_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe wordsem_inst_const_full_probeScript.sml wordsem_inst_const_full_probe.out \
+  inst_const_full_statement inst_const_full_proved inst_const_full_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_pop_env_const_probeScript.sml wordsem_pop_env_const_probe.out \
+  pop_env_const_statement pop_env_const_proved pop_env_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
