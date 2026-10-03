@@ -4,8 +4,8 @@ import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
 /-!
 # Arbitrary-real machine IEEE conversion wrappers
 
-HOL `convert_def` and the generated `real_to_fp32_with_flags` /
-`real_to_fp64_with_flags` (`HOL/src/floating-point/machine_ieeeScript.sml`)
+HOL `convert_def` and the generated `real_to_fp64`, `real_to_fp32_with_flags`
+and `real_to_fp64_with_flags` (`HOL/src/floating-point/machine_ieeeScript.sml`)
 take HOL `real` arguments.  `Flapjack.Misc.MachineIeee.Convert` renders them
 over `Rat` for the executed cross-format conversions, which restricts HOL's
 arbitrary-real domain, so those renderings are untagged.  This module gives
@@ -59,6 +59,28 @@ noncomputable def holRealToFp64WithFlagsR (mode : HolRounding) (r : ℝ) :
     HolFloatFlags × BitVec 64 :=
   let result : HolFloatFlags × HolFloat 52 11 := holRealToFloatWithFlagsR mode r
   (result.1, holFloatToFp64 result.2)
+
+/-- Generated HOL `real_to_fp64 mode = float_to_fp64 o real_to_float mode`
+(`machine_ieeeScript.sml:16`), applied to an arbitrary real. The executed
+`holRealToFp64` is its restriction to rationals (`holRealToFp64R_ratCast`). -/
+@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "real_to_fp64_def" 16
+  (reals_as_rational_cuts)]
+noncomputable def holRealToFp64R (mode : HolRounding) (r : ℝ) : BitVec 64 :=
+  holFloatToFp64 (holRealToFloatR mode r)
+
+theorem holRealToFp64R_ratCast (mode : HolRounding) (q : Rat) :
+    holRealToFp64R mode (q : ℝ) = holRealToFp64 mode q := by
+  unfold holRealToFp64R holRealToFp64
+  rw [holRealToFloatR_ratCast]
+
+/-- HOL `int_to_fp64 mode a = real_to_fp64 mode (real_of_int a)` holds for the
+executed `holIntToFp64` with the arbitrary-real `real_to_fp64`, for every mode
+and integer (no premise). -/
+theorem holIntToFp64_eq_real (mode : HolRounding) (a : Int) :
+    holIntToFp64 mode a = holRealToFp64R mode (a : ℝ) := by
+  unfold holIntToFp64
+  rw [← holRealToFp64R_ratCast]
+  norm_cast
 
 theorem holRealToFp32WithFlagsR_ratCast (mode : HolRounding) (q : Rat) :
     holRealToFp32WithFlagsR mode (q : ℝ) = holRealToFp32WithFlags mode q := by
