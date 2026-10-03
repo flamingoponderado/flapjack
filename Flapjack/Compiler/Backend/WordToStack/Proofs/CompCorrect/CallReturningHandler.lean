@@ -333,6 +333,397 @@ theorem handlerNoRoomSourceLimit {width : Nat} [NeZero width] {C F α : Type}
           wordSemOptionAdd, wordSemOptionMax, Option.getD_some]
         omega
 
+/-- Handler-case argument-local construction after the actual three-word
+header. The caller relation is retained on the pre-header state; copied
+arguments are observed at the actual lowered header space. This factors the
+original handler branch's local argument proof and has no separate HOL
+original. The move observations are primitive register/slot facts, not an
+assumed callee or post-state relation. -/
+theorem handlerCalleeLocals {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (saved moved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (related : stateRel ac k callerSize callerFrame source saved lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (calleeShape : if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1)
+    (argumentBound : args1.length - k ≤ calleeFrame)
+    (headerSpace : Nat) (headerSpaceEq : headerSpace + 3 = saved.stackSpace)
+    (space : calleeSize ≤ headerSpace)
+    (registers : ∀ register, register ≠ k →
+      StackSemStateOps.getVar register moved = StackSemStateOps.getVar register saved)
+    (slots : ∀ index, index < args1.length - k →
+      holEl (index + callerSize) (saved.stack.drop (saved.stackSpace - (args1.length - k))) =
+        holEl index (moved.stack.drop (headerSpace - (args1.length - k))))
+    (movedLength : moved.stack.length = saved.stack.length) :
+    ∀ key value, sptLookup key (sptFromList2 args1) = some value →
+      key % 2 = 0 ∧
+      if key / 2 < k then (moved.regs.updateEq (0, .loc l1 l2)).lookup (key / 2) = some value
+      else ((moved.stack.drop (headerSpace - calleeSize)).take calleeSize)[calleeSize - 1 - (key / 2 - k)]? = some value ∧ key / 2 < k + calleeFrame := by
+  obtain ⟨get, _, find, _, _⟩ := guards
+  obtain ⟨_, _, _, indirect, direct⟩ := CallTail.findCode_facts dest _
+    source.code source.stackSize args1 prog ss find
+  have argPrefix : args1.IsPrefix (.loc l1 l2 :: xs) := by
+    cases dest with
+    | none => rw [indirect rfl]; exact List.dropLast_prefix _
+    | some p => rw [direct (by simp)]; exact List.prefix_refl _
+  have argsEq := (CallReturning.returningConventions k values names retCode l1 l2 dest args conventions).2.1
+  unfold stateRel at related
+  obtain ⟨_, _, _, _, _, _, _, _, _, kPositive, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+    _, _, _, _, stackBound, _, callerShape, _, _, _, locals⟩ := related
+  intro key value lookup
+  have index : key / 2 < args1.length := by
+    rw [fromList2Lookup] at lookup
+    split at lookup
+    · exact (List.getElem?_eq_some_iff.mp lookup).1
+    · cases lookup
+  have fullLookup := lookupFromList2Prefix args1 (.loc l1 l2 :: xs) key value argPrefix lookup
+  have even : key % 2 = 0 := by
+    rw [fromList2Lookup] at lookup
+    split at lookup
+    · assumption
+    · cases lookup
+  refine ⟨even, ?_⟩
+  by_cases zero : key = 0
+  · subst key
+    have valueLoc : value = .loc l1 l2 := by
+      simpa [fromList2Lookup] using fullLookup.symm
+    rw [if_pos (by omega), valueLoc]
+    simp [FUPDATE_HOL]
+  have sourceLookup := getVarsFromList2EqCons args source xs key l1 l2 value
+    (by rwa [← argsEq]) fullLookup zero
+  obtain ⟨_, callerLocal⟩ := locals key value sourceLookup
+  by_cases inRegister : key / 2 < k
+  · rw [if_pos inRegister] at callerLocal ⊢
+    have preserved := registers (key / 2) (by omega)
+    simp only [StackSemStateOps.getVar] at preserved
+    simp only [HolFiniteMapExact.updateEq, FUPDATE_HOL]
+    rw [if_neg (by omega), preserved]
+    exact callerLocal
+  · rw [if_neg inRegister] at callerLocal ⊢
+    obtain ⟨callerSlot, callerIndex⟩ := callerLocal
+    rw [if_neg (by omega)] at callerShape
+    have calleePositive : 0 < calleeFrame := by omega
+    rw [if_neg (by omega)] at calleeShape
+    have countSpace : args1.length - k ≤ headerSpace := by omega
+    have copyIndex : args1.length - k - 1 - (key / 2 - k) < args1.length - k := by omega
+    have copied := slots _ copyIndex
+    have callerAbsolute : saved.stackSpace + (callerSize - 1 - (key / 2 - k)) < saved.stack.length := by
+      rw [Nat.add_zero, List.getElem?_take, List.getElem?_drop] at callerSlot
+      split at callerSlot
+      · exact (List.getElem?_eq_some_iff.mp callerSlot).1
+      · cases callerSlot
+    have movedAbsolute : headerSpace - calleeSize +
+        (calleeSize - 1 - (key / 2 - k)) < moved.stack.length := by omega
+    refine ⟨?_, by omega⟩
+    rw [List.getElem?_take, if_pos (by omega), List.getElem?_drop,
+      List.getElem?_eq_getElem movedAbsolute]
+    rw [Nat.add_zero, List.getElem?_take, if_pos (by omega), List.getElem?_drop,
+      List.getElem?_eq_getElem callerAbsolute] at callerSlot
+    rw [holEl_eq_getElem _ _ (by simp; omega), holEl_eq_getElem _ _ (by simp; omega),
+      List.getElem_drop, List.getElem_drop] at copied
+    have sourceIndex : saved.stackSpace - (args1.length - k) +
+        (args1.length - k - 1 - (key / 2 - k) + callerSize) =
+        saved.stackSpace + (callerSize - 1 - (key / 2 - k)) := by omega
+    have targetIndex : headerSpace - (args1.length - k) +
+        (args1.length - k - 1 - (key / 2 - k)) =
+        headerSpace - calleeSize + (calleeSize - 1 - (key / 2 - k)) := by omega
+    simp only [sourceIndex, targetIndex] at copied
+    rw [← copied]
+    exact callerSlot
+
+/-- Execute the real handler argument allocation/move and connect its
+slots to the pre-header caller stack. Header writes lie below the occupied
+caller slots. This supports the original handler callee entry; the target
+move and its register/slot observations are proved, not supplied. There is
+no separate HOL declaration for this case-local composition. -/
+theorem evaluateHandlerArguments {width : Nat} [NeZero width] {C F : Type}
+    (k f frame h1 h2 : Nat) (destination : Sum Nat Nat) (argCount : Nat)
+    (saved : StackSemStateFiniteExact width C F) (savedHandler : WordLocW width)
+    (useStack : saved.useStack = true) (room : 3 ≤ saved.stackSpace)
+    (frameBound : saved.stackSpace + f ≤ saved.stack.length)
+    (moveBound : Compiler.Backend.WordToStack.stackArgCount destination argCount k ≤ f)
+    (space : Compiler.Backend.WordToStack.stackArgCount destination argCount k ≤
+      (pushedHandlerState saved h1 h2 k savedHandler).stackSpace) :
+    let count := Compiler.Backend.WordToStack.stackArgCount destination argCount k
+    let header := pushedHandlerState saved h1 h2 k savedHandler
+    ∃ (moved : StackSemStateFiniteExact width C F) (stack : List (WordLocW width))
+      (regs : HolFiniteMapExact Nat (WordLocW width)),
+      StackSemEvaluate.evaluate
+        (stackHandlerArgsNative false destination argCount (k,f,frame), header) =
+          (none, moved) ∧
+      moved = {header with stackSpace := header.stackSpace-count, stack := stack, regs := regs} ∧
+      (∀ register, register ≠ k → StackSemStateOps.getVar register moved =
+        StackSemStateOps.getVar register saved) ∧
+      moved.stack.length = saved.stack.length ∧
+      moved.stackSpace = header.stackSpace - count ∧
+      moved.stack.drop (moved.stackSpace + count) = header.stack.drop header.stackSpace ∧
+      (∀ index, index < count →
+        holEl (index + f) (saved.stack.drop (saved.stackSpace - count)) =
+          holEl index (moved.stack.drop (header.stackSpace - count))) := by
+  dsimp only
+  let header := pushedHandlerState saved h1 h2 k savedHandler
+  let count := Compiler.Backend.WordToStack.stackArgCount destination argCount k
+  have resources := pushedHandlerStateResources saved h1 h2 k savedHandler room
+  have headerLength : header.stack.length = saved.stack.length := resources.2.2
+  have headerSpace : header.stackSpace + 3 = saved.stackSpace := resources.2.1
+  obtain ⟨moved, stack, regs, run, movedState, registers, stackLength, movedSpace, tail, slots⟩ :=
+    CallReturning.evaluateStackArguments k (f+3) (frame+3) destination argCount header
+      useStack (by rw [headerLength]; omega)
+      (by omega) space
+  refine ⟨moved, stack, regs, ?_, movedState, ?_, ?_, movedSpace, ?_, ?_⟩
+  · rw [stackHandlerArgsF]
+    exact run
+  · intro register distinct
+    exact (registers register distinct).trans (resources.1 register distinct)
+  · rw [movedState]
+    change stack.length = saved.stack.length
+    exact stackLength.symm.trans resources.2.2
+  · simpa only [movedState] using tail
+  · intro index indexBound
+    have copied := slots index indexBound
+    change holEl (index + (f+3)) (header.stack.drop (header.stackSpace - count)) =
+      holEl index (stack.drop (header.stackSpace - count)) at copied
+    rw [movedState]
+    change holEl (index+f) (saved.stack.drop (saved.stackSpace-count)) =
+      holEl index (stack.drop (header.stackSpace-count))
+    rw [← copied, holElDrop, holElDrop]
+    have absoluteEq : header.stackSpace-count+(index+(f+3)) =
+        saved.stackSpace-count+(index+f) := by
+      change saved.stackSpace-3-count+(index+(f+3)) = _
+      omega
+    rw [absoluteEq]
+    have unchanged := congrArg (holEl (index+f-count))
+      (pushedHandlerStateOccupiedSuffix saved h1 h2 k savedHandler room)
+    rw [holElDrop, holElDrop] at unchanged
+    have sameIndex : saved.stackSpace+(index+f-count) =
+        saved.stackSpace-count+(index+f) := by omega
+    rw [sameIndex] at unchanged
+    exact unchanged.symm
+
+/-- Full handler callee-entry state relation from the actual saved frame,
+three-word PushHandler update and argument-move observations. The handler
+frame is decoded by the already checked PushHandler relation; the local
+argument conjunct uses the original pre-header caller. Every callee state
+field is proved. This is Flapjack case infrastructure, not a whole
+comp_correct port or an assumption of its target execution/result. -/
+theorem handlerCalleeStateRel {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (savedHandler : WordLocW width)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (saved header : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source saved lens 0)
+    (prePushRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) = true)
+    (headerState : header = pushedHandlerState saved h1 h2 k savedHandler)
+    (savedLookup : saved.store.lookup .handler = some savedHandler)
+    (room : 3 ≤ saved.stackSpace)
+    (calleeShape : if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1)
+    (calleeLocalsSize : ss.getD calleeSize = calleeSize)
+    (argumentBound : args1.length - k ≤ calleeFrame)
+    (space : calleeSize ≤ header.stackSpace)
+    (registers : ∀ register, register ≠ k → regs.lookup register = saved.regs.lookup register)
+    (slots : ∀ index, index < args1.length - k →
+      holEl (index + callerSize) (saved.stack.drop (saved.stackSpace - (args1.length - k))) =
+        holEl index (stack.drop (header.stackSpace - (args1.length - k))))
+    (stackLength : stack.length = saved.stack.length)
+    (stackTail : stack.drop header.stackSpace = header.stack.drop header.stackSpace) :
+    stateRel ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)))
+      {header with
+        clock := header.clock - 1, stackSpace := header.stackSpace - calleeSize,
+        stack := stack, regs := regs.updateEq (0, .loc l1 l2)}
+      (callerFrame :: lens) 0 := by
+  have pushedRelation := stateRelPushedHandler ac k callerFrame h1 h2 handlerVar handlerCode
+    source saved envs lens savedHandler savedLookup room prePushRelation
+  rw [← headerState] at pushedRelation
+  have resources := pushedHandlerStateResources saved h1 h2 k savedHandler room
+  have headerLength : header.stack.length = saved.stack.length := by
+    rw [headerState]; exact resources.2.2
+  have headerSpace : header.stackSpace + 3 = saved.stackSpace := by
+    rw [headerState]; exact resources.2.1
+  have actualLength : stack.length = header.stack.length := stackLength.trans headerLength.symm
+  have plainConventions := conventionsWithoutHandler k values names retCode l1 l2 dest args
+    (some (handlerVar,handlerCode,h1,h2)) conventions
+  let cleared := {WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) source with
+    locals := .ln, localsSize := some 0}
+  have calleeSource : WordSemStateFiniteExact.callEnv args1 ss
+      (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)) =
+      WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock cleared) := by
+    rfl
+  rw [calleeSource]
+  change stateRel ac k 0 0 cleared header (callerFrame :: lens) 0 at pushedRelation
+  unfold stateRel at pushedRelation
+  obtain ⟨g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18,
+    g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, g33, g34, _, _,
+    resource, oldStack, _⟩ := pushedRelation
+  unfold stateRel
+  refine ⟨?_, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18,
+    g19, g20, g21, g22, g23, g24, g25, g26, g27, g28, g29, g30, g31, g32, ?_, ?_,
+    calleeShape, wfFromList2 args1, ?_, ?_, ?_⟩
+  · show cleared.clock - 1 = header.clock - 1
+    rw [g1]
+  · show header.stackSpace - calleeSize + calleeSize ≤ stack.length
+    omega
+  · show stack.length < 2 ^ width
+    omega
+  · change stackSizeRel calleeSize ss cleared.stackLimit
+      (wordSemOptionMax cleared.stackMax (wordSemOptionAdd (wordSemStackSize cleared.stack) ss))
+      cleared.stack stack (header.stackSpace - calleeSize) 0
+    obtain ⟨_, limit, maximum⟩ := resource
+    refine ⟨fun _ => calleeLocalsSize, by simpa only [actualLength] using limit, ?_⟩
+    intro newMaximum newValue
+    rcases oldValue : cleared.stackMax with _ | oldMaximum
+    · rw [oldValue] at newValue
+      simp [wordSemOptionMax] at newValue
+    obtain ⟨oldBound, _, size, oldSize, sizeValue⟩ := maximum oldMaximum oldValue
+    rcases sizeOption : ss with _ | size
+    · rw [oldValue, sizeOption, oldSize] at newValue
+      simp [wordSemOptionMax, wordSemOptionAdd] at newValue
+    rw [sizeOption] at calleeLocalsSize
+    simp only [Option.getD_some] at calleeLocalsSize
+    subst size
+    rw [oldValue, oldSize, sizeOption] at newValue
+    simp only [wordSemOptionMax, wordSemOptionAdd, Option.some.injEq] at newValue
+    have := Nat.le_max_right oldMaximum (size + calleeSize)
+    refine ⟨by omega, by simp, size, oldSize, by omega⟩
+  · change stackRel k cleared.handler cleared.stack (header.store.lookup .handler)
+      ((stack.drop (header.stackSpace - calleeSize + 0)).drop calleeSize)
+      stack.length header.bitmaps (callerFrame :: lens)
+    rw [List.drop_drop, Nat.add_zero, Nat.sub_add_cancel space, stackTail, actualLength]
+    simpa only [Nat.add_zero, Nat.add_zero, List.drop_zero] using oldStack
+  · apply handlerCalleeLocals ac k callerSize callerFrame calleeSize calleeFrame values names
+      retCode l1 l2 dest args source saved {header with stack := stack, regs := regs} lens
+      xs args1 prog ss envs guards callerRelation plainConventions calleeShape argumentBound
+      header.stackSpace headerSpace space
+    · intro register distinct
+      change regs.lookup register = saved.regs.lookup register
+      exact registers register distinct
+    · exact slots
+    · exact stackLength
+
+/-- Actual StackHandlerArgs execution and native callee frame allocation,
+with the full original handler callee-entry relation. The pushed header is
+an explicit actual update of the saved caller, and all argument observations
+are derived by executing the native move. This is Flapjack case factoring,
+not the whole comp_correct result or an assumed callee target run. -/
+theorem enterHandlerCallee {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (savedHandler : WordLocW width)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (saved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (destinationCode : HolProg width) (destination : Sum Nat Nat)
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source saved lens 0)
+    (prePushRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) < 2 * callerFrame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, callerSize, callerFrame) =
+      (destinationCode, destination))
+    (savedLookup : saved.store.lookup .handler = some savedHandler)
+    (room : 3 ≤ saved.stackSpace)
+    (calleeShape : if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1)
+    (calleeLocalsSize : ss.getD calleeSize = calleeSize)
+    (argumentBound : args1.length - k ≤ calleeFrame)
+    (space : calleeSize ≤ (pushedHandlerState saved h1 h2 k savedHandler).stackSpace) :
+    let header := pushedHandlerState saved h1 h2 k savedHandler
+    ∃ (moved entry : StackSemStateFiniteExact width C F),
+      StackSemEvaluate.evaluate (stackHandlerArgsNative false destination (args.length+1)
+        (k,callerSize,callerFrame), header) = (none,moved) ∧
+      StackSemEvaluate.evaluate (.stackAlloc (calleeSize-(args1.length-k)),
+        StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)) =
+          (none,entry) ∧
+      stateRel ac k calleeSize calleeFrame
+        (WordSemStateFiniteExact.callEnv args1 ss
+          (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+            (WordSemStateFiniteExact.decClock source))) entry (callerFrame :: lens) 0 := by
+  dsimp only
+  let header := pushedHandlerState saved h1 h2 k savedHandler
+  change calleeSize ≤ header.stackSpace at space
+  have plainConventions := conventionsWithoutHandler k values names retCode l1 l2 dest args
+    (some (handlerVar,handlerCode,h1,h2)) conventions
+  have plainMaximum := lt_of_le_of_lt
+    (maximumWithoutHandler values names retCode l1 l2 dest args
+      (some (handlerVar,handlerCode,h1,h2))) maximum
+  have countEq := CallReturning.stackArgumentCount values names retCode l1 l2 dest args
+    source xs args1 prog ss envs k callerSize callerFrame destinationCode destination guards
+    destinationCompile
+  have countCaller := CallReturning.stackArgumentFrameBound ac k callerSize callerFrame
+    values names retCode l1 l2 dest args source saved lens xs args1 prog ss envs
+    destinationCode destination guards callerRelation plainConventions plainMaximum destinationCompile
+  have countCallee : args1.length-k ≤ calleeSize := by
+    split_ifs at calleeShape <;> omega
+  have useStack : saved.useStack = true := by
+    unfold stateRel at callerRelation
+    aesop (config := { enableSimp := false })
+  have stackBound : saved.stackSpace+callerSize ≤ saved.stack.length := by
+    unfold stateRel at callerRelation
+    aesop (config := { enableSimp := false })
+  obtain ⟨moved, stack, regs, moveRun, movedState, registers, stackLength, movedSpace,
+    tail, slots⟩ := evaluateHandlerArguments k callerSize callerFrame h1 h2 destination
+      (args.length+1) saved savedHandler useStack room stackBound countCaller
+      (by change Compiler.Backend.WordToStack.stackArgCount destination (args.length+1) k ≤
+            header.stackSpace; omega)
+  rw [countEq] at movedState movedSpace tail slots
+  subst moved
+  let entry : StackSemStateFiniteExact width C F := {header with
+    clock := header.clock-1, stackSpace := header.stackSpace-calleeSize,
+    stack := stack, regs := regs.updateEq (0,.loc l1 l2)}
+  refine ⟨_,entry,moveRun,?_,?_⟩
+  · rw [StackSemEvaluate.evaluate_stackAlloc,
+      if_neg (by simp [StackSemStateOps.setVar, StackSemStateOps.decClock,
+        pushedHandlerState, useStack]),
+      if_neg (by
+        change ¬ header.stackSpace-(args1.length-k) < calleeSize-(args1.length-k)
+        omega)]
+    simp only [StackSemStateOps.setVar, StackSemStateOps.decClock]
+    have spaceEq : header.stackSpace-(args1.length-k)-(calleeSize-(args1.length-k)) =
+        header.stackSpace-calleeSize := by omega
+    rw [spaceEq]
+  · apply handlerCalleeStateRel ac k callerSize callerFrame calleeSize calleeFrame values names
+      retCode l1 l2 dest args handlerVar h1 h2 handlerCode savedHandler source saved header
+      lens xs args1 prog ss envs stack regs guards callerRelation prePushRelation conventions
+      rfl savedLookup room calleeShape calleeLocalsSize argumentBound space
+    · intro register distinct
+      have preserved := registers register distinct
+      change regs.lookup register = saved.regs.lookup register at preserved
+      exact preserved
+    · exact slots
+    · change stack.length = saved.stack.length at stackLength
+      exact stackLength
+    · change stack.drop (header.stackSpace-(args1.length-k)+(args1.length-k)) =
+        header.stack.drop header.stackSpace at tail
+      rw [Nat.sub_add_cancel (show args1.length-k ≤ header.stackSpace by omega)] at tail
+      exact tail
+
 /-- Actual native restoration state after reading the saved handler slot,
 setting the handler store and freeing precisely the three header words.
 Flapjack proof infrastructure for the original normal-return branch9495+;

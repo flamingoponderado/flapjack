@@ -59,24 +59,24 @@ example : locToPc 1 99 code = none := by simp [code, locToPc, isLabelHOL]
 example : locToPc 77 0 code = none := by simp [code, locToPc, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_return0=T.
-example : getLabAfter 0 code = some (.loc 1 5) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
+example : getLabAfter (resultWidth := 8) 0 code = some (.loc 1 5) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_return1=T.
-example : getLabAfter 1 code = some (.loc 1 7) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
+example : getLabAfter (resultWidth := 8) 1 code = some (.loc 1 7) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_return2=T.
-example : getLabAfter 2 code = some (.loc 2 0) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
+example : getLabAfter (resultWidth := 8) 2 code = some (.loc 2 0) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_return3=T.
-example : getLabAfter 3 code = some (.loc 2 4) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
+example : getLabAfter (resultWidth := 8) 3 code = some (.loc 2 4) := by simp [code, nextLabel, getLabAfter, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_return4=T.
-example : getLabAfter 4 code = none := by simp [code, nextLabel, getLabAfter, isLabelHOL]
+example : getLabAfter (resultWidth := 8) 4 code = none := by simp [code, nextLabel, getLabAfter, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_return5=T.
-example : getLabAfter 5 code = none := by simp [code, getLabAfter, isLabelHOL]
+example : getLabAfter (resultWidth := 8) 5 code = none := by simp [code, getLabAfter, isLabelHOL]
 
 -- Original HOL labsem_navigation_probe.out: nav_first_label=T.
-example : nextLabel code = some (.loc 1 0) := by simp [code, nextLabel]
+example : nextLabel (resultWidth := 8) code = some (.loc 1 0) := by simp [code, nextLabel]
 
 end Flapjack.Test.LabSemNavigationParity
