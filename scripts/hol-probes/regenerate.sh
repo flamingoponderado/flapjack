@@ -7510,3 +7510,6 @@ run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.ou
 run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
   semantics_eq_statement semantics_eq_proved semantics_eq_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_probe.out \
+  evaluateWInstConst_typed evaluateWInstConst_proved evaluateWInstConst_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

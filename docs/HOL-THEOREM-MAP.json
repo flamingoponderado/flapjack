@@ -87879,5 +87879,23 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol compared original1473-1533, convert_s58-67 and faithful PanSem semantics785-809. All eight source conjuncts retained in original order: non-Fail, ctxt structs fields projection, source empty locals, globals fields/wellformed shape, ctxt empty locals, alist shape map=FMAP_MAP2 shape_of, struct_infos_ok. Conclusion is actual semantics(convertStateExact ctxt source) start=semantics source start with no targetrun/trace equality/IH/hooks premise. Same canonical imported owner four maps, full two-way state roundtrip; positive indexed BitVec and Type0 FFI host. Full compileCorrectExact supplies actual compiled TailCall target run at identical clock; empty locals discharge FEVERY/map premises, compile args empty preserves TailCall, convertRes classification preserves original outcome and state conversion preserves ffi.ioEvents. Original tagged clock stability and event monotonicity discharge full six-premise PanProps wrapper equality internally. Fresh closed original statement/types/kernel truth capture; no executed production route completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Constant.lean",
+    "lean_name": "evaluateWInstConst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source review of evaluate_wInst4688-5140, Const branch4705-4714. Full original five guards and existential native run/full state relation/stack length and stack-space conclusion retained on the Const constructor. Source inst on WordLangInst and target HolInst use the same positive alpha word width; gamma host and FFI types remain arbitrary. EveryVar/maxVar/argument convention retain reviewed literal clauses. Actual source post-state derived from inst, actual register/stack write derived from evaluateWRegWrite1Seq and evaluateWStackStoreWReg1, without target execution/postrelation assumptions. Fresh typed original kernel specialization of evaluate_wInst at asm Const proves entire case with zero hypotheses; not a local literal proof replay or cross-language equivalence proof. Five canonical relation map fields have genuine local source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item 8), no independent IEEE agreement. Other instruction cases and arbitrary-instruction assembly remain open.",
+    "hol_line": 4688
   }
 ]
