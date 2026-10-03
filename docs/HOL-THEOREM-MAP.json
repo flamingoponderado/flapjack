@@ -69459,6 +69459,21 @@
     "reviewer": "flapjack-sol2 full source comparison2026-10-03 original679-692 and original fully generalized native type: all original program/source/result/post/replacementclock binders and sole source-evaluation AND clock_neutral premise, complete actual updated-clock evaluation and same result/post-state clock update. Arbitrary positive width and independent compile/FFI host types retained. Actual native HolProg/StackSemStateFiniteExact/evaluate and reviewed clockNeutralHOL used; original-neutral constructors Skip/Inst/LocValue/Halt and recursive Seq/If exactly retained, every other constructor excluded by source predicate. Structural size proof derives full clock-update commutation AND unchanged post-clock internally; Seq min clock clamp identity proved from first recursive result, conditional register/immediate and word comparison failures/successes retained. No desired evaluation/post-clock/free-context extra premise or callback law. Actual canonical regs/fpRegs/store owner and local genuine codec roundtrip; Spt code unchanged. Fresh literal original full inst_clock_neutral local proof then literal original full evaluate_clock_neutral proof, full generalized statement0hyp and7 independent original neutral/nonneutral observations. Full arbitrary kernel consumer and4 mixed Seq/Inst/Halt consumers at widths1/8/64/80 with replacement clocks0/17/0/123456789. Existing evaluator closure inherits reals_as_rational_cuts SOUNDNESS item8, no new real/FP agreement, production behavior/default/HOLD policy unchanged. Actual StackRemove initializer3887 prerequisite, not full initialization/compiler completion."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateNeutral.lean",
+    "lean_name": "evaluateFfiNeutral",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_ffi_neutral",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-stack-evaluate-ffi-neutral) against stackPropsScript.sml:694-705: !prog s res t. evaluate (prog,s) = (res,t) /\\ clock_neutral prog ==> evaluate (prog,s with ffi := c) = (res,t with ffi := c). All binders retained (program, source, result, post, replacement ffi c : 'ffi ffi_state of the same type, as HOL record update preserves the type); sole premises are the source evaluation equality and clock_neutral; conclusion is the evaluator equality under ffi update. Proof by structural induction over clock_neutral programs mirroring the HOL recInduct, using the tagged inst_clock_neutral_ffi for Inst. Canonical regs/fpRegs/store finite-map carriers and positive-width words; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8). No other difference."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiEntryExclusion.lean",
     "lean_name": "asmFetch_notFfiEntryPcs",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
@@ -73771,6 +73786,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 528-531: !s s' s'l. LIST_REL (\\a b. is_gc_word_const a ==> b = a) (enc_stack s) s'l /\\ dec_stack s'l s = SOME s' ==> LIST_REL sf_gc_consts s s' Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "gc_fun_sf_gc_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "gc_fun_sf_gc_consts",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store",
+      "store'"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-wordsimp-gc-transition-tag) against word_simpProofScript.sml:563-572: !s s'l s' gc_fun memory memory' mdomain store store'. gc_fun_const_ok gc_fun /\\ gc_fun (enc_stack s, memory, mdomain, store) = SOME (s'l, memory', store') /\\ dec_stack s'l s = SOME s' ==> LIST_REL sf_gc_consts s s'. All nine binders retained in HOL order with the same conjunctive premise and LIST_REL (List.Forall2) conclusion. store/store' are standalone HOL |-> finite maps on the canonical HolFiniteMapExact carrier (bare fmap_as_finite_support_relation entries, no owning-carrier witness needed). gc_fun has the separately tagged, source-reviewed gc_fun_type alias WordSemGcFun; its nested argument_4/result_3 maps carry that alias's reviewed slot translation (as for gc_sf_gc_consts's s.gc_fun); gc_fun_const_ok is the tagged gcFunConstOk. memory/mdomain are total functions as in HOL ('a word -> 'a word_loc, 'a word -> bool). Positive-width words under NeZero. Proof via enc_stack_dec_stack_is_gc_word_const as in HOL. No other difference."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -80845,6 +80873,88 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SemanticsCompile.lean",
+    "lean_name": "semanticsCompileLemmaPrime",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "semantics_compile_lemma'",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison original11012-11171: full original prime sixteen guards and machine_sem equality, and derived nonprime fifteen guards/implements-prime T conclusion. Original independent alpha word, beta machine state, gamma projection, delta empty-label value and epsilon FFI types preserved as positive width and S/Q/G/F; generic LN remains Spt(Spt G). Native exact config, code/compile, all oracle/non-sharing, initial-state, MMIO entry/exit/address tuples, boundary, strict whole-buffer bound and provided ExtCall classification retained verbatim. No target execution/result or simulation premise. Actual compile success is decomposed through both FFI choices, removeLabels and shared-info recursion; accepted filtering/initializer proof supplies semantics equality. Last buffer guard derived via bounded native list-search entries and modular arithmetic, no total EL/LEAST adoption. Final implements lift internally discharges non-Fail; no extra outer premise. words_as_type_indexed_bitvec records only standard positive word/Type0 host translation. Imported semantic real operations inherit reals_as_rational_cuts assumption, SOUNDNESS section8 rational-cut assurance; no full real closure or cross-language equivalence claim. Fresh mechanically extracted verbatim original prime proof and original nonprime REWRITE_RULE/MATCH_MP chain kernel replay/fulltypes/hyp0 in lab_to_target_semantics_compile_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/SemanticsCompile.lean",
+    "lean_name": "semanticsCompileLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "semantics_compile_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison original11012-11171: full original prime sixteen guards and machine_sem equality, and derived nonprime fifteen guards/implements-prime T conclusion. Original independent alpha word, beta machine state, gamma projection, delta empty-label value and epsilon FFI types preserved as positive width and S/Q/G/F; generic LN remains Spt(Spt G). Native exact config, code/compile, all oracle/non-sharing, initial-state, MMIO entry/exit/address tuples, boundary, strict whole-buffer bound and provided ExtCall classification retained verbatim. No target execution/result or simulation premise. Actual compile success is decomposed through both FFI choices, removeLabels and shared-info recursion; accepted filtering/initializer proof supplies semantics equality. Last buffer guard derived via bounded native list-search entries and modular arithmetic, no total EL/LEAST adoption. Final implements lift internally discharges non-Fail; no extra outer premise. words_as_type_indexed_bitvec records only standard positive word/Type0 host translation. Imported semantic real operations inherit reals_as_rational_cuts assumption, SOUNDNESS section8 rational-cut assurance; no full real closure or cross-language equivalence claim. Fresh mechanically extracted verbatim original prime proof and original nonprime REWRITE_RULE/MATCH_MP chain kernel replay/fulltypes/hyp0 in lab_to_target_semantics_compile_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegister.lean",
+    "lean_name": "evaluateWStackLoadWReg1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_wReg1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1. Source comparison is recorded here; fleet acceptance is tracked separately on the open bead. Original local4417-4445: arbitrary wReg1 equality, EVEN/source lookup/full state_rel with extra0 imply actual existential native load execution, unchanged clock, full relation, stack length/space/bitmaps, every register except scratch k, output register unequal k+1 and exact loaded value. Lean keeps all premises and conjuncts, derives spill bounds from the full locals relation, and writes only scratch k. No target-run premise or additional bound. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator reals_as_rational_cuts assurance remains; no new IEEE equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegister.lean",
+    "lean_name": "evaluateWStackLoadSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1. Source comparison is recorded here; fleet acceptance is tracked separately on the open bead. Original4512-4523: unconditional equality for every load list, continuation and whole state, including invalid indices, disabled stack and all non-NONE outcomes. Lean list induction uses unconditional native Seq clock identity; no success/range premise. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator reals_as_rational_cuts assurance remains; no new IEEE equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MapRestoration.lean",
+    "lean_name": "resVarFmapMap2Rev",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "res_var_FMAP_MAP2_rev",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fmap"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-10-03 original816-833: Full arbitrary key/value/result types, map, callback, key and optional restored value; unconditional map2/res_var equality, exact optional callback keyed by restored name. NONE deletes that key and SOME updates that key; every other lookup preserved. No arbitrary BEq/DecidableEq parameter or extra premise. Only canonical finite-support bare fmap parameter translation; no word/name/state carrier changes. Classical HOL equality internally selected. Fresh original whole theorem/binder types/hyp0/closed kernelT source reviewed; Dec/DecCall/full compiler consumers remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MapRestoration.lean",
+    "lean_name": "feveryResVar",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "FEVERY_res_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fmap"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-10-03 original816-833: Full arbitrary map/predicate/key/optional value; original FEVERY equivalence to conjunction of restricted old map FEVERY and universal optional restored-binding predicate. Bool-returning P and FEVERY truth use established pointwise rendering. DRESTRICT fmap (COMPL {k}) represented by restrictExcept with unconditional checked lookup if query=k then NONE else FLOOKUP fmap query, exactly the original singleton exclusion/DOMSUB semantics. Neither restricted-map validity nor restored-value validity is assumed in a premise. Only canonical finite-support bare fmap parameter translation; no word/name/state carrier changes. Classical HOL equality internally selected. Fresh original whole theorem/binder types/hyp0/closed kernelT source reviewed; Dec/DecCall/full compiler consumers remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MapRestoration.lean",
+    "lean_name": "restrictExceptLookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical finite-support lookup witness for external finite_map complement-singleton DRESTRICT; no independent CakeML declaration. Exact unconditional singleton-exclusion lookup, not a premise assuming restriction correspondence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Call.lean",

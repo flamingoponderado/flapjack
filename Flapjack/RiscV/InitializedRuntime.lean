@@ -45,6 +45,44 @@ def initializedRuntimeLab? {width : Nat} [NeZero width]
     (Flapjack.Compiler.Backend.StackToLab.RuntimeLabels.originalSection start)
     Flapjack.Compiler.Backend.RiscVConfig.riscvNames native
 
+/-- Successful output of the actual runtime-image lowering decodes to the
+literal native section composition. Every converted source section, native
+support stub, allocation pass, initializer argument and naming map is retained.
+This untagged theorem is Flapjack codec infrastructure with no standalone HOL
+original; codec success is not a target-run assumption or pass simulation. -/
+theorem initializedRuntimeLab_recover {width : Nat} [NeZero width]
+    (jump : Bool) (bounds : BitVec width × BitVec width) (pointer start registerCount : Nat)
+    (programs : List (Nat × StackProg Nat)) (outputs : LabProgram (Word width))
+    (accepted : initializedRuntimeLab? jump bounds pointer start registerCount programs = some outputs) :
+    ∃ converted,
+      Flapjack.Compiler.Backend.StackToLab.InitializedProduction.nativeInputs? programs = some converted ∧
+      let source := Flapjack.Compiler.Backend.StackToLab.RuntimeLabels.originalInputs
+        (converted.filter (fun entry => entry.1 >= 3))
+      let support :=
+        [(Flapjack.raiseStubLocation, Flapjack.Compiler.Backend.WordToStack.Native.raiseStubNative false registerCount),
+         (Flapjack.storeConstsStubLocation, Flapjack.Compiler.Backend.WordToStack.Native.storeConstsStubNative registerCount)]
+      let allocated := Flapjack.Compiler.Backend.StackAlloc.compile
+        initializedRuntimeDataConfig (support ++ source)
+      let heap := 2 * Flapjack.Compiler.Backend.DataToWord.maxHeapLimit width
+        initializedRuntimeDataConfig - 1
+      Flapjack.Compiler.Backend.StackToLab.ExecutedCodec.mapCodec?
+        Flapjack.Compiler.Backend.StackToLab.ExecutedCodec.sectionFromExecuted? outputs = some
+          ((Flapjack.Compiler.Backend.StackNames.compileHOL
+            Flapjack.Compiler.Backend.RiscVConfig.riscvNames
+            (Flapjack.Compiler.Backend.StackRemove.compileHOL jump bounds false heap pointer
+              (Flapjack.Compiler.Backend.StackToLab.RuntimeLabels.originalSection start)
+              allocated)).map Flapjack.Compiler.Backend.StackToLab.progToSectionHOL) := by
+  cases convertedEq :
+      Flapjack.Compiler.Backend.StackToLab.InitializedProduction.nativeInputs?
+        (width := width) programs with
+  | none => simp [initializedRuntimeLab?, convertedEq] at accepted
+  | some converted =>
+      refine ⟨converted, rfl, ?_⟩
+      have lowered := accepted
+      simp only [initializedRuntimeLab?, convertedEq] at lowered
+      exact Flapjack.Compiler.Backend.StackToLab.InitializedProduction.compileNative_recover
+        _ _ _ _ _ _ _ _ _ lowered
+
 /-- Stored-length convergence over the complete actual program. Exhausting the
 relocation budget fails, matching HOL `remove_labels_loop`; an unconverged
 program must never reach instruction lowering. -/

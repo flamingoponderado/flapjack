@@ -1,0 +1,4 @@
+wload_full_register_transport=⊢ wReg1 r (k,f,f') = (x,r') ∧ EVEN r ∧ get_var r s = SOME c ∧ state_rel ac k f f' s t lens 0 ⇒ ∃t'. evaluate (wStackLoad x Skip,t) = (NONE,t') ∧ t.clock = t'.clock ∧ state_rel ac k f f' s t' lens 0 ∧ LENGTH t'.stack = LENGTH t.stack ∧ t'.stack_space = t.stack_space ∧ t'.bitmaps = t.bitmaps ∧ (∀r. r ≠ k ⇒ get_var r t' = get_var r t) ∧ r' ≠ k + 1 ∧ get_var r' t' = SOME c
+wload_full_continuation=⊢ ∀ls prog s. evaluate (wStackLoad ls prog,s) = evaluate (Seq (wStackLoad ls Skip) prog,s)
+wload_original_definition=⊢ (∀x. wStackLoad [] x = x) ∧ ∀x r ps i. wStackLoad ((r,i)::ps) x = Seq (StackLoad r i) (wStackLoad ps x)
+wload_original_register_compiler=⊢ ∀r k f f'. wReg1 r (k,f,f') = (let r = r DIV 2 in if r < k then ([],r) else ([(k,f − 1 − (r − k))],k))

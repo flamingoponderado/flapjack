@@ -266,14 +266,20 @@ theorem enc_stack_dec_stack_is_gc_word_const {width : Nat} [NeZero width] :
 
 /-- Statement-for-statement rendering of HOL `gc_fun_sf_gc_consts`
     (`word_simpProofScript.sml:563-572`), all nine binders and the conjunctive
-    premise as in HOL.  Untagged for the same reason as `gcFunConstOk`: the
-    reviewed `gc_fun_type` slot translation is currently accepted by the
-    reference checker only for `gc_fun_ok_def`. -/
+    premise as in HOL.  The two standalone `store`/`store'` finite maps use
+    the canonical `HolFiniteMapExact` carrier (named relation entries); the
+    `gcFun` binder has the separately tagged, source-reviewed `gc_fun_type`
+    alias `WordSemGcFun`, whose nested argument/result maps carry that
+    alias's own reviewed slot translation, as for `gc_sf_gc_consts`'s
+    `s.gcFun`.  No other difference. -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "gc_fun_sf_gc_consts"
+  (fmap_as_finite_support_relation := [store, store']) (words_as_type_indexed_bitvec)]
 theorem gc_fun_sf_gc_consts {width : Nat} [NeZero width] :
     ∀ (s : List (WordSemStackFrame width)) (s'l : List (WordLocW width))
       (s' : List (WordSemStackFrame width)) (gcFun : WordSemGcFun width)
       (memory memory' : BitVec width → WordLocW width) (mdomain : BitVec width → Bool)
-      (store store' : HolFiniteMapExact WordStoreHOL (WordLocW width)),
+      (store : HolFiniteMapExact WordStoreHOL (WordLocW width))
+      (store' : HolFiniteMapExact WordStoreHOL (WordLocW width)),
       gcFunConstOk gcFun ∧ gcFun (wordSemEncStack s, memory, mdomain, store) = some (s'l, memory', store') ∧
         wordSemDecStack s'l s = some s' →
         List.Forall₂ sfGcConsts s s' := by
