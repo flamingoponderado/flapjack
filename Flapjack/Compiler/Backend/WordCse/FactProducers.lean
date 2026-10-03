@@ -53,6 +53,18 @@ def addToLoadAux {width : Nat} [NeZero width] (data : Knowledge)
             toCanonical := sptInsert destination destination data.toCanonical,
             toLatest := sptInsert destination destination data.toLatest }, original)
 
+/-- Original wrapper keeps the adjusted instruction's complete key and the
+original instruction's complete native payload distinct. The reviewed
+constructor-for-constructor instruction codec supplies the WordLang carrier;
+no constructor, eligibility or destination-parity restriction is imposed.
+Executed producer correspondence remains separate production-path work. -/
+@[hol "cakeml/compiler/backend/word_cseScript.sml" "add_to_data_def"
+  (words_as_type_indexed_bitvec)]
+def addToData {width : Nat} [NeZero width] (data : Knowledge)
+    (destination : Nat) (adjusted original : Compiler.Encoders.Asm.HolInst width) :
+    Knowledge × WordLangProgHOL (BitVec width) :=
+  addToDataAux data destination (instToNumList adjusted) (.inst original.toWordLangInst)
+
 /-- Original constant rematerialization for arbitrary destination parity:
 source callers guard odd registers, but this definition has no such premise.
 Both branches emit the original Const rather than extending a holder lifetime. -/

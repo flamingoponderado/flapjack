@@ -84007,5 +84007,14 @@
     "hol_name": "good_cmp_listCmp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source480-484 sole conclusion good_cmp listCmp, no premises. Full original seven comparator conjuncts retained via exact general TotOrder_imp_good_cmp and original TotOrd_listCmp result. Original arbitrary numeral-list carrier and direct three-constructor Ordering translation retained; no finite-map carrier, word dimension, range, invariant, sortedness, evaluation or output assumption added. Existing Sol2 equality/reversal/transitivity ports reused unchanged."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",
+    "lean_name": "addToData",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "add_to_data_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-native-add-wrapper): word_cseScript385-389 computes instToNumList adjusted then add_to_data_aux data r key (Inst original), retaining arbitrary adjusted and original instructions and the complete knowledge/program result. Lean uses the reviewed full HolInst width carrier and its constructor-for-constructor toWordLangInst codec for the WordLangProgHOL Inst payload, preserving Skip/Const/Arith/Mem/Fp without successful codec, eligibility, parity, invariant or evaluation premises. Positive BitVec width/NeZero is the standard HOL word dimension translation; no other statement or behavior differences. This is the native definition only; executed producer correspondence and complete CSE route remain separately open."
   }
 ]
