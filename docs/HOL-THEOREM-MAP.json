@@ -67937,5 +67937,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison: stackPropsScript421-440 StoreConsts case. Actual evaluate equation is sole premise, all useStore/useAlloc and optional-stub lookup guards and primitive errors retained. Full store_const_sem_const derives unchanged oracle/code/bitmaps, giving count0 for all outcomes. Conclusion retains original existential oracle shift, left-fold spt union over GENLIST encoded as range/map, and bitmap List append/flatten. No successful guard, field equality or trace premise assumed. Imported StackSemStateFiniteExact owns canonical regs/fpRegs/store finite maps; same-module non-vacuous codec witness re-export, code remains Spt, bitmaps remains List. All word dimensions positive NeZero width. No runtime change, no LOG2-zero equality or cross-language agreement obligation; StoreConsts uses word-copy operations. One case only, full theorem remains open. Elaborated constant closure inherits reals_as_rational_cuts through the full native evaluator (including its FP arms); recorded as inherited assurance scope, not a direct qualifier or proof that floating-point semantics agree cross-language.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/DataBufferWrite.lean",
+    "lean_name": "compCorrectDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03; bead flapjack-sol-remove-databuffer: original comp_correct DataBufferWrite case2035-2080, original four premises evaluate/nonError/full state_rel/reg_bound and native existential target clock/poststate with full result branch retained. Operand words and buffer-write success follow from native source evaluation and nonError; target register lookups from original bounds/state relation, target domain from next existential word-list cell. Clock0 native compiled store uses second register as value and first as address with zero offset. Complete postrelation retains all 25 unchanged conjuncts; full separated memory/bitmap-buffer/remaining/store/stack heap updated via singleton functional-graph store, consuming one remaining cell and appending value, all modular addresses derived from native success and state relation. No target execution/domain/postheap premises. Imported canonical regs/fpRegs/store use genuine same-module codec roundtrip witness; tree-map code excluded. Positive width BitVec/NeZero and C/F Type0 retained. Entire evaluator closure inherits reals_as_rational_cuts explicitly; no independent floating-point correspondence claim. Other cases and parent assembly remain open."
   }
 ]

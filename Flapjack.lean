@@ -207,6 +207,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
