@@ -75517,5 +75517,42 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; flapjack-labprops-evaluate-add-clock): original labPropsScript.sml312-334 and fresh complete HOL type capture preserve independent alpha word/beta configuration/gamma FFI carriers, all s/res/r/k binders, evaluate s=(res,r) and sole res != TimeOut guard, and complete result/poststate equality with final clock r.clock+k. Native evaluator functional induction covers all instruction, shared-memory, Install, FFI, halt and error branches; no successful-run, non-Error, target-run or desired poststate premise. Positive-width BitVec translation is qualified. Inherits reals_as_rational_cuts via native evaluator FP closure, SOUNDNESS item 8 unchanged. Fresh original statement/types/zero hypotheses/proved capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "asm_fetch_not_skip_adjust_pc",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "asmFetchNotSkipAdjustPc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original125 full arbitrary pc/code and universal no-Skip bytes/length guard imply complete fetch equality. Unused original inst:beta binder is vacuous, confirmed fresh fulltype and documented beside declaration; omitted only this irrelevant binder. Count from actual asmFetchAuxEq is proved zero from real allSkips predecessor exclusion, not supplied. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original199 full native state relation with independent word/config/FFI carriers: existential arbitrary sourceCompile, actual filtered code, adjusted pc, pointwise oracle second-component filter, compile transformation function equality and original nonfailed guard. Entire conjunction/exists/state equality retained, no target run or error premise. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "asm_fetch_aux_eq2",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "asmFetchAuxEq2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original252 full arbitrary adjusted native fetch=x guard yields actual existential count with original fetch(pc+count)=x and entire allSkips predicate. All pc/code/x binders retained; no supplied count. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "all_skips_evaluate_rw",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "allSkipsEvaluateRw",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original263 full native state/count/clock/target binders, conjunction of allSkips, nonfailed, clock=clk+count and target exact pc/clock update; conclusion entire native evaluator result-pair equality. Retains Error/TimeOut outcomes; no target evaluator premise. Native allSkipsEvaluate derives clock accounting. Inherits reals_as_rational_cuts via actual evaluator FP closure, SOUNDNESS item 8 unchanged. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

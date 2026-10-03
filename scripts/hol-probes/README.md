@@ -6984,3 +6984,7 @@ The same probe now also fetches the exported original `max_var_intro` kernel the
 ### Full native Lab evaluator clock stability
 
 `labprops_evaluate_ADD_clock_probeScript.sml` captures the original full theorem312, all quantified carriers, zero hypotheses and a kernel reproof of its entire statement. Four rows preserve the sole non-TimeOut guard and complete result/poststate clock equality.
+
+### Native filter state relation and skipped-run consequences
+
+`lab_filter_state_relation_probeScript.sml` captures four complete original declarations125/199/252/263 with full types, zero hypotheses and kernel reproofs (16 rows). The unchanged local proofs and their unchanged local state/skip-run prerequisites are replayed from the original source. The unused fetch lemma inst binder is captured explicitly.

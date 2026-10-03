@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabFilter.Proofs.StateRelation
 import Flapjack.Compiler.Backend.LabFilter.Proofs.Navigation
 
 /-! Original lab_filterProof prerequisite groups. The full filter simulation

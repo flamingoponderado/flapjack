@@ -6581,3 +6581,10 @@ run_probe pan_structs_decs_stcnames_compile_decs_probeScript.sml pan_structs_dec
 run_probe labprops_evaluate_ADD_clock_probeScript.sml labprops_evaluate_ADD_clock_probe.out \
   evaluate_ADD_clock evaluate_ADD_clock_types evaluate_ADD_clock_hypotheses evaluate_ADD_clock_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_filter_state_relation_probeScript.sml lab_filter_state_relation_probe.out \
+  asm_fetch_not_skip_adjust_pc asm_fetch_not_skip_adjust_pc_types asm_fetch_not_skip_adjust_pc_hypotheses asm_fetch_not_skip_adjust_pc_proved \
+  state_rel_def state_rel_def_types state_rel_def_hypotheses state_rel_def_proved \
+  asm_fetch_aux_eq2 asm_fetch_aux_eq2_types asm_fetch_aux_eq2_hypotheses asm_fetch_aux_eq2_proved \
+  all_skips_evaluate_rw all_skips_evaluate_rw_types all_skips_evaluate_rw_hypotheses all_skips_evaluate_rw_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"

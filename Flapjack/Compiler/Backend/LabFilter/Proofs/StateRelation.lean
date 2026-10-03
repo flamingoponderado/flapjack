@@ -1,0 +1,69 @@
+import Flapjack.Compiler.Backend.LabFilter.Proofs.Navigation
+
+namespace Flapjack.Compiler.Backend.LabFilter.Proofs
+open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
+open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabFilter
+open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
+
+/-- The original quantified inst binder is vacuous and omitted; it does not occur in any guard or conclusion. -/
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "asm_fetch_not_skip_adjust_pc"
+  (words_as_type_indexed_bitvec)]
+theorem asmFetchNotSkipAdjustPc {width : Nat} [NeZero width] (pc : Nat)
+    (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
+      (BitVec width)))) :
+    (∀ bytes len, asmFetchAux pc code ≠ some (.asm (.asmi (.inst .skip)) bytes len)) →
+    asmFetchAux pc code = asmFetchAux (adjustPc pc code) (filterSkip code) := by
+  intro hn
+  obtain ⟨count, he, hs⟩ := asmFetchAuxEq pc code
+  have hz : count = 0 := by
+    by_contra h
+    obtain ⟨bytes, len, hf⟩ := hs.2 0 (by omega)
+    exact hn bytes len (by simpa only [Nat.add_zero] using hf)
+  simpa only [hz, Nat.add_zero] using he
+
+/-- Full source filter simulation relation, retaining the actual compiler/oracle
+transformations and original nonfailed guard. -/
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "state_rel_def"
+  (words_as_type_indexed_bitvec)]
+def stateRel {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (s t : Flapjack.Compiler.Backend.LabSem.State width C F) : Prop :=
+  (∃ sourceCompile,
+    s = { t with
+      code := filterSkip t.code
+      pc := adjustPc t.pc t.code
+      compileOracle := (fun n => ((t.compileOracle n).1, filterSkip (t.compileOracle n).2))
+      compile := sourceCompile } ∧
+    t.compile = fun config program => sourceCompile config (filterSkip program)) ∧
+  t.failed = false
+
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "asm_fetch_aux_eq2"
+  (words_as_type_indexed_bitvec)]
+theorem asmFetchAuxEq2 {width : Nat} [NeZero width] (pc : Nat)
+    (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
+      (BitVec width))))
+    (x : Option (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
+      (BitVec width))) :
+    asmFetchAux (adjustPc pc code) (filterSkip code) = x →
+    ∃ count, asmFetchAux (pc + count) code = x ∧ allSkips pc code count := by
+  intro h
+  obtain ⟨count, he, hs⟩ := asmFetchAuxEq pc code
+  exact ⟨count, he.trans h, hs⟩
+
+/-- Entire result-pair equality from the original skipped-run clock accounting.
+Evaluation inherits the real rendering assumption of SOUNDNESS item 8. -/
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "all_skips_evaluate_rw"
+  (words_as_type_indexed_bitvec)]
+theorem allSkipsEvaluateRw {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (s : Flapjack.Compiler.Backend.LabSem.State width C F) (count clock : Nat)
+    (t : Flapjack.Compiler.Backend.LabSem.State width C F) :
+    allSkips s.pc s.code count ∧ s.failed = false ∧ s.clock = clock + count ∧
+      t = { s with pc := s.pc + count, clock := clock } →
+    evaluate s = evaluate t := by
+  rintro ⟨hs, hf, hc, rfl⟩
+  have h := allSkipsEvaluate count {s with clock := clock} ⟨hs, hf⟩ 0
+  simpa only [Nat.add_zero, ← hc] using h
+
+end Flapjack.Compiler.Backend.LabFilter.Proofs
