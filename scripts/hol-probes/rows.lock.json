@@ -2066,6 +2066,24 @@
       "sha256": "904f882bfc261bbc8c53544aaf146f827b2266dbb397cb1776f1baf3f353ba00"
     },
     {
+      "bytes": 2269,
+      "out": "lab_props_alignment_dm_control_probe.out",
+      "rows": 24,
+      "sha256": "0f324e2bc9dc33217e7535d6afa1d8d1bfdd08dc33e8dffa0dab5aa3e5561800"
+    },
+    {
+      "bytes": 707,
+      "out": "lab_props_alignment_dm_evaluate_probe.out",
+      "rows": 8,
+      "sha256": "bea7689f7a18ec7340494f4b28dfad4323bcc8b4d2a2482c07a7d447cbc35cbb"
+    },
+    {
+      "bytes": 2010,
+      "out": "lab_props_alignment_dm_memory_probe.out",
+      "rows": 24,
+      "sha256": "b270c97281054595df52fcafbdc577368910631790c0cfedb86c93821e508036"
+    },
+    {
       "bytes": 1609,
       "out": "lab_props_alignment_operations_probe.out",
       "rows": 24,
