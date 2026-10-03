@@ -62,9 +62,9 @@ theorem stepOfLine {width : Nat} [NeZero width] {S Q F σ : Type}
   exact bytesInMem_encWithNop _ _ _ _ _ _ _ henc hmem
 
 /-- Simulate a whole NOP-padded line `bytes'` encoding the non-`Call`
-instruction `instr` (`asm_step_IMP_evaluate_step_nop`), when the instruction
-leaves memory unchanged. -/
-theorem stepNopOfLine {width : Nat} [NeZero width] {S Q F σ : Type}
+instruction `instr` (`asm_step_IMP_evaluate_step_nop`), given that the line's
+bytes are still in the target memory after the instruction. -/
+theorem stepNopOfLineMem {width : Nat} [NeZero width] {S Q F σ : Type}
     {mc : MachineConfig width S Q} {code2 : LabProgHOL width} {labs : Spt (Spt Nat)}
     {p : BitVec width} {s1 : LabSem.State width Config F} {t1 : AsmState width} {ms1 : S}
     (io : HolFfiState σ) (hrel : stateRel (mc, code2, labs, p) s1 t1 ms1)
@@ -75,7 +75,8 @@ theorem stepNopOfLine {width : Nat} [NeZero width] {S Q F σ : Type}
     (hok : asmOkExact instr mc.target.config = true)
     (hdis : ffiEntryPcsDisjoint mc t1 bytes'.length)
     (hnf : ¬ (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1).failed)
-    (hmemeq : (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1).mem = t1.mem)
+    (hb2 : bytesInMemoryHOL t1.pc bytes'
+      (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1).mem t1.memDomain)
     (hcall : ∀ x, instr ≠ .call x) :
     ∃ l ms2, ∀ k,
       evaluateTargetHOL mc io (k + l) ms1 = evaluateTargetHOL (shiftInterfer l mc) io k ms2 ∧
@@ -89,7 +90,43 @@ theorem stepNopOfLine {width : Nat} [NeZero width] {S Q F σ : Type}
   have hb := bytesInMem_impliesMemory _ _ _ _ _ hmem
   rw [← htpc] at hb
   apply asmStepImpEvaluateStepNop mc t1 ms1 io instr _ bytes'
-  refine ⟨hec, c3, hdis, c27, by rw [hmemeq]; exact hb, ?_, rfl, c1, hcall⟩
+  refine ⟨hec, c3, hdis, c27, hb2, ?_, rfl, c1, hcall⟩
+  exact ⟨hb, henc, c43, c44, c45, rfl, hnf, hok⟩
+
+/-- Simulate a whole NOP-padded line `bytes'` encoding the non-`Call`
+instruction `instr` (`asm_step_IMP_evaluate_step_nop`), when the instruction
+leaves memory unchanged outside the source memory domain. -/
+theorem stepNopOfLine {width : Nat} [NeZero width] {S Q F σ : Type}
+    {mc : MachineConfig width S Q} {code2 : LabProgHOL width} {labs : Spt (Spt Nat)}
+    {p : BitVec width} {s1 : LabSem.State width Config F} {t1 : AsmState width} {ms1 : S}
+    (io : HolFfiState σ) (hrel : stateRel (mc, code2, labs, p) s1 t1 ms1)
+    (hec : encoderCorrect mc.target) (instr : HolAsm width) (bytes' : List (BitVec 8))
+    (hmem : bytesInMemHOL (p + BitVec.ofNat width (posVal s1.pc 0 code2)) bytes' t1.mem
+      t1.memDomain (fun a => s1.memDomain a = true))
+    (henc : encWithNop mc.target.config.encode instr bytes')
+    (hok : asmOkExact instr mc.target.config = true)
+    (hdis : ffiEntryPcsDisjoint mc t1 bytes'.length)
+    (hnf : ¬ (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1).failed)
+    (hmemeq : ∀ a, ¬ s1.memDomain a = true →
+      (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1).mem a = t1.mem a)
+    (hcall : ∀ x, instr ≠ .call x) :
+    ∃ l ms2, ∀ k,
+      evaluateTargetHOL mc io (k + l) ms1 = evaluateTargetHOL (shiftInterfer l mc) io k ms2 ∧
+      findNextInterference mc io (k + l) ms1 =
+        findNextInterference (shiftInterfer l mc) io k ms2 ∧
+      targetStateRel mc.target (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1)
+        ms2 ∧
+      l ≠ 0 := by
+  obtain ⟨c1, -, c3, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -,
+    c27, -, -, -, -, -, -, -, -, -, -, -, -, -, htpc, -, c43, c44, c45, -⟩ := hrel
+  have hb := bytesInMem_impliesMemory _ _ _ _ _ hmem
+  rw [← htpc] at hb
+  have hb2 := bytesInMem_impliesMemory_change _ t1.mem
+    (asmUpd instr (t1.pc + BitVec.ofNat width bytes'.length) t1).mem _ bytes' _
+    (fun a ha => (hmemeq a ha).symm) hmem
+  rw [← htpc] at hb2
+  apply asmStepImpEvaluateStepNop mc t1 ms1 io instr _ bytes'
+  refine ⟨hec, c3, hdis, c27, hb2, ?_, rfl, c1, hcall⟩
   exact ⟨hb, henc, c43, c44, c45, rfl, hnf, hok⟩
 
 /-- The target line for a fetched source `LabAsm` instruction: same
@@ -123,5 +160,35 @@ theorem fetchedLabAsmLine {width : Nat} [NeZero width] {S Q F : Type}
     refine ⟨w', bytes', len', hok, hmem, hpos, ?_⟩
     exact imp_ffiEntryPcsDisjoint_labAsm s1 mc code2 labs _ a w bytes n p bytes' t1
       ⟨c49, c47, hfetch, c51, hmem, by rw [hpos]; simp [lineBytes, Nat.add_comm], htpc⟩
+
+/-- The target line for a fetched source `Asm` line that is not a shared
+memory access. -/
+theorem fetchedAsmLine {width : Nat} [NeZero width] {S Q F : Type}
+    {mc : MachineConfig width S Q} {code2 : LabProgHOL width} {labs : Spt (Spt Nat)}
+    {p : BitVec width} {s1 : LabSem.State width Config F} {t1 : AsmState width} {ms1 : S}
+    (hrel : stateRel (mc, code2, labs, p) s1 t1 ms1)
+    {b : AsmOrCbw (HolAsm width) HolMemop (HolAddr width)} {bytes : List (BitVec 8)} {n : Nat}
+    (hfetch : asmFetch s1 = some (.asm b bytes n)) (hb : ∀ op re a, b ≠ .shareMem op re a) :
+    ∃ bytes' len',
+      lineOk mc.target.config labs (mc.ffiNames.take (holThe (mmioPcsMinIndex mc.ffiNames)))
+        (posVal s1.pc 0 code2) (.asm b bytes' len') ∧
+      bytesInMemHOL (p + BitVec.ofNat width (posVal s1.pc 0 code2)) bytes' t1.mem t1.memDomain
+        (fun x => s1.memDomain x = true) ∧
+      posVal (s1.pc + 1) 0 code2 = posVal s1.pc 0 code2 + bytes'.length ∧
+      ffiEntryPcsDisjoint mc t1 bytes'.length := by
+  obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -,
+    -, -, -, -, -, -, c33, -, -, -, -, -, -, -, htpc, -, -, -, -, -, c47, -, c49, -, c51,
+    -⟩ := id hrel
+  obtain ⟨j, hmem, hok, hpos, hsim⟩ :=
+    imp_bytesInMemory_state mc labs _ s1 code2 p t1 _ ⟨c49, c47, c33, hfetch⟩
+  cases j with
+  | label => exact hsim.elim
+  | labAsm => exact hsim.elim
+  | asm b' bytes' len' =>
+    simp only [lineSimilar] at hsim
+    subst hsim
+    refine ⟨bytes', len', hok, hmem, hpos, ?_⟩
+    exact imp_ffiEntryPcsDisjoint_asm s1 mc code2 labs _ b bytes n p bytes' t1
+      ⟨c49, c47, hfetch, hb, c51, hmem, by rw [hpos]; simp [lineBytes, Nat.add_comm], htpc⟩
 
 end Flapjack.Compiler.Backend.LabToTarget

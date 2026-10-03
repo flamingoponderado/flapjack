@@ -1,0 +1,125 @@
+has_io_name_def=(∀index. has_io_name index [] ⇔ F) ∧
+(∀xs k index. has_io_name index (Section k []::xs) ⇔ has_io_name index xs) ∧
+∀ys y xs k index.
+  has_io_name index (Section k (y::ys)::xs) ⇔
+  has_io_name index (Section k ys::xs) ∨
+  case y of
+    Label v10 v11 v12 => F
+  | Asm v13 v14 v15 => F
+  | LabAsm (Jump v29) v17 v18 v19 => F
+  | LabAsm (JumpCmp v30 v31 v32 v33) v17 v18 v19 => F
+  | LabAsm (Call v34) v17 v18 v19 => F
+  | LabAsm (LocValue v35 v36) v17 v18 v19 => F
+  | LabAsm (CallFFI i) v17 v18 v19 => i = index
+  | LabAsm Install v17 v18 v19 => F
+  | LabAsm Halt v17 v18 v19 => F
+has_io_name_def_types=(∀(index :mlstring). has_io_name index ([] :α sec list) ⇔ F) ∧
+(∀(xs :α sec list) (k :num) (index :mlstring).
+   has_io_name index (Section k ([] :α line list)::xs) ⇔ has_io_name index xs) ∧
+∀(ys :α line list) (y :α line) (xs :α sec list) (k :num) (index :mlstring).
+  has_io_name index (Section k (y::ys)::xs) ⇔
+  has_io_name index (Section k ys::xs) ∨
+  case y of
+    (Label v10 v11 v12 :α line) => F
+  | Asm v13 v14 v15 => F
+  | LabAsm (Jump v29 :α asm_with_lab) v17 v18 v19 => F
+  | LabAsm (JumpCmp v30 v31 v32 v33 :α asm_with_lab) v17 v18 v19 => F
+  | LabAsm (Call v34 :α asm_with_lab) v17 v18 v19 => F
+  | LabAsm (LocValue v35 v36 :α asm_with_lab) v17 v18 v19 => F
+  | LabAsm (CallFFI i :α asm_with_lab) v17 v18 v19 => i = index
+  | LabAsm (Install :α asm_with_lab) v17 v18 v19 => F
+  | LabAsm (Halt :α asm_with_lab) v17 v18 v19 => F
+read_bytearray_state_rel=∀n a x.
+  state_rel (mc_conf,code2,labs,p) s1 t1 ms1 ∧
+  read_bytearray a n (mem_load_byte_aux s1.mem s1.mem_domain s1.be) = SOME x ⇒
+  read_bytearray a n
+    (λa. if a ∈ mc_conf.prog_addresses then SOME (t1.mem a) else NONE) =
+  SOME x
+read_bytearray_state_rel_types=∀(n :num) (a :α word) (x :word8 list).
+  (state_rel
+     ((mc_conf :(α, β, γ) machine_config),(code2 :α sec list),
+      (labs :num sptree$num_map sptree$num_map),(p :α word))
+     (s1 :(α, config, 'ffi) labSem$state) (t1 :α asm_state) (ms1 :β) :bool) ∧
+  read_bytearray a n (mem_load_byte_aux s1.mem s1.mem_domain s1.be) = SOME x ⇒
+  read_bytearray a n
+    (λ(a :α word).
+         if a ∈ mc_conf.prog_addresses then SOME (t1.mem a :word8)
+         else (NONE :word8 option)) = SOME x
+IMP_has_io_name=asm_fetch s1 = SOME (LabAsm (CallFFI index) l bytes n) ⇒
+has_io_name index s1.code
+IMP_has_io_name_types=asm_fetch (s1 :(α, γ, 'ffi) labSem$state) =
+SOME
+  (LabAsm (CallFFI (index :mlstring) :α asm_with_lab) (l :α word)
+     (bytes :word8 list) (n :num)) ⇒
+has_io_name index s1.code
+bytes_in_mem_asm_write_bytearray_lemma=∀xs p.
+  (∀a. a ∉ k ⇒ m1 a = m2 a) ⇒
+  bytes_in_mem p xs m1 d k ⇒
+  bytes_in_mem p xs m2 d k
+bytes_in_mem_asm_write_bytearray_lemma_types=∀(xs :α list) (p :β word).
+  (∀(a :β word).
+     a ∉ (k :β word -> bool) ⇒ (m1 :β word -> α) a = (m2 :β word -> α) a) ⇒
+  bytes_in_mem p xs m1 (d :β word -> bool) k ⇒
+  bytes_in_mem p xs m2 d k
+bytes_in_mem_asm_write_bytearray=(∀a. byte_align a ∈ s1.mem_domain ⇒ a ∈ s1.mem_domain) ∧
+read_bytearray c1 (LENGTH new_bytes)
+  (mem_load_byte_aux s1.mem s1.mem_domain s1.be) = SOME x ⇒
+bytes_in_mem p xs t1.mem t1.mem_domain s1.mem_domain ⇒
+bytes_in_mem p xs (asm_write_bytearray c1 new_bytes t1.mem) t1.mem_domain
+  s1.mem_domain
+bytes_in_mem_asm_write_bytearray_types=(∀(a :α word).
+   byte_align a ∈ (s1 :(α, γ, 'ffi) labSem$state).mem_domain ⇒
+   a ∈ s1.mem_domain) ∧
+read_bytearray (c1 :α word) (LENGTH (new_bytes :word8 list))
+  (mem_load_byte_aux s1.mem s1.mem_domain s1.be) = SOME (x :word8 list) ⇒
+bytes_in_mem (p :α word) (xs :word8 list) (t1 :α asm_state).mem t1.mem_domain
+  s1.mem_domain ⇒
+bytes_in_mem p xs (asm_write_bytearray c1 new_bytes t1.mem) t1.mem_domain
+  s1.mem_domain
+write_bytearray_NOT_Loc=∀xs c1 s1 a c.
+  s1.mem a = Word c ⇒
+  write_bytearray c1 xs s1.mem s1.mem_domain s1.be a ≠ Loc n n0
+write_bytearray_NOT_Loc_types=∀(xs :word8 list) (c1 :α word) (s1 :(α, γ, 'ffi) labSem$state) (a :α word)
+    (c :α word).
+  (s1.mem a :α word_loc) = Word c ⇒
+  write_bytearray c1 xs s1.mem s1.mem_domain s1.be a ≠
+  (Loc (n :num) (n0 :num) :α word_loc)
+CallFFI_bytearray_lemma=byte_align a ∈ s1.mem_domain ∧ good_dimindex (:α) ∧ a ∈ t1.mem_domain ∧
+a ∈ s1.mem_domain ∧ (s1.be ⇔ mc_conf.target.config.big_endian) ∧
+read_bytearray c1 (LENGTH new_bytes)
+  (mem_load_byte_aux s1.mem s1.mem_domain s1.be) = SOME x ∧
+word_loc_val_byte p labs s1.mem a mc_conf.target.config.big_endian =
+SOME (t1.mem a) ⇒
+word_loc_val_byte p labs
+  (write_bytearray c1 new_bytes s1.mem s1.mem_domain s1.be) a
+  mc_conf.target.config.big_endian =
+SOME (asm_write_bytearray c1 new_bytes t1.mem a)
+CallFFI_bytearray_lemma_types=byte_align (a :α word) ∈ (s1 :(α, γ, 'ffi) labSem$state).mem_domain ∧
+good_dimindex (:α) ∧ a ∈ (t1 :α asm_state).mem_domain ∧ a ∈ s1.mem_domain ∧
+(s1.be ⇔ (mc_conf :(β, δ, ε) machine_config).target.config.big_endian) ∧
+read_bytearray (c1 :α word) (LENGTH (new_bytes :word8 list))
+  (mem_load_byte_aux s1.mem s1.mem_domain s1.be) = SOME (x :word8 list) ∧
+word_loc_val_byte (p :α word) (labs :num sptree$num_map sptree$num_map)
+  s1.mem a mc_conf.target.config.big_endian = SOME (t1.mem a :word8) ⇒
+word_loc_val_byte p labs
+  (write_bytearray c1 new_bytes s1.mem s1.mem_domain s1.be) a
+  mc_conf.target.config.big_endian =
+SOME (asm_write_bytearray c1 new_bytes t1.mem a)
+list_add_if_fresh_simp=∀n s. list_add_if_fresh s l = if find_index s l n = NONE then l ++ [s] else l
+list_add_if_fresh_simp_types=∀(n :num) (s :α).
+  list_add_if_fresh s (l :α list) =
+  if find_index s l n = (NONE :num option) then l ++ [s] else l
+find_index_append=∀n. find_index s (l ++ l') n =
+    case find_index s l n of
+      NONE => find_index s l' (n + LENGTH l)
+    | SOME i => SOME i
+find_index_append_types=∀(n :num).
+  find_index (s :α) ((l :α list) ++ (l' :α list)) n =
+  case find_index s l n of
+    (NONE :num option) => find_index s l' (n + LENGTH l)
+  | SOME i => SOME i
+has_io_name_find_index=∀l s.
+  has_io_name s l ⇒ ∃y. find_index (ExtCall s) (find_ffi_names l) 0 = SOME y
+has_io_name_find_index_types=∀(l :α sec list) (s :mlstring).
+  has_io_name s l ⇒
+  ∃(y :num). find_index (ExtCall s) (find_ffi_names l) (0 :num) = SOME y

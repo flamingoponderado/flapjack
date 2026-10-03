@@ -6764,3 +6764,46 @@ chain used by original machine_sem_EQ_sem; full compiler simulation and machine
 semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
 `list_last_probeScript.sml` captures the complete original `LAST_DEF`, its generic type and zero hypotheses, replays the complete `LAST_CONS` proof, and checks the total case equation retaining the original unspecified `LAST []`. The primitive-recursive specification constrains cons lists only; the single shared `holLast` in `Flapjack/Misc/ListEl.lean` uses a dedicated opaque residual value, without asserting an equality to `HD []` or `ARB` or choosing a concrete missing value. This accessor is a prerequisite of the full StackRemove initializer state predicate.
+
+
+### Full native Lab evaluator event monotonicity
+
+`labprops_evaluate_io_events_mono_probeScript.sml` freshly captures the complete
+original `evaluate_io_events_mono` statement, full variable types, zero
+hypotheses and kernel proof T. The native proof follows all36 evaluator
+branches, including all eight shared-memory operators, Install validity/failure,
+and final/returning external FFI paths, with arbitrary compiler configuration
+and FFI host. Existing full `labsem_evaluate_probeScript.sml` execution fixtures
+are independently replayed against original HOL. FP dependencies retain the
+inherited real-rendering assumption (SOUNDNESS item8); full clock extension,
+compiler simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_io_events_mono_probeScript.sml`.
+
+### Full native Lab instruction and shared-memory clock laws
+
+`labprops_clock_support_probeScript.sml` freshly captures all four original
+reg_imm/asm_inst/addr/shared-op clock declarations, complete generic types,
+zero hypotheses and kernel proof T (sixteen rows). Native proofs retain all
+arbitrary compiler configurations and FFI hosts, all instruction constructors
+and all eight shared operators. The shared law keeps all three NONE/return/final
+conjuncts and each original nonzero-clock guard. Instruction FP dependencies
+retain inherited real-rendering assurance (SOUNDNESS item8); these laws supply
+actual prerequisites of clock-event monotonicity, not a machine simulation.
+Regenerate with `HOL_PROBE_ONLY=labprops_clock_support_probeScript.sml`.
+
+### Full native Lab clock-extension event theorem
+
+`labprops_evaluate_add_clock_io_events_mono_probeScript.sml` freshly captures
+original whole statement, complete arbitrary state/extra types, zero hypotheses
+and kernel proof T. Native functional induction retains all36 evaluator
+branches with unconditional event-prefix conclusion, including zero-clock,
+Install and all shared/FFI outcomes. The derived native two-clock comparability
+consequence supplies actual observational trace-chain inputs. This retains
+inherited real rendering (SOUNDNESS item8); whole machine/compile simulation
+and end-to-end correctness remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_add_clock_io_events_mono_probeScript.sml`.
+`stack_rawcall_seq_standard_probe` captures the original full comp_correct, zero hypotheses, and full Seq specializations at64/80 plus standard Skip/Skip compiler observations. Five native standard-composition consumers cover arbitrary positive and1/8/64/80 widths; a generic kernel compiler observation and two executable guards replay the concrete rows. The source-local helper retains the actual fixed-source first and NONE-run guarded second induction hypotheses, derives intermediate stackspace equality, and composes added clocks. It has no separate HOL declaration/tag: optimized equal/less/greater frame branches and full Seq assembly remain open. Captures are regression/statement evidence, not cross-language equivalence.
+
+`stack_rawcall_seq_probe` freshly captures the complete original comp_correct, zero hypotheses, full Seq64/80 specializations and the exact closed Seq evaluate_ind obligation, plus all three optimized compiler forms at64/80. Five full paired theorem consumers cover arbitrary positive and1/8/64/80 widths. Three generic kernel compiler fixtures and six axiom-free executable guards independently replay the optimized forms. The full theorem retains only actual first and NONE-run guarded second IH, derives target Call execution, and covers equal/less/greater sizes, zero clock, allocation failure and every body outcome. EmptyEnv retains stackspace; original timeout/HaltWord2 exceptions remain. Greater failure uses no extra clock, successful body execution one extra Tick. Captures are regression evidence, not cross-language equivalence.
+
+`stack_rawcall_call_tail_probe` freshly captures original comp_correct, zero hypotheses, full NONE-return Call64/80 specializations, the closed complete Call evaluate_ind clause and four direct/indirect compiler trees. Five full paired case consumers cover arbitrary positive and1/8/64/80 widths. The tail callee IH is guarded by handler NONE, actual findCode and nonzero clock; target compTop execution is derived from that IH, and outer frames from actual evaluation monotonicity. All bad-return/timeout outcomes and original stackspace exceptions remain. The NONE-return compiler leaves even an invalid optional handler unchanged. Returning Call and whole pass remain open; captures are regression evidence, not cross-language equivalence.

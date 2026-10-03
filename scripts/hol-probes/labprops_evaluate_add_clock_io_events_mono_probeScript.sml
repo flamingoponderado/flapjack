@@ -1,0 +1,14 @@
+load "bossLib";
+load "preamble";
+load "labPropsTheory";
+open bossLib HolKernel Parse preamble labPropsTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+fun types label th = (print(label ^ "=");app(fn v=>print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";"))(fst(strip_forall(concl th)) @ free_vars(concl th));print "\n");
+fun checked label th = (print(label ^ "="); print_term(rhs(concl(EQT_INTRO (prove(concl th,ACCEPT_TAC th)))));print "\n");
+val th = DB.fetch "labProps" "evaluate_add_clock_io_events_mono";
+val _ = capture "evaluate_add_clock_io_events_mono" th;
+val _ = types "evaluate_add_clock_io_events_mono_types" th;
+val _ = print("evaluate_add_clock_io_events_mono_hypotheses=" ^ Int.toString(length(hyp th)) ^ "\n");
+val _ = show_types := false;
+val _ = checked "evaluate_add_clock_io_events_mono_proved" th;
