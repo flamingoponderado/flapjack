@@ -6237,6 +6237,14 @@ predicate and the complete separated-heap conclusion. The native counterpart
 uses the reviewed `memoryHOL` and SetSep carriers; the capture is regression
 evidence, not a cross-language equivalence proof.
 
+`stack_remove_comp_ffi_probeScript.sml` replays the complete original FFI case
+of `comp_correct` (2081–2098), with the original register, byte-read and full
+byte-write frame prerequisite proofs. Its two rows record the complete case
+statement and kernel proof success. The returning FFI length law justifies
+the replacement-byte read premise; no target run or writeback frame is assumed.
+This evidence does not establish cross-language equivalence or full pass
+correctness.
+
 `stack_remove_comp_shmem_probeScript.sml` replays the complete original
 `comp_correct` ShMemOp case (1998–2022), including its literal local register
 and clock-relation prerequisites. The two rows record the full quantified

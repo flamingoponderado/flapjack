@@ -68105,5 +68105,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 complete source comparison2026-10-03 original comp_correct1481-1490 and ShMemOp1998-2022: genuine constructor case at arbitrary positive word width and independent compile/FFI host types. Retains source evaluation, non-Error, full state_rel and reg_bound as exactly four premises; proves existential added clock and target poststate with original Halt/TimeOut/FinalFFI FFI equality versus full state relation for other results. All eight HOL memop constructors and Addr base/offset retained. Actual StackSem.evaluate and unchanged StackRemove.comp used; address expression success derived by original state_rel_word_exp, timeout by equal original clocks/FFI, native FFI domain and register guards by state_rel_const/get_var. Successful loads update same bounded register and FFI; stores update only FFI, final leaves state unchanged. Full relation reconstructed including reserved regs/compile transport/separated memory; source dec_clock implies target dec_clock relation. Zero clock witness derived, never target success assumed. Canonical finite-map owning carrier is actual evaluator StackSemStateFiniteExact, local checked roundtrip re-export, all three original map fields translated. No runtime/default/qualifier-policy change or held HD/EL/dispatch dependency. The elaborated native declaration closure inherits reals_as_rational_cuts through imported full evaluator/comp definitions and their binary IEEE renderings (SOUNDNESS item 8); this propagates the existing external assumption and is not a new floating-point transition or cross-language equivalence proof.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/FFI.lean",
+    "lean_name": "compCorrectFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 complete source comparison2026-10-03 original comp_correct1481-1490 and FFI2081-2098: all original name/ptr/len/ptr2/len2/ret/source-result-post/target/bound/config binders retained, actual native mlstring byte-list carrier (not String), arbitrary positive word width and independent compile/FFI host types. Exactly four original premises: actual source evaluation, non-Error, complete state relation and all five original register bounds. Proves original target existential with zero added clock and original complete result-dependent postcondition; no target read/run/frame/register preservation assumed. Four successful source word lookups imply target lookups, both target byte reads derived by accepted original read_bytearray_IMP_read_bytearray. Shared original FFI state and call yield identical final/return result. Returning FFI clears both FP maps, restricts both register maps to equal saved-register predicates, preserves every original reserved pointer/base/heap lookup using state_rel saved-register conjunct, updates both actual memory functions and FFI. Original read length and call_FFI_LENGTH derive successful source read at replacement length; full write_bytearray_lemma with original nested STAR_ASSOC frame supplies complete updated separated memory. No extra alignment/domain/no-wrap/target-success hypothesis, no runtime/default/qualifier policy change. Local roundtrip reexports actual canonical owning StackSemStateFiniteExact carrier for all three finite maps. Elaborated evaluator/compiler closure inherits existing reals_as_rational_cuts external assumption (SOUNDNESS item8); no new floating-point or cross-language equivalence claim."
   }
 ]
