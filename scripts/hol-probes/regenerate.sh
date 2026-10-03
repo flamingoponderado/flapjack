@@ -6927,3 +6927,8 @@ run_probe pan_structs_program_primitive_probeScript.sml pan_structs_program_prim
 run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantics_compile_probe.out \
   semantics_compile_lemma_prime semantics_compile_lemma_prime_types semantics_compile_lemma_prime_hypotheses semantics_compile_lemma_prime_proved semantics_compile_lemma semantics_compile_lemma_types semantics_compile_lemma_hypotheses semantics_compile_lemma_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_wide_arithmetic_probeScript.sml riscv_target_wide_arithmetic_probe.out \
+  wide_mul_long_statement wide_mul_long_types wide_mul_long_hypotheses wide_mul_long_proved wide_product_type wide_slice_type \
+  wide_ror_statement wide_ror_types wide_ror_hypotheses wide_ror_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

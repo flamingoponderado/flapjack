@@ -45,6 +45,15 @@ example (a b : BitVec 64) :
       (18446744073709551616 : BitVec 65).ule (a.setWidth 65 + b.setWidth 65) = true) :=
   (TargetProof.carry_widen a b).2
 
+example (a b : BitVec 64) :
+    BitVec.ofNat 64 ((a.toNat * b.toNat) / 18446744073709551616) =
+      BitVec.extractLsb' 64 64 (a.setWidth 128 * b.setWidth 128) :=
+  TargetProof.mul_long a b
+
+example (w : BitVec 64) (n : Nat) (h : n < 64) :
+    ((w <<< (64 - n)) ||| (w >>> n)) = w.rotateRight n :=
+  TargetProof.ror w n h
+
 #guard zeroGuard
 #guard maxInRangeGuard
 #guard zeroGuard && maxInRangeGuard

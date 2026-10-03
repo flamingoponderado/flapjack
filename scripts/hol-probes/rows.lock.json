@@ -5696,6 +5696,12 @@
       "sha256": "fa4948d83a553a010d1ba431acdbe7e635200ee73c321edcf3e47cb94b233118"
     },
     {
+      "bytes": 407,
+      "out": "riscv_target_wide_arithmetic_probe.out",
+      "rows": 10,
+      "sha256": "e2dab84bec2eac5803f6294714e76114861caf28dd4209091a361220afb89d87"
+    },
+    {
       "bytes": 70,
       "out": "riscv_word_extract_6_probe.out",
       "rows": 3,

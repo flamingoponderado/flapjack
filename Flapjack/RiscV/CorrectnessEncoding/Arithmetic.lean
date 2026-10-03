@@ -4,8 +4,9 @@ import Flapjack.RiscV.L3.Support
 
 /-! Fixed-width arithmetic prerequisites from `riscv_targetProofScript.sml`.
 The original `lem5` and `lem8` use free word/Boolean variables, bound explicitly
-here; `lem9` quantifies both word64 operands. No target-state or execution
-hypothesis is added. -/
+here; `lem9` and `mul_long` quantify both word64 operands. `ror` retains its
+original natural shift amount and sole strict bound. No target-state or
+execution hypothesis is added. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack.RiscV.L3
 
@@ -45,5 +46,23 @@ theorem carry_widen (r2 r3 : BitVec 64) :
     (18446744073709551616 ≤ r2.toNat + r3.toNat ↔
     18446744073709551616 ≤ (r2.toNat + r3.toNat) % 36893488147419103232)
   omega
+
+@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "mul_long"]
+theorem mul_long (a b : BitVec 64) :
+    BitVec.ofNat 64 ((a.toNat * b.toNat) / 18446744073709551616) =
+      BitVec.extractLsb' 64 64 (a.setWidth 128 * b.setWidth 128) := by
+  have bound : a.toNat * b.toNat < 2 ^ 128 :=
+    BitVec.toNat_mul_toNat_lt
+  have ea := BitVec.toNat_setWidth_of_le (b := a) (w' := 128) (by decide)
+  have eb := BitVec.toNat_setWidth_of_le (b := b) (w' := 128) (by decide)
+  apply BitVec.eq_of_toNat_eq
+  simp only [BitVec.extractLsb', BitVec.toNat_ofNat, BitVec.toNat_mul,
+    ea, eb, Nat.mod_eq_of_lt bound, Nat.shiftRight_eq_div_pow]
+
+@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "ror"]
+theorem ror (w : BitVec 64) (n : Nat) (h : n < 64) :
+    ((w <<< (64 - n)) ||| (w >>> n)) = w.rotateRight n := by
+  rw [BitVec.rotateRight_eq_rotateRightAux_of_lt h]
+  exact BitVec.or_comm _ _
 
 end Flapjack.RiscV.TargetProof

@@ -7349,3 +7349,13 @@ and its `Primitive v pop es` specialization, with binder types and closed kernel
 proofs. The Lean case retains all ten premises and seven conclusions, executes
 the original argument mmap and AddCarry operation, and derives local validity
 and update postconditions internally from the full Assign case.
+
+`riscv_target_wide_arithmetic_probeScript.sml` replays unchanged original
+`mul_long` and `ror` proofs (`riscv_targetProofScript.sml:120–160`). Closed
+statements retain both word64 product operands, the actual word128 product and
+word64 slice, and the sole original natural rotate-amount bound `n < 64`.
+The strict checker validates complete statements/types/zero hypotheses/kernel
+`T` and the literal original term/proof replay. Lean arithmetic ports and full
+generic consumers preserve these carriers and conclusions. These two original
+rewrite prerequisites do not discharge target-state/step correctness or assert
+HOL-to-Lean equivalence from a finite fixture.
