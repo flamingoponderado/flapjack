@@ -83850,5 +83850,29 @@
     "hol_name": "namespace",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "Tra",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "tra",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "orphanTrace",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "orphan_trace_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "mkCons",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "mk_cons_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
   }
 ]
