@@ -6786,3 +6786,5 @@ eight-command non-instrumented sequence, proved=T, and zero hypotheses are
 captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
 registers and order; this equation neither assumes nor proves target execution
 or full Raise correctness.
+
+`word_to_stack_comp_raise_full_probeScript.sml` captures the complete original evaluate_ind Raise obligation of comp_correct, including the entire clock/resource/result motive, by specialization of the original complete theorem. Closed statement/proved/hypothesis rows are statement evidence; this is not literal Raise proof replay or a HOL-to-Lean equivalence proof. Read-only original backend/proofs theory; proof-only Lean case.

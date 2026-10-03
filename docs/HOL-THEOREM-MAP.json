@@ -72412,5 +72412,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.3: original74-86 entire arbitrary-k equation retained. Actual native raiseStubNative false expands Get Handler, StackSetSize, Skip, StackLoad2, Set Handler, StackLoad1, StackFree3, Raise in identical nested Seq order. Original handler_slots F=3; no instruction omitted, register changed, state/run/success premise or conclusion added. Positive type-indexed word carrier only translation, no maps/real evaluator dependency in this syntax equation. Source comparison recorded; acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Raise.lean",
+    "lean_name": "compCorrectRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6: complete original comp_correct motive5719-5751 and Raise6627-6747. Simulation retains every original source execution/nonError/full stateRel/convention/bitmap/label/max bound premise and full existential clock/actual target run/compCorrectResult conclusion, with no extra IH or target-run/postrelation/resource assumption. Source getVar then jumpExc succeeds from nonError; postAllocConventions forces register2. Actual LASTN handler frame and full stackRel derive strict gc sorting, handler pointer, raw width/index/space bounds, location/saved-handler reads. Native comp emits Call NONE raiseStubLocation NONE; exact eight-command raiseStubFalse and actual call evaluator derive extraClock1, unchanged returned clock, Handler update and three-slot free. Full stackRelRaise, environment identity and decoder/aux suffix facts derive cleared stack relation including conditional saved-handler pointer; LASTN_stack_size_SOME and full aux size derive all optional stackSizeRel/max branches. Empty pushed locals discharge original wf/placement; erased Handler update preserves original store, all other state fields/oracle/code conventions unchanged. Original source handler count determines LASTN lens, exception value preserved in reg1 from actual getVar2 and k>4. Original gc existential chosen directly because reviewed sorted env identity proves original env_to_list output equals gc. Imported canonical source/target owners retain actual five fmap fields, Spt code/locals and List fields unchanged; same-module genuine codec roundtrips, positive BitVec width NeZero and C/F Type0 retained. Evaluator closure inherits reals_as_rational_cuts assurance limit; no numerical FP correspondence claim. Original capture specializes original complete comp_correct to its evaluate_ind Raise obligation: statement evidence, not literal case replay or cross-language equivalence. Proof-only, no executed compiler change; coordinator acceptance tracked on bead.",
+    "hol_line": 5756
   }
 ]
