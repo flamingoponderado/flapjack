@@ -7343,3 +7343,8 @@ allocation, zero clock, all body results and normal/exception continuations are
 assembled with the entire original result/resource conclusion. This capture is
 statement evidence from the original full theorem, not a replay of the local
 9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
+`pan_structs_program_primitive_probe` captures the full original program theorem
+and its `Primitive v pop es` specialization, with binder types and closed kernel
+proofs. The Lean case retains all ten premises and seven conclusions, executes
+the original argument mmap and AddCarry operation, and derives local validity
+and update postconditions internally from the full Assign case.

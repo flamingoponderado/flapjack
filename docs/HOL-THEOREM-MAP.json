@@ -80822,5 +80822,28 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 bead9.4.4: FULL original comp_correct motive5719-5751 and entire SOME returning-handler branch9020-10048. Literal three evaluate_ind guarded IHs retain every original intermediate tuple/result/return/handler binder, get/find/cut/clock/result/pop/domain condition; impossible tail IH for fixed SOME return omitted as vacuous. inductionHypothesesOfOriginal kernel-translates these to actual guarded states; Seq.Simulation preserves every original result/poststate/target/frame/config/FFI/bitmap/label/convention/max bound quantifier and full existential clock/run/result/resource conclusion. Source nonError derives get/find/cut guards; whole compNative derives destination/save/return/handler trees. Original header room/argument capacity/zero clock/callee allocation branches and EVERY successful callee outcome are assembled internally. Header/argument/callee allocation failure derives original source stackMax overflow and trace across actual source continuation, including zero clock; target Halt2 execution is constructed. Zero clock precedes callee allocation after successful argument setup. Successful body uses only original guarded body IH, actual callee key/body compilation, code/bitmap history, full returned caller38field relation or exceptional handler restoration and original guarded continuation IHs; clocks summed by actual evaluate_add_clock. Full unmatched Halt2, matching Return placement, Exception pushLocals/LASTN/locals union/reg1 and terminal FFI/clock conclusion retained. No targetrun/postrelation/source overflow/narrowed body outcomes or strengthened IH input. Canonical imported WordSemStateFiniteExact fpRegs/store and StackSemStateFiniteExact regs/fpRegs/store with same-module genuine roundtrip witnesses; Spt/List unchanged, positive BitVec width and Type0 C/F. Inherits reals_as_rational_cuts evaluator assurance limit; no numerical FP correspondence or cross-language equivalence claim. Fresh original whole constructor specialization and evaluate_ind obligation captures provide statement evidence, not literal full local proof replay. No full pass/compiler completion.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectPrimitive.lean",
+    "lean_name": "compileCorrectPrimitive",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and Primitive1133-1167: all ten premises/seven conclusions, actual Primitive name/operator/list syntax and no recursive IH. Source argument mmap/primop failures excluded solely by original no-Error premise. Full original expression correctness derives every target argument run, original mmap helper derives converted result list. Actual AddCarry successful pattern is three word values with original wordAddCarry output two-word RStruct; converted arguments/value are definitionally identical. An internal RStruct expression of the two result constants evaluates to precisely the actual primitive value in both source and compiled target, so original full Assign local case derives validity/update simulation and all source postconditions; no target evaluation/validity/shape/update premise or different evaluator introduced. Original state/code/struct/map fields and source clock unchanged. Imported full canonical four-map roundtrip and positive indexed words/Type0 host translation only. Original full/case statements/binder types/closed kernel proof captured. Full program and executable compiler correctness remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectPrimitive.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

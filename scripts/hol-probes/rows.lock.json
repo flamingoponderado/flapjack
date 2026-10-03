@@ -4934,6 +4934,12 @@
       "sha256": "b3024de29c59ee7decbf435e91f1acf28515a2822e70a6b137a31662c47d6240"
     },
     {
+      "bytes": 2431,
+      "out": "pan_structs_program_primitive_probe.out",
+      "rows": 6,
+      "sha256": "a4b1e191ca88e90ba790ac94243959ce5523a5f48af55df6f46f1fd8db457d62"
+    },
+    {
       "bytes": 3683,
       "out": "pan_structs_program_return_raise_probe.out",
       "rows": 9,

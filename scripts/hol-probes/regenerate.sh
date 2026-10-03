@@ -6913,3 +6913,7 @@ run_probe pan_structs_program_assign_probeScript.sml pan_structs_program_assign_
 run_probe lab_to_target_implements_intro_probeScript.sml lab_to_target_implements_intro_probe.out \
   implements_intro_gen implements_intro_gen_types implements_intro_gen_hypotheses implements_intro_gen_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_primitive_probeScript.sml pan_structs_program_primitive_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_primitive_statement compile_correct_primitive_proved compile_correct_full_types compile_correct_primitive_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
