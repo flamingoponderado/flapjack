@@ -82237,5 +82237,28 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectExact.lean",
+    "lean_name": "compileCorrectExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original compile_correct1034-1061 source review: arbitrary program/source/result/post/context, all10 hypotheses and7 conclusions retained. Complete faithful21-minor evaluate_ind instantiates fixed full property using original cases, including precisely original guarded IHs internally. No public IH/predicate/target-run/postmap premise. Canonical imported PanSemStateFiniteExact locals/globals/code/eshapes owning carrier, genuine same-module broad-state roundtrip; positive indexed BitVec width and Type0 FFI host only. Original full theorem/types and complete evaluate_ind/closed kernel T captured in pan_structs_program_call_probe.out. Production compiler routing remains separate open inventory."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Full imported canonical-state two-way roundtrip."
   }
 ]
