@@ -1490,6 +1490,12 @@
       "sha256": "60065d52ffc3d80b6b077569838c06367950adcf053f6243470d45cf2eea3691"
     },
     {
+      "bytes": 5739,
+      "out": "l3_amoswap_probe.out",
+      "rows": 30,
+      "sha256": "9c6277d4596ccd4107db7c9c19b84f4ad480407bff2fa6b29133689cf6cb36df"
+    },
+    {
       "bytes": 10113,
       "out": "l3_fetch_primitives_probe.out",
       "rows": 282,
