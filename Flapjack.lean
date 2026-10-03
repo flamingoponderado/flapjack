@@ -1,4 +1,7 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
@@ -1296,6 +1299,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemStore
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
