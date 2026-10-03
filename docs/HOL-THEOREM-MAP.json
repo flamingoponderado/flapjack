@@ -75574,5 +75574,58 @@
     "lean_name": "shapeMap_lookup",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-sol2026-10-03: Flapjack canonical finite-map codec correspondence to external HOL alistTheory right-fold FUPDATE/FEMPTY, not a CakeML declaration. Arbitrary exact MlS/ShapeHOL entries/key including duplicates; unconditional independent raw alistToFmap lookup equality. Source alistScript21/ALOOKUP_EQ_FLOOKUP67 checked; no distinctness, extra support or desired map relation premise. Enables canonical original shape-map equality hypotheses of faithful PanStructs compile_exp_correct."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpAtomic.lean",
+    "lean_name": "compileExpCorrectConst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review2026-10-03: genuine Const constructor case of original686-791 whole theorem, same7 source hypotheses and all3 original conclusions. Exact evalHOLFinite/ContextExact/ExpHOL/ValueHOL/state conversion; canonical context first-binding shape maps equal FMAP_MAP2 shape_of locals/globals; exact mapped struct fields, FEVERY valueFldsOk and structInfosOk. Explicit classical membership deciders implement original sets, not an added hypothesis. Imported actual PanSemStateFiniteExact owns all four canonical map fields; same-module real two-way roundtrip, positive-width/Type0 FFI qualifier only, no duplicate carrier. Invert SOURCE eval success, derive old shape/result field validity and converted target eval; no supplied target evaluation, adapter, compatibility, rangedness or resource relation. This constructor has no recursive subexpression/IH. Original full theorem and exact constructor specialization kernel captured closed/hyp0; parent assembly/declarations remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpAtomic.lean",
+    "lean_name": "compileExpCorrectBaseAddr",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review2026-10-03: genuine BaseAddr constructor case of original686-791 whole theorem, same7 source hypotheses and all3 original conclusions. Exact evalHOLFinite/ContextExact/ExpHOL/ValueHOL/state conversion; canonical context first-binding shape maps equal FMAP_MAP2 shape_of locals/globals; exact mapped struct fields, FEVERY valueFldsOk and structInfosOk. Explicit classical membership deciders implement original sets, not an added hypothesis. Imported actual PanSemStateFiniteExact owns all four canonical map fields; same-module real two-way roundtrip, positive-width/Type0 FFI qualifier only, no duplicate carrier. Invert SOURCE eval success, derive old shape/result field validity and converted target eval; no supplied target evaluation, adapter, compatibility, rangedness or resource relation. This constructor has no recursive subexpression/IH. Original full theorem and exact constructor specialization kernel captured closed/hyp0; parent assembly/declarations remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpAtomic.lean",
+    "lean_name": "compileExpCorrectTopAddr",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review2026-10-03: genuine TopAddr constructor case of original686-791 whole theorem, same7 source hypotheses and all3 original conclusions. Exact evalHOLFinite/ContextExact/ExpHOL/ValueHOL/state conversion; canonical context first-binding shape maps equal FMAP_MAP2 shape_of locals/globals; exact mapped struct fields, FEVERY valueFldsOk and structInfosOk. Explicit classical membership deciders implement original sets, not an added hypothesis. Imported actual PanSemStateFiniteExact owns all four canonical map fields; same-module real two-way roundtrip, positive-width/Type0 FFI qualifier only, no duplicate carrier. Invert SOURCE eval success, derive old shape/result field validity and converted target eval; no supplied target evaluation, adapter, compatibility, rangedness or resource relation. This constructor has no recursive subexpression/IH. Original full theorem and exact constructor specialization kernel captured closed/hyp0; parent assembly/declarations remain open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpAtomic.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation infrastructure re-exporting actual PanSemStateFiniteExact canonical two-way broad-carrier roundtrip, not a separate HOL theorem."
   }
 ]

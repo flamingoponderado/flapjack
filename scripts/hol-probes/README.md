@@ -7001,3 +7001,8 @@ exactly locals, globals, structs, code and exception shapes.
 `pan_structs_shape_map_codec_probe` captures the external HOL alistTheory right-fold
 definition and unconditional lookup theorem used by PanStructs. Original duplicate
 keys keep the first binding; other, missing and empty lookups are recorded.
+
+`pan_structs_exp_atomic_faithful_probe` captures the complete original expression
+correctness theorem and its genuine Const/BaseAddr/TopAddr specializations. Each
+retains all seven hypotheses and all three conclusions, with no extra assumptions.
+The parent whole expression/declaration/pass proofs remain open.
