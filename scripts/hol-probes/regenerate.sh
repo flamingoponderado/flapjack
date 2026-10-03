@@ -7352,3 +7352,12 @@ run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
   riscv_encoder_correct_loc_hypotheses riscv_encoder_correct_loc_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
+  ori_decode_zero ori_decode_all_ones ori_decode_sign_bit ori_decode_positive_max \
+  xori_decode_zero xori_decode_all_ones xori_decode_sign_bit xori_decode_positive_max \
+  slli_decode_zero slli_decode_all_ones slli_decode_sign_bit slli_decode_positive_max \
+  or_decode_zero or_decode_all_ones or_decode_sign_bit or_decode_positive_max \
+  xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

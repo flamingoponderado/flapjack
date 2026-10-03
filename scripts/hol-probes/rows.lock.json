@@ -5876,6 +5876,12 @@
       "sha256": "a2f077766405c3dbc59675c90d87a607af763e7c4a62e67455b298f2ad1361ba"
     },
     {
+      "bytes": 444,
+      "out": "riscv_const_decode_probe.out",
+      "rows": 20,
+      "sha256": "b9650b527d94b68ea367eeb2863383e81af20d62a0e3436a624525ba047ccf1d"
+    },
+    {
       "bytes": 290,
       "out": "riscv_encode_length_probe.out",
       "rows": 8,

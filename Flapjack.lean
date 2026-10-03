@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.Loc
 import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
