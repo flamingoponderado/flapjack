@@ -69089,5 +69089,14 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .17.13: full original stackProps421-440 arbitrary c/s/r/s1, sole evaluate equality, existential n with all original oracle shift, left-fold sptree union of fromAList prefix and bitmap append/flatten conjuncts. No count/prefix/target/poststate/IH premise in final theorem. Native clock-first LexNat induction handles every constructor; genuine recursive case IHs discharged by structural descent or actual decrement/clamp descent, independent of publication metadata. CodeBitmaps is definitionally the literal three conjuncts. GENLIST vs range.map, original composition/fromAList/FOLDL union order and FLAT/append compared; sptree unchanged. Canonical regs/fpRegs/store codec re-export and positive-width words reviewed; inherited reals_as_rational_cuts explicitly retained. Fresh literal complete HOL proof replay has no hypotheses/free variables. This establishes structural preservation only, not floating-point equivalence or full compiler correctness.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRel.lean",
+    "lean_name": "stackRel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 xza2: original846-859/full fresh equation/hyp0/type. Alpha source frames/rest/bitmaps coincide via abs_stack and stack_rel_aux; beta target handler INDEPENDENT, retained handlerWidth/own NeZero, not old narrowed one-width draft. Literal EVERY sorted_env via List.all Bool true, existential abs_stack SOME, original conjunction handler guard as equivalent curried implications, full stack_rel_aux. Accepted total holEl retains shared unspecified holArb without concrete default or extra index bound. Original LENGTH subtraction/index/n2w wrap retained; LASTN_DROP_UNCOND implements drop(length-n) including overlength. Accepted absStack and all three stackRelAux dimensions instantiated from actual fields; accepted sortedEnv adjacent strict keys/isHandlerFrame/handlerVal used unchanged. No added success/range/target-state premise. Individually source compared, no restored provisional tag inferred from old delivery. Positive word translation only; proof-side relation, no executed compiler change."
   }
 ]

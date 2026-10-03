@@ -6047,3 +6047,7 @@ run_probe stack_code_bitmaps_call_probeScript.sml stack_code_bitmaps_call_probe.
 run_probe stack_code_bitmaps_full_probeScript.sml stack_code_bitmaps_full_probe.out \
   bitmap_full_statement bitmap_full_proved bitmap_full_hypotheses bitmap_full_type \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_rel_definition_probeScript.sml stack_rel_definition_probe.out \
+  stack_rel_definition stack_rel_hypotheses stack_rel_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
