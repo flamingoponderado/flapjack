@@ -1,0 +1,6 @@
+times2_div2_statement=∀moves. windmill moves ∧ EVERY EVEN (MAP FST moves) ∧ EVERY EVEN (MAP SND moves) ⇒ MAP ($* 2 ∘ THE) (FILTER IS_SOME (MAP FST (parmove (MAP (DIV2 ## DIV2) moves)))) = MAP THE (FILTER IS_SOME (MAP FST (parmove moves)))
+times2_div2_proved=T
+times2_div2_hypotheses=0
+parsem_parmove_div2_statement=∀r moves. windmill moves ∧ EVERY EVEN (MAP FST moves) ∧ EVERY EVEN (MAP SND moves) ⇒ MAP (parsem (MAP (SOME ## SOME) (MAP (DIV2 ## DIV2) moves)) r) (FILTER IS_SOME (MAP FST (parmove (MAP (DIV2 ## DIV2) moves)))) = MAP (parsem (MAP (SOME ## SOME) moves) (r ∘ OPTION_MAP DIV2)) (FILTER IS_SOME (MAP FST (parmove moves)))
+parsem_parmove_div2_proved=T
+parsem_parmove_div2_hypotheses=0

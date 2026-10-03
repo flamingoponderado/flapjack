@@ -1,9 +1,0 @@
-insert_eq_statement=∀n1 n2 v1 v2 l. insert n1 v1 l = insert n1 v2 l ⇔ v1 = v2
-insert_eq_hypotheses=0
-evaluate_arith_set_var_statement=∀a r u w s. can_mem_arith a ∧ ¬MEM r (arithReads a) ⇒ (evaluate (Inst (Arith a),set_var r u s) = (NONE,set_var (firstRegOfArith a) w (set_var r u s)) ⇔ evaluate (Inst (Arith a),s) = (NONE,set_var (firstRegOfArith a) w s))
-evaluate_arith_set_var_hypotheses=0
-evaluate_load_any_dest_statement=∀op r0 a ofs w s r. ¬is_store op ∧ evaluate (Inst (Mem op r0 (Addr a ofs)),s) = (NONE,set_var r0 w s) ⇒ evaluate (Inst (Mem op r (Addr a ofs)),s) = (NONE,set_var r w s)
-evaluate_load_any_dest_hypotheses=0
-evaluate_load_set_var_statement=∀op r a ofs n u w s. ¬is_store op ∧ a ≠ n ⇒ (evaluate (Inst (Mem op r (Addr a ofs)),set_var n u s) = (NONE,set_var r w (set_var n u s)) ⇔ evaluate (Inst (Mem op r (Addr a ofs)),s) = (NONE,set_var r w s))
-evaluate_load_set_var_hypotheses=0
-evaluate_arith_set_var_typed=∀(a :α arith) (r :num) (u :α word_loc) (w :α word_loc) (s :(α, β, γ) state). can_mem_arith a ∧ ¬MEM r (arithReads a) ⇒ (evaluate ((Inst (Arith a :α inst) :α prog),set_var r u s) = ((NONE :α result option),set_var (firstRegOfArith a) w (set_var r u s)) ⇔ evaluate ((Inst (Arith a :α inst) :α prog),s) = ((NONE :α result option),set_var (firstRegOfArith a) w s))

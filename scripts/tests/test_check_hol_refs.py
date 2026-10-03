@@ -2377,6 +2377,73 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
 
     ERRORS = staticmethod(CHECKER["words_as_type_indexed_bitvec_errors"])
 
+    PREDICATE = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
+  (∀ register (value : BitVec width), value.toNat = register) ∧
+  (∃ (offset : BitVec width), offset.toNat = 0)
+"""
+
+    def test_accepts_explicit_internal_predicate_word_quantifiers(self):
+        self.assertEqual(self.ERRORS(self.PREDICATE, "wordPredicate"), [])
+
+    def test_internal_predicate_words_require_signature_nat_and_nezero(self):
+        for old, new in [("(width : Nat)", "(width : Int)"),
+                         (" [NeZero width]", ""),
+                         ("[NeZero width]", "[NeZero other]")]:
+            with self.subTest(mutation=old + new):
+                self.assertTrue(self.ERRORS(self.PREDICATE.replace(old, new), "wordPredicate"))
+
+    def test_internal_predicate_words_check_every_dimension(self):
+        for dimension in ["0", "(0)", "other"]:
+            text = self.PREDICATE.replace("(offset : BitVec width)",
+                                          f"(offset : BitVec {dimension})")
+            with self.subTest(dimension=dimension):
+                self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_word_route_rejects_nonpredicate_and_proof_commands(self):
+        for text in [self.PREDICATE.replace("def wordPredicate", "theorem wordPredicate"),
+                     self.PREDICATE.replace(": Prop :=", ": Bool :="),
+                     self.PREDICATE.replace(": Prop :=", ": Prop := by\n  exact")]:
+            with self.subTest(text=text):
+                self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_word_route_rejects_discarded_or_unquantified_carriers(self):
+        for body in ["let unused : BitVec width := 0; True",
+                     "let unused := (∀ (value : BitVec width), True); True",
+                     "have unused : BitVec width := 0; True",
+                     "True -- ∀ (value : BitVec width), True",
+                     '"∀ (value : BitVec width), True" = "unrelated"',
+                     "True"]:
+            text = "def wordPredicate (width : Nat) [NeZero width] : Prop := " + body
+            with self.subTest(body=body):
+                self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_word_route_rejects_word_mentions_in_proof_binders(self):
+        text = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
+          ∀ (proof : ∀ value : BitVec width, value = value), True"""
+        self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_predicate_resolves_imported_word_carrier_and_its_width(self):
+        root = Path(__file__).resolve().parents[2]
+        module = "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean"
+        lines = (root / module).read_text().splitlines()
+        text = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
+          ∀ (operation : HolArith width), True"""
+        self.assertEqual(self.ERRORS(text, "wordPredicate", module, str(root), lines), [])
+        for mutation in [text.replace("[NeZero width]", ""),
+                         text.replace("HolArith width", "HolArith other"),
+                         text.replace("HolArith width", "HolArith 0"),
+                         text.replace("HolArith width", "HolArith 64"),
+                         text.replace("HolArith width", "HolArith (64)")]:
+            with self.subTest(mutation=mutation):
+                self.assertTrue(self.ERRORS(mutation, "wordPredicate", module, str(root), lines))
+
+    def test_internal_direct_word_does_not_hide_another_carrier_width(self):
+        root = Path(__file__).resolve().parents[2]
+        module = "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean"
+        lines = (root / module).read_text().splitlines()
+        text = self.PREDICATE + " ∧ (∀ (operation : HolArith other), True)"
+        self.assertTrue(self.ERRORS(text, "wordPredicate", module, str(root), lines))
+
     GOOD = (
         "@[hol \"cakeml/pancake/semantics/crepSemScript.sml\" \"evaluate_def\" 240",
         "  (fmap_as_finite_support := [locals, globals, code])",
