@@ -9,7 +9,7 @@ import Mathlib.Tactic.LinearCombination
 (lab_to_targetProofScript.sml:2242-2878). The source side uses the reviewed
 wordSem byte helpers; their agreement with the HOL `byte` library renderings
 and the target `read_mem_word`/`write_mem_word` computations at the 32- and
-64-bit dimensions admitted by `good_dimindex` are Flapjack infrastructure
+64-bit dimensions allowed by `good_dimindex` are Flapjack infrastructure
 (HOL rewrites with `read_mem_word_compute`/`write_mem_word_compute`). -/
 namespace Flapjack.Compiler.Backend.LabToTarget
 open Flapjack Flapjack.Compiler.Encoders Flapjack.Compiler.Encoders.Asm
