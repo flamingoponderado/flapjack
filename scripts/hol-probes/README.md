@@ -7369,3 +7369,9 @@ and closed kernel proofs. The Lean piece retains ten premises/seven conclusions
 and all three original guarded IHs, including nonzero source clock and actual
 body outcome/evaluation guards. Original body invariants derive each recursive
 loop state's fields, well-formedness and context maps.
+
+`pan_structs_program_shmem_store_probe` captures the full original program
+theorem and its `ShMemStore opsz e1 e2` specialization, binder types and closed
+kernel proofs. The Lean case keeps all ten premises/seven conclusions without
+an IH, covers original byte-count/domain and MappedWrite FFI final/ret branches,
+and derives target arguments/outcomes and finite state repacking internally.
