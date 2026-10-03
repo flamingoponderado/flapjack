@@ -71313,5 +71313,53 @@
     "hol_name": "dfn'SRAW_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRAW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateShift.lean",
+    "lean_name": "«dfn'SLLI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateShift.lean",
+    "lean_name": "«dfn'SRLI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateShift.lean",
+    "lean_name": "«dfn'SRAI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateShift.lean",
+    "lean_name": "«dfn'SLLIW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLIW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateShift.lean",
+    "lean_name": "«dfn'SRLIW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLIW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateShift.lean",
+    "lean_name": "«dfn'SRAIW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAIW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
   }
 ]

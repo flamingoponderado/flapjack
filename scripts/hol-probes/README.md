@@ -6691,3 +6691,14 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_prob
 ### Native register-shift equations
 
 `l3_register_shift_probeScript.sml` checks735 full-state original SLL/SLLW/SRL/SRLW/SRA/SRAW equations with matching kernel fixtures. Sixinstructions, selectors0/2/3, ten source/count groups and destinations0/1/2/7 cover countmask0/31/32/63/64/65/127/129, signs/high32/wrap/sourcezero/sourcealiases/rdzero. RV32Willegal routes compare the original exact signalException helper. Twelve ordinary invalidselector1 equations preserve exact error/priorretention; three W equations retain a symbolic architecture-dependent illegal branch, without selecting canonical ARB. The strict checker requires every unique label to be T. RV32SLL full64 source, SRLlow32zeroextend, SRAlow32signextend and Wsignextension remain literal. FullRun/Next is open.
+
+### Native immediate shifts
+
+`l3_immediate_shift_probeScript.sml` captures 558 whole-state original HOL
+SLLI/SRLI/SRAI/SLLIW/SRLIW/SRAIW equations. Run
+`python3 scripts/hol-probes/check-l3-immediate-shift.py` to require every row
+to reduce to T. The matching Lean fixtures are `L3ImmediateShiftParity`.
+Coverage includes numeric/count boundaries, RV32 illegal routes using the
+reviewed signalException helper, twelve invalid-mode error/prior-exception
+cases and six symbolic ARB branches seeded with NoException. ARB is unspecified.
+The complete definitions retain arbitrary states and original hypotheses.
