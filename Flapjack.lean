@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral

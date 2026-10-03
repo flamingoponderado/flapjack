@@ -6446,3 +6446,5 @@ execution premise and both original conclusions. These captures are regression
 evidence, not cross-language equivalence or whole compiler correctness.
 
 `stack_rawcall_rawcall_case_probe` freshly captures the original full paired `comp_correct`, zero external hypotheses, width64 RawCall specialization and original evaluate_ind RawCall obligation. The Lean case retains arbitrary positive width and only the actual callee IH; this is source-statement evidence, not a HOL-to-Lean equivalence proof.
+
+`stack_rawcall_stack_access_probe` freshly captures original full comp_correct/zero hypotheses and all ten LocValue/stack/bitmap constructor statements (original562-581). Twenty full Lean consumers retain both existential simulations at arbitrary positive and 1/8/64/80 widths. LocValue checking is derived through actual code labels, not arbitrary code transport. Statement evidence does not prove cross-language equivalence.

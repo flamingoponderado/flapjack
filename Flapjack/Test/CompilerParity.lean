@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRawCallStackAccessParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
