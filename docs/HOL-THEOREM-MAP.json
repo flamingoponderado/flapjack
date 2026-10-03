@@ -82290,5 +82290,161 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original577: forall prog4 n prog3, labels_ok (MAP prog_to_section prog4) and ALOOKUP prog4 n = SOME prog3 imply ?pc. code_installed pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) and loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original601: definition over stackSem state s and labSem state t, all 29 source conjuncts in order: FLOOKUP regs/fp_regs agreement; mem, mem_domain, shared_mem_domain, be, ffi, clock equalities; every code lookup n prog has call_args prog with t's ptr/len/ptr2/len2/link regs and ?pc. code_installed pc (append (FST (flatten T prog n (next_lab prog 2) [] []))) t.code and loc_to_pc n 0 t.code = SOME pc (next_lab is accepted nextLabHOL); domain s.code = set (MAP Section_num t.code) as pointwise membership iff; EVERY sec_labels_ok t.code; ~t.failed; link_reg distinct from len/ptr/len2/ptr2; link_reg not in ffi_save_regs; io_regs n i k = NONE and cc_regs n k = NONE for saved k; mdomain/sh_mdomain alignment w2n x MOD (dimindex DIV 8) = 0; code_buffer equality; compile = (\\c p. t.compile c (MAP prog_to_section p)); compile_oracle = (\\n. let (c,p,_) = s.compile_oracle n in (c, MAP prog_to_section p)) rendered by projections; oracle EVERY call_args, extract_labels (n,l2<>0,l2<>1) and ALL_DISTINCT plus ALL_DISTINCT (MAP FST ps); ~use_stack, ~use_store, ~use_alloc; good_dimindex. stackProps extract_labels is accepted StackPropsCodeLabels.extractLabels. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "loc_check_IMP_loc_to_pc",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "locCheckImpLocToPc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original645: loc_check s.code (l1,l2) and state_rel s t1 imply ?v. loc_to_pc l1 l2 t1.code = SOME v, over accepted locCheckExact; s t1 l1 l2 free. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_dec_clock",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRelDecClock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original655: state_rel s t implies state_rel (dec_clock s) (dec_clock t) with stackSem and labSem dec_clock. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_with_pc",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRelWithPc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original662: state_rel s t implies state_rel s (upd_pc pc t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_with_clock",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRelWithClock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original669: state_rel s t implies state_rel (s with clock := k) (t with clock := k). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "set_var_upd_reg",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "setVarUpdReg",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original675: state_rel s t implies state_rel (set_var a b s) (upd_reg a b t) for arbitrary word_loc b. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "set_var_Word_upd_reg",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "setVarWordUpdReg",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original683: state_rel s t implies state_rel (set_var a (Word b) s) (upd_reg a (Word b) t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "set_fp_var_upd_fp_reg",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "setFpVarUpdFpReg",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original690: state_rel s t implies state_rel (set_fp_var a b s) (upd_fp_reg a b t), b a 64-bit FP word. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "mem_store_upd_mem",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "memStoreUpdMem",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original698: state_rel s t and stackSem mem_store x y s = SOME s1 imply state_rel s1 (upd_mem x y t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_read_reg_FLOOKUP_regs",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRelReadRegFlookupRegs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original711: state_rel s t and FLOOKUP s.regs x = SOME y imply y = read_reg x t; read_reg is labSem's overload \\r s. s.regs r, rendered as t.regs x. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_read_fp_reg_FLOOKUP_fp_regs",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRelReadFpRegFlookupFpRegs",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original719: state_rel s t and get_fp_var n s = SOME x imply x = read_fp_reg n t. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_get_var_imm",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/StateRel.lean",
+    "lean_name": "stateRelGetVarImm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original728: state_rel s t and get_var_imm r s = SOME x imply reg_imm r t = x for arbitrary asm$reg_imm r (exact HolRegImm carrier); the accepted StackSem getVarImm mirror reads the same operand through the checked HolRegImm.toWordRegImm codec, exactly as the accepted StackSem evaluator does, so the statement is the source equality at the same operand. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
   }
 ]

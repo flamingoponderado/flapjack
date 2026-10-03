@@ -7553,3 +7553,5 @@ mapped-read FFI and returned-word assignment internally, and adds no IH or
 oracle agreement premise. Full compiler correctness remains open.
 
 `stack_to_lab_code_installed_probeScript.sml` prints the stored originals of `stack_to_labProofScript.sml:32-600` (word shift, `assert_T`, `dest_to_loc`, `find_code_lookup`, comparison negation, and the `code_installed`/`loc_to_pc`/`labs_correct`/`labels_ok` group) and replays the five local theorems (`code_installed_get_labels_IMP`, `asm_fetch_aux_SOME_append`, `asm_fetch_aux_SOME_isPREFIX`, the line-228 `MAP_prog_to_section_FST`, `code_installed_prog_to_section_lemma`) with their source proofs; every statement is closed with zero hypotheses.
+
+`stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.

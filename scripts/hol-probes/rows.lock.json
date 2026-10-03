@@ -7748,6 +7748,12 @@
       "sha256": "74fe1adcec42b08218314055e1e5d94f154cb49d188c6aac6af6fa6bbee12e88"
     },
     {
+      "bytes": 2845,
+      "out": "stack_to_lab_state_rel_probe.out",
+      "rows": 12,
+      "sha256": "d9ff6dd1721e4c1a55be1e619e4a15a44f37b37eb25da18bdff3131e23aa7092"
+    },
+    {
       "bytes": 2313,
       "out": "stacklang_inst_builders_probe.out",
       "rows": 62,
