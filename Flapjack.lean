@@ -688,6 +688,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
 import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
+import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluateFacts
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation

@@ -85666,5 +85666,139 @@
     "hol_name": "lookup_register_reads",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL lookup_register_reads (word_cseProof:816-824). For all rs, data and x, lookup x (register_reads data rs).to_canonical = if MEM x rs and not EVEN x and lookup x data.to_canonical = NONE then SOME x else lookup x data.to_canonical, with MEM as list membership and not-EVEN as x % 2 != 0 (as above). Proof by HOL's induction on rs via lookup_register_read. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "insert_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "insert_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL insert_eq (word_cseProof:167-171). Binders n1 n2 v1 v2 l over Spt (the reviewed num_map carrier) at an arbitrary payload type; sptInsert n1 v1 l = sptInsert n1 v2 l iff v1 = v2. HOL's vacuous n2 binder is retained, as allowed. Kernel-checked. The word_cse_evaluate_facts probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_arith_set_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_arith_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_arith_set_var (word_cseProof:179-215). Binders a r u w s in HOL order; the premise is can_mem_arith a and r not in arithReads a; the conclusion is the iff between the two evaluation equations, with set_var r u s on the left as in HOL. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. The word_cse_evaluate_facts probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_load_any_dest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_any_dest",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_load_any_dest (word_cseProof:221-233). Binders op r0 a ofs w s r; the premise is not is_store op together with the r0 evaluation equation; the conclusion is the evaluation equation at an arbitrary destination r. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. The word_cse_evaluate_facts probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_load_set_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_load_set_var (word_cseProof:235-256). Binders op r a ofs n u w s; the premise is not is_store op and a != n; the conclusion is the iff of the evaluation equations over set_var n u s and s. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. The word_cse_evaluate_facts probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_load_change_addr",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_change_addr",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_load_change_addr (word_cseProof:258-270). Binders op r a a' ofs w s; the premise is not is_store op, sptree lookup a' s.locals = lookup a s.locals, and the evaluation equation at address a; the conclusion is the evaluation equation at address a'. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_arith_memory",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_arith_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_arith_memory (word_cseProof:272-287). Binders a w s m (m : BitVec width -> WordLocW width, HOL 'a word -> 'a word_loc); the premise is can_mem_arith a; the conclusion is the iff of the equation under s with memory := m, with post-state (set_var (firstRegOfArith a) w s) with memory := m exactly as HOL parses it, and the equation under s. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_arith_unset_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_arith_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_arith_unset_var (word_cseProof:341-380). Binders a r w s; the premise is can_mem_arith a and r not in arithReads a; the conclusion is the iff over unset_var r s and s. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_load_unset_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_load_unset_var (word_cseProof:382-400). Binders op r a ofs n w s; the premise is not is_store op and a != n; the conclusion is the iff over unset_var n s and s. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_arith_agree",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_arith_agree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_arith_agree (word_cseProof:521-537). Binders a w s1 s2 at one state type as in HOL; the premise is the s1 evaluation equation, can_mem_arith a and s2.locals = s1.locals; the conclusion is the s2 evaluation equation. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/EvaluateFacts.lean",
+    "lean_name": "evaluate_load_agree",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_load_agree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-hbxqi): HOL evaluate_load_agree (word_cseProof:539-553). Binders op r a ofs w s1 s2; the premise is the s1 equation, not is_store op, and equality of locals, memory, mdomain and be; the conclusion is the s2 equation. The statement uses the faithful wordSem evaluate over the exact WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordCseEvaluateFactsSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). The CSE asm arith is embedded by the reviewed constructor codec HolArith.toWordLangArith (sol-a's semInv convention), HolMemop is the reviewed alias of WordMemOp, can_mem_arith/is_store are the tagged Bool definitions (can_mem_arith a as canMemArith a = true, not is_store op as the negated Bool coercion), MEM is list membership, and HOL's paired evaluate is applied to the program and state. Kernel-checked. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

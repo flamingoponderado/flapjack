@@ -1,0 +1,12 @@
+load "word_cseProofTheory";
+open HolKernel Parse bossLib word_cseProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "insert_eq_statement="; print_term(concl insert_eq));
+val _ = print("insert_eq_hypotheses=" ^ Int.toString(length(hyp insert_eq)) ^ "\n");
+val _ = (print "evaluate_arith_set_var_statement="; print_term(concl evaluate_arith_set_var));
+val _ = print("evaluate_arith_set_var_hypotheses=" ^ Int.toString(length(hyp evaluate_arith_set_var)) ^ "\n");
+val _ = (print "evaluate_load_any_dest_statement="; print_term(concl evaluate_load_any_dest));
+val _ = print("evaluate_load_any_dest_hypotheses=" ^ Int.toString(length(hyp evaluate_load_any_dest)) ^ "\n");
+val _ = (print "evaluate_load_set_var_statement="; print_term(concl evaluate_load_set_var));
+val _ = print("evaluate_load_set_var_hypotheses=" ^ Int.toString(length(hyp evaluate_load_set_var)) ^ "\n");
+val _ = (print "evaluate_arith_set_var_typed="; Lib.with_flag (Globals.show_types, true) print_term (concl evaluate_arith_set_var));

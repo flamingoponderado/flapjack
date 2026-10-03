@@ -8972,6 +8972,12 @@
       "sha256": "82c94563bb1f0265134c0cd13bec57bb15ea13a3b377448b03529c47e761ff58"
     },
     {
+      "bytes": 1343,
+      "out": "word_cse_evaluate_facts_probe.out",
+      "rows": 9,
+      "sha256": "49fd32565d37e27412b7298325560ae3c038f8be815d66daa9d2adee793b05ec"
+    },
+    {
       "bytes": 82570,
       "out": "word_cse_evaluation_frames_probe.out",
       "rows": 264,
