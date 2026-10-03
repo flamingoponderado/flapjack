@@ -1,4 +1,4 @@
-import Flapjack.Misc.BinaryIeeeConvert
+import Flapjack.Misc.MachineIeee.ConvertInt
 
 /-!
 Direct HOL oracle rows for binary64 `fp64_to_int` and `int_to_fp64`

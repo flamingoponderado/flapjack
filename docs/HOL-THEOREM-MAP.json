@@ -79385,7 +79385,7 @@
     "reviewer": "flapjack-sol3 source comparison: original local lab_to_targetProofScript10564-10570 forall code c, all_enc_ok_pre c code implies all_enc_ok_pre c(filter_skip code). Fresh original verbatim local proof replay confirms code:alpha sec list and c:alpha asm_config, zero hypotheses. Lean retains code/config binder order and complete native Section/Line/HolAsm/HolAddr/HolRegImm/MlString carriers. EVERY over sections/lines is List membership quantification; actual filterSkip MAP retains each surviving original line with no successful compilation or post-encoding assumption. Native lineOkPreHOL uses the original asm_ok(cbw_to_asm instruction) and ignores cache/length exactly; other constructors true. The words_as_type_indexed_bitvec qualifier records alpha word/dimindex as positive BitVec width/NeZero. Original capture lab_to_target_filter_preconditions_probe.out."
   },
   {
-    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_path": "Flapjack/Misc/MachineIeee/SqrtReal.lean",
     "lean_name": "holFp64SqrtR",
     "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
     "hol_name": "fp64_sqrt_def",
@@ -79540,6 +79540,16 @@
     "hol_line": 16,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-ieee-wrapper-real-domains) against the pinned machine_ieeeScript.sml and machine_ieeeLib generated encodings: generated real_to_fp64_with_flags m r = (I ## float_to_fp64) (real_to_float_with_flags m r) at 52/11: flags kept, float encoded by float_to_fp64; real_to_float_with_flags is the tagged arbitrary-real holRealToFloatWithFlagsR. HOL real is Mathlib ℝ (arbitrary real argument; the previous Rat-domain Convert.lean rendering is untagged and proved equal at rationals); reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/ConvertReal.lean",
+    "lean_name": "holRealToFp64R",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "real_to_fp64_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.1.1) against the machine_ieeeLib definition generated at machine_ieeeScript.sml:16, captured by machine_ieee_fp64_defs_probe: real_to_fp64 mode = float_to_fp64 o real_to_float mode at (52,11), applied to an arbitrary real r; real_to_float is the tagged arbitrary-real holRealToFloatR over Mathlib ℝ. reals_as_rational_cuts is carried because the declaration names the reviewed rendering family (SOUNDNESS item 8). No other difference."
   },
   {
     "lean_path": "Flapjack/Misc/MachineIeee/Convert.lean",
@@ -79763,6 +79773,182 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the one-line Datatype at binary_ieeeScript.sml:755: float_compare = LT | EQ | GT | UN, four nullary constructors in HOL order. reals_as_rational_cuts is carried because check-hol-refs requires it for the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
   },
   {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64ToFloat",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_to_float_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: <|Sign := (63 >< 63) w; Exponent := (62 >< 52) w; Significand := (51 >< 0) w|>; extractLsb' with lower bound and length gives the same 1/11/52 fields. HOL word64/word1/word11/52 word and (52,11) float are the fixed-width BitVec 64/1/11/52 and HolFloat 52 11 (positive literal widths). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFloatToFp64",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "float_to_fp64_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: x.Sign @@ (x.Exponent @@ x.Significand) : word64; Lean's left-associated ++ changes only grouping, and the cast only proves the 64-bit width. HOL word64/word1/word11/52 word and (52,11) float are the fixed-width BitVec 64/1/11/52 and HolFloat 52 11 (positive literal widths). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64LessThan",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_lessThan_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_less_than (fp64_to_float a) (fp64_to_float b). Fixed widths as in HOL; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64LessEqual",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_lessEqual_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_less_equal (fp64_to_float a) (fp64_to_float b). Fixed widths as in HOL; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64GreaterThan",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_greaterThan_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_greater_than (fp64_to_float a) (fp64_to_float b). Fixed widths as in HOL; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64GreaterEqual",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_greaterEqual_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_greater_equal (fp64_to_float a) (fp64_to_float b). Fixed widths as in HOL; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64Equal",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_equal_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_equal (fp64_to_float a) (fp64_to_float b). Fixed widths as in HOL; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64Abs",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_abs_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 o float_abs o fp64_to_float (point-free; Lean applies it to a). HOL word64/word1/word11/52 word and (52,11) float are the fixed-width BitVec 64/1/11/52 and HolFloat 52 11 (positive literal widths). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64Negate",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_negate_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 o float_negate o fp64_to_float (point-free; Lean applies it to a). HOL word64/word1/word11/52 word and (52,11) float are the fixed-width BitVec 64/1/11/52 and HolFloat 52 11 (positive literal widths). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64IsNan",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_isNan_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: fp64_isNan = float_is_nan o fp64_to_float at (52,11). Point-free in HOL; Lean applies it to a. Fixed widths as in HOL; float_is_nan/float_is_signalling go through float_value, whose finite values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64IsSignalling",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_isSignallingNan_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: fp64_isSignallingNan = float_is_signalling o fp64_to_float at (52,11). Point-free in HOL; Lean applies it to a. Fixed widths as in HOL; float_is_nan/float_is_signalling go through float_value, whose finite values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Arith.lean",
+    "lean_name": "holFp64Add",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_add_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 (SND (float_add mode (fp64_to_float a) (fp64_to_float b))). HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Arith.lean",
+    "lean_name": "holFp64Sub",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_sub_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 (SND (float_sub mode (fp64_to_float a) (fp64_to_float b))). HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Arith.lean",
+    "lean_name": "holFp64Mul",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_mul_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 (SND (float_mul mode (fp64_to_float a) (fp64_to_float b))). HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Arith.lean",
+    "lean_name": "holFp64Div",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_div_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 (SND (float_div mode (fp64_to_float a) (fp64_to_float b))). HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/Arith.lean",
+    "lean_name": "holFp64MulAdd",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_mul_add_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 (SND (float_mul_add mode (fp64_to_float a) (fp64_to_float b) (fp64_to_float c))). HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/ConvertInt.lean",
+    "lean_name": "holFp64ToInt",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_to_int_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.3) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: fp64_to_int mode = float_to_int mode o fp64_to_float at (52,11), applied to a. HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/ConvertInt.lean",
+    "lean_name": "holIntToFp64",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "int_to_fp64_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.1.1) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: int_to_fp64 mode a = real_to_fp64 mode (real_of_int a); the integer argument is a rational, so the executed Rat real_to_fp64 is used, and holIntToFp64_eq_real proves equality with the tagged arbitrary-real holRealToFp64R at real_of_int a. HOL word64 and (52,11) float are BitVec 64 and HolFloat 52 11; float values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
     "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
     "lean_name": "holFloatPlusInfinity",
     "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
@@ -79905,6 +80091,26 @@
     "words_as_type_indexed_bitvec": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: clear_flags with InvalidOp := EXISTS float_is_signalling l (List.any). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatSomeQnan",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_some_qnan_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: (@f. let qnan = f fp_op in float_is_nan qnan /\\ ~float_is_signalling qnan) fp_op; the choice is over functions fp_op -> float and is applied to fp_op, as in HOL. HOL @ is Classical.epsilon on the same predicate (external translation assumption, as for closest_such); the chosen NaN is only claimed to meet the same specification, not to equal HOL's choice. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because the body names float_is_nan/float_is_signalling renderings (SOUNDNESS item 8); the NaN choice itself involves no real. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeConvert.lean",
+    "lean_name": "holFloatToInt",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_to_int_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.3) against the pinned HOL source and the definition captured with types by binary_ieee_convert_probe: case float_value x of Float r => SOME (roundTiesToEven: f = INT_FLOOR r, df = abs (r - real_of_int f), f if df < 1/2 \\/ df = 1/2 /\\ EVEN (Num (ABS f)) else INT_CEILING r; roundTowardPositive INT_CEILING r; roundTowardNegative INT_FLOOR r; roundTowardZero if x.Sign = 1w then INT_CEILING r else INT_FLOOR r) | _ => NONE. r is a float value, a rational rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8); INT_FLOOR/INT_CEILING are Rat.floor/Rat.ceil, EVEN (Num (ABS f)) is f.natAbs % 2 = 0. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. No other difference."
   },
   {
     "lean_path": "Flapjack/Misc/BinaryIeeeArith.lean",
