@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Misc.GoodDimindex
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
 
 /-! Native execution of the StackRemove initializer, towards
 `init_code_thm` (`stack_removeProofScript.sml` 3225-3837). The lemmas here
@@ -650,6 +651,108 @@ theorem runInitCode (generateGc : Bool) (maxHeap k : Nat) (s : StackSemStateFini
       simp [FUPDATE_HOL, FUPDATE_LIST_HOL, n0, nk1]
     all_goals simp [FUPDATE_HOL, FUPDATE_LIST_HOL, k0, k1, k2, k3, k4, k5, k6, k7,
       k0', k1', k2', k3', k4', k5', k6', k7', sl, half, reg3, hshrunk, hadjusted]
+
+/-! ### Separation helpers -/
+
+instance starAssocInst {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+  ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
+
+instance starCommInst {α : Type} : Std.Commutative (SetSep.star (α := α)) :=
+  ⟨SetSep.starComm⟩
+
+omit [NeZero width] in
+/-- A framed existential word list is a framed concrete list of that length. -/
+theorem starWordListExists {β : Type} [NeZero width] (P : ((BitVec width × β) → Prop) → Prop)
+    (a : BitVec width) (n : Nat) (h : (BitVec width × β) → Prop) :
+    SetSep.star P (Misc.wordListExists a n) h ↔
+      ∃ xs : List β, xs.length = n ∧ SetSep.star P (Misc.wordList a xs) h := by
+  constructor
+  · rintro ⟨left, right, partition, pLeft, ⟨xs, hxs⟩⟩
+    obtain ⟨listHeap, length⟩ := (WordListExists.starCond _ _ _).mp hxs
+    exact ⟨xs, length, left, right, partition, pLeft, listHeap⟩
+  · rintro ⟨xs, length, left, right, partition, pLeft, listHeap⟩
+    exact ⟨left, right, partition, pLeft, ⟨xs, (WordListExists.starCond _ _ _).mpr ⟨listHeap, length⟩⟩⟩
+
+omit [NeZero width] in
+/-- Every entry of the right part of a framed heap is in the heap. -/
+theorem starRightMember {α : Type} (P Q : (α → Prop) → Prop) (h : α → Prop)
+    (hyp : SetSep.star P Q h) : ∃ part, Q part ∧ ∀ e, part e → h e := by
+  obtain ⟨left, right, partition, _, q⟩ := hyp
+  exact ⟨right, q, fun e member => by rw [← partition.1]; exact Or.inr member⟩
+
+/-- Framed element read and domain membership of a word list. -/
+theorem framedListRead {β : Type} (P : ((BitVec width × β) → Prop) → Prop)
+    (a : BitVec width) (xs : List β) (m : BitVec width → β) (d : BitVec width → Prop)
+    (hyp : SetSep.star P (Misc.wordList a xs) (SetSep.fun2Set (m, d)))
+    (i : Nat) (hi : i < xs.length) :
+    m (a + bytesInWord width * BitVec.ofNat width i) = xs[i] ∧
+      d (a + bytesInWord width * BitVec.ofNat width i) := by
+  obtain ⟨part, listHeap, sub⟩ := starRightMember _ _ _ hyp
+  have member := sub _ (StackHeap.wordListNth a xs part i hi listHeap)
+  exact (SetSep.fun2SetThm m d _ _).mp member
+
+omit [NeZero width] in
+theorem list_split {β : Type} (l : List β) (a b : Nat) (h : l.length = a + b) :
+    ∃ l1 l2, l = l1 ++ l2 ∧ l1.length = a ∧ l2.length = b :=
+  ⟨l.take a, l.drop a, (List.take_append_drop a l).symm, by simp; omega, by simp; omega⟩
+
+omit [NeZero width] in
+theorem list_split_last {β : Type} (l : List β) (c : Nat) (h : l.length = c + 1) :
+    ∃ l1 x, l = l1 ++ [x] ∧ l1.length = c := by
+  rcases List.eq_nil_or_concat l with rfl | ⟨l1, x, rfl⟩
+  · simp at h
+  · exact ⟨l1, x, List.concat_eq_append, by simpa using h⟩
+
+theorem wordListSingleton {β : Type} (a : BitVec width) (x : β) :
+    Misc.wordList a [x] = SetSep.one (a, x) := by
+  simp only [Misc.wordList]
+  rw [SetSep.starComm, StackHeap.starEmptyLeft]
+
+/-- The initial heap region split into the heap, the store, the rest of the
+stack and the final stack word (source 3545-3586). -/
+theorem initHeapSplit {β : Type} (P : ((BitVec width × β) → Prop) → Prop)
+    (p2 reg3 p4 : BitVec width) (heapLength stackLength : Nat)
+    (m : BitVec width → β) (d : BitVec width → Prop)
+    (regEq : reg3 = p2 + bytesInWord width * BitVec.ofNat width heapLength)
+    (endEq : p4 = reg3 + bytesInWord width * BitVec.ofNat width stackLength)
+    (long : storeList.length + 1 ≤ stackLength)
+    (hyp : SetSep.star P (Misc.wordListExists p2 (heapLength + stackLength))
+      (SetSep.fun2Set (m, d))) :
+    ∃ (heapValues storeValues restValues : List β) (last : β),
+      heapValues.length = heapLength ∧ storeValues.length = storeList.length ∧
+      restValues.length = stackLength - (storeList.length + 1) ∧
+      SetSep.star (SetSep.star (SetSep.star (SetSep.star P (Misc.wordList p2 heapValues))
+        (Misc.wordList reg3 storeValues))
+        (Misc.wordList (reg3 + bytesInWord width * BitVec.ofNat width storeList.length)
+          restValues))
+        (SetSep.one (p4 - bytesInWord width, last)) (SetSep.fun2Set (m, d)) := by
+  obtain ⟨xs, xlen, listHeap⟩ := (starWordListExists P p2 _ _).mp hyp
+  obtain ⟨heapValues, tail, rfl, hlen, tlen⟩ := list_split xs heapLength stackLength xlen
+  obtain ⟨storeValues, tail2, rfl, slen, t2len⟩ :=
+    list_split tail storeList.length (stackLength - storeList.length) (by omega)
+  obtain ⟨restValues, last, rfl, rlen⟩ :=
+    list_split_last tail2 (stackLength - (storeList.length + 1)) (by omega)
+  refine ⟨heapValues, storeValues, restValues, last, hlen, slen, rlen, ?_⟩
+  rw [StackHeap.wordListAppend, StackHeap.wordListAppend, StackHeap.wordListAppend,
+    wordListSingleton, hlen, slen, rlen, ← regEq] at listHeap
+  have lastAddr : reg3 + bytesInWord width * BitVec.ofNat width storeList.length +
+      bytesInWord width * BitVec.ofNat width (stackLength - (storeList.length + 1)) =
+      p4 - bytesInWord width := by
+    have split : stackLength = storeList.length + (stackLength - (storeList.length + 1)) + 1 := by
+      omega
+    rw [endEq, split, BitVec.ofNat_add, BitVec.ofNat_add, BitVec.mul_add, BitVec.mul_add,
+      BitVec.mul_one, ← split]
+    simp only [← BitVec.add_assoc, BitVec.add_sub_cancel]
+  rw [lastAddr] at listHeap
+  rw [show SetSep.star (SetSep.star (SetSep.star (SetSep.star P (Misc.wordList p2 heapValues))
+      (Misc.wordList reg3 storeValues))
+      (Misc.wordList (reg3 + bytesInWord width * BitVec.ofNat width storeList.length) restValues))
+      (SetSep.one (p4 - bytesInWord width, last)) =
+    SetSep.star P (SetSep.star (Misc.wordList p2 heapValues) (SetSep.star
+      (Misc.wordList reg3 storeValues) (SetSep.star
+        (Misc.wordList (reg3 + bytesInWord width * BitVec.ofNat width storeList.length) restValues)
+        (SetSep.one (p4 - bytesInWord width, last))))) by ac_rfl]
+  exact listHeap
 
 /-! ### Layout arithmetic of the computed pointers -/
 
