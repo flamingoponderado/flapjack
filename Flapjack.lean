@@ -728,6 +728,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvUpdates
 import Flapjack.Compiler.Backend.WordCse.Proofs.FactInsert
 import Flapjack.Compiler.Backend.WordCse.Proofs.MoveLemmas
 import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
+import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames

@@ -88859,5 +88859,68 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison of evaluate_wInst4688-5140 LongDiv branch4776-4789. All five original source inst/every-var/max-var/argument-convention/full stateRel guards are retained, even when a guard becomes redundant after the original fixed register convention is derived. Full conclusion is existential actual native wInst run, entire source-post/target-post stateRel and stack length/space equations. Source success internally derives original word operands, complete source double-update and (for LongDiv) divisor nonzero/quotient bound. Actual native Reg1 load derives spill bounds and full operand relation; both result-register updates are derived using original stateRel register update laws with4<k from the original relation. No targetrun, desired final relation, narrowed register variable, extra successful operation or IH premise. WordLangInst source and HolInst target share positive alpha word width; generic host and FFI carriers remain independent. Fresh typed original kernel case specialization passed (proved=T, hypotheses=0), with shared alpha width and independent beta/gamma host/FFI types, not a literal local proof replay or cross-language equivalence claim. Five canonical relation map fields have local genuine source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item8), no new agreement assumption. Other original instruction cases/full constructor and compiler goal remain unfinished.",
     "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "word_cse_full_inst_ok_less",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_cse_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL word_cse_full_inst_ok_less (word_cseProof:3814). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "word_cse_pre_alloc_conventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_cse_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL word_cse_pre_alloc_conventions (word_cseProof:3857). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "word_cse_every_inst_distinct_tar_reg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_cse_every_inst_distinct_tar_reg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL word_cse_every_inst_distinct_tar_reg (word_cseProof:3929). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "word_cse_every_inst_two_reg",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_cse_every_inst_two_reg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL word_cse_every_inst_two_reg (word_cseProof:3971). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "every_inst_distinct_tar_reg_word_common_subexp_elim",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "every_inst_distinct_tar_reg_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL every_inst_distinct_tar_reg_word_common_subexp_elim (word_cseProof:4013). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "pre_alloc_conventions_word_common_subexp_elim",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "pre_alloc_conventions_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL pre_alloc_conventions_word_common_subexp_elim (word_cseProof:4022). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
+    "lean_name": "full_inst_ok_less_word_common_subexp_elim",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "full_inst_ok_less_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-w08gc): HOL full_inst_ok_less_word_common_subexp_elim (word_cseProof:4031). The full original statement is kept: binders in HOL order, the same premise conjunction, and the same conclusion, over the tagged wordCse/wordCommonSubexpElim and the tagged convention predicates fullInstOkLessExact (HOL asm_config as AsmConfigExact), preAllocConventionsHOL, and everyInst with distinctTarRegExact/twoRegInstExact. HOL every_inst P over 'a inst is everyInst (fun i => P (HolInst.ofWordLangInst i)) over the reviewed instruction mirror, as in the accepted inst_select convention theorems. The proof goes through a CseOut output-shape relation (each instruction-level program is kept or becomes a move; structure is preserved), matching HOL's remark that word_cse emits only original instructions or Moves. Kernel-checked; the word_cse_conventions probe captures the statement (0 hypotheses)."
   }
 ]
