@@ -67979,29 +67979,88 @@
     "statement_status": "reviewed_exact",
     "reviewer": "Full source/body comparison pinned riscvScript7286-7324: Source7286-7324: complete LD; low 64 bits with raw word64. Original mode guard precedes address computation; its returned state is retained, including unspecified-mode behavior. HOL right-nested tuple word5 x word5 x word12 and full riscv_state -> riscv_state match native carriers. GPR rs1 plus signed12 offset wraps at64; translateAddr Data Read receives original/current-mode returned state. NONE calls signalAddressException(Load_Fault, original virtual address) on returned translation state; SOME reads rawReadData at physical address on that same state and writes original rd. Extraction high63/low0 within64 and original sign/zero/raw extension compared. Original GPR0 suppression and total core functions retained; no alignment/success/core bound or evaluator replacement. Full Run/Next/runtime routing remains open."
   },
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
-  "lean_name": "mmioPcsMinIndex_append",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "mmio_pcs_min_index_APPEND_thm",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-sol3 complete original source9753/9904 and exported fulltypes0hyp comparison: Complete source EVERY suffix not-ExtCall for all mlstring names and EVERY prefix exists-ExtCall guards, exact optional MMIO index SOME(length prefix), every l/ffis binder retained. Original ffiname/SharedMem/ExtCall/MlString carriers are constructor-exact, word-free signature and no representation qualifier. No added bound, callback, target result or choice/default premise. Kernel mmioBoundary_boundedLookup rewrites the entire existing source boundary to bounds-checked getElem; prefix j<index together with original index<=length discharges j<length, suffix keeps original j<length. Thus every actual EL access is in range and no holHdNil/holArb empty/past-end value is evaluated or needed. Existing mmio optional-choice definition and ListEl implementation/provenance policy remain untouched; this does not release the individual total-HD/EL hold or certify out-of-range defaults. Full generic consumers and arbitrary-query actual extraction consumer discharge original guards. Fresh original two fulltypes0hyp/seven paired source/native cases cover empty/external/shared/mixed boundaries, guard counterexamples and actual encoded extraction at independent positions. Oracle theorem instances discharge their actual source guards through EVAL plus datatype simplification, not by assuming the target MMIO result. Evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
-},
-{
-  "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
-  "lean_name": "mmioPcsMinIndex_getShmemInfo",
-  "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
-  "hol_name": "mmio_pcs_min_index_get_shmem_info_ok",
-  "statement_status": "reviewed_words_as_type_indexed_bitvec",
-  "reviewer": "flapjack-sol3 complete original source9753/9904 and exported fulltypes0hyp comparison: All c/labs/ffis-prime/p-prime/code/ffis/p/new-ffi-names/new-info binders retained, all four original all_enc_ok/enc_ok/external-prefix/output equality conjuncts, exact optional MMIO index SOME(length ffis). Query and validity starts remain independent. Source encoding guards remain even though the alternate checked full name-classification proof makes them unnecessary in the proof. Native positive-width BitVec Section/Line/AsmConfig carriers with own NeZero, canonical Spt labels, fixed word8 bytes/nbytes, Nat record PCs/registers/offsets and exact MlString names. No added bound, callback, target result or choice/default premise. Kernel mmioBoundary_boundedLookup rewrites the entire existing source boundary to bounds-checked getElem; prefix j<index together with original index<=length discharges j<length, suffix keeps original j<length. Thus every actual EL access is in range and no holHdNil/holArb empty/past-end value is evaluated or needed. Existing mmio optional-choice definition and ListEl implementation/provenance policy remain untouched; this does not release the individual total-HD/EL hold or certify out-of-range defaults. Full generic consumers and arbitrary-query actual extraction consumer discharge original guards. Fresh original two fulltypes0hyp/seven paired source/native cases cover empty/external/shared/mixed boundaries, guard counterexamples and actual encoded extraction at independent positions. Oracle theorem instances discharge their actual source guards through EVAL plus datatype simplification, not by assuming the target MMIO result. Evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness.",
-  "words_as_type_indexed_bitvec": true
-},
-{
-  "lean_path": "Flapjack/Misc/FindIndex/Distinct.lean",
-  "lean_name": "findIndex_allDistinct_elEq",
-  "hol_path": "cakeml/misc/miscScript.sml",
-  "hol_name": "find_index_ALL_DISTINCT_EL_eq",
-  "statement_status": "reviewed_exact",
-  "reviewer": "flapjack-sol3 full original source1166 and exported fulltype0hyp comparison: generic HOL alpha list, sole ALL_DISTINCT guard, arbitrary target/starting offset/result index and complete search-SOME iff existential j with result=offset+j, j<length and target=EL j preserved. DecidableEq is propositional equality as in accepted find_index_def; Nonempty exposes HOL intrinsic inhabited carrier for the existing EL. No word/model, finite-map, name-string or list-array representation change. Genuine structural kernel proof with unique-head exclusion; EL cons clauses and holEl_eq_getElem are used only when original j<length supplies each tail bound. Empty-list branch rules out the bounded existential without evaluating a past-end value. No extra outer bound, successful-search/result callback, opaque default evaluation, choice/provenance change or release of individual total-HD/EL hold. Fresh original fulltype0hyp and eight original/native observations allT cover first/last match, nonzero and 2^80 offsets, missing/empty search, duplicate-guard counterexample with in-range EL and actual extracted shared-memory PCs. Full generic and actual arbitrary query/offset/result consumer discharges Nodup via the full entry-PC law and its encoding/size guards. Kernel/oracle evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
-}
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/StoreConsts.lean",
+    "lean_name": "evaluateCodeBitmapsStoreConsts",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison: stackPropsScript421-440 StoreConsts case. Actual evaluate equation is sole premise, all useStore/useAlloc and optional-stub lookup guards and primitive errors retained. Full store_const_sem_const derives unchanged oracle/code/bitmaps, giving count0 for all outcomes. Conclusion retains original existential oracle shift, left-fold spt union over GENLIST encoded as range/map, and bitmap List append/flatten. No successful guard, field equality or trace premise assumed. Imported StackSemStateFiniteExact owns canonical regs/fpRegs/store finite maps; same-module non-vacuous codec witness re-export, code remains Spt, bitmaps remains List. All word dimensions positive NeZero width. No runtime change, no LOG2-zero equality or cross-language agreement obligation; StoreConsts uses word-copy operations. One case only, full theorem remains open. Elaborated constant closure inherits reals_as_rational_cuts through the full native evaluator (including its FP arms); recorded as inherited assurance scope, not a direct qualifier or proof that floating-point semantics agree cross-language.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
+    "lean_name": "mmioPcsMinIndex_append",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "mmio_pcs_min_index_APPEND_thm",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete original source9753/9904 and exported fulltypes0hyp comparison: Complete source EVERY suffix not-ExtCall for all mlstring names and EVERY prefix exists-ExtCall guards, exact optional MMIO index SOME(length prefix), every l/ffis binder retained. Original ffiname/SharedMem/ExtCall/MlString carriers are constructor-exact, word-free signature and no representation qualifier. No added bound, callback, target result or choice/default premise. Kernel mmioBoundary_boundedLookup rewrites the entire existing source boundary to bounds-checked getElem; prefix j<index together with original index<=length discharges j<length, suffix keeps original j<length. Thus every actual EL access is in range and no holHdNil/holArb empty/past-end value is evaluated or needed. Existing mmio optional-choice definition and ListEl implementation/provenance policy remain untouched; this does not release the individual total-HD/EL hold or certify out-of-range defaults. Full generic consumers and arbitrary-query actual extraction consumer discharge original guards. Fresh original two fulltypes0hyp/seven paired source/native cases cover empty/external/shared/mixed boundaries, guard counterexamples and actual encoded extraction at independent positions. Oracle theorem instances discharge their actual source guards through EVAL plus datatype simplification, not by assuming the target MMIO result. Evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/MmioShmem.lean",
+    "lean_name": "mmioPcsMinIndex_getShmemInfo",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "mmio_pcs_min_index_get_shmem_info_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol3 complete original source9753/9904 and exported fulltypes0hyp comparison: All c/labs/ffis-prime/p-prime/code/ffis/p/new-ffi-names/new-info binders retained, all four original all_enc_ok/enc_ok/external-prefix/output equality conjuncts, exact optional MMIO index SOME(length ffis). Query and validity starts remain independent. Source encoding guards remain even though the alternate checked full name-classification proof makes them unnecessary in the proof. Native positive-width BitVec Section/Line/AsmConfig carriers with own NeZero, canonical Spt labels, fixed word8 bytes/nbytes, Nat record PCs/registers/offsets and exact MlString names. No added bound, callback, target result or choice/default premise. Kernel mmioBoundary_boundedLookup rewrites the entire existing source boundary to bounds-checked getElem; prefix j<index together with original index<=length discharges j<length, suffix keeps original j<length. Thus every actual EL access is in range and no holHdNil/holArb empty/past-end value is evaluated or needed. Existing mmio optional-choice definition and ListEl implementation/provenance policy remain untouched; this does not release the individual total-HD/EL hold or certify out-of-range defaults. Full generic consumers and arbitrary-query actual extraction consumer discharge original guards. Fresh original two fulltypes0hyp/seven paired source/native cases cover empty/external/shared/mixed boundaries, guard counterexamples and actual encoded extraction at independent positions. Oracle theorem instances discharge their actual source guards through EVAL plus datatype simplification, not by assuming the target MMIO result. Evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
+    "lean_name": "«dfn'LR_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LR_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7463-7505 comparison: full word1 aq/rl and word5 rd/rs1 tuple, arbitrary complete native riscv_state; unused order payloads retained. Early low2 virtual-address AMO_Misaligned before any translation; otherwise exact Data/Read, returned-state Load_Fault with original virtual address or low32 signed64 read/GPR write followed by virtual-address reservation on that resulting state. No successful/core/alignment premise or changed architecture mode. Original definition/type plus14 whole-state observations freshly regenerated; independently derived expected values match14/14, including all order bits, misalignment residues1/2/3, fault reservation retention, zero register, core255,totalCore1,RV32/RV128 and Sv39 PTE3079->3111 returned-state read. Unconditional normal form kernel checked; full regression/final gates pending. Not full LR/SC/Run/Next or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
+    "lean_name": "«dfn'LR_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LR_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7506-7554: full fixed word1 aq/rl and word5 rd/rs1 arguments, arbitrary complete riscv_state; original unused order bits retained. in32BitMode first and forwards returned state to Illegal_Instr or subsequent GPR virtual address calculation; low3 virtual alignment failure AMO_Misaligned precedes any translation. Aligned route exact Data/Read; fault Load_Fault retains returned translation state and original virtual address; success rawReadData entire64word from returned state, writeGPR then reserve original virtual address on resulting state. No mode/alignment/success/core premise. Mechanically rendered full40-declaration closure0failed; definition and unconditional complete-state normal form kernel checked. Fresh pinned original definition/type+18 whole-state observations independently matched, all7misalignment residues, earlyRV32/RV128, orderbit combinations, register0/core255,totalCore1/Sv32 fault retention/Sv39 PTE3111 returned read, complete reservation/frame. No whole atomic/Run/Next or compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/GcFunOk.lean",
+    "lean_name": "wordGcFunOk",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "gc_fun_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_function": [
+      "argument_4",
+      "result_3"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-02, beads .29.1/.31: original wordPropsScript3869-3878 preserves f and all seven universal wl/m/d/s/wl1/m1/s1 binders, Handler domain and successful erased-store callback antecedent, and all three consequent conjuncts: root lengths, no returned Handler, same callback on original store returning outputstore updated with original Handler. Existing reviewed WordSemGcFun from WordSem.State matches original gc_fun_type193-197, canonical store at argument_4/result_3, Lists remain Lists, memory total, domain reviewed Bool-predicate word set, positive width. Narrow approved function qualifier inherits exactly that alias translation and words qualifier, not a new callback or predicate policy. FDOM is lookup nonabsence, FDOMSUB eraseEq and FUPDATE updateEq use HOL equality. Original FAPPLY occurs only under Handler in FDOM; wordGcHandlerValue derives unique SOME value and wordGcHandlerFallback proves arbitrary fallback independence under that original guard, so getD Loc0 0 introduces no out-of-domain semantics or premise. Fresh original probe captures complete definition with zero hypotheses, HOL FLOOKUP/FAPPLY correspondence under original domain guard, and always-fail contract theorem. Generic kernel examples include rejecting successful callbacks that keep Handler and location-valued Handler fallback. This ports the predicate only, not initialization/state_rel/full pass simulation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CopyEach.lean",
+    "lean_name": "copyEachThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "copy_each_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-copy-each), stack_removeProofScript.sml1250-1332: full original pattern induction, source successful copy_words_for_pattern and all original premises retained (distinct [1,2,3,t1,t2], dm equality, good_dimindex, all four register reads, d subset dm, word_list MAP Word bs * rest * memory m d). Result derives existential extra clock/y/target memory, native NONE evaluation, complete original state update with sentinel/non-sentinel temporary-register alternatives, and same separated memory frame for source output. Native Boolean mdomain denotes its true predicate set, as in reviewed native state relation. Arbitrary positive width with original good_dimindex, arbitrary compiler/FFI carriers, lists, functions and predicate frames remain; no target execution/read/postrelation premise or added width/range/alias condition. Source iteration heap derives target load/domain and accepted generic memory_write supplies frame transition; exact source low bit matches native Test. Owning imported StackSemStateFiniteExact and canonical regs/fpRegs/store codec witness reviewed, with no duplicate owner; Spt code untouched. Words qualifier records only type-indexed positive BitVec/FFI Type translation. Kernel source induction assembles clock allowance and final map updates, no native_decide. The native evaluator closure inherits the reviewed reals_as_rational_cuts FP real carrier (SOUNDNESS item 8), even though this body executes only integer instructions; no claim of full evaluator carrier independence.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/Distinct.lean",
+    "lean_name": "findIndex_allDistinct_elEq",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_ALL_DISTINCT_EL_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full original source1166 and exported fulltype0hyp comparison: generic HOL alpha list, sole ALL_DISTINCT guard, arbitrary target/starting offset/result index and complete search-SOME iff existential j with result=offset+j, j<length and target=EL j preserved. DecidableEq is propositional equality as in accepted find_index_def; Nonempty exposes HOL intrinsic inhabited carrier for the existing EL. No word/model, finite-map, name-string or list-array representation change. Genuine structural kernel proof with unique-head exclusion; EL cons clauses and holEl_eq_getElem are used only when original j<length supplies each tail bound. Empty-list branch rules out the bounded existential without evaluating a past-end value. No extra outer bound, successful-search/result callback, opaque default evaluation, choice/provenance change or release of individual total-HD/EL hold. Fresh original fulltype0hyp and eight original/native observations allT cover first/last match, nonzero and 2^80 offsets, missing/empty search, duplicate-guard counterexample with in-range EL and actual extracted shared-memory PCs. Full generic and actual arbitrary query/offset/result consumer discharges Nodup via the full entry-PC law and its encoding/size guards. Kernel/oracle evidence supplements source review, not cross-language equivalence or full shared-memory/initializer/compiler/machine correctness."
+  }
 ]

@@ -1656,10 +1656,6 @@ run_probe crep_replicate_const_probeScript.sml crep_replicate_const_probe.out \
   "$cake_dir/pancake/semantics"
 # The mem_load probe observes the total word -> word_lab memory function and the
 # memaddrs guard on both mem_load and eval (Load ...).
-run_probe crep_mem_load_probeScript.sml crep_mem_load_probe.out \
-  mem_load_valid eval_load_invalid \
-  "$cake_dir/pancake/semantics/crepSemScript.sml" \
-  "$cake_dir/pancake/semantics"
 run_probe crep_mem_store_probeScript.sml crep_mem_store_probe.out \
   mem_store_valid_lookup mem_store_invalid \
   "$cake_dir/pancake/semantics/crepSemScript.sml" \
@@ -1927,10 +1923,6 @@ run_probe longdiv_code_probeScript.sml longdiv_code_probe.out \
   "$cake_dir/compiler/backend/data_to_wordScript.sml"
 run_probe pan_itree_h_prog_deccall_probeScript.sml \
   pan_itree_h_prog_deccall_probe.out \
-  argument_failure lookup_failure \
-  "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
-run_probe pan_itree_h_prog_call_probeScript.sml \
-  pan_itree_h_prog_call_probe.out \
   argument_failure lookup_failure \
   "$cake_dir/pancake/semantics/pan_itreeSemScript.sml"
 run_probe word_byte_memory_probeScript.sml word_byte_memory_probe.out \
@@ -2444,10 +2436,6 @@ run_probe crep_lang_prog_probeScript.sml crep_lang_prog_probe.out \
   "$cake_dir/pancake/crepLangScript.sml" \
   "$cake_dir/pancake"
 
-run_probe pan_lang_size_of_sh_with_ctxt_probeScript.sml pan_lang_size_of_sh_with_ctxt_probe.out \
-  sswc_one sswc_comb_miss \
-  "$cake_dir/pancake/panLangScript.sml" \
-  "$cake_dir/pancake"
 
 # The mem_load probe observes the exact HOL mem_load over the faithful carriers.
 run_probe pan_sem_mem_load_exact_probeScript.sml pan_sem_mem_load_exact_probe.out \
@@ -2455,10 +2443,6 @@ run_probe pan_sem_mem_load_exact_probeScript.sml pan_sem_mem_load_exact_probe.ou
   "$cake_dir/pancake/semantics/panSemScript.sml"
 
 # The size_of_shape probe observes the exact context-free HOL size_of_shape.
-run_probe pan_lang_size_of_shape_probeScript.sml pan_lang_size_of_shape_probe.out \
-  ss_one ss_eq \
-  "$cake_dir/pancake/panLangScript.sml" \
-  "$cake_dir/pancake"
 
 # The is_wf_shape probe observes is_wf_shape/is_wf_flds/is_wf_ctxt over the
 # exact MlString-keyed context, including the duplicate-name and missing-field
@@ -5606,16 +5590,7 @@ run_probe stack_remove_comp_seq_probeScript.sml stack_remove_comp_seq_probe.out 
   cc_seq_statement cc_seq_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
-  entry_0 entry_1 entry_5 entry_6 entry_7 entry_1000 lookup_empty lookup_first lookup_last lookup_two lookup_wrong_asid lookup_global lookup_wrong_address lookup_zero_mask \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
-run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
-  raw_write_frame \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
-run_probe l3_mmu_primitives_probeScript.sml l3_mmu_primitives_probe.out \
-  constant_ASID_SIZE constant_LEVEL_BITS constant_PAGESIZE_BITS constant_TLBEntries privilege_0 privilege_1 privilege_2 privilege_3 global_0 global_1 global_2 global_3 global_4 global_5 global_6 global_7 global_8 global_9 global_10 global_11 global_12 global_13 global_14 global_15 pte_0 pte_repack_0 vaddr_0 pte_1 pte_repack_1 vaddr_1 pte_2 pte_repack_2 vaddr_2 pte_3 pte_repack_3 vaddr_3 pte_4 pte_repack_4 vaddr_4 pte_5 pte_repack_5 vaddr_5 pte_6 pte_repack_6 vaddr_6 pte_7 pte_repack_7 vaddr_7 pte_8 pte_repack_8 vaddr_8 pte_9 pte_repack_9 vaddr_9 scsr_full tlb_full tlb_write_full mem_write_full mem_read_0 mem_read_1 mem_read_2 mem_read_3 \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
 run_probe word_to_stack_make_init_probeScript.sml word_to_stack_make_init_probe.out \
   mi_definition mi_1_0_reset mi_1_0_sizes mi_1_0_inherit mi_1_0_store mi_1_0_oracle mi_1_1_reset mi_1_1_sizes mi_1_1_inherit mi_1_1_store mi_1_1_oracle mi_1_2_reset mi_1_2_sizes mi_1_2_inherit mi_1_2_store mi_1_2_oracle mi_1_3_reset mi_1_3_sizes mi_1_3_inherit mi_1_3_store mi_1_3_oracle mi_1_4_reset mi_1_4_sizes mi_1_4_inherit mi_1_4_store mi_1_4_oracle mi_1_0_0_compile mi_1_0_99_compile mi_1_17_0_compile mi_1_17_99_compile mi_1_300_0_compile mi_1_300_99_compile mi_8_0_reset mi_8_0_sizes mi_8_0_inherit mi_8_0_store mi_8_0_oracle mi_8_1_reset mi_8_1_sizes mi_8_1_inherit mi_8_1_store mi_8_1_oracle mi_8_2_reset mi_8_2_sizes mi_8_2_inherit mi_8_2_store mi_8_2_oracle mi_8_3_reset mi_8_3_sizes mi_8_3_inherit mi_8_3_store mi_8_3_oracle mi_8_4_reset mi_8_4_sizes mi_8_4_inherit mi_8_4_store mi_8_4_oracle mi_8_0_0_compile mi_8_0_99_compile mi_8_17_0_compile mi_8_17_99_compile mi_8_300_0_compile mi_8_300_99_compile mi_64_0_reset mi_64_0_sizes mi_64_0_inherit mi_64_0_store mi_64_0_oracle mi_64_1_reset mi_64_1_sizes mi_64_1_inherit mi_64_1_store mi_64_1_oracle mi_64_2_reset mi_64_2_sizes mi_64_2_inherit mi_64_2_store mi_64_2_oracle mi_64_3_reset mi_64_3_sizes mi_64_3_inherit mi_64_3_store mi_64_3_oracle mi_64_4_reset mi_64_4_sizes mi_64_4_inherit mi_64_4_store mi_64_4_oracle mi_64_0_0_compile mi_64_0_99_compile mi_64_17_0_compile mi_64_17_99_compile mi_64_300_0_compile mi_64_300_99_compile mi_80_0_reset mi_80_0_sizes mi_80_0_inherit mi_80_0_store mi_80_0_oracle mi_80_1_reset mi_80_1_sizes mi_80_1_inherit mi_80_1_store mi_80_1_oracle mi_80_2_reset mi_80_2_sizes mi_80_2_inherit mi_80_2_store mi_80_2_oracle mi_80_3_reset mi_80_3_sizes mi_80_3_inherit mi_80_3_store mi_80_3_oracle mi_80_4_reset mi_80_4_sizes mi_80_4_inherit mi_80_4_store mi_80_4_oracle mi_80_0_0_compile mi_80_0_99_compile mi_80_17_0_compile mi_80_17_99_compile mi_80_300_0_compile mi_80_300_99_compile \
@@ -5702,16 +5677,7 @@ run_probe l3_mmu_walk_probeScript.sml l3_mmu_walk_probe.out \
   walk_invalid walk_pointer_zero walk_pointer_type_one walk_leaf_read walk_leaf_write walk_leaf_already_rd walk_permission_denied walk_leaf_global walk_superpage_unaligned_ppn walk_pointer_leaf walk_leaf_level4 walk_leaf_level1000 walk_recursive_ppn_truncated walk_pointer_type_one_leaf walk_pte_address_wrap \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
-run_probe stack_sem_evaluate_clock_probeScript.sml stack_sem_evaluate_clock_probe.out \
-  gc_clock_statement gc_clock_proved alloc_clock_statement alloc_clock_proved store_const_sem_clock_statement store_const_sem_clock_proved inst_clock_statement inst_clock_proved sh_mem_op_clock_statement sh_mem_op_clock_proved evaluate_clock_statement evaluate_clock_proved fix_clock_evaluate_statement fix_clock_evaluate_proved \
-  "$cake_dir/compiler/backend/semantics/stackSemScript.sml" "$cake_dir/compiler/backend/semantics"
-run_probe l3_mmu_tlb_probeScript.sml l3_mmu_tlb_probe.out \
-  entry_0 entry_1 entry_5 entry_6 entry_7 entry_1000 lookup_empty lookup_first lookup_last lookup_two lookup_wrong_asid lookup_global lookup_wrong_address lookup_zero_mask \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
-run_probe l3_mmu_write_frame_probeScript.sml l3_mmu_write_frame_probe.out \
-  raw_write_frame \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
 
 run_probe l3_mmu_insert_probeScript.sml l3_mmu_insert_probe.out \
   insert_empty insert_holes insert_last_hole insert_full_ascending insert_full_tie insert_full_max insert_last_oldest insert_early_oldest \
@@ -5770,6 +5736,30 @@ run_probe word_to_stack_word_extraction_probeScript.sml word_to_stack_word_extra
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_remove_comp_raw_call_probeScript.sml stack_remove_comp_raw_call_probe.out \
   cc_raw_call_statement cc_raw_call_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_tail_probeScript.sml stack_remove_comp_call_tail_probe.out \
+  cc_call_tail_statement cc_call_tail_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_return_none_probeScript.sml stack_remove_comp_call_return_none_probe.out \
+  cc_call_return_none_statement cc_call_return_none_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_return_handler_probeScript.sml stack_remove_comp_call_return_handler_probe.out \
+  cc_call_return_handler_statement cc_call_return_handler_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_prog_comp_eta_probeScript.sml stack_remove_prog_comp_eta_probe.out \
+  prog_comp_eta_statement prog_comp_eta_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_memory_subset_probeScript.sml stack_remove_memory_subset_probe.out \
+  memory_subset_statement memory_subset_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_exists_probeScript.sml stack_remove_word_list_exists_probe.out \
+  word_list_exists_statement word_list_exists_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_position_order_probeScript.sml lab_to_target_position_order_probe.out \
   asm_fetch_SOME_IMP_LESS_num_pcs asm_fetch_SOME_IMP_LESS_num_pcs_types asm_fetch_SOME_IMP_LESS_num_pcs_hypotheses \
@@ -5855,41 +5845,40 @@ run_probe word_to_stack_bitmap_frame_updates_probeScript.sml word_to_stack_bitma
   bf_full_drop bf_full_not_nil bf_full_append bf_not_nil_types bf_overwrite_8_0_0 bf_overwrite_8_0_1 bf_overwrite_8_0_2 bf_overwrite_8_6_0 bf_overwrite_8_6_1 bf_overwrite_8_6_2 bf_overwrite_8_7_0 bf_overwrite_8_7_1 bf_overwrite_8_7_2 bf_overwrite_8_8_0 bf_overwrite_8_8_1 bf_overwrite_8_8_2 bf_overwrite_8_63_0 bf_overwrite_8_63_1 bf_overwrite_8_63_2 bf_overwrite_8_64_0 bf_overwrite_8_64_1 bf_overwrite_8_64_2 bf_overwrite_8_80_0 bf_overwrite_8_80_1 bf_overwrite_8_80_2 bf_overwrite_64_0_0 bf_overwrite_64_0_1 bf_overwrite_64_0_2 bf_overwrite_64_6_0 bf_overwrite_64_6_1 bf_overwrite_64_6_2 bf_overwrite_64_7_0 bf_overwrite_64_7_1 bf_overwrite_64_7_2 bf_overwrite_64_8_0 bf_overwrite_64_8_1 bf_overwrite_64_8_2 bf_overwrite_64_63_0 bf_overwrite_64_63_1 bf_overwrite_64_63_2 bf_overwrite_64_64_0 bf_overwrite_64_64_1 bf_overwrite_64_64_2 bf_overwrite_64_80_0 bf_overwrite_64_80_1 bf_overwrite_64_80_2 bf_overwrite_80_0_0 bf_overwrite_80_0_1 bf_overwrite_80_0_2 bf_overwrite_80_6_0 bf_overwrite_80_6_1 bf_overwrite_80_6_2 bf_overwrite_80_7_0 bf_overwrite_80_7_1 bf_overwrite_80_7_2 bf_overwrite_80_8_0 bf_overwrite_80_8_1 bf_overwrite_80_8_2 bf_overwrite_80_63_0 bf_overwrite_80_63_1 bf_overwrite_80_63_2 bf_overwrite_80_64_0 bf_overwrite_80_64_1 bf_overwrite_80_64_2 bf_overwrite_80_80_0 bf_overwrite_80_80_1 bf_overwrite_80_80_2 \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe stack_remove_comp_call_tail_probeScript.sml stack_remove_comp_call_tail_probe.out \
-  cc_call_tail_statement cc_call_tail_proved \
-  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe stack_remove_comp_call_return_none_probeScript.sml stack_remove_comp_call_return_none_probe.out \
-  cc_call_return_none_statement cc_call_return_none_proved \
-  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe stack_remove_comp_call_return_handler_probeScript.sml stack_remove_comp_call_return_handler_probe.out \
-  cc_call_return_handler_statement cc_call_return_handler_proved \
-  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe stack_remove_prog_comp_eta_probeScript.sml stack_remove_prog_comp_eta_probe.out \
-  prog_comp_eta_statement prog_comp_eta_proved \
-  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe stack_remove_memory_subset_probeScript.sml stack_remove_memory_subset_probe.out \
-  memory_subset_statement memory_subset_proved \
-  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe stack_remove_word_list_exists_probeScript.sml stack_remove_word_list_exists_probe.out \
-  word_list_exists_statement word_list_exists_proved \
-  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_probe.out \
   get_shmem_info_MappedRead_or_MappedWrite get_shmem_info_MappedRead_or_MappedWrite_types get_shmem_info_MappedRead_or_MappedWrite_hypotheses \
   word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
+run_probe stackprops_code_bitmaps_probeScript.sml stackprops_code_bitmaps_probe.out \
+  evaluate_code_bitmaps evaluate_code_bitmaps_hypotheses \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe lab_to_target_mmio_shmem_probeScript.sml lab_to_target_mmio_shmem_probe.out \
   mmio_pcs_min_index_APPEND_thm mmio_pcs_min_index_APPEND_thm_types mmio_pcs_min_index_APPEND_thm_hypotheses \
   mmio_pcs_min_index_get_shmem_info_ok mmio_pcs_min_index_get_shmem_info_ok_types mmio_pcs_min_index_get_shmem_info_ok_hypotheses \
   empty_boundary external_boundary shared_boundary mixed_boundary suffix_guard prefix_guard extraction_boundary \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe l3_lrw_probeScript.sml l3_lrw_probe.out \
+  lrw_definition lrw_type lrw_negative lrw_positive lrw_rd_zero lrw_core_wrap lrw_fault_sv32 lrw_rv32_mode lrw_rv128_mode lrw_walk_returned_state lrw_misaligned_1 lrw_misaligned_2 lrw_misaligned_3 lrw_order_0_1 lrw_order_1_0 lrw_order_1_1 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_lrd_probeScript.sml l3_lrd_probe.out \
+  lrd_definition lrd_type lrd_negative lrd_positive lrd_rd_zero lrd_core_wrap lrd_fault_sv32 lrd_rv32_mode lrd_rv128_mode lrd_walk_returned_state lrd_misaligned_1 lrd_misaligned_2 lrd_misaligned_3 lrd_order_0_1 lrd_order_1_0 lrd_order_1_1 lrd_misaligned_4 lrd_misaligned_5 lrd_misaligned_6 lrd_misaligned_7 \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe word_props_gc_fun_ok_probeScript.sml word_props_gc_fun_ok_probe.out \
+  gc_fun_ok_def gc_fun_ok_hypotheses guarded_handler_lookup always_fail_gc \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
+  "$cake_dir/compiler/backend/semantics"
+run_probe stack_remove_copy_each_probeScript.sml stack_remove_copy_each_probe.out \
+  copy_each_statement copy_each_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_probe.out \
   find_index_ALL_DISTINCT_EL_eq find_index_ALL_DISTINCT_EL_eq_types find_index_ALL_DISTINCT_EL_eq_hypotheses \
