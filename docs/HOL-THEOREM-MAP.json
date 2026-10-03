@@ -74268,5 +74268,272 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original3089-3098: complete forall xs,a,u,uPrime and sole conjunction word_list a xs u and word_list a xs uPrime implies u=uPrime. Actual native forward wordList recurrence retains current singleton, modular bytesInWord tail and full STAR partition over arbitrary predicate heaps; independent payload Type and address BitVec width with NeZero translate original positive word dimension. No finite heap, word-valued payload, no-wrap, address distinctness or numeric bound added. Nil uses original empty heap equalities; cons extracts actual two partitions, singleton equalities and tail assertions, genuine tail IH derives equal rest heaps, actual union equations yield whole heap equality. Original literal unchanged induction/DIFF/SPLIT_EQ proof replay with original simplifier context captured full statement/T/hyp0; source review compares full statements and actual carriers, not inferred from test or name. Proof-only initializer prerequisite, no executed compiler behavior change; coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/FFI.lean",
+    "lean_name": "compCorrectFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.8): full original comp_correct goal 5719-5751 specialized only at FFI (source proof 7125-7171), same statement shape as the reviewed compCorrectAssign/Store/Alloc rows: arbitrary ffi index, argument registers, cutsets, frame, states, result and bitmap parameters; all eleven original premises retained; full existential target clock/run/result conclusion with compCorrectResult. Proof follows HOL: post_alloc_conventions fixes ptr1/len1/ptr2/len2 = 2/4/6/8 and puts cutset names on the stack; state_rel moves source variables 2/4/6/8 to target registers 1-4; memory/mdomain/be/ffi agree so the byte reads and call_FFI coincide; FinalFFI gives equal ffi/clock; the returning branch relates the cut environment (stack-placed names only, so the restricted target registers are unobservable) with clock 0. No target run, simulation law or successful-execution premise added. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through the evaluator closure; no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallDest.lean",
+    "lean_name": "callDestLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "call_dest_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.1): source 3315-3415: HOL free ret/ac/k/f/f'/lens explicit (ret at HOL's add_ret_loc carrier, Option (List Nat x cutsets x prog x Nat x Nat)); premises ~bad_dest_args, state_rel, native call_dest compile equation, get_vars success; conclusion: exists t4 with native StackSem evaluate (q0, t) = (NONE, t4), state_rel s t4, equal stack length and stack_space, and for all real_args/prog/ssize with native WordSem find_code dest (add_ret_loc ret args') = SOME, the compile_prog/bitmap-bound/isPREFIX facts, the fs ssize = fs as ssize.getD fs, and StackSem find_code dest' t4.regs t4.code = SOME stack_prog. Proof follows HOL's three call_dest branches (direct label, register, stack slot via StackLoad k+1). Full literal stateRel over imported carriers; positive BitVec width with NeZero. Statement names the StackSem evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "evaluateSeqStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_SeqStackFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 960-972: premises t.use_stack and t.stack_space <= LENGTH t.stack; conclusion evaluate (SeqStackFree f p, t) = evaluate (Seq (StackFree f) p, t) over the native StackSem evaluator and native seqStackFreeNative; arbitrary f/p/t. Imported canonical regs/fpRegs/store translation with same-module witness. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion. HOL declares the same statement again at line 3286 (non-local, renamed variables); the tag cites the line-960 declaration.",
+    "hol_line": 960
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "compileResultNot2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_result_NOT_2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 3423-3429: good_dimindex premise; compile_result x <> Halt (Word 2w) for arbitrary native WordSem result x, over the reviewed compileResult."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "compileProgStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_prog_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 7546-7551: native compile_prog equation implies x - k <= fs; all free variables (ac, perf, word_prog, x, k, bs, stack_prog, fs, bs2) arbitrary."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "evaluateSeqStackFree'",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_SeqStackFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 3286-3293, the script's second (non-local) declaration of evaluate_SeqStackFree with variables n/p/s: same premises s.use_stack and s.stack_space <= LENGTH s.stack and same conclusion over the native StackSem evaluator and seqStackFreeNative; proved by the line-960 port. Imported canonical regs/fpRegs/store translation with same-module witness. Inherits reals_as_rational_cuts (SOUNDNESS item 8) via the evaluator; no numerical FP assertion.",
+    "hol_line": 3286
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/CallTail.lean",
+    "lean_name": "compCorrectCallTail",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.3): full original comp_correct goal 5719-5751 specialized at Call with ret = NONE (HOL's Call_tail suspension, 7935-8164); arbitrary dest/args/handler/frame/states/result/bitmap parameters and all eleven original premises; full existential target clock/run/result conclusion with compCorrectResult. The induction hypothesis is exactly the WordSem evaluator's guarded hypothesis for the callee body (get_vars SOME xs, ~bad_dest_args, find_code dest (add_ret_loc NONE xs) = SOME (args1,prog,ss), handler = NONE, clock <> 0) quantified over the complete original simulation motive (Seq.Simulation, the factored 5719-5751 statement), as HOL's evaluate_ind provides; no target run or simulation law is assumed. Proof follows HOL: call_dest_lemma, evaluate_SeqStackFree, timeout branch, stack-limit Halt (Word 2w) branch via compile_result_NOT_2/evaluate_io_events_mono/evaluate_stack_limit/evaluate_stack_max, and the callee state_rel for call_env args1 ss (dec_clock s) at frame (fs, stack_var_count) before applying the IH with evaluate_add_clock. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through the evaluator closure; no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "llookupTake",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LLOOKUP_TAKE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 308-312: n < f implies LLOOKUP (TAKE f xs) n = LLOOKUP xs n; HOL LLOOKUP (oEL) is native optional indexing as in the reviewed llookup and LLOOKUP_cons_SUC ports; arbitrary payload."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stateRelImpLength",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_IMP_LENGTH",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5260-5268: state_rel ac k f f' s t lens extra implies LENGTH lens = LENGTH s.stack, all parameters arbitrary. Full literal stateRel over imported carriers with same-module relation witnesses; positive BitVec width."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stackRelConsLenNone",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_cons_LEN_NONE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5409-5423: stack_rel on a handler-free head frame at lens f'::lens implies f'+1 <= LENGTH sstack. HOL free variables explicit; over the reviewed stackRel with the target handler word at its own independent dimension, as stack_rel_def leaves it; positive BitVec widths with NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stackRelConsLocalsSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_cons_locals_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5425-5440: stack_rel on head frame StackFrame n l0 l opt (arbitrary opt) at f'::lens implies the (f'+1) n = f'+1, as n.getD (f'+1). HOL free variables explicit; over the reviewed stackRel with the target handler word at its own independent dimension, as stack_rel_def leaves it; positive BitVec widths with NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "stackRelDropNone",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_DROP_NONE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5368-5396: stack_rel on a handler-free head frame at f'::lens implies stack_rel of the tail on DROP (f'+1) sstack at lens. HOL free variables explicit; over the reviewed stackRel with the target handler word at its own independent dimension, as stack_rel_def leaves it; positive BitVec widths with NeZero."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateCallDestClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_call_dest_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5234-5242: native call_dest equation implies evaluate (q0, t with clock := clk) = (I ## (λt. t with clock := clk)) (evaluate (q0, t)), I ## as Prod.map id; all free variables explicit. Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateWLiveClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wLive_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5244-5258: for all x t q bs bs', native wLive x bs kf = (q, bs') implies evaluate (q, t with clock := clk) = (FST (evaluate (q,t)), SND (evaluate (q,t)) with clock := clk); kf and clk explicit. Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateStackMoveSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_stack_move_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5330-5348: for all a b c d prog t, evaluate (stack_move a b c d prog, t) = evaluate (Seq prog (stack_move a b c d Skip), t) over native stackMoveNative. Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateCopyRetAuxClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_copy_ret_aux_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 7706-7718: for all t, evaluate (copy_ret_aux k f n, t with clock := clk) = (I ## (λt. t with clock := clk)) (evaluate (copy_ret_aux k f n, t)); k/f/n/clk explicit. Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateCopyRetSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_copy_ret_Seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 7611-7641: evaluate (copy_ret perf b kf vs k0, t) = evaluate (Seq (copy_ret perf b kf vs Skip) k0, t), with copy_ret's independent return-value and unused frame-component carriers as in the reviewed copyRetNative. Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateStackMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_stack_move",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5270-5328: HOL free k explicit; for all n tar t offset with use_stack, stack_space+tar+n+offset <= LENGTH stack and n <= offset: exists t' with evaluate (stack_move n tar offset k Skip, t) = (NONE, t') and t' = t with <|stack; regs|>, all registers except k preserved, equal stack length and stack_space, unchanged suffix from stack_space+tar+n, and the copied first n slots (EL (x+offset) stack = EL x stack'). HOL total EL is holEl (all uses in range). Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnEval.lean",
+    "lean_name": "evaluateCopyRetAux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_copy_ret_aux",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 7643-7704: for all k f n t with use_stack, f <> 0, f <= LENGTH stack - (stack_space + n): exists t' with evaluate (copy_ret_aux k f n, t) = (NONE, t') and t' = t with <|stack; regs|>, equal length and stack_space, unchanged suffix from f+n+stack_space, registers except k preserved, unchanged slots m < f - n above n, and copied slots EL (x+f) stack' = EL x stack for x < n. HOL total EL is holEl (all uses in range). Over the native StackSem evaluator and native compiler helpers; imported canonical regs/fpRegs/store translation with same-module witness; positive BitVec width. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnSupport.lean",
+    "lean_name": "lastGenlistEvens",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "LAST_GENLIST_evens",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.4.1): source 5398-5407: n <> 0 implies, for reg = LAST (GENLIST (λx. 2 * (x+1)) n), reg <> 0 and EVEN reg; GENLIST as (List.range n).map, LAST as the corrected holLast port (independent opaque nil, only cons equations used since the list is nonempty), EVEN as % 2 = 0."
   }
 ]
