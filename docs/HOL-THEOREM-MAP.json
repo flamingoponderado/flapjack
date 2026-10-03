@@ -76192,6 +76192,72 @@
     "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_stepScript34-35: full fixedword64/native-state update_pc v s=SOME(writePC v s); entire Option result and original complete function-valued PC update retained. No current-core bounds, target-run assumption or chosen defaults. Generic whole option and full-record equations kernel checked and original HOL proofs captured with zero hypotheses."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "compileExpCorrectVar",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review2026-10-03: genuine original686-791 Var case, arbitrary Local/Global kind and exact MlS name; same ALL7sourcehyp/ALL3conclusions. Actual finite-map evalHOLFinite/ContextExact/ExpHOL/ValueHOL and full convertStateExact, canonical first-binding context shape maps equal original FMAP_MAP2 shape_of, structs map exact info.fields, FEVERY locals/globals and structInfosOk. Source success gives actual source lookup; shape equality follows canonical context map via unconditional first-match codec law; source FEVERY yields result fields validity; target success derived from actual converted locals/globals map2. No target evaluation, compatibility/memory adapter/range/resource premise or IH for this leaf. Lawful helper typeclasses apply only to generic infrastructure, not case signature; exact MlS canonical equality instances discharge them. Actual imported owner PanSemStateFiniteExact, no local duplicate; local genuine two-way roundtrip. Four canonical map field and positive-word/Type0 FFI qualifiers only. Original whole theorem + Var specialization source kernel closed/hyp0 captured; whole assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "alistToFmap_findSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "shapeMap_lookup_findSome",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpVar.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Allocation.lean",
+    "lean_name": "ssaCcTrans_preAllocAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10547-10623, original Alloc case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Allocation.lean",
+    "lean_name": "ssaCcTrans_preAllocInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10547-10623, original Install case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Allocation.lean",
+    "lean_name": "ssaCcTrans_preAllocFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10547-10623, original FFI case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
     "hol_name": "next_label_filter_skip",
     "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ReturnLabels.lean",
