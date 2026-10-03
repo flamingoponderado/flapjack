@@ -659,9 +659,11 @@ theorem codeSimAll {width : Nat} {σ : Type} [NeZero width] :
 /-- Original pan_simp `compile_correct`: the `evaluate_ind` instance of the
 source goal at `comp = seq_assoc Skip`. A non-Error source run is matched, with
 the same result, by the `state_rel`-related state running `seq_assoc Skip prog`,
-and `state_rel` is re-established for the final states. The source goal's
-`ctxt` binder occurs nowhere in the statement (it is a vacuous HOL
-quantifier of unconstrained type) and is omitted. -/
+and `state_rel` is re-established for the final states. The binders are
+exactly those of the elaborated HOL theorem (`v v1 res s1 t`, captured with
+types by `pan_simp_semantics_statement_probe`): the source `goal` term's
+`∀ctxt` is removed by the `REWRITE_RULE []` that builds `ind_thm2`, so the
+stored theorem has no `ctxt` quantifier. -/
 @[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "compile_correct"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]

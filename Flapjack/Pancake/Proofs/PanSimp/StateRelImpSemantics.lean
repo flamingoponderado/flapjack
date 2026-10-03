@@ -188,21 +188,22 @@ theorem evaluateDeclsCodeRel {width : Nat} {σ : Type} [NeZero width] :
 
 /-- Original pan_simp `state_rel_imp_evaluate_decls`. The memory-domain
 decider of `evaluate_decls` is chosen classically, as in the tagged
-`semantics_decls`, which adds no premise. HOL's universally quantified `start`
-occurs nowhere in the statement (a vacuous binder) and is omitted. The
-`ALL_DISTINCT` hypothesis is retained although, as in the source proof, it is
-not used. -/
+`semantics_decls`, which adds no premise. HOL's quantified `start` occurs
+nowhere in the formula; the elaborated HOL theorem keeps it at its own type
+variable `γ` (captured by `pan_simp_semantics_statement_probe`), and so does
+this statement. The `ALL_DISTINCT` hypothesis is retained although, as in the
+source proof, it is not used. -/
 @[hol "cakeml/pancake/proofs/pan_simpProofScript.sml" "state_rel_imp_evaluate_decls"
   (fmap_as_finite_support := [locals, globals, code, eshapes])
   (words_as_type_indexed_bitvec)]
-theorem stateRelImpEvaluateDeclsHOL {width : Nat} {σ : Type} [NeZero width] :
+theorem stateRelImpEvaluateDeclsHOL {width : Nat} {σ : Type} {γ : Type} [NeZero width] :
     ∀ (s : PanSemStateFiniteExact width σ) (pan_code : List (DeclHOL width))
-      (t s' : PanSemStateFiniteExact width σ),
+      (t s' : PanSemStateFiniteExact width σ) (_start : γ),
       stateRel s t t.code ∧ ((functionsHOL pan_code).map Prod.fst).Nodup ∧
         (open Classical in evaluateDeclsHOLFinite s pan_code) = some s' →
       ∃ t', (open Classical in evaluateDeclsHOLFinite t (panSimpDeclsHOL pan_code)) = some t' ∧
         stateRel s' t' t'.code := by
-  rintro s pan_code t s' ⟨⟨ht, hnone, hsome⟩, -, hev⟩
+  rintro s pan_code t s' _start ⟨⟨ht, hnone, hsome⟩, -, hev⟩
   obtain ⟨c', hev', hc'⟩ := evaluateDeclsCodeRel pan_code s _ t.code s' ⟨hnone, hsome⟩ hev
   refine ⟨{ s' with code := c' }, ?_, rfl, hc'.1, hc'.2⟩
   rw [ht]
@@ -240,7 +241,7 @@ theorem stateRelImpSemanticsDeclsHOL {width : Nat} {σ : Type} [NeZero width] :
         refine ⟨?_, hnone, hsome⟩
         rw [ht]
       obtain ⟨t', hev', hrel'⟩ := stateRelImpEvaluateDeclsHOL { s with structs := stCtxt }
-        pan_code { t with structs := stCtxt } s' ⟨hrel, hdist, hev⟩
+        pan_code { t with structs := stCtxt } s' start ⟨hrel, hdist, hev⟩
       have hev'' : evaluateDeclsHOLFinite { t with structs := stCtxt }
           (panSimpDeclsHOL pan_code) = some t' := hev'
       simp only [hev'']
