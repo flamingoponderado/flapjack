@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl

@@ -7626,3 +7626,13 @@ Full Call/whole program/compiler correctness remain open.
 ### Signed native immediate reconstruction
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+
+### Native encoder correctness Skip case
+
+`riscv_target_skip_probeScript.sml` specializes the complete original
+`riscv_encoder_correct` theorem only at `Inst Skip`, recording its entire
+source premise, existential step count, every interference environment, both
+assertion predicates, native types, zero stored hypotheses, and proved `T`.
+Lean derives actual native Fetch/DecodeAny/Run/Next and post-relation before
+using the original zero assertion witness. The fixture is original evidence,
+not a cross-language equivalence proof.

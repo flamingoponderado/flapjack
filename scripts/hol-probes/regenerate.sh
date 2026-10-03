@@ -7135,3 +7135,9 @@ run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_se
 run_probe word_to_stack_loop_handler_probeScript.sml word_to_stack_loop_handler_probe.out \
   loop_handler_full loop_handler_hypotheses loop_handler_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_skip_probeScript.sml riscv_target_skip_probe.out \
+  riscv_encoder_correct_skip_statement riscv_encoder_correct_skip_types \
+  riscv_encoder_correct_skip_hypotheses riscv_encoder_correct_skip_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
