@@ -634,6 +634,7 @@ import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Asm
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Cbw
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.ShareMem
 import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
