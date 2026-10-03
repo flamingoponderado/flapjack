@@ -1,3 +1,5 @@
+import Flapjack.Test.L3RegisterALUParity
+import Flapjack.Test.L3ConditionalBranchParity
 import Flapjack.Test.L3UpperJumpParity
 import Flapjack.Test.L3CSRInstructionsParity
 import Flapjack.Test.LabToTargetInitializerInterferenceParity
@@ -13,6 +15,7 @@ import Flapjack.Test.L3CSRAccessParity
 import Flapjack.Test.StackRawCallJumpLowerParity
 import Flapjack.Test.StackRawCallStackAccessParity
 import Flapjack.Test.StackRawCallMemoryFfiParity
+import Flapjack.Test.StackRawCallAllocationStoreParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
