@@ -7084,3 +7084,8 @@ run_probe word_to_stack_store_register_probeScript.sml word_to_stack_store_regis
 run_probe lab_props_alignment_sdm_evaluate_probeScript.sml lab_props_alignment_sdm_evaluate_probe.out \
   evaluate_align_sdm evaluate_align_sdm_types evaluate_align_sdm_hypotheses evaluate_align_sdm_proved implements_align_sdm implements_align_sdm_types implements_align_sdm_hypotheses implements_align_sdm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcurrheap_probe.out \
+  comp_correct_opcurrheap_full_statement comp_correct_opcurrheap_full_proved comp_correct_opcurrheap_full_hypotheses \
+  comp_correct_opcurrheap_whole_statement comp_correct_opcurrheap_whole_proved comp_correct_opcurrheap_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -9422,6 +9422,12 @@
       "sha256": "790a3f9f1afa4001820a89e788378d6810229137318edab8f8bcba22be0780ab"
     },
     {
+      "out": "word_to_stack_comp_opcurrheap_probe.out",
+      "sha256": "13a79a6113a83979113d7b329c1e65127ebbc6042c45d2af8f708bae4ce0cb81",
+      "bytes": 3653,
+      "rows": 6
+    },
+    {
       "bytes": 95,
       "out": "word_to_stack_comp_prefix_probe.out",
       "rows": 9,
