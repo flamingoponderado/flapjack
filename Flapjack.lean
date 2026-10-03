@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
 import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
 import Flapjack.Compiler.Backend.LabToTarget.ListSubset
@@ -432,6 +433,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning.Execution
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler.Execution
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Call
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1274,7 +1276,9 @@ import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
+import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode

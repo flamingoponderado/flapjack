@@ -7334,6 +7334,20 @@ closed kernel proofs. The Lean case retains all ten original premises and seven
 conclusions for both local and global assignment, deriving target validity and
 shape-map neutrality internally from source validity and full value conversion.
 
+`word_to_stack_comp_handler_full_probe.out` records the full original SOME-handler
+returning Call specialization of comp_correct, its closed kernel theorem
+(proved=T, hypotheses=0), and the complete original evaluate_ind Call obligation.
+The native constructor retains the three literal guarded returning IHs; the
+fixed SOME return makes the fourth tail IH impossible. Header/argument/callee
+allocation, zero clock, all body results and normal/exception continuations are
+assembled with the entire original result/resource conclusion. This capture is
+statement evidence from the original full theorem, not a replay of the local
+9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
+`pan_structs_program_primitive_probe` captures the full original program theorem
+and its `Primitive v pop es` specialization, with binder types and closed kernel
+proofs. The Lean case retains all ten premises and seven conclusions, executes
+the original argument mmap and AddCarry operation, and derives local validity
+and update postconditions internally from the full Assign case.
 `word_to_stack_load_register_probe.out` freshly replays the unchanged original
 local `evaluate_wStackLoad_wReg1` proof (4417–4445) and captures the original
 unconditional `evaluate_wStackLoad_seq` (4512–4523), plus both compiler equations.
@@ -7341,6 +7355,22 @@ All four theorem rows have zero hypotheses. LoadRegister kernel ports preserve
 the complete source lookup/full relation premises and all preservation conjuncts;
 the continuation law covers arbitrary loads/programs/states and failed loads.
 These proof-side prerequisites do not establish the full Return case or pass.
+
+`pan_structs_map_restoration_probe` captures full original
+`res_var_FMAP_MAP2_rev` and `FEVERY_res_var`, including all binder types, zero
+hypotheses, closedness and kernel proofs. Lean uses canonical finite-support
+maps and classical HOL key equality, with no comparison premise; the
+complement-singleton restriction has a checked unconditional literal lookup
+witness. The Dec and DecCall consumers remain separate obligations.
+
+`word_to_stack_comp_call_full_probe.out` records the complete original Call
+constructor induction obligation with all four literal guarded IHs, plus the
+whole arbitrary-ret/arbitrary-handler Call specialization of comp_correct.
+Both statements are closed kernel theorems, proved=T and hypotheses=0. The
+native enclosing constructor assembles checked tail/NONE/SOME cases with every
+original quantifier and result/resource conclusion. These captures are statement
+evidence via the original full theorem, not a replay of the local case proof or
+a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.
 
 `word_to_stack_comp_return_probe.out` freshly specializes the entire original
 comp_correct theorem at arbitrary Return/register/value-list/source state,
