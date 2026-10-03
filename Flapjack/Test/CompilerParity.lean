@@ -1,3 +1,4 @@
+import Flapjack.Test.StackRawCallCompileSemanticsParity
 import Flapjack.Test.WordToStackCallReturnHandlerParity
 import Flapjack.Test.StackRawCallCompCorrectParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity

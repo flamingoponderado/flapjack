@@ -6859,3 +6859,11 @@ statements with zero HOL hypotheses and the full setup theorem at64/80 widths.
 Lean consumers apply all seven full statements at arbitrary/1/8/64/80 widths.
 The complete final state relation is derived; these captures are regression
 evidence, not a HOL-to-Lean equivalence proof or whole compiler completion.
+
+`stack_rawcall_compile_semantics_probeScript.sml` freshly reads the original full
+`compile_semantics` theorem and zero-HOL-hypothesis count, with 1/8/64/80 word
+instances (six rows). The Lean consumers apply the full observational equality
+with all four original premises at arbitrary positive/1/8/64/80 widths. The Lean
+proof derives entry simulations and native clock/event-chain obligations; these
+captures are regression evidence, not a HOL-to-Lean equivalence proof or evidence
+of production routing or whole compiler completion.

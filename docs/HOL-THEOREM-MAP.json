@@ -74610,5 +74610,20 @@
     ],
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original42-75/5384-5396/5417-5423/5468-5552: native nonperformance handler argument/save/restore trees retain all original constructors and arbitrary unused frame carriers/destination carriers; unconditional PushHandler clock replacement covers errors and success with no execution guard. Full SOME frame length/drop laws use sole original stackRel guard, arbitrary frame/header/rest and independent observed input-handler word dimension; returned handler is actual total EL2 and tail DROP(fprime+4), no selected default or new range premise. Full evaluate_PushHandler retains precisely room3, initial stateRel after pushEnv NONE with empty locals/some0, and actual locCheck. All quantified environment/callback/FFI/width/continuation values and compiler f/fprime/lens retained. Native evaluator derives existential post with every original unchanged-four-fields, occupied-word+3, unrelated-register, space+3, length, and full final38-field stateRel conjunct. Actual canonical scratch/store updates are derived, three saved words reconstructed, normal decoder gains handler header, saved pointer from old relation and new active handler pointer from actual abstraction length; optional source maxima/frame sizes use full None/Some cases. No targetrun, postrelation, narrowed success assumption or external IH. Actual imported canonical map owners and local roundtrips, Spt/List carriers unchanged, positive word/FFI translation only; full evaluator closure inherits reals_as_rational_cuts SOUNDNESS8. Full35 consumers at arbitrary/1/8/64/80, fresh literal original local proofs and captures regression evidence, not cross-language equivalence or whole compiler completion. No default/allowlist/individual HOLD changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompileSemantics.lean",
+    "lean_name": "compileSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "compile_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original625-end: full original ALL_DISTINCT source keys, use_stack true, code fromAList, and non-Fail premises retained; complete target/source semantics equality at arbitrary entry start and positive width/FFI/configuration. Actual native compile collects full code info; initial stateRel and independent per-entry witnesses derived from accepted domain/lookup/collectInfo laws. Full comp_correct derives target entry executions with additional clock and identical whole FFI state from source run and nonError derived from nonFail. Shared Flapjack semanticsAux_shift proof infrastructure derives target nonFail, equality of entire termination predicates, and cofinal native ioEvents chain LUB equality using native clock stability/monotonicity, all obligations discharged inside theorem. No target run, final relation, external IH, event-prefix or simulation premises added. Canonical imported regs/fpRegs/store owner plus checked roundtrip, Spt/List unchanged; evaluator inherits reals_as_rational_cuts SOUNDNESS8. Full consumers arbitrary/1/8/64/80; original probe regression does not establish cross-language equivalence or production-route completion."
   }
 ]
