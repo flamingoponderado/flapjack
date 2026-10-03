@@ -1217,6 +1217,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
+import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
+import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
@@ -1231,6 +1233,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -1622,6 +1625,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel.Load
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
