@@ -8066,6 +8066,12 @@
       "sha256": "ee0034c1d72ca0ccbd1a65120490d1f888c719f9e6ca557152414552a2479ac7"
     },
     {
+      "bytes": 13201,
+      "out": "stack_to_lab_label_sets_probe.out",
+      "rows": 30,
+      "sha256": "d008abcf31a55f1afeb27410b627245ccd11d010bd2e32b70fc458a5b7a55b20"
+    },
+    {
       "bytes": 10522,
       "out": "stack_to_lab_make_init_probe.out",
       "rows": 18,

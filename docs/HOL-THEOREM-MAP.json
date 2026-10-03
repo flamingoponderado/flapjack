@@ -87078,6 +87078,96 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5209-5221. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "complex_get_code_labels_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "complexGetCodeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3800-3817. Definition clauses as captured by the probe: Seq/If union, Call = (INL x ⇒ {(x,0)}) ∪ (ret NONE ⇒ ∅ | SOME (r,_,l1,l2) ⇒ (l1,l2) INSERT (labels r ∪ handler part)), handler SOME (r,l1,l2) ⇒ (l1,l2) INSERT labels r; Loop, LocValue, RawCall (l,1), JumpLower (l,0), wildcard ∅. HOL INSERT binds looser than UNION, reproduced by insert around the union. HOL set as Lean Set. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "complex_flatten_labels",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "complexFlattenLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3818-3874. Statement as captured by the probe: the let-bound pp is inlined; set (append …) is list membership, BIGUNION (IMAGE f s) is ⋃₀ (f '' s); the conditional label index (t ∧ ∃p1 p2. p = Seq p1 p2) is the Bool t = true with the same existential; free variables universally quantified in HOL order t p n m cs bs. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_labels",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "flattenLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3876-3929. Statement as captured by the probe: flatten t m n p cs bs = (l,x,y) ∧ EVERY (sec_label_ok n) (append l) ⇒ the BIGUNION of line labels ⊆ set (MAP (λl. (n,l)) (cs ++ bs)) ∪ sec_get_code_labels (Section n (append l)) ∪ get_code_labels m; EVERY is a membership quantifier over the reviewed LabProps.secLabelOk; quantifier order preserved. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "get_labels_MAP_prog_to_section_SUBSET_code_labels_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "getLabelsMapProgToSectionSubsetCodeLabelsLemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3931-3949. Statement as captured by the probe: EVERY sec_labels_ok (MAP prog_to_section p) ⇒ get_labels … ⊆ get_code_labels … ∪ BIGUNION (IMAGE get_code_labels (set (MAP SND p))); EVERY as membership quantifier, IMAGE/BIGUNION as image/sUnion over the reviewed StackProps.getCodeLabels. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "prog_to_section_preserves_MAP_FST",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "progToSectionPreservesMapFst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3951-3961. Statement as captured by the probe: IMAGE (λn. (n,0)) (set (MAP FST p)) ⊆ get_code_labels (MAP prog_to_section p) over the reviewed progToSectionHOL. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "prog_to_section_labels",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "progToSectionLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3963-3982. Statement as captured by the probe: prog_to_section (n,p) = pp ⇒ sec_get_labels pp ⊆ sec_get_code_labels pp ∪ complex_get_code_labels p; free variables implicit. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_preserves_handler_labels",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "flattenPreservesHandlerLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3984-4024. Statement as captured by the probe: flatten t m n p cs bs = (l,x,y) ⇒ stack_get_handler_labels n m ⊆ sec_get_code_labels (Section n (append l)), over the reviewed StackProps.stackGetHandlerLabels; quantifier order preserved. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "MAP_prog_to_section_preserves_handler_labels",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "mapProgToSectionPreservesHandlerLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4026-4042. Statement as captured by the probe: BIGUNION (set (MAP (λ(n,pp). stack_get_handler_labels n pp) p)) ⊆ get_code_labels (MAP prog_to_section p); the paired lambda is a projection lambda over the pair. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "one_prog_section",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "oneProgSection",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4044-4060. Statement as captured by the probe: IMAGE (λn. (n,1)) (set (MAP FST p)) ⊆ get_code_labels (MAP prog_to_section p); free p implicit. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "get_labels_MAP_prog_to_section_SUBSET_code_labels",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/LabelSets.lean",
+    "lean_name": "getLabelsMapProgToSectionSubsetCodeLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4062-4082. Statement as captured by the probe: EVERY sec_labels_ok (MAP prog_to_section p) ∧ stack_good_code_labels p elabs ⇒ get_labels … ⊆ get_code_labels … ∪ IMAGE (λn. (n,0)) elabs ∪ IMAGE (λn. (n,1)) elabs, over the reviewed StackProps.stackGoodCodeLabels; free elabs implicit. 'a word as BitVec width with [NeZero width]. No added premise."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Semantics/PanProps/SemanticsWrapperEquality.lean",
     "lean_name": "panPropsSemanticsWrapper_eq",
     "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
