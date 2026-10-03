@@ -6,6 +6,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
@@ -1997,5 +1998,34 @@ theorem simulateCalleeAndCopyReturn {width : Nat} [NeZero width] {C F : Type}
   rw [List.length_drop] at frameBound
   exact evaluateReturnCopyFree k callerSize callerFrame values targetPost useStack
     (by omega) (by rwa [callerSizeEq, countEq])
+
+/-- Case-local source lookup decomposition used by the original normal-return
+restoration proof. It unfolds the actual popped NONE frame and actual `setVars`:
+returned entries take precedence, then restored GC entries, then the saved
+non-GC environment. No distinctness, lookup outcome, or target relation is
+assumed. This is infrastructure factoring inside `comp_correct`, not a separate
+HOL declaration or the completed caller state relation. -/
+theorem restoredCallerLookup {width : Nat} [NeZero width] {C F : Type}
+    (bodyPost : WordSemStateFiniteExact width C F) (size : Nat)
+    (nonGC : Spt (WordLocW width)) (gc : List (Nat × WordLocW width))
+    (tail : List (WordSemStackFrame width))
+    (values : List Nat) (returned : List (WordLocW width)) (key : Nat)
+    (frame : bodyPost.stack = .stackFrame size (sptToAList nonGC) gc none :: tail) :
+    ∃ popped, WordSemStateFiniteExact.popEnv bodyPost = some popped ∧
+      sptLookup key (WordSemStateFiniteExact.setVars values returned popped).locals =
+        match holAlookup (values.zip returned) key with
+        | some result => some result
+        | none => match sptAListLookup key gc with
+          | some result => some result
+          | none => sptLookup key nonGC := by
+  refine ⟨{ bodyPost with
+    locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList nonGC)),
+    stack := tail, localsSize := size }, ?_, ?_⟩
+  · simp only [WordSemStateFiniteExact.popEnv, frame]
+  · have savedLookup : sptAListLookup key (sptToAList nonGC) = sptLookup key nonGC := by
+      rw [← sptLookup_sptFromAList, sptLookup_sptFromAList_sptToAList]
+    simp only [WordSemStateFiniteExact.setVars, lookup_alist_insert_any,
+      sptLookup_sptUnion, sptLookup_sptFromAList, savedLookup]
+    cases holAlookup (values.zip returned) key <;> cases sptAListLookup key gc <;> rfl
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
