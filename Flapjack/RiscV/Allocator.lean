@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordAlloc.SSAStateRoute
 import Flapjack.Compiler.Backend.WordAlloc.MergeMovesRoute
 import Flapjack.Compiler.Backend.WordAlloc.InstructionRoute
 import Flapjack.Compiler.Backend.WordAlloc.KeyMapRoute
@@ -235,6 +236,7 @@ def wordArithReadVars {α : Type u} (operation : WordArith α) : List Nat :=
           [sourceLeft, sourceRight, carryIn]
       | .cakeAddCarry _ sourceLeft sourceRight carry =>
           [sourceLeft, sourceRight, carry]
+      | .addOverflow _ l r _ | .subOverflow _ l r _ => [l, r]
       | .div _ dividend divisor => [dividend, divisor]
       | .binOp _ _ sourceLeft sourceRight =>
           sourceLeft :: (match sourceRight with
@@ -266,6 +268,8 @@ def wordInstWriteVars {α : Type u} : WordInst α → List Nat
           [destinationLeft, destinationRight]
       | .addCarry destination resultCarry _ _ _ =>
           [destination, resultCarry]
+      | .addOverflow destination _ _ carry
+      | .subOverflow destination _ _ carry
       | .cakeAddCarry destination _ _ carry =>
           [destination, carry]
       | .div destination _ _ => [destination]
@@ -298,6 +302,8 @@ def wordInstForcedClashes {α : Type u} : WordInst α → List (Nat × Nat)
   | .arith (.addCarry destination resultCarry sourceLeft sourceRight _) =>
       [(destination, resultCarry),
         (destination, sourceLeft), (destination, sourceRight)]
+  | .arith (.addOverflow d _ r _) | .arith (.subOverflow d _ r _) =>
+      if d = r then [] else [(d, r)]
   | .arith (.cakeAddCarry destination _sourceLeft sourceRight carry) =>
       [(destination, carry),
         (destination, sourceRight)]
@@ -399,10 +405,8 @@ def wordSsaReadCutsets (state : WordSsaState)
     NumSet.fromAList ((NumSet.fromAList cutsets.2).map (wordSsaRead state)))
 
 def wordSsaFresh (state : WordSsaState) (name : Nat) : WordSsaState × Nat :=
-  ({ current := (name, state.next) ::
-        state.current.filter (fun entry => entry.1 != name),
-      next := state.next + 4 },
-    state.next)
+  let (name,current,next) := Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable name state.current state.next
+  ({current := current,next := next},name)
 
 theorem wordSsaFresh_next (state : WordSsaState) (name : Nat) :
     (wordSsaFresh state name).1.next = state.next + 4 := by
@@ -411,7 +415,8 @@ theorem wordSsaFresh_next (state : WordSsaState) (name : Nat) :
 theorem wordSsaFresh_preserves_residue (state : WordSsaState) (name : Nat)
     (residue : Nat) (hresidue : state.next % 4 = residue) :
     (wordSsaFresh state name).1.next % 4 = residue := by
-  simp [wordSsaFresh, hresidue]
+  rw [wordSsaFresh_next]
+  omega
 
 def wordSsaFreshList (state : WordSsaState) : List Nat →
     WordSsaState × List Nat
@@ -432,14 +437,8 @@ def wordSsaRenameReturns (state : WordSsaState) :
       let (state, destinations) := wordSsaFreshList state destinations
       (state, some (destinations, cutsets, returnCode, returnLabel, entryLabel))
 
-def wordSsaForceRename : List (Nat × Nat) → WordSsaState → WordSsaState
-  | [], state => state
-  | (source, destination) :: renamings, state =>
-      wordSsaForceRename renamings
-        { state with current := (source, destination) ::
-            state.current.filter (fun entry => entry.1 != source) }
-termination_by renamings => sizeOf renamings
-decreasing_by all_goals decreasing_trivial
+def wordSsaForceRename (renamings : List (Nat × Nat)) (state : WordSsaState) : WordSsaState :=
+  {state with current := Compiler.Backend.WordAlloc.ssaForceRenameExecutable renamings state.current}
 
 /-! Refresh a cut set while retaining the source-to-current mapping used by
     the surrounding SSA block.  CakeML uses this helper around ABI-sensitive
@@ -447,9 +446,9 @@ decreasing_by all_goals decreasing_trivial
     the generated Move makes that refresh explicit in the Word program. -/
 def wordSsaListNextVarRenameMove (state : WordSsaState) (next : Nat)
     (names : List Nat) : WordSsaState × Nat × WordProg α :=
-  let sources := names.map (wordSsaRead state)
-  let (state, destinations) := wordSsaFreshList { state with next := next } names
-  (state, state.next, .move 0 (destinations.zip sources))
+  let (moves, current, next) :=
+    Compiler.Backend.WordAlloc.ssaListNextVarRenameMoveExecutable state.current next names
+  ({ state with current := current, next := next }, next, .move 0 moves)
 
 def wordSsaCallAbiRegisters (start count : Nat) : List Nat :=
   (List.range count).map (fun index => 2 * (start + index))
@@ -501,6 +500,18 @@ def wordSsaRenameInst (state : WordSsaState) :
           let (state, freshCarry) := wordSsaFresh state carry
           (state, .arith (.cakeAddCarry freshDestination sourceLeft
             sourceRight freshCarry))
+      | .addOverflow d l r flag =>
+          let l := wordSsaRead state l
+          let r := wordSsaRead state r
+          let (state, d) := wordSsaFresh state d
+          let (state, flag) := wordSsaFresh state flag
+          (state, .arith (.addOverflow d l r flag))
+      | .subOverflow d l r flag =>
+          let l := wordSsaRead state l
+          let r := wordSsaRead state r
+          let (state, d) := wordSsaFresh state d
+          let (state, flag) := wordSsaFresh state flag
+          (state, .arith (.subOverflow d l r flag))
       | .div destination dividend divisor =>
           let dividend := wordSsaRead state dividend
           let divisor := wordSsaRead state divisor
@@ -616,7 +627,7 @@ def wordSsaSeq (first second : WordProg α) : WordProg α :=
   | first, second => .seq first second
 
 def wordSsaKeys (state : WordSsaState) : List Nat :=
-  state.current.map (fun entry => entry.1)
+  Compiler.Backend.WordAlloc.ssaMapKeysExecutable state.current
 
 /-! CakeML enumerates `num_set`/`num_map` keys with
     `MAP FST (toAList ...)`, whose order is the Patricia-tree traversal
@@ -719,7 +730,7 @@ structure WordSsaLoopFrame where
   deriving DecidableEq, Repr
 
 def wordSsaRestrict (state : WordSsaState) (names : List Nat) : WordSsaState :=
-  { state with current := state.current.filter (fun entry => entry.1 ∈ names) }
+  { state with current := Compiler.Backend.WordAlloc.ssaRestrictExecutable state.current names }
 
 /-- `ssa_reconcile` (`word_allocScript.sml:318-330`): one parallel
     `Move 1` over CakeML's `MAP FST (toAList ns)` variable order.  Variables missing from the
@@ -727,16 +738,9 @@ def wordSsaRestrict (state : WordSsaState) (names : List Nat) : WordSsaState :=
     to register `0` (CakeML's `option_lookup`). -/
 def wordSsaReconcileTo (source target : WordSsaState) (names : List Nat) :
     WordProg α :=
-  let moves := (NumSet.fromList names.eraseDups).filterMap (fun name =>
-    match lookupNatInfo name source.current with
-      | none => none
-      | some sourceName =>
-          let targetName := (lookupNatInfo name target.current).getD 0
-          if targetName = sourceName then none
-          else some (targetName, sourceName))
-  match moves with
+  match Compiler.Backend.WordAlloc.ssaReconcileMovesExecutable source.current target.current names with
   | [] => .skip
-  | _ => .move 1 moves
+  | moves => .move 1 moves
 
 def wordSsaRefreshList (state : WordSsaState) : List Nat →
     WordSsaState × WordProg α
@@ -831,6 +835,20 @@ def wordSsaRenameProgramWithLoops [OfNat α 0] (frames : List WordSsaLoopFrame)
           .inst (.arith (.cakeAddCarry freshDestination sourceLeft sourceRight 0))
         let moveOut : WordProg α := .move 1 [(freshCarry, 0)]
         (state, wordSsaSeq moveIn (wordSsaSeq addCarry moveOut))
+    | .inst (.arith (.addOverflow d l r flag)) =>
+        let l := wordSsaRead state l
+        let r := wordSsaRead state r
+        let (state, d) := wordSsaFresh state d
+        let (state, flag) := wordSsaFresh state flag
+        (state, wordSsaSeq (.inst (.arith (.addOverflow d l r 0)))
+          (.move 1 [(flag, 0)]))
+    | .inst (.arith (.subOverflow d l r flag)) =>
+        let l := wordSsaRead state l
+        let r := wordSsaRead state r
+        let (state, d) := wordSsaFresh state d
+        let (state, flag) := wordSsaFresh state flag
+        (state, wordSsaSeq (.inst (.arith (.subOverflow d l r 0)))
+          (.move 1 [(flag, 0)]))
     | .inst instruction =>
         wordSsaRenameInstProgram state instruction
     | .get destination store =>
@@ -1084,9 +1102,16 @@ theorem wordSsaRenameProgram_ite [OfNat α 0] :
             (.seq (.move 1 [(18, 14)]) .skip))) := by
   have merge : Compiler.Backend.WordAlloc.mergeMovesExecutable [1] [(1,10)] [(1,14)] 18 =
       ([(18,10)],[(18,14)],22,[(1,18)],[(1,18)]) := by decide +kernel
+
+  have freshLeft : wordSsaFresh {current := [], next := 10} 1 =
+      ({current := [(1,10)], next := 14},10) := by decide +kernel
+  have freshRight : wordSsaFresh {current := [], next := 14} 1 =
+      ({current := [(1,14)], next := 18},14) := by decide +kernel
+  have keysLeft : wordSsaKeys {current := [(1,10)], next := 14} = [1] := by decide +kernel
+  have keysRight : wordSsaKeys {current := [(1,14)], next := 18} = [1] := by decide +kernel
   simp [wordSsaRenameProgram, wordSsaRenameProgramWithLoops,
     wordSsaRenameExp, wordSsaRenameRegImm,
-    wordSsaRead, wordSsaFresh, wordSsaKeys,
+    wordSsaRead, freshLeft, freshRight, keysLeft, keysRight,
     wordSsaFixInconsistencies, wordSsaPriorityMove,
     wordSsaBranchPriority, wordSsaMergeMoves, merge,
     wordSsaFakeInconsistencyMoves,
@@ -1185,6 +1210,7 @@ def wordInstReadVarsFastAcc {α : Type u} : WordInst α → List Nat → List Na
           sourceLeft :: sourceRight :: carryIn :: tail
       | .cakeAddCarry _ sourceLeft sourceRight carry =>
           sourceLeft :: sourceRight :: carry :: tail
+      | .addOverflow _ l r _ | .subOverflow _ l r _ => l :: r :: tail
       | .div _ dividend divisor => dividend :: divisor :: tail
       | .binOp _ _ sourceLeft sourceRight =>
           sourceLeft :: match sourceRight with
@@ -1213,6 +1239,8 @@ def wordInstWriteVarsFastAcc {α : Type u} : WordInst α → List Nat → List N
           destinationLeft :: destinationRight :: tail
       | .addCarry destination resultCarry _ _ _ =>
           destination :: resultCarry :: tail
+      | .addOverflow destination _ _ carry
+      | .subOverflow destination _ _ carry
       | .cakeAddCarry destination _ _ carry => destination :: carry :: tail
       | .div destination _ _ => destination :: tail
       | .binOp _ destination _ _ => destination :: tail
@@ -1401,6 +1429,8 @@ def wordArithCakeMaxVar : WordArith α → Nat
         (max sourceLeft (max sourceRight quotient)))
   | .addCarry destination resultCarry sourceLeft sourceRight carryIn =>
       max destination (max resultCarry (max sourceLeft (max sourceRight carryIn)))
+  | .addOverflow destination sourceLeft sourceRight carry
+  | .subOverflow destination sourceLeft sourceRight carry
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       max destination (max sourceLeft (max sourceRight carry))
   | .div destination dividend divisor =>
@@ -1752,6 +1782,8 @@ def wordClashTreeDeltaInst {α : Type u} : WordInst α → WordClashTree
       .delta [destination, resultCarry] [carryIn, sourceRight, sourceLeft]
   | .arith (.cakeAddCarry destination sourceLeft sourceRight carry) =>
       .delta [destination, carry] [carry, sourceRight, sourceLeft]
+  | .arith (.addOverflow d l r flag) | .arith (.subOverflow d l r flag) =>
+      .delta [d, flag] [r, l]
   | .arith (.div destination dividend divisor) =>
       .delta [destination] [divisor, dividend]
   | .arith (.binOp _ destination sourceLeft sourceRight) =>
@@ -1888,8 +1920,8 @@ def wordClashTree : WordProg α → List (List Nat × List Nat) → WordClashTre
       .seq (.delta [] [dataLength, dataBuffer, codeLength, codeBuffer])
         (.seq (.set (wordClashTreeCallSet nonGc gc))
           (.delta [codeBuffer] []))
-  | .codeBufferWrite address value, _ => .delta [] [address, value]
-  | .dataBufferWrite address value, _ => .delta [] [address, value]
+  | .codeBufferWrite address value, _ => .delta [] [value, address]
+  | .dataBufferWrite address value, _ => .delta [] [value, address]
   | .ffi _ configuration configurationLength array arrayLength (nonGc, gc), _ =>
       .seq (.delta [] [configuration, configurationLength, array, arrayLength])
         (.set (wordClashTreeCallSet nonGc gc))
@@ -2358,6 +2390,8 @@ def wordApplyColourArith (colour : Nat → Nat) : WordArith α → WordArith α
   | .cakeAddCarry destination sourceLeft sourceRight carry =>
       .cakeAddCarry (colour destination) (colour sourceLeft)
         (colour sourceRight) (colour carry)
+  | .addOverflow d l r flag => .addOverflow (colour d) (colour l) (colour r) (colour flag)
+  | .subOverflow d l r flag => .subOverflow (colour d) (colour l) (colour r) (colour flag)
   | .div destination dividend divisor =>
       .div (colour destination) (colour dividend) (colour divisor)
   | .binOp operator destination sourceLeft sourceRight =>
@@ -2729,11 +2763,11 @@ theorem wordSsaRenameLinear_addCarry :
         { current := [(2, 100), (3, 101), (4, 102)], next := 200 }
         ([.arith (.addCarry 0 1 2 3 4), .arith (.addCarry 5 6 0 1 2)] :
           List (WordInst Nat)) =
-      ({ current := [(6, 212), (5, 208), (1, 204), (0, 200),
-          (2, 100), (3, 101), (4, 102)], next := 216 },
+      ({ current := [(3, 101), (1, 204), (5, 208), (0, 200),
+          (4, 102), (2, 100), (6, 212)], next := 216 },
         [.arith (.addCarry 200 204 100 101 102),
           .arith (.addCarry 208 212 200 204 100)]) := by
-  rfl
+  decide +kernel
 
 theorem wordAllocateLinearInstructions_example :
     wordAllocateLinearInstructions (α := Nat)
@@ -2882,6 +2916,16 @@ def wordSpecialArithLocationsSafe {α : Type u} (operation : WordArith α)
                 .register sourceRight, .register carry =>
                 destination != sourceRight && destination != 31 &&
                   sourceLeft != 31 && sourceRight != 31 && carry != 31
+            | _, _, _, _ => true
+      | _, _, _, _ => false
+  | .addOverflow d l r flag | .subOverflow d l r flag =>
+      match lookupNatInfo d locations, lookupNatInfo l locations,
+        lookupNatInfo r locations, lookupNatInfo flag locations with
+      | some d, some l, some r, some flag =>
+          d != r &&
+            match d, l, r, flag with
+            | .register d, .register l, .register r, .register flag =>
+                d != 31 && l != 31 && r != 31 && flag != 31
             | _, _, _, _ => true
       | _, _, _, _ => false
   | .longDiv _ _ _ _ _ | .div _ _ _ | .binOp _ _ _ _ | .shift _ _ _ _ => true

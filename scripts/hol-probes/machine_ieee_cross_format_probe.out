@@ -1,0 +1,45 @@
+source_convert=⊢ ∀to_float from_float from_real_with_flags m w.
+    convert to_float from_float from_real_with_flags m w =
+    (let
+       f = to_float w
+     in
+       case float_value f of
+         Float r => from_real_with_flags m r
+       | Infinity =>
+         (clear_flags,
+          from_float
+            (if f.Sign = 0w then float_plus_infinity (:δ # ε)
+             else float_minus_infinity (:δ # ε)))
+       | NaN => (check_for_signalling [f],from_float (@fp. float_is_nan fp)))
+widen_pinf=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,
+ 0x7FF0000000000000w)
+widen_ninf=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,
+ 0xFFF0000000000000w)
+widen_qnan=<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+  Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>
+widen_snan=<|DivideByZero := F; InvalidOp := T; Overflow := F; Precision := F;
+  Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>
+narrow_pinf=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,0x7F800000w)
+narrow_ninf=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,0xFF800000w)
+narrow_qnan=<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+  Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>
+narrow_snan=<|DivideByZero := F; InvalidOp := T; Overflow := F; Precision := F;
+  Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>
+widen_zero=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,0w)
+widen_one=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,
+ 0x3FF0000000000000w)
+widen_min_subnormal=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,
+ 0x36A0000000000000w)
+narrow_zero=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,0w)
+narrow_one=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,0x3F800000w)
+narrow_tie_even=(<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := T;
+   Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>,0x3F800000w)

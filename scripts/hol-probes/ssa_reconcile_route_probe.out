@@ -1,0 +1,7 @@
+rec_empty=Skip
+rec_identity=Skip
+rec_missing_source=Skip
+rec_missing_target=Move1 [(0,7)]
+rec_duplicate=Move1 [(19,11); (13,7)]
+rec_order=Move1 [(0,21); (0,41); (0,37); (0,33)]
+rec_big=Move1 [(0,18446744073709551620)]

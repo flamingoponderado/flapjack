@@ -10,7 +10,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: first-large
 
     steps:
       - uses: actions/checkout@v5
@@ -18,14 +18,18 @@ jobs:
         with:
           use-mathlib-cache: true
 
-      - name: Check for new native_decide uses
-        run: ./scripts/check-native-decide.sh
+      - name: Check native proof and compiler trust mechanisms
+        run: |
+          python3 -m unittest discover -s scripts/tests -p 'test_check_native_trust.py'
+          ./scripts/check-native-decide.sh
 
-      - name: Check the build is warning-free
+      - name: Check non-test modules are warning-free
         run: ./scripts/check-warnings.sh
 
       - name: Check @[hol] cross-references point at existing HOL declarations
         run: |
+          # Tagged HOL/ declarations are verified against the pinned gitlink
+          # and tracked blobs, alongside the existing hol4 snapshots.
           git submodule update --init --depth 1 -- cakeml HOL
           python3 -m unittest discover -s scripts/tests -p 'test*hol*.py'
           bash scripts/test-hol-ref-syntax.sh

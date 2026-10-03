@@ -8,11 +8,11 @@ namespace Flapjack
 example :
     wordSsaRenameFunction [2, 3]
         (.return 0 [2, 3] : WordProg Nat) =
-      ({ current := [(3, 9), (2, 5)], next := 13 },
+      ({ current := sptToAList (sptFromAList [(3, 9), (2, 5)]), next := 13 },
         [5, 9], .seq (.move 0 [(2, 5), (4, 9)])
           (.return 0 [2, 4])) := by
   have hAbi : wordSsaCallAbiRegisters 1 2 = [2, 4] := by rfl
-  simp [wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
+  simp [Compiler.Backend.WordAlloc.ssaNextVarRenameExecutable, Compiler.Backend.WordAlloc.nextVarRename,    sptToAList, sptFromAList, sptFoldi, sptInsert,  lrNext, wordSsaRenameFunction, wordSsaSetupParameters, wordSsaLimitVar,
     wordProgCakeMaxVar,
     wordSsaRenameProgram, wordSsaRenameProgramWithLoops, wordSsaRead,
     wordSsaFreshList, wordSsaFresh, wordSsaSeq, hAbi, lookupNatInfo]

@@ -1,0 +1,13 @@
+sm_def=∀m dm. memory m dm = (λs. s = fun2set (m,dm))
+sm_type=:(α -> β) -> (α -> bool) -> (α # β -> bool) -> bool
+sm_full_generic=T
+sm_unique=T
+sm_empty=T
+sm_infinite=T
+sm_independent=T
+sm_product=T
+sm_missing=T
+sm_extra=T
+sm_wrong_value=T
+sm_wrong_address=T
+sm_noninjective=T

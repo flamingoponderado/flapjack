@@ -1,0 +1,1372 @@
+fmadd_s_basic_rte=(0xCAFE000040A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_basic_rtz=(0xCAFE000040A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_basic_down=(0xCAFE000040A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_basic_up=(0xCAFE000040A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_basic_dynamic_up=(0xCAFE000040A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_basic_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmadd_s_basic_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmadd_s_double_round_rte=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_double_round_rtz=(0xCAFE0000B3800000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0xB3800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_double_round_down=(0xCAFE0000B3800000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0xB3800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_double_round_up=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_double_round_dynamic_up=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_double_round_invalid_static=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmadd_s_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmadd_s_signed_zero_rte=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_signed_zero_rtz=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_signed_zero_down=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_signed_zero_up=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_s_infinity_rte=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_infinity_rtz=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_infinity_down=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_infinity_up=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_negative_finite_rte=(0xCAFE00003F800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_negative_finite_rtz=(0xCAFE00003F800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_negative_finite_down=(0xCAFE00003F800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_negative_finite_up=(0xCAFE00003F800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fmadd_s_invalid_product_rte=⊢ dfn'FMADD_S (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_add roundTiesToEven (fp32_mul roundTiesToEven 0w 0x7F800000w)
+       0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_s_invalid_product_rtz=⊢ dfn'FMADD_S (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_add roundTowardZero (fp32_mul roundTowardZero 0w 0x7F800000w)
+       0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_s_invalid_product_down=⊢ dfn'FMADD_S (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_add roundTowardNegative
+       (fp32_mul roundTowardNegative 0w 0x7F800000w) 0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_s_invalid_product_up=⊢ dfn'FMADD_S (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_add roundTowardPositive
+       (fp32_mul roundTowardPositive 0w 0x7F800000w) 0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_s_basic_rte=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_basic_rtz=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_basic_down=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_basic_up=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_basic_dynamic_up=(0xCAFE0000BF800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_basic_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmsub_s_basic_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmsub_s_double_round_rte=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_double_round_rtz=(0xCAFE0000B3800000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0xB3800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_double_round_down=(0xCAFE0000B3800000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0xB3800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_double_round_up=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_double_round_dynamic_up=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_double_round_invalid_static=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmsub_s_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fmsub_s_signed_zero_rte=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_signed_zero_rtz=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_signed_zero_down=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_signed_zero_up=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fmsub_s_infinity_rte=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_infinity_rtz=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_infinity_down=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_infinity_up=(0xCAFE0000FF800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0xFF800000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_negative_finite_rte=(0xCAFE0000C0A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_negative_finite_rtz=(0xCAFE0000C0A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_negative_finite_down=(0xCAFE0000C0A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_negative_finite_up=(0xCAFE0000C0A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fmsub_s_invalid_product_rte=⊢ dfn'FMSUB_S (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_sub roundTiesToEven (fp32_mul roundTiesToEven 0w 0x7F800000w)
+       0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_s_invalid_product_rtz=⊢ dfn'FMSUB_S (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_sub roundTowardZero (fp32_mul roundTowardZero 0w 0x7F800000w)
+       0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_s_invalid_product_down=⊢ dfn'FMSUB_S (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_sub roundTowardNegative
+       (fp32_mul roundTowardNegative 0w 0x7F800000w) 0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_s_invalid_product_up=⊢ dfn'FMSUB_S (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_sub roundTowardPositive
+       (fp32_mul roundTowardPositive 0w 0x7F800000w) 0x3F800000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_s_basic_rte=(0xCAFE0000C0A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_basic_rtz=(0xCAFE0000C0A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_basic_down=(0xCAFE0000C0A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_basic_up=(0xCAFE0000C0A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_basic_dynamic_up=(0xCAFE0000C0A00000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xC0A00000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_basic_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmadd_s_basic_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmadd_s_double_round_rte=(0xCAFE000080000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0x80000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_double_round_rtz=(0xCAFE000033800000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0x33800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_double_round_down=(0xCAFE000033800000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0x33800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_double_round_up=(0xCAFE000080000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0x80000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_double_round_dynamic_up=(0xCAFE000080000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,3w,T,
+ SOME 0x80000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_double_round_invalid_static=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmadd_s_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0xBF800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmadd_s_signed_zero_rte=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fnmadd_s_signed_zero_rtz=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fnmadd_s_signed_zero_down=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmadd_s_signed_zero_up=(0xCAFE000080000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0x80000000w,F,T,
+ 0xBBBB000000000000w,F)
+fnmadd_s_infinity_rte=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_infinity_rtz=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_infinity_down=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_infinity_up=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_negative_finite_rte=(0xCAFE0000BF800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_negative_finite_rtz=(0xCAFE0000BF800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_negative_finite_down=(0xCAFE0000BF800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_negative_finite_up=(0xCAFE0000BF800000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0xBF800000w,F,T,0xBBBB000000000000w,F)
+fnmadd_s_invalid_product_rte=⊢ dfn'FNMADD_S (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_add roundTiesToEven (fp32_mul roundTiesToEven 0w 0x7F800000w)
+          0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_s_invalid_product_rtz=⊢ dfn'FNMADD_S (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_add roundTowardZero (fp32_mul roundTowardZero 0w 0x7F800000w)
+          0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_s_invalid_product_down=⊢ dfn'FNMADD_S (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_add roundTowardNegative
+          (fp32_mul roundTowardNegative 0w 0x7F800000w) 0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_s_invalid_product_up=⊢ dfn'FNMADD_S (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_add roundTowardPositive
+          (fp32_mul roundTowardPositive 0w 0x7F800000w) 0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_s_basic_rte=(0xCAFE00003F800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_basic_rtz=(0xCAFE00003F800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_basic_down=(0xCAFE00003F800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_basic_up=(0xCAFE00003F800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_basic_dynamic_up=(0xCAFE00003F800000w,0x3F800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x3F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_basic_invalid_static=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmsub_s_basic_invalid_dynamic=(0xCAFE000000000000w,0x3F800000w,0x40000000w,0x40400000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmsub_s_double_round_rte=(0xCAFE000080000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0x80000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_double_round_rtz=(0xCAFE000033800000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0x33800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_double_round_down=(0xCAFE000033800000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0x33800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_double_round_up=(0xCAFE000080000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0x80000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_double_round_dynamic_up=(0xCAFE000080000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,3w,T,
+ SOME 0x80000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_double_round_invalid_static=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmsub_s_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3F800001w,0x3F7FFFFEw,0x3F800000w,0w,F,SOME 42w,F,T,
+ 0xBBBB000000000000w,T)
+fnmsub_s_signed_zero_rte=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_s_signed_zero_rtz=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_s_signed_zero_down=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_s_signed_zero_up=(0xCAFE000000000000w,0x80000000w,0x40000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_s_infinity_rte=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_infinity_rtz=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_infinity_down=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_infinity_up=(0xCAFE00007F800000w,0x7F800000w,0xBF800000w,0x3F800000w,3w,T,
+ SOME 0x7F800000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_negative_finite_rte=(0xCAFE000040A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_negative_finite_rtz=(0xCAFE000040A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_negative_finite_down=(0xCAFE000040A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_negative_finite_up=(0xCAFE000040A00000w,0xBF800000w,0x40000000w,0x40400000w,3w,T,
+ SOME 0x40A00000w,F,T,0xBBBB000000000000w,F)
+fnmsub_s_invalid_product_rte=⊢ dfn'FNMSUB_S (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_sub roundTiesToEven (fp32_mul roundTiesToEven 0w 0x7F800000w)
+          0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_s_invalid_product_rtz=⊢ dfn'FNMSUB_S (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_sub roundTowardZero (fp32_mul roundTowardZero 0w 0x7F800000w)
+          0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_s_invalid_product_down=⊢ dfn'FNMSUB_S (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_sub roundTowardNegative
+          (fp32_mul roundTowardNegative 0w 0x7F800000w) 0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_s_invalid_product_up=⊢ dfn'FNMSUB_S (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRS
+    (4w,
+     fp32_negate
+       (fp32_sub roundTowardPositive
+          (fp32_mul roundTowardPositive 0w 0x7F800000w) 0x3F800000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7F800000w
+               else if r = 3w then 0x3F800000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_d_basic_rte=(0x4014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_basic_rtz=(0x4014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_basic_down=(0x4014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_basic_up=(0x4014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_basic_dynamic_up=(0x4014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_basic_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmadd_d_basic_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmadd_d_double_round_rte=(0w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,0xBFF0000000000000w,3w,T,SOME 0w,
+ F,T,0xBBBB000000000000w,F)
+fmadd_d_double_round_rtz=(0xBCA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0xBCA0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_double_round_down=(0xBCA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0xBCA0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_double_round_up=(0w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,0xBFF0000000000000w,3w,T,SOME 0w,
+ F,T,0xBBBB000000000000w,F)
+fmadd_d_double_round_dynamic_up=(0w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,0xBFF0000000000000w,3w,T,SOME 0w,
+ F,T,0xBBBB000000000000w,F)
+fmadd_d_double_round_invalid_static=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmadd_d_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmadd_d_signed_zero_rte=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_d_signed_zero_rtz=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_d_signed_zero_down=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_signed_zero_up=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fmadd_d_infinity_rte=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_infinity_rtz=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_infinity_down=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_infinity_up=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_negative_finite_rte=(0x3FF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_negative_finite_rtz=(0x3FF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_negative_finite_down=(0x3FF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_negative_finite_up=(0x3FF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmadd_d_invalid_product_rte=⊢ dfn'FMADD_D (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_add roundTiesToEven
+       (fp64_mul roundTiesToEven 0w 0x7FF0000000000000w) 0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_d_invalid_product_rtz=⊢ dfn'FMADD_D (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_add roundTowardZero
+       (fp64_mul roundTowardZero 0w 0x7FF0000000000000w) 0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_d_invalid_product_down=⊢ dfn'FMADD_D (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_add roundTowardNegative
+       (fp64_mul roundTowardNegative 0w 0x7FF0000000000000w)
+       0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmadd_d_invalid_product_up=⊢ dfn'FMADD_D (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_add roundTowardPositive
+       (fp64_mul roundTowardPositive 0w 0x7FF0000000000000w)
+       0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_d_basic_rte=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_basic_rtz=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_basic_down=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_basic_up=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_basic_dynamic_up=(0xBFF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_basic_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmsub_d_basic_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmsub_d_double_round_rte=(0w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,0x3FF0000000000000w,3w,T,SOME 0w,
+ F,T,0xBBBB000000000000w,F)
+fmsub_d_double_round_rtz=(0xBCA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0xBCA0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_double_round_down=(0xBCA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0xBCA0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_double_round_up=(0w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,0x3FF0000000000000w,3w,T,SOME 0w,
+ F,T,0xBBBB000000000000w,F)
+fmsub_d_double_round_dynamic_up=(0w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,0x3FF0000000000000w,3w,T,SOME 0w,
+ F,T,0xBBBB000000000000w,F)
+fmsub_d_double_round_invalid_static=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmsub_d_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fmsub_d_signed_zero_rte=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_signed_zero_rtz=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_signed_zero_down=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_signed_zero_up=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_infinity_rte=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_infinity_rtz=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_infinity_down=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_infinity_up=(0xFFF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0xFFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_negative_finite_rte=(0xC014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_negative_finite_rtz=(0xC014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_negative_finite_down=(0xC014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_negative_finite_up=(0xC014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fmsub_d_invalid_product_rte=⊢ dfn'FMSUB_D (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_sub roundTiesToEven
+       (fp64_mul roundTiesToEven 0w 0x7FF0000000000000w) 0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_d_invalid_product_rtz=⊢ dfn'FMSUB_D (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_sub roundTowardZero
+       (fp64_mul roundTowardZero 0w 0x7FF0000000000000w) 0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_d_invalid_product_down=⊢ dfn'FMSUB_D (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_sub roundTowardNegative
+       (fp64_mul roundTowardNegative 0w 0x7FF0000000000000w)
+       0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fmsub_d_invalid_product_up=⊢ dfn'FMSUB_D (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_sub roundTowardPositive
+       (fp64_mul roundTowardPositive 0w 0x7FF0000000000000w)
+       0x3FF0000000000000w)
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_d_basic_rte=(0xC014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_basic_rtz=(0xC014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_basic_down=(0xC014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_basic_up=(0xC014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_basic_dynamic_up=(0xC014000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xC014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_basic_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmadd_d_basic_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmadd_d_double_round_rte=(0x8000000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_double_round_rtz=(0x3CA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0x3CA0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_double_round_down=(0x3CA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0x3CA0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_double_round_up=(0x8000000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_double_round_dynamic_up=(0x8000000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,3w,T,SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_double_round_invalid_static=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmadd_d_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0xBFF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmadd_d_signed_zero_rte=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_signed_zero_rtz=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_signed_zero_down=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmadd_d_signed_zero_up=(0x8000000000000000w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,
+ SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_infinity_rte=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_infinity_rtz=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_infinity_down=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_infinity_up=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_negative_finite_rte=(0xBFF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_negative_finite_rtz=(0xBFF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_negative_finite_down=(0xBFF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_negative_finite_up=(0xBFF0000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0xBFF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmadd_d_invalid_product_rte=⊢ dfn'FNMADD_D (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_add roundTiesToEven
+          (fp64_mul roundTiesToEven 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_d_invalid_product_rtz=⊢ dfn'FNMADD_D (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_add roundTowardZero
+          (fp64_mul roundTowardZero 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_d_invalid_product_down=⊢ dfn'FNMADD_D (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_add roundTowardNegative
+          (fp64_mul roundTowardNegative 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmadd_d_invalid_product_up=⊢ dfn'FNMADD_D (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_add roundTowardPositive
+          (fp64_mul roundTowardPositive 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_d_basic_rte=(0x3FF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_basic_rtz=(0x3FF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_basic_down=(0x3FF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_basic_up=(0x3FF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_basic_dynamic_up=(0x3FF0000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x3FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_basic_invalid_static=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmsub_d_basic_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmsub_d_double_round_rte=(0x8000000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_double_round_rtz=(0x3CA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0x3CA0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_double_round_down=(0x3CA0000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0x3CA0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_double_round_up=(0x8000000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_double_round_dynamic_up=(0x8000000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,3w,T,SOME 0x8000000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_double_round_invalid_static=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmsub_d_double_round_invalid_dynamic=(0xCAFE000000000000w,0x3FF0000000000001w,0x3FEFFFFFFFFFFFFEw,
+ 0x3FF0000000000000w,0w,F,SOME 42w,F,T,0xBBBB000000000000w,T)
+fnmsub_d_signed_zero_rte=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_d_signed_zero_rtz=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_d_signed_zero_down=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_d_signed_zero_up=(0w,0x8000000000000000w,0x4000000000000000w,0w,3w,T,SOME 0w,F,T,
+ 0xBBBB000000000000w,F)
+fnmsub_d_infinity_rte=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_infinity_rtz=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_infinity_down=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_infinity_up=(0x7FF0000000000000w,0x7FF0000000000000w,0xBFF0000000000000w,
+ 0x3FF0000000000000w,3w,T,SOME 0x7FF0000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_negative_finite_rte=(0x4014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_negative_finite_rtz=(0x4014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_negative_finite_down=(0x4014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_negative_finite_up=(0x4014000000000000w,0xBFF0000000000000w,0x4000000000000000w,
+ 0x4008000000000000w,3w,T,SOME 0x4014000000000000w,F,T,0xBBBB000000000000w,F)
+fnmsub_d_invalid_product_rte=⊢ dfn'FNMSUB_D (4w,1w,2w,3w,0w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_sub roundTiesToEven
+          (fp64_mul roundTiesToEven 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_d_invalid_product_rtz=⊢ dfn'FNMSUB_D (4w,1w,2w,3w,1w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_sub roundTowardZero
+          (fp64_mul roundTowardZero 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_d_invalid_product_down=⊢ dfn'FNMSUB_D (4w,1w,2w,3w,2w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_sub roundTowardNegative
+          (fp64_mul roundTowardNegative 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>
+fnmsub_d_invalid_product_up=⊢ dfn'FNMSUB_D (4w,1w,2w,3w,3w)
+    <|procID := 7w; c_gpr := (λ_0 _1. 99w); c_NextFetch := (λ_2. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_3. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_4. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_5. <|mstatus := <|MFS := 0w; MSD := F|> |>)|> =
+  writeFPRD
+    (4w,
+     fp64_negate
+       (fp64_sub roundTowardPositive
+          (fp64_mul roundTowardPositive 0w 0x7FF0000000000000w)
+          0x3FF0000000000000w))
+    <|procID := 7w; c_gpr := (λ_6 _7. 99w); c_NextFetch := (λ_8. NONE);
+      c_fpr :=
+        (λc r.
+             if c = 7w then
+               if r = 1w then 0w
+               else if r = 2w then 0x7FF0000000000000w
+               else if r = 3w then 0x3FF0000000000000w
+               else 0xCAFE000000000000w
+             else 0xBBBB000000000000w);
+      c_update := (λ_9. <|data1 := SOME 42w|>);
+      c_UCSR := (λ_10. <|fpcsr := <|NV := F; NX := T; FRM := 0w|> |>);
+      c_MCSR := (λ_11. <|mstatus := <|MFS := 0w; MSD := F|> |>)|>

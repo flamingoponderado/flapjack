@@ -11,8 +11,8 @@ handle the constructor, so an unported clause is never silently reported as
 The effective address is the tagged `word_exp` of `Op Add [Var a; Const w]`;
 the exact `word_exp` miss returns `(SOME Error, s)`, a zero clock returns
 `(SOME TimeOut, empty_env s)`, and otherwise the tagged `sh_mem_op` dispatch is
-applied to `dec_clock s`. The total evaluator and its production refinement are
-tracked by flapjack-y19g (parent flapjack-y19g.14). No `@[hol]` tag applies to
+applied to `dec_clock s`. The total evaluator is assembled in Evaluate.lean; production refinement
+is a separate obligation. No `@[hol]` tag applies to
 this partial case helper. -/
 
 namespace Flapjack.StackSemShMemOpCase

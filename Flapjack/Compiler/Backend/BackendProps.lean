@@ -3,6 +3,12 @@ import Mathlib.Data.Set.Lattice
 
 namespace Flapjack.Compiler.Backend.BackendProps
 
+/-- Original zero-entry restriction over arbitrary Nat-pair sets.
+This proof-side set operation has no executable compiler caller. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "restrict_zero_def"]
+def restrictZero (labels : Set (Nat × Nat)) : Set (Nat × Nat) :=
+  {label | label ∈ labels ∧ label.2 = 0}
+
 /-- Literal restriction of code-label pairs to nonzero entry indices. -/
 @[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "restrict_nonzero_def"]
 def restrictNonzero (labels : Set (Nat × Nat)) : Set (Nat × Nat) :=

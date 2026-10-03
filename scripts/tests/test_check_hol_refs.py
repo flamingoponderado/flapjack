@@ -57,6 +57,14 @@ class ExternalHolSourcesTest(unittest.TestCase):
         self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
         self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "some_def", 794, {}))
 
+    def test_binary_ieee_verified_submodule_source_and_declaration(self):
+        path = "HOL/src/floating-point/binary_ieeeScript.sml"
+        self.assertIsNone(CHECKER["hol_source_error"](CHECKER["ROOT"], path))
+        self.assertIsNone(REF_ERROR(CHECKER["ROOT"] / path, "float_some_qnan_def", 495, {}))
+        self.assertIsNotNone(REF_ERROR(CHECKER["ROOT"] / path, "missing_ieee_def", None, {}))
+        self.assertIsNotNone(CHECKER["hol_source_error"](
+            CHECKER["ROOT"], "hol4/src/floating-point/binary_ieeeScript.sml"))
+
     def test_missing_option_pin_rejected(self):
         import json
         with tempfile.TemporaryDirectory() as tmp:
@@ -639,10 +647,179 @@ noncomputable def cmp : FpCmp -> Bool
 """
         self.assertEqual(check(datatype, False, names), [])
 
+    def test_rounding_enum_is_source_bound_and_real_free(self):
+        root = CHECKER["ROOT"]
+        self.assertTrue(CHECKER["source_bound_rounding_enum"](root))
+        names = CHECKER["reals_rendering_names"](root)
+        self.assertNotIn("HolRounding", names)
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        enum = "def modes : Option HolRounding := some HolRounding.roundTiesToEven"
+        self.assertEqual(check(enum, False, names), [])
+        for source in [
+            "def mixed (m : HolRounding) := holRound m 0",
+            "def mixed (m : HolRounding) : HolFloat 52 11 := holRound m 0",
+            "def mixed (m : HolRounding) := holFloatToReal (holRound m 0)",
+        ]:
+            self.assertTrue(any("must carry" in e for e in check(source, False, names)))
+
+    def test_rounding_enum_exemption_fails_closed_on_carrier_or_owner_changes(self):
+        enum = """namespace Flapjack
+inductive HolRounding where
+  | roundTiesToEven
+  | roundTowardPositive
+  | roundTowardNegative
+  | roundTowardZero
+  deriving DecidableEq, Repr
+"""
+        hol = """Datatype:
+  rounding = roundTiesToEven | roundTowardPositive
+           | roundTowardNegative | roundTowardZero
+End
+"""
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            owner = root / "Flapjack/Misc/BinaryIeeeRound.lean"
+            original = root / "HOL/src/floating-point/binary_ieeeScript.sml"
+            owner.parent.mkdir(parents=True)
+            original.parent.mkdir(parents=True)
+            owner.write_text(enum)
+            original.write_text(hol)
+            check = CHECKER["source_bound_rounding_enum"]
+            self.assertTrue(check(root))
+            for changed in [enum.replace("roundTowardZero", "extraConstructor"),
+                            enum.replace("| roundTiesToEven", "| roundTiesToEven (r : Rat)"),
+                            enum.replace("namespace Flapjack", "namespace Shadow"),
+                            "abbrev HolRounding := Rat\n"]:
+                owner.write_text(changed)
+                self.assertFalse(check(root))
+            owner.write_text(enum)
+            original.write_text(hol.replace("roundTowardZero", "extraConstructor"))
+            self.assertFalse(check(root))
+            original.write_text("(* outer (* nested *) " + hol + " *)\n" +
+                                hol.replace("roundTowardZero", "extraConstructor"))
+            self.assertFalse(check(root))
+            original.write_text(hol)
+            shadow = root / "Flapjack/Shadow.lean"
+            for declaration in ["inductive HolRounding where | fake\n",
+                                "abbrev HolRounding := Rat\n",
+                                "abbrev Local.HolRounding := Rat\n"]:
+                shadow.write_text(declaration)
+                self.assertFalse(check(root))
+                self.assertIn("HolRounding", CHECKER["reals_rendering_names"](root))
+            shadow.unlink()
+            original.unlink()
+            self.assertFalse(check(root))
+
     def test_reals_rendering_names_cover_machine_ieee(self):
         names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
         self.assertIn("holFp64Sqrt", names)
         self.assertIn("holFp64Add", names)
+
+    def test_bit_only_ieee_forms_do_not_require_real_qualifier(self):
+        root = CHECKER["ROOT"]
+        names = CHECKER["reals_rendering_names"](root)
+        forms = CHECKER["REAL_FREE_IEEE_FORMS"]
+        self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
+                         len(CHECKER["REAL_FREE_IEEE_FORMS"]))
+        for (_, name), form in forms.items():
+            self.assertNotIn(name, names)
+            self.assertEqual(CHECKER["reals_as_rational_cuts_errors"](form, False, names), [])
+        # Rational values/rounding/sqrt still need the marker.
+        for name in ("holFloatToReal", "holFp64Add", "holFp64SqrtReal"):
+            self.assertIn(name, names)
+            self.assertTrue(CHECKER["reals_as_rational_cuts_errors"](
+                "def caller := " + name, False, names))
+
+    def test_bit_only_ieee_dependency_changes_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
+                target = root / relative
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text((CHECKER["ROOT"] / relative).read_text())
+            self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
+                         len(CHECKER["REAL_FREE_IEEE_FORMS"]))
+            target = root / "Flapjack/Misc/BinaryIeee.lean"
+            target.write_text(target.read_text().replace(
+                "{ x with sign := 0 }", "{ x with sign := holFloatToReal x }"))
+            self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+            names = CHECKER["reals_rendering_names"](root)
+            self.assertIn("holFp64ToFloat", names)
+            self.assertIn("holFloatAbs", names)
+
+    def test_bit_only_ieee_changed_width_or_duplicate_rejected(self):
+        for change in ("width", "duplicate", "namespace", "shadow", "theorem_shadow", "field"):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
+                    target = root / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text((CHECKER["ROOT"] / relative).read_text())
+                target = root / "Flapjack/Misc/MachineIeee.lean"
+                if change == "width":
+                    target.write_text(target.read_text().replace("extractLsb' 52 11", "extractLsb' 51 12"))
+                elif change == "duplicate":
+                    target.write_text(target.read_text() + "\ndef holFp64Abs (a : BitVec 64) := a\n")
+                elif change == "namespace":
+                    target.write_text(target.read_text().replace("namespace Flapjack", "namespace Other"))
+                elif change == "shadow":
+                    (root / "Flapjack/Shadow.lean").write_text("abbrev Local.holFp64Abs := Nat\n")
+                elif change == "theorem_shadow":
+                    (root / "Flapjack/Shadow.lean").write_text("theorem Local.holFp64Abs : True := by trivial\n")
+                else:
+                    target = root / "Flapjack/Misc/BinaryIeee.lean"
+                    target.write_text(target.read_text().replace("x.exponent ≠ 0", "x.exponent = 0"))
+                self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+
+    def test_bit_only_ieee_compiled_overrides_fail_closed(self):
+        changes = {
+            "implemented_by": '@[implemented_by replacement]\n',
+            "combined_attributes": '@[inline, implemented_by replacement]\n',
+            "multiline_attribute": '@[\n implemented_by replacement\n]\n',
+            "extern": '@[extern "replacement"]\n',
+            "unsafe": 'unsafe ',
+        }
+        for change in (*changes, "attribute_command", "imported_attribute"):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
+                    target = root / relative
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    target.write_text((CHECKER["ROOT"] / relative).read_text())
+                target = root / "Flapjack/Misc/MachineIeee.lean"
+                if change in changes:
+                    target.write_text(target.read_text().replace(
+                        "def holFp64Abs", changes[change] + "def holFp64Abs", 1))
+                elif change == "attribute_command":
+                    target.write_text(target.read_text() +
+                        "\nattribute [implemented_by replacement] Flapjack.holFp64Abs\n")
+                else:
+                    (root / "Flapjack/Override.lean").write_text(
+                        "import Flapjack.Misc.MachineIeee\n"
+                        "attribute [extern \"replacement\"]\n  Flapjack.holFp64Abs\n")
+                self.assertEqual(CHECKER["real_free_ieee_names"](root), set())
+                self.assertIn("holFp64Abs", CHECKER["reals_rendering_names"](root))
+
+    def test_reals_rendering_names_cover_nested_sqrt_real(self):
+        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+        self.assertIn("holFp64SqrtReal", names)
+        user = "noncomputable def sqrtCase : BitVec 64 -> BitVec 64 := holFp64SqrtReal .roundTiesToEven"
+        check = CHECKER["reals_as_rational_cuts_errors"]
+        self.assertEqual(check(user, True, names), [])
+        self.assertTrue(any("must carry" in e for e in check(user, False, names)))
+        self.assertEqual(check("def f : Nat := 0 -- holFp64SqrtReal", False, names), [])
+
+    def test_reals_rendering_names_recurse_beneath_binary_ieee(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            nested = root / "Flapjack/Misc/BinaryIeeeSqrt"
+            nested.mkdir(parents=True)
+            (nested / "RoundAgreement.lean").write_text(
+                "noncomputable def holFp64SqrtReal : Nat := 0\n"
+                "theorem comparisonOnly : True := trivial\n")
+            names = CHECKER["reals_rendering_names"](root)
+            self.assertIn("holFp64SqrtReal", names)
+            self.assertNotIn("comparisonOnly", names)
 
     def test_fmap_as_finite_support_fields(self):
         self.assertEqual(
@@ -2002,6 +2179,25 @@ class HolDatatypeDeclarationsTest(unittest.TestCase):
         )
         self.assertEqual(DECL(path, {})["shape"], [2])
 
+    def test_datatype_name_on_its_own_line_is_indexed(self):
+        path = self._write_sml(
+            "Datatype:\n"
+            "  shmem_info_num\n"
+            "  = <| entry_pc : num\n"
+            "     ; nbytes : word8 |>\n"
+            "End\n"
+        )
+        self.assertEqual(DECL(path, {})["shmem_info_num"], [2])
+
+    def test_lab_to_target_shmem_info_num_is_resolvable(self):
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "cakeml/compiler/backend/lab_to_targetScript.sml"
+        )
+        cache = {}
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", None, cache))
+        self.assertIsNone(REF_ERROR(path, "shmem_info_num", 350, cache))
+
     def test_panlang_shape_is_resolvable(self):
         path = (
             Path(__file__).resolve().parents[2]
@@ -3258,6 +3454,295 @@ class PinnedPathAllowlistAlignmentTest(unittest.TestCase):
     def test_every_python_pin_is_snapshotted(self):
         for path in CHECKER["EXTERNAL_HOL_PATHS"]:
             self.assertTrue((CHECKER["ROOT"] / path).is_file(), path)
+
+
+
+ROOT_HOL = Path(CHECKER["ROOT"]) / "HOL"
+LIST_SCRIPT = "src/list/src/listScript.sml"
+
+
+def _run(*args, cwd=None):
+    import subprocess
+    subprocess.run(list(args), cwd=cwd, check=True, capture_output=True)
+
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class HolSubmoduleSourcesTest(unittest.TestCase):
+    """``HOL/<rel>.sml`` citations need gitlink, checkout and blob provenance."""
+
+    def fixture(self, root):
+        pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+        _run("git", "init", "--quiet", str(root))
+        (root / ".gitmodules").write_text(
+            '[submodule "HOL"]\n\tpath = HOL\n'
+            "\turl = https://github.com/HOL-Theorem-Prover/HOL.git\n")
+        _run("git", "clone", "--quiet", "--shared", "--no-checkout",
+             str(ROOT_HOL), str(root / "HOL"))
+        _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", pinned)
+        _run("git", "-C", str(root / "HOL"), "checkout", pinned, "--", LIST_SCRIPT)
+        _run("git", "-C", str(root), "update-index", "--add", "--cacheinfo",
+             f"160000,{pinned},HOL")
+        return "HOL/" + LIST_SCRIPT
+
+    def error(self, root, path):
+        return CHECKER["hol_source_error"](root, path)
+
+    def test_verified_submodule_file_is_accepted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            self.assertIsNone(self.error(root, path))
+
+    def test_untracked_path_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            self.assertIn("not tracked", self.error(root, "HOL/src/list/src/noSuchScript.sml"))
+
+    def test_locally_modified_file_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            target = root / path
+            target.write_text(target.read_text() + "\n(* local edit *)\n")
+            self.assertIn("differs from the pinned blob", self.error(root, path))
+
+    def test_wrong_superproject_gitlink_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            _run("git", "-C", str(root), "update-index", "--cacheinfo",
+                 f"160000,{'1' * 40},HOL")
+            self.assertIn("gitlink", self.error(root, path))
+
+    def test_checkout_at_other_commit_is_rejected(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            # CI initializes HOL with --depth 1, so its parent need not exist.
+            # Create a distinct commit using the available pinned tree instead.
+            pinned = CHECKER["HOL_SUBMODULE_COMMIT"]
+            other_commit = subprocess.run(
+                ["git", "-C", str(root / "HOL"),
+                 "-c", "user.name=HOL provenance test",
+                 "-c", "user.email=hol-provenance-test@example.invalid",
+                 "commit-tree", pinned + "^{tree}", "-p", pinned,
+                 "-m", "Distinct local commit for checkout rejection test"],
+                check=True, capture_output=True, text=True).stdout.strip()
+            self.assertNotEqual(other_commit, pinned)
+            _run("git", "-C", str(root / "HOL"), "update-ref", "--no-deref", "HEAD", other_commit)
+            self.assertIn("not at the pinned commit", self.error(root, path))
+
+    def test_wrong_submodule_url_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.fixture(root)
+            (root / ".gitmodules").write_text(
+                '[submodule "HOL"]\n\tpath = HOL\n\turl = https://example.com/HOL.git\n')
+            self.assertIn(".gitmodules", self.error(root, path))
+
+    def test_repository_checkout_accepts_pinned_list_script(self):
+        self.assertIsNone(self.error(Path(CHECKER["ROOT"]), "HOL/" + LIST_SCRIPT))
+
+    def test_existing_hol4_snapshot_paths_unchanged(self):
+        self.assertIsNone(self.error(Path(CHECKER["ROOT"]), CHECKER["EXTERNAL_HOL_PATH"]))
+
+
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class HolSubmoduleDeclarationTest(unittest.TestCase):
+    """Declarations cited under ``HOL/`` resolve in the verified pinned file."""
+
+    def test_list_and_sorting_definitions_resolve(self):
+        root = Path(CHECKER["ROOT"])
+        cache = {}
+        for rel, name in [("src/list/src/listScript.sml", "EL_def"),
+                          ("src/sort/sortingScript.sml", "SORTED_DEF"),
+                          ("src/sort/sortingScript.sml", "PART_DEF"),
+                          ("src/sort/sortingScript.sml", "PARTITION_DEF")]:
+            self.assertIsNone(CHECKER["hol_source_error"](root, "HOL/" + rel))
+            self.assertIsNone(REF_ERROR(root / "HOL" / rel, name, None, cache), (rel, name))
+
+    def test_missing_declaration_is_reported(self):
+        root = Path(CHECKER["ROOT"])
+        self.assertIsNotNone(
+            REF_ERROR(root / "HOL/src/list/src/listScript.sml", "no_such_def", None, {}))
+
+@unittest.skipUnless((ROOT_HOL / ".git").exists(), "pinned HOL submodule not initialized")
+class MachineIeeeGeneratedDeclarationsTest(unittest.TestCase):
+    """Only the reviewed fixed-format factory and unchanged generator qualify."""
+
+    def machine_fixture(self, root):
+        HolSubmoduleSourcesTest.fixture(self, root)
+        for path in (CHECKER["MACHINE_IEEE_SCRIPT"], CHECKER["MACHINE_IEEE_GENERATOR"]):
+            _run("git", "-C", str(root / "HOL"), "checkout",
+                 CHECKER["HOL_SUBMODULE_COMMIT"], "--", path[len("HOL/"):])
+        return root / CHECKER["MACHINE_IEEE_SCRIPT"]
+
+    def test_all_reviewed_generated_names_resolve_at_literal_call(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        cache = {}
+        self.assertEqual(len(CHECKER["MACHINE_IEEE_FP64_NAMES"]), 47)
+        for name in CHECKER["MACHINE_IEEE_FP64_NAMES"]:
+            self.assertIsNone(REF_ERROR(path, name, 16, cache), name)
+
+    def test_binary32_prerequisites_resolve_only_at_literal_call(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        self.assertEqual(len(CHECKER["MACHINE_IEEE_FP32_NAMES"]), 3)
+        for name in CHECKER["MACHINE_IEEE_FP32_NAMES"]:
+            self.assertIsNone(REF_ERROR(path, name, 15, {}), name)
+            for line in (None, 13, 14, 16, 17):
+                self.assertIn("source line 15", REF_ERROR(path, name, line, {}))
+
+    def test_changed_binary32_format_rejected_independently_of_pin(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.machine_fixture(root)
+            path.write_text(path.read_text().replace('("fp32", 23, 8,', '("fp32", 22, 9,'))
+            self.assertIsNotNone(REF_ERROR(path, "fp32_to_float_def", 15, {}))
+            fn = CHECKER["machine_ieee_fp32_source_error"]
+            with patch.dict(fn.__globals__, {"hol_submodule_source_error": lambda *_: None}):
+                self.assertIn("23/8/32", fn(root))
+
+    def test_generated_names_require_call_line(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        for line in (None, 13, 15, 17, 63):
+            self.assertIn("source line 16", REF_ERROR(path, "fp64_to_float_def", line, {}))
+
+    def test_fabricated_or_other_format_names_are_not_generated(self):
+        path = Path(CHECKER["ROOT"]) / CHECKER["MACHINE_IEEE_SCRIPT"]
+        for name in ("fp64_fake_def", "fp32_add_def", "fp64_to_float_11"):
+            self.assertIn("declares no", REF_ERROR(path, name, 16, {}))
+
+    def test_missing_or_drifted_generator_rejected(self):
+        for missing in (False, True):
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path = self.machine_fixture(root)
+                generator = root / CHECKER["MACHINE_IEEE_GENERATOR"]
+                if missing:
+                    generator.unlink()
+                else:
+                    generator.write_text(generator.read_text() + "\n(* drift *)\n")
+                self.assertIn("machine_ieeeLib.sml", REF_ERROR(path, "fp64_add_def", 16, {}))
+                self.assertIn("machine_ieeeLib.sml", REF_ERROR(path, "fp32_to_float_def", 15, {}))
+                self.assertIsNotNone(CHECKER["hol_source_error"](
+                    root, CHECKER["MACHINE_IEEE_SCRIPT"]))
+
+    def test_changed_fixed_format_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            path = self.machine_fixture(root)
+            path.write_text(path.read_text().replace('("fp64", 52, 11,', '("fp64", 51, 12,'))
+            self.assertIsNotNone(REF_ERROR(path, "fp64_add_def", 16, {}))
+            # Even after a provenance provider returns success, literal format
+            # checking remains independent of that provider.
+            fn = CHECKER["machine_ieee_fp64_source_error"]
+            with patch.dict(fn.__globals__, {"hol_submodule_source_error": lambda *_: None}):
+                self.assertIn("52/11/64", fn(root))
+
+
+
+
+
+
+class FmapResultObservationTest(unittest.TestCase):
+    def fixture(self):
+        import json
+        root = CHECKER["ROOT"]
+        records = json.loads((root / "docs/HOL-THEOREM-MAP.json").read_text())
+        return root, records
+
+    def errors(self, signature=None, producers=("toFmap",), records=None, root=None):
+        default_root, default_records = self.fixture()
+        return CHECKER["fmap_result_observation_errors"](
+            ["import Flapjack.Misc.BalancedMap.Semantics"], "Fixture",
+            signature or "theorem observer : (toFmap cmp tree).lookup keys ≠ none → True",
+            producers, default_records if records is None else records,
+            default_root if root is None else root)
+
+    def test_reviewed_real_producer(self):
+        self.assertEqual([], self.errors())
+
+    def test_unused_producer(self):
+        self.assertTrue(any("unused" in e for e in self.errors("theorem observer : True")))
+
+    def test_unreviewed_producer(self):
+        self.assertTrue(any("manifest" in e for e in self.errors(records=[])))
+
+    def test_nonmap_producer(self):
+        self.assertTrue(any("return HolFiniteMapExact" in e for e in
+                            self.errors("theorem observer : keySet cmp key = keys", ("keySet",))))
+
+    def test_unqualified_and_missing_witness(self):
+        root, records = self.fixture()
+        source = (root / "Flapjack/Misc/BalancedMap/Semantics.lean").read_text()
+        for alteration, expected in [
+            (source.replace("(fmap_as_finite_support_result)", ""), "qualification"),
+            (source.replace("holFmapAsFiniteSupportResultWitness_toFmap", "removedWitness"), "witness"),
+        ]:
+            with tempfile.TemporaryDirectory() as directory:
+                temporary = Path(directory)
+                path = temporary / "Flapjack/Misc/BalancedMap/Semantics.lean"
+                path.parent.mkdir(parents=True)
+                path.write_text(alteration)
+                self.assertTrue(any(expected in e for e in self.errors(records=records, root=temporary)))
+
+    def test_empty_duplicate_unknown_names(self):
+        for names in [(), ("toFmap", "toFmap"), ("unknown",)]:
+            self.assertTrue(self.errors(producers=names))
+
+    def test_scanner_retains_producer_list(self):
+        source = ['@[hol "HOL/examples/data-structures/balanced_bst/balanced_mapScript.sml" "to_fmap_key_set"',
+                  ' (fmap_as_finite_support_result_observations := [BalancedMap.toFmap])]',
+                  'theorem observer : True := by trivial']
+        self.assertEqual(("BalancedMap.toFmap",), next(SITES(source, include_result_observations=True))[-1])
+
+
+class FmapResultObservationShadowTest(unittest.TestCase):
+    def test_observer_binder_cannot_impersonate_producer(self):
+        fixture = FmapResultObservationTest()
+        errors = fixture.errors("theorem observer (toFmap : Nat) : toFmap = toFmap")
+        self.assertTrue(any("shadowed" in error for error in errors))
+
+
+class FmapResultObservationLiteralTest(unittest.TestCase):
+    def test_string_literal_does_not_establish_dependency(self):
+        errors = FmapResultObservationTest().errors('theorem observer : "toFmap" = "toFmap"')
+        self.assertTrue(any("unused" in error for error in errors))
+
+
+class FmapResultObservationQualifiedTest(unittest.TestCase):
+    def test_fully_qualified_producer(self):
+        producer = "Flapjack.Misc.BalancedMap.toFmap"
+        fixture = FmapResultObservationTest()
+        self.assertEqual([], fixture.errors(
+            f"theorem observer : ({producer} cmp tree).lookup keys ≠ none → True", (producer,)))
+
+    def test_local_shadow_rejected(self):
+        root, records = FmapResultObservationTest().fixture()
+        errors = CHECKER["fmap_result_observation_errors"](
+            ["import Flapjack.Misc.BalancedMap.Semantics", "def toFmap : Nat := 0"],
+            "Fixture", "theorem observer : toFmap = toFmap", ("toFmap",), records, root)
+        self.assertTrue(any("shadowed" in error for error in errors))
+
+
+class FmapResultObservationAmbiguityTest(unittest.TestCase):
+    def test_unqualified_imported_shadow_rejected(self):
+        root, records = FmapResultObservationTest().fixture()
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            producer = temporary / "Flapjack/Misc/BalancedMap/Semantics.lean"
+            producer.parent.mkdir(parents=True)
+            producer.write_text((root / "Flapjack/Misc/BalancedMap/Semantics.lean").read_text())
+            shadow = temporary / "Flapjack/Other.lean"
+            shadow.write_text("namespace Other\ndef toFmap : Nat := 0\nend Other\n")
+            errors = CHECKER["fmap_result_observation_errors"](
+                ["import Flapjack.Misc.BalancedMap.Semantics", "import Flapjack.Other"],
+                "Fixture", "theorem observer : (toFmap cmp tree).lookup keys ≠ none → True",
+                ("toFmap",), records, temporary)
+            self.assertTrue(any("ambiguous" in error for error in errors))
 
 
 if __name__ == "__main__":

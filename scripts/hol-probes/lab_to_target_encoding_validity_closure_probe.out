@@ -1,0 +1,22 @@
+all_enc_ok_append=∀(conf :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffi :ffiname list) (n :num) (c1 :α sec list) (c2 :α sec list).
+  all_enc_ok conf labs ffi n c1 ∧
+  all_enc_ok conf labs ffi (n + LENGTH (prog_to_bytes c1)) c2 ⇒
+  all_enc_ok conf labs ffi n (c1 ++ c2)
+all_enc_ok_append_types=(conf :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(n :num)::num;(c1 :α sec list)::α sec list;(c2 :α sec list)::α sec list;
+all_enc_ok_append_hypotheses=0
+all_enc_ok_labs_mono=∀(conf :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffi :ffiname list) (n :num) (c :α sec list)
+    (labs2 :num sptree$num_map sptree$num_map).
+  (∀(l1 :num) (l2 :num) (x :num).
+     lab_lookup l1 l2 labs = SOME x ⇒ lab_lookup l1 l2 labs2 = SOME x) ∧
+  all_enc_ok conf labs ffi n c ⇒
+  all_enc_ok conf labs2 ffi n c
+all_enc_ok_labs_mono_types=(conf :α asm_config)::α asm_config;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffi :ffiname list)::ffiname list;(n :num)::num;(c :α sec list)::α sec list;(labs2 :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;
+all_enc_ok_labs_mono_hypotheses=0
+append=T
+extended=T
+dropped_lookup=T
+wrong_position=T
+owner_not_guard=T
+new_and_preserved=T

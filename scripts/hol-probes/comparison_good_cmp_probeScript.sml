@@ -1,0 +1,10 @@
+load "comparisonTheory";
+open HolKernel Parse bossLib comparisonTheory;
+val _ = Globals.linewidth := 10000;
+fun out label q = (print(label ^ "="); print_term(rand(concl(SIMP_CONV (srw_ss()) [good_cmp_def,boolTheory.FORALL_BOOL] q))); print "\n");
+val _ = out "gcmp_equal" ``good_cmp (\(x:bool) (y:bool). Equal)``;
+val _ = out "gcmp_less" ``good_cmp (\(x:bool) (y:bool). Less)``;
+val _ = out "gcmp_greater" ``good_cmp (\(x:bool) (y:bool). Greater)``;
+val _ = out "gcmp_bool_order" ``good_cmp (\(x:bool) (y:bool). if x=y then Equal else if x then Greater else Less)``;
+val _ = out "gcmp_bool_reverse" ``good_cmp (\(x:bool) (y:bool). if x=y then Equal else if x then Less else Greater)``;
+val _ = (print "gcmp_definition="; print_thm good_cmp_def; print "\n");

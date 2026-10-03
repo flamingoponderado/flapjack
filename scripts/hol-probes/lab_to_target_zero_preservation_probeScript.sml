@@ -1,0 +1,33 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open bossLib HolKernel Parse preamble lab_to_targetProofTheory lab_to_targetTheory labLangTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "="); print_term(concl th); print "\n");
+fun types label th = (print(label ^ "="); app (fn v => print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";")) (fst(strip_forall(concl th)) @ free_vars(concl th)); print "\n");
+val EVERY_label_zero_add_nop = prove (``!xs. EVERY label_zero (add_nop nop xs) = EVERY label_zero xs``,
+Induct \\ fs [add_nop_def,EVERY_REVERSE]
+  \\ Cases \\ fs [add_nop_def,EVERY_REVERSE]);
+val _ = capture "EVERY_label_zero_add_nop" EVERY_label_zero_add_nop;
+val _ = types "EVERY_label_zero_add_nop_types" EVERY_label_zero_add_nop;
+val _ = capture "EVERY_label_zero_pad_section" EVERY_label_zero_pad_section;
+val _ = types "EVERY_label_zero_pad_section_types" EVERY_label_zero_pad_section;
+val _ = capture "EVERY_sec_label_zero_pad_code" EVERY_sec_label_zero_pad_code;
+val _ = types "EVERY_sec_label_zero_pad_code_types" EVERY_sec_label_zero_pad_code;
+val _ = capture "enc_lines_again_simp_label_zero" enc_lines_again_simp_label_zero;
+val _ = types "enc_lines_again_simp_label_zero_types" enc_lines_again_simp_label_zero;
+val _ = capture "enc_secs_again_label_zero" enc_secs_again_label_zero;
+val _ = types "enc_secs_again_label_zero_types" enc_secs_again_label_zero;
+val _ = show_types := false;
+fun observe label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val lines = ``[Label 3 4 0;LabAsm (Jump (Lab 3 4)) 77w [] 1] : 8 labLang$line list``;
+val res = ``[Label 3 4 0;LabAsm (Jump (Lab 3 4)) 0w [9w;9w;9w] 3] : 8 labLang$line list``;
+val _ = observe "add_nop_full" ``add_nop [0w] [Label 1 2 0;Asm (Asmi (Inst Skip)) [1w] 2;Label 1 3 0] = [Label 1 2 0;Asm (Asmi (Inst Skip)) [1w;0w] 3;Label 1 3 0]``;
+val _ = observe "add_nop_bad_label_stays_bad" ``~EVERY label_zero(add_nop [0w] [Label 1 2 1])``;
+val _ = observe "pad_unrestricted_labels" ``pad_section [0w] [Label 1 2 999] [] = [Label 1 2 0]``;
+val _ = observe "pad_nop_accumulator" ``pad_section [0w] [Label 1 2 1] [Asm (Asmi (Inst Skip)) [1w] 2] = [Asm (Asmi (Inst Skip)) [1w;0w] 3;Label 1 2 0]``;
+val _ = observe "pad_bad_acc_guard" ``~EVERY label_zero(pad_section [0w] [] [Label 1 2 1])``;
+val _ = observe "pad_code_unconditional" ``EVERY sec_label_zero(pad_code [0w] [Section 1 [Label 1 2 999];Section 7 []])``;
+val _ = observe "simple_false_flag_full" ``enc_lines_again_simp LN [] 0 (K [9w;9w;9w]) ^lines = (^res,F)``;
+val _ = observe "simple_false_zero" ``EVERY label_zero ^lines /\ EVERY label_zero ^res``;
+val _ = observe "sections_false_full" ``enc_secs_again 0 LN [] (K [9w;9w;9w]) [Section 3 ^lines;Section 7 []] = ([Section 3 ^res;Section 7 []],F)``;

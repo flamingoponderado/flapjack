@@ -1,0 +1,18 @@
+offset_ok_pad_code=∀(labs :num sptree$num_map sptree$num_map) (ffis :ffiname list) (pos :num)
+    (code :α sec list).
+  (LENGTH (nop :word8 list) ≠ (1 :num) ⇒
+   EVERY (sec_label_zero :α sec -> bool) code) ∧
+  EVERY (sec_label_one :α sec -> bool) code ∧
+  EVERY (sec_label_prefix_zero :α sec -> bool) code ∧
+  all_lab_len_pos_ok pos code ∧ (offset_ok labs ffis pos code :bool) ⇒
+  (offset_ok labs ffis pos (pad_code nop code) :bool)
+offset_ok_pad_code_types=(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(ffis :ffiname list)::ffiname list;(pos :num)::num;(code :α sec list)::α sec list;(nop :word8 list)::word8 list;
+original_five_guards=T
+mixed_full_tuple=T
+mixed_output_offsets=T
+zero_original_guards=T
+empty_nop_offsets=T
+multibyte_nop_offsets=T
+prefix_guard_necessary=T
+input_offset_necessary=T
+empty_width1=T

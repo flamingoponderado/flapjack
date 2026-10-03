@@ -1,0 +1,14 @@
+sorted_type=:(α -> α -> bool) -> α list -> bool
+part_type=:(α -> bool) -> α list -> α list -> α list -> α list # α list
+partition_type=:(α -> bool) -> α list -> α list # α list
+sorted_empty=T
+sorted_single=T
+sorted_asc=T
+sorted_dup=F
+sorted_le_dup=T
+sorted_gt=T
+sorted_nontrans=T
+part_basic=([2; 1; 10],[7; 5; 20])
+part_empty=([1],[2])
+partition_basic=([6; 4; 2],[3; 1])
+partition_bool=([T; T],[F])

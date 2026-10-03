@@ -1,0 +1,18 @@
+ar_div=∀jump off k s t s1 r1 r2 r3. state_rel jump off k s t ∧ reg_bound_inst (Arith (Div r1 r2 r3)) k ∧ inst (Arith (Div r1 r2 r3)) s = SOME s1 ⇒ ∃t1. inst (Arith (Div r1 r2 r3)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ar_div_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r1:num;r2:num;r3:num
+ar_div_proved=T
+ar_carry=∀jump off k s t s1 r1 r2 r3 r4. state_rel jump off k s t ∧ reg_bound_inst (Arith (AddCarry r1 r2 r3 r4)) k ∧ inst (Arith (AddCarry r1 r2 r3 r4)) s = SOME s1 ⇒ ∃t1. inst (Arith (AddCarry r1 r2 r3 r4)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ar_carry_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r1:num;r2:num;r3:num;r4:num
+ar_carry_proved=T
+ar_add_overflow=∀jump off k s t s1 r1 r2 r3 r4. state_rel jump off k s t ∧ reg_bound_inst (Arith (AddOverflow r1 r2 r3 r4)) k ∧ inst (Arith (AddOverflow r1 r2 r3 r4)) s = SOME s1 ⇒ ∃t1. inst (Arith (AddOverflow r1 r2 r3 r4)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ar_add_overflow_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r1:num;r2:num;r3:num;r4:num
+ar_add_overflow_proved=T
+ar_sub_overflow=∀jump off k s t s1 r1 r2 r3 r4. state_rel jump off k s t ∧ reg_bound_inst (Arith (SubOverflow r1 r2 r3 r4)) k ∧ inst (Arith (SubOverflow r1 r2 r3 r4)) s = SOME s1 ⇒ ∃t1. inst (Arith (SubOverflow r1 r2 r3 r4)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ar_sub_overflow_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r1:num;r2:num;r3:num;r4:num
+ar_sub_overflow_proved=T
+ar_longmul=∀jump off k s t s1 r1 r2 r3 r4. state_rel jump off k s t ∧ reg_bound_inst (Arith (LongMul r1 r2 r3 r4)) k ∧ inst (Arith (LongMul r1 r2 r3 r4)) s = SOME s1 ⇒ ∃t1. inst (Arith (LongMul r1 r2 r3 r4)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ar_longmul_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r1:num;r2:num;r3:num;r4:num
+ar_longmul_proved=T
+ar_longdiv=∀jump off k s t s1 r1 r2 r3 r4 r5. state_rel jump off k s t ∧ reg_bound_inst (Arith (LongDiv r1 r2 r3 r4 r5)) k ∧ inst (Arith (LongDiv r1 r2 r3 r4 r5)) s = SOME s1 ⇒ ∃t1. inst (Arith (LongDiv r1 r2 r3 r4 r5)) t = SOME t1 ∧ state_rel jump off k s1 t1
+ar_longdiv_types=jump:bool;off:α word # α word;k:num;s:(α, β, γ) stackSem$state;t:(α, β, γ) stackSem$state;s1:(α, β, γ) stackSem$state;r1:num;r2:num;r3:num;r4:num;r5:num
+ar_longdiv_proved=T

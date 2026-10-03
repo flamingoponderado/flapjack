@@ -3,7 +3,7 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Expressions
 /-! Source-matched Get/Set/OpCurrHeap clauses of stackSemScript.sml
  evaluate_def:793-807. Outer NONE means unsupported constructor. This extra
  Option-shaped dispatcher is untagged assembly infrastructure; the total
- evaluator is tracked by flapjack-y19g, which depends on flapjack-y19g.10. -/
+ evaluator is assembled in Evaluate.lean. -/
 namespace Flapjack.StackSemRegisterTransfers
 open StackSemStateOps StackSemExpressions Compiler.Backend.StackLang
 

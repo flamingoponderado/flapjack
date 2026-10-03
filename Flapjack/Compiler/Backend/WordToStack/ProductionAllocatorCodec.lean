@@ -13,7 +13,7 @@ open RiscV RiscV.CakeRegAlloc
 /-- Flapjack-specific composition in the exact executed allocator order.
 This is a codec acceptance implication, not equality: dead/unreachable
 elimination can remove a rejected instruction. No output acceptance is assumed. -/
-private theorem allocatorStagesCodec {width : Nat} (parameters : List Nat)
+private theorem allocatorStagesCodec {width : Nat} [WordCseHash (BitVec width)] (parameters : List Nat)
     (program : WordProg (BitVec width))
     (accepted : (wordLangProgToHOL program).isSome = true) :
     (wordLangProgToHOL (wordRemoveDeadProgram
@@ -41,7 +41,10 @@ theorem retainedAllocator_programCodec {width : Nat} [NeZero width]
     (wordLangProgToHOL output.program).isSome = true := by
   have stages := allocatorStagesCodec parameters program accepted
   unfold cakeAllocateWordFunctionAfterDeadWithColour
-    cakeAllocateWordFunctionAfterDeadWithColourFromLimit at allocated
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimit
+    cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at allocated
+  simp only [Option.bind_some] at allocated
   repeat' (split at allocated <;> simp_all)
   all_goals rcases allocated with ⟨_, _, _, rfl⟩
   all_goals exact stages

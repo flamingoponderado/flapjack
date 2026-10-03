@@ -29,3 +29,7 @@ mem_store_miss=T
 mem_store_hit=SOME (Word 1w)
 var_imm=SOME (Word 4w)
 var_imm_reg=SOME (Loc 4 0)
+the_word_word1=1w
+the_word_word64=0xFFFFFFFFFFFFFFFFw
+get_word_word32=0x80000000w
+get_word_word80=0xFFFFFFFFFFFFFFFFFFFFw

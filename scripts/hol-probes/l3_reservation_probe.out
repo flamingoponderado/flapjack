@@ -1,0 +1,15 @@
+reserve_read_definition=∀state. ReserveLoad state = state.c_ReserveLoad state.procID
+reserve_read_type=:riscv_state -> word64 option
+reserve_write_definition=∀value. write'ReserveLoad value = (λstate. state with c_ReserveLoad := state.c_ReserveLoad⦇state.procID ↦ value⦈)
+reserve_write_type=:word64 option -> riscv_state -> riscv_state
+reserve_match_definition=∀vAddr. matchLoadReservation vAddr = (λstate. IS_SOME (ReserveLoad state) ∧ THE (ReserveLoad state) = vAddr)
+reserve_match_type=:word64 -> riscv_state -> bool
+none_none=(NONE,NONE,F,F,SOME 77,T,1,7)
+none_zero=(NONE,SOME 0,F,T,SOME 77,T,1,7)
+clear_zero=(SOME 0,NONE,T,F,SOME 77,T,1,7)
+replace_match=(SOME 21,SOME 123,F,T,SOME 77,T,1,7)
+max_mismatch=(SOME 18446744073709551615,SOME 18446744073709551615,F,F,SOME 77,T,1,7)
+present_mismatch=(SOME 21,SOME 21,F,F,SOME 77,T,1,7)
+core_zero=(NONE,SOME 18446744073709551615,F,T,SOME 77,T,1,0)
+core_wrap=(SOME 21,SOME 0,F,T,SOME 77,T,1,255)
+/tmp/flap-solc-l3-fp-reviewed/scripts/hol-probes/l3_reservation_probeScript.sml:46: warning: The type of (it) contains a free type variable. Setting it to a unique monotype.

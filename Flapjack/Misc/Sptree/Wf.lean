@@ -58,6 +58,14 @@ theorem sptWfInsert {α : Type} : ∀ (key : Nat) (value : α) (tree : Spt α),
       cases tree <;> rw [sptInsert] <;> by_cases hp : key % 2 = 0 <;>
         simp_all [sptWf, sptInsertNotEmpty]
 
+/-- Exact HOL `wf_fromAList` (`sptreeScript.sml:1507-1515`). -/
+@[hol "hol4/src/finite_maps/sptreeScript.sml" "wf_fromAList"]
+theorem sptWfFromAList {α : Type} : ∀ (ls : List (Nat × α)), sptWf (sptFromAList ls) = true
+  | [] => rfl
+  | (k, v) :: ls => by
+      simp only [sptFromAList]
+      exact sptWfInsert k v _ (sptWfFromAList ls)
+
 /-- Flapjack proof factoring for the collapsing constructor; no separate HOL
 theorem is claimed. The source wf_delete proof unfolds this constructor. -/
 private theorem wfMkBN {α : Type} (left right : Spt α)

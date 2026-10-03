@@ -36,7 +36,9 @@ COORDINATOR_PENDING_NOTE = re.compile(
     r"\b(?:acceptance|review)\b[^.;]{0,20}?\b(?:pending|required)\b"
     r"|\bcoordinator\s+(?:is\s+)?(?:pending|required)\b"
     r"|\bpending\s+(?:coordinator|integration)\s+(?:acceptance|review)\b"
-    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b",
+    r"|\b(?:acceptance|review)\s+pending\s+coordinator\b"
+    r"|\b(?:fleet\s+merge|merge)\s+acceptance\b"
+    r"|\bacceptance\s+separate\b",
     re.IGNORECASE,
 )
 REFS = runpy.run_path(str(ROOT / "scripts" / "check-hol-refs.py"))
@@ -1732,6 +1734,29 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningRefreshArguments'): ('Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningPrepareArguments'): ('Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningCalleeTransport'): ('Flapjack-specific inline factoring of original returning Call8422-8477, no standalone HOL declaration. Actual mapped paired-cut domains/injections, second-cut value relation and matching handler labels derive a source root permutation, complete callee-entry state equality after stack replacement and value-equal stacks; existing total evaluateStackSwap supplies result-sensitive body transport. No target evaluation or desired callee equality premise. Full returning Call return/exception restoration and full SSA remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningRestoreRegisters'): ('Flapjack-specific inline returning Call continuation factoring of original8550-8575, no standalone HOL declaration. Internal restored cut SSA, source cut domain, original map validity/frame and return-value length derive preservation under actual physical registers2*(i+1) insertion and actual retMov NONE/newSSA/frame via original rename preservation. No target evaluation or desired output SSA premise. Pop-environment cut SSA derivation, continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningPopCutRelation'): ('Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningCutSSA'): ('Flapjack-specific inline returning Call8477-8550 factoring, no standalone HOL declaration. Actual callee key/value stack facts and pushed root-map correspondence derive successful source/target pops, complete wordStateEqRel, popped cut domain and all value lookup transport using native pushEnvPopEnvSKeyEq/popEnvFrame/keyMapImplies/allocLocalsRel. Internal actual cut domain/scoped lookup relation plus map-domain and source-bound facts reconstruct all restricted SSA conjuncts. No desired popped-local relation/output SSA or target evaluation premise. Continuation/exception full returning Call and fullSSA assembly remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningRestoreRegistersRead'): ('Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningBindResults'): ('Flapjack-specific inline returning Call8575-8610 factoring, no standalone HOL declaration. Existing actual retMov preservation plus duplicate-free physical convention writes derive successful return-register rereads; actual listNextVarRename producer and Move copy derive NONE/source-setVars versus target-setVars SSA/frame from internal cut SSA/map/nonphysical/bounds and native Call return Nodup/length guards. No target continuation run or desired output relation premise. Counter class/bounds are internal original producer facts to be discharged in full case. Full continuation/exception assembly and fullSSA remain open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningNoHandlerException'): ('Flapjack-specific inline no-handler returning Call8660-8692 factoring, no standalone HOL declaration. Actual source callee Exception and total evaluateStackSwap prove LASTN cannot select the new NONE-handler frame, so it enters the identical original common stack. Native key/value equality reconstructs identical outer-handler locals/tail stack and actual target evaluate equals the complete original returned state. Internal pre-run callee stack-replacement equality comes from calleeSwap, never a target run or output-state premise. Full returning Call constructor with original six premises and return/handler IHs remains open on flapjack-sola-callreturn.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean', 'allocNonErrorShape'): ('Flapjack-specific exhaustive actual alloc branch factoring from original Alloc9558-9606, no standalone HOL declaration. Excluding actual Error derives NONE or actual NotEnoughSpace with flush-empty locals; no target outcome or desired locals premise. Used to discharge full SSA result-sensitive failure branch. Full six-premise Alloc case is assembled in ssaCcTransCorrectAlloc; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean', 'allocCollectorTransport'): ('Flapjack-specific internal factoring of original Alloc9410-9558, no standalone HOL declaration. Existing actual native allocSim chooses the source permutation and proves result/frame equality from intermediate original scoped-cut relations and injectivity. Normal return derives full union-cut scoped locals and domain via allocNormalLocalsDomain; no target-run/result or desired post-relation premise. Depends on delivered flapjack-sola-alloc.2. Full six-premise SSA Alloc assembly remains open on flapjack-sola-alloc.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean', 'allocRestoreLocals'): ('Flapjack-specific internal factoring of original Alloc9478-9606, no standalone HOL declaration. Intermediate collector domain/scoped-local relation, original map validity and source-name bounds derive restricted SSA relation and actual final listNextVarRenameMove NONE/full SSA/frame. No target-run or desired final SSA premise. Collector transport and full six-premise Alloc case are assembled in ssaCcTransCorrectAlloc; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean', 'allocRefreshCutNames'): ('Flapjack-specific factoring of original Alloc9333-9410 preparation, no standalone HOL declaration. Successful source count/paired-cut inputs are actual evaluator branch guards. Native initial rename/count Move runs, preserved SSA/frame, successful mapped paired cuts with full image domains, restricted strong relations and inherited injections are conclusions; no targetrun or collector result assumed. Original tagged cutEnvsLemma/renameMovePreserve/Distinct discharge the obligations. Internal prerequisite only, not full Alloc correctness; GC/permutation/restoration/full six-premise Alloc case are assembled in ssaCcTransCorrectAlloc; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean', 'allocNormalLocalsDomain'): ('Flapjack-specific internal factoring of original Alloc9460-9480, no standalone HOL declaration. Actual alloc NONE return derives collector/pop success and post-locals domain equal union of original paired-cut names through native gcSKeyEq and pushEnvPopEnvSKeyEq. No target-run or desired-domain premise. Full six-premise Alloc case is assembled in ssaCcTransCorrectAlloc; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticAlloc.lean', 'allocPrepareArguments'): ('Flapjack-specific factoring of original Alloc9333-9410 preparation, no standalone HOL declaration. Successful source count/paired-cut inputs are actual evaluator branch guards. Native initial rename/count Move runs, preserved SSA/frame, successful mapped paired cuts with full image domains, restricted strong relations and inherited injections are conclusions; no targetrun or collector result assumed. Original tagged cutEnvsLemma/renameMovePreserve/Distinct discharge the obligations. Internal prerequisite only, not full Alloc correctness; GC/permutation/restoration/full six-premise Alloc case are assembled in ssaCcTransCorrectAlloc; full SSA remains open.'),
+    ("Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileEmpty.lean", "evaluateSSAReconcileEmpty"): (
+        'Flapjack-specific empty-moves branch factoring; the extra compiler-filter guard is derived inside evaluateSSAReconcile, not an independent HOL theorem. Full original evaluate_ssa_reconcile is separately tagged and assembled in SSAReconcile.lean. Useful helper retained without a HOL tag; this classification is not an additional completed port.'
+    ),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installCallbacksAligned'): ('Flapjack-specific factoring of original Install9710-9858 callback transport, no standalone HOL declaration. Source/target argument and cut success are internal alignment facts derived by preparation; original shared frame yields identical actual compile callback, buffer flush, oracle/config check and code union branches. Total evaluator result/frame and successful source-pointer versus target-pointer Loc local shapes are conclusions, no targetrun/result or post-frame premise. Failure cases retained. Infrastructure prerequisite only; full six-premise Install simulation is assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installResultLocals'): ('Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installRestoreResult'): ('Flapjack-specific factoring of original Install9800-9858 post-result algebra/restoration, no standalone HOL declaration. Actual callback local shapes, source cut environment domain/strong matching and original map bounds are intermediate branch facts. Fresh SSA insertion/physical2 nonalias, actual pointer-copy/final native rename execution and final SSA/frame are proved conclusions. No targetrun or desired final locals hypothesis. This is an independent prerequisite of full six-premise Install simulation, not an additional completed HOL port; callback branch and full case are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installRefreshCutNames'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
+    ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticInstall.lean', 'installPrepareArguments'): ('Flapjack-specific factoring of original Install9710-9800 preparation, no standalone HOL declaration. Successful source argument/cut guards are evaluator branch facts; actual native rename/scratch execution, preserved data arguments and mapped-cut relation are conclusions, never final correctness premises. Useful dependency of full Install case, not an additional completed HOL theorem port; full six-premise Install simulation and callback/post-rename assembly are assembled in ssaCcTransCorrectInstall; full SSA remains open.'),
     ("Flapjack/Pancake/Semantics/CrepSem/EvaluateIndWhile.lean", "evalCrepSemHOLProgExact_inductWhile"): (
         "Flapjack-specific well-founded clock/sizeOf induction interface, no standalone "
         "HOL declaration. Derives guarded While body and plain-state NONE/Continue0 "
@@ -1818,6 +1843,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_heterogeneous_function_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_result",
     "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+    "reviewed_fmap_as_finite_support_result_observations",
     "reviewed_fmap_as_finite_support_parameters",
     "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_existentials",
@@ -1990,13 +2016,14 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
                  include_fmap_heterogeneous_function=True,
                  include_reals_as_rational_cuts=True,
                  include_fmap_as_finite_support_equality=True,
+                 include_result_observations=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -2007,7 +2034,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -2023,7 +2050,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality,
+        fmap_equality, result_observations,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2049,6 +2076,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_heterogeneous_function"] = list(
                 fmap_heterogeneous_function_positions
             )
+        if result_observations:
+            entry["fmap_as_finite_support_result_observations"] = list(result_observations)
         if fmap_parameters:
             entry["fmap_as_finite_support_parameters"] = list(fmap_parameters)
         if fmap_existentials:
@@ -2110,6 +2139,15 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
     # These source/theorem pairs were checked against their HOL declaration
     # statements in the active review task, not merely copied from attributes.
     reviewed_exact = {
+        ("Flapjack/Misc/FindIndex.lean", "findIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "findPos"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Positions.lean", "getFfiIndex"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Padding.lean", "padBytes"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "ShmemInfoNum"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "listAddIfFresh"),
+        ("Flapjack/Compiler/Backend/LabToTarget/ShmemInfo.lean", "getMemopInfo"),
+        ("Flapjack/Misc/ListSubset.lean", "listSubset"),
+        ("Flapjack/Compiler/Backend/LabToTarget/Compile.lean", "Config"),
         ("Flapjack/Misc/LList.lean", "lprefixAntisymHOL"),
         ("Flapjack/Misc/LList.lean", "lprefixTransHOL"),
         ("Flapjack/Misc/LList.lean", "prefixesLprefixTotalHOL"),
@@ -2364,6 +2402,18 @@ def validate_inventory(
         )
         reals_cuts = bool(tag[15]) if tag is not None and len(tag) > 15 else False
         fmap_equality = bool(tag[16]) if tag is not None and len(tag) > 16 else False
+        result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
+        manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
+        observation_status = "reviewed_fmap_as_finite_support_result_observations"
+        if manifest_observations != result_observations:
+            errors.append(f"{key[0]}:{key[1]}: manifest result observation producers do not match @[hol] tag")
+        if bool(result_observations) != (status == observation_status):
+            errors.append(f"{key[0]}:{key[1]}: result observations require matching reviewed result-observation status")
+        if result_observations:
+            if any(tag[2:17]):
+                errors.append(f"{key[0]}:{key[1]}: result observations cannot combine with other representation qualifiers")
+            if not isinstance(reviewer, str) or not reviewer.strip():
+                errors.append(f"{key[0]}:{key[1]}: result observations require source-comparison note")
         manifest_list_fields = tuple(record.get("list_as_array", ()))
         manifest_names_fields = tuple(record.get("names_as_string", ()))
         manifest_boundary_fields = tuple(record.get("names_as_string_boundary", ()))

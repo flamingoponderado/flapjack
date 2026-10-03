@@ -1,0 +1,6 @@
+wa_inverse_statement=∀n. good_dimindex (:α) ∧ w2n bytes_in_word * w2n n < dimword (:α) ⇒ (bytes_in_word * n) ⋙ shift (:α) = n
+wa_inverse_proved=T
+wa_offset_statement=∀n. word_offset n = bytes_in_word * n2w n
+wa_offset_proved=T
+wa_forward_statement=∀w. good_dimindex (:α) ⇒ w ≪ shift (:α) = w * bytes_in_word
+wa_forward_proved=T

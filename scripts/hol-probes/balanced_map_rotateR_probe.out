@@ -1,0 +1,11 @@
+bmrr_full=⊢ ∀(k :α) (v :β) (l :(α, β) balanced_map) (r :(α, β) balanced_map) (cmp :α -> α -> ordering). good_cmp cmp ∧ key_ordered cmp k l Greater ∧ key_ordered cmp k r Less ∧ ¬(size l + size r ≤ (1 :num)) ∧ size l > delta * size r ∧ almost_balancedL (size l) (size r) ∧ invariant cmp l ∧ invariant cmp r ⇒ invariant cmp (rotateR k v l r) ∧ to_fmap cmp (rotateR k v l r) = (to_fmap cmp l ⊌ to_fmap cmp r)⟨key_set cmp k ↦ v⟩
+bmrr_single_tree=Bin (3 :num) (1 :num) (10 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (2 :num) (20 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bmrr_single_invariant=T
+bmrr_single_lookup0=SOME (0 :num)
+bmrr_single_lookup1=SOME (10 :num)
+bmrr_single_lookup2=SOME (20 :num)
+bmrr_double_tree=Bin (3 :num) (1 :num) (10 :num) (Bin (1 :num) (0 :num) (0 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map)) (Bin (1 :num) (2 :num) (20 :num) (Tip :(num, num) balanced_map) (Tip :(num, num) balanced_map))
+bmrr_double_invariant=T
+bmrr_double_lookup0=SOME (0 :num)
+bmrr_double_lookup1=SOME (10 :num)
+bmrr_double_lookup2=SOME (20 :num)

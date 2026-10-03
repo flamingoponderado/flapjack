@@ -34,6 +34,7 @@ ALLOWED_QUALIFIERS = {
     "fmap_as_finite_support", "fmap_as_finite_support_result",
     "fmap_as_finite_support_function",
     "fmap_as_finite_support_heterogeneous_function",
+    "fmap_as_finite_support_result_observations",
     "fmap_as_finite_support_parameters",
     "fmap_as_finite_support_existentials",
     "fmap_as_finite_support_relation", "fmap_as_finite_support_equalities",
@@ -122,6 +123,7 @@ def manifest_qualifiers(record: dict[str, Any]) -> dict[str, Any]:
         "fmap_as_finite_support_relation",
         "fmap_as_finite_support_function",
         "fmap_as_finite_support_heterogeneous_function",
+        "fmap_as_finite_support_result_observations",
         "fmap_as_finite_support_parameters",
         "fmap_as_finite_support_existentials",
     ):
@@ -153,7 +155,12 @@ def check_records(
     for record in manifest:
         if not str(record.get("statement_status", "")).startswith("reviewed_"):
             continue
-        key = (record["hol_path"], record["hol_name"], record["lean_name"])
+        # Source scanners retain Lean's escaped identifier delimiters, while
+        # Name.toString exports the underlying leaf (e.g. dfn'FMIN_S).
+        leaf = record["lean_name"]
+        if leaf.startswith("«") and leaf.endswith("»"):
+            leaf = leaf[1:-1]
+        key = (record["hol_path"], record["hol_name"], leaf)
         candidates = by_key.get(key, [])
         if len(candidates) != 1:
             raise ValueError(

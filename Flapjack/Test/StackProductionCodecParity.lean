@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.StackLang.ProductionCodec
+import Flapjack.Compiler.Backend.WordToStack.NativeMoves
 
 /-! Kernel tests of the production StackLang carrier codec. No evaluated
 compiler or HOL semantic parity is claimed by these structural examples. -/
@@ -9,9 +10,36 @@ example : storeFromProduction (.temp 31) = some (.temp (BitVec.ofNat 5 31)) := r
 example : storeFromProduction (.temp 32) = none := rfl
 
 example : progToProduction (.stackStore 17 9 : ProgW (BitVec 64)) =
-    some (.stackStore 9 17) := rfl
+    some (.stackStore 17 9) := rfl
 example : progFromProduction (.stackLoad 9 17 : StackProg (BitVec 64)) =
-    some (.stackLoad 17 9) := rfl
+    some (.stackLoad 9 17) := rfl
+
+/- HOL stackSemScript.sml:973/988 uses the first operand as the register
+and the second as the stack-space-relative offset. Unequal operands are
+intentional: symmetric roundtrip alone did not detect the previous swap. -/
+example : holProgToProduction (.stackLoad 23 2 : HolProg 64) =
+    some (.stackLoad 23 2) := by
+  simp [holProgToProduction, Compiler.Backend.holProgToProgW, Prog.map, progToProduction]
+example : holProgToProduction (.stackStore 22 1 : HolProg 64) =
+    some (.stackStore 22 1) := by
+  simp [holProgToProduction, Compiler.Backend.holProgToProgW, Prog.map, progToProduction]
+example : productionToHolProg (.stackLoad 23 2 : StackProg (BitVec 64)) =
+    some (.stackLoad 23 2) := by
+  simp [productionToHolProg, Compiler.Backend.progWToHolProg, Prog.map, progFromProduction]
+example : productionToHolProg (.stackStore 22 1 : StackProg (BitVec 64)) =
+    some (.stackStore 22 1) := by
+  simp [productionToHolProg, Compiler.Backend.progWToHolProg, Prog.map, progFromProduction]
+
+/- Original HOL capture sr_spill_cycle in
+scripts/hol-probes/word_to_stack_scheduler_route_probe.out. This independently
+checks the native compiler image through the production codec, rather than
+roundtripping a possibly incorrect codec image. -/
+example : holProgToProduction
+    (Compiler.Backend.WordToStack.Native.wMoveNative (width := 64)
+      [(44, 46), (46, 44)] (22, 3, 2)) =
+    some (.seq (.stackLoad 23 1)
+      (.seq (.seq (.stackLoad 22 2) (.stackStore 22 1))
+        (.stackStore 23 2))) := by cbv
 
 example : progFromProduction (.const 9 255 : StackProg (BitVec 64)) = none := rfl
 example : progFromProduction (.arith .add 9 10 11 : StackProg (BitVec 64)) = none := rfl
@@ -37,7 +65,7 @@ example : progToProduction
     (.call (some (.seq .skip (.inst (.const 9 255)), 7, 8, 9)) (.inr 10)
       (some (.loop (.stackLoad 17 11), 12, 13)) : ProgW (BitVec 64)) =
     some (.call (some (.seq .skip (.inst (.const 9 255)), 7, 8, 9)) (.register 10)
-      (some (.loop (.stackLoad 11 17), 12, 13))) := rfl
+      (some (.loop (.stackLoad 17 11), 12, 13))) := rfl
 
 example {width : Nat} [NeZero width] (p : HolProg width)
     (s : StackProg (BitVec width)) (h : holProgToProduction p = some s) :

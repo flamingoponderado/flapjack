@@ -1202,4 +1202,3 @@ example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]),
 
 -- fo_relation_7_7
 example : (decide (List.Forall₂ absFrameEq ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)) ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))), handlerVal ([(none,0,[11]), (none,1,[11, 12]), (some 7,0,[])] : List (Option Nat × Nat × List Nat)), handlerVal ([(none,0,[false]), (none,1,[false, true]), (some 7,0,[])] : List (Option Nat × Nat × List Bool))) = (true, 10, 10) := by decide +kernel
-

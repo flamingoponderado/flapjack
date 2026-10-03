@@ -2,6 +2,15 @@ import Flapjack.Compiler.Backend.LinearScan.Proofs.LiveTree
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Intervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.CheckIntervals
 import Flapjack.Compiler.Backend.LinearScan.Proofs.RegExchange
+import Flapjack.Compiler.Backend.LinearScan.Proofs.GoodState
+import Flapjack.Compiler.Backend.LinearScan.Proofs.SpillRegister
+import Flapjack.Compiler.Backend.LinearScan.Proofs.EdgesToAdjlist
+import Flapjack.Compiler.Backend.LinearScan.Proofs.ColorRegister
+import Flapjack.Compiler.Backend.LinearScan.Proofs.PassInvariants
+import Flapjack.Compiler.Backend.LinearScan.Proofs.SortCorrect
+import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalsCorrect
+import Flapjack.Compiler.Backend.LinearScan.Proofs.WithoutRenaming
+import Flapjack.Compiler.Backend.LinearScan.Proofs.TopLevelCorrect
 import Flapjack.Compiler.Backend.LinearScan.Proofs.Bijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.ApplyBijection
 import Flapjack.Compiler.Backend.LinearScan.Proofs.IntervalMonad
@@ -23,6 +32,25 @@ order:
   `check_intervals_check_live_tree` and `get_intervals_ct_eq`.
 * `RegExchange`: `linear_scanProofScript.sml:2020-2402`, the generated
   array accessor equations and `apply_reg_exchange_correct`.
+* `GoodState`: `linear_scanProofScript.sml:2404-2696`, the colouring-state
+  invariant `good_linear_scan_state`, releasing inactive intervals and
+  finding a colour.
+* `SpillRegister`: `linear_scanProofScript.sml:2697-2946`, sparse sublists
+  and `spill_register` preserving `good_linear_scan_state`.
+* `EdgesToAdjlist`: `linear_scanProofScript.sml:2947-3071`, the forced-edge
+  adjacency lists and the `forbidden_is_from_*` predicates.
+* `ColorRegister`: `linear_scanProofScript.sml:3073-3548`, stealing,
+  `color_register`, `find_spill` and the colouring step `linear_reg_alloc_step_aux`.
+* `PassInvariants`: `linear_scanProofScript.sml:3550-3820`, the pass1/pass2
+  steps, `intbeg_less`, and the `st_ex_FOLDL` pass invariants.
+* `SortCorrect`: `linear_scanProofScript.sml:3821-4330`, the in-array
+  quicksort of registers and moves.
+* `IntervalsCorrect`: `linear_scanProofScript.sml:4332-4996`, the pass
+  initial states, array/list conversions and `linear_reg_alloc_intervals_correct`.
+* `WithoutRenaming`: `linear_scanProofScript.sml:5471-5564`,
+  `linear_reg_alloc_without_renaming_correct`.
+* `TopLevelCorrect`: `linear_scanProofScript.sml:6008-6230`, the allocator
+  correctness `linear_scan_reg_alloc_correct`.
 * `Bijection`: `linear_scanProofScript.sml:4997-5204`, the register
   bijection invariants.
 * `ApplyBijection`: `linear_scanProofScript.sml:5565-6006`, checking a
@@ -30,9 +58,8 @@ order:
 * `IntervalMonad`: `linear_scanProofScript.sml:5206-5469`, the interval monad
   against `get_intervals_ct` and live-tree registers.
 
-Declarations whose statements use HOL `EL` are kernel-checked but untagged
-provisional ports until the HOL `listScript` provenance review
-(bead flapjack-pxn.18.5.15.3.38.1).
+Declarations whose statements use HOL `EL` render it by the exact tagged
+`holEl` (`Flapjack.Misc.ListEl`); each was re-tagged after its own statement
+review.
 
-The top-level `linear_scan_reg_alloc_correct` is not yet ported.
 -/

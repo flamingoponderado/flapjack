@@ -92,7 +92,10 @@ namespace WordSemStateFiniteExact
     against the real `sqrt r` by its rational cut; HOL's rounding inspects
     that real only through such comparisons, so this is a representation of
     the HOL real, recorded by the qualifier.  Its agreement with HOL remains
-    the external assumption of `docs/SOUNDNESS.md` item 8.
+    the external assumption of `docs/SOUNDNESS.md` item 8. The proof-only
+    `WordSem.Inst.RealSqrtAgreement` proves the actual sqrt clause equals
+    the literal Mathlib-real rendering, including missing-register failure;
+    no external cut-criterion premise is required for that kernel equality.
 
     Every other clause matches HOL clause by clause.  The other FP clauses use
     the binary64 renderings over `Rat`.  Floats have dyadic rational values,

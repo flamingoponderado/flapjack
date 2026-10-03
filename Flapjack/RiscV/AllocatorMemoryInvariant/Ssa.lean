@@ -51,7 +51,6 @@ theorem allocatorMemorySupported_wordSsaRenameInstProgram {α : Type u} [OfNat �
     (source target : WordSsaState) (names : List Nat) :
     allocatorMemorySupported (wordSsaReconcileTo (α := α) source target names) = true := by
   unfold wordSsaReconcileTo
-  dsimp only
   split <;> simp [allocatorMemorySupported]
 
 /-- Flapjack-only: initialization of one-sided SSA names uses constants only. -/
@@ -105,7 +104,7 @@ theorem allocatorMemorySupported_wordSsaRenameProgramWithLoops
     allocatorMemorySupported (wordSsaRenameProgramWithLoops frames state program).2 =
       allocatorMemorySupported program := by
   induction frames, state, program using wordSsaRenameProgramWithLoops.induct
-  case case41 =>
+  case case43 =>
     rename_i frames inputState op condition right thenBranch elseBranch leftState leftProgram leftEq elseInput rightState rightProgram rightEq preferred merged leftMoves rightMoves fixEq ih2 ih1
     have repair := allocatorMemorySupported_wordSsaFixInconsistencies (α := α) preferred leftState rightState rightState.next
     rw [fixEq] at repair
@@ -116,9 +115,7 @@ theorem allocatorMemorySupported_wordSsaRenameProgramWithLoops
   all_goals simp_all (config := { zetaDelta := true }) [allocatorMemorySupported, wordSsaFresh,
       allocatorMemorySupported_wordSsaRenameInstProgram,
       allocatorMemorySupported_wordSsaSeq,
-      allocatorMemorySupported_wordSsaListNextVarRenameMove,
-      allocatorMemorySupported_wordSsaReconcileTo,
-      allocatorMemorySupported_wordSsaFixInconsistencies]
+      allocatorMemorySupported_wordSsaReconcileTo]
 
   all_goals grind only [allocatorMemorySupported_wordSsaListNextVarRenameMove,
     allocatorMemorySupported_wordSsaLoopSetup,

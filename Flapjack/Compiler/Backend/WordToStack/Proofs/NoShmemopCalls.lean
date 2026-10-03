@@ -127,8 +127,9 @@ private theorem callDestNoShmemop {width : Nat} [NeZero width]
       · simp only [callDestNative, dif_pos empty]; rfl
       · simp only [callDestNative, dif_neg empty, wStackLoadNoShmemop]; rfl
 
-/-- Full original returning Call case with no handler, preserving bitmap
-threading and only the genuine return-body induction hypothesis. -/
+/-- Structural-motive returning Call piece without a handler. Bitmap threading
+is preserved; the return-body hypothesis quantifies over all bitmap/frame inputs,
+rather than the argument-specific hypothesis from HOL's `comp_ind`. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopReturningCall {width : Nat} [NeZero width]
@@ -163,9 +164,10 @@ theorem compNoShmemopReturningCall {width : Nat} [NeZero width]
       perfCallPrefixNoShmemop, perfCallSuffixNoShmemop]
 
 
-/-- Full original returning Call with a handler. The return compilation's
-residual bitmap feeds the handler compiler, and only the two original child
-induction hypotheses are used. All source handler payloads remain arbitrary. -/
+/-- Structural-motive returning Call piece with a handler. The return compilation's
+residual bitmap feeds the handler compiler. Both child hypotheses quantify over
+all bitmap/frame inputs, unlike HOL's argument-specific `comp_ind` hypotheses.
+All source handler payloads remain arbitrary. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml"
   "comp_no_shmemop" (words_as_type_indexed_bitvec)]
 theorem compNoShmemopHandledCall {width : Nat} [NeZero width]

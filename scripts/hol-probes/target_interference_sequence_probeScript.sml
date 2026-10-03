@@ -1,0 +1,21 @@
+load "preamble";
+load "targetPropsTheory";
+open simpLib HolKernel Parse boolLib bossLib preamble targetPropsTheory;
+val _ = print("next_interference_type=" ^ type_to_string(type_of ``next_interference``) ^ "\n");
+val _ = if null(hyp next_interference_def) then (print "next_interference_definition="; print_term(concl next_interference_def); print "\n") else raise Fail "next_interference hypotheses";
+val _ = print("interference_app_seq_type=" ^ type_to_string(type_of ``interference_app_seq``) ^ "\n");
+val _ = if null(hyp interference_app_seq_def) then (print "interference_app_seq_definition="; print_term(concl interference_app_seq_def); print "\n") else raise Fail "interference_app_seq hypotheses";
+val _ = print("interference_count_type=" ^ type_to_string(type_of ``interference_count``) ^ "\n");
+val _ = if null(hyp interference_count_def) then (print "interference_count_definition="; print_term(concl interference_count_def); print "\n") else raise Fail "interference_count hypotheses";
+val _ = print("interference_pos_type=" ^ type_to_string(type_of ``interference_pos``) ^ "\n");
+val _ = if null(hyp interference_pos_def) then (print "interference_pos_definition="; print_term(concl interference_pos_def); print "\n") else raise Fail "interference_pos hypotheses";
+fun checked label q = let val th = prove(q,SIMP_TAC(srw_ss())[interference_app_seq_def,interference_count_def]) in if null(hyp th) andalso aconv (concl th) q then print(label ^ "=T\n") else raise Fail label end;
+val _ = checked "sequence_zero" ``interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms 0 = next_interference mc ffi ms``;
+val _ = checked "count_zero" ``interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms 0 = 0``;
+
+val _ = checked "sequence_absent" ``next_interference (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms = NONE ==> interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms (SUC n) = NONE``;
+val _ = checked "sequence_present" ``next_interference (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms = SOME(app,mc',ffi') ==> interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms (SUC n) = interference_app_seq mc' ffi' (app_post app) n``;
+val _ = checked "count_absent" ``interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = NONE ==> interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms (SUC n) = interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n``;
+val _ = checked "count_present_true" ``interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(app,mc',ffi') /\ P app ==> interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms (SUC n) = interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n + 1``;
+val _ = checked "count_present_false" ``interference_app_seq (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n = SOME(app,mc',ffi') /\ ~P app ==> interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms (SUC n) = interference_count P (mc:(8,num,num)machine_config) (ffi:num ffi_state) ms n``;
+val _ = OS.Process.exit OS.Process.success;

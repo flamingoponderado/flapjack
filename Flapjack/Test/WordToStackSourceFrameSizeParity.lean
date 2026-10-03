@@ -1365,4 +1365,3 @@ example : let t := pushEnv (sptInsert 4 (.word 5) .ln, sptInsert 3 (.loc 1 2) .l
     ([(some 2,[(4,.word 5)],[(3,.loc 1 2)],some (9,7,8)),(some 2,[],[],some (11,12,13))], some 2, some 11, some 11, 1, some (.word 42)) := by
   simp [pushEnv, setStore, base, frameView, wordSemStackSize, wordSemStackSizeFrame, wordSemOptionAdd, wordSemEnvToList, wordSemListRearrange, wordSemOptionMax, FUPDATE_HOL]
   decide +kernel
-

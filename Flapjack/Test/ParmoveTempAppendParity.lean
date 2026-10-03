@@ -31,4 +31,19 @@ example : notUseTempBeforeAssign ([(some false, none)] : List (Option Bool × Op
 example : notUseTempBeforeAssign ([(none, some 7), (some true, none)] : List (Option Bool × Option Nat)) = true := rfl
 example : notUseTempBeforeAssign ([(none, none)] : List (Option Bool × Option Nat)) = false := rfl
 
+-- Insert (real destination, real source) original observations.
+-- nti_empty=T
+example : notUseTempBeforeAssign (([] : List (Move Nat)) ++ [(some 1, some 2)] ++ []) = true := rfl
+-- nti_real_ok=T
+example : notUseTempBeforeAssign ([(some 1, some 2)] ++ [(some 5, some 6)] ++ [(some 3, some 4)]) = true := rfl
+-- nti_read_bad=F
+example : notUseTempBeforeAssign ([(some 1, none)] ++ [(some 2, some 3)] ++ []) = false := rfl
+-- nti_write_first=T
+example : notUseTempBeforeAssign ([(none, some 1)] ++ [(some 3, some 4)] ++ [(some 2, none)]) = true := rfl
+-- nti_bad_append=F
+example : notUseTempBeforeAssign ([(some 1, some 2)] ++ [(some 4, some 5)] ++ [(some 3, none)]) = false := rfl
+-- nti_append_ok=T
+example : notUseTempBeforeAssign ([(some 1, some 2)] ++ [(some 4, some 5)] ++ [(none, some 3)]) = true := rfl
+
+
 end Flapjack.Test.ParmoveTempAppendParity

@@ -1,0 +1,6 @@
+pos_tail_hit_full_statement=next_interference mc ffi ms = SOME (app0,mcc,ffic) ∧ P app0 ⇒
+interference_pos P mc ffi ms (SUC k) =
+OPTION_MAP SUC (interference_pos P mcc ffic (app_post app0) k)
+pos_tail_miss_full_statement=next_interference mc ffi ms = SOME (app0,mcc,ffic) ∧ ¬P app0 ⇒
+interference_pos P mc ffi ms k =
+OPTION_MAP SUC (interference_pos P mcc ffic (app_post app0) k)

@@ -1,0 +1,9 @@
+lab_len_pos_ok_even_prefix_zero=∀(pos :num) (ls :α line list).
+  EVEN pos ∧ lab_len_pos_ok pos ls ⇒ label_prefix_zero ls
+lab_len_pos_ok_even_prefix_zero_types=(pos :num)::num;(ls :α line list)::α line list;
+zero_label_chain=T
+odd_guard_necessary=T
+parity_guard_necessary=T
+empty_width1=T
+malformed_nonlabel=T
+large_width80=T

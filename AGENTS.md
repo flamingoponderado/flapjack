@@ -99,6 +99,14 @@ temporary strategic focus here or claim a blocked parent merely because it is
 high priority. The coordinator keeps bead priorities aligned with the current
 goal.
 
+Do not wait for a coordinator assignment to continue. Claim ready work in your
+area and coordinate directly with peers about sharing or taking over a
+prerequisite, especially one blocking your own work. Check existing claims and
+pending deliveries first; agree on ownership before taking over active work.
+If blocked, record the genuine dependency, release the blocked parent, and pick
+an available prerequisite or another ready task. Work awaiting integration may
+be consumed by an ordinary peer merge; its acceptance status stays unchanged.
+
 Persistent agent goals describe the overall fleet mission, not a particular
 bead or temporary assignment. Send individual assignments as ordinary messages
 and use the shared database to choose subsequent work. Completing a bead is a
@@ -151,7 +159,10 @@ not close its beads or certify its ports: coordinator acceptance and the usual
 source-comparison requirements still apply.
 
 Before reporting a port complete, build affected Lean modules, run `lake test`,
-`scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. For executable
+`scripts/check-hol-refs.py`, and `scripts/check-warnings.sh`. The warning gate
+excludes diagnostics from `Flapjack/Test/`, as requested by the maintainer;
+warnings from other modules and all build errors still fail the gate. Tests
+remain default build targets and must pass `lake test`. For executable
 compiler changes, compare the executed output with original Pancake where an
 oracle exists; see `docs/PARITY-TESTING.md`. State which checks actually ran and
 which remain pending (including CI).
@@ -163,6 +174,9 @@ Lake artifacts, and run focused tests first. Independent reference, mapping,
 and probe checks may run concurrently. `check-warnings.sh` invokes Lake, so
 run it sequentially with other Lake commands; do not run multiple Lake builds
 against the same worktree at once.
+Treat `check_hol_ref_export.py` and the HOL checker unit suite as Lake users,
+too: their native-export regression can build modules. Run them sequentially
+with builds, `lake test`, and the warning check to avoid artifact-write races.
 Run the full required suite before reporting a branch ready and again on the
 coordinator's merged tree before integration. Profile a persistently slow
 theorem or checker and fix the bottleneck; never shorten default build targets
@@ -425,6 +439,44 @@ authorize changed quantifiers, hypotheses, conclusions, `BEq` side conditions,
 or word-model differences, and the manifest must use status
 `reviewed_fmap_as_finite_support_result` after source comparison.
 
+**Qualify standalone finite-map input parameters.** Use
+`(fmap_as_finite_support_parameters := [binder, ...])` for explicitly named
+HOL `|->` inputs represented directly by `HolFiniteMapExact`, when the result
+is not a finite map. Each binder must have that explicit carrier and a
+same-module kernel-checked
+`holFmapAsFiniteSupportParamWitness_<declaration>_<binder>` establishing its
+lookup/finite-support codec roundtrip. This is distinct from qualifiers for
+structure fields and map-valued results. Source review must preserve binder
+order, hypotheses, and conclusions; the representation witness and checker
+do not prove HOL-to-Lean correspondence or permit other statement differences.
+Record the named parameters in the reviewed manifest, with the matching
+`reviewed_fmap_as_finite_support_parameters` status (or its supported combined
+status).
+
+**Qualify observations of computed finite-map results.** Use
+`(fmap_as_finite_support_result_observations := [Producer, ...])` only
+for explicitly named imported map producers used in the tagged observer's
+type. Each producer must resolve uniquely to an imported tagged declaration,
+return `HolFiniteMapExact` directly, carry `fmap_as_finite_support_result`,
+and have its checked same-module canonical lookup witness and a
+`reviewed_fmap_as_finite_support_result` manifest row with source review.
+Local declarations or observer binders must not shadow the producer; short
+names ambiguous among imported declarations are rejected. The producer list
+must be nonempty, distinct, used in the observer signature, and identical in
+the attribute and observer manifest row. Use status
+`reviewed_fmap_as_finite_support_result_observations` after separately
+comparing the observer's complete HOL statement and carriers.
+
+This qualifier records only the canonical representation of those computed
+map results. It does not qualify an observer's own map parameters, authorize
+raw function maps, change any quantifier or hypothesis, or establish the
+observer from producer acceptance. It cannot combine with any other
+representation qualifier. The reference checker validates producer resolution,
+usage, result carrier, witness and manifest evidence syntactically; the
+elaborated-attribute export checks manifest agreement and Lean checks the
+witness. None establishes cross-language correspondence. Complete source
+review of both the producer and observer remains required.
+
 **Qualify multi-carrier finite-map relations.** Use
 `(fmap_as_finite_support_relation := [Carrier.field, ...])` when a HOL relation
 mentions multiple carrier structures and needs explicit ownership for the
@@ -597,7 +649,15 @@ records that representation only: it authorizes no change to clauses,
 hypotheses, conclusions, NaN or flag behavior. `check-hol-refs.py` requires
 the qualifier exactly on the tagged declarations whose own source (signature
 and body, comments excluded) names a rendering declaration, and rejects it
-elsewhere. A declaration that merely calls a qualified declaration (for
+elsewhere, except for the reviewed bit-only forms `HolFloat`,
+`holFloatIsNormal`, `holFloatIsSubnormal`, `holFloatNegate`, `holFloatAbs`,
+`holFp64ToFloat`, `holFloatToFp64`, `holFp64Abs`, `holFp64Negate`,
+`holFp32ToFloat`, and `holFloatToFp32`.
+The checker exempts these forms only while their canonical bodies, namespace,
+and unique declaration ownership pass its fail-closed checks; real-dependent
+operations still require the qualifier. These checks do not establish
+HOL-to-Lean equivalence or replace source review.
+A declaration that merely calls a qualified declaration (for
 example the wordSem `evaluate` calling `inst`) is a dependent: it does not
 carry the qualifier but must record `"inherits_reals_as_rational_cuts": true`
 and a note naming the inherited assumption in the theorem map.

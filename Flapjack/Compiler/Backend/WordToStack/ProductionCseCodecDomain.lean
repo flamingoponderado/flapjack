@@ -7,7 +7,7 @@ open WordProgCarrierCodec
 open RiscV
 
 /-- Flapjack-only fact substitution preserves accepted program constructors. -/
-private theorem factDomain {width : Nat} (data : WordCseKnowledge)
+private theorem factDomain {width : Nat} [WordCseHash (BitVec width)] (data : WordCseKnowledge)
     (table : WordCseFactMap) (register : Nat) (key : List Nat)
     (instruction : WordProg (BitVec width))
     (insert : WordCseKnowledge → Nat → WordCseKnowledge)
@@ -17,7 +17,7 @@ private theorem factDomain {width : Nat} (data : WordCseKnowledge)
   split <;> split <;> simp_all [supportsCodec]
 
 /-- Flapjack-only constant fact recording emits the original accepted constant. -/
-private theorem constantDomain {width : Nat} (data : WordCseKnowledge)
+private theorem constantDomain {width : Nat} [WordCseHash (BitVec width)] (data : WordCseKnowledge)
     (register : Nat) (value : BitVec width) :
     supportsCodec (wordCseAddToDataConst data register value).1 = true := by
   unfold wordCseAddToDataConst
@@ -26,15 +26,19 @@ private theorem constantDomain {width : Nat} (data : WordCseKnowledge)
 
 /-- Full actual instruction CSE codec domain, without well-formed knowledge
 assumptions. The unsupported five-register primitive is never recorded. -/
-private theorem cseInstructionDomain {width : Nat} (data : WordCseKnowledge)
+private theorem cseInstructionDomain {width : Nat} [WordCseHash (BitVec width)] (data : WordCseKnowledge)
     (instruction : WordInst (BitVec width)) :
     supportsCodec (wordCseInst data instruction).1 = supportsCodec (.inst instruction) := by
   cases instruction with
   | arith operation =>
-    cases operation <;>
-      simp [wordCseInst, wordCseCanonicalArith, wordCseCanMemArith,
-        wordCseAddToData, supportsCodec]
-    all_goals repeat' (split <;> simp_all [supportsCodec, factDomain])
+    cases operation <;> simp only [wordCseInst]
+    all_goals try dsimp only
+    -- Split the actual outer sharing decision before unfolding its dispatch.
+    -- This works for arbitrary diagnostic instances; the five-register case
+    -- still reduces to the literal false branch.
+    all_goals first | rfl | skip
+    all_goals split <;>
+      simp_all [supportsCodec, wordCseAddToData, wordCseCanonicalArith, factDomain]
   | const register value =>
     simp [wordCseInst, supportsCodec]
     split <;> simp_all [supportsCodec, constantDomain]
@@ -47,7 +51,7 @@ private theorem cseInstructionDomain {width : Nat} (data : WordCseKnowledge)
 
 /-- Full production CSE recursion, with arbitrary knowledge and both Call
 continuations. Flapjack-only carrier closure, not a HOL theorem port. -/
-private theorem cseDomain {width : Nat} (data : WordCseKnowledge)
+private theorem cseDomain {width : Nat} [WordCseHash (BitVec width)] (data : WordCseKnowledge)
     (program : WordProg (BitVec width)) :
     supportsCodec (wordCseProg data program).1 = supportsCodec program := by
   fun_induction wordApplyColour (fun name => name) program generalizing data <;>
@@ -71,7 +75,7 @@ private theorem cseDomain {width : Nat} (data : WordCseKnowledge)
 recursion for arbitrary knowledge. No desired output, valid-knowledge, codec
 success or successful-pass premise is assumed. Flapjack-only infrastructure;
 there is no HOL original theorem about the production partial codec. -/
-theorem wordLangProgToHOL_wordCseProg_isSome {width : Nat}
+theorem wordLangProgToHOL_wordCseProg_isSome {width : Nat} [WordCseHash (BitVec width)]
     (data : WordCseKnowledge) (program : WordProg (BitVec width)) :
     (wordLangProgToHOL (wordCseProg data program).1).isSome =
       (wordLangProgToHOL program).isSome := by
@@ -81,7 +85,7 @@ theorem wordLangProgToHOL_wordCseProg_isSome {width : Nat}
 /-- The actual production CSE wrapper preserves exactly the codec domain.
 Other optimization passes and native frame/route remain separate obligations.
 Flapjack-only carrier infrastructure, not a HOL port. -/
-theorem wordLangProgToHOL_wordCseProp_isSome {width : Nat}
+theorem wordLangProgToHOL_wordCseProp_isSome {width : Nat} [WordCseHash (BitVec width)]
     (program : WordProg (BitVec width)) :
     (wordLangProgToHOL (wordCseProp program)).isSome =
       (wordLangProgToHOL program).isSome :=

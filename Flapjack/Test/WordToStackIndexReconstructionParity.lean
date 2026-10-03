@@ -748,4 +748,3 @@ example : (sptAListLookup 112 (indexList ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
 -- ir_lookup_6_99_900
 example : (sptAListLookup 900 (indexList ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : List Nat) 99), ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : List Nat)[(12+99)-(900+1)]?, decide (900 < 12+99)) = (none, some 0, false) := by decide +kernel
-

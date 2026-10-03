@@ -1,0 +1,18 @@
+load "bossLib";
+load "preamble";
+load "miscTheory";
+open bossLib HolKernel Parse preamble miscTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "="); print_term(concl th); print "\n");
+fun types label th = (print(label ^ "="); app (fn v => print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";")) (fst(strip_forall(concl th)) @ free_vars(concl th)); print "\n");
+val _ = capture "TAKE_FLAT_REPLICATE_LEQ" TAKE_FLAT_REPLICATE_LEQ;
+val _ = types "TAKE_FLAT_REPLICATE_LEQ_types" TAKE_FLAT_REPLICATE_LEQ;
+val _ = show_types := false;
+fun observe label q = (print(label ^ "="); print_term(rconc(EVAL q)); print "\n");
+val _ = observe "prefix_two_chunks" ``TAKE (2*3) (FLAT (REPLICATE 4 [1;2;3])) = [1;2;3;1;2;3]``;
+val _ = observe "equal_counts" ``TAKE (3*2) (FLAT (REPLICATE 3 [T;F])) = FLAT (REPLICATE 3 [T;F])``;
+val _ = observe "zero_count" ``TAKE (0*2) (FLAT (REPLICATE 5 [T;F])) = []``;
+val _ = observe "empty_chunks" ``TAKE (3*0) (FLAT (REPLICATE 5 ([]:num list))) = FLAT (REPLICATE 3 ([]:num list))``;
+val _ = observe "zero_source" ``TAKE (0*2) (FLAT (REPLICATE 0 [T;F])) = FLAT (REPLICATE 0 [T;F])``;
+val _ = observe "count_guard_required" ``TAKE (3*2) (FLAT (REPLICATE 2 [T;F])) <> FLAT (REPLICATE 3 [T;F])``;
+val _ = observe "length_guard_required" ``TAKE (2*1) (FLAT (REPLICATE 3 [T;F])) <> FLAT (REPLICATE 2 [T;F])``;

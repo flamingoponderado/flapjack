@@ -1,0 +1,10 @@
+stub_names_def=⊢ stub_names () = [((0 :num),«_Init»); ((1 :num),«_Halt0»); ((2 :num),«_Halt2»)]
+stub_names_type=:unit -> (num # mlstring) list
+check_init_stubs_length=⊢ LENGTH (init_stubs (gen_gc :bool) (max_heap :num) (k :num) (start :num) :(num # α prog) list) + (2 :num) = stack_num_stubs
+init_stubs_type=:bool -> num -> num -> num -> (num # α prog) list
+stub_names_values=[((0 :num),«_Init»); ((1 :num),«_Halt0»); ((2 :num),«_Halt2»)]
+stub_names_bytes=[((0 :num),[(95 :num); (73 :num); (110 :num); (105 :num); (116 :num)]); ((1 :num),[(95 :num); (72 :num); (97 :num); (108 :num); (116 :num); (48 :num)]); ((2 :num),[(95 :num); (72 :num); (97 :num); (108 :num); (116 :num); (50 :num)])]
+stub_names_count=(3 :num)
+init_count_8_false=(5 :num)
+init_count_64_true=(5 :num)
+init_count_1_true=(5 :num)

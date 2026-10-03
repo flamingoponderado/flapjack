@@ -1,0 +1,40 @@
+code_similar_MAP_Section_num=∀(c1 :α sec list) (c2 :α sec list).
+  code_similar c1 c2 ⇒
+  MAP (Section_num :α sec -> num) c1 = MAP (Section_num :α sec -> num) c2
+code_similar_MAP_Section_num_types=(c1 :α sec list)::α sec list;(c2 :α sec list)::α sec list;
+code_similar_extract_labels=∀(code1 :α sec list) (code2 :α sec list).
+  code_similar code1 code2 ⇒
+  MAP
+    ((extract_labels :α line list -> (num # num) list) ∘
+     (Section_lines :α sec -> α line list)) code1 =
+  MAP
+    ((extract_labels :α line list -> (num # num) list) ∘
+     (Section_lines :α sec -> α line list)) code2
+code_similar_extract_labels_types=(code1 :α sec list)::α sec list;(code2 :α sec list)::α sec list;
+line_similar_line_get_code_labels=∀(l1 :α line) (l2 :α line).
+  line_similar l1 l2 ⇒ line_get_code_labels l1 = line_get_code_labels l2
+line_similar_line_get_code_labels_types=(l1 :α line)::α line;(l2 :α line)::α line;
+code_similar_get_code_labels=∀(c1 :α sec list) (c2 :α sec list).
+  code_similar c1 c2 ⇒ get_code_labels c1 = get_code_labels c2
+code_similar_get_code_labels_types=(c1 :α sec list)::α sec list;(c2 :α sec list)::α sec list;
+line_similar_line_get_labels=∀(l1 :α line) (l2 :α line).
+  line_similar l1 l2 ⇒ line_get_labels l1 = line_get_labels l2
+line_similar_line_get_labels_types=(l1 :α line)::α line;(l2 :α line)::α line;
+code_similar_get_labels=∀(c1 :α sec list) (c2 :α sec list).
+  code_similar c1 c2 ⇒ get_labels c1 = get_labels c2
+code_similar_get_labels_types=(c1 :α sec list)::α sec list;(c2 :α sec list)::α sec list;
+changed_encoding_similar=T
+section_numbers=T
+ordered_extraction=T
+reference_hit=T
+call_ignored=T
+code_section_owner=T
+code_wrong_owner=T
+empty_section_zero=T
+numbers_preserved=T
+extraction_preserved=T
+code_labels_preserved=T
+references_preserved=T
+label_names_preserved=T
+line_refs_preserved=T
+changed_reference_rejected=T
