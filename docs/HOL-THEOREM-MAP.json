@@ -80462,5 +80462,23 @@
     "hol_name": "star_move_lemma",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2733-2737 (local): p0 * p1 * p1' * p2 * p3 * p4 = p2 * (p1 * p1' * STAR p3 (p4 * p0)) for arbitrary assertions over an arbitrary heap-element type, HOL * as left-associated accepted SetSep.star; proof by AC from accepted STAR_ASSOC/STAR_COMM ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/CallReturning/Execution.lean",
+    "lean_name": "compCorrectCallReturningNone",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead9.4.2: full original comp_correct motive5719-5751 and NONE returning Call8170-9020. Entire Seq.Simulation quantifies original k/f/frame/sourcePost/target/result/bitmap context/compiled/lens; preserves actual source evaluation/nonError/full stateRel/postAllocConventions/flat/compilation/bitmap length-offset-prefix/labels/maxVar hypotheses, existential extra clock actual whole literal compiled Call run and full compCorrectResult including mismatch HaltWord2/event prefix/source overflow, matching Return physical placements, matching Exception pushLocals/locals union/reg1/LASTN(original source.handler+1)lens, NONE/Break/Continue relations and terminal FFI/clock equality. Only original guarded callee and continuation evaluate_ind IHs; actual source guards, body run and actual compiled programs are derived internally. Original argument failure before clock test, zero-clock case, canonical callee frame allocation failure, and all successful callee outcomes/target resource alternatives covered. Actual source-selected key/body/frame/metadata and erased-link native findCode share one coherent witness; actual prelude/entry/labels/bitmap preservation derive body IH context. Normal return reconstructs popEnv/copy/continuation guarded IH and sums actual clock allowances; NONE exception derives original depth/LASTN from evaluate_stack_swap rather than added postrelation/depth premise. Full native Call and prelude evaluation compose actual existential runs. No target-run/bodycontract/success/resource/poststate assumption in full case; no permanent allocation guard. Canonical imported source fpRegs/store and target regs/fpRegs/store codecs reexported same module; Spt/list unchanged, positive BitVec width/NeZero and C/F Type0 hosts retained. Full evaluator closure inherits reals_as_rational_cuts assurance limit, no additional FP equivalence claim. Full original motive and source case compared directly; case helpers kernel checked, full case kernel4 PASS before tagging. Proof-side case, no executable implementation change. Coordinator source acceptance and entire pass theorem remain pending.",
+    "hol_line": 5756
   }
 ]
