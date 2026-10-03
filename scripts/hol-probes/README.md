@@ -6467,4 +6467,3 @@ codec/lift/lower definitions and 862 independently calculated observations:
 interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
-
