@@ -6901,3 +6901,9 @@ run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_c
 run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
   no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_arithmetic_probeScript.sml riscv_target_arithmetic_probe.out \
+  arithmetic_lem5_statement arithmetic_lem5_types arithmetic_lem5_hypotheses arithmetic_lem5_proved \
+  arithmetic_lem8_statement arithmetic_lem8_types arithmetic_lem8_hypotheses arithmetic_lem8_proved \
+  arithmetic_lem9_statement arithmetic_lem9_types arithmetic_lem9_sum_type arithmetic_lem9_hypotheses arithmetic_lem9_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

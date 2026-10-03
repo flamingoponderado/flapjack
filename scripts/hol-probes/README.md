@@ -7327,3 +7327,18 @@ all source field values and every immediate-policy operator boundary. These
 captures and kernel proofs remain evidence for source review, not a proof of
 HOL-to-Lean equivalence or full target execution correctness.
 `stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+## Native RISC-V encoder arithmetic prerequisites
+
+`riscv_target_arithmetic_probeScript.sml` replays the unchanged local `lem5`,
+`lem8` and `lem9` proofs from original `riscv_targetProofScript.sml:67–100`.
+The closed statements retain every free/quantified operand, the original sole
+alignment premise, the fixed word64 input and word65 carry-expression types,
+and both carry equivalences (with and without carry-in). Each replay has zero
+hypotheses and a kernel `EQT_INTRO` result `T`. The strict checker compares the
+literal replay terms/proofs to the pinned original, and rejects captured
+statement, type, hypothesis or proof-result drift. Lean ports live beneath the
+existing source counterpart in `RiscV/CorrectnessEncoding/Arithmetic.lean`;
+their generic consumers use the full statements. This source review and these
+kernel proofs do not establish cross-assistant equivalence or the full
+`riscv_encoder_correct` theorem; its target-state/step obligations remain open.

@@ -80721,5 +80721,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: original lab_to_targetProofScript10801-10829 full implication no_install_or_no_share_mem code ffi_names => no_install_or_no_share_mem(filter_skip code) ffi_names. Fresh full type confirms independent code:alpha sec list and ffi_names:ffiname list, hyp0/kernel replay. Full native Section/Line/HolAsm/HolAddr/HolRegImm/MlString and FFI-name carriers retained. Both original safety alternatives, original universally quantified ExtCall witnesses, and same original name list are preserved. Source noShareMem alternative uses the accepted exact filter law; noInstall alternative derives actual original fetched Install PC from asmFetchAuxFilterSkip, never assumes an existential source PC or successful compiler. words_as_type_indexed_bitvec records positive BitVec width/NeZero translation only. Fresh original lab_to_target_filter_safety_probe.out. Actual full semantics assembly remains unfinished."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem5",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "aligned_bit_one",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL67-72 retains the sole aligned2 premise and fixed word64 c. Exact holAligned/holAlign slice clears bit1. HOL free c is explicitly bound in Lean; conclusion negated bit is getLsbD1=false. No target-state or execution premise. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem8",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "singleton_or",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL82-86 retains every Boolean b,x,y and fixed word64 singleton v2w conversion. HOL Boolean equality between propositions is Lean iff; x OR y is Bool disjunction and word OR is BitVec bitwise OR. HOL free variables are explicit Lean binders. No added premise. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem9",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "carry_widen",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL88-100 retains both quantified word64 operands and BOTH conjunctions, including carry-in one. w2n is toNat; w2w to word65 is zero-extending setWidth65, <=+ is unsigned ule=true, and the numeric/word threshold is2^64. No operand bounds or target-run premise supplied; width bounds are internal carrier facts. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
   }
 ]
