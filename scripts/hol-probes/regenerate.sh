@@ -6641,3 +6641,11 @@ run_probe l3_write_pc_probeScript.sml l3_write_pc_probe.out \
 run_probe l3_decode_any_probeScript.sml l3_decode_any_probe.out \
   DecodeAny_type DecodeAny_hypotheses DecodeAny_half_equation DecodeAny_half_proof DecodeAny_word_equation DecodeAny_word_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe pan_structs_exp_atomic_faithful_probeScript.sml pan_structs_exp_atomic_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_const_statement compile_exp_correct_base_statement compile_exp_correct_top_statement compile_exp_correct_cases_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_filter_location_lookup_probeScript.sml lab_filter_location_lookup_probe.out \
+  loc_to_pc_eq_NONE loc_to_pc_eq_NONE_types loc_to_pc_eq_NONE_hypotheses loc_to_pc_eq_NONE_proved \
+  loc_to_pc_eq_SOME loc_to_pc_eq_SOME_types loc_to_pc_eq_SOME_hypotheses loc_to_pc_eq_SOME_proved \
+  loc_to_pc_adjust_pc_append loc_to_pc_adjust_pc_append_types loc_to_pc_adjust_pc_append_hypotheses loc_to_pc_adjust_pc_append_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
