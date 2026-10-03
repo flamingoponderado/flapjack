@@ -5913,3 +5913,7 @@ run_probe lab_to_target_shmem_correctness_probeScript.sml lab_to_target_shmem_co
   full_instance first_index last_index prefixed_load_name prefixed_store_name load_record store_record nonshared_intervals \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_if_probeScript.sml stack_code_bitmaps_if_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_if_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
