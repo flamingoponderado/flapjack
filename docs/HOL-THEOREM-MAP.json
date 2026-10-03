@@ -75570,5 +75570,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:10456-10468: original names/exit_names/maps/next register and actual loop_setup output equation; entire pre_alloc_conventions conclusion. Actual rename/fake sequence/move output projections discharged, no added bounds or validity premises. words_as_type_indexed_bitvec records positive HOL word width only; native List/Spt/WordLang carriers and all quantified variables preserved. Used instArgConvention clauses match original for the positive width bound here, despite its broader untagged helper domain."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "setupSSAProps2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "setup_ssa_props_2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10745-10761: same positive word width for source program and prologue as explicitly annotated in HOL; sole is_alloc_var limit premise gives all four actual setupSSA output conclusions (ssa_map_ok, allocation class, pre_alloc_conventions, limit bound). Derived from literal original rename properties and empty map invariant, with no evaluation or post-state assumption. words_as_type_indexed_bitvec records only positive HOL word dimension. Original List/Spt/WordLang carriers retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "loopSetup_propsLocal",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "loop_setup_props_local",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10470-10481: original loopSetup producer equation, ssa_map_ok and allocation-class premises imply output class, output map invariant and source counter bound. Literal two rename stages and original list_next_var_rename_props/list_next_var_rename_move_props discharge all conclusions; no extra freshness or target invariant premise. words_as_type_indexed_bitvec records only positive HOL word dimension. Original List/Spt/WordLang carriers retained."
   }
 ]
