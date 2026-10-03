@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
+import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
@@ -787,5 +788,743 @@ theorem enterCallee {width : Nat} [NeZero width] {C F : Type}
         change stack.drop (saved.stackSpace - (args1.length - k) + (args1.length - k)) = _ at tail
         rw [Nat.sub_add_cancel (show args1.length - k ≤ saved.stackSpace by omega)] at tail
         exact tail)
+
+/-- Flapjack factoring of the original indirect destination register bound.
+The shifted caller argument convention supplies a positive physical register;
+wReg2 chooses that register below k or the distinct k+1 scratch register.
+There is no separate HOL declaration for this case-local fact. -/
+theorem destinationRegisterBound {width : Nat} [NeZero width]
+    (k f frame : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat) (code : HolProg width) (destination : Sum Nat Nat)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (compiled : callDestNative dest args (k, f, frame) = (code, destination)) :
+    ∀ register, destination = .inr register → register ≠ 0 ∧ register ≠ k := by
+  have argsEq := (returningConventions k values names retCode l1 l2 dest args conventions).2.1
+  cases dest with
+  | some location =>
+    simp only [callDestNative, Prod.mk.injEq] at compiled
+    obtain ⟨_, rfl⟩ := compiled
+    intro register impossible
+    cases impossible
+  | none =>
+    by_cases empty : args.length = 0
+    · simp only [callDestNative, dif_pos empty, Prod.mk.injEq] at compiled
+      obtain ⟨_, rfl⟩ := compiled
+      intro register impossible
+      cases impossible
+    have nonempty : args ≠ [] := by simpa using empty
+    simp only [callDestNative, dif_neg empty, Prod.mk.injEq] at compiled
+    obtain ⟨_, rfl⟩ := compiled
+    have member : args.getLast nonempty ∈ args := List.getLast_mem nonempty
+    have mappedMember := Eq.mp (congrArg (fun items => args.getLast nonempty ∈ items) argsEq) member
+    obtain ⟨index, _, last⟩ := List.mem_map.mp mappedMember
+    intro register equal
+    have equalRegister := Sum.inr.inj equal
+    simp only [Compiler.Backend.WordToStackRegFormat.wReg2] at equalRegister
+    split at equalRegister
+    · simp only at equalRegister
+      rw [← equalRegister, ← last]
+      omega
+    · simp only at equalRegister
+      omega
+
+/-- Flapjack factoring of lookup preservation in the original returning-call
+prelude. Code growth preserves existing callee entries, moving arguments only
+changes register k, and the call clears register zero. The actual compiled
+indirect destination is distinct from both, as proved above. This is not a
+HOL pass-correctness statement or a target-run assumption. -/
+theorem findCodePreserved {width : Nat} [NeZero width] {α : Type}
+    (k : Nat) (destination : Sum Nat Nat)
+    (oldRegs newRegs : HolFiniteMapExact Nat (WordLocW width))
+    (oldCode newCode : Spt α) (program : α)
+    (avoids : ∀ register, destination = .inr register → register ≠ 0 ∧ register ≠ k)
+    (registers : ∀ register, register ≠ k → newRegs.lookup register = oldRegs.lookup register)
+    (growth : sptSubspt oldCode newCode)
+    (found : StackSemControl.findCode destination oldRegs oldCode = some program) :
+    StackSemControl.findCode destination (newRegs.eraseEq 0) newCode = some program := by
+  cases destination with
+  | inl location =>
+    exact (sptSubsptLookup oldCode newCode).mp growth location program found
+  | inr register =>
+    obtain ⟨notZero, notScratch⟩ := avoids register rfl
+    simp only [StackSemControl.findCode]
+    rw [HolFiniteMapExact.lookup_eraseEq, FDOMSUB_HOL, if_neg notZero, registers register notScratch]
+    simp only [StackSemControl.findCode] at found
+    cases lookupEq : oldRegs.lookup register with
+    | none => simp [lookupEq] at found
+    | some value =>
+      cases value with
+      | word word => simp [lookupEq] at found
+      | loc location offset =>
+        cases offset with
+        | zero =>
+          simp only [lookupEq] at found ⊢
+          exact (sptSubsptLookup oldCode newCode).mp growth location program found
+        | succ offset => simp [lookupEq] at found
+
+/-- Flapjack factoring of the actual destination/save/argument-move path
+at HOL 8170–8388. Every target run and the final callee lookup are constructed
+from the original source guards, compiler equations and caller relation.
+The space condition is the original StackArgs resource split, whose failure
+branch is retained separately. This is not the full comp_correct case. -/
+theorem prepareCalleeDestination {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps : AppList (BitVec width)) (n savedIndex : Nat)
+    (destinationCode savedCode : HolProg width) (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) = (savedCode, (savedBitmaps, savedIndex)))
+    (bitmapLength : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (bitmapPrefix : (appListAppend savedBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length)))
+    (space : Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k ≤ target.stackSpace) :
+    ∃ (destinationTarget saved moved : StackSemStateFiniteExact width C F)
+      (calleeCode : HolProg width) (calleeSize : Nat)
+      (calleeBs calleeBsPost : AppList (BitVec width)) (calleeIndex calleeIndexPost : Nat),
+      StackSemEvaluate.evaluate (destinationCode, target) = (none, destinationTarget) ∧
+      StackSemEvaluate.evaluate (savedCode, destinationTarget) = (none, saved) ∧
+      StackSemEvaluate.evaluate (stackArgsNative destination (args.length + 1) (k, f, frame), saved) =
+        (none, moved) ∧
+      stateRel ac k f frame source saved lens 0 ∧
+      stateRel ac k 0 0
+        {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+        saved (frame :: lens) 0 ∧
+      compileProgNative ac false prog args1.length k (calleeBs, calleeIndex) =
+        (calleeCode, calleeSize, (calleeBsPost, calleeIndexPost)) ∧
+      (appListAppend calleeBs).length ≤ calleeIndex ∧
+      calleeIndex - (appListAppend calleeBs).length ≤ target.bitmaps.length ∧
+      (appListAppend calleeBsPost).IsPrefix
+        (target.bitmaps.drop (calleeIndex - (appListAppend calleeBs).length)) ∧
+      ss.getD calleeSize = calleeSize ∧
+      StackSemControl.findCode destination (moved.regs.eraseEq 0) moved.code = some calleeCode ∧
+      saved.stackSpace = target.stackSpace ∧
+      ∃ (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+        moved = {saved with
+          stackSpace := saved.stackSpace -
+            Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k,
+          stack := stack, regs := regs} := by
+  have originalGuards := guards
+  obtain ⟨get, bad, find, _, _⟩ := originalGuards
+  obtain ⟨destinationTarget, destinationRun, destinationRelation,
+    destinationLength, destinationSpace, callees⟩ :=
+    CallDest.callDestLemma ac k f frame dest args source target lens destinationCode destination xs
+      (some (values, names, retCode, l1, l2)) ⟨bad, related, destinationCompile, get⟩
+  obtain ⟨calleeBs, calleeIndex, calleeBsPost, calleeIndexPost, calleeSize, calleeCode,
+    calleeCompile, calleeBitmapLength, calleeBitmapBound, calleeBitmapPrefix,
+    calleeLocalsSize, found⟩ := callees args1 prog ss find
+  obtain ⟨destinationBitmaps, _⟩ := CallDest.callDest_preserves dest args (k, f, frame)
+    destinationCode destination target destinationTarget destinationCompile destinationRun
+  obtain ⟨saved, savedRun, pushedRelation, savedRelation, savedLength, savedSpace, savedRegisters⟩ :=
+    evaluateSavedFrame ac k f frame values names retCode l1 l2 dest args source destinationTarget lens
+      xs args1 prog ss envs bs savedBitmaps n savedIndex savedCode guards destinationRelation
+      conventions maximum savedCompile bitmapLength (by rwa [destinationBitmaps])
+      (by rwa [destinationBitmaps])
+  have useStack : saved.useStack = true := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  have frameBound : saved.stackSpace + f ≤ saved.stack.length := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  have moveBound := stackArgumentFrameBound ac k f frame values names retCode l1 l2 dest args
+    source saved lens xs args1 prog ss envs destinationCode destination guards savedRelation
+    conventions maximum destinationCompile
+  obtain ⟨moved, stack, regs, moveRun, movedState, moveRegisters, _, _, _, _⟩ :=
+    evaluateStackArguments k f frame destination (args.length + 1) saved useStack frameBound
+      moveBound (by rw [savedSpace, destinationSpace]; exact space)
+  have savedGrowth := (Compiler.Backend.StackProps.EvaluateMono.evaluateMono savedCode
+    destinationTarget saved none savedRun).2
+  have movedGrowth := (Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    (stackArgsNative destination (args.length + 1) (k, f, frame)) saved moved none moveRun).2
+  have registers : ∀ register, register ≠ k → moved.regs.lookup register =
+      destinationTarget.regs.lookup register := by
+    intro register notScratch
+    exact (moveRegisters register notScratch).trans (savedRegisters register notScratch)
+  have finalFound := findCodePreserved k destination destinationTarget.regs moved.regs
+    destinationTarget.code moved.code calleeCode
+    (destinationRegisterBound k f frame values names retCode l1 l2 dest args destinationCode destination
+      conventions destinationCompile)
+    registers (sptSubsptTrans _ _ _ ⟨savedGrowth, movedGrowth⟩) found
+  exact ⟨destinationTarget, saved, moved, calleeCode, calleeSize, calleeBs, calleeBsPost,
+    calleeIndex, calleeIndexPost, destinationRun, savedRun, moveRun, savedRelation, pushedRelation,
+    calleeCompile, calleeBitmapLength, calleeBitmapBound, calleeBitmapPrefix, calleeLocalsSize,
+    finalFound, savedSpace.trans destinationSpace, stack, regs, movedState⟩
+
+/-- Flapjack factoring of the original callee non-error obligation before
+applying its guarded induction hypothesis (HOL 8575–8585). It is derived from
+the actual whole source Call run, never supplied as an extra pass hypothesis. -/
+theorem calleeNotError {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost calleePost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost)) (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, calleePost)) : bodyResult ≠ some .error := by
+  intro error
+  rw [error] at bodyRun
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [Prod.mk.injEq] at execution
+  exact absurd execution.1.symm notError
+
+/-- Flapjack factoring of the original source overflow fact for returning
+Call allocation failures (HOL 8278–8294 and 8413–8427). The stack_size_rel of
+the actual saved frame and compiler-derived callee local size imply that the
+source call_env exceeds its stack limit. No source overflow is assumed. -/
+theorem calleeStackOverflow {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerFrame calleeSize : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (saved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (args1 : List (WordLocW width)) (ss : Option Nat)
+    (pushedRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (calleeLocalsSize : ss.getD calleeSize = calleeSize)
+    (insufficient : saved.stackSpace < calleeSize) :
+    let callee := WordSemStateFiniteExact.callEnv args1 ss
+      (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))
+    miscThe (callee.stackLimit + 1) callee.stackMax > callee.stackLimit := by
+  let cleared := {WordSemStateFiniteExact.pushEnv envs none source with
+    locals := .ln, localsSize := some 0}
+  change stateRel ac k 0 0 cleared saved (callerFrame :: lens) 0 at pushedRelation
+  unfold stateRel at pushedRelation
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+    _, _, _, _, stackBound, _, _, _, resource, _⟩ := pushedRelation
+  change miscThe (cleared.stackLimit + 1)
+    (wordSemOptionMax cleared.stackMax (wordSemOptionAdd (wordSemStackSize cleared.stack) ss)) >
+    cleared.stackLimit
+  obtain ⟨_, limit, maximum⟩ := resource
+  rw [limit]
+  rcases oldValue : cleared.stackMax with _ | oldMaximum
+  · simp [wordSemOptionMax, miscThe]
+  obtain ⟨_, _, size, oldSize, sizeValue⟩ := maximum oldMaximum oldValue
+  rcases sizeOption : ss with _ | localSize
+  · simp [wordSemOptionMax, wordSemOptionAdd, miscThe]
+  rw [sizeOption] at calleeLocalsSize
+  simp only [Option.getD_some] at calleeLocalsSize
+  subst localSize
+  simp only [oldSize, wordSemOptionMax, wordSemOptionAdd, miscThe]
+  have := Nat.le_max_right oldMaximum (size + calleeSize)
+  omega
+
+/-- Flapjack factoring of the complete source resource conclusion in the
+original allocation-failure branches. Timeout, callee outcomes, pop_env and
+continuation evaluation all retain the exceeded-resource fact. The overflow
+is derived from the actual saved-frame relation, not an added source premise. -/
+theorem sourceCallOverflow {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerFrame calleeSize : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (saved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (result : Option (WordSemResult width)) (xs args1 : List (WordLocW width))
+    (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (pushedRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (calleeLocalsSize : ss.getD calleeSize = calleeSize)
+    (insufficient : saved.stackSpace < calleeSize)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost)) :
+    miscThe (sourcePost.stackLimit + 1) sourcePost.stackMax > sourcePost.stackLimit := by
+  have overflow := calleeStackOverflow ac k callerFrame calleeSize source saved lens envs args1 ss
+    pushedRelation calleeLocalsSize insufficient
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  by_cases clock : source.clock = 0
+  · rw [dif_pos clock] at execution
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+    exact overflow
+  rw [dif_neg clock, WordSemStateFiniteExact.fix_clock_evaluate] at execution
+  rcases bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) with
+      ⟨bodyResult, bodyPost⟩
+  have bodyOverflow := WordSemStateFiniteExact.evaluate_stack_limit_stack_max prog _ bodyResult bodyPost
+    ⟨bodyRun, overflow⟩
+  rw [bodyRun] at execution
+  rcases bodyResult with _ | bodyResult
+  · obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+    exact bodyOverflow
+  cases bodyResult <;> try (
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+    exact bodyOverflow)
+  case result location returned =>
+    simp only at execution
+    by_cases invalid : location ≠ .loc l1 l2 ∨ returned.length ≠ values.length
+    · rw [if_pos invalid] at execution
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+      exact bodyOverflow
+    rw [if_neg invalid] at execution
+    rcases pop : WordSemStateFiniteExact.popEnv bodyPost with _ | popped
+    · rw [pop] at execution
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+      exact bodyOverflow
+    rw [pop] at execution
+    simp only at execution
+    have properties := WordSemStateFiniteExact.popEnvConst bodyPost popped pop
+    have poppedLimit : popped.stackLimit = bodyPost.stackLimit := by
+      aesop (config := { enableSimp := false })
+    have poppedMaximum : popped.stackMax = bodyPost.stackMax := by
+      aesop (config := { enableSimp := false })
+    have poppedOverflow : miscThe (popped.stackLimit + 1) popped.stackMax > popped.stackLimit := by
+      rw [poppedLimit, poppedMaximum]
+      exact bodyOverflow
+    by_cases domain : sptDomainEqUnion popped.locals envs.1 envs.2
+    · rw [if_pos domain] at execution
+      exact WordSemStateFiniteExact.evaluate_stack_limit_stack_max retCode _ result sourcePost
+        ⟨execution, poppedOverflow⟩
+    · rw [if_neg domain] at execution
+      obtain ⟨rfl, rfl⟩ := Prod.mk.inj execution
+      exact poppedOverflow
+
+/-- Flapjack factoring of the full comp_correct result/resource conclusion
+for returning-call allocation failure. The concrete empty_env target result
+is Halt 2; its event prefix comes from the whole actual source evaluation and
+its exceeded-resource fact is proved above. Failure clock/space cover both
+original allocation points. This is a branch conclusion, not a full port. -/
+theorem allocationFailureResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (saved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (result : Option (WordSemResult width)) (xs args1 : List (WordLocW width))
+    (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width)) (failureClock failureSpace : Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source saved lens 0)
+    (pushedRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (calleeLocalsSize : ss.getD calleeSize = calleeSize)
+    (insufficient : saved.stackSpace < calleeSize)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost)) :
+    compCorrectResult ac k callerSize callerFrame source sourcePost
+      (StackSemStateOps.emptyEnv {saved with clock := failureClock, stackSpace := failureSpace})
+      result (some (.halt (.word (BitVec.ofNat width 2)))) lens := by
+  have overflow := sourceCallOverflow ac k callerFrame calleeSize values names retCode l1 l2
+    dest args source sourcePost saved lens result xs args1 prog ss envs guards pushedRelation
+    calleeLocalsSize insufficient execution
+  have events := WordSemStateFiniteExact.evaluate_io_events_mono
+    (.call (some (values, names, retCode, l1, l2)) dest args none) source result sourcePost execution
+  unfold stateRel at callerRelation
+  obtain ⟨_, _, _, ffi, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _,
+    dimension, _⟩ := callerRelation
+  have mismatch : result.map compileResult ≠ some (.halt (.word (BitVec.ofNat width 2))) := by
+    cases result with
+    | none => simp
+    | some value =>
+      intro same
+      exact CallHelpers.compileResultNot2 value dimension (Option.some.inj same)
+  unfold compCorrectResult
+  rw [if_pos mismatch]
+  refine ⟨rfl, ?_, ?_⟩
+  · change saved.ffi.ioEvents.IsPrefix sourcePost.ffi.ioEvents
+    rw [ffi]
+    exact events
+  · cases maximum : sourcePost.stackMax with
+    | none => simp
+    | some value => simpa only [maximum, miscThe, Option.getD_some] using overflow
+
+/-- Flapjack factoring of the original first allocation-failure branch.
+The whole compiled no-handler Call executes its actual destination/save prelude
+and fails in StackArgs before entering the callee. The exceeded-resource and
+event-prefix conclusions are derived from the actual source evaluation; no
+target execution or resource conclusion is assumed. This remains one branch
+of the unfinished full comp_correct case, with no separate HOL declaration. -/
+theorem compiledStackArgumentsFailure {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width))
+    (n savedIndex finalIndex : Nat) (destinationCode savedCode returnCode : HolProg width)
+    (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, f, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (compiled : HolProg width)
+    (compilation : compNative ac false
+      (.call (some (values, names, retCode, l1, l2)) dest args none) (bs, n) (k, f, frame) =
+      (compiled, (finalBitmaps, finalIndex)))
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost))
+    (insufficient : target.stackSpace <
+      Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length))) :
+    ∃ targetPost : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (compiled, target) =
+        (some (.halt (.word (BitVec.ofNat width 2))), targetPost) ∧
+      compCorrectResult ac k f frame source sourcePost targetPost result
+        (some (.halt (.word (BitVec.ofNat width 2)))) lens := by
+  obtain ⟨saved, preludeRun, pushedRelation, savedRelation, _, savedSpace⟩ :=
+    evaluatePrelude ac k f frame values names retCode l1 l2 dest args source target lens
+      xs args1 prog ss envs bs savedBitmaps finalBitmaps n savedIndex finalIndex
+      destinationCode savedCode returnCode destination guards related conventions maximum
+      destinationCompile savedCompile returnCompile lengthBound bitmapBound bitmapPrefix
+  obtain ⟨_, _, _, _, _, _, calleeSize, calleeFrame, _, _, _, _, _, _, _, _,
+    calleeLocalsSize, calleeShape, argumentBound, _⟩ :=
+    calleeCompilation ac k f frame values names retCode l1 l2 dest args source saved lens
+      xs args1 prog ss envs guards savedRelation
+  have countEq := stackArgumentCount values names retCode l1 l2 dest args source xs args1
+    prog ss envs k f frame destinationCode destination guards destinationCompile
+  have calleeSpace : saved.stackSpace < calleeSize := by
+    rw [savedSpace]
+    rw [countEq] at insufficient
+    split_ifs at calleeShape <;> omega
+  have useStack : saved.useStack = true := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  have argumentRun := evaluateStackArgumentsInsufficient k f frame destination (args.length + 1)
+    saved useStack (by rwa [savedSpace])
+  have branchResult := allocationFailureResult ac k f frame calleeSize values names retCode
+    l1 l2 dest args source sourcePost saved lens result xs args1 prog ss envs
+    saved.clock saved.stackSpace guards savedRelation pushedRelation calleeLocalsSize
+    calleeSpace execution
+  obtain ⟨get, bad, _, _, _⟩ := guards
+  obtain ⟨destinationTarget, destinationRun, _, _, _, _⟩ :=
+    CallDest.callDestLemma ac k f frame dest args source target lens destinationCode
+      destination xs (some (values, names, retCode, l1, l2))
+      ⟨bad, related, destinationCompile, get⟩
+  have savedRun := preludeRun 0
+  simp only [Nat.add_zero] at savedRun
+  rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+    destinationRun] at savedRun
+  simp only at savedRun
+  simp only [compNative, destinationCompile, savedCompile, returnCompile,
+    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+  obtain ⟨rfl, _⟩ := compilation
+  refine ⟨StackSemStateOps.emptyEnv saved, ?_, ?_⟩
+  · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      destinationRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, savedRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, argumentRun]
+  · exact branchResult
+
+/-- Flapjack execution factoring for the actual compile_prog callee allocation.
+The original insufficient-space branch executes its StackAlloc and returns
+Halt 2 before the compiled body. No target run is a premise, and there is no
+separate HOL declaration for this case-local equation. -/
+theorem compiledCalleeAllocationFailure {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (prog : WordLangProgHOL (BitVec width))
+    (argumentCount k : Nat) (bs bsPost : AppList (BitVec width) × Nat)
+    (calleeCode : HolProg width) (calleeSize : Nat)
+    (target : StackSemStateFiniteExact width C F)
+    (compiled : compileProgNative ac false prog argumentCount k bs =
+      (calleeCode, calleeSize, bsPost))
+    (useStack : target.useStack = true)
+    (insufficient : target.stackSpace < calleeSize - (argumentCount - k)) :
+    StackSemEvaluate.evaluate (calleeCode, target) =
+      (some (.halt (.word (BitVec.ofNat width 2))), StackSemStateOps.emptyEnv target) := by
+  simp only [compileProgNative, Prod.mk.injEq] at compiled
+  obtain ⟨rfl, size, _⟩ := compiled
+  rw [← size] at insufficient
+  rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+    StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [useStack]), if_pos insufficient]
+
+/-- Flapjack factoring of the original second allocation-failure branch.
+After the actual destination/save/argument prelude, the compiled Call enters
+its actual compiled callee and fails its frame allocation. The callee size
+is derived from code_rel, and the original resource branch remains explicit.
+The clock is positive here; timeout and successful-body/return branches remain
+part of the unfinished full comp_correct case. No separate HOL declaration. -/
+theorem compiledCalleeFrameFailure {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width))
+    (n savedIndex finalIndex : Nat) (destinationCode savedCode returnCode : HolProg width)
+    (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, f, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (compiled : HolProg width)
+    (compilation : compNative ac false
+      (.call (some (values, names, retCode, l1, l2)) dest args none) (bs, n) (k, f, frame) =
+      (compiled, (finalBitmaps, finalIndex)))
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost))
+    (space : Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k ≤
+      target.stackSpace)
+    (nonzero : source.clock ≠ 0)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length))) :
+    ∃ calleeSize : Nat, ss.getD calleeSize = calleeSize ∧
+      (target.stackSpace < calleeSize →
+        ∃ targetPost : StackSemStateFiniteExact width C F,
+          StackSemEvaluate.evaluate (compiled, target) =
+            (some (.halt (.word (BitVec.ofNat width 2))), targetPost) ∧
+          compCorrectResult ac k f frame source sourcePost targetPost result
+            (some (.halt (.word (BitVec.ofNat width 2)))) lens) := by
+  have savedPrefix := (compImpIsPrefix ac false retCode (savedBitmaps, savedIndex)
+    (k, f, frame) returnCode (finalBitmaps, finalIndex) returnCompile).trans bitmapPrefix
+  obtain ⟨destinationTarget, saved, moved, calleeCode, calleeSize, calleeBs, calleeBsPost,
+    calleeIndex, calleeIndexPost, destinationRun, savedRun, moveRun, savedRelation,
+    pushedRelation, calleeCompile, _, _, _, calleeLocalsSize, found, savedSpace,
+    stack, regs, movedState⟩ :=
+    prepareCalleeDestination ac k f frame values names retCode l1 l2 dest args source target lens
+      xs args1 prog ss envs bs savedBitmaps n savedIndex destinationCode savedCode destination
+      guards related conventions maximum destinationCompile savedCompile lengthBound bitmapBound
+      savedPrefix space
+  refine ⟨calleeSize, calleeLocalsSize, ?_⟩
+  intro insufficient
+  have countEq := stackArgumentCount values names retCode l1 l2 dest args source xs args1
+    prog ss envs k f frame destinationCode destination guards destinationCompile
+  have savedClock : saved.clock = source.clock := savedRelation.1.symm
+  have useStack : saved.useStack = true := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  subst moved
+  let moved : StackSemStateFiniteExact width C F := {saved with
+    stackSpace := saved.stackSpace -
+      Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k,
+    stack := stack, regs := regs}
+  let entry := StackSemStateOps.decClock (StackSemStateOps.setVar 0 (.loc l1 l2) moved)
+  have calleeRun := compiledCalleeAllocationFailure ac prog args1.length k
+    (calleeBs, calleeIndex) (calleeBsPost, calleeIndexPost) calleeCode calleeSize entry
+    calleeCompile (by simpa only [entry, moved, StackSemStateOps.decClock,
+      StackSemStateOps.setVar] using useStack) (by
+        change saved.stackSpace -
+          Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k <
+          calleeSize - (args1.length - k)
+        rw [countEq]
+        rw [← savedSpace, countEq] at space
+        rw [← savedSpace] at insufficient
+        omega)
+  have callRun : StackSemEvaluate.evaluate
+      (.call (some (.seq .skip (copyRetNative false false (k, f, frame) values returnCode),
+        0, l1, l2)) destination none, moved) =
+      (some (.halt (.word (BitVec.ofNat width 2))), StackSemStateOps.emptyEnv entry) := by
+    rw [StackSemEvaluate.evaluate_call]
+    simp only
+    rw [found]
+    simp only
+    rw [if_neg (by change saved.clock ≠ 0; rwa [savedClock]),
+      StackSemEvaluateClock.fixClockEvaluate, calleeRun]
+  have branchResult := allocationFailureResult ac k f frame calleeSize values names retCode
+    l1 l2 dest args source sourcePost saved lens result xs args1 prog ss envs
+    (saved.clock - 1) (saved.stackSpace -
+      Compiler.Backend.WordToStack.stackArgCount destination (args.length + 1) k)
+    guards savedRelation pushedRelation calleeLocalsSize (by rwa [savedSpace]) execution
+  simp only [compNative, destinationCompile, savedCompile, returnCompile,
+    Bool.false_eq_true, if_false, Prod.mk.injEq] at compilation
+  obtain ⟨rfl, _⟩ := compilation
+  refine ⟨StackSemStateOps.emptyEnv entry, ?_, ?_⟩
+  · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, destinationRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, savedRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, moveRun]
+    simp only
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      StackSemEvaluate.evaluate_skip]
+    exact callRun
+  · simpa only [entry, moved, StackSemStateOps.emptyEnv,
+      StackSemStateOps.decClock, StackSemStateOps.setVar] using branchResult
+
+/-- Flapjack factoring of the original guarded callee induction step
+(8568–8620). Successful entry is executed above; all bitmap, label, compiler,
+convention, frame and non-error obligations are discharged here. The original
+IH supplies the complete clock-existential compCorrectResult for every body
+outcome, including allocation failure. This is case-local assembly, not a
+separate HOL declaration or a completed full Call port. -/
+theorem simulateCalleeBody {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (saved : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (destinationCode : HolProg width) (destination : Sum Nat Nat)
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source saved lens 0)
+    (pushedRelation : stateRel ac k 0 0
+      {WordSemStateFiniteExact.pushEnv envs none source with locals := .ln, localsSize := some 0}
+      saved (callerFrame :: lens) 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * callerFrame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, callerSize, callerFrame) =
+      (destinationCode, destination))
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args source)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost))
+    (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost)) :
+    ∃ (calleeSize calleeFrame : Nat) (body : HolProg width) (location : Nat),
+      sptLookup location source.code = some (args1.length, prog) ∧
+      sptLookup location saved.code = some
+        (.seq (.stackAlloc (calleeSize - (args1.length - k))) body) ∧
+      ss.getD calleeSize = calleeSize ∧
+      (if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1) ∧
+      (calleeSize ≤ saved.stackSpace →
+        ∃ (moved entry : StackSemStateFiniteExact width C F)
+          (extraClock : Nat) (targetPost : StackSemStateFiniteExact width C F)
+          (targetResult : Option (StackSemResult width)),
+          StackSemEvaluate.evaluate (stackArgsNative destination (args.length + 1)
+            (k, callerSize, callerFrame), saved) = (none, moved) ∧
+          StackSemEvaluate.evaluate
+            (.stackAlloc (calleeSize - (args1.length - k)),
+              StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)) =
+            (none, entry) ∧
+          StackSemEvaluate.evaluate (body, {entry with clock := entry.clock + extraClock}) =
+            (targetResult, targetPost) ∧
+          StackSemEvaluate.evaluate
+            (.seq (.stackAlloc (calleeSize - (args1.length - k))) body,
+              {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+                clock := (StackSemStateOps.decClock moved).clock + extraClock}) =
+            (targetResult, targetPost) ∧
+          compCorrectResult ac k calleeSize calleeFrame
+            (WordSemStateFiniteExact.callEnv args1 ss
+              (WordSemStateFiniteExact.pushEnv envs none
+                (WordSemStateFiniteExact.decClock source)))
+            bodyPost targetPost bodyResult targetResult (callerFrame :: lens)) := by
+  obtain ⟨location, bs, bsPost, n, nPost, body, calleeSize, calleeFrame,
+    sourceCode, targetCode, bodyConventions, bodyFlat, bodyCompile, bitmapLength,
+    bitmapBound, bitmapPrefix, calleeLocalsSize, calleeShape, argumentBound, bodyMaximum⟩ :=
+    calleeCompilation ac k callerSize callerFrame values names retCode l1 l2 dest args
+      source saved lens xs args1 prog ss envs guards callerRelation
+  refine ⟨calleeSize, calleeFrame, body, location, sourceCode, targetCode,
+    calleeLocalsSize, calleeShape, ?_⟩
+  intro space
+  obtain ⟨moved, entry, moveRun, allocationRun, entryRelation⟩ :=
+    enterCallee ac k callerSize callerFrame calleeSize calleeFrame values names retCode
+      l1 l2 dest args source saved lens xs args1 prog ss envs destinationCode destination
+      guards callerRelation pushedRelation conventions maximum destinationCompile
+      calleeShape calleeLocalsSize argumentBound space
+  have moveGrowth := Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    (stackArgsNative destination (args.length + 1) (k, callerSize, callerFrame))
+    saved moved none moveRun
+  have entryGrowth := Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    (.stackAlloc (calleeSize - (args1.length - k)))
+    (StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved))
+    entry none allocationRun
+  have bitmapGrowth : saved.bitmaps.IsPrefix entry.bitmaps :=
+    moveGrowth.1.trans entryGrowth.1
+  have codeGrowth : sptSubspt saved.code entry.code :=
+    sptSubsptTrans _ _ _ ⟨moveGrowth.2, entryGrowth.2⟩
+  have labels : ∀ loc, StackSem.getLabelsExact body loc →
+      StackSem.locCheckExact entry.code loc := by
+    intro loc member
+    apply LocationLabels.locCheckSubset saved.code entry.code codeGrowth loc
+    exact Or.inr ⟨location, .seq (.stackAlloc (calleeSize - (args1.length - k))) body,
+      targetCode, by unfold StackSem.getLabelsExact; exact Or.inr member⟩
+  have bodyNotError := calleeNotError values names retCode l1 l2 dest args source
+    sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution
+    notError bodyRun
+  obtain ⟨extraClock, targetPost, targetResult, targetRun, conclusion⟩ :=
+    ih.2 xs args1 prog ss envs ⟨guards, nonzero⟩ k calleeSize calleeFrame bodyPost entry
+      bodyResult bs bsPost n nPost body (callerFrame :: lens)
+      ⟨bodyRun, bodyNotError, entryRelation, bodyConventions, bodyFlat, bodyCompile,
+        bitmapLength, bitmapBound.trans bitmapGrowth.length_le,
+        bitmapPrefix.trans (bitmapGrowth.drop _), labels, bodyMaximum⟩
+  have allocationClock : ∀ extra : Nat,
+      StackSemEvaluate.evaluate
+        (.stackAlloc (calleeSize - (args1.length - k)),
+          {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+            clock := (StackSemStateOps.decClock moved).clock + extra}) =
+        (none, {entry with clock := entry.clock + extra}) := by
+    intro extra
+    have success := allocationRun
+    rw [StackSemEvaluate.evaluate_stackAlloc] at success
+    split_ifs at success with disabled insufficient
+    · cases (Prod.mk.inj success).1
+    · cases (Prod.mk.inj success).1
+    obtain ⟨_, rfl⟩ := Prod.mk.inj success
+    rw [StackSemEvaluate.evaluate_stackAlloc, if_neg disabled, if_neg insufficient]
+    rfl
+  have calleeRun : StackSemEvaluate.evaluate
+      (.seq (.stackAlloc (calleeSize - (args1.length - k))) body,
+        {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+          clock := (StackSemStateOps.decClock moved).clock + extraClock}) =
+      (targetResult, targetPost) := by
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      allocationClock extraClock]
+    exact targetRun
+  exact ⟨moved, entry, extraClock, targetPost, targetResult, moveRun, allocationRun,
+    targetRun, calleeRun, conclusion⟩
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
