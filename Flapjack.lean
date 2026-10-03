@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+import Flapjack.RiscV.CorrectnessEncoding.ConstInterference
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
 import Flapjack.RiscV.CorrectnessEncoding.ConstRun
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull

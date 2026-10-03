@@ -7879,3 +7879,20 @@ wrappers and fourteen original encoding boundary EVALs establishing the full
 word-instruction low bits. These width oracles are not Next execution replays.
 The already captured whole native Const Run observations and unrestricted
 Lean fetch/decode/Next proofs supply separate evidence for their own scopes.
+
+### Native Const interference transport
+
+`CorrectnessEncoding/ConstInterference.lean` is untagged composition infrastructure
+for the seven literal Const register instruction families. Source comparison uses
+`riscv_targetScript.sml:306-315` (the full current-core GPR function, including
+scratch31, plus VM/ArchBase/NextFetch/exception/domain memory/PC) and
+`asmPropsScript.sml:77-79` (every environment index and native state). It proves
+validity preservation, full projection congruence, and arbitrary-list register
+effects under that original interference premise. It adds no target execution or
+scratch-preservation premise. `check-riscv-const-interference.py` pins the family,
+public statements and environment iteration, with mutation regressions.
+
+This helper iterates literal native `Run`, which does not advance PC. It is not
+a full native Next execution/assertion oracle or the full Const encoder theorem;
+those remain separate open work. Existing `riscv_const_run_probe` captures the
+scoped original Run observations; no new HOL declaration identity is claimed.
