@@ -81694,5 +81694,78 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Full canonical imported-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memLoadAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memLoad32AlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load32_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memLoadByteAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load_byte_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memStoreAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memStore32AlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store32_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memStoreByteAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store_byte_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "memOpAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_op_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmMemory.lean",
+    "lean_name": "asmInstAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "asm_inst_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps966-1021: original full unconditional SDM memory/instruction commutation, generic positive word width, C/FFI state, register/address/memory-operation/instruction carriers retained. Exact native ordinary memory/domain/endian reads, register/memory writes, assertion/failure and all dispatcher cases preserved. No good_dimindex, success, clock or result premise. Canonical shared-domain projection leaves ordinary memory domain unchanged; no choice of LOG2 zero. Fresh original fulltypes/hyp0/kernelT captured in lab_props_alignment_sdm_memory_probe.out. Full evaluator/refinement remains open. Native FP dispatch inherits reals_as_rational_cuts assumption of SOUNDNESS item8; no full real carrier closure or HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
