@@ -43,13 +43,13 @@ theorem forall₂_trans' {α β γ : Type} {R : α → β → Prop} {S : β → 
 
 namespace Compiler.Backend.WordSimp
 
-/-- Clause-for-clause rendering of HOL `gc_fun_const_ok_def`
-    (`word_simpProofScript.sml:135-139`): `!x y. f x = SOME y ==> EVERY2 (\a b.
-    is_gc_word_const a ==> b = a) (FST x) (FST y)`.  Left untagged only because
-    the reference checker accepts the reviewed `gc_fun_type` slot translation
-    (`WordSemGcFun`, argument 4 / result 3) solely for `gc_fun_ok_def`; the
-    statement itself has no other difference.  Extending that allowance is
-    tracked on the bead of this port. -/
+/-- Exact HOL `gc_fun_const_ok_def` (`word_simpProofScript.sml:135-139`):
+    `!x y. f x = SOME y ==> EVERY2 (\a b. is_gc_word_const a ==> b = a) (FST x)
+    (FST y)`, with `EVERY2` as `List.Forall₂`. The argument inherits the
+    reviewed `gc_fun_type` slot translation (`WordSemGcFun`, argument 4 /
+    result 3). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "gc_fun_const_ok_def"
+  (fmap_as_finite_support_function := [argument_4, result_3]) (words_as_type_indexed_bitvec)]
 def gcFunConstOk {width : Nat} [NeZero width] (f : WordSemGcFun width) : Prop :=
   ∀ x y, f x = some y →
     List.Forall₂ (fun a b => isGcWordConst a = true → b = a) x.1 y.1
