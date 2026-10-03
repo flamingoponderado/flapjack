@@ -77809,6 +77809,91 @@
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Continue control case. Same original every_var source bound/is_alloc_var/ssa_map_ok/source full_inst_ok_less premises and full same-config actual SSA output conclusion. Only genuine generalized source-body induction hypotheses added. Source bound monotonicity and native ssa_cc_trans_props/setup properties derive later input bounds/class/map; original fake_moves_conventions2 and loop_setup_full_inst_ok_less prove actual reconciliation/setup validity. Arbitrary loop contexts and absent entries retained, no target-run or desired output assumption. Native AsmConfigExact/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records positive HOL word dimension only. Inst/Call and full assembly remain open."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/BufferTerminalCases.lean",
+    "lean_name": "filterCorrectLabel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original Label/default Error constructor branch688. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/BufferTerminalCases.lean",
+    "lean_name": "filterCorrectHalt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original Halt terminal branch1034-1036 and native labSem524-529, all Word zero/nonzero and Loc outcomes. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/BufferTerminalCases.lean",
+    "lean_name": "filterCorrectBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original CBW branch797-816, all invalid operand/buffer-write NONE paths and actual SOME buffer successor. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "word_bit_1_0",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "word_bit_1_0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line130: all eight Boolean binders, fixed word8 v2w and both exact index1/index0 conjuncts. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "word_bit_0_lemmas",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "word_bit_0_lemmas",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line149: arbitrary word64 w and v, both complete low-bit mask/low-bit addition conjuncts; Boolean negation rendered as false equality. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "v2w_0_rwts",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "v2w_0_rwts",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line173: all four arbitrary Boolean binders and all seven fixed word5 equality/Boolean-equality conjuncts, preserved true bit at each original position. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
+    "lean_name": "word_bit_add_lsl_simp",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "word_bit_add_lsl_simp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original line559: arbitrary word64 x/w and exact low bit of x plus (w shifted left1), preserving original operator associativity. Complete original no-premise statement, no restricted opcode/state or concrete-fixture replacement. holV2w compared with original bitstring testbit_def/v2w_def: in-range i indexes list at LENGTH-1-i and false outside list length, full FCP width. getLsbD renders in-range word_bit; fixed theorem indices are within original word widths. Fresh generic HOL proofs/types/hyp0 captured and native Lean kernel proof checked without trusted bit tactics."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct_mmap_helper",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpMmapHelper.lean",
+    "lean_name": "compileExpCorrectMmapHelper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original206-216 full local theorem: actual evalListHOLFinite/compileExpsExact/ContextExact/convertStateExact/convertV. Original source-list success and per-member source-eval implication to converted target eval preserved; full actual converted list evaluation with map convertV conclusion, no additional field-validity/shape/invariant/compatibility premise. Original local statement and unchanged induction proof replayed independently in HOL, full generic state/context/expression/value types captured, closed hyp0/proved. Native list induction decomposes successful head/tail and uses exactly original per-member premise. Actual imported canonical state owner/full local roundtrip, four map fields and positive-width/Type0 FFI qualifiers only. This faithfully replaces scope of old documented production mismatch .38; executable production routing and whole expression assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpMmapHelper.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation infrastructure: re-export actual imported canonical state two-way roundtrip, no separate HOL original."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/CallInstructionValidity.lean",
     "lean_name": "ssaCcTrans_fullInstTailCall",
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -77825,5 +77910,51 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original ReturningCall case with both exception-handler options. Same source every_var bound/is_alloc_var/ssa_map_ok/source full_inst_ok_less hypotheses and full same-config actual SSA output conclusion. Only genuine generalized return/exception source-subprogram IH added. Original source occurrence predicate supplies handler bounds, native renaming/SSA counter properties and bound monotonicity derive actual later input hypotheses; actual fake_moves_conventions2 proves reconciliation validity. Arbitrary source metadata/optional handlers retained; no target-run, target validity or narrowed evaluator premise. Native config/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Native Inst and full recursive assembly remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "compileExpCorrectOp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 Op case, original766-783 proof: all seven original source hypotheses and three conclusions; only original full per-member child IHs. Actual source evalList success supplies values, word guard and operation success. Original full faithful mmap helper derives converted list evaluation; source word guard proves map convertV identity; exact original wordOpHOL/panOpHOL evaluation and result retained, deriving result shape/validity/target evaluation. No target run, compatibility, extra bounds/ranges/memory-adapter premise. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/constructor specialization/eval_ind kernel captured. Whole expression/compiler assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "compileExpCorrectPanop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 Panop case, original766-783 proof: all seven original source hypotheses and three conclusions; only original full per-member child IHs. Actual source evalList success supplies values, word guard and operation success. Original full faithful mmap helper derives converted list evaluation; source word guard proves map convertV identity; exact original wordOpHOL/panOpHOL evaluation and result retained, deriving result shape/validity/target evaluation. No target run, compatibility, extra bounds/ranges/memory-adapter premise. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/constructor specialization/eval_ind kernel captured. Whole expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "convert_word_arguments",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpOperators.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
   }
 ]
