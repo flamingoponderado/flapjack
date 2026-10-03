@@ -86706,5 +86706,310 @@
     "hol_name": "semantics_wrapper_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol compared full original1831-1929, result datatype1818 and wrapper1824. Arbitrary original absf/concf:Nat→distinct PanProps SemanticsRunResHOL HolOutcome×List HolIoEvent retained; all six curried hypotheses and wrapper equality exactly retained. Original IS_PREFIX ev evprime means evprime prefix ev, encoded evprime <+: ev. Source non-Fail, non-RunError matching extension, both non-Incomplete stability premises, both Incomplete event-prefix premises unchanged. Error/completion/incomplete result cases derive both chains and equal same-wrapper choices internally, with no supplied LUB/chain/event-equality or target-semantics premise. Reused identical proof structure of the separately sourced CrepToLoop theorem after substituting the distinct reviewed PanProps datatype and wrapper; no datatype identification assumed. Standard choice formula translation retains existing boundary limitation; equality is internal to the same model. Fresh closed full HOL theorem/types/kernelT capture. Faithful PanSem evaluator wrapper and PanStructs semantics_eq still separate pending obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_empty",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_empty",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_empty (word_cseProof:2294). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_loads_wipe",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_loads_wipe",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_loads_wipe (word_cseProof:2301). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_invalidate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_invalidate",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_invalidate (word_cseProof:2308). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_invalidate_regs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_invalidate_regs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_invalidate_regs (word_cseProof:2314). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_to_canonical",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_to_canonical",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_to_canonical (word_cseProof:2322). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_to_latest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_to_latest",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_to_latest (word_cseProof:2366). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_register_read",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_register_read",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_register_read (word_cseProof:2378). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_register_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_register_reads",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_register_reads (word_cseProof:2386). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_instrs_Const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_instrs_Const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_instrs_Const (word_cseProof:2396). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_instrs_Arith",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_instrs_Arith",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_instrs_Arith (word_cseProof:2412). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_instrs_OpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_instrs_OpCurrHeap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_instrs_OpCurrHeap (word_cseProof:2435). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_instrs_LocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_instrs_LocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_instrs_LocValue (word_cseProof:2452). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_loads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_loads",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_loads (word_cseProof:2467). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wf_add_to_data_aux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_add_to_data_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_add_to_data_aux (word_cseProof:2487). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wf_add_to_data_const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_add_to_data_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_add_to_data_const (word_cseProof:2541). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wf_add_to_load_aux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_add_to_load_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_add_to_load_aux (word_cseProof:2600). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_insert_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_insert_gets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_insert_gets (word_cseProof:2652). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_filter_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_filter_gets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_filter_gets (word_cseProof:2670). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_cons_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_cons_gets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_cons_gets (word_cseProof:2682). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_reinsert_canonical",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_reinsert_canonical",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_reinsert_canonical (word_cseProof:2695). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_merge",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_merge",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_merge (word_cseProof:2714). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wfData_move_pairs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_move_pairs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_data_move_pairs (word_cseProof:2761). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "wf_canonicalMoveRegs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_canonicalMoveRegs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL wf_canonicalMoveRegs (word_cseProof:2800). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. The word_cse_wf_data_preservation probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "canonicalRegs_self_or_fresh_wf",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_self_or_fresh_wf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL canonicalRegs_self_or_fresh_wf (word_cseProof:2832). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "canonicalRegs'_self_or_fresh_wf",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs'_self_or_fresh_wf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL canonicalRegs'_self_or_fresh_wf (word_cseProof:2846). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "inNamesSet_insert_self",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "in_names_set_insert_self",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL in_names_set_insert_self (word_cseProof:2861). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "inNamesSet_register_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "in_names_set_register_reads",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL in_names_set_register_reads (word_cseProof:2867). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "canonicalArith_reads_self_or_fresh",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalArith_reads_self_or_fresh",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL canonicalArith_reads_self_or_fresh (word_cseProof:2881). The full original statement is kept: universally quantified variables in HOL order, the single conjunctive premise, and the conclusion. wf_data (:'a) is the reviewed wfData width with the theorem's own {width : Nat} [NeZero width] for HOL's type dimension; words_as_type_indexed_bitvec is admitted by the reviewed internally-word predicate application route (docs/HOL-WORD-PREDICATES.md, approved by main) or, for statements that also name HolArith width or BitVec width, by the ordinary carrier route. HOL renderings: ODD x is x % 2 = 1 and not-EVEN r is not r % 2 = 0 (as in the reviewed wfData and addToDataAux), EVERY P l is a forall-over-membership, ALOOKUP l x is List.lookup x l, x IN domain t is sptDomain t x, lookup_any is lookupAny, and nested record updates are Lean structure updates. The Knowledge, balanced-map, Spt and fact-producer carriers are the reviewed tagged ones. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "wordCseInst",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "word_cseInst_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL word_cseInst_def (word_cseScript.sml:446-479). All five clauses (Skip, Const, Arith, Mem with the store/load split, FP) with the same invalidation, guards (EVEN r, can_mem_arith a' and not MEM r rds, EVEN r or EVEN a or a = r) and producers (add_to_data_const, add_to_data on register_reads, add_to_load_aux on register_read with loadToNumList) as HOL. Faithful carriers: native Knowledge, WordLangProgHOL (BitVec width), and HolInst width for HOL's asm inst; the reviewed exact inverse codecs HolInst.toWordLangInst/ofWordLangInst (to_of, of_to) are carrier infrastructure only, so every emitted Inst is the input instruction unchanged. EVEN r is r % 2 = 0 as in the reviewed fact producers; lookup_any is Option.getD inside the reviewed getClause/setClause bodies. Kernel-checked; the word_cse_transform probe captures the type.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "wordCse",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "word_cse_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL word_cse_def (word_cseScript.sml:538-632). All 26 clauses in structural recursion, one per program constructor: Move, Inst through word_cseInst, Get/Set through the clause bodies getClause/setClause (compared against HOL 545-573), MustTerminate, Call, Seq, If with merge_data, OpCurrHeap, LocValue (key [48; l]), Skip, Store, Assign, Raise, Return, Tick, Alloc, Install, both buffer writes, FFI, StoreConsts, ShareInst, Loop from empty_data, Break and Continue. Faithful carriers: native Knowledge, WordLangProgHOL (BitVec width), and HolInst width for HOL's asm inst; the reviewed exact inverse codecs HolInst.toWordLangInst/ofWordLangInst (to_of, of_to) are carrier infrastructure only, so every emitted Inst is the input instruction unchanged. EVEN r is r % 2 = 0 as in the reviewed fact producers; lookup_any is Option.getD inside the reviewed getClause/setClause bodies. Kernel-checked; the word_cse_transform probe captures the type.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "wordCommonSubexpElim",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "word_common_subexp_elim_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL word_common_subexp_elim_def (word_cseScript.sml:634-638). SND of word_cse empty_data prog. Faithful carriers: native Knowledge, WordLangProgHOL (BitVec width), and HolInst width for HOL's asm inst; the reviewed exact inverse codecs HolInst.toWordLangInst/ofWordLangInst (to_of, of_to) are carrier infrastructure only, so every emitted Inst is the input instruction unchanged. EVEN r is r % 2 = 0 as in the reviewed fact producers; lookup_any is Option.getD inside the reviewed getClause/setClause bodies. Kernel-checked; the word_cse_transform probe captures the type.",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Transform.lean",
+    "lean_name": "seqs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "Seqs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.40): HOL Seqs_def (word_cseScript.sml:642-646). All three equations at an arbitrary payload type. The built word_cseTheory exports Seqs_ind but no Seqs_def, so the comparison is against the script text. Kernel-checked."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "word_cse_wf_data",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_cse_wf_data",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL word_cse_wf_data (word_cseProof:2912-3302). For all p and data, wf_data (:'a) data implies wf_data (:'a) (FST (word_cse data p)), over the reviewed wfData and wordCse. The proof follows HOL's Induct with a per-constructor case split, using structural recursion over the nested program type, with the Inst case factored into wfData_wordCseInst. Kernel-checked with standard axioms only. The word_cse_transform probe captures the statement (0 hypotheses).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WfDataPreservation.lean",
+    "lean_name": "canMemArith_odd_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "can_mem_arith_ODD_reads",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL can_mem_arith_ODD_reads (word_cseProof:1511-1516). can_mem_arith a implies EVERY ODD (arithReads a), with EVERY as a forall-over-membership and ODD as % 2 = 1, over the HolArith width carrier. HOL local, so there is no probe capture; it was compared against the source text. Kernel-checked.",
+    "words_as_type_indexed_bitvec": true
   }
 ]
