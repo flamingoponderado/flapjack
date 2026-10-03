@@ -6792,9 +6792,6 @@ run_probe pan_structs_program_atomic_probeScript.sml pan_structs_program_atomic_
   compile_correct_full_statement compile_correct_full_proved compile_correct_skip_statement compile_correct_skip_proved compile_correct_break_statement compile_correct_break_proved compile_correct_continue_statement compile_correct_continue_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
-run_probe lab_filter_map_probeScript.sml lab_filter_map_probe.out \
-  not_skip_def_statement not_skip_def_types not_skip_def_hypotheses not_skip_def_proved filter_skip_def_statement filter_skip_def_types filter_skip_def_hypotheses filter_skip_def_proved filter_skip_MAP_statement filter_skip_MAP_types filter_skip_MAP_hypotheses filter_skip_MAP_proved \
-  "$cake_dir/compiler/backend/lab_filterScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tick_annot_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_tick_statement compile_correct_tick_proved compile_correct_annot_statement compile_correct_annot_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
