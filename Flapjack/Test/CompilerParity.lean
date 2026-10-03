@@ -339,6 +339,7 @@ import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.BinaryIeeeArithExecParity
+import Flapjack.Test.BinaryIeeeSqrtExecParity
 import Flapjack.Test.LoopToWordProgramNamesParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.LoopToWordLabelHandlersParity
