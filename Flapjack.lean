@@ -639,6 +639,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
 import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+import Flapjack.Compiler.Backend.WordCse.Knowledge
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
@@ -955,6 +956,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoIdentity
 import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorCaller

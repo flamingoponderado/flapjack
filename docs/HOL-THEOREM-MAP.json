@@ -82003,5 +82003,45 @@
     "reviewer": "flapjack-sol2 source comparison6356-6374 original comp_correct5756/motive5719-5751: complete Seq.Simulation over arbitrary original store name/expression/source/config/width. All original premises and full existential actual targetrun/result/resource conclusion retained. Original flatness implies Var; source nonerror excludes Handler/BitmapBase and missing local read. Original conventions derive even source register, full Reg1 theorem provides actual compiled stack loads and exact value/full relation; literal native Set transition and general state_rel_set_store prove postrelation. Clock fixing derives unchanged clock from load theorem. No added successful read/run/label/postrelation/bounds assumption. Named five canonical finite maps/positive words and same-module genuine codecs; inherited reals_as_rational_cuts retained. Fresh whole original Set evaluate_ind obligation and arbitrary specialization hyp0/T statement evidence, not literal local-case proof replay or cross-language equivalence.",
     "inherits_reals_as_rational_cuts": true,
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Knowledge.lean",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "statement_status": "reviewed_exact",
+    "lean_name": "Knowledge",
+    "hol_name": "knowledge",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines55-64: all five fields retain constructor-for-constructor carriers: to_canonical/to_latest num num_map are Spt Nat (LN/LS/BN/BS), gets_mem is ordered List (WordStoreHOL × Nat), instrs_mem/loads_mem are literal BalancedMap.Map (List Nat) Nat including cached sizes. WordStoreHOL=WordStore Unit removes only a phantom parameter and retains all store constructors and fixed BitVec5 Temp. No arrays, finite-support map, generic word width or host-map substitute. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Knowledge.lean",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "statement_status": "reviewed_exact",
+    "lean_name": "emptyData",
+    "hol_name": "empty_data_def",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines78-84: exact LN/LN/[]/balanced_map.empty/empty fields in original order; imported sparse and balanced tree constructors preserve cached sizes. No normalization or premise. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Knowledge.lean",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "statement_status": "reviewed_exact",
+    "lean_name": "keepData",
+    "hol_name": "keep_data_def",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines88-91: arbitrary num num_map and register; IS_NONE(lookup written canon) becomes Option.isNone(sptLookup written canon), retaining original sparse-tree recursive key arithmetic. No invariant or comparison premise. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Knowledge.lean",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "statement_status": "reviewed_exact",
+    "lean_name": "invalidateData",
+    "hol_name": "invalidate_data_def",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines93-99: original keep_data branch returns the entire data unchanged on true and exact empty_data on false. All five original fields retained; no tracked-register or output invariant assumed. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Knowledge.lean",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "statement_status": "reviewed_exact",
+    "lean_name": "invalidateRegs",
+    "hol_name": "invalidate_regs_def",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines102-105: exact equations data/[] returns data; data/(r::rs) recurses on invalidate_data data r then rs, left to right for arbitrary lists. No early-exit rewrite or source restriction. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
   }
 ]
