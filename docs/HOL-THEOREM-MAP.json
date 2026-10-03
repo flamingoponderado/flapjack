@@ -26481,6 +26481,485 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "wordLocalsRel",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_def (wordPropsScript.sml:3385-3387). locals_rel temp (s:'a word_loc num_map) t ⇔ ∀x. x < temp ⇒ lookup x s = lookup x t; Lean wordLocalsRel temp s t := ∀ x, x < temp → sptLookup x s = sptLookup x t over the exact Spt (WordLocW width) carrier (renamed from localsRel to avoid the PanToCrep localsRel clash). words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "the_words_EVERY_IS_SOME",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "the_words_EVERY_IS_SOME",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL the_words_EVERY_IS_SOME (wordPropsScript.sml:3389-3397). ∀ls x. the_words ls = SOME x ⇒ EVERY IS_SOME ls over the tagged theWords; EVERY IS_SOME as ∀ o ∈ ls, o.isSome. words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_get_var",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_get_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_get_var (wordPropsScript.sml:3424-3432). r < temp ∧ get_var r st = SOME x ∧ locals_rel temp st.locals loc ⇒ get_var r (st with locals := loc) = SOME x; free r temp st x loc as explicit binders. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_get_var_simp",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_get_var_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_get_var_simp (wordPropsScript.sml:3434-3440). r < temp ∧ locals_rel temp st.locals loc ⇒ get_var r (st with locals := loc) = get_var r st. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_get_vars",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_get_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_get_vars (wordPropsScript.sml:3399-3411). ∀ls vs. get_vars ls st = SOME vs ∧ EVERY (λx. x < temp) ls ∧ locals_rel temp st.locals loc ⇒ get_vars ls (st with locals := loc) = SOME vs; free st temp loc are outer binders; EVERY (λx. x < temp) l is rendered ∀ x ∈ l, x < temp. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_get_vars_simp",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_get_vars_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_get_vars_simp (wordPropsScript.sml:3442-3450). EVERY (λx. x < temp) l ∧ locals_rel temp st.locals loc ⇒ get_vars l (st with locals := loc) = get_vars l st; EVERY (λx. x < temp) l is rendered ∀ x ∈ l, x < temp. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_get_var_imm",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_get_var_imm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_get_var_imm (wordPropsScript.sml:3452-3460). every_var_imm (λx. x<temp) r ∧ get_var_imm r st = SOME x ∧ locals_rel temp st.locals loc ⇒ get_var_imm r (st with locals := loc) = SOME x, over the tagged everyVarImmHOL with the Boolean decide (x < temp) predicate. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_get_var_imm_simp",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_get_var_imm_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_get_var_imm_simp (wordPropsScript.sml:3462-3470). every_var_imm (λx. x<temp) r ∧ locals_rel temp st.locals loc ⇒ get_var_imm r (st with locals := loc) = get_var_imm r st. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_set_var",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_set_var",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_set_var (wordPropsScript.sml:3524-3530). HOL local: ∀n s t. locals_rel temp s t ⇒ locals_rel temp (insert n v s) (insert n v t); free temp v outer binders, over sptInsert. words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_delete",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_delete",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_delete (wordPropsScript.sml:3532-3538). HOL local: ∀n s t. locals_rel temp s t ⇒ locals_rel temp (delete n s) (delete n t), over sptDelete. words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_alist_insert",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_alist_insert",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_alist_insert (wordPropsScript.sml:3413-3422). ∀ls vs s t. locals_rel temp s t ∧ EVERY (λx. x < temp) ls ⇒ locals_rel temp (alist_insert ls vs s) (alist_insert ls vs t), over the tagged sptAlistInsert; EVERY (λx. x < temp) l is rendered ∀ x ∈ l, x < temp. words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_word_exp_simp",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_word_exp_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_word_exp_simp (wordPropsScript.sml:3502-3522). ∀s exp w. every_var_exp (λx. x < temp) exp ∧ locals_rel temp s.locals loc ⇒ word_exp (s with locals := loc) exp = word_exp s exp; HOL's binder w does not occur in the statement and is omitted (recorded in the docstring); temp loc outer binders; tagged everyVarExpHOL and wordExp. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_word_exp",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_word_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_word_exp (wordPropsScript.sml:3472-3500). ∀s exp w. every_var_exp (λx. x < temp) exp ∧ word_exp s exp = SOME w ∧ locals_rel temp s.locals loc ⇒ word_exp (s with locals := loc) exp = SOME w. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_cut_envs",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_cut_envs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_cut_envs (wordPropsScript.sml:3540-3559). locals_rel temp loc loc' ∧ every_name (λx. x < temp) names ∧ cut_envs names loc = SOME x ⇒ cut_envs names loc' = SOME x, over the tagged everyNameHOL and wordSemCutEnvs. words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_cut_env",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_cut_env",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_cut_env (wordPropsScript.sml:3561-3572). locals_rel temp loc loc' ∧ every_name (λx. x < temp) names ∧ cut_env names loc = SOME x ⇒ cut_env names loc' = SOME x, over wordSemCutEnv. words_as_type_indexed_bitvec records only the positive BitVec width translation of 'a word. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
+    "lean_name": "locals_rel_evaluate_thm",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "locals_rel_evaluate_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1; source from preserved flapjack-opus5 checkpoint 602b2a539): HOL locals_rel_evaluate_thm (wordPropsScript.sml:3577-3620). ∀prog st res rst loc temp. evaluate (prog,st) = (res,rst) ∧ res ≠ SOME Error ∧ every_var (λx.x < temp) prog ∧ locals_rel temp st.locals loc ⇒ ∃loc'. evaluate (prog, st with locals := loc) = (res, rst with locals := loc') ∧ case res of NONE | SOME (Break _) | SOME (Continue _) => locals_rel temp rst.locals loc' | SOME _ => rst.locals = loc'; binders in HOL order, the case as a Lean match with the same four arms, over the tagged exact evaluate and everyVarHOL; proved over HOL's measure with every Resume case (Move, Inst, Store, MustTerminate, Call, ...). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordSemLocalsRelSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "PERM_SWAP_SIMP",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "PERM_SWAP_SIMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 20-25): Source comparison: HOL local PERM_SWAP_SIMP (word_instProofScript.sml:20-25) states PERM (A ++ (B::C)) (B::(A++C)) with free A, B, C. Lean takes A B C as explicit outer binders in HOL order (polymorphic {α : Type}) and concludes holPerm (A ++ B :: C) (B :: (A ++ C)) over the tagged holPerm (sortingScript PERM_DEF). No hypotheses on either side. No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "EL_FILTER",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "EL_FILTER",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 27-32): Source comparison: HOL local EL_FILTER (:27-32): ∀ls x. x < LENGTH (FILTER P ls) ⇒ P (EL x (FILTER P ls)), with free P : 'a -> bool. Lean binds P : α → Bool as the outer explicit binder, then ∀ ls x, x < (ls.filter P).length → P (holEl x (ls.filter P)) = true; FILTER is List.filter and EL is the tagged holEl (listScript EL_def). The extra instance [Nonempty α] is only the HOL type-inhabitation discharge required by holEl's HD/ARB rendering (every HOL type is inhabited), not a restricting hypothesis. Same hypothesis and conclusion; no word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "PERM_SWAP",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "PERM_SWAP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 34-47): Source comparison: HOL local PERM_SWAP (:34-47): PERM (A ++ B ++ C) (B++(A++C)) with free A B C. Lean binds A B C : List α as outer explicit binders in HOL order and concludes holPerm (A ++ B ++ C) (B ++ (A ++ C)) over the tagged holPerm; Lean ++ is left-associative as in HOL. No hypotheses. No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "convert_sub_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "convert_sub_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 61-69): Source comparison: HOL local convert_sub_ok (:61-69): ∀ls. word_exp s (convert_sub ls) = word_exp s (Op Sub ls), free s. Lean binds s : WordSemStateFiniteExact width C F as the outer explicit binder, then ∀ ls, wordExp s (convertSub ls) = wordExp s (.op .sub ls), with convertSub the tagged convert_sub_def. No hypotheses. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "word_exp_op_permute_lem",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "word_exp_op_permute_lem",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 72-93): Source comparison: HOL local word_exp_op_permute_lem (:72-93): op ≠ Sub ⇒ ∀ls ls'. PERM ls ls' ⇒ word_exp s (Op op ls) = word_exp s (Op op ls'), free op and s. Lean binds op then s as outer explicit binders, then op ≠ .sub → ∀ ls ls', holPerm ls ls' → wordExp s (.op op ls) = wordExp s (.op op ls'); same nesting of the op ≠ Sub guard, the PERM premise (tagged holPerm) and the equality conclusion. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "pullOpsSimp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "pull_ops_simp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 96-102): Source comparison: HOL pull_ops_simp_def (:96-102), clause by clause: pull_ops_simp op [] = []; pull_ops_simp op (x::xs) = case x of Op op' ls => if op = op' then ls ++ pull_ops_simp op xs else x :: pull_ops_simp op xs | _ => x :: pull_ops_simp op xs. Lean pullOpsSimp (op : BinOp) has the identical two clauses with the same inner match on .op op' ls and the same if-branch and fallthrough results; structural recursion on the list. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "pull_ops_simp_pull_ops_perm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "pull_ops_simp_pull_ops_perm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 104-113): Source comparison: HOL local pull_ops_simp_pull_ops_perm (:104-113): ∀ls x. PERM (pull_ops op ls x) ((pull_ops_simp op ls) ++ x), free op. Lean binds op outermost, then ∀ ls x, holPerm (pullOps op ls x) (pullOpsSimp op ls ++ x), with pullOps the tagged pull_ops_def, pullOpsSimp the tagged pull_ops_simp_def and holPerm the tagged PERM_DEF. No hypotheses. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "pull_ops_simp_pull_ops_word_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "pull_ops_simp_pull_ops_word_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 115-123): Source comparison: HOL local pull_ops_simp_pull_ops_word_exp (:115-123): op ≠ Sub ⇒ word_exp s (Op op (pull_ops op ls [])) = word_exp s (Op op (pull_ops_simp op ls)), free op, s, ls. Lean binds op, s, ls as explicit binders, then op ≠ .sub → wordExp s (.op op (pullOps op ls [])) = wordExp s (.op op (pullOpsSimp op ls)). Same single guard and conclusion. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "word_exp_op_mono",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "word_exp_op_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 127-138): Source comparison: HOL local word_exp_op_mono (:127-138): op ≠ Sub ⇒ word_exp s (Op op ls) = word_exp s (Op op ls') ⇒ word_exp s (Op op (x::ls)) = word_exp s (Op op (x::ls')), all variables free. Lean binds op, s, ls, ls', x explicitly and states op ≠ .sub → wordExp s (.op op ls) = wordExp s (.op op ls') → wordExp s (.op op (x :: ls)) = wordExp s (.op op (x :: ls')); same curried premises and conclusion. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "the_words_append",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "the_words_append",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 140-155): Source comparison: HOL local the_words_append (:140-155): ∀ls ls'. the_words (ls ++ ls') = case the_words ls of NONE => NONE | SOME w => (case the_words ls' of NONE => NONE | SOME w' => SOME (w ++ w')). Lean: ∀ ls ls' : List (Option (WordLocW width)), theWords (ls ++ ls') = match theWords ls with none => none | some w => match theWords ls' with none => none | some w' => some (w ++ w'), over the tagged theWords (the_words_def) and tagged WordLocW (word_loc). No hypotheses; no state carrier. Words are BitVec width with [NeZero width]; no finite-map qualifier. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "word_exp_op_op",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "word_exp_op_op",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 157-174): Source comparison: HOL local word_exp_op_op (:157-174): op ≠ Sub ⇒ ∀ls ls'. word_exp s (Op op ls) = word_exp s (Op op ls') ⇒ word_exp s (Op op (l ++ ls)) = word_exp s (Op op ((Op op l) :: ls')), free op, s, l. Lean binds op, s, l as outer binders, then op ≠ .sub → ∀ ls ls', wordExp s (.op op ls) = wordExp s (.op op ls') → wordExp s (.op op (l ++ ls)) = wordExp s (.op op (.op op l :: ls')); same quantifier placement, guard, premise and conclusion. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "pull_ops_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "pull_ops_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 176-189): Source comparison: HOL local pull_ops_ok (:176-189): op ≠ Sub ⇒ ∀ls. word_exp s (Op op (pull_ops op ls [])) = word_exp s (Op op ls), free op and s. Lean binds op then s, then op ≠ .sub → ∀ ls, wordExp s (.op op (pullOps op ls [])) = wordExp s (.op op ls), with pullOps the tagged pull_ops_def. Same guard and conclusion. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "word_exp_swap_head",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "word_exp_swap_head",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 193-205): Source comparison: HOL local word_exp_swap_head (:193-205): ∀B. op ≠ Sub ⇒ word_exp s (Op op A) = SOME (Word w) ⇒ word_exp s (Op op (B++A)) = word_exp s (Op op (Const w::B)), free op, s, A, w. Lean binds op, s, A, w as outer binders, then ∀ B, op ≠ .sub → wordExp s (.op op A) = some (.word w) → wordExp s (.op op (B ++ A)) = wordExp s (.op op (.const w :: B)); the ∀B stays innermost before the guard as in HOL. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "EVERY_is_const_word_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "EVERY_is_const_word_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 207-212): Source comparison: HOL local EVERY_is_const_word_exp (:207-212): ∀ls. EVERY is_const ls ⇒ EVERY IS_SOME (MAP (λa. word_exp s a) ls), free s. Lean binds s outermost, then ∀ ls, (∀ e ∈ ls, isConst e = true) → ∀ o ∈ ls.map (fun a => wordExp s a), o.isSome = true; EVERY is rendered as the equivalent bounded membership quantifier, is_const is the tagged isConst (is_const_def), IS_SOME is Option.isSome. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "all_consts_simp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "all_consts_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 214-232): Source comparison: HOL local all_consts_simp (:214-232): op ≠ Sub ⇒ ∀ls. EVERY is_const ls ⇒ word_exp s (Op op ls) = SOME (Word (THE (word_op op (MAP rm_const ls)))), free op and s. Lean binds op, s, then op ≠ .sub → ∀ ls, (∀ e ∈ ls, isConst e = true) → wordExp s (.op op ls) = some (.word (holThe (wordOpHOL op (ls.map rmConst)))), with THE the tagged holThe (THE_DEF), word_op the tagged wordOpHOL (word_op_def), rm_const the tagged rmConst; EVERY as the bounded membership quantifier. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "word_exp_reduce_const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "word_exp_reduce_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 234-241): Source comparison: HOL local word_exp_reduce_const (:234-241): word_exp s (Op op (Const w :: rest)) = SOME x ⇒ word_exp s (reduce_const op w rest) = SOME x, all free. Lean binds op, s, w : BitVec width, rest, x : WordLocW width explicitly and states wordExp s (.op op (.const w :: rest)) = some x → wordExp s (reduceConst op w rest) = some x, with reduceConst the tagged reduce_const_def. No op ≠ Sub guard on either side. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "optimize_consts_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "optimize_consts_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 243-270): Source comparison: HOL local optimize_consts_ok (:243-270): op ≠ Sub ∧ word_exp s (Op op ls) = SOME x ⇒ word_exp s (optimize_consts op ls) = SOME x, all free. Lean binds op, s, ls, x explicitly and states the same single conjunctive premise op ≠ .sub ∧ wordExp s (.op op ls) = some x → wordExp s (optimizeConsts op ls) = some x, with optimizeConsts the tagged optimize_consts_def (PARTITION via tagged holPartition, THE via holThe). State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "pull_exp_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "pull_exp_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 272-317): Source comparison: HOL local pull_exp_ok (:272-317): ∀exp s x. word_exp s exp = SOME x ⇒ word_exp s (pull_exp exp) = SOME x. Lean: ∀ (exp : WordLangExpHOL (BitVec width)) (s : WordSemStateFiniteExact width C F) (x : WordLocW width), wordExp s exp = some x → wordExp s (pullExp exp) = some x, same binder order, premise and conclusion, with pullExp the tagged pull_exp_def; proved by well-founded recursion mirroring pull_exp_ind. State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "convert_sub_every_var_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "convert_sub_every_var_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 320-327): Source comparison: HOL local convert_sub_every_var_exp (:320-327): ∀ls. (∀x. MEM x ls ⇒ every_var_exp P x) ⇒ every_var_exp P (convert_sub ls), free P. Lean binds P : Nat → Bool outermost (HOL num -> bool), then ∀ ls, (∀ x ∈ ls, everyVarExpHOL P x = true) → everyVarExpHOL P (convertSub ls) = true, with everyVarExpHOL the tagged every_var_exp_def and convertSub the tagged convert_sub_def. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "optimize_consts_every_var_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "optimize_consts_every_var_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 329-339): Source comparison: HOL local optimize_consts_every_var_exp (:329-339): ∀ls. (∀x. MEM x ls ⇒ every_var_exp P x) ⇒ every_var_exp P (optimize_consts op ls), free P and op. Lean binds P then op (HOL first-occurrence order), then ∀ ls, (∀ x ∈ ls, everyVarExpHOL P x = true) → everyVarExpHOL P (optimizeConsts op ls) = true. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "pull_exp_every_var_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "pull_exp_every_var_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 348-360): Source comparison: HOL local pull_exp_every_var_exp (:348-360): ∀exp. every_var_exp P exp ⇒ every_var_exp P (pull_exp exp), free P. Lean binds P outermost, then ∀ exp, everyVarExpHOL P exp = true → everyVarExpHOL P (pullExp exp) = true, by recursion mirroring pull_exp_ind; HOL's anonymous Q.prove pull_ops_every_var_exp (:341-346) is the untagged Lean helper pull_ops_every_var_exp. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "flatten_exp_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "flatten_exp_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 363-394): Source comparison: HOL local flatten_exp_ok (:363-394): ∀exp s x. word_exp s exp = SOME x ⇒ word_exp s (flatten_exp exp) = SOME x. Lean: ∀ exp s (x : WordLocW width), wordExp s exp = some x → wordExp s (flattenExp exp) = some x, same binder order, premise and conclusion, with flattenExp the tagged flatten_exp_def; proved by recursion following flatten_exp_ind (Sub, [], [a], a::b::rest, Load, Shift, leaf cases). State is the tagged WordSemStateFiniteExact width C F (HOL ('a,'c,'ffi) wordSem$state), whose |-> fields fp_regs/store are recorded by fmap_as_finite_support [fpRegs, store] with the same-module witness WordInstPullExpSupport.holFmapAsFiniteSupportWitness; words are BitVec width with [NeZero width]; word_exp is the tagged wordExp (word_exp_def), expressions the tagged WordLangExpHOL (wordLang$exp), binops the shared BinOp (Add|Sub|And|Or|Xor). No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "binaryBranchExp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "binary_branch_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 397-409): Source comparison: HOL binary_branch_exp_def (:397-409), clause by clause in source order: Op Sub exps => EVERY binary_branch_exp exps; Op op xs (op ≠ Sub by clause order) => LENGTH xs = 2 ∧ EVERY binary_branch_exp xs; Load exp => binary_branch_exp exp; Shift shift exp nexp => binary_branch_exp exp ∧ binary_branch_exp nexp; otherwise (Const, Var, Lookup) => T. Lean binaryBranchExp : WordLangExpHOL (BitVec width) → Bool has the same clauses in the same order: .op .sub exps => all; .op _ xs => decide (xs.length = 2) && all; .load; .shift _ exp nexp => conjunction; _ => true. EVERY is List.all over attach (for the exp_size-style well-founded termination). Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "flatten_exp_binary_branch_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "flatten_exp_binary_branch_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 412-417): Source comparison: HOL local flatten_exp_binary_branch_exp (:412-417): ∀exp. binary_branch_exp (flatten_exp exp), no free variables. Lean: ∀ exp : WordLangExpHOL (BitVec width), binaryBranchExp (flattenExp exp) = true, over the tagged binaryBranchExp (binary_branch_exp_def) and flattenExp (flatten_exp_def); no hypotheses. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/PullExp.lean",
+    "lean_name": "flatten_exp_every_var_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "flatten_exp_every_var_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 419-425): Source comparison: HOL local flatten_exp_every_var_exp (:419-425): ∀exp. every_var_exp P exp ⇒ every_var_exp P (flatten_exp exp), free P. Lean binds P : Nat → Bool outermost, then ∀ exp, everyVarExpHOL P exp = true → everyVarExpHOL P (flattenExp exp) = true. Words are BitVec width with [NeZero width] over the tagged WordLangExpHOL (wordLang$exp); no state carrier, so no finite-map qualifier. No other representation change. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Misc/PermPartition.lean",
+    "lean_name": "permPart",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "PERM_PART",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 1419-1438): Source comparison: CakeML miscScript PERM_PART (:1419-1438): ∀P L l1 l2 p q. ((p,q) = PART P L l1 l2) ⇒ PERM (L ++ (l1 ++ l2)) (p++q). Lean permPart: ∀ (P : α → Bool) (L l1 l2 p q : List α), (p, q) = holPart P L l1 l2 → holPerm (L ++ (l1 ++ l2)) (p ++ q), same binders in HOL order, same equation orientation and conclusion, over the tagged holPart (sortingScript PART_DEF) and holPerm (PERM_DEF); HOL 'a -> bool predicate as Bool-valued function as in PART_DEF. No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Misc/PermPartition.lean",
+    "lean_name": "permPartitionMisc",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "PERM_PARTITION",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 1440-1444): Source comparison: CakeML miscScript PERM_PARTITION (:1440-1444): ∀P L A B. ((A,B) = PARTITION P L) ⇒ PERM L (A ++ B). Lean permPartitionMisc: ∀ (P : α → Bool) (L A B : List α), (A, B) = holPartition P L → holPerm L (A ++ B), same binders, hypothesis orientation and conclusion, over the tagged holPartition (PARTITION_DEF) and holPerm. Distinct from the separately tagged linear_scanProof PERM_PARTITION in IntervalsCorrect.lean. No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sorting/PartsHaveProp.lean",
+    "lean_name": "holPartsHaveProp",
+    "hol_path": "HOL/src/sort/sortingScript.sml",
+    "hol_name": "PARTs_HAVE_PROP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.1/.2.42; source from preserved flapjack-opus5 checkpoint 602b2a539; HOL lines 684-697): Source comparison: HOL sortingScript PARTs_HAVE_PROP (:684-697): ∀P L A B l1 l2. ((A,B) = PART P L l1 l2) ∧ (∀x. MEM x l1 ⇒ P x) ∧ (∀x. MEM x l2 ⇒ ¬P x) ⇒ (∀z. MEM z A ⇒ P z) ∧ (∀z. MEM z B ⇒ ¬P z). Lean holPartsHaveProp: ∀ (P : α → Bool) (L A B l1 l2 : List α), (A, B) = holPart P L l1 l2 ∧ (∀ x, x ∈ l1 → P x = true) ∧ (∀ x, x ∈ l2 → ¬ P x = true) → (∀ z, z ∈ A → P z = true) ∧ (∀ z, z ∈ B → ¬ P z = true); same binder order, the same three-conjunct premise and two-conjunct conclusion, MEM as list membership, over the tagged holPart (PART_DEF). No word or state carrier: unqualified, reviewed_exact. Kernel-checked; no extra hypothesis."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "strong_locals_rel_set_vars_dom",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",

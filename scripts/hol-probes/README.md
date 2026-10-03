@@ -18,6 +18,8 @@ correspondence additionally covers arbitrary partner lists.
 
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
+`word_remove_group_probe.out` captures, from the original built theories, the full statements (all with zero hypotheses) of wordProps `evaluate_dec_clock`, every exported word_removeProof declaration (`compile_state_def` and its type, the 28 exported commutation lemmas, `word_remove_correct` also with full types) and the sptree `domain_map`, `map_insert`, `map_fromAList` and `map_union` lemmas. The two `[local]` theorems `evaluate_add_clock_compile_state` and `pair_map_I` are not exported from the theory and cannot be captured this way; their statements are reviewed against the script source. These rows are statement evidence for source review, not a HOL-to-Lean equivalence proof.
+
 `target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
 
 `target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.

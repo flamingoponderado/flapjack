@@ -1469,6 +1469,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.LocalsRel
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
@@ -2120,6 +2121,8 @@ import Flapjack.Misc.ListEl
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
+import Flapjack.Misc.Sorting.PartsHaveProp
+import Flapjack.Misc.PermPartition
 import Flapjack.Misc.Mergesort
 import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
@@ -2334,6 +2337,7 @@ import Flapjack.Compiler.Backend.WordUnreach.ProductionCanonicalImage
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordInst
+import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
