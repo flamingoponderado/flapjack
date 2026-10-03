@@ -1,0 +1,36 @@
+asm_fetch_NOT_ffi_entry_pcs=LENGTH (prog_to_bytes (code2 :α sec list)) < dimword (:α) ∧
+mmio_pcs_min_index (mc_conf :(α, 'state, β) machine_config).ffi_names =
+SOME (i :num) ∧ LENGTH mc_conf.ffi_names = LENGTH mc_conf.ffi_entry_pcs ∧
+all_enc_ok mc_conf.target.config (labs :num sptree$num_map sptree$num_map)
+  (ffi_names :ffiname list) (0 :num) code2 ∧ enc_ok mc_conf.target.config ∧
+(∀(index :num).
+   index < i ⇒
+   -(n2w (ffi_offset * (index + (3 :num))) :α word) +
+   mc_conf.target.get_pc (ms :'state) ∉ mc_conf.prog_addresses ∧
+   -(n2w (ffi_offset * (index + (3 :num))) :α word) +
+   mc_conf.target.get_pc ms ∉ mc_conf.shared_addresses ∧
+   -(n2w (ffi_offset * (index + (3 :num))) :α word) +
+   mc_conf.target.get_pc ms ≠ mc_conf.halt_pc ∧
+   -(n2w (ffi_offset * (index + (3 :num))) :α word) +
+   mc_conf.target.get_pc ms ≠ mc_conf.ccache_pc ∧
+   find_index
+     (-(n2w (ffi_offset * (index + (3 :num))) :α word) +
+      mc_conf.target.get_pc ms) mc_conf.ffi_entry_pcs (0 :num) = SOME index) ∧
+bytes_in_mem (mc_conf.target.get_pc ms) (prog_to_bytes code2)
+  (t :α asm_state).mem mc_conf.prog_addresses (dm :α word -> bool) ∧
+asm_fetch_aux (pos :num) code2 = SOME (line :α line) ∧
+(a :num) < LENGTH (line_bytes line) ⇒
+¬MEM
+  (mc_conf.target.get_pc ms + (n2w a :α word) +
+   (n2w (pos_val pos (0 :num) code2) :α word)) (TAKE i mc_conf.ffi_entry_pcs)
+asm_fetch_NOT_ffi_entry_pcs_types=(a :num)::num;(line :α line)::α line;(pos :num)::num;(dm :α word -> bool)::α word -> bool;(t :α asm_state)::α asm_state;(ms :'state)::'state;(ffi_names :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(i :num)::num;(mc_conf :(α, 'state, β) machine_config)::(α, 'state, β) machine_config;(code2 :α sec list)::α sec list;
+asm_fetch_NOT_ffi_entry_pcs_hypotheses=0
+first=T
+wrap=T
+next=T
+next_last=T
+shift_wrap=T
+shift=T
+shift_next=T
+byte_bound_guard=T
+fetch_guard=T

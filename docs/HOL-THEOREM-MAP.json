@@ -69091,6 +69091,117 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Misc/Sptree/MapiLookup.lean",
+    "lean_name": "sptLookupMapi0",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_mapi0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03, bead flapjack-sola-sptree-mapi-lookup: original HOL source lines880-889 retains arbitrary exact Spt tree, Nat key, polymorphic independent universe-0 payload types and Nat-indexed payload function. lookup_mapi0 also retains arbitrary Nat start index and original spt_acc key; its NONE/SOME case is constructor-for-constructor Option.map. lookup_mapi starts at zero and preserves original OPTION_MAP(f key) conclusion. No well-formedness, output equality or successful-run premise. Compared imported original mapi0/mapi, lrnext, spt_acc and smart-constructor behavior including malformed trees; kernel structural induction proves both complete statements. This library prerequisite supports actual heuristic branch-join transport, not completed allocator/compiler semantics. Source statement and carrier comparison completed by flapjack-sol-a."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/MapiLookup.lean",
+    "lean_name": "sptLookupMapi",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_mapi",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03, bead flapjack-sola-sptree-mapi-lookup: original HOL source lines891-896 retains arbitrary exact Spt tree, Nat key, polymorphic independent universe-0 payload types and Nat-indexed payload function. lookup_mapi0 also retains arbitrary Nat start index and original spt_acc key; its NONE/SOME case is constructor-for-constructor Option.map. lookup_mapi starts at zero and preserves original OPTION_MAP(f key) conclusion. No well-formedness, output equality or successful-run premise. Compared imported original mapi0/mapi, lrnext, spt_acc and smart-constructor behavior including malformed trees; kernel structural induction proves both complete statements. This library prerequisite supports actual heuristic branch-join transport, not completed allocator/compiler semantics. Source statement and carrier comparison completed by flapjack-sol-a."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "privLevel",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "privLevel_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "is_CSR_defined",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "is_CSR_defined_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "curPrivilege",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "curPrivilege_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "csrPR",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "csrPR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "csrRW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "csrRW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "check_CSR_access",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "check_CSR_access_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRAccess.lean",
+    "lean_name": "checkCSROp",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "checkCSROp_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source/carrier comparison: complete literal native CSR access section, fixedword12 addresses/word2 permissions/word5 rs1 and full native state. Original signed word12 range comparisons and unsigned privilege comparison preserved; MPRV selector, architecture-check returned states and ignored rs1 retained. No success/mode/core/defined-address premise, arbitrary architecture never fixed. Fresh original boundary and full-frame regression checks supplement source review; whole Run/Next and compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/StoreConsts.lean",
+    "lean_name": "compCorrectStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-remove-storeconsts): full original comp_correct StoreConsts case1504–1575. Arbitrary temporary/bitmap registers, optional stub, original four premises and existential target clock/result dispatch/full postrelation retained. Original source semantics excludes allocation and error branches and derives distinct registers, three input words and successful copyWordsExact. Native bitmap-base load/add/shift uses original store/stack heap, original positive good dimension and state relation; accepted full copyLoopThm supplies the actual native run and framed memory update; final moves and every full state-relation conjunct are proved. No target execution, successful pass, desired postrelation, extra alias/width condition or simulation is assumed. Canonical actual imported StackSemStateFiniteExact regs/fpRegs/store finite maps and positive type-indexed BitVec words use the reviewed combined relation/word qualifiers with non-vacuous broad/exact roundtrip witness; code remains original Spt. Inherits the reviewed reals_as_rational_cuts FP carrier through evaluator closure (SOUNDNESS item8), although this constructor performs no FP instruction. Full original literal HOL case proof and local state_rel_get_var replay produce closed statement/proved rows. This is a full constructor slice, not whole-pass completion or executed compiler parity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateNeutral.lean",
+    "lean_name": "evaluateClockNeutral",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_clock_neutral",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 original679-692 and original fully generalized native type: all original program/source/result/post/replacementclock binders and sole source-evaluation AND clock_neutral premise, complete actual updated-clock evaluation and same result/post-state clock update. Arbitrary positive width and independent compile/FFI host types retained. Actual native HolProg/StackSemStateFiniteExact/evaluate and reviewed clockNeutralHOL used; original-neutral constructors Skip/Inst/LocValue/Halt and recursive Seq/If exactly retained, every other constructor excluded by source predicate. Structural size proof derives full clock-update commutation AND unchanged post-clock internally; Seq min clock clamp identity proved from first recursive result, conditional register/immediate and word comparison failures/successes retained. No desired evaluation/post-clock/free-context extra premise or callback law. Actual canonical regs/fpRegs/store owner and local genuine codec roundtrip; Spt code unchanged. Fresh literal original full inst_clock_neutral local proof then literal original full evaluate_clock_neutral proof, full generalized statement0hyp and7 independent original neutral/nonneutral observations. Full arbitrary kernel consumer and4 mixed Seq/Inst/Halt consumers at widths1/8/64/80 with replacement clocks0/17/0/123456789. Existing evaluator closure inherits reals_as_rational_cuts SOUNDNESS item8, no new real/FP agreement, production behavior/default/HOLD policy unchanged. Actual StackRemove initializer3887 prerequisite, not full initialization/compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiEntryExclusion.lean",
+    "lean_name": "asmFetch_notFfiEntryPcs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_NOT_ffi_entry_pcs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 complete original source10011 and fresh original fulltype0hyp comparison: all eleven outer/free binders a/line/pos/dm/t/ms/ffi_names/labs/i/machine_config/code retained, arbitrary positive native word width/host state/projection, constructor-exact native Line/Section/AsmState/MachineConfig, fixed word8 bytes/memory, MlString names, canonical Spt labels and HOL sets as predicates. words_as_type_indexed_bitvec records only standard dimension translation; nine original guard families retained in full, including code-byte size, optional MMIO success, equal name/entry lengths, all_enc_ok/enc_ok, every external-address program/shared/halt/cache exclusion plus actual search, actual excluded-domain byte memory, actual successful fetch and in-line byte bound. Whole exclusion from TAKE i actual entry PCs, with original address addition order. Kernel first-match membership lemmas derive bounded EL address equality from actual searches, memory implication/domain and fetched-successor/position-bound lemmas derive program-domain membership, and original external exclusion contradicts it. No desired target/exclusion, extra bound, no-duplicate or successful compiler premise. Every EL is under original take bound/search witness; unchanged default/choice definitions and individual hold. Fresh original seven complete instances discharge all source guards on actual two-instruction encoding, external prefix, memory domains and wrapped/shifted addresses, plus failed byte/fetch guard observations; native full generic and arbitrary underlying MachineConfig/AsmState fixtures with concrete wrapped/shifted PCs match. Unused source guard conjuncts remain stated. Source comparison/oracle evidence is not cross-language equivalence or full initializer/compiler/machine correctness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRel.lean",
     "lean_name": "stackRel",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
