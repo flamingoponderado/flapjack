@@ -71490,7 +71490,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 complete source comparison (2026-10-03; bead .15.10.151): original local complete IMP_state_rel_make_init10134-10514 including all17 Suspend/Resume cases and Finalise. Whole original state_rel53conjunct conclusion at actual makeInit, every original binder and all14 conjunctive guards retained. Four checked coherent original case groups (ten basic, four interference, two MMIO/buffer, full ISR16) are applied inside the proof from the same original guard; caller supplies no case theorem/callback, target evaluation, successful compiler output beyond original remove_labels equation, postrelation, new bounds or output facts. Remaining definitional fields and original dimension/configuration/initial-state/removal guards establish exact register/FP/memory/buffer/oracle/clock-independent/config/label/safety clauses. Optional link-register cases preserve original fallback; original SOME boundary discharges holThe without inspecting or choosing NONE default. Source Boolean domains use existing reviewed truth predicates, no changed membership; generic positive-width BitVec words, fixed byte8/FP64, separate universe0 FFI host and native AST/config/state/projection carriers retained. No totalHD/EL provenance hold/default policy change. Fresh original complete theorem/types0hyp/kernelT plus complete original state_rel definition/types0hyp and53conjunct count captured; native fullguard whole-relation consumer derives actual compile interface and aligned target-memory bytes. Inherits reals_as_rational_cuts SOUNDNESS item8 through original mcConfOk/encoderCorrect, no own rendering and no faithful real-carrier closure inferred. This is full initializer relation only; original semantics_make_init152/machine semantics/compile semantics153 and end-to-end correctness remain open."
+    "reviewer": "flapjack-sol3 complete source comparison (2026-10-03; bead .15.10.151): original local complete IMP_state_rel_make_init10134-10514 including all17 Suspend/Resume cases and Finalise. Whole original state_rel53conjunct conclusion at actual makeInit, every original binder and all14 conjunctive guards retained. Four checked coherent original case groups (ten basic, four interference, two MMIO/buffer, full ISR16) are applied inside the proof from the same original guard; caller supplies no case theorem/callback, target evaluation, successful compiler output beyond original remove_labels equation, postrelation, new bounds or output facts. Remaining definitional fields and original dimension/configuration/initial-state/removal guards establish exact register/FP/memory/buffer/oracle/clock-independent/config/label/safety clauses. Optional link-register cases preserve original fallback; original SOME boundary discharges holThe without inspecting or choosing NONE default. Source Boolean domains use existing reviewed truth predicates, no changed membership; generic positive-width BitVec words, fixed byte8/FP64, separate universe0 FFI host and native AST/config/state/projection carriers retained. No totalHD/EL provenance hold/default policy change. Fresh original complete theorem/types0hyp/kernelT plus complete original state_rel definition/types0hyp and53conjunct count captured; native fullguard whole-relation consumer derives actual compile interface and aligned target-memory bytes. Inherits reals_as_rational_cuts SOUNDNESS item8 through original mcConfOk/encoderCorrect, no own rendering and no faithful real-carrier closure inferred. This is full initializer relation only; original semantics_make_init152/machine semantics/compile semantics153 and end-to-end correctness remain open. PR1207 review repair: retains HOL independent arbitrary G in the empty goodCode label tree; only internal support is specialized to Nat using equality of empty domains. No narrowing in the tagged conclusion or premises."
   },
   {
     "lean_path": "Flapjack/Compiler/Encoders/AsmProps/AsmConsts.lean",
@@ -76904,7 +76904,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open. PR1207 review repair: IH additionally retains the original asm_inst nonfailed source-success guard, discharged by hok only on the successful source branch."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
@@ -78421,5 +78421,59 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.6): Full genuine original filter_correct669 external CallFFI branch962-981, native labSem Evaluate callFFI constructor. Retains full source s1/t1/res/s2 evaluate/stateRel/nonfailed and literal native fetch guard, existential target execution/result/extra clock/FFI conclusion, all generic native word/configuration/FFI and exact MlString carriers. Covers all five actual register matches, both native bytearray read NONE/SOME cases, locator NONE/SOME, and FFI final/ret without success narrowing. IH only for literal actual returned source successor: its path guard packages original five register, two memory-read, source locator and FFI-return choices existentially; no target evaluation, desired result/postrelation, or universally vacuous context supplied. Local private callFfiReturnState merely names exact inline native record update, no independent HOL declaration: returned memory/FFI, IO/register/FP/PC/clock clauses unchanged. Full target successor relation and source/target return locator derive from original stateRel plus accepted loc_to_pc_eq_NONE/SOME; actual skipped-run and target evaluation derived. Positive-width words translation only; exact fixed bytes preserved. Original full669 capture/type/hyp0/kernel reproof freshly replayed. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Install/full evaluator assembly/semantic lift remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "fakeSeq_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1005: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "ssaReconcile_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1035: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "loopSetup_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1080: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "fakeMoves_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_fake_moves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1402: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+    "lean_name": "ssaCcTrans_flatExpInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1417-1430, original complete Inst constructor case. Retains original source flat_exp_conventions premise and literal SSA output conclusion for all native instruction constructors, FP width branches and fallback. No target premise or restricted instruction subset. Native WordLang/Spt/List and positive word carrier; words_as_type_indexed_bitvec records only HOL dimension translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+    "hol_name": "filter_skip_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Map.lean",
+    "lean_name": "filterSkipMap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.8): Full original lab_filterScript21 forall ls filter_skip ls = MAP (lambda Section n xs => Section n (FILTER not_skip xs)) ls. Fresh original fulltype captures for theorem/not_skip_def/filter_skip_def show alpha sec list and alpha line: actual fixed native syntax indexed by HOL word dimension, no arbitrary other Line carriers to specialize. Lean retains full program binder and constructor-for-constructor Section/List/Line/ASM/register-immediate/MlString fields; map lambda written with structure projections is original single constructor case. Positive-width words_as_type_indexed_bitvec is sole translation; fixed bytes unchanged, no extra hypotheses. Kernel list induction follows unchanged source proof. Same-module untagged filterSkipAppend is derived map/append infrastructure for actual Install code/oracle successor, not a new HOL declaration. Original three declarations freshly replayed with full type/hyp0/kernel captures12rows. This is a missing original995/999/1005/1024/1028/1031 Install dependency; full Install/filter assembler remain open."
   }
 ]

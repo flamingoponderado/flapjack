@@ -1946,6 +1946,12 @@
       "sha256": "ba2d1d85473478a70ac9f4dbbc42bba570ac0e62dc08d109d77306814c35b0bd"
     },
     {
+      "bytes": 1456,
+      "out": "lab_filter_map_probe.out",
+      "rows": 12,
+      "sha256": "86240a15cfaf0fa1e6557f5a79055c496bedcbf47082dec04c892be99f50c59c"
+    },
+    {
       "bytes": 567,
       "out": "lab_filter_pc_adjustment_probe.out",
       "rows": 8,
