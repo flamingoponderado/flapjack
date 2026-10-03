@@ -1,0 +1,9 @@
+last_definition=∀h t. LAST (h::t) = if t = [] then h else LAST t
+last_type=:α list -> α
+last_hypotheses=0
+last_cons_statement=(∀x. LAST [x] = x) ∧ ∀x y z. LAST (x::y::z) = LAST (y::z)
+last_cons_hypotheses=0
+last_cons_proved=T
+last_total_statement=∀l. LAST l = case l of [] => LAST [] | [h] => h | h::t => LAST t
+last_total_hypotheses=0
+last_total_proved=T

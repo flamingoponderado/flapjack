@@ -87,7 +87,7 @@ theorem compileCorrect_jumpCmp {width : Nat} [NeZero width] {S Q F : Type}
     | false =>
       simp only [hc] at hev
       obtain ⟨l, ms2, hl⟩ := stepNopOfLine s1.ffi hrel hec _ bytes' hmem hv.1 hv.2.2 hdis
-        (by simp [asmUpd, ← htc, AsmSem.updPc, ht1f]) (by simp [asmUpd, ← htc, AsmSem.updPc])
+        (by simp [asmUpd, ← htc, AsmSem.updPc, ht1f]) (fun _ _ => by simp [asmUpd, ← htc, AsmSem.updPc])
         (by intro x h; cases h)
       have htrel := (hl 0).2.2.1
       have hnewpc : t1.pc + BitVec.ofNat width bytes'.length =
@@ -165,7 +165,7 @@ theorem compileCorrect_locValue {width : Nat} [NeZero width] {S Q F : Type}
     simp only [getLabel, labInst, hfind] at hv
     obtain ⟨l, ms2, hl⟩ := stepNopOfLine s1.ffi hrel hec _ bytes' hmem hv.1 hv.2.2 hdis
       (by simp [asmUpd, AsmSem.updPc, AsmSem.updReg, ht1f])
-      (by simp [asmUpd, AsmSem.updPc, AsmSem.updReg]) (by intro x h; cases h)
+      (fun _ _ => by simp [asmUpd, AsmSem.updPc, AsmSem.updReg]) (by intro x h; cases h)
     have htrel := (hl 0).2.2.1
     have hnewpc : t1.pc + BitVec.ofNat width bytes'.length =
         p + BitVec.ofNat width (posVal (s1.pc + 1) 0 code2) := by
