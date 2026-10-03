@@ -69898,5 +69898,57 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 complete original434-472 and fresh full typed definition0hyp: all eight inputs and all eighteen clauses retained over independent MachineConfig state/projection, generic positive word dimension, fixed word8 bytes, exact AsmState and WordLocW memory. Source data/shared domains remain Boolean functions, translated pointwise as equality-to-true only when entering reviewed Prop-backed ASM/machine sets; same-module checked initDomainTruth_roundtrip and initDomainTruth_surjective establish every Boolean membership and all Prop-domain representatives, without new input premise. Full targetStateRel/configured/actualPC/startPcOk/alignment/next-interference/FFI/cache/codeLoaded/bytesInMem/subset/byte-alignment/shared-domain equality/disjoint/word-memory/codebuffer/dimension clauses preserved in source order. Actual HolByte.getByte/holByteAlign used; LOG2(0) unchanged at widths1-7. Full original startPcOk length clause plus FFI index<names.length bounds imported entry-PC EL; generic native consumers derive ordinary bounded getElem without added original guard or total-default/individual hold change. Fresh original fullbody/types0hyp and four generic word-memory/entry-bound/space/overflow kernel observations allT, native no-location memory and overflow rejection consumers. Proof-script contract only: actual175 dependent initializer151, whole machine/evaluator/compiler and end-to-end remain open. No supplied desired target execution, successful compilation or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Clock.lean",
+    "lean_name": "stateRelDecClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_dec_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.3: fresh full closed original statements and literal unchanged proof replays T/hyp0. Original7741-7748 arbitrary frames/lens/extra and full state relation retained; source/target dec_clock change only their clocks, equal clocks minus1 derived from original related clocks; every remaining conjunct preserved. Relation-only helper no numeric FP assertion. All5 named original fmap fields use actual imported canonical owners and genuine same-module roundtrip witnesses; Spt locals/code/frames untouched. Source config Nat#C/target C and universe0 FFI F retain source types, shared positive BitVec width/NeZero. No executable compiler changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Clock.lean",
+    "lean_name": "compCorrectTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.3: fresh full closed original statements and literal unchanged proof replays T/hyp0. Full goal5719-5751/Tick6410-6420. All original native execution/errorfree/stateRel/convention/compile/perf=false/bitmapbounds/prefix/labelsubset/maxvar hypotheses retained and complete clock/poststate/result existential plus compCorrectResult original full conditional resource/results conclusion. Timeout branch uses actual source flush_state T/target empty_env, result TimeOut, original FFI/clock equality; positive-clock branch uses native decrements and exact full state relation. No successful-only case, targetrun/postrelation/IH assumption or extra clock bound. Evaluator closure inherits reals_as_rational_cuts; no numerical FP correspondence asserted. All5 named original fmap fields use actual imported canonical owners and genuine same-module roundtrip witnesses; Spt locals/code/frames untouched. Source config Nat#C/target C and universe0 FFI F retain source types, shared positive BitVec width/NeZero. No executable compiler changes.",
+    "hol_line": 5756,
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Clock.lean",
+    "lean_name": "compCorrectMustTerminate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.3: fresh full closed original statements and literal unchanged proof replays T/hyp0. Full goal5719-5751/MustTerminate6422-6427 with arbitrary body program. Exactly original all execution/errorfree/stateRel/convention/nativecompiler/bitmapbounds/prefix/labelsubset/maxvar premises and complete existential/conditional conclusion. Original full stateRel entails source termdep=0; native MustTerminate returns Error, contradicting original res!=Error. No added impossible guard or restricted body/execution hypothesis; no recursive IH required by this stronger original-premise case. Does not claim an actual target-run example on this unreachable branch. Evaluator closure inherits reals_as_rational_cuts; no numerical FP claim. All5 named original fmap fields use actual imported canonical owners and genuine same-module roundtrip witnesses; Spt locals/code/frames untouched. Source config Nat#C/target C and universe0 FFI F retain source types, shared positive BitVec width/NeZero. No executable compiler changes.",
+    "hol_line": 5756,
+    "inherits_reals_as_rational_cuts": true
   }
 ]
