@@ -1,0 +1,9 @@
+ALL_DISTINCT_compile_top=∀(start :mlstring) (code :α decl list).
+  ALL_DISTINCT
+    (MAP
+       (FST :mlstring # (mlstring # shape) list # α prog # shape -> mlstring)
+       (functions code)) ⇒
+  ALL_DISTINCT
+    (MAP
+       (FST :mlstring # (mlstring # shape) list # α prog # shape -> mlstring)
+       (functions (compile_top code start)))
