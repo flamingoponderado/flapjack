@@ -2093,6 +2093,17 @@ def reviewed_gc_function_alias(module: str, root: str) -> str | None:
     return source
 
 
+# The only HOL predicates over the reviewed `gc_fun_type` alias that may inherit
+# its argument_4/result_3 slots: wordProps `gc_fun_ok_def` and word_simpProof
+# `gc_fun_const_ok_def` (word_simpProofScript.sml:135-139), both unary
+# predicates `f : 'a gc_fun_type -> bool`. Each was source-reviewed separately;
+# any further predicate needs its own review and an entry here.
+GC_FUNCTION_PREDICATE_REFERENCES = frozenset({
+    ("cakeml/compiler/backend/semantics/wordPropsScript.sml", "gc_fun_ok_def"),
+    ("cakeml/compiler/backend/proofs/word_simpProofScript.sml", "gc_fun_const_ok_def"),
+})
+
+
 def gc_function_predicate_signature(source: str, decl_name: str) -> bool:
     """Require the single alias argument and self-contained positive width."""
     if not re.search(rf"\bdef\s+{re.escape(decl_name)}\b", strip_lean_comments(source)):
@@ -2117,26 +2128,26 @@ def fmap_as_finite_support_function_errors(
 
     Normally this qualifier requires a type abbreviation with one top-level
     arrow, a tuple argument, and an Option-wrapped tuple result. The sole
-    approved predicate extension is original wordProps gc_fun_ok_def with
-    its one WordSemGcFun argument: it inherits exactly the existing reviewed
+    approved predicate extensions are original wordProps gc_fun_ok_def and
+    word_simpProof gc_fun_const_ok_def (GC_FUNCTION_PREDICATE_REFERENCES), each
+    with its one WordSemGcFun argument: they inherit exactly the existing reviewed
     alias slots and positive word width. This does not review predicate clauses
     or authorize an arbitrary higher-order predicate or alias. The
     position names are one-based (`argument_N`, `result_N`). It verifies both
     carrier slots are `HolFiniteMapExact`, contain identical canonical map
     types, and account for every such occurrence in the abbreviation.
     """
-    if (hol_reference == ("cakeml/compiler/backend/semantics/wordPropsScript.sml",
-                          "gc_fun_ok_def") and module and root
+    if (hol_reference in GC_FUNCTION_PREDICATE_REFERENCES and module and root
             and gc_function_predicate_signature(declaration_source, decl_name)):
         if not words_bitvec:
-            return ["gc_fun_ok must inherit words_as_type_indexed_bitvec together with map slots"]
+            return ["gc predicate must inherit words_as_type_indexed_bitvec together with map slots"]
         if positions != ("argument_4", "result_3"):
-            return ["gc_fun_ok must inherit exactly argument_4/result_3"]
+            return ["gc predicate must inherit exactly argument_4/result_3"]
         if re.search(r"^\s*(?:variable|variables|include|omit)\b",
                      strip_lean_comments("\n".join(lines)), re.M):
-            return ["gc_fun_ok requires self-contained binders"]
+            return ["gc predicate requires self-contained binders"]
         if reviewed_gc_function_alias(module, root) is None:
-            return ["gc_fun_ok requires the unique source-reviewed WordSemGcFun alias"]
+            return ["gc predicate requires the unique source-reviewed WordSemGcFun alias"]
         return []
     errors: list[str] = []
     if not positions:
@@ -3764,13 +3775,12 @@ def words_as_type_indexed_bitvec_errors(
             )
 
     carrier_ok = bool(module and root and reviewed_hol_prog_word_alias(signature, module, root))
-    # gc_fun_ok alone inherits the already reviewed function alias translation.
-    # Keep arbitrary higher-order aliases outside this narrowly approved route.
+    # Only the approved gc predicates inherit the reviewed function alias
+    # translation. Keep arbitrary higher-order aliases outside this route.
     if (not carrier_ok and module and root and lines is not None
             and gc_function_predicate_signature(signature + " := True", declaration)):
         sites = [site for site in hol_attribute_sites(lines, include_fmap_function=True)
-                 if site[1:3] == ("cakeml/compiler/backend/semantics/wordPropsScript.sml",
-                                  "gc_fun_ok_def")
+                 if tuple(site[1:3]) in GC_FUNCTION_PREDICATE_REFERENCES
                  and site[11] and site[-1] == ("argument_4", "result_3")
                  and gc_function_predicate_signature(
                      tagged_declaration_source(lines, site[0]), declaration)]

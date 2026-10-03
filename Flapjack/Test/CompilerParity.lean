@@ -26,6 +26,7 @@ import Flapjack.Test.StackRawCallInstallParity
 import Flapjack.Test.StackRawCallSeqStandardParity
 import Flapjack.Test.StackRawCallSeqParity
 import Flapjack.Test.StackRawCallCallTailParity
+import Flapjack.Test.StackRawCallCallParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
@@ -1155,6 +1156,8 @@ import Flapjack.Test.AsmPropsEncoderCorrectParity
 import Flapjack.Test.MachineIeeeCrossFormatParity
 import Flapjack.Test.L3RiscvCrossFormatParity
 import Flapjack.Test.WordGcFunOkParity
+import Flapjack.Test.WordSimpCompileExpParity
+import Flapjack.Test.WordInstSelectExactParity
 
 
 

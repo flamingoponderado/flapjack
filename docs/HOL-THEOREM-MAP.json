@@ -72942,6 +72942,1290 @@
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; bead flapjack-sola-call-entry-locals-domain): HOL miscScript.sml:2263-2269 universally quantifies an arbitrary payload list q and states domain(fromList2 q) = set(GENLIST (fun x => 2*x) (LENGTH q)), without hypotheses. Lean retains arbitrary Type payloads and List, native reviewed Spt/fromList2 fold, Nat keys, predicate-valued domain/set equality and exact length-indexed range/map generator. Existing sptFromList2 is the reviewed original foldl insertion at even keys; proof derives domain from every actual insertion including empty lists. No width, WF, distinctness, output or target-evaluation premise added. Counterpart beneath Sptree; callEnv consumer derives original SSA entry domain from real argument list."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "seqAssoc",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "Seq_assoc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all seven clauses including catch-all SmartSeq p1 other; option cases on ret/handler literal. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destSeq",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_Seq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destIf",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_If_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destIfEqImm",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_If_Eq_Imm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: SOME (Equal,n,Imm w,p1,p2) pattern else NONE. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destSeqAssignConst",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_Seq_Assign_Const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: let-split dest_Seq then Assign m (Const w) with m = n test. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "stripConst",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "strip_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: three clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpExp",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Var/Op/Shift clauses and identity for Const/Lookup/Load (HOL does not recurse into Load); MAP rendered by attached map (same list) for termination; word_op/word_sh are tagged wordOpHOL/wordShiftHOL with w2n as toNat. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpMoveCs",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_move_cs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses with insert/delete on lookup of SND m in old cs. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpInstCs",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_inst_cs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: every clause positionally (AddCarry/AddOverflow/SubOverflow delete args 1 and 4; LongMul/LongDiv delete 1 and 2; Mem Load/Load32/Load8 only, so Load16 falls to identity as in HOL); dimindex(:'a)=64 as width = 64. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "getVarImmCs",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "get_var_imm_cs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "allNames",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "all_names_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all_names (n,m) = union n m over num_set pair. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "dropConsts",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "drop_consts_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses, SmartSeq (drop_consts cs ns) (Assign n (Const w)) reversed order as HOL. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpLoop",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: every clause in source order: Move, Inst, Assign, Get, OpCurrHeap, MustTerminate, Seq, If (static word_cmp selection or inter_eq), Call (NONE ret / returning without handler with delete_all and filter_v is_gc_const of inter / with handler LN), FFI, LocValue, Alloc, StoreConsts, Install, Store, all eight ShareInst ops, Loop (body from LN, result LN), catch-all. HOL local overload delete_all is untagged deleteAll = FOLDR delete; inter is sptInter, filter_v tagged sptFilterV, inter_eq tagged sptInterEq, word_cmp tagged asm wordCmpHOL. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFp",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: FST (const_fp_loop p LN). 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "rewriteDuplicateIfMaxReassoc",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "rewrite_duplicate_if_max_reassoc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: = 8. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destRaiseNum",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_Raise_num_pmatch_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Raise n => n | _ => 0. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "isSimple",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "is_simple_pmatch_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Tick/Skip/Move/Assign true, else false. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "tryIfHoist2",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "try_if_hoist2_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: if N = 0 then NONE rendered as match on N with successor recursing on predecessor (= N - 1); If and Seq/dest_If/is_simple branches literal, res1 = 0 and res1 + res2 <> 3 guards literal. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "tryIfHoist1",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "try_if_hoist1_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: dummy If with Raise 1/Raise 2 and rewrite_duplicate_if_max_reassoc. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "simpDuplicateIf",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "simp_duplicate_if_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all clauses; Seq uses try_if_hoist1 then Seq_assoc Skip. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "pushOutIfAux",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "push_out_if_aux_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all clauses including four If flag combinations, Seq short-circuit, Loop flag F, Call NONE true. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "pushOutIf",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "push_out_if_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: FST of aux. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "compileExp",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Seq_assoc Skip, const_fp, simp_duplicate_if, push_out_if in order. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/FilterV.lean",
+    "lean_name": "sptFilterV",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "filter_v_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38: all four filter_v clauses literal with mk_BN/mk_BS collapsing; HOL bool predicate as Bool function. Used by word_simp const_fp_loop; covered by the word_simp_compile_exp probe replay (Call/Alloc/Install rows)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "pullOps",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "pull_ops_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: both clauses; same-op Op args prepended (ls ++ acc) else consed. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "isConst",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "is_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: both clauses. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "rmConst",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "rm_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: Const w => w else 0w. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "convertSub",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "convert_sub_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: three clauses in source order ([Const;Const], [x;Const w] => Op Add [Const (-w); x], else Op Sub). Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "opConsts",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "op_consts_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: And => Const (~0w) else Const 0w. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "reduceConst",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "reduce_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: all branches (w = 0 with Add/Or/Xor list cases, And, else). Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "optimizeConsts",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "optimize_consts_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: PARTITION is tagged holPartition (PART accumulators, reversed sublists); THE is tagged holThe (unspecified THE NONE), so noncomputable. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "pullExp",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "pull_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: clauses in source order: every Op Sub to convert_sub (MAP pull_exp), Op op [] => op_consts, Op op [x] => pull_exp x, Op op ls => optimize_consts (pull_ops op (MAP pull_exp ls) []), Load, Shift, identity; MAP as attached map for termination. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "flattenExp",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "flatten_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: clauses in source order incl. Op op (x::xs) => Op op [flatten_exp (Op op xs); flatten_exp x]. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "isLookupCurrHeap",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "is_Lookup_CurrHeap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: Lookup CurrHeap => T else F. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "instSelectExp",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "inst_select_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: every clause: Load with Op Add [exp'; Const w] addr_offset_ok split, Const, Var (Move 0 [tar,v]), Lookup (Get), binary Op with CurrHeap cases (op <> Sub guard), valid_imm (INL op), Add-to-Sub negated immediate, temp+1 constant, Shift with w2n < dimindex (=width), n = 0 Move, else Inst Const tar 0w, register shift, catch-all Skip. addr_offset_ok overload = offset_ok 0 c.addr_offset (asmOffsetOkExact 0). Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "instSelect",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "inst_select_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: every clause: Assign, Set, Store (addr_offset_ok), Seq, MustTerminate, ShareInst (Load/Store addr, Load32/Store32 addr, Load16/Store16 hw, Load8/Store8 byte offset guards), If, Call (ret/handler bodies), Loop, identity. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "threeToTwoReg",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "three_to_two_reg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: every clause: Binop, Shift, AddCarry, AddOverflow, SubOverflow, OpCurrHeap two-address rewrites with Move 0 [r1,r2]; structural cases; identity. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "threeToTwoRegProg",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "three_to_two_reg_prog_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: if b then three_to_two_reg prog else prog. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/CompileExp.lean",
+    "lean_name": "evaluate_try_if_hoist2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_try_if_hoist2",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1171-1174: ! N p1 interm dummy p2 s. try_if_hoist2 N p1 interm dummy p2 = SOME p3 ==> gc_fun_const_ok s.gc_fun ==> evaluate (p3, s) = evaluate (Seq (Seq p1 interm) p2, s) Lean keeps the same binders, premises and conclusion; HOL local; HOL's free p1 p2 p3 p s are explicit binders (p3 explicit as the try_if_hoist2 output).. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpCompileExpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/CompileExp.lean",
+    "lean_name": "evaluate_try_if_hoist1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_try_if_hoist1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1208-1210: try_if_hoist1 p1 p2 = SOME p3 ==> gc_fun_const_ok s.gc_fun ==> evaluate (p3, s) = evaluate (Seq p1 p2, s) Lean keeps the same binders, premises and conclusion; HOL local; HOL's free p1 p2 p3 s are explicit binders.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpCompileExpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/CompileExp.lean",
+    "lean_name": "evaluate_simp_duplicate_if",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_simp_duplicate_if",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1222-1223: !p s. gc_fun_const_ok s.gc_fun ==> evaluate (simp_duplicate_if p, s) = evaluate (p, s) Lean keeps the same binders, premises and conclusion; Proved by structural recursion following simp_duplicate_if_ind; gc_fun_const_ok is the untagged gcFunConstOk (the gc_fun_type slot qualifier is accepted by the checker only for gc_fun_ok_def), rendered literally as its EVERY2 over FST components.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpCompileExpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/CompileExp.lean",
+    "lean_name": "push_out_if_aux_T",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "push_out_if_aux_T",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1266-1269: !c2 c2' res s s'. push_out_if_aux c2 = (c2',T) ==> evaluate (c2,s) = (res,s') ==> res <> NONE Lean keeps the same binders, premises and conclusion; HOL local; proved by structural recursion following push_out_if_aux_ind; Call NONE uses the WordProps evaluate_call_none_ne_none fact.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpCompileExpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/CompileExp.lean",
+    "lean_name": "evaluate_simp_push_out_if",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_simp_push_out_if",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1287-1288: !p s. evaluate (push_out_if p, s) = evaluate (p, s) Lean keeps the same binders, premises and conclusion; push_out_if is the tagged pushOutIf = (pushOutIfAux p).1; proof via untagged recursion evaluate_push_out_if_aux following push_out_if_aux_ind, If (F,T)/(T,F) branches discharged by push_out_if_aux_T as in HOL.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpCompileExpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/CompileExp.lean",
+    "lean_name": "compile_exp_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "compile_exp_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1319-1321: wordSem$evaluate (prog,^s) = (res,s2) /\\ res <> SOME Error /\\ gc_fun_const_ok s.gc_fun ==> evaluate (word_simp$compile_exp prog,s) = (res,s2) Lean keeps the same binders, premises and conclusion; Statement binders prog s s2 res and the three-conjunct premise as in HOL, with the res <> SOME Error conjunct kept although unused; proof chains evaluate_simp_push_out_if, evaluate_simp_duplicate_if, evaluate_const_fp and evaluate_Seq_assoc exactly as HOL's fs. Fresh literal original proof replay (word_simp_proof_compile_exp_thm probe), aconv, closed, 0 hypotheses.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpCompileExpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFp.lean",
+    "lean_name": "evaluate_drop_consts_1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_drop_consts_1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 895-897: ∀vs rest s. (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) ==> evaluate (drop_consts cs vs,s) = (NONE, s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFp.lean",
+    "lean_name": "evaluate_drop_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_drop_consts",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 906-907: (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) ==> evaluate (SmartSeq (drop_consts cs vs) p,s) = evaluate (p, s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFp.lean",
+    "lean_name": "lookup_FOLDR_delete",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_FOLDR_delete",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 913-915: ∀l m v w. lookup v (FOLDR delete m l) = SOME w ⇒ lookup v m = SOME w ∧ ~MEM v l Lean keeps the same binders, premises and conclusion; HOL local; sptree lookup/delete are the tagged sptLookup/sptDelete; no word carrier.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFp.lean",
+    "lean_name": "get_var_set_vars_ignore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_var_set_vars_ignore",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 921-921: ∀xs l m. ~MEM v xs ⇒ get_var v (set_vars xs l m) = get_var v m Lean keeps the same binders, premises and conclusion; HOL's free v is the outer binder.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFp.lean",
+    "lean_name": "evaluate_const_fp_loop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_const_fp_loop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 929-935: !p cs p' cs' s res s'. evaluate (p, s) = (res, s') /\\ const_fp_loop p cs = (p', cs') /\\ gc_fun_const_ok s.gc_fun /\\ (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) ==> evaluate (p', s) = (res, s') /\\ (res = NONE ==> (!v w. lookup v cs' = SOME w ==> get_var v s' = SOME (Word w))) Lean keeps the same binders, premises and conclusion; Conjunctive premise and both conclusions as HOL; proof by recursion following const_fp_loop_ind with the constant-set invariant as an untagged CsOk predicate (the HOL premise conjunct literally).. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFp.lean",
+    "lean_name": "evaluate_const_fp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_const_fp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 1160-1160: !p s. gc_fun_const_ok s.gc_fun ==> evaluate (const_fp p, s) = evaluate (p, s) Lean keeps the same binders, premises and conclusion; gc_fun_const_ok is the untagged literal gcFunConstOk; derived from evaluate_const_fp_loop with LN as HOL does.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "sfGcConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "sf_gc_consts_def",
+    "hol_line": 141,
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 141-142: sf_gc_consts (StackFrame _ l0 sv h) (StackFrame _ l0' sw h') = (EVERY2 (\\(ak, av) (bk, bv). (ak = bk) /\\ (is_gc_word_const av ==> bv = av)) sv sw /\\   l0 = l0' /\\ h = h') Lean keeps the same binders, premises and conclusion; Line 141 cited because a second sf_gc_consts_def at 147 is commented out in HOL; both StackFrame components and the EVERY2 pair predicate kept; EVERY2 is List.Forall2.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "sfGcConstsRefl",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "sf_gc_consts_refl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 154-154: !x. sf_gc_consts x x Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "sfGcConstsTrans",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "sf_gc_consts_trans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 160-161: !a b c. sf_gc_consts a b /\\ sf_gc_consts b c ==> sf_gc_consts a c Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "strip_const_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "strip_const_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 172-172: !xs x s. strip_const xs = SOME x ==> MAP (\\a. word_exp s a) xs = MAP (SOME o Word) x Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "the_words_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "the_words_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 178-178: !x. the_words (MAP (SOME o Word) x) = SOME x Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "const_fp_exp_word_exp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "const_fp_exp_word_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 184-185: !e cs s. (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) ==> word_exp s (const_fp_exp e cs) = word_exp s e Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "const_fp_exp_word_exp_const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "const_fp_exp_word_exp_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 203-205: !e cs s c. (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) /\\ const_fp_exp e cs = Const c ==> word_exp s e = SOME (Word c) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "set_vars_move_NONE",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "set_vars_move_NONE",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 232-235: !moves x s s' v. set_vars (MAP FST moves) x s = s' /\\ ALOOKUP moves v = NONE ==> get_var v s' = get_var v s Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "set_vars_move_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "set_vars_move_SOME",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 244-248: !moves x v w s s'. set_vars (MAP FST moves) x s = s' /\\ get_vars (MAP SND moves) s = SOME x /\\ ALOOKUP moves v = SOME w ==> get_var v s' = get_var w s Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "get_var_move_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_var_move_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 256-261: !s s' moves x v. get_vars (MAP SND moves) s = SOME x /\\ set_vars (MAP FST moves) x s = s' ==> get_var v s' = case ALOOKUP moves v of | SOME w => get_var w s | NONE => get_var v s Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_const_fp_move_cs_NONE",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_const_fp_move_cs_NONE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 267-270: !moves v cs cs'. ALOOKUP moves v = NONE /\\ lookup v cs = lookup v cs' ==> lookup v (const_fp_move_cs moves cs cs') = lookup v cs' Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_const_fp_move_cs_SOME_part",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_const_fp_move_cs_SOME_part",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 286-289: !moves q cs cs' x. ¬MEM q (MAP FST moves) /\\ lookup q cs' = x ==> lookup q (const_fp_move_cs moves cs cs') = x Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_const_fp_move_cs_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_const_fp_move_cs_SOME",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 296-300: !moves v w cs cs'. ALOOKUP moves v = SOME w /\\ ALL_DISTINCT (MAP FST moves) /\\ lookup v cs = lookup v cs' ==> lookup v (const_fp_move_cs moves cs cs') = lookup w cs Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_const_fp_move_cs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_const_fp_move_cs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 325-329: !v moves cs. ALL_DISTINCT (MAP FST moves) ==> lookup v (const_fp_move_cs moves cs cs) = case ALOOKUP moves v of | SOME w => lookup w cs | NONE => lookup v cs Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "get_var_imm_cs_imp_get_var_imm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_var_imm_cs_imp_get_var_imm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 338-340: !x y s cs. (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) /\\ get_var_imm_cs x cs = SOME y ==> get_var_imm x s = SOME (Word y) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "get_var_set_var_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_var_set_var_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 348-349: !k1 k2 v s. get_var k1 (set_var k2 v s) = if k1 = k2 then SOME v else get_var k1 s Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "get_var_mem_store_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_var_mem_store_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 355-356: !v addr x s. mem_store addr x s = SOME s' ==> get_var v s' = get_var v s Lean keeps the same binders, premises and conclusion; HOL's free post-state s' is an explicit binder.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "cs_delete_if_set",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "cs_delete_if_set",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 362-365: !x v1 v2 s cs w. (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) /\\ lookup v2 (delete v1 cs) = SOME w ==> get_var v2 (set_var v1 x s) = SOME (Word w) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "cs_delete_if_set_x2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "cs_delete_if_set_x2",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 371-374: !x1 x2 v1 v2 v3 s cs w. (!v w. lookup v cs = SOME w ==> get_var v s = SOME (Word w)) /\\ lookup v3 (delete v2 (delete v1 cs)) = SOME w ==> get_var v3 (set_var v2 x2 (set_var v1 x1 s)) = SOME (Word w) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_inter_eq_some",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_inter_eq_some",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 382-383: !m1 m2 k x. lookup k (inter_eq m1 m2) = SOME x ==> lookup k m1 = SOME x /\\ lookup k m2 = SOME x Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_filter_v_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_filter_v_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 389-389: !t k v f. lookup k (filter_v f t) = SOME v ==> f v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "lookup_filter_v_SOME_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "lookup_filter_v_SOME_imp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 395-396: !t k v f. lookup k (filter_v f t) = SOME v ==> lookup k t = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "LIST_REL_prefix",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "LIST_REL_prefix",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 404-406: !R l1 l2 l1' l2'. LIST_REL R (l1 ++ l2) (l1' ++ l2') /\\ LENGTH l1 = LENGTH l1' ==> LIST_REL R l1 l1' Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "LIST_REL_append_left",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "LIST_REL_append_left",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 412-415: !l0 l1 l2 R. LIST_REL R (l0 ++ l1) l2 ==> LIST_REL R l0 (TAKE (LENGTH l0) l2) /\\ LIST_REL R l1 (DROP (LENGTH l0) l2) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "push_env_set_store_stack",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "push_env_set_store_stack",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 423-423: !x1 x2 x3 x4 s. (push_env x1 x2 (set_store x3 x4 s)).stack = (push_env x1 x2 s).stack Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "pop_env_stack_gc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "pop_env_stack_gc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 430-430: !s. pop_env s = SOME s' ==> s'.gc_fun = s.gc_fun Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "ALOOKUP_LIST_REL_sf_gc_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "ALOOKUP_LIST_REL_sf_gc_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 436-440: !l1 l2 k v. LIST_REL (\\(ak, av) (bk, bv). ak = bk /\\ (is_gc_word_const av ==> bv = av)) l1 l2 /\\ is_gc_word_const v /\\ ALOOKUP l1 k = SOME v ==> ALOOKUP l2 k = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "ALOOKUP_LIST_REL_sf_gc_consts_NONE",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "ALOOKUP_LIST_REL_sf_gc_consts_NONE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 450-453: !l1 l2 k v. LIST_REL (\\(ak, av) (bk, bv). ak = bk /\\ (is_gc_word_const av ==> bv = av)) l1 l2 /\\ ALOOKUP l1 k = NONE ==> ALOOKUP l2 k = NONE Lean keeps the same binders, premises and conclusion; HOL's unused binder v is kept.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "ALL_DISTINCT_PERM_FST",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "ALL_DISTINCT_PERM_FST",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 463-463: !l. ALL_DISTINCT (MAP FST l) /\\ PERM l (f l) ==> ALL_DISTINCT (MAP FST (f l)) Lean keeps the same binders, premises and conclusion; HOL's free f is an explicit binder; PERM is tagged holPerm, ALL_DISTINCT is List.Nodup.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "ALOOKUP_LIST_REL_value_rel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "ALOOKUP_LIST_REL_value_rel",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 472-475: !f l' l k v. LIST_REL (\\(ak, av) (bk, bv). (ak = bk) /\\ (f av ==> bv = av)) l' l /\\ ALOOKUP l' k = SOME v /\\ f v ==> ALOOKUP l k = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "ALOOKUP_ALL_DISTINCT_FST_PERM",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "ALOOKUP_ALL_DISTINCT_FST_PERM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 482-482: !l1 l2. ALL_DISTINCT (MAP FST l1) /\\ PERM l1 l2 ==> ALOOKUP l1 = ALOOKUP l2 Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "ALOOKUP_ALL_DISTINCT_FST_PERM_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "ALOOKUP_ALL_DISTINCT_FST_PERM_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 488-491: !l1 f k v. ALL_DISTINCT (MAP FST l1) /\\ PERM l1 (f l1) /\\ ALOOKUP l1 k = SOME v ==> ALOOKUP (f l1) k = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "pop_env_gc_fun",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "pop_env_gc_fun",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 497-497: !s s'. pop_env s = SOME s' ==> s'.gc_fun = s.gc_fun Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "pop_env_gc_fun_const_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "pop_env_gc_fun_const_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 503-504: !s s'. pop_env s = SOME s' /\\ gc_fun_const_ok s.gc_fun ==> gc_fun_const_ok s'.gc_fun Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "evaluate_gc_fun_const_ok",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_gc_fun_const_ok",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 516-517: !p s res s'. evaluate (p, s) = (res, s') /\\ gc_fun_const_ok s.gc_fun ==> gc_fun_const_ok s'.gc_fun Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "getAboveHandler",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_above_handler_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 523-524: get_above_handler s = case EL (LENGTH s.stack - (s.handler + 1)) s.stack of | StackFrame _ _ _ (SOME (h,_,_)) => h Lean keeps the same binders, premises and conclusion; HOL case has only the StackFrame _ _ _ (SOME (h,_,_)) clause, completed by the tagged holArb for every other frame and EL by the tagged holEl (out-of-range unspecified as HOL); noncomputable.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "enc_stack_dec_stack_is_gc_word_const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "enc_stack_dec_stack_is_gc_word_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 528-531: !s s' s'l. LIST_REL (\\a b. is_gc_word_const a ==> b = a) (enc_stack s) s'l /\\ dec_stack s'l s = SOME s' ==> LIST_REL sf_gc_consts s s' Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "gc_sf_gc_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "gc_sf_gc_consts",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 574-574: !s s'. gc_fun_const_ok s.gc_fun /\\ gc s = SOME s' ==> LIST_REL sf_gc_consts s.stack s'.stack Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "gc_handler",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "gc_handler",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 580-580: !s s'. gc s = SOME s' ==> s'.handler = s.handler Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "sf_gc_consts_get_above_handler",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "sf_gc_consts_get_above_handler",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 586-589: !s s'. LIST_REL sf_gc_consts s.stack s'.stack /\\ s'.handler = s.handler /\\ s.handler < LENGTH s.stack ==> get_above_handler s' = get_above_handler s Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "LIST_REL_call_Result",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "LIST_REL_call_Result",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 598-602: !s s' s'' s''' env handler. LIST_REL sf_gc_consts (push_env env handler s).stack s''.stack /\\ pop_env s'' = SOME s''' /\\ s''.handler = (push_env env handler s).handler ==> LIST_REL sf_gc_consts s.stack s'''.stack /\\ s'''.handler = s.handler Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "get_above_handler_call_env_push_env_dec_clock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "get_above_handler_call_env_push_env_dec_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 610-613: !s s' s'' args lsz env x0 x1 x2 x3. s' = call_env args lsz (push_env env (SOME (x0,x1,x2,x3)) (dec_clock s)) /\\ s''.handler = get_above_handler s' ==> s''.handler = s.handler Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "call_env_push_env_dec_clock_handler_length",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "call_env_push_env_dec_clock_handler_length",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 620-621: !s s' args lsz env x0 x1 x2 x3. s' = call_env args lsz (push_env env (SOME (x0,x1,x2,x3)) (dec_clock s)) ==> s'.handler < LENGTH s'.stack Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "EVERY2_trans_LASTN_sf_gc_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "EVERY2_trans_LASTN_sf_gc_consts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 627-628: !l l' l'' n R. n <= LENGTH l /\\ LIST_REL sf_gc_consts l l' /\\ LIST_REL sf_gc_consts (LASTN n l') l'' ==> LIST_REL sf_gc_consts (LASTN n l) l'' Lean keeps the same binders, premises and conclusion; HOL's unused binder R is kept; LASTN is wordSemLastN.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "LIST_REL_push_env",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "LIST_REL_push_env",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 635-635: !R s s' env h. LIST_REL R (push_env env h s).stack s'.stack ==> LIST_REL R s.stack (TL s'.stack) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "LASTN_LENGTH_CONS",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "LASTN_LENGTH_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 642-642: !l h. LASTN (LENGTH l) (h::l) = l Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "LASTN_TL_res",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "LASTN_TL_res",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 648-648: !l n h t. n < LENGTH l /\\ LASTN (n + 1) l = (h::t) ==> t = LASTN n l Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "HD_LASTN",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "HD_LASTN",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 654-654: !l n. 0 < n /\\ n <= LENGTH l ==> HD (LASTN n l) = EL (LENGTH l - n) l Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "push_env_pop_env_locals_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "push_env_pop_env_locals_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 660-665: ∀^s s' s'':('a,'c,'ffi) wordSem$state s''' env names (handler:(num # 'a prog # num # num) option). cut_envs names s.locals = SOME env /\\ push_env env handler s = s' /\\ LIST_REL sf_gc_consts s'.stack s''.stack /\\ pop_env s'' = SOME s''' ==> (!v w. get_var v s = SOME w /\\ is_gc_word_const w /\\ lookup v (all_names names) <> NONE ==> get_var v s''' = SOME w) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "evaluate_sf_gc_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_sf_gc_consts",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 692-711: !p s s' res. evaluate (p, s) = (res, s') /\\ gc_fun_const_ok s.gc_fun ==> (case res of | NONE => LIST_REL sf_gc_consts s.stack s'.stack /\\ s'.handler = s.handler | SOME (Result _ _) => LIST_REL sf_gc_consts s.stack s'.stack /\\ s'.handler = s.handler | SOME (Exception _ _) => s.handler < LENGTH s.stack ==> LIST_REL sf_gc_consts (LASTN s.handler s.stack) s'.stack /\\ s'.handler = get_above_handler s | SOME (Break _) => LIST_REL sf_gc_consts s.stack s'.stack /\\ s'.handler = s.handler | SOME (Continue _) => LIST_REL sf_gc_consts s.stack s'.stack /\\ s'.handler = s.handler | _ => T) Lean keeps the same binders, premises and conclusion; The HOL result case expression is rendered clause for clause by the untagged sfMotive (NONE, Result, Exception with handler < LENGTH guard, Break, Continue, and T for TimeOut/NotEnoughSpace/FinalFFI/Error).. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpGcConstsSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_SmartSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_SmartSeq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 14-14: evaluate (SmartSeq p1 p2,s) = evaluate (Seq p1 p2,^s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_Seq_Skip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_Seq_Skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 20-20: !p1 s. evaluate (Seq p1 Skip,s) = evaluate (p1,^s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_Skip_Seq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_Skip_Seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 27-27: evaluate (Seq Skip p,s) = evaluate (p,^s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_Loop_body_cong_gc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_Loop_body_cong_gc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 49-52: ∀(s:('a,'c,'ffi) wordSem$state) names c c' exit_names. (∀(v:('a,'c,'ffi) wordSem$state). R v.gc_fun ⇒ evaluate (c', v) = evaluate (c, v)) ⇒ R s.gc_fun ⇒ evaluate (Loop names c' exit_names, s) = evaluate (Loop names c exit_names, s) Lean keeps the same binders, premises and conclusion; HOL's free predicate R on the GC function is the outermost binder.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_Loop_body_cong",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_Loop_body_cong",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 33-35: ∀(s:('a,'c,'ffi) wordSem$state) names c c' exit_names. (∀(v:('a,'c,'ffi) wordSem$state). evaluate (c', v) = evaluate (c, v)) ⇒ evaluate (Loop names c' exit_names, s) = evaluate (Loop names c exit_names, s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_Seq_assoc_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_Seq_assoc_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 69-69: !p1 p2 s. evaluate (Seq_assoc p1 p2,s) = evaluate (Seq p1 p2,^s) Lean keeps the same binders, premises and conclusion; Proved by recursion following Seq_assoc_ind.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "evaluate_Seq_assoc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "evaluate_Seq_assoc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 90-90: !p s. evaluate (Seq_assoc Skip p,s) = evaluate (p,^s) Lean keeps the same binders, premises and conclusion; Fresh literal original proof replay (word_simp_proof_compile_exp_thm probe), aconv, closed.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "dest_If_Eq_Imm_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "dest_If_Eq_Imm_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 96-97: dest_If_Eq_Imm x2 = SOME (n,w,p1,p2) <=> x2 = If Equal n (Imm w) p1 p2 Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "dest_If_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "dest_If_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 104-104: dest_If x2 = SOME (g1,g2,g3,g4,g5) <=> x2 = If g1 g2 g3 g4 g5 Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "dest_Seq_IMP",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "dest_Seq_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 110-110: dest_Seq p1 = (x1,x2) ==> evaluate (p1,s) = evaluate (Seq x1 x2,^s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/SeqAssoc.lean",
+    "lean_name": "dest_Seq_Assign_Const_IMP",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "dest_Seq_Assign_Const_IMP",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 117-118: dest_Seq_Assign_Const v p = SOME (q,w) ==> evaluate (p,s) = evaluate (Seq q (Assign v (Const w)),^s) Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpSeqAssocSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: the statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/FilterV.lean",
+    "lean_name": "sptLookupFilterV",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "lookup_filter_v",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41: pinned HOL sptreeScript lookup_filter_v !k t f. lookup k (filter_v f t) = case lookup k t of SOME v => if f v then SOME v else NONE | NONE => NONE. Lean keeps the binders k t f and the same case conclusion over the tagged sptLookup/sptFilterV; HOL bool predicate as Lean Bool function, as for the reviewed filter_v_def row; proof by induction on the tree with lookup_mk_BS/lookup_mk_BN as HOL."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
+    "lean_name": "gcFunConstOk",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "gc_fun_const_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_function_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_function": [
+      "argument_4",
+      "result_3"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 135-139 gc_fun_const_ok (f:'a gc_fun_type) = !x y. f x = SOME y ==> EVERY2 (\\a b. is_gc_word_const a ==> b = a) (FST x) (FST y). Lean keeps the single argument f, both universal binders x y, the SOME antecedent and the EVERY2 (List.Forall2) over the first (word-list) components with the tagged isGcWordConst = true guard and HOL equality; no extra premise. The argument is the reviewed WordSemGcFun alias of gc_fun_type (argument_4/result_3 canonical store, positive width), inherited through the coordinator-approved narrow gc predicate checker extension (unary predicates only; gc_fun_sf_gc_consts stays untagged). Probe word_simp_proof_compile_exp_thm captures the statements using gc_fun_const_ok."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimitsDouble.lean",
+    "lean_name": "getStackHeapLimitDouble",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_stack_heap_limit''_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-stackremove-init-def-limits-double: original3048-3051 is the complete curried natural-number function h2,h3,h4 returning (h4-h3-LENGTH store_list,(h3-h2) DIV2). Native Nat matches HOL num, both subtractions are left-associated truncated natural subtraction and division remains total; actual reviewed StackRemove.storeList supplies the same reserved-word count, including fixed five-bit Temp names. No pointer/word argument, dimension parameter, map/array/name representation change or added bound/positivity/success assumption. The original kernel definition/type/zero-hypothesis capture and source-executed store count are recorded by stack_remove_init_limits_double_probeScript.sml. This is the original proof-script initializer-state helper and a real prerequisite of the next original word-valued limit definition, not a new executed compiler-path replacement; no new guest or FP parity claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/Call/Return.lean",
+    "lean_name": "compCorrectCallReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original409-518/full135-149: full native SOME-return Call with original evaluate/nonError/stateRel three premises and only actual evaluate_ind lookup-after-link-erasure/nonzero-clock callee compTop IH, return comp IH guarded by actual callee Result matching Loc l1 l2, and handler comp IH guarded by actual selected handler/callee Exception matching Loc hl1 hl2. Unused paired-motive components omitted. Missing lookup, Error/NONE/Break/Continue bodies and mismatching locations rejected solely through original nonError; clock0 empties environment. Actual canonical link-register erase and setVar transport preserve code entry witnesses. Callee target execution DERIVED from IH, outer frame information restored via actual evaluateMono, not supplied as postcondition. Terminal Halt/TimeOut/FinalFFI/unhandled Exception retain full result/space exception. Returning Result and handled Exception force intermediate stackspace equality via original guard, then compose allowances using checked native evaluateAddClock and returning-input clock arithmetic. Both original compTop/comp existential conclusions and final stackspace guard retained. Imported canonical regs/fpRegs/store owner and local nonvacuous roundtrip; literal List/Spt/mlstring, arbitrary positive words/C/F Type0, inherited reals_as_rational_cuts SOUNDNESS8. Fresh original statement/closed Call induction clause/complete compiler trees/erased-link lookups are regression evidence, not cross-language equivalence or fullpass. No allowlist/default/individual HOLD changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/Call.lean",
+    "lean_name": "compCorrectCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original409-518/full135-149: full native SOME-return Call with original evaluate/nonError/stateRel three premises and only actual evaluate_ind lookup-after-link-erasure/nonzero-clock callee compTop IH, return comp IH guarded by actual callee Result matching Loc l1 l2, and handler comp IH guarded by actual selected handler/callee Exception matching Loc hl1 hl2. Unused paired-motive components omitted. Missing lookup, Error/NONE/Break/Continue bodies and mismatching locations rejected solely through original nonError; clock0 empties environment. Actual canonical link-register erase and setVar transport preserve code entry witnesses. Callee target execution DERIVED from IH, outer frame information restored via actual evaluateMono, not supplied as postcondition. Terminal Halt/TimeOut/FinalFFI/unhandled Exception retain full result/space exception. Returning Result and handled Exception force intermediate stackspace equality via original guard, then compose allowances using checked native evaluateAddClock and returning-input clock arithmetic. Both original compTop/comp existential conclusions and final stackspace guard retained. Imported canonical regs/fpRegs/store owner and local nonvacuous roundtrip; literal List/Spt/mlstring, arbitrary positive words/C/F Type0, inherited reals_as_rational_cuts SOUNDNESS8. Fresh original statement/closed Call induction clause/complete compiler trees/erased-link lookups are regression evidence, not cross-language equivalence or fullpass. No allowlist/default/individual HOLD changes. Complete constructor assembly chooses only literal NONE/SOME optional-return branch; previously reviewed full tail source reused, no additional hypothesis or narrowed destination/handler."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionSuffix.lean",
+    "lean_name": "absStackPrefixDrop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_prefix_drop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2.1: full original2488-2570 arbitrary bs/wstack/sstack/lens/stack/h/wrest/k/len, sole count bound/source LASTN equation/actual abstraction success/full auxiliary relation. Both suffix decoder success and full suffix auxiliary relation conclusions retained. Native structural induction covers normal/handler decoding, tail suffix and whole-stack boundaries; actual successful abstraction derives frame/lens lengths and handler offsets. Auxiliary suffix relation derives from original tail clauses, not supplied as a premise. Decoder/aux relation together unify source-frame/raw-stack word dimension; one positive BitVec width with NeZero. Native literal list/Option/frame/tree carriers preserved, no BEq/safety/range assumptions. Literal original proof and all unexported local prerequisites replayed unchanged with original simplifier context; capture statements/T/hyp0 and inferred carrier types. Source comparison recorded; acceptance tracked on shared bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/EnvironmentIdentity.lean",
+    "lean_name": "envToListIdentityImp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "env_to_list_K_I_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead flapjack-word-stack-env-identity-sort: original1291-1310 arbitrary env native Spt word_loc/list/output oracle; sole actual env_to_list(env)(K I)=(l,oracle) premise. Full descending adjacent key SORTED, function identity oracle, complete toAList PERM conclusions retained. Native actual listRearrange identity proven without bijection premise; actual sortSorted and sortPerm with original comparator transitivity/totality, tree unique keys propagated through permutation derive strict order. Original comparator payload/signed order unchanged; only positive word dimension translation, no map qualifier for Spt. No extra desired sorting/permutation/evaluation assumption. Literal original local proof replay reconstructs source-local SORTS_SORT and list_rearrange_I unchanged; source comparison recorded, acceptance on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/HandlerTransition.lean",
+    "lean_name": "stackRelRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_raise",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2: full local2687-2796 six original premises n bound/source handler bound/strict adjacent source env sort/source LASTN equation/actual decoder/full stackRelAux. Complete existential ex/payload, target LASTN head+tail, both3 length bounds, absolute Loc l3 l4 and conditional saved-handler Word n2w, cleared source handler with exact env_to_list(fromAList l)(K I), full cleared auxiliary relation and successful original DROP(offset+3) decoder conclusion. All actual target payload/header/run facts derived; no supplied postrelation/success/safety premise. Source/raw/frame word dimension unified by original decoder and relation; positive BitVec with NeZero; actual Option/List/Spt/word_loc carriers preserved. Total original EL keeps unspecified out-of-range behavior, local inhabitation does not select it. Native source-sized helpers derive suffix/absolute offsets/header obligations/unwinding; full original bounds kept even redundant. Source comparison recorded; coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Stubs.lean",
+    "lean_name": "raiseStubFalse",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "raise_stub_F",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.3: original74-86 entire arbitrary-k equation retained. Actual native raiseStubNative false expands Get Handler, StackSetSize, Skip, StackLoad2, Set Handler, StackLoad1, StackFree3, Raise in identical nested Seq order. Original handler_slots F=3; no instruction omitted, register changed, state/run/success premise or conclusion added. Positive type-indexed word carrier only translation, no maps/real evaluator dependency in this syntax equation. Source comparison recorded; acceptance tracked on bead."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
     "hol_name": "not_not_skip_IMP_Skip",
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
