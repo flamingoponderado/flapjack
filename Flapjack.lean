@@ -1,4 +1,5 @@
 import Flapjack.RiscV.CorrectnessEncoding.TargetOk
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
@@ -643,7 +644,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
 import Flapjack.Compiler.Backend.StackProps.RegisterBounds
 import Flapjack.Compiler.Backend.WordCse.Knowledge
+import Flapjack.Compiler.Backend.WordCse.RegisterData
 import Flapjack.Compiler.Backend.WordCse.ProductionKnowledge
+import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
@@ -1438,6 +1441,8 @@ import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
 import Flapjack.Misc.MachineIeee.Arith
+import Flapjack.Misc.MachineIeee.ArithReal
+import Flapjack.Misc.BinaryIeeeArith.RealCarrier
 import Flapjack.Misc.MachineIeee.Convert
 import Flapjack.Misc.MachineIeee.ConvertInt
 import Flapjack.Misc.MachineIeee.ConvertReal

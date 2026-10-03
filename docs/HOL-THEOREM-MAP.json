@@ -82532,6 +82532,74 @@
     "hol_line": 5756
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmEvaluate.lean",
+    "lean_name": "evaluateAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "evaluate_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison labProps1174-1245: original good_dimindex guard and forall generic native width/C/FFI state preserved. Full evaluate_align_sdm equality retains let result/poststate shape; actual evaluator induction handles all original instruction/navigation/shared-memory/Install/FFI/error/clock cases using genuine recursive hypotheses. Full implements_align_sdm retains precise true flag and original source-state singleton first/aligned singleton second, not reversed. Faithful behaviors retain existential clocks, optional terminating choice and lazy-list trace LUB. Private full behavior equality derives refinement with no assumed execution/result/simulation/postcondition premise. Shared-domain projection changes neither source error guards nor FFI bytes/results/clock updates. No LOG2zero/runtime changes or total HD/EL policy adoption. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through actual native evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_sdm_evaluate_probe.out; final DM/SDM compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmEvaluate.lean",
+    "lean_name": "implementsAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "implements_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison labProps1174-1245: original good_dimindex guard and forall generic native width/C/FFI state preserved. Full evaluate_align_sdm equality retains let result/poststate shape; actual evaluator induction handles all original instruction/navigation/shared-memory/Install/FFI/error/clock cases using genuine recursive hypotheses. Full implements_align_sdm retains precise true flag and original source-state singleton first/aligned singleton second, not reversed. Faithful behaviors retain existential clocks, optional terminating choice and lazy-list trace LUB. Private full behavior equality derives refinement with no assumed execution/result/simulation/postcondition premise. Shared-domain projection changes neither source error guards nor FFI bytes/results/clock updates. No LOG2zero/runtime changes or total HD/EL policy adoption. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through actual native evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_sdm_evaluate_probe.out; final DM/SDM compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "registerRead",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "register_read_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:110-115: negated EVEN is register%2!=0; conjunction with exact keepData chooses precisely the original update inserting register↦register in toCanonical alone, otherwise unchanged full Knowledge. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "registerReads",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "register_reads_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:117-120: empty list returns data; cons recurses on registerRead data head then tail, in source left-to-right order, for arbitrary data and lists. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "canonicalRegs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalRegs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:124-127: source lookup_any r data.to_canonical r is exact sptLookup r data.toCanonical followed by getD r; missing values return the input register. No canonical/wellformed premise. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "canonicalRegs'",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalRegs'_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:129-133: exact let-bound canonicalRegs lookup, equality to arbitrary avoid register, original register returned on equality and canonical lookup result otherwise. No additional guard. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "canonicalMultRegs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalMultRegs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:145-147: original MAP canonicalRegs over arbitrary register list preserves order and multiplicity. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "mapInsert",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "map_insert_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:149-154: exact empty and pair-cons equations; tail processed first then sparse insert of head key/value. Arbitrary Spt Nat retained, including malformed trees; duplicate head bindings win as in source. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "riscv_target_ok",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/TargetOk.lean",
