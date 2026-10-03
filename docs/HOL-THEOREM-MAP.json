@@ -74544,5 +74544,29 @@
     "hol_name": "dfn'FSD_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.2.12 literal line9489: complete full native riscv_state word5 registers/word12 offset clauses; all quantified parameters and branches preserved with no extra premise. Full GPR original-state plus signExtend12to64 offset, translateAddr Data Read/Write, success forwards returned state to direct writeFPRS(low32 rawReadData)/writeFPRD(raw64) for loads, not arithmetic Dirty wrappers. Stores read FPRS/FPRD from translation-returned state, zeroextend S32to64 then rawWriteData4 or fullD64 rawWriteData8. NONE signals original virtual address Load_Fault/Store_AMO_Fault on returned state. No mode/alignment/core/success/targetrun hypothesis; canonical undefined MMU modes retain ARB. All42 closure owners reviewed except four newly added roots. Fresh256 original whole-state T rows with matching kernel fixtures, independent numeric address/payload expected through reviewed memory/FPR writer helpers; helper reuse is not an independent transition equivalence theorem. Numeric fixtures bypass/fault include FPRzero and arbitrary prior state; full clauses retain TLB/pagewalk and invalid-mode paths outside finite fixture sample. Full Run/Next remainOPEN."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeImmediates.lean",
+    "lean_name": "asImm12",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "asImm12_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.4.1 literal line12157: complete fixedword field widths1/1/6/4, right-associated tuple shape and concatenation order match CC exactly; standard nested append/setWidth yields original total12/20 bits. Encoded sign bits retained without signed arithmetic/offset shift, no hypothesis. Independent numerical field split plus original103 T/kernel rows covers every output position onehot/onecold, sign/max/wrap-adjacent and alternating boundaries. These definitions are actual original Decode prerequisites; no fullDecode/Run/Next/equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeImmediates.lean",
+    "lean_name": "asImm20",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "asImm20_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.4.1 literal line12162: complete fixedword field widths1/8/1/10, right-associated tuple shape and concatenation order match CC exactly; standard nested append/setWidth yields original total12/20 bits. Encoded sign bits retained without signed arithmetic/offset shift, no hypothesis. Independent numerical field split plus original103 T/kernel rows covers every output position onehot/onecold, sign/max/wrap-adjacent and alternating boundaries. These definitions are actual original Decode prerequisites; no fullDecode/Run/Next/equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeImmediates.lean",
+    "lean_name": "asSImm12",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "asSImm12_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.4.1 literal line12167: complete fixedword field widths7/5, right-associated tuple shape and concatenation order match CC exactly; standard nested append/setWidth yields original total12/20 bits. Encoded sign bits retained without signed arithmetic/offset shift, no hypothesis. Independent numerical field split plus original103 T/kernel rows covers every output position onehot/onecold, sign/max/wrap-adjacent and alternating boundaries. These definitions are actual original Decode prerequisites; no fullDecode/Run/Next/equivalence claim."
   }
 ]

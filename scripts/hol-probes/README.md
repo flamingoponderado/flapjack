@@ -6857,3 +6857,13 @@ The complete definitions additionally preserve arbitrary translation outcomes,
 TLB/pagewalk updates and invalid-mode ARB; these are outside this finite sample.
 `check-l3-fp-memory.py` requires every unique label and original value T.
 This regression evidence supplements source review, not full equivalence.
+
+### Native decode immediate assembly
+
+`l3_decode_immediates_probeScript.sml` and `L3DecodeImmediatesParity` replay
+103 numeric equations for full asImm12/asImm20/asSImm12 field concatenations.
+Independent numeric splits exercise every one-hot/one-cold position and
+sign/max/alternating boundaries. Original fixed field widths and tuple order
+are preserved; no signed reinterpretation or offset shift occurs here.
+`check-l3-decode-immediates.py` requires full unique label coverage and all T.
+This is an actual Decode prerequisite, not complete decoder or step equivalence.
