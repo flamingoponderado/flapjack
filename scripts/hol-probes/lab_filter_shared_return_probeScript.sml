@@ -1,0 +1,15 @@
+load "bossLib";
+load "preamble";
+load "lab_filterProofTheory";
+open bossLib HolKernel Parse preamble lab_filterProofTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+fun types label th = (print(label ^ "=");app(fn v=>print(term_to_string v ^ ":" ^ type_to_string(type_of v) ^ ";"))(fst(strip_forall(concl th)) @ free_vars(concl th));print "\n");
+fun checked label th = (print(label ^ "="); print_term(rhs(concl(EQT_INTRO (prove(concl th,ACCEPT_TAC th)))));print "\n");
+val th = DB.fetch "lab_filterProof" "share_mem_op_FFI_return_filter_correct";
+val _ = show_types := true;
+val _ = capture "share_mem_op_FFI_return_filter_correct" th;
+val _ = types "share_mem_op_FFI_return_filter_correct_types" th;
+val _ = print("share_mem_op_FFI_return_filter_correct_hypotheses=" ^ Int.toString(length(hyp th)) ^ "\n");
+val _ = show_types := false;
+val _ = checked "share_mem_op_FFI_return_filter_correct_proved" th;

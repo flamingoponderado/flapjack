@@ -7069,6 +7069,17 @@ through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
 definition and unconditional lookup theorem used by PanStructs. Original duplicate
 keys keep the first binding; other, missing and empty lookups are recorded.
 
+### Full native shared-memory filter return clause
+
+`lab_filter_shared_return_probeScript.sml` captures the complete original return614 theorem, independent full carriers, zero hypotheses and kernel reproof (4 rows). The existential poststate and full state relation/nonfailed/forall-clock conjunction remain conclusions. Together with the terminal probe it covers the complete original shared-memory filter prerequisite group.
+
+`word_simp_generic_carriers_probeScript.sml` captures the original seven generic
+lookup/move/name declarations with `Globals.show_types := true`, plus zero HOL
+hypothesis counts (14 rows). It exposes arbitrary association keys/value types,
+the independently typed unused NONE binder, arbitrary second move components
+and arbitrary Spt payloads. Full Lean consumers cover generic and String/Bool
+instances. These source captures are regression evidence, not cross-language
+equivalence or a new representation exception.
 ## Native PC writer and DecodeAny
 
 `l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.

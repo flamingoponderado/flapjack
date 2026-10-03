@@ -6629,7 +6629,12 @@ run_probe lab_filter_shared_terminal_probeScript.sml lab_filter_shared_terminal_
 run_probe pan_structs_shape_map_codec_probeScript.sml pan_structs_shape_map_codec_probe.out \
   shape_map_definition shape_map_lookup_statement shape_map_lookup_hypotheses shape_map_first_binding shape_map_other_binding shape_map_missing shape_map_empty \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
-
+run_probe lab_filter_shared_return_probeScript.sml lab_filter_shared_return_probe.out \
+  share_mem_op_FFI_return_filter_correct share_mem_op_FFI_return_filter_correct_types share_mem_op_FFI_return_filter_correct_hypotheses share_mem_op_FFI_return_filter_correct_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_simp_generic_carriers_probeScript.sml word_simp_generic_carriers_probe.out \
+  generic_carrier_1 generic_carrier_1_hypotheses generic_carrier_2 generic_carrier_2_hypotheses generic_carrier_3 generic_carrier_3_hypotheses generic_carrier_4 generic_carrier_4_hypotheses generic_carrier_5 generic_carrier_5_hypotheses generic_carrier_6 generic_carrier_6_hypotheses generic_carrier_7 generic_carrier_7_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe l3_write_pc_probeScript.sml l3_write_pc_probe.out \
   writePC_type writePC_hypotheses writePC_fullRecord_equation writePC_fullRecord_proof writePC_allKeys_equation writePC_allKeys_proof writePC_current_equation writePC_current_proof \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
