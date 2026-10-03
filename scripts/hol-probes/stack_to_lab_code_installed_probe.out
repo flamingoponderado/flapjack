@@ -1,0 +1,41 @@
+word_sh_word_shift_statement=∀z c b a. word_sh a b c = SOME z ⇒ c < dimindex (:α) ∧ z = word_shift a b c
+assert_T_statement=∀s. assert T s = s
+asm_fetch_aux_no_label_statement=∀x l2 l1 pc code. asm_fetch_aux pc code = SOME (Label l1 l2 x) ⇒ F
+dest_to_loc_def_statement=∀regs dest. dest_to_loc regs dest = case dest of INL p => p | INR r => case regs⟨r⟩ of Word v => ARB | Loc loc v3 => loc
+dest_to_loc'_def_statement=∀regs dest. dest_to_loc' regs dest = case dest of INL p => p | INR r => case regs r of Word v => ARB | Loc loc v3 => loc
+find_code_lookup_statement=∀regs p dest code. find_code dest regs code = SOME p ⇒ lookup (dest_to_loc regs dest) code = SOME p ∧ ∀r. dest = INR r ⇒ r ∈ FDOM regs
+not_is_Label_compile_jump_statement=∀dest. is_Label (compile_jump dest) ⇔ F
+word_cmp_not_NONE_statement=∀w2 w1 cmp. word_cmp cmp (Word w1) (Word w2) ≠ NONE
+word_cmp_negate_alt_statement=∀w2 w1 cmp. word_cmp (negate cmp) w1 w2 ⇔ ¬word_cmp cmp w1 w2
+word_cmp_negate_statement=∀w2 w1 cmp. word_cmp (negate cmp) w1 w2 = OPTION_MAP $¬ (word_cmp cmp w1 w2)
+code_installed_def_statement=(∀n code. code_installed n [] code ⇔ T) ∧ ∀n x xs code. code_installed n (x::xs) code ⇔ if is_Label x then (case x of Label l1 l2 v2 => loc_to_pc l1 l2 code = SOME n | Asm v3 v4 v5 => ARB | LabAsm v9 v10 v11 v12 => ARB) ∧ code_installed n xs code else asm_fetch_aux n code = SOME x ∧ code_installed (n + 1) xs code
+code_installed_append_imp_statement=∀l1 pc l2 code. code_installed pc (l1 ++ l2) code ⇒ code_installed pc l1 code ∧ code_installed (pc + LENGTH (FILTER ($¬ ∘ is_Label) l1)) l2 code
+loc_to_pc_APPEND_statement=∀n m code pc code2. loc_to_pc n m code = SOME pc ⇒ loc_to_pc n m (code ++ code2) = SOME pc
+code_installed_APPEND_statement=∀ls pc code code2. code_installed pc ls code ⇒ code_installed pc ls (code ++ code2)
+code_installed_isPREFIX_statement=∀ls pc code code2. code_installed pc ls code ∧ code ≼ code2 ⇒ code_installed pc ls code2
+loc_to_pc_isPREFIX_statement=∀n m code pc code2. loc_to_pc n m code = SOME pc ∧ code ≼ code2 ⇒ loc_to_pc n m code2 = SOME pc
+MAP_prog_to_section_Section_num_statement=∀prog. MAP Section_num (MAP prog_to_section prog) = MAP FST prog
+asm_fetch_aux_SOME_append2_statement=∀pc code l code2. asm_fetch_aux pc code2 = SOME l ⇒ asm_fetch_aux (LENGTH (FLAT (MAP (FILTER ($¬ ∘ is_Label) ∘ Section_lines) code)) + pc) (code ++ code2) = SOME l
+loc_to_pc_append2_statement=∀k ll code code2 pc. ¬MEM k (MAP Section_num code) ∧ EVERY sec_labels_ok code ∧ loc_to_pc k ll code2 = SOME pc ⇒ loc_to_pc k ll (code ++ code2) = SOME (pc + LENGTH (FLAT (MAP (FILTER ($¬ ∘ is_Label) ∘ Section_lines) code)))
+code_installed_append2_statement=∀lines pc c1 c2 k. ¬MEM k (MAP Section_num c1) ∧ EVERY sec_labels_ok c1 ∧ EVERY (sec_label_ok k) lines ∧ code_installed pc lines c2 ⇒ code_installed (LENGTH (FLAT (MAP (FILTER ($¬ ∘ is_Label) ∘ Section_lines) c1)) + pc) lines (c1 ++ c2)
+ALOOKUP_PARTITION_statement=∀ls n v. ALOOKUP ls n = SOME v ⇒ ∃ls1 ls2. ls = ls1 ++ [(n,v)] ++ ls2 ∧ ¬MEM n (MAP FST ls1)
+code_installed'_def_statement=(∀n code. code_installed' n [] code ⇔ T) ∧ ∀n x xs code. code_installed' n (x::xs) code ⇔ if is_Label x then code_installed' n xs code else asm_fetch_aux n code = SOME x ∧ code_installed' (n + 1) xs code
+code_installed'_cons_label_statement=∀xs other n h lines pos. is_Label h ⇒ (code_installed' pos lines (Section n (h::xs)::other) ⇔ code_installed' pos lines (Section n xs::other))
+code_installed'_cons_non_label_statement=∀xs other n lines h. ¬is_Label h ⇒ (code_installed' 1 lines (Section n (h::xs)::other) ⇔ code_installed' 0 lines (Section n xs::other))
+code_installed'_simp_statement=∀rest other n lines. code_installed' 0 lines (Section n (lines ++ rest)::other)
+loc_to_pc_skip_section_statement=∀xs p n lines. n ≠ p ⇒ loc_to_pc n 0 (Section p lines::xs) = case loc_to_pc n 0 xs of NONE => NONE | SOME k => SOME (k + LENGTH (FILTER (λx. ¬is_Label x) lines))
+asm_fetch_aux_add_statement=∀pos ys pc rest. asm_fetch_aux (pc + LENGTH (FILTER (λx. ¬is_Label x) ys)) (Section pos ys::rest) = asm_fetch_aux pc rest
+labs_correct_def_statement=(∀n code. labs_correct n [] code ⇔ T) ∧ ∀n x xs code. labs_correct n (x::xs) code ⇔ if is_Label x then labs_correct n xs code ∧ case x of Label l1 l2 v2 => loc_to_pc l1 l2 code = SOME n | Asm v14 v15 v16 => T | LabAsm v17 v18 v19 v20 => T else labs_correct (n + 1) xs code
+code_installed_eq_statement=∀pc xs code. code_installed pc xs code ⇔ code_installed' pc xs code ∧ labs_correct pc xs code
+code_installed_cons_statement=∀rest xs ys pos pc. code_installed' pc xs rest ⇒ code_installed' (pc + LENGTH (FILTER (λx. ¬is_Label x) ys)) xs (Section pos ys::rest)
+labs_correct_hd_statement=∀n code extra l. ALL_DISTINCT (extract_labels (extra ++ l)) ∧ EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) (extract_labels (extra ++ l)) ⇒ labs_correct (LENGTH (FILTER (λx. ¬is_Label x) extra)) l (Section n (extra ++ l)::code)
+labels_ok_def_statement=∀code. labels_ok code ⇔ ALL_DISTINCT (MAP (λs. case s of Section n v1 => n) code) ∧ EVERY (λs. case s of Section n lines => (let labs = extract_labels lines in EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) labs ∧ ALL_DISTINCT labs)) code
+labels_ok_imp_statement=∀code. labels_ok code ⇒ EVERY sec_labels_ok code ∧ ALL_DISTINCT (MAP Section_num code) ∧ EVERY (ALL_DISTINCT ∘ extract_labels ∘ Section_lines) code
+labels_ok_labs_correct_statement=∀code. labels_ok code ⇒ EVERY (λs. case s of Section n lines => case loc_to_pc n 0 code of NONE => T | SOME pc => labs_correct pc lines code) code
+labs_correct_append_statement=∀rest code ls pc. labs_correct pc (ls ++ rest) code ⇒ labs_correct pc ls code
+code_installed_prog_to_section_statement=∀prog4 n prog3. labels_ok (MAP prog_to_section prog4) ∧ ALOOKUP prog4 n = SOME prog3 ⇒ ∃pc. code_installed pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) ∧ loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc
+code_installed_get_labels_IMP_statement=∀l2 l1 c top e n q cs bs pc. code_installed pc (append (FST (flatten top e n q cs bs))) c ∧ (l1,l2) ∈ get_labels e ⇒ ∃v. loc_to_pc l1 l2 c = SOME v
+asm_fetch_aux_SOME_append_statement=∀pc code l code2. asm_fetch_aux pc code = SOME l ⇒ asm_fetch_aux pc (code ++ code2) = SOME l
+asm_fetch_aux_SOME_isPREFIX_statement=∀pc code l code2. asm_fetch_aux pc code = SOME l ∧ code ≼ code2 ⇒ asm_fetch_aux pc code2 = SOME l
+MAP_prog_to_section_FST_statement=∀prog. MAP (λs. case s of Section n v => n) (MAP prog_to_section prog) = MAP FST prog
+code_installed_prog_to_section_lemma_statement=∀prog4 n prog3. ALOOKUP prog4 n = SOME prog3 ⇒ ∃pc. code_installed' pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) ∧ loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc

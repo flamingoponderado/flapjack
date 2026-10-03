@@ -694,7 +694,7 @@ theorem progToSection_eq {width : Nat} [NeZero width] (n : Nat) (p : HolProg wid
   simp only [progToSectionHOL, (appListAppend_thm _ _ []).1, (appListAppend_thm .nil .nil _).2.1]
 
 /-- Complete original section-name law of the section compiler. -/
-@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_FST"
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_FST" 228
   (words_as_type_indexed_bitvec)]
 theorem mapProgToSectionFst {width : Nat} [NeZero width] (prog : List (Nat × HolProg width)) :
     (prog.map progToSectionHOL).map (fun s => s.sectionId) = prog.map Prod.fst := by
