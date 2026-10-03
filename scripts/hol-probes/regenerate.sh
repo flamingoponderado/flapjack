@@ -7599,3 +7599,7 @@ run_probe word_depth_graph_probeScript.sml word_depth_graph_probe.out \
 run_probe pan_to_word_semantics_probeScript.sml pan_to_word_semantics_probe.out \
   state_rel_imp_semantics_statement state_rel_imp_semantics_proved state_rel_imp_semantics_types \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_to_stack_inst_shift_probeScript.sml word_to_stack_inst_shift_probe.out \
+  shiftReg_typed shiftReg_proved shiftReg_hypotheses shiftImm_typed shiftImm_proved shiftImm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
