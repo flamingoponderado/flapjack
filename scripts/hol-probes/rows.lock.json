@@ -1724,10 +1724,10 @@
       "sha256": "b985e79e5ed331756baf2078b1b2d6b4fa2360a70362c43679f4a1a3d85d0960"
     },
     {
-      "bytes": 29680,
+      "bytes": 29976,
       "out": "l3_divide_probe.out",
-      "rows": 1456,
-      "sha256": "53dacbfbeee92365cfa388aeec326bc753af31718b30455cfff8b3705ede6244"
+      "rows": 1462,
+      "sha256": "cb69e6e8067814815dff941f56d06845188ab7492c6d0c1518675d40a461da8b"
     },
     {
       "bytes": 16820,
