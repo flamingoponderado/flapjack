@@ -1,11 +1,13 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem
 import Flapjack.Pancake.Semantics.LoopSem
 
-/- Source-review pending for the three original write_bytearray support/equality laws.
-The native alignment uses Nat.log2 (width / 8); HOL LOG2 0 is unspecified by
-its positive-argument specification. These proofs do not inspect that numerical
-choice, but correspondence of the imported operators at widths below eight is
-not established here. No HOL port tags are claimed pending that review. -/
+/- Declaration-local alignment review (user correction, 2026-10-02): the
+original three proofs use byte_align only as a common aligned-address key.
+They unfold tail-first read/write/load/store clauses and functional updates;
+none evaluates LOG2 or assumes a numerical alignment law. These are portable
+original-shaped numerical instances with unchanged executable operators, at
+all positive widths. No equality with HOL's unspecified LOG2 0, runtime rewrite,
+out-of-domain default policy, or cross-prover equivalence is asserted. -/
 
 namespace Flapjack.Compiler.Backend.StackRemove
 open Flapjack
@@ -42,7 +44,11 @@ private theorem loadDomain {width : Nat} [NeZero width]
     · simp [memLoadByteAuxExact,value,inside] at loaded
 
 /-- Native non-aligned-key law matching the original statement shape. The key is outside the image of byte
-alignment; all source byte lists, memories, domains and endianness are arbitrary. -/
+alignment; all source byte lists, memories, domains and endianness are arbitrary.
+Original324-330 uses only the update key, without a numerical LOG2, alignment
+idempotence, range, or minimum-byte-width premise. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
+  "write_bytearray_IGNORE_non_aligned" (words_as_type_indexed_bitvec)]
 theorem writeBytearrayIgnoreNonAligned {width : Nat} [NeZero width]
     (bytes : List (BitVec 8)) (address : BitVec width)
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Bool)
@@ -63,7 +69,12 @@ theorem writeBytearrayIgnoreNonAligned {width : Nat} [NeZero width]
 
 /-- Native IGNORE law matching the original statement shape, with independent readable-source and updated
 memories. HOL set membership is the existing native domain Boolean being true;
-the original subset/read-success/outside-domain conjunction is retained. -/
+the original subset/read-success/outside-domain conjunction is retained.
+Original332-344 derives aligned-key membership from the successful source read
+and excludes the queried key from that source domain. It needs the same
+alignment in load and store, irrespective of its numerical value. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
+  "write_bytearray_IGNORE" (words_as_type_indexed_bitvec)]
 theorem writeBytearrayIgnore {width : Nat} [NeZero width]
     (bytes : List (BitVec 8)) (address : BitVec width) (readBytes : List (BitVec 8))
     (point : BitVec width) (source memory : BitVec width → WordLocW width)
@@ -101,7 +112,12 @@ theorem writeBytearrayIgnore {width : Nat} [NeZero width]
 
 /-- Native equality law matching the original statement shape. The readable domain, source/target memory
 correspondence on it, original read success and initial point equality are
-retained. No target read, aligned-key, or successful-store premise is added. -/
+retained. No target read, aligned-key, or successful-store premise is added.
+Original346-370 compares the tail writes at the same symbolic aligned key
+and then their identical updates. No numerical LOG2/alignment fact is used;
+this is the arbitrary-positive-width numerical instance of that statement. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml"
+  "write_bytearray_EQ" (words_as_type_indexed_bitvec)]
 theorem writeBytearrayEq {width : Nat} [NeZero width]
     (bytes : List (BitVec 8)) (address : BitVec width)
     (source memory : BitVec width → WordLocW width) (readBytes : List (BitVec 8))

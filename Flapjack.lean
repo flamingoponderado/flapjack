@@ -212,6 +212,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
@@ -696,6 +697,8 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionMovePreparation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
 import Flapjack.Compiler.Backend.WordAlloc.ProductionBufferClashTree
+import Flapjack.Compiler.Backend.WordAlloc.ProductionExpressionClashTree
+import Flapjack.Compiler.Backend.WordAlloc.ProductionInstructionClashTree
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
