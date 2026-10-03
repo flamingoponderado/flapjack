@@ -4928,6 +4928,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 418,
+      "out": "pan_structs_compiled_shapes_wf_probe.out",
+      "rows": 3,
+      "sha256": "f97845d48ae0f269843dcaabe3e7fce16276b3a09c112061d98778e13b917b64"
+    },
+    {
       "bytes": 319,
       "out": "pan_structs_convert_code_locals_probe.out",
       "rows": 3,
