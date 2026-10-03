@@ -1,6 +1,10 @@
+import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
+import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
 import Flapjack.Compiler.Backend.LabFilter.Proofs
+import Flapjack.RiscV.L3.Defs.DecodeImmediates
+import Flapjack.RiscV.L3.Defs.DecodeBits
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.RiscV.L3.Defs.FPMemory
 import Flapjack.RiscV.L3.Defs.ControlFetch
@@ -9,7 +13,7 @@ import Flapjack.RiscV.L3.Defs.Divide
 import Flapjack.RiscV.L3.Defs.Multiply
 import Flapjack.RiscV.L3.Defs.WordArithmetic
 import Flapjack.RiscV.L3.Defs.ImmediateShift
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
 import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
@@ -35,6 +39,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitModOrder
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitProp
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReadMemory
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -253,6 +259,8 @@ import Flapjack.Misc.WordList
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
@@ -362,6 +370,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnStackMoveClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
@@ -638,6 +647,7 @@ import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
 import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+import Flapjack.Pancake.WordConvs.StackOccurrences
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.MapInj
 import Flapjack.Compiler.Backend.Parmove.PathLemmas
@@ -679,6 +689,8 @@ import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
+import Flapjack.Pancake.Proofs.PanSimp.SeqAssocAssembly
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailAssembly
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
@@ -1185,6 +1197,8 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
+import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
@@ -2071,6 +2085,10 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar

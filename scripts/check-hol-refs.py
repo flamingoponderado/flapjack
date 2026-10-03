@@ -201,6 +201,35 @@ def machine_ieee_fp32_source_error(root: Path) -> str | None:
     return None
 
 
+# Source-reviewed generated definitions from the pinned L3 BL factory. The
+# first BL call at each fixed width creates the word-to-Bool-tuple definition
+# in the riscv theory. This recognizes declaration identity only; it does not
+# certify a Lean equation or permit other dynamically generated names.
+L3_BOOLIFY_SCRIPT = "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml"
+L3_BOOLIFY_GENERATORS = (
+    "HOL/examples/l3-machine-code/common/Import.sml",
+    "HOL/src/n-bit/bitstringLib.sml",
+)
+L3_BOOLIFY_DECLARATIONS = {
+    "boolify8_def": (8, 4536),
+    "boolify32_def": (32, 12179),
+    "boolify16_def": (16, 20507),
+}
+
+
+def l3_boolify_source_error(root: Path) -> str | None:
+    """Require all model/factory bytes pinned before recognizing three names."""
+    for source in (L3_BOOLIFY_SCRIPT, *L3_BOOLIFY_GENERATORS):
+        error = hol_submodule_source_error(root, source)
+        if error:
+            return f"L3 boolify generated declaration source {source}: {error}"
+    lines = (root / L3_BOOLIFY_SCRIPT).read_text().splitlines()
+    for width, line in L3_BOOLIFY_DECLARATIONS.values():
+        if len(lines) < line or not lines[line - 1].strip().startswith(f"BL({width},"):
+            return "L3 boolify generation trigger differs from reviewed fixed-width BL call"
+    return None
+
+
 def hol_source_error(root: Path, path: str) -> str | None:
     """Validate a repository-relative source, including external byte pins."""
     parts = path.split("/")
@@ -4172,6 +4201,11 @@ def hol_declaration_lines(
             if machine_ieee_fp32_source_error(path.parents[3]) is None:
                 for name in MACHINE_IEEE_FP32_NAMES:
                     names.setdefault(name, []).append(MACHINE_IEEE_FP32_LINE)
+        if path.parts[-len(Path(L3_BOOLIFY_SCRIPT).parts):] == Path(L3_BOOLIFY_SCRIPT).parts:
+            root = path.parents[len(Path(L3_BOOLIFY_SCRIPT).parts) - 1]
+            if l3_boolify_source_error(root) is None:
+                for name, (_width, line) in L3_BOOLIFY_DECLARATIONS.items():
+                    names.setdefault(name, []).append(line)
         for locations in names.values():
             locations.sort()
         cache[path] = names

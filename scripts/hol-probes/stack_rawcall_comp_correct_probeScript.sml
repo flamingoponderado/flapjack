@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "comp_correct_full_statement" comp_correct;
+val _ = print("comp_correct_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+val _ = row "comp_correct_arbitrary_program1" (ISPEC ``program:1 stackLang$prog`` comp_correct);
+val _ = row "comp_correct_arbitrary_program8" (ISPEC ``program:8 stackLang$prog`` comp_correct);
+val _ = row "comp_correct_arbitrary_program64" (ISPEC ``program:64 stackLang$prog`` comp_correct);
+val _ = row "comp_correct_arbitrary_program80" (ISPEC ``program:80 stackLang$prog`` comp_correct);
