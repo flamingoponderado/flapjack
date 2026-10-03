@@ -49,7 +49,9 @@ private theorem sourceOffsetRead {width : Nat} [NeZero width] {C F : Type}
 All four guards and seven-conjunct conclusion are retained, with arbitrary
 word constant/result, physical or spill source and full source/target carriers.
 The actual source word read and calculation derive the actual native load and
-target expression success; no target-run or target-expression premise is used. -/
+target expression success; no target-run or target-expression premise is used.
+The evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8), without
+an independent agreement claim. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wStackLoad_wReg1_with_const"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
