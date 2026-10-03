@@ -1,0 +1,11 @@
+find_index_MAP_w2n=∀(l :α word list) (x :α word) (n :num).
+  find_index (w2n x) (MAP (w2n :α word -> num) l) n = find_index x l n
+find_index_MAP_w2n_types=(l :α word list)::α word list;(x :α word)::α word;(n :num)::num;
+find_index_MAP_w2n_hypotheses=0
+first=T
+mapped=T
+duplicates=T
+absent=T
+empty=T
+wrapped=T
+wide=T
