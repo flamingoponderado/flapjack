@@ -81275,5 +81275,28 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 bead11.1: full original local evaluate_wStackLoad_wReg2 word_to_stackProofScript.sml4478-4510, four original wReg2 tuple/EVEN/source get_var/full state_rel premises and ALL nine actual target run/clock/bitmap/full state_rel/stack length/space/non-k+1 get_var/additive word_exp/exact loaded value conclusions retained. Arbitrary source payload Word or Loc, Nat registers/frame slots/lens, positive shared word width and config/FFI host types; no maxVar/success/range/postrelation/targetrun guard added. wReg2 below-k branch empty load derives physical register lookup; spill branch derives bound and exact target stack value from original full locals relation/source lookup, actual StackLoad writes k+1. Scratch stateRel update uses accepted stateRel_setVar_of_ge; every other register and word_exp(Op Add[Var r;Const c]) are preserved, including missing/Loc/Word values and all constants, by exact canonical lookup update and literal expression equations. Genuine same-module codecs reexport actual imported canonical source fpRegs/store and target regs/fpRegs/store owners; Spt/List unchanged. Fresh original local statement and unchanged HOL proof replay from pinned source, closed hyp0, original wReg2 and stack-load definitions captured. No executable path change, no HOL-to-Lean equivalence/full case or pass completion. Inherits reals_as_rational_cuts from the source/target state relation evaluator assurance limit.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectWhile.lean",
+    "lean_name": "compileCorrectWhile",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/While1062-1089 and faithful panSem evaluate_ind three While minors: original ten premises/seven conclusions and precisely all three guarded IHs. WhileProperty is transparent spelling of full original all10/7 predicate, not a caller-supplied predicate. Body IH binds original v2/v11/word and retains eval SOME v2, v2=Val v11, v11=Word word, word!=0, source.clock!=0; each recursive loop IH retains those plus actual (res,s1)=evaluate(body,dec_clock s), and original SOME v1/v1=Continue or NONE guard. Original zero-word termination, clock-zero timeout with empty locals, body NONE/Continue recursion, Break-to-NONE and propagated Error/TimeOut/Return/Exception/FinalFFI outcomes covered. Error branches excluded only by original no-Error. Full expression theorem supplies target condition, converter preserves clock/commutes dec_clock, full guarded body IH supplies actual target body and all postconditions. Original structs/code and WF-shape evaluation invariants derive all next loop-state preconditions internally; source-result NONE/Continue discharges original local-map preservation guard. Break preserves body fields/maps and NONE result predicates; terminal converted values propagated exactly. No extra target run/clock/postmap/state compatibility or unguarded IH. Imported canonical four-map state/full two-way witness and positive indexed words/Type0 host translation only. Fresh original full/case/induction statements and binder types closed/kernelT reviewed; broader full program/executed compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectWhile.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

@@ -5000,6 +5000,12 @@
       "sha256": "ee3f0815f15bfa5a6e6bf68326935e4e056874c56f6296463594a36fdb44d874"
     },
     {
+      "bytes": 5852,
+      "out": "pan_structs_program_while_probe.out",
+      "rows": 9,
+      "sha256": "7ebb0c64442daac3809c876083b8478c7f02ef9ed8339b8188dcbf12e185e58b"
+    },
+    {
       "bytes": 499,
       "out": "pan_structs_reorder_faithful_probe.out",
       "rows": 4,

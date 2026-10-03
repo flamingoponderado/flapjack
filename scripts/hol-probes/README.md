@@ -7398,3 +7398,10 @@ additive expression and exact value conjunct with only the four original
 premises. Bounds and spilled values are derived from actual source lookup and
 state relation. This is transcription/regression evidence, not a cross-language
 equivalence proof or full instruction/If/compiler correctness claim.
+
+`pan_structs_program_while_probe` captures the full original program theorem,
+its `While e c1` specialization, and original `evaluate_ind`, with binder types
+and closed kernel proofs. The Lean piece retains ten premises/seven conclusions
+and all three original guarded IHs, including nonzero source clock and actual
+body outcome/evaluation guards. Original body invariants derive each recursive
+loop state's fields, well-formedness and context maps.

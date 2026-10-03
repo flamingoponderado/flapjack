@@ -6964,3 +6964,6 @@ run_probe lab_props_alignment_primitives_probeScript.sml lab_props_alignment_pri
 run_probe word_to_stack_comp_return_probeScript.sml word_to_stack_comp_return_probe.out \
   return_full_original_simulation return_full_original_proved return_full_original_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_while_probeScript.sml pan_structs_program_while_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_while_statement compile_correct_while_proved compile_correct_full_types compile_correct_while_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
