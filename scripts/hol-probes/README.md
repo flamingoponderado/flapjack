@@ -7133,3 +7133,7 @@ and actual compileFieldsExact, preserving both original premises.
 `pan_structs_exp_cmp_shift_faithful_probe` captures the full original theorem,
 both Cmp/Shift specializations and eval_ind. Both native cases retain all seven
 hypotheses and three conclusions, using only the two original child IHs.
+
+## Original native Next evaluation theorem group
+
+`l3_next_evaluation_probeScript.sml` proves universally quantified copies of original `NextRISCV`, `NextRISCV_branch` and `NextRISCV_cond_branch` using the pinned original theorems. Captures include every binder type, all original conjunction premises and complete result records, zero proof assumptions and proof markers. Lean preserves those literal premises; it does not assume the resulting Next transition. The conditional false path derives the full control-update identity from the original empty-control premise. `check-l3-next-evaluation.py` rejects carrier narrowing, circular-premise substitution, dropped premises or lost record updates. Original stepLib uses all three rules; encoder and compiler correctness remain further work. Full Run/Next inherit the rational-cuts IEEE assumption (SOUNDNESS item 8).

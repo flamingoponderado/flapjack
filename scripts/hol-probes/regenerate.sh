@@ -6696,3 +6696,7 @@ run_probe pan_structs_reorder_faithful_probeScript.sml pan_structs_reorder_faith
 run_probe pan_structs_exp_cmp_shift_faithful_probeScript.sml pan_structs_exp_cmp_shift_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_cmp_statement compile_exp_correct_cmp_proved eval_ind_full_statement compile_exp_correct_shift_statement compile_exp_correct_shift_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
+  nextEval_binders nextEval_statement nextEval_hypotheses nextEval_proof nextBranch_binders nextBranch_statement nextBranch_hypotheses nextBranch_proof nextCond_binders nextCond_statement nextCond_hypotheses nextCond_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"

@@ -77152,5 +77152,32 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: genuine actual imported canonical state two-way roundtrip, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Evaluation.lean",
+    "lean_name": "nextRISCV",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript59-68: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion nxt PC+Skip and unchanged whole nxt. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Evaluation.lean",
+    "lean_name": "nextRISCV_branch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV_branch",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript70-83: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion target a and full nxt record with function update clearing only NextFetch. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Evaluation.lean",
+    "lean_name": "nextRISCV_cond_branch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV_cond_branch",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript85-99: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion Boolean b chooses a or nxt PC+Skip; the whole record still clears NextFetch on both branches. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
   }
 ]
