@@ -83958,5 +83958,19 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof plumbing; canonical imported-state genuine two-way roundtrip, no independent HOL original."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_correct",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenCorrect.lean",
+    "lean_name": "flattenCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.12.10: original stack_to_labProofScript.sml:1207-1243. Binders prog s1 t r s2 n l cs bs t1 in source order. All six premises retained verbatim: native StackSem evaluate (prog,s1) = (r,s2), r <> SOME Error, state_rel s1 t1 (reviewed stateRel), call_args prog over t1's ptr/len/ptr2/len2/link registers, code_installed t1.pc (append (FST (flatten t prog n l cs bs))) t1.code over the reviewed flattenHOL, and EVERY IS_SOME (loc_to_pc n k t1.code) over cs ++ bs ++ [0]. Conclusion exists ck t2 with case halt_view r: SOME res gives the native LabSem evaluate (t1 with clock + ck) = (res,t2) and t2.ffi = s2.ffi; NONE gives the clock-shifted evaluate equality for all ck1, the five register-name equalities, t1.code prefix of t2.code (IS_PREFIX rendered <+:), and the case on OPTION_MAP result_view r: NONE pc advance by LENGTH (FILTER ($~ o is_Label) ...) plus state_rel s2 t2; Vloc the installed-code IS_SOME clause and the loc_to_pc w = t2.pc /\\ state_rel clause; Vcont state_rel plus code_installed of the Jump line (0w rendered 0); Vtimeout ffi and clock = 0; the wildcard (only Verr remains) False. No supplied target run, simulation or success premise. Proof by well-founded induction on the evaluator's own (clock, size) measure (HOL recInduct evaluate_ind) with untagged per-constructor case lemmas under FlattenCorrect/, using the ported inst_correct, state_rel lemmas, code_installed and flatten helpers; Install via the oracle/compile/code-buffer conjuncts of state_rel. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   }
 ]
