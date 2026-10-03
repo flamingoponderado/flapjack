@@ -688,6 +688,8 @@ import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
+import Flapjack.Pancake.Proofs.PanSimp.SeqAssocAssembly
+import Flapjack.Pancake.Proofs.PanSimp.RetToTailAssembly
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
