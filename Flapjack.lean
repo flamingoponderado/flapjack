@@ -1219,6 +1219,8 @@ import Flapjack.Pancake.Proofs.PanStructs.ConvertState
 import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -2114,6 +2116,9 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Primitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Instructions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Control
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Allocation
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Calls
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Program
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Full
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
