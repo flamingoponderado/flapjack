@@ -78235,5 +78235,50 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison word_allocProofScript.sml:11154-11174: full original arbitrary-program/count/config wrapper, sole source full_inst_ok_less premise and literal fullSSA output conclusion. Original limit_var_props and setup_ssa_props_2 derive source bounds/allocation class/map; setup Move validity derived from literal native producer. Full recursive theorem supplies body validity; no target premise or subset. Native AsmConfigExact/WordLang/Spt/List carriers; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "fakeSeq_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1005: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "ssaReconcile_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1035: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "loopSetup_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1080: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
+    "lean_name": "fakeMoves_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_fake_moves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1402: original SSA flat-expression helper. Unconditional fake sequence/reconciliation; loop setup and fake moves retain actual producer equality as sole premise and complete output predicate (both fake-move outputs). Native arbitrary lists/Spt maps/priorities/counters, literal SSA producers and native flatExpConventions. Only vacuous original fake_moves conf binder omitted, documented locally. No target assumptions or restricted cases. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatInst.lean",
+    "lean_name": "ssaCcTrans_flatExpInst",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1417-1430, original complete Inst constructor case. Retains original source flat_exp_conventions premise and literal SSA output conclusion for all native instruction constructors, FP width branches and fallback. No target premise or restricted instruction subset. Native WordLang/Spt/List and positive word carrier; words_as_type_indexed_bitvec records only HOL dimension translation."
   }
 ]
