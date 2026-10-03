@@ -6912,3 +6912,7 @@ run_probe lab_to_target_implements_intro_probeScript.sml lab_to_target_implement
 run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_register_probe.out \
   wload_full_register_transport wload_full_continuation wload_original_definition wload_original_register_compiler \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_return_probeScript.sml word_to_stack_comp_return_probe.out \
+  return_full_original_simulation return_full_original_proved return_full_original_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

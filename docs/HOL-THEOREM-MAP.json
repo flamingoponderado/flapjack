@@ -80836,5 +80836,23 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1. Source comparison is recorded here; fleet acceptance is tracked separately on the open bead. Original4512-4523: unconditional equality for every load list, continuation and whole state, including invalid indices, disabled stack and all non-NONE outcomes. Lean list induction uses unconditional native Seq clock identity; no success/range premise. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator reals_as_rational_cuts assurance remains; no new IEEE equivalence claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Return.lean",
+    "lean_name": "compCorrectReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead .27.1.1.10: original full motive5719-5751 and Return6494-6585, entire Seq.Simulation with all original source run/nonerror/fullstateRel/postallocation conventions/flat/nativecompile/bitmap size-prefix/labels/maxVar hypotheses and quantified contexts. Derives successful Loc getVar/getVars from source nonerror, EVEN register and canonical GENLIST one-based even values from conventions, release bound from maxVar+frame relation including frame0, then actual wReg1 load, SeqStackFree and Ret with zero added clock. Full flushed-source stateRel k0 0 with extra LENGTH ys-(k-1), every returned physical register and remaining stack slot proved; stackSizeRel maximum/option/stack size and complete stackRel preserved. No extra bounds, target run, postrelation or placement hypothesis on full case; countBound is case-local infrastructure derived internally. Five named canonical map fields use actual imported source/target owners and genuine same-module roundtrips; HOL List/Spt unchanged, positive BitVec/NeZero width and FFI Type0 standard translation only. Inherits evaluator reals_as_rational_cuts assurance, no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
   }
 ]

@@ -7341,3 +7341,11 @@ All four theorem rows have zero hypotheses. LoadRegister kernel ports preserve
 the complete source lookup/full relation premises and all preservation conjuncts;
 the continuation law covers arbitrary loads/programs/states and failed loads.
 These proof-side prerequisites do not establish the full Return case or pass.
+
+`word_to_stack_comp_return_probe.out` freshly specializes the entire original
+comp_correct theorem at arbitrary Return/register/value-list/source state,
+with kernel-proved=T, no free variables and zero hypotheses. The native Return
+case retains every quantified original premise and the complete existential
+execution/result/resource contract; it derives all source reads, frame/free
+bounds, postrelation and physical returned-value placements internally.
+This constructor port does not establish full pass or runtime correctness.
