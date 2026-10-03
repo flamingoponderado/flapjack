@@ -9098,6 +9098,12 @@
       "sha256": "9cb06210c2c3047db7cb7d7d3fe2b5cb586a78041e9f8ef5f9ce58133372f609"
     },
     {
+      "bytes": 291,
+      "out": "word_to_stack_stack_move_clock_probe.out",
+      "rows": 3,
+      "sha256": "efcecb4742e280b23a3bf75eb529424616136c474b3e54d2b7c700e21238123a"
+    },
+    {
       "out": "word_to_stack_stack_rel_aux_size_probe.out",
       "bytes": 362,
       "rows": 4,
