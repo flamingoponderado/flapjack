@@ -88823,5 +88823,21 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-correct): HOL word_common_subexp_elim_correct (word_cseProof:3795-3804). Free variables p s res s1 are bound; the premise is the evaluate equation, flat_exp_conventions and res != SOME Error; the conclusion is the evaluate equation of wordCommonSubexpElim p. The proof is HOL's: comp_correct with empty_data (dataInvEmpty). The word_cse_comp_correct probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "CallTree",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "call_tree",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: original word_depthScript14-20 datatype has Leaf/Unknown/Const num call_tree/Call num call_tree/Branch call_tree call_tree, all five constructors and payloads retained. Original max_depthScript24-33 full inferred type num num_map -> call_tree -> num option and all five typed recursive clauses captured in word_depth_probe.out. Exact Spt Nat frame map with reviewed sptLookup; Nat and Option identity carriers. Const maps left addition n+d, Branch OPTION_MAP2 MAX, Call OPTION_MAP2 addition of lookup n and recursive depth; missing lookup or unknown propagates NONE. Generic optionMap2 helper is Flapjack infrastructure with no HOL declaration port tag. Twelve fresh original EVAL rows include misses, unknown branches and nested calls. No word carrier, dimension qualifier, invented bound, pass assumption, production routing or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepth.lean",
+    "lean_name": "maxDepth",
+    "hol_path": "cakeml/compiler/backend/word_depthScript.sml",
+    "hol_name": "max_depth_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04: original word_depthScript14-20 datatype has Leaf/Unknown/Const num call_tree/Call num call_tree/Branch call_tree call_tree, all five constructors and payloads retained. Original max_depthScript24-33 full inferred type num num_map -> call_tree -> num option and all five typed recursive clauses captured in word_depth_probe.out. Exact Spt Nat frame map with reviewed sptLookup; Nat and Option identity carriers. Const maps left addition n+d, Branch OPTION_MAP2 MAX, Call OPTION_MAP2 addition of lookup n and recursive depth; missing lookup or unknown propagates NONE. Generic optionMap2 helper is Flapjack infrastructure with no HOL declaration port tag. Twelve fresh original EVAL rows include misses, unknown branches and nested calls. No word carrier, dimension qualifier, invented bound, pass assumption, production routing or cross-language equivalence claim."
   }
 ]
