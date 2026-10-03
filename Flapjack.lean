@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set

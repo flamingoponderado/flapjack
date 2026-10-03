@@ -9686,6 +9686,12 @@
       "sha256": "cf43dd90b6c8a9f24359b24241f44bd6af033df1cc2a74651823d98f64a270e4"
     },
     {
+      "bytes": 439,
+      "out": "word_to_stack_native_stackstore_probe.out",
+      "rows": 4,
+      "sha256": "816ce7bc501780cac22b820c0043970337ebc42123cf402c1d6392b6944516be"
+    },
+    {
       "bytes": 553,
       "out": "word_to_stack_native_top_probe.out",
       "rows": 24,

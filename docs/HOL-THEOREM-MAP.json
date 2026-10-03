@@ -81777,5 +81777,14 @@
     "reviewer": "flapjack-sol2 source comparison7098-7126 original comp_correct5756/motive5719-5751: full Seq.Simulation all original quantifiers/premises and entire existential actual targetrun/resource/result conclusion. Source nonerror derives actual ordered Word reads and successful data buffer write/exact poststate. Original conventions derive even registers; full native Reg1/Reg2 actual loads compose and preserve first value. Full stateRel derives target useStack and dataBuffer equality, target writes same full-width word. Literal buffer_write success guard gives length+spaceLeft conservation, preserving original bitmap/buffer capacity h30; all other relation conjuncts preserved after identical actual updates. No added success/read/targetrun/size/postrelation premise. Five canonical finite maps/positive words and same-module actual codecs qualified; inherited reals_as_rational_cuts unchanged. Fresh original full DataBufferWrite obligation/whole specialization closed captures; statement regression evidence, not literal local-case replay or cross-language equivalence.",
     "inherits_reals_as_rational_cuts": true,
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeStackStore.lean",
+    "lean_name": "wStackStoreNative",
+    "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
+    "hol_name": "wStackStore_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison57-60: both exact original wStackStore_def clauses on List(register,slot) and arbitrary faithful HolProg continuation. Empty returns continuation; cons is Seq(recursive tail continuation)(StackStore register slot), preserving reverse store order including repeated slots/registers and arbitrary continuations. Positive native program word carrier qualified. Original source reference audit finds definition only in production word_to_stackScript; compiler wRegWrite1/2 contain direct literal StackStore clauses and are retained. Helper is proof-side original source support, no claimed executed routing change/performance exception. Fresh original constructor/order captures; no evaluator/statement weakening or cross-language equivalence claim."
   }
 ]

@@ -7047,3 +7047,7 @@ run_probe word_to_stack_comp_codebufferwrite_probeScript.sml word_to_stack_comp_
 run_probe word_to_stack_comp_databufferwrite_probeScript.sml word_to_stack_comp_databufferwrite_probe.out \
   comp_correct_databufferwrite_full_statement comp_correct_databufferwrite_full_proved comp_correct_databufferwrite_full_hypotheses comp_correct_databufferwrite_whole_statement comp_correct_databufferwrite_whole_proved comp_correct_databufferwrite_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_native_stackstore_probeScript.sml word_to_stack_native_stackstore_probe.out \
+  native_stackstore_full_definition native_stackstore_empty native_stackstore_reverse native_stackstore_repeated_slot \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

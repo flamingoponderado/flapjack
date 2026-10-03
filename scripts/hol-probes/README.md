@@ -7531,3 +7531,8 @@ Statement regression evidence, not literal local proof replay or equivalence.
 `word_to_stack_comp_databufferwrite_probeScript.sml` captures the full original
 DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
+
+`word_to_stack_native_stackstore_probeScript.sml` captures the original full
+wStackStore definition and empty/reverse/repeated-slot continuation cases.
+Original production script uses it only at its definition; compiler direct
+store clauses are retained. Regression evidence, not equivalence.
