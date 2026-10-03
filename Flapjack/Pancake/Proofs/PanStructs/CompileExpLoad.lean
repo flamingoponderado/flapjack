@@ -19,7 +19,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
 
 /-- Genuine `Load` case of the original `compile_exp_correct`
 (`pan_structsProofScript.sml:740-748`), retaining the original full child
-induction hypothesis and all seven premises and three conclusions. As in the
+induction hypothesis under the original `eval_ind` Load guard
+(`is_wf_shape s.structs shape ==> P s address`), and all seven premises and
+three conclusions. As in the
 source, the loaded value is converted by `mem_load_conversion_inst`, and the
 compiled shape is name-free by `compile_shape_no_name`. -/
 @[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_exp_correct"
@@ -28,7 +30,7 @@ compiled shape is name-free by `compile_shape_no_name`. -/
 theorem compileExpCorrectLoad {width : Nat} {σ : Type} [NeZero width]
     (source : PanSemStateFiniteExact width σ) (context : ContextExact)
     (shape : ShapeHOL) (expression : ExpHOL width) (value : ValueHOL width)
-    (ih : ∀ childValue : ValueHOL width,
+    (ih : isWfShapeExactHOL source.structs shape = true → ∀ childValue : ValueHOL width,
       @PanSemStateFiniteExact.evalHOLFinite width σ _ source
         (fun a => Classical.propDecidable (source.memaddrs a)) expression = some childValue ∧
       shapeMap context.locals = source.locals.map2 (fun entry => shapeOfHOLExact entry.2) ∧
@@ -65,7 +67,7 @@ theorem compileExpCorrectLoad {width : Nat} {σ : Type} [NeZero width]
   · rename_i hwf
     split at hr
     · rename_i word hchild
-      obtain ⟨_, _, htarget⟩ := ih (.val (.word word))
+      obtain ⟨_, _, htarget⟩ := ih hwf (.val (.word word))
         ⟨hchild, hlocals, hglobals, hstructs, hlocal, hglobal, hinfo⟩
       simp only [PanSemStateFiniteExact.evalHOLFinite, convertV] at htarget
       obtain ⟨hconv, hflds⟩ := memLoadConversionInst source.memaddrs source.memory source.structs
