@@ -6071,3 +6071,7 @@ run_probe l3_machine_csr_codec_probeScript.sml l3_machine_csr_codec_probe.out \
 run_probe word_to_stack_state_rel_probeScript.sml word_to_stack_state_rel_probe.out \
   state_rel_definition state_rel_hypotheses state_rel_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_make_init_probeScript.sml lab_to_target_make_init_probe.out \
+  make_init_def make_init_def_types make_init_def_hypotheses \
+  regs fp_regs mem mem_domain shared_mem_domain pc be ffi io_regs io_fp_regs cc_regs cc_fp_regs code clock failed ptr_reg len_reg ptr2_reg len2_reg link_reg compile code_buffer compile_oracle \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
