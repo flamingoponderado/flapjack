@@ -769,15 +769,15 @@ def asmOk {width : Nat} (config : AsmConfig width) : AsmData width → Bool
 Exact 64-bit field values of HOL `riscv_config_def`
 (`cakeml/compiler/encoders/riscv/riscv_targetScript.sml:277-304`).
 
-`encode` is carried with the HOL field type but is a placeholder, so the
+`encode` uses the legacy production AsmData/UInt8 carriers and is a placeholder, so the
 definition is named `riscvConfigForChecks`: the HOL value is
-`riscv_enc = LIST_BIND riscv_encode ∘ riscv_ast`, whose instruction encoder is
-not ported here, and a caller that read `encode` would silently emit empty
-code. No validity predicate in this module (or in `stackProps$stack_asm_ok`)
+`riscv_enc = LIST_BIND riscv_encode ∘ riscv_ast`, whose full native instruction encoder now lives in
+`Flapjack/Compiler/Encoders/RiscV/Target.lean`. A caller that read this legacy
+record's `encode` would still emit empty code. No validity predicate in this module (or in `stackProps$stack_asm_ok`)
 reads `encode`, so every check-relevant projection is exact, but the record as
-a whole is NOT a complete port and no `@[hol]` tag is attached. The exact
-`riscv_ast`/`riscv_enc` field and production bridge is tracked by bead
-`flapjack-pxn.18.5.15.9.11.1`. -/
+a whole is NOT a complete port and no `@[hol]` tag is attached. The complete native configuration lives in
+`RiscV/Target/Configuration.lean`; the remaining actual production encoder
+route is tracked by bead `flapjack-pxn.18.5.15.9.11.1.3.2`. -/
 
 /-- HOL `min12` (`sw2sw (INT_MINw : word12) : word64`). -/
 def riscvMin12 : BitVec 64 := BitVec.ofInt 64 (-2048)
