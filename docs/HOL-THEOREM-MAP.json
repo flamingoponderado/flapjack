@@ -85601,5 +85601,70 @@
     "hol_name": "lookup_bm_inter_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-sola-cse-intersection-lookup): HOL lookup_bm_inter_eq (word_cseProof:621-638). Arbitrary payload alpha, native maps m1 m2, key k : List Nat and value v, in HOL order. The sole premise is invariant listCmp m1 and invariant listCmp m2; the conclusion is the iff between lookup listCmp k (bm_inter_eq m1 m2) = SOME v and both input lookups being SOME v. There is no output-relation or run assumption and no finite-map carrier in the statement. The proof, as in HOL, applies bm_inter_eq_acc_thm with the empty accumulator and lookup_thm. Kernel-checked; the word_cse_intersection_acc probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "firstRegOfArith_canonicalArith",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "firstRegOfArith_canonicalArith",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL firstRegOfArith_canonicalArith (word_cseProof:152-156). Arbitrary data and arithmetic a; firstRegOfArith (canonicalArith data a) = firstRegOfArith a, over the tagged native Knowledge, canonicalArith and firstRegOfArith with the HolArith width carrier (words_as_type_indexed_bitvec, [NeZero width]). No premise. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses).",
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "lookup_listCmp_empty",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_listCmp_empty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL lookup_listCmp_empty (word_cseProof:486-490). lookup listCmp k empty = NONE for arbitrary key k : List Nat (HOL num list) and arbitrary payload, over the tagged native balanced-map lookup/empty. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "invariant_listCmp_empty",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "invariant_listCmp_empty",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL invariant_listCmp_empty (word_cseProof:498-502). invariant listCmp empty at an arbitrary payload type, over the tagged native invariant/empty. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "lookup_insert_listCmp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_insert_listCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL lookup_insert_listCmp (word_cseProof:775-787). Arbitrary k i : List Nat, payload v and native map m in HOL order. The sole premise is invariant listCmp m; the conclusion is the inserted map's invariant together with lookup listCmp k (insert listCmp i v m) = if k = i then SOME v else lookup listCmp k m (HOL equality on keys). Proof as in HOL from insert_thm, lookup_thm, key_set_eq and listCmpEq_correct. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "register_read_simps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "register_read_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL register_read_simps (word_cseProof:789-796). All four field conjuncts (instrs_mem, to_latest, gets_mem, loads_mem) in source order for arbitrary data and r, over the tagged native registerRead and Knowledge. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "register_reads_simps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "register_reads_simps",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL register_reads_simps (word_cseProof:798-806). For all rs and data, the four field conjuncts in source order, over the tagged registerReads; proof by HOL's induction on rs. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "lookup_register_read",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_register_read",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL lookup_register_read (word_cseProof:808-814). sptree lookup x (register_read data r).to_canonical = if x = r and not EVEN r and lookup r data.to_canonical = NONE then SOME r else lookup x data.to_canonical. HOL's not-EVEN r is rendered r % 2 != 0, the same rendering the reviewed registerRead uses for the definition's guard; Spt sptLookup is the reviewed num_map lookup. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/KnowledgeLemmas.lean",
+    "lean_name": "lookup_register_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_register_reads",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-r1n8q): HOL lookup_register_reads (word_cseProof:816-824). For all rs, data and x, lookup x (register_reads data rs).to_canonical = if MEM x rs and not EVEN x and lookup x data.to_canonical = NONE then SOME x else lookup x data.to_canonical, with MEM as list membership and not-EVEN as x % 2 != 0 (as above). Proof by HOL's induction on rs via lookup_register_read. Kernel-checked; the word_cse_knowledge_lemmas probe captures the statement (0 hypotheses)."
   }
 ]
