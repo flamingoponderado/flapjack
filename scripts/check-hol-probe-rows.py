@@ -217,12 +217,17 @@ def expected_lock(probes_dir: Path) -> list[dict[str, object]]:
 
 
 def render_lock(records: list[dict[str, object]]) -> str:
-    lines = ["{", '  "version": 1,', '  "records": [']
-    for index, record in enumerate(records):
-        comma = "," if index + 1 < len(records) else ""
-        lines.append("    " + json.dumps(record, sort_keys=True) + comma)
-    lines.extend(["  ]", "}"])
-    return "\n".join(lines) + "\n"
+    """Render the content lock in the canonical pretty indent-2 format.
+
+    Keys are emitted in a fixed order so that ``--update`` (and any manual
+    merge union routed through it) always reproduces the canonical rendering
+    instead of churning unrelated records.
+    """
+    ordered = [
+        {key: record[key] for key in ("bytes", "out", "rows", "sha256")}
+        for record in records
+    ]
+    return json.dumps({"version": 1, "records": ordered}, indent=2) + "\n"
 
 
 def check_structural(probes_dir: Path) -> list[str]:
@@ -287,6 +292,11 @@ def check_lock(probes_dir: Path, lock_path: Path) -> list[str]:
         name for name in old.keys() | new.keys() if old.get(name) != new.get(name)
     )
     if not changed:
+        if read_text(lock_path) != render_lock(records):
+            return [
+                f"{lock_path}: captured content matches but rendering is not the "
+                "canonical indent-2 form; run --update to normalise the lock"
+            ]
         return []
     detail = ", ".join(changed[:12]) + (" ..." if len(changed) > 12 else "")
     return [
