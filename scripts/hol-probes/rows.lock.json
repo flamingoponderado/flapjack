@@ -1098,6 +1098,7 @@
     {"bytes": 651, "out": "stack_code_bitmaps_rawcall_probe.out", "rows": 3, "sha256": "17ce8686c8fbe7a18e0fc1085b8ebfbdc74515ee91bb2231373b1b2013c7a552"},
     {"bytes": 644, "out": "stack_code_bitmaps_seq_probe.out", "rows": 3, "sha256": "7b0663572e4bfba0aab95f69eb1bbf98d029ee72701d15a61c12cf8e48d5cae4"},
     {"bytes": 339, "out": "stack_evaluate_clock_neutral_probe.out", "rows": 9, "sha256": "e628b5dd4ff98863483c04f077f9e8ff0b2646dfa73249644ab138ba6a97f698"},
+    {"bytes": 183, "out": "stack_evaluate_ffi_neutral_probe.out", "rows": 2, "sha256": "1d622229c50e7dd10467f5844f203530ff549fd0d8224e8b42ebc9db6efa857b"},
     {"bytes": 227, "out": "stack_evaluate_mono_probe.out", "rows": 6, "sha256": "e76f8acf6b2b0f08b65c72841f2a7e56dd745a0dd889b1b072e7328e13fccc08"},
     {"bytes": 2330, "out": "stack_initialized_boundary_probe.out", "rows": 40, "sha256": "bb679afacded1d1e591b601bb4f1ca2b6c78686cd82036eb3db30824cbdbeb34"},
     {"bytes": 109, "out": "stack_lang_inst_overloads_probe.out", "rows": 6, "sha256": "0d91d8c445c0d8cf67aa58d2ba936598c3c282fda4c54b3a837483697d70c809"},
