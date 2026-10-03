@@ -6398,3 +6398,10 @@ list, a domain hole, a wrong byte and a past-end index. The Lean parity module
 checks all observations and twelve applications of the full theorem. These
 fixtures provide regression evidence, not a cross-language equivalence proof.
 `stack_code_bitmaps_callreturn_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Call SOME specialization. Actual callee/link/clock guards and matching return/exception-label execution restrict continuation IHs to the actual clamped poststate; derive full prefix composition, retain all mismatches and terminal outcomes. Full Call/whole evaluator assembly remains open.
+
+`l3_tlb_flush_probe.out` captures complete flushTLB/SFENCE_VM definitions/types
+and 64 mixed-entry observations. Original TLBEntries=16 visits all slots0..15.
+Independent expectations cover ASID zero/nonzero, global entries, optional masked
+addresses, empty entries, surviving arbitrary records, register-zero semantics,
+other-core tables and the entire frame outside c_tlb. No entry-validity/core-bound
+premise is assumed; these regressions do not establish whole Run/Next correctness.

@@ -68681,5 +68681,21 @@
     "hol_name": "find_index_is_MEM",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison miscScript.sml1227 and fresh fulltype0hyp: full generic target/list/offset/result, sole successful-search premise and original membership conclusion. Generic alpha retained; DecidableEq supplies propositional equality. No fixed word specialization, Nodup, index bound or HD/EL/default dependency. Fresh original complete theorem instances discharge actual successful-search guards; kernel structural proof and arbitrary MachineConfig.ffiEntryPcs consumer. Source/regression evidence does not establish cross-language equivalence or full FFI/initializer/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Flush.lean",
+    "lean_name": "flushTLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "flushTLB_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source5386-5469. Fullword6 ASID/optionalword64 address/arbitraryword4 function TLB map, exact native state. Original5022 TLBEntries=16 and FORinclusive0..15 retained. ASID0 clears global and nonglobal matching addresses; nonzeroASID clears only sameASID/nonglobal. Address match is e.vAddr=(va AND e.vMatchMask), no entry-validity premise. SFENCE logicalGPR0 omits addressfilter; othersread GPRrs1, currentASID andcurrentTLB, write onlycurrentcore. Existing reviewed helper/carrier owners used. Complete10definition closure0fail and unconditional SFENCE whole-state normalform kernelchecked. Fresh original64mixedentry observations independently compared: differingASIDs/global/empty/invalidmaskedaddress andslot15; survivingentries exactlyequal original arbitrary records; othercore andfullframe outsidec_tlb unchanged,core255 totalCore1. Independent check caught earlier mistaken slot15 note; corrected from literal source constant, rendered behavior unchanged. No wholeRun/Next/compiler equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/MMU/Flush.lean",
+    "lean_name": "«dfn'SFENCE_VM»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SFENCE_VM_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10709-10727. Fullword6 ASID/optionalword64 address/arbitraryword4 function TLB map, exact native state. Original5022 TLBEntries=16 and FORinclusive0..15 retained. ASID0 clears global and nonglobal matching addresses; nonzeroASID clears only sameASID/nonglobal. Address match is e.vAddr=(va AND e.vMatchMask), no entry-validity premise. SFENCE logicalGPR0 omits addressfilter; othersread GPRrs1, currentASID andcurrentTLB, write onlycurrentcore. Existing reviewed helper/carrier owners used. Complete10definition closure0fail and unconditional SFENCE whole-state normalform kernelchecked. Fresh original64mixedentry observations independently compared: differingASIDs/global/empty/invalidmaskedaddress andslot15; survivingentries exactlyequal original arbitrary records; othercore andfullframe outsidec_tlb unchanged,core255 totalCore1. Independent check caught earlier mistaken slot15 note; corrected from literal source constant, rendered behavior unchanged. No wholeRun/Next/compiler equivalence claim."
   }
 ]
