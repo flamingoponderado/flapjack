@@ -72450,5 +72450,22 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.8): full original comp_correct goal 5719-5751 specialized only at FFI (source proof 7125-7171), same statement shape as the reviewed compCorrectAssign/Store/Alloc rows: arbitrary ffi index, argument registers, cutsets, frame, states, result and bitmap parameters; all eleven original premises retained; full existential target clock/run/result conclusion with compCorrectResult. Proof follows HOL: post_alloc_conventions fixes ptr1/len1/ptr2/len2 = 2/4/6/8 and puts cutset names on the stack; state_rel moves source variables 2/4/6/8 to target registers 1-4; memory/mdomain/be/ffi agree so the byte reads and call_FFI coincide; FinalFFI gives equal ffi/clock; the returning branch relates the cut environment (stack-placed names only, so the restricted target registers are unobservable) with clock 0. No target run, simulation law or successful-execution premise added. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through the evaluator closure; no numerical FP assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallDest.lean",
+    "lean_name": "callDestLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "call_dest_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.1): source 3315-3415: HOL free ret/ac/k/f/f'/lens explicit (ret at HOL's add_ret_loc carrier, Option (List Nat x cutsets x prog x Nat x Nat)); premises ~bad_dest_args, state_rel, native call_dest compile equation, get_vars success; conclusion: exists t4 with native StackSem evaluate (q0, t) = (NONE, t4), state_rel s t4, equal stack length and stack_space, and for all real_args/prog/ssize with native WordSem find_code dest (add_ret_loc ret args') = SOME, the compile_prog/bitmap-bound/isPREFIX facts, the fs ssize = fs as ssize.getD fs, and StackSem find_code dest' t4.regs t4.code = SOME stack_prog. Proof follows HOL's three call_dest branches (direct label, register, stack slot via StackLoad k+1). Full literal stateRel over imported carriers; positive BitVec width with NeZero. Statement names the StackSem evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
   }
 ]
