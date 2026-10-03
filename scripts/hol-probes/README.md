@@ -7244,6 +7244,12 @@ correctness theorem and Tick/Annot specializations as closed kernel theorems.
 Native Tick retains both zero-clock timeout and decrement branches without
 extra premises; both cases retain all ten hypotheses and seven conclusions.
 
+`pan_structs_value_shape_conversion_probe` captures whole, source-local
+induction and exactly simplified reversed shape-conversion theorems, binder
+types and closed kernel proofs. Local statements and original unchanged proof
+text are replayed. The whole unused binder is polymorphic; induction n is num.
+Native proofs retain original guards and derive named lookup/field shapes.
+
 ## Full native RISC-V configuration
 
 `l3_native_config_probeScript.sml` captures the complete original record,
