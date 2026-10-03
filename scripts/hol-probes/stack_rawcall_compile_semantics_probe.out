@@ -1,0 +1,6 @@
+rawcall_compile_semantics_full=ALL_DISTINCT (MAP FST code) ∧ s.use_stack ∧ s.code = fromAList code ∧ semantics start s ≠ Fail ⇒ semantics start (s with code := fromAList (compile code)) = semantics start s
+rawcall_compile_semantics_hypotheses=0
+rawcall_compile_semantics_width1=ALL_DISTINCT (MAP FST code) ∧ s.use_stack ∧ s.code = fromAList code ∧ semantics start s ≠ Fail ⇒ semantics start (s with code := fromAList (compile code)) = semantics start s
+rawcall_compile_semantics_width8=ALL_DISTINCT (MAP FST code) ∧ s.use_stack ∧ s.code = fromAList code ∧ semantics start s ≠ Fail ⇒ semantics start (s with code := fromAList (compile code)) = semantics start s
+rawcall_compile_semantics_width64=ALL_DISTINCT (MAP FST code) ∧ s.use_stack ∧ s.code = fromAList code ∧ semantics start s ≠ Fail ⇒ semantics start (s with code := fromAList (compile code)) = semantics start s
+rawcall_compile_semantics_width80=ALL_DISTINCT (MAP FST code) ∧ s.use_stack ∧ s.code = fromAList code ∧ semantics start s ≠ Fail ⇒ semantics start (s with code := fromAList (compile code)) = semantics start s

@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "rawcall_compile_semantics_full" compile_semantics;
+val _ = print("rawcall_compile_semantics_hypotheses=" ^ Int.toString(length(hyp compile_semantics)) ^ "\n");
+val _ = row "rawcall_compile_semantics_width1" (INST_TYPE [alpha |-> ``:1``] compile_semantics);
+val _ = row "rawcall_compile_semantics_width8" (INST_TYPE [alpha |-> ``:8``] compile_semantics);
+val _ = row "rawcall_compile_semantics_width64" (INST_TYPE [alpha |-> ``:64``] compile_semantics);
+val _ = row "rawcall_compile_semantics_width80" (INST_TYPE [alpha |-> ``:80``] compile_semantics);

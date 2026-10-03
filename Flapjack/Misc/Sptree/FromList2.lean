@@ -1,5 +1,6 @@
 import Flapjack.Misc.Sptree
 import Mathlib.Data.List.Induction
+import Mathlib.Algebra.Group.Nat.Even
 import Lean.Elab.Tactic.Omega
 
 namespace Flapjack
@@ -41,5 +42,15 @@ theorem sptDomainFromList2 {α : Type} : ∀ values : List α,
     change key = 2 * values.length ∨ sptDomain (sptFromList2 values) key ↔ _
     rw [ih]
     simp [List.range_succ, or_comm]
+
+/-- Every domain key of the native even-key list binding is even, for any
+payload list and any key. The exact domain theorem supplies the original
+GENLIST index; no well-formedness or successful lookup assumption is added. -/
+@[hol "cakeml/misc/miscScript.sml" "EVEN_fromList2"]
+theorem sptEvenFromList2 {α : Type} (values : List α) (key : Nat)
+    (member : sptDomain (sptFromList2 values) key) : Even key := by
+  rw [sptDomainFromList2] at member
+  obtain ⟨index, _, rfl⟩ := List.mem_map.mp member
+  exact ⟨index, by omega⟩
 
 end Flapjack
