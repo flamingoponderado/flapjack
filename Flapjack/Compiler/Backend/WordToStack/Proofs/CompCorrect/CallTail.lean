@@ -238,6 +238,98 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
     · unfold compCorrectResult
       simp only [Option.map_some, compileResult, ne_eq, not_true_eq_false, if_false]
       exact ⟨r4.symm, hclk⟩
-  · sorry
+  · rw [dif_neg hclk] at execution
+    rcases hbody : WordSemStateFiniteExact.evaluate prog
+        (WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock source)) with
+      ⟨res', s'⟩
+    rw [hbody] at execution
+    by_cases hbf : wordSemBadFunReturn res' = true
+    · simp only [hbf, if_true, Prod.mk.injEq] at execution
+      exact absurd execution.1.symm notError
+    simp only [hbf, Bool.false_eq_true, if_false, Prod.mk.injEq] at execution
+    obtain ⟨rfl, rfl⟩ := execution
+    -- the compiled callee: a frame allocation followed by the compiled body
+    have hsacfs : args1.length - k ≤ fs := CallHelpers.compileProgStackSize _ _ _ _ _ _ _ _ _ hcomp
+    simp only [compileProgNative] at hcomp
+    set svc := max (maxVarHOL prog / 2 + 1 - k) (args1.length - k) with hsvc
+    rcases hbc : compNative ac false prog (bs0, i0)
+        (k, if svc = 0 then 0 else svc + 1, svc) with ⟨body, bsb⟩
+    rw [hbc] at hcomp
+    simp only [Prod.mk.injEq] at hcomp
+    obtain ⟨rfl, hfsdef, hbsb⟩ := hcomp
+    rw [hfsdef] at hfind hbc
+    subst hbsb
+    obtain ⟨hbm4, hcode4⟩ := CallDest.callDest_preserves _ _ _ _ _ _ _ hcd hev4
+    have hc1 : 1 ≤ t4.clock := by omega
+    set nfree := Compiler.Backend.WordToStack.stackFree dest' args.length k f frame with hnfree
+    have hnfree' : nfree = f - (args1.length - k) := by
+      simp only [hnfree, Compiler.Backend.WordToStack.stackFree]
+      rw [← hsac1]
+    set m := fs - (args1.length - k) with hm
+    -- the target reaches the callee's allocation
+    have hreach : ∀ extra : Nat,
+        StackSemEvaluate.evaluate
+            (Compiler.Backend.StackLang.Prog.seq q0
+              (seqStackFreeNative nfree (Compiler.Backend.StackLang.Prog.call none dest' none)),
+              {target with clock := target.clock + extra}) =
+          (match StackSemControl.fixClock
+              {t4 with stackSpace := t4.stackSpace + nfree, clock := t4.clock + extra - 1}
+              (StackSemEvaluate.evaluate ((Prog.stackAlloc m).seq body,
+                {t4 with stackSpace := t4.stackSpace + nfree, clock := t4.clock + extra - 1})) with
+            | (res, s2) => if StackSemControl.badFunReturn res then (some .error, s2) else (res, s2)) := by
+      intro extra
+      rw [hcall extra, StackSemEvaluate.evaluate_call]
+      simp only [hfind, if_neg (show ¬ t4.clock + extra = 0 by omega)]
+      rfl
+    by_cases hlim : t4.stackSpace + nfree < m
+    · -- the callee's frame does not fit: Halt (Word 2w)
+      have hrun := hreach 0
+      rw [StackSemEvaluate.evaluate_seq (Prog.stackAlloc m) body,
+        StackSemEvaluate.evaluate_stackAlloc, if_neg (by simp [r5]),
+        if_pos (by simp only; omega)] at hrun
+      simp only [StackSemControl.fixClock, StackSemControl.badFunReturn] at hrun
+      refine ⟨0, _, _, hrun, ?_⟩
+      unfold compCorrectResult
+      have hne : res'.map compileResult ≠ some (.halt (.word (BitVec.ofNat width 2))) := by
+        rcases res' with _ | r
+        · simp [wordSemBadFunReturn] at hbf
+        · simp only [Option.map_some, ne_eq, Option.some.injEq]
+          exact CallHelpers.compileResultNot2 r r28
+      rw [if_pos hne]
+      refine ⟨rfl, ?_, ?_⟩
+      · show List.IsPrefix t4.ffi.ioEvents s'.ffi.ioEvents
+        rw [r4]
+        exact WordSemStateFiniteExact.evaluate_io_events_mono prog
+          (WordSemStateFiniteExact.callEnv args1 ss (WordSemStateFiniteExact.decClock source))
+          res' s' hbody
+      · have hlimS := WordSemStateFiniteExact.evaluate_stack_limit prog _ res' s' hbody
+        have hmaxS := WordSemStateFiniteExact.evaluate_stack_max prog _ res' s' hbody
+        obtain ⟨-, rlim, rmax⟩ := r37
+        simp only [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.decClock] at hlimS hmaxS
+        rw [hlimS, rlim]
+        rcases hsm : source.stackMax with _ | a
+        · rw [hsm] at hmaxS
+          simp only [wordSemOptionMax] at hmaxS
+          rw [hmaxS]; simp
+        rcases hssc : ss with _ | c
+        · rw [hsm, hssc] at hmaxS
+          rcases hst : wordSemStackSize source.stack with _ | b <;>
+            simp only [hst, wordSemOptionMax, wordSemOptionAdd] at hmaxS <;> (rw [hmaxS]; simp)
+        rw [hssc] at hss
+        simp only [Option.getD_some] at hss
+        subst hss
+        obtain ⟨-, -, b, hb, hbv⟩ := rmax a hsm
+        rw [hsm, hssc, hb] at hmaxS
+        simp only [wordSemOptionMax, wordSemOptionAdd] at hmaxS
+        have hbig : t4.stack.length < max a (b + c) := by
+          have := Nat.le_max_right a (b + c)
+          omega
+        rcases hs'm : s'.stackMax with _ | x
+        · simp
+        · rw [hs'm] at hmaxS
+          simp only [miscThe] at hmaxS
+          simp only [Option.getD_some]
+          omega
+    · sorry
 
 end Flapjack.WordToStackProofs.CompCorrect.CallTail
