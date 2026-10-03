@@ -1,0 +1,12 @@
+mem_load_align_dm=good_dimindex (:α) ⇒
+(mem_load (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) :
+ (α, β, γ) labSem$state) = align_dm (mem_load n a s :(α, β, γ) labSem$state)
+mem_load_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;
+mem_load_align_dm_hypotheses=0
+mem_load_align_dm_proved=T
+mem_store_align_dm=good_dimindex (:α) ⇒
+(mem_store (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) :
+ (α, β, γ) labSem$state) = align_dm (mem_store n a s :(α, β, γ) labSem$state)
+mem_store_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;
+mem_store_align_dm_hypotheses=0
+mem_store_align_dm_proved=T

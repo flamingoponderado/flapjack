@@ -7001,3 +7001,6 @@ run_probe riscv_target_slice_probeScript.sml riscv_target_slice_probe.out \
 run_probe word_to_stack_register_spill_update_probeScript.sml word_to_stack_register_spill_update_probe.out \
   register_spill_update_full register_spill_update_hypotheses register_spill_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_props_alignment_word_memory_probeScript.sml lab_props_alignment_word_memory_probe.out \
+  mem_load_align_dm mem_load_align_dm_types mem_load_align_dm_hypotheses mem_load_align_dm_proved mem_store_align_dm mem_store_align_dm_types mem_store_align_dm_hypotheses mem_store_align_dm_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
