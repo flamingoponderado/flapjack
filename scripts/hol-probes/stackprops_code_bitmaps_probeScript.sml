@@ -1,0 +1,11 @@
+load "bossLib";
+load "preamble";
+load "stackPropsTheory";
+open bossLib HolKernel Parse preamble stackPropsTheory;
+val _ = show_types := true;
+val original = DB.fetch "stackProps" "evaluate_code_bitmaps";
+val _ = if null (hyp original) then () else raise Fail "original has hypotheses";
+val _ = print "evaluate_code_bitmaps=";
+val _ = print_term (concl original);
+val _ = print "\n";
+val _ = print ("evaluate_code_bitmaps_hypotheses=" ^ Int.toString(length(hyp original)) ^ "\n");

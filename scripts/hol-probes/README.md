@@ -6202,6 +6202,17 @@ sptree_wf_definition_probeScript.sml captures the full original wf_def and254 co
 `word_to_stack_word_extraction_probe` replays all three full original successful `the_words` proofs (4068–4087), then captures 136 complete extraction outputs at widths 1/8/64/80: every zero/one/two-element combination of NONE, Word0, Word1, Loc3/5 and a 70-bit word literal, plus long successful and late/early failing lists. Lean expected results are decoded only from original outputs and checked in the kernel and compiled runtime. The full mapped-source theorem is applied with function-valued inputs without an equality instance. Anonymous projection defaults are unreachable under the original success guard, as proved by the membership theorem; the existing approved option THE is reused without a new default. The subsequent legacy expression consumers are commented in HOL, so this inventory section is not claimed as an active comp_correct dependency.
 `stack_remove_comp_raw_call_probeScript.sml` replays the complete original RawCall case with actual Seq-code/nonzero-clock guarded body IH and original local lookup/dec-clock helpers. It assumes no full `comp_correct`; two rows record the scoped statement and proof success.
 
+`stack_remove_comp_call_tail_probeScript.sml` replays the literal original ret=NONE Call case with arbitrary handlers and actual source lookup/handler-NONE/nonzero-clock guarded callee IH. Original local lookup/dec-clock proofs are recreated; no full `comp_correct` assumed. Two rows capture the scoped statement and proof success.
+
+`stack_remove_comp_call_return_none_probeScript.sml` replays the original returning Call prefix and handler-NONE exception branch, with actual source guarded callee and successful-return continuation IHs. Specializing the AST option omits the handler-SOME branch and its selector combinator; branch proof tactics remain unchanged. Original local erased lookup/clock relation helpers are recreated, full `comp_correct` is not assumed. Two rows capture the scoped statement and proof success.
+
+`stack_remove_comp_call_return_handler_probeScript.sml` replays the original returning prefix and handler-SOME branch tactics, omitting the handler-NONE branch and its selector for the fixed AST option. Full source-guarded callee/return/exception-body IHs retained; original local erased lookup/clock helpers recreated, no full `comp_correct` assumed. Two rows record the scoped statement and proof success.
+
+`stack_remove_prog_comp_eta_probeScript.sml` replays the complete literal original function-equality proof, retaining arbitrary section names and all compiler parameters. Two rows capture its full statement and proof success; no full pass correctness theorem is assumed.
+
+`stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
+
+`stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
 `l3_model_fetch_probe.out` captures the full original riscv model Fetch
 definition/type, an arbitrary-state odd-PC equation, and eighteen fully reduced
 route observations. L3ModelFetchParity kernel-checks an unconditional complete
@@ -6259,3 +6270,35 @@ offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
 and executed deltas; the complete accepted-instruction producer relation uses
 the real instruction encoder, retaining every ordered operand. No whole
 allocator or source-program producer correctness is claimed.
+`stackprops_code_bitmaps_probe.out` captures the complete original existential oracle/code/bitmap theorem and explicitly checks zero theorem hypotheses. The StoreConsts case retains all dispatch guards and primitive errors, deriving count zero from the full preservation theorem. This is source evidence, not runtime parity or full theorem assembly.
+`l3_lrw_probe.out` captures the complete original LR_W definition/type and
+14 whole-state observations. These retain all aq/rl payloads, early virtual
+misalignment residues1/2/3, aligned Sv32 fault, signed32 success, register-zero,
+core255 with totalCore1, RV32/RV128 and Sv39 returned-state PTE3079->3111 reads.
+The reservation is the virtual address on success and remains unchanged on
+fault/misalignment; the other-core reservation and full frame outside the six
+potentially changed fields are observed. No whole atomic/runtime assembly is
+claimed; probes are regression evidence, not cross-language equivalence proofs.
+
+`l3_lrd_probe.out` captures the complete original LR_D definition/type and
+18 whole-state observations. All seven low3 virtual misalignment residues trap
+before translation; RV32 is rejected before address calculation, while RV128
+retains the original word64 model. All order-bit payloads, zero-register behavior,
+core255 with totalCore1, aligned Sv32 faults and Sv39 returned-state PTE3111 reads
+are replayed. Reservation/current-core/other-core and entire frame outside the
+six potentially changed fields are observed. This is the LR_D clause only,
+not full atomic/Run/Next or compiler correctness.
+
+`word_props_gc_fun_ok_probe` captures the complete original higher-order GC contract, zero definition hypotheses, the guarded FLOOKUP/FAPPLY correspondence and the always-failing callback theorem. The Lean predicate keeps all original quantifiers and guards; generic kernel tests reject returned Handler and cover location values. This is definition/guard evidence, not whole initialization or compiler correctness.
+
+`stack_remove_copy_each_probeScript.sml` replays the complete literal original `copy_each_thm` proof (1250–1332), with every original premise and full clock/register/separated-memory conclusion. Two rows capture the complete statement and kernel proof success. Native full source induction derives target execution; no full pass theorem or executed compiler parity is claimed by this proof-only slice.
+`l3_scw_probe.out` captures the complete original SC_W definition/type and
+19 whole-state observations. Missing/mismatched reservations with VM31 leave
+the native exception unchanged, demonstrating that translation is skipped.
+The read-only PTE2 observation intentionally succeeds under original Data/Read;
+this preserves the pinned source instead of substituting modern ISA behavior.
+Four-byte stores preserve the other memory bytes; successful stores clear only
+the current reservation, while faults/misalignment retain it. All order bits,
+rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
+are covered. Independent byte-wise expectations and arbitrary-base Lean state
+frames provide regressions only, not whole atomic/runtime correctness.
