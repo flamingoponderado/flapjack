@@ -1538,10 +1538,10 @@
       "sha256": "7db284df938bc10094b99223cb4141cdda7d9257794f198a6fa88506525a3b43"
     },
     {
-      "bytes": 5049,
+      "bytes": 5232,
       "out": "l3_csr_instruction_probe.out",
-      "rows": 102,
-      "sha256": "77e0656aa529c0417c48cd0cbc5462449f1e0a850ddc5ae64aeed02a68a02cc8"
+      "rows": 108,
+      "sha256": "6873e1244080dbae33b3dfd913676ff3431712998995abd234078919d863f895"
     },
     {
       "bytes": 926,
@@ -1776,6 +1776,12 @@
       "out": "l3_tlb_flush_probe.out",
       "rows": 68,
       "sha256": "72d95b8104f5737e98827d84eccaa5addceaa5309496c2c24fd07dec38c35d56"
+    },
+    {
+      "bytes": 2507,
+      "out": "l3_upper_jump_probe.out",
+      "rows": 77,
+      "sha256": "1ac6a439a5ecc1c665bff87e158867d5a2ccfe8069e88a75d134068228356261"
     },
     {
       "bytes": 413,

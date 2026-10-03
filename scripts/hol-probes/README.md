@@ -6588,11 +6588,11 @@ regressions; fullRun/Next/pass correctness remains open.
 ### Complete native CSR instructions
 
 `l3_csr_instruction_probeScript.sml` captures all six literal original
-register/immediate equations and 96 independently stated whole-state fixtures.
+register/immediate equations and 102 independently stated whole-state fixtures.
 `check-l3-csr-instructions.py` requires the full unique label set and `T` for
 every fixture. Kernel counterparts live in `L3CSRInstructionsParity`. Cases
 cover zero/nonzero operands, rd0 and source alias, read-only and privilege
-traps, RV32/64/128, arbitrary prior exceptions and remaining state. The
+traps, selectors0RV32/2RV64/3RV128 and selector1 unspecified, arbitrary prior exceptions and remaining state. The
 literal original CSRRWI zero-immediate path reads and skips writes. These
 checks supplement source review; full Run/Next correctness remains open.
 
@@ -6617,3 +6617,13 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_interference_probeScri
 
 
 `wordsem_mem_store_const_probe.out` freshly replays the unchanged original full wordProps mem_store_const proof before generalization. The closed theorem retains the sole successful-store premise and all eighteen original field equalities for arbitrary address/value/states; replay=T and hypotheses=0. No alignment/domain/safety premise is added. Full evaluator resource induction remains open.
+### Native upper-immediate and jump family
+
+`l3_upper_jump_probeScript.sml` captures the full original Skip, branchTo,
+LUI, AUIPC, JAL and JALR equations and 71 independent whole-state fixtures.
+`check-l3-upper-jump.py` requires every unique expected label to reduce to T.
+Kernel counterparts in L3UpperJumpParity cover signed immediate boundaries,
+PC wrap, Skip2/4, rd0, source alias and source0, the literal targetbit0 trap
+and JALR mask, while preserving arbitrary other state and prior exceptions.
+Successful jumps change NextFetch and link GPR, not PC or Delta. These probes
+supplement source review; full Run/Next correctness remains open.

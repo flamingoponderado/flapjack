@@ -1,3 +1,4 @@
+import Flapjack.Test.L3UpperJumpParity
 import Flapjack.Test.L3CSRInstructionsParity
 import Flapjack.Test.LabToTargetInitializerInterferenceParity
 import Flapjack.Test.LabToTargetInitializerBasicCasesParity
