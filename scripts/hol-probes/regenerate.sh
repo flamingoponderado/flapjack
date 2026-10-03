@@ -7503,3 +7503,7 @@ run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_prob
 run_probe word_to_stack_store_reg1_zero_probeScript.sml word_to_stack_store_reg1_zero_probe.out \
   storeReg1Zero_typed storeReg1Zero_proved storeReg1Zero_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_carry_overflow_probeScript.sml word_to_stack_inst_carry_overflow_probe.out \
+  carry_typed carry_proved carry_hypotheses addOverflow_typed addOverflow_proved addOverflow_hypotheses subOverflow_typed subOverflow_proved subOverflow_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

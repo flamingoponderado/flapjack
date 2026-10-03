@@ -87850,5 +87850,59 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison of full local evaluate_wStackStore_wReg1_0 at4629-4654. Same six original compiled/even/range/full stateRel/length/space guards and complete existential native store run/full double source update relation/resource conclusion; arbitrary alpha word_loc values, shared alpha word width, independent c host and ffi type retained. The r=0 alias shadows the first write; nonzero source and physical register writes commute, and original stateRel internally provides4<k to relate physical/source register0 updates. No additional positivity, execution or postrelation premise. Fresh typed literal original local proof replay, with original supporting store-Reg1 proof replay, passedT/hyp0. Five canonical relation map fields have local genuine roundtrip witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators, no independent IEEE agreement. Needed by actual evaluate_wInst carry/overflow source4736/4753/4774; full primitive/constructor remain unfinished.",
     "hol_line": 4629
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/CarryOverflow.lean",
+    "lean_name": "evaluateWInstCarry",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full evaluate_wInst4688-5140 Carry branch4755-4775. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/CarryOverflow.lean",
+    "lean_name": "evaluateWInstAddOverflow",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full evaluate_wInst4688-5140 AddOverflow branch4738-4754. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/CarryOverflow.lean",
+    "lean_name": "evaluateWInstSubOverflow",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full evaluate_wInst4688-5140 SubOverflow branch4721-4737. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
+    "hol_line": 4688
   }
 ]
