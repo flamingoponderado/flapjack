@@ -126,6 +126,23 @@ theorem semanticsAux_shift {width : Nat} [NeZero width] {C F : Type}
 
 end CompileSemanticsSupport
 
+/-- Exact HOL `with_same_regs_lemma` (`stack_allocProofScript.sml:5901-5905`):
+re-setting `regs` to its own value is redundant in a record update. HOL's free
+`s cc oracle anything k c` are implicit. -/
+@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "with_same_regs_lemma"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem with_same_regs_lemma {width : Nat} [NeZero width] {C F : Type}
+    {s : StackSemStateFiniteExact width C F}
+    {cc : C → List (Nat × HolProg width) → Option (List (BitVec 8) × C)}
+    {oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)}
+    {anything : WordSemGcFun width} {k : Nat} {c : Spt (HolProg width)} :
+    { s with
+        regs := s.regs, compile := cc, compileOracle := oracle, gcFun := anything
+        useStack := true, useStore := true, useAlloc := false, clock := k, code := c } =
+      { s with
+        compile := cc, compileOracle := oracle, gcFun := anything
+        useStack := true, useStore := true, useAlloc := false, clock := k, code := c } := rfl
+
 open CompileSemanticsSupport in
 /-- Exact HOL `compile_semantics` (`stack_allocProofScript.sml:5909-6066`), with
 all nine source premises. HOL's free `s c compile_rest start anything` are
