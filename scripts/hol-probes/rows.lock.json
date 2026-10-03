@@ -10550,6 +10550,12 @@
       "sha256": "0bb9553a915ca459f5d986a7a4aee20f17d9249de93fb02c6f13ff1d7801b1a3"
     },
     {
+      "bytes": 38796,
+      "out": "wordsem_state_const_group_probe.out",
+      "rows": 114,
+      "sha256": "e21db22e9227aa9353ff2a51ea2f3a4741746e11c7d2e8f69d5f170016a56981"
+    },
+    {
       "bytes": 4967,
       "out": "wordsem_state_laws_probe.out",
       "rows": 20,

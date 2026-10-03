@@ -1,12 +1,29 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
+import Flapjack.HolRef
 
-namespace Flapjack.WordSemStateFiniteExact
+namespace Flapjack
 
-/-- Kernel prerequisite for HOL wordProps `inst_const` (935-942). This is
-currently Flapjack infrastructure, deliberately untagged: the instruction
-rendering still has the unresolved real-sqrt fidelity dependency h29l.6/dshl.
-The source-shaped success premise and clock/FFI conclusions are preserved;
-this invariant alone does not establish instruction semantic correspondence. -/
+namespace WordSemInstConstSupport
+
+/-- Same-module canonical finite-support witness for the `fpRegs`/`store`
+    fields named by `instConst`. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+        (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+        WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
+end WordSemInstConstSupport
+
+namespace WordSemStateFiniteExact
+
+/-- Exact HOL `inst_const` (`wordPropsScript.sml:935-941`): the sole
+    successful-instruction premise and the clock/FFI conclusions.  Like
+    `inst_const_full`, it inherits `reals_as_rational_cuts` from `inst`; it
+    establishes no cross-language numerical FP correspondence. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "inst_const"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem instConst {width : Nat} [NeZero width] {C F : Type}
     (i : WordLangInst (BitVec width)) (state next : WordSemStateFiniteExact width C F)
     (h : inst i state = some next) :
@@ -26,4 +43,6 @@ theorem instConst {width : Nat} [NeZero width] {C F : Type}
        unfold memStore at heq
        split at heq <;> cases heq <;> exact ⟨rfl, rfl⟩)
 
-end Flapjack.WordSemStateFiniteExact
+end WordSemStateFiniteExact
+
+end Flapjack
