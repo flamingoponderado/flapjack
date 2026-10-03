@@ -1,0 +1,12 @@
+const_wide_value_zero=T
+const_wide_value_low_positive_max=T
+const_wide_value_low_sign_bit=T
+const_wide_value_low_all_ones=T
+const_wide_value_high_one=T
+const_wide_value_high_one_low_sign=T
+const_wide_value_positive_max=T
+const_wide_value_negative_min=T
+const_wide_value_negative_min_low_sign=T
+const_wide_value_negative_high_low_positive=T
+const_wide_value_negative_high_low_sign=T
+const_wide_value_all_ones=T
