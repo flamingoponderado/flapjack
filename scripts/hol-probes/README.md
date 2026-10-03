@@ -7672,3 +7672,10 @@ full target run and every existential conclusion. Precisely the original
 source guard-success tail IHs are used; compiled-shape WF, absence lookup and
 code/exception-update transport derive target guards and evaluation internally.
 Whole declaration assembly and executed production routing remain separate.
+
+`pan_structs_decls_correct_probe` captures the whole original declaration
+correctness theorem, all quantified types and closed kernel truth. The Lean
+assembly proves the full eight-hypothesis result with actual target execution
+and every existential context/state conjunct over all five source constructors,
+without public induction or target/post-state premises. Executed production
+routing remains separately tracked.

@@ -84056,5 +84056,28 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported broad/state roundtrip representation witness; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectExact.lean",
+    "lean_name": "compileDeclsCorrectExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decls_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared full original1357-1380 with source evaluate_decls_ind and every constructor proof1382-1435. Full8 premises exactly source successful declaration run, structs context, empty context locals, struct infos, global fields/WF/global shape map and actual declaration compiler result. Full target run and existential globals extension/allfields/WF/unchanged structs+locals/map equality. No public induction hypothesis or target/post-state/compatibility premise. Generalized source declaration-list induction supplies exactly the guarded updated source-state IHs to reviewed Nil/Name/Decl/Function/ExnDecl minors. Faithful evaluateDeclsHOLFinite/compileDeclsExact/convertStateExact; canonical imported state four maps with full same-module roundtrip; positive indexed word dimension and Type0 FFI. Closed full original theorem/quantified types/kernel capture. Whole source theorem proved, executed production routing remains separate."
   }
 ]
