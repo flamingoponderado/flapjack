@@ -1,3 +1,9 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
+import Flapjack.Misc.Sptree.AlistInsertReverse
+import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+import Flapjack.RiscV.CorrectnessEncoding.Const32
+import Flapjack.Compiler.Backend.Backend
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
@@ -739,9 +745,12 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenSemantics
 import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.Conventions
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs
 import Flapjack.Compiler.Backend.StackToLab.Compile
 import Flapjack.Compiler.Backend.BvlToBvi
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
@@ -1406,6 +1415,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
 import Flapjack.Pancake.Proofs.PanStructs.CompiledShapesWf
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectFunctionExn
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
+import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
+import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapperEquality
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion

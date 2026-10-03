@@ -1,3 +1,8 @@
+`backend_config_attach_bitmaps_probe.out` captures the full original eleven-field backend config equality/field types and the independently generic byte/bitmap payload signature and both attach_bitmaps clauses. Native fields retain every frontend/backend carrier, byte-backed MlString names, literal lists and sptrees. The kernel regression checks ordered duplicate symbols, missing-name fallback and all nine unchanged configuration fields. This support group does not establish full backend composition, production routing or whole compiler correctness.
+
+`bvl_to_bvi_default_probe.out` captures the complete original ten-field default initializer, both BVL stub/namespace definitions, the zero-hypothesis namespace-alignment theorem, full default type and original evaluated counts/counters. The native default uses the checked shared data-stub chain and distinct literal BVL/BVI inline trees. This support group does not establish whole compiler correctness or production routing of the backend configuration.
+`wordsem_find_code_generic_probe.out` captures the complete original inferred find_code type, typed definition and full typed zero-hypothesis find_code_map_I. The code source/target payloads and stack-size payload remain independent; evaluator callers retain their Prog/Nat specialization. This carrier repair changes no source guards or conclusion.
+
 `stack_rawcall_if_case_probe.out` captures complete generic comp_correct, zero open assumptions and its genuine If specialization. The capture also extracts the original evaluate_ind If obligation. Native recursive case uses the two subprogram comp-component induction hypotheses at the fixed source, guarded by successful operand reads and selected comparison; actual guard transport derives branch selection/target evaluation and full paired existential conclusions. Full theorem assembly and runtime correctness remain open.
 
 `stack_rawcall_basic_cases_probe.out` captures the full original comp_correct theorem, zero open assumptions and all six Skip/Halt/Get/Set/OpCurrHeap/Tick specialized paired conclusions. Native positive-width kernel cases keep every source premise and derive complete target execution/postrelation, including Tick timeout. This is a six-case slice; recursive/pass/production correctness remains open.
@@ -7728,6 +7733,7 @@ both nested conjuncts. The target context retains arbitrary payload alpha;
 the compilation context retains original MlS field names. Both unconditional
 single-shape and EVERY list conclusions are ported without source-WF premises.
 This is a prerequisite for original Function/ExnDecl declaration minors.
+
 ### Native Loc and upper-immediate decoder evidence
 
 `riscv_upper_decode_probeScript.sml` captures eight original HOL LUI/AUIPC Encode/Decode boundary EVALs (zero, all ones, sign bit, positive maximum). All are `T`; these finite oracles supplement the unconditional Lean proofs over every intrinsic register/immediate bitvector, and do not constitute a universal HOL proof.
@@ -7748,3 +7754,44 @@ assembly proves the full eight-hypothesis result with actual target execution
 and every existential context/state conjunct over all five source constructors,
 without public induction or target/post-state premises. Executed production
 routing remains separately tracked.
+
+`pan_props_semantics_wrapper_probe` captures the full generic PanProps wrapper
+equation, quantified function type and closed kernel truth. Lean retains the
+original distinct result datatype, arbitrary clock-indexed function,
+error/complete/incomplete observations, SOME-choice and chain-free generic LUB
+formula. No supplied LUB or chain premise is required. Standard choice
+translation leaves independently unspecified selections outside the
+cross-language agreement claim. Wrapper equality and PanSem correspondence
+remain separately tracked proof obligations.
+
+`pan_props_semantics_wrapper_eq_probe` captures the complete original wrapper
+equality theorem, quantified function types and closed kernel truth. The Lean
+port retains both arbitrary functions and all six source premises, including
+both clock-stability and Incomplete event-prefix hypotheses. Prefix chains and
+same-model wrapper choice equality are proved internally; no supplied chain,
+LUB or target-semantics premise is added. It uses the distinct PanProps result
+datatype. Faithful evaluator wrapper correspondence remains separate.
+
+`word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
+### Native Const instruction decoder evidence
+
+`riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
+## Native Const instruction decoder evidence
+
+`riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
+
+## Native Const32 value reconstruction
+
+`riscv_const32_value_probeScript.sml` evaluates the two literal bit-11 branches
+of `riscv_targetScript.sml:77-85` using the original HOL word operations. All
+12 captured boundary rows are `T`, including positive/negative sign boundaries
+and low-immediate sign boundaries. The concatenated LUI operand is explicitly
+word32, matching the native instruction carrier.
+
+`CorrectnessEncoding/Const32.lean` proves the identity for every word32 and
+composes the actual native LUI plus ADDI/XORI `Run` equations for every native
+state and destination, including zero. These are untagged infrastructure: no
+separately named HOL composition identity exists. They do not establish the
+full Const encoder theorem's fetch, Next, interference, or assertions.
+`check-riscv-const32-value.py` pins the unrestricted signatures and original
+evidence; mutation tests reject an added run premise or a lost oracle row.

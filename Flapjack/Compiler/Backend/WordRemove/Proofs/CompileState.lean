@@ -92,12 +92,14 @@ theorem compileState_const {width : Nat} [NeZero width] {C : Type} {F : Type}
     rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Exact HOL `find_code_map_I` (`word_removeProofScript.sml:49-54`):
-    `find_code d l (map (I ## f) t) lsz = OPTION_MAP (I ## f ## I) (find_code d l t lsz)`. -/
+    `find_code d l (map (I ## f) t) lsz = OPTION_MAP (I ## f ## I) (find_code d l t lsz)`.
+    The source and target payloads of `f` and the stack-size payload are three
+    independent HOL types; only the argument word-locations share a width. -/
 @[hol "cakeml/compiler/backend/proofs/word_removeProofScript.sml" "find_code_map_I"
   (words_as_type_indexed_bitvec)]
-theorem findCode_map_I {width : Nat} [NeZero width] (d : Option Nat) (l : List (WordLocW width))
-    (f : WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width))
-    (t : Spt (Nat × WordLangProgHOL (BitVec width))) (lsz : Spt Nat) :
+theorem findCode_map_I {width : Nat} [NeZero width]
+    {Source Target StackSize : Type} (d : Option Nat) (l : List (WordLocW width))
+    (f : Source → Target) (t : Spt (Nat × Source)) (lsz : Spt StackSize) :
     wordSemFindCode d l (sptMap (fun p => (p.1, f p.2)) t) lsz =
       (wordSemFindCode d l t lsz).map (fun r => (r.1, f r.2.1, r.2.2)) := by
   cases d with
