@@ -83296,5 +83296,32 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: dest_Var_def481-485 returns SOME v exactly for Var v and NONE for every other exp constructor. Original wordLang exp15-20 has Const word, Var num, Lookup store_name, Load exp, Op binop list exp, Shift shift exp exp; imported WordLangExpHOL matches all six and full WordStoreHOL retains fixed5bit Temp and all named stores. Positive-width BitVec width records only standard word translation. No added success/evaluation hypothesis; full Set/CSE definition and semantics remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",
+    "lean_name": "addToDataAux",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "add_to_data_aux_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: add_to_data_aux_def lines368-383, original balanced_map lookup/insert using reviewed listCmp and literal Knowledge fields; spt inserts and lookup_any default retained. Full WordLangProgHOL(BitVec width) has original program constructor arities, Spt cutsets and MlString names; no constructor restriction or representation change. Only positive HOL word dimension becomes BitVec width with NeZero. All found/missing and even/odd branches preserved: found emits Move0/defaultlatest with original register updates; missing even retains original data/program, missing odd inserts original fact map and both self register maps. Native definition only; actual Std.TreeMap insertion transport requires original balanced invariant and remains linked production work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",
+    "lean_name": "addToLoadAux",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "add_to_load_aux_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: add_to_load_aux_def lines410-425, original balanced_map lookup/insert using reviewed listCmp and literal Knowledge fields; spt inserts and lookup_any default retained. Full WordLangProgHOL(BitVec width) has original program constructor arities, Spt cutsets and MlString names; no constructor restriction or representation change. Only positive HOL word dimension becomes BitVec width with NeZero. All found/missing and even/odd branches preserved: found emits Move0/defaultlatest with original register updates; missing even retains original data/program, missing odd inserts original fact map and both self register maps. Native definition only; actual Std.TreeMap insertion transport requires original balanced invariant and remains linked production work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",
+    "lean_name": "addToDataConst",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "add_to_data_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: add_to_data_const_def lines396-407, original balanced_map lookup/insert using reviewed listCmp and literal Knowledge fields; spt inserts and lookup_any default retained. Full WordLangProgHOL(BitVec width) has original program constructor arities, Spt cutsets and MlString names; no constructor restriction or representation change. Only positive HOL word dimension becomes BitVec width with NeZero. Both lookup branches emit original Inst(Const destination word), arbitrary destination parity retained with no caller ODD assumption; key uses exact instToNumList Const. Native definition only; actual Std.TreeMap insertion transport requires original balanced invariant and remains linked production work."
   }
 ]
