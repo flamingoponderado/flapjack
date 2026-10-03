@@ -68152,5 +68152,21 @@
     "hol_name": "dfn'SD_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7415-7455: complete SD, fixed word5 rs1/rs2 and word12 offset with arbitrary native riscv_state. Signed12 offset plus GPR rs1 wraps64. Literal Data/Write translateAddr forwards returned state to both Store_AMO_Fault with original virtual address and GPR rs2 read/rawWriteData8bytes. Original in32BitMode runs first and forwards returned state to Illegal_Instr or all later routes. No alignment/success/core premise. Full mechanical source closure0failed; definition and unconditional whole-state normal form kernel checked. Fresh pinned original definition/type and15complete observations independently matched via wrapping byte-wise updates: unaligned negative cross-word offsets, address/offset wrapping, positive offset, register-zero reads, core255,totalCore1,RV32/RV128, Sv32 virtual faults, Sv39 Write dirty/read bits and returned-state memory, read-only/invalidPTE faults. Current/other rs2, three full memory-word reads/eight bytes/allTLBfields and entire frame outside only MEM8/TLB/NextFetch/exception retain arbitrary unrelated fields and unchanged GPR/reservation. No whole Decode/Run/Next/compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOSwap.lean",
+    "lean_name": "«dfn'AMOSWAP_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOSWAP_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7673-7720: complete fixed word1 aq/rl (unused as in HOL), word5 rd/rs1/rs2 and arbitrary native riscv_state. Virtual alignment before Data/Write translateAddr; returned state for old memory read, operand GPR rs2 and fault. rawWriteData operand is evaluated from returned translation state before write GPR rd; preserve overlapping rs2=rd. W extracts/sign extends low32, D retains full64. No architecture guard, success/alignment/core hypothesis, or modern ISA replacement. Full mechanical36-definition closure has zero failures; unconditional whole-state normal form kernel checked. Fresh original26 combined observations independently calculated via wrapping byte updates and compared, covering negative/positive words, destination/source/address overlap, zero registers, core255/totalCore1, RV32/RV128, virtual misalignment, returned Sv39 write dirty/read flags and read-only/invalid faults. Observed frame resets GPR/memory/TLB/NextFetch/exception and retains other arbitrary fields; numeric guards do not establish full transition equivalence. No whole Run/Next/compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOSwap.lean",
+    "lean_name": "«dfn'AMOSWAP_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOSWAP_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7721-7768: complete fixed word1 aq/rl (unused as in HOL), word5 rd/rs1/rs2 and arbitrary native riscv_state. Virtual alignment before Data/Write translateAddr; returned state for old memory read, operand GPR rs2 and fault. rawWriteData operand is evaluated from returned translation state before write GPR rd; preserve overlapping rs2=rd. W extracts/sign extends low32, D retains full64. No architecture guard, success/alignment/core hypothesis, or modern ISA replacement. Full mechanical36-definition closure has zero failures; unconditional whole-state normal form kernel checked. Fresh original26 combined observations independently calculated via wrapping byte updates and compared, covering negative/positive words, destination/source/address overlap, zero registers, core255/totalCore1, RV32/RV128, virtual misalignment, returned Sv39 write dirty/read flags and read-only/invalid faults. Observed frame resets GPR/memory/TLB/NextFetch/exception and retains other arbitrary fields; numeric guards do not establish full transition equivalence. No whole Run/Next/compiler theorem claim."
   }
 ]

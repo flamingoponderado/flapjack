@@ -6311,3 +6311,10 @@ offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
 and executed deltas; the complete accepted-instruction producer relation uses
 the real instruction encoder, retaining every ordered operand. No whole
 allocator or source-program producer correctness is claimed.
+
+`l3_amoswap_probe.out` captures the literal AMOSWAP_W/D definitions and types
+and 26 original state observations, including rs2=rd operand ordering, rd=rs1,
+zero registers, signed word loads, RV32/RV128 without added mode guards,
+virtual misalignment and returned Sv39 write translations/faults. Matching Lean
+replays use independent wrapping byte/register expectations. These regressions
+do not claim full Run/Next or compiler correctness.

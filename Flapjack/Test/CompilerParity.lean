@@ -1,3 +1,4 @@
+import Flapjack.Test.L3AMOSwapParity
 import Flapjack.Test.L3IntegerStoreParity
 import Flapjack.Test.L3SCDParity
 import Flapjack.Test.L3SCWParity
