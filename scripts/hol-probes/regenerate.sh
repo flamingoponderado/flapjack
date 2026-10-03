@@ -5924,3 +5924,10 @@ run_probe l3_integer_store_probeScript.sml l3_integer_store_probe.out \
 run_probe stack_code_bitmaps_loop_probeScript.sml stack_code_bitmaps_loop_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_loop_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_shmem_offset_probeScript.sml lab_to_target_shmem_offset_probe.out \
+  line_to_info_offset_FST_eq line_to_info_offset_FST_eq_types line_to_info_offset_FST_eq_hypotheses \
+  line_to_info_offset_SND_eq line_to_info_offset_SND_eq_types line_to_info_offset_SND_eq_hypotheses \
+  get_shmem_info_init_pc_offset get_shmem_info_init_pc_offset_types get_shmem_info_init_pc_offset_hypotheses \
+  independent_names independent_records none empty_offset actual_names actual_records valid_guard negative_length \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
