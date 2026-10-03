@@ -7411,6 +7411,7 @@ run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrappe
 run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
   wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \
   lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
@@ -7442,3 +7443,11 @@ run_probe wordsem_shmem_independent_result_probeScript.sml wordsem_shmem_indepen
 run_probe wordsem_find_code_generic_probeScript.sml wordsem_find_code_generic_probe.out \
   find_code_type find_code_def_typed find_code_map_I_typed find_code_map_I_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
+  ori_decode_zero ori_decode_all_ones ori_decode_sign_bit ori_decode_positive_max \
+  xori_decode_zero xori_decode_all_ones xori_decode_sign_bit xori_decode_positive_max \
+  slli_decode_zero slli_decode_all_ones slli_decode_sign_bit slli_decode_positive_max \
+  or_decode_zero or_decode_all_ones or_decode_sign_bit or_decode_positive_max \
+  xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

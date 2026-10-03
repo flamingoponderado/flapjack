@@ -7729,6 +7729,7 @@ both nested conjuncts. The target context retains arbitrary payload alpha;
 the compilation context retains original MlS field names. Both unconditional
 single-shape and EVERY list conclusions are ported without source-WF premises.
 This is a prerequisite for original Function/ExnDecl declaration minors.
+
 ### Native Loc and upper-immediate decoder evidence
 
 `riscv_upper_decode_probeScript.sml` captures eight original HOL LUI/AUIPC Encode/Decode boundary EVALs (zero, all ones, sign bit, positive maximum). All are `T`; these finite oracles supplement the unconditional Lean proofs over every intrinsic register/immediate bitvector, and do not constitute a universal HOL proof.
@@ -7768,3 +7769,6 @@ LUB or target-semantics premise is added. It uses the distinct PanProps result
 datatype. Faithful evaluator wrapper correspondence remains separate.
 
 `word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
+### Native Const instruction decoder evidence
+
+`riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
