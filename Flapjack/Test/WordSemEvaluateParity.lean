@@ -202,7 +202,7 @@ theorem callRet :
     view (evaluate (.call (some ([4], (units [2], units [3]), .skip, 10, 11)) (some 6) [2] none) (s0)) = (.none, [(3, .loc 5 0), (4, .word 7), (2, .word 7)], 2) := by
   -- the callee is chosen by `find_code`, so its guards are rewritten explicitly
   have h1 : WordSemStateFiniteExact.getVars [2] s0 = some [.word 7] := by decide +kernel
-  have h3 : wordSemFindCode (some 6) (wordSemAddRetLoc (some ([4], (units [2], units [3]), .skip, 10, 11))
+  have h3 : wordSemFindCode (width := 64) (some 6) (wordSemAddRetLoc (some ([4], (units [2], units [3]), .skip, 10, 11))
       [.word 7]) s0.code s0.stackSize = some ([.loc 10 11, .word 7], WordLangProgHOL.return 0 [2], none) := by
     simp (config := { decide := true }) [wordSemFindCode, wordSemAddRetLoc, s0, sptFromAList, sptInsert,
       sptLookup]

@@ -1,3 +1,4 @@
+import Flapjack.Test.WordFindCodeGenericCarriers
 import Flapjack.Test.L3DecodeImmediatesParity
 import Flapjack.Test.WordSimpGenericCarriersParity
 import Flapjack.Test.L3FPMemoryParity
