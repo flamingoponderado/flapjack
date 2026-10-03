@@ -559,7 +559,7 @@ theorem holFloatRoundSqrt_rte_fp64 (toneg : Bool) {r : Rat} (hr : 0 ≤ r) :
   have hc : fp64RtePredSqrt r (holClosestSuchSqrt (fun a => a.significand.getLsbD 0 = false)
       (fun a => holFloatIsFinite a = true) r) :=
     Classical.epsilon_spec (p := fun c => fp64RtePredSqrt r c) ⟨a, hPa⟩
-  generalize holClosestSuchSqrt _ _ r = c at hc ⊢
+  generalize holClosestSuchSqrt (t := 52) (w := 11) _ _ r = c at hc ⊢
   have ⟨hz, hne⟩ := hall _ hc
   exact fp64_zero_select' hz hne
 

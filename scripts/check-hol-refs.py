@@ -3528,26 +3528,26 @@ def holFloatToFp32 (a : HolFloat 23 8) : BitVec 32 :=
   (a.sign ++ a.exponent ++ a.significand).cast (by decide)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsNormal"): """
-def holFloatIsNormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsNormal {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent ≠ 0) && decide (x.exponent ≠ BitVec.allOnes w)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsSubnormal"): """
-def holFloatIsSubnormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsSubnormal {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent = 0) && decide (x.significand ≠ 0)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "HolFloat"): """
-structure HolFloat (t w : Nat) where
+structure HolFloat (t : Nat) (w : Nat) [NeZero t] [NeZero w] where
   sign : BitVec 1
   exponent : BitVec w
   significand : BitVec t
   deriving DecidableEq, Repr
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatNegate"): """
-def holFloatNegate {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatNegate {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := ~~~x.sign }
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatAbs"): """
-def holFloatAbs {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatAbs {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := 0 }
 """,
     ("Flapjack/Misc/MachineIeee.lean", "holFp64ToFloat"): """
@@ -4153,8 +4153,12 @@ def hol_declaration_lines(
         # line(s) (``name = ...``) and terminate with a top-level ``End``.  A
         # type name may also sit on its own line with the ``=`` beginning the
         # following line (for example ``shmem_info_num``), so a bare name is
-        # remembered and indexed once its ``=`` line is seen.
+        # remembered and indexed once its ``=`` line is seen.  The one-line
+        # header form ``Datatype: name = ...`` (for example binary_ieee's
+        # ``float_value`` and ``float_compare``) declares ``name`` on the
+        # header line itself and still ends with ``End``.
         datatype_header = re.compile(r"^Datatype\s*:?\s*$")
+        datatype_inline = re.compile(r"^Datatype\s*:\s*([A-Za-z0-9_']+)\s*=")
         datatype_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*=")
         datatype_bare_name = re.compile(r"^\s*([A-Za-z0-9_']+)\s*$")
         datatype_equals = re.compile(r"^\s*=")
@@ -4185,6 +4189,11 @@ def hol_declaration_lines(
                                 pending_datatype_name = (bare.group(1), number)
                     continue
                 if datatype_header.match(line):
+                    in_datatype = True
+                    continue
+                inline = datatype_inline.match(line)
+                if inline:
+                    names.setdefault(inline.group(1), []).append(number)
                     in_datatype = True
                     continue
                 match = header.match(line) or sml_val.match(line)

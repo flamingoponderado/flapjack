@@ -1,0 +1,17 @@
+real_to_float_def=∀(m :rounding).
+  (real_to_float m :real -> (α, β) float) =
+  (float_round m (m = roundTowardNegative) :real -> (α, β) float)
+real_to_float_with_flags_def=∀(m :rounding).
+  (real_to_float_with_flags m :real -> flags # (α, β) float) =
+  (float_round_with_flags m (m = roundTowardNegative) :
+   real -> flags # (α, β) float)
+float_sqrt_def=∀(mode :rounding) (x :(τ, χ) float).
+  float_sqrt mode x =
+  if x.Sign = (0w :word1) then
+    case float_value x of
+      Float r =>
+        (float_round_with_flags mode F (sqrt r) :flags # (τ, χ) float)
+    | Infinity => (clear_flags,float_plus_infinity (:τ # χ))
+    | NaN => (check_for_signalling [x],float_some_qnan (FP_Sqrt mode x))
+  else if x = NEG0 then (clear_flags,NEG0)
+  else (invalidop_flags,float_some_qnan (FP_Sqrt mode x))

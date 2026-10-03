@@ -2385,7 +2385,7 @@ operand. FPFromInt covers the 64-bit low-32-bit read (`0x0000000000000003` ->
 missing-operand failure. `Flapjack/Test/StackSemFpRegisterInstParity.lean`
 kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
 `Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
-`holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
+`holIntToFp64_rte` from `Flapjack/Misc/MachineIeee/ConvertInt.lean`, and the FPToInt
 rows use the computable `holFp64ToInt`. The untagged partial case helper
 `Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
 not the whole HOL `inst_def`. Regenerate read-only using
@@ -7249,6 +7249,7 @@ induction and exactly simplified reversed shape-conversion theorems, binder
 types and closed kernel proofs. Local statements and original unchanged proof
 text are replayed. The whole unused binder is polymorphic; induction n is num.
 Native proofs retain original guards and derive named lookup/field shapes.
+
 `lab_filter_semantics_probe.out` mechanically replays the literal original local `state_rel_IMP_sem_EQ_sem` proof from source1039-1152, with native quantified state types, zero hypotheses and kernel reproof. It does not assume local theorems are exported by HOL. The native Lean lift derives failure and terminating-choice predicate equivalences and whole divergence LUB equality from full evaluator simulation and original clock/prefix laws; no target run or semantic equality is supplied as a premise. This is source-review evidence, not HOL-to-Lean equivalence.
 ## Full native RISC-V configuration
 
@@ -7263,3 +7264,122 @@ emitted-byte routing remains a separate blocking bead. These finite regressions
 and source-reviewed record equations are not universal HOL-to-Lean equivalence.
 
 `lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.
+
+`pan_structs_program_return_raise_probe` captures the original whole program
+correctness theorem and Return/Raise specializations as closed kernel theorems.
+Native cases retain all ten hypotheses and seven conclusions. Original source
+size guards, Raise exception-shape lookup/equality and error branches are
+preserved; target guards follow from full faithful expression correctness,
+value well-formedness, shape conversion and compiled-shape size preservation.
+
+`pan_structs_structs_code_invariant_probe` replays the original local
+`evaluate_structs_code_inv` statement and unchanged source proof. It records
+closed binder types, zero hypotheses and kernel proof. The native theorem
+preserves both structs and code for arbitrary evaluation results, using the
+full faithful invariant theorem through the field-for-field PanProps codec.
+
+`pan_structs_program_seq_if_probe` captures the original whole theorem and
+Seq/If specializations, closed binder types and kernel proofs, together with
+the original evaluator induction principle. Native cases preserve all ten
+premises/seven conclusions and the genuine source-guarded recursive IHs.
+Seq derives intermediate invariants; If uses the source-word-selected branch.
+`lab_to_target_make_init_filter_probe.out` captures full original10540 initializer skip-filter semantics equality, every independent free-variable type, zero hypotheses and kernel reproof. The native port keeps literal compileLab, all eleven original machine/FFI/memory/domain/program/buffer/oracle arguments and whole semantics equality, deriving both filtered-state compiler/oracle relation and both nonfailed guards from the actual initializer.
+
+`pan_structs_flatten_conversion_probe` captures unconditional full
+`flatten_convert_v`, its binder type, zero hypotheses and closed kernel proof.
+The native theorem preserves flattened words for arbitrary nested records and
+named structs; erasing names retains field order and requires no validity guard.
+
+`pan_structs_program_store_words_probe` captures the full original program
+correctness theorem and Store32/StoreByte specializations, closed binder types
+and kernel proofs. Native cases keep all ten premises/seven conclusions, actual
+source memory-domain/error/endian/cast behavior and arbitrary positive width.
+The target memory operation is the same source operation, derived internally.
+
+`pan_structs_program_store_probe` captures the full original program theorem
+and general Store specialization, closed binder types and kernel proofs.
+Native general Store retains arbitrary nested values, all ten premises/seven
+conclusions and original memory/domain/error behavior. Full expression and
+unconditional flatten conversion derive the identical target memory operation.
+`stack_remove_word_list_memory_probeScript.sml` captures the full original `mem_val_def` equations and type and replays unchanged original proofs of `MAP_mem_val_MAP_INL`, `word_list_and_rev_join_lemma`, `INSERT_DELETE_EQ_DELETE` (with its local `IN_addresses` prerequisite), `word_list_exists_addresses`, `word_list_wrap` and `fmap_simp_lemma1` (stack_removeProofScript.sml:2631-3046), and prints the stored `word_list_set`, `word_list_seteq`, `word_list_EL_in_memory` and `word_list_in_memory` theorems (3101-3222). Every row has proved=T and zero hypotheses; the two exported replays are also checked `aconv` against the stored theory.
+
+`stack_remove_init_make_probeScript.sml` captures the full original equations and constant types of `get_stack_heap_limit'_def`, `get_stack_heap_limit_def`, `read_pointers_def`, `make_init_opt_def`, `init_pre_def`, `make_init_any_def`, `discharge_these_def` and `propagate_these_def` (stack_removeProofScript.sml:3053-3089, 3839-3854, 4007-4067), the argument types of `get_stack_heap_limit'` (its first two pointers have independent word types; only the last pointer shares the arithmetic width), and 13 EVAL rows of both limit functions over 16/32/64-bit words, including heap-bound overflow, midpoint selection and wrapped pointers. `Flapjack.Test.StackRemoveInitLimits` kernel-replays every EVAL row.
+
+`stack_remove_init_any_probeScript.sml` replays the unchanged local originals `MOD_EQ_IMP_MULT`, `star_move_lemma` and `memory_addresses` (with its local `IN_addresses` prerequisite; stack_removeProofScript.sml:2727-2803) and prints the stored `make_init_any_bitmaps`, `make_init_any_use_stack`, `make_init_any_use_store`, `make_init_any_use_alloc`, `make_init_any_code`, `make_init_any_stack_limit` and `make_init_any_compile_oracle` theorems (4100-4157). All statements are closed with zero hypotheses; `memory_addresses` keeps its `'a word_loc` memory codomain.
+
+`pan_structs_fupdate_neutral_probe` replays original local `fupdate_elim2`
+with its unchanged source proof, closed binder types, zero hypotheses and
+kernel proof. Native update neutrality keeps arbitrary key/value types and
+uses canonical finite-support maps with HOL equality and no comparison premise.
+## Native RISC-V inline-helper relations
+
+`riscv_target_helper_links_probeScript.sml` proves three universal equations
+from original `riscv_ast_def`: immediate binops retain the priority Sub clause;
+immediate and register shifts retain the explicit Ror expansion before using
+the partial helper tables. Every original register and word64 operand remains
+quantified, and each captured theorem has zero hypotheses. The strict checker
+`check-riscv-target-helper-links.py` rejects statement, hypothesis, or proof-row
+drift. The corresponding Lean congruences and all fifteen non-encode legacy
+configuration projections are in `Target/HelperLinks.lean`; they are untagged
+Flapjack relations between different Lean implementations, not separately
+named source declarations. The existing full native configuration probe checks
+all source field values and every immediate-policy operator boundary. These
+captures and kernel proofs remain evidence for source review, not a proof of
+HOL-to-Lean equivalence or full target execution correctness.
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+`pan_structs_program_assign_probe` captures the full original `compile_correct`
+and its `Assign vk v e` specialization, with all quantified binder types and
+closed kernel proofs. The Lean case retains all ten original premises and seven
+conclusions for both local and global assignment, deriving target validity and
+shape-map neutrality internally from source validity and full value conversion.
+
+`word_to_stack_comp_handler_full_probe.out` records the full original SOME-handler
+returning Call specialization of comp_correct, its closed kernel theorem
+(proved=T, hypotheses=0), and the complete original evaluate_ind Call obligation.
+The native constructor retains the three literal guarded returning IHs; the
+fixed SOME return makes the fourth tail IH impossible. Header/argument/callee
+allocation, zero clock, all body results and normal/exception continuations are
+assembled with the entire original result/resource conclusion. This capture is
+statement evidence from the original full theorem, not a replay of the local
+9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
+`pan_structs_program_primitive_probe` captures the full original program theorem
+and its `Primitive v pop es` specialization, with binder types and closed kernel
+proofs. The Lean case retains all ten premises and seven conclusions, executes
+the original argument mmap and AddCarry operation, and derives local validity
+and update postconditions internally from the full Assign case.
+`word_to_stack_load_register_probe.out` freshly replays the unchanged original
+local `evaluate_wStackLoad_wReg1` proof (4417–4445) and captures the original
+unconditional `evaluate_wStackLoad_seq` (4512–4523), plus both compiler equations.
+All four theorem rows have zero hypotheses. LoadRegister kernel ports preserve
+the complete source lookup/full relation premises and all preservation conjuncts;
+the continuation law covers arbitrary loads/programs/states and failed loads.
+These proof-side prerequisites do not establish the full Return case or pass.
+
+`pan_structs_map_restoration_probe` captures full original
+`res_var_FMAP_MAP2_rev` and `FEVERY_res_var`, including all binder types, zero
+hypotheses, closedness and kernel proofs. Lean uses canonical finite-support
+maps and classical HOL key equality, with no comparison premise; the
+complement-singleton restriction has a checked unconditional literal lookup
+witness. The Dec and DecCall consumers remain separate obligations.
+
+`word_to_stack_comp_call_full_probe.out` records the complete original Call
+constructor induction obligation with all four literal guarded IHs, plus the
+whole arbitrary-ret/arbitrary-handler Call specialization of comp_correct.
+Both statements are closed kernel theorems, proved=T and hypotheses=0. The
+native enclosing constructor assembles checked tail/NONE/SOME cases with every
+original quantifier and result/resource conclusion. These captures are statement
+evidence via the original full theorem, not a replay of the local case proof or
+a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.
+
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+`stack_remove_word_list_exists_add_probeScript.sml` prints the stored original `word_list_exists_ADD` (stack_removeProofScript.sml:38-47) with zero hypotheses; the Lean port keeps arbitrary payloads and modular addresses.
+
+`stack_remove_init_code_thm_probeScript.sml` prints the stored original `init_code_thm` (stack_removeProofScript.sml:3225-3837) in full with zero hypotheses. The Lean port `Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect.initCodeThm` proves the complete statement over the native stackSem evaluator by symbolically executing the actual `init_code` (InitCodeThm.lean) and establishing the original `state_rel`/`init_prop` conclusions; it adds no premise.
+`pan_structs_program_dec_probe` captures the full original program theorem, its
+`Dec v sh e c1` specialization, and the original `evaluate_ind`, with all binder
+types and closed kernel proofs. The Lean piece retains all ten premises/seven
+conclusions and precisely the initializer-SOME/declared-shape guarded body IH
+at the actual updated local state. Source invariants supply body preconditions;
+restoration handles both absent and shadowed caller bindings.

@@ -109,8 +109,12 @@ an independent captured original prefix for regression comparison only.
 addresses, lengths and bytes against that unchanged oracle. The legacy source
 namespace is normalized to original globals (GC4, Raise5, StoreConsts6,
 source functions64 onward); exported symbol suffixes remain section ordinals.
-Upstream broad allocation/raw-call/long-div preparation remains a separate
-compiler-port frontier; the runtime boundary does not establish its simulation.
+In that default runtime-image route the tagged native `stack_rawcall$compile`
+runs on the whole native list before native allocation, as in
+`stack_to_lab$compile_def`. Upstream broad allocation/long-div preparation
+remains a separate compiler-port frontier (and the `--sections`/bytes modes
+still use the legacy raw-call helper); the runtime boundary does not establish
+their simulation.
 
 ## Differential fuzzing against `cake`
 

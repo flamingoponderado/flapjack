@@ -76,10 +76,19 @@ The following are open review or verification obligations:
    source-reviewed external assumption, not a kernel-checked cross-prover
    theorem. The value-component theorems do not establish flag equivalence;
    NaN payload choice remains unspecified. HOL `real_to_float` and
-   `real_to_fp64` accept arbitrary reals. Lean renders them only for
-   rational inputs (`holRealToFloat`, `holRealToFp64`), and there is no
-   general-real result. The one wordSem use, `int_to_fp64`, applies them to
-   integers, which are in scope. Irrational square-root rounding
+   `real_to_fp64` accept arbitrary reals. The executed path renders them
+   only for rational inputs (`holRealToFloat`, `holRealToFp64`); the
+   general-real `real_to_float` over Mathlib `ℝ` is `holRealToFloatR`, and
+   `holRealToFloatR_ratCast` proves that at every rational argument it equals
+   the executed `holRealToFloat` (likewise `round`, `float_round` and
+   `float_round_with_flags`, in `Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean`).
+   The one wordSem
+   use, `int_to_fp64`, applies them to integers, which are in scope. The
+   WordSem and StackSem `FPSqrt`/`FPToInt`/`FPFromInt` instruction clauses
+   are proved equal, with no premise, to the same clauses over the tagged
+   Mathlib-real `fp64_sqrt`, `fp64_to_int` and `real_to_fp64` ports
+   (`WordSem/Inst/RealSqrtAgreement.lean`, `WordSem/Inst/RealConvertAgreement.lean`,
+   `StackSem/FpRegisterInstructions/RealAgreement.lean`). Irrational square-root rounding
    is not covered by these rational-input theorems, and is handled
    separately below.
 
@@ -97,7 +106,8 @@ The following are open review or verification obligations:
 
    `Misc/BinaryIeeeSqrt/RealAgreement.lean` now kernel-checks the rational-cut
    comparisons against Mathlib's `Real.sqrt`, including distance comparisons,
-   and `Misc/BinaryIeeeSqrt/RealCarrier.lean` kernel-checks that the executed
+   and `Misc/BinaryIeeeSqrt/RealCarrier.lean` (with `Misc/MachineIeee/SqrtReal.lean`
+   for `fp64_sqrt`) kernel-checks that the executed
    cut `float_sqrt`/`fp64_sqrt` equal literal transcriptions of HOL `round`,
    `float_round`, `float_round_with_flags` and `float_sqrt` over Mathlib `ℝ`
    (with `Real.sqrt`, HOL `abs` and all flag tests kept), for every rounding

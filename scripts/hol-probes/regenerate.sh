@@ -1525,6 +1525,24 @@ run_probe dup_exn_eids_probeScript.sml dup_exn_eids_probe.out \
 run_probe compile_prog_probeScript.sml compile_prog_probe.out \
   empty inline_call global_dest handled_missing_dest done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe binary_ieee_carrier_probeScript.sml binary_ieee_carrier_probe.out \
+  float_to_real_def float_minus_min_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_round_probeScript.sml binary_ieee_round_probe.out \
+  clear_flags_def check_for_signalling_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_arith_probeScript.sml binary_ieee_arith_probe.out \
+  float_add_def float_equal_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_real_probeScript.sml binary_ieee_real_probe.out \
+  real_to_float_def float_sqrt_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_convert_probeScript.sml binary_ieee_convert_probe.out \
+  float_to_int_def real_to_float_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe machine_ieee_fp64_defs_probeScript.sml machine_ieee_fp64_defs_probe.out \
+  fp64_to_float_def fp64_isSignallingNan_def \
+  "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
   distinct_names duplicate_names \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"
@@ -6069,6 +6087,9 @@ run_probe stack_evaluate_mono_probeScript.sml stack_evaluate_mono_probe.out \
 run_probe stack_evaluate_clock_neutral_probeScript.sml stack_evaluate_clock_neutral_probe.out \
   neutral_clock_full_statement neutral_clock_full_proved neutral_clock_skip neutral_clock_halt neutral_clock_inst neutral_clock_seq neutral_clock_nested neutral_clock_tick neutral_clock_loop \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe stack_evaluate_ffi_neutral_probeScript.sml stack_evaluate_ffi_neutral_probe.out \
+  neutral_ffi_full_statement neutral_ffi_full_proved \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe stack_code_bitmaps_nonrecursive_probeScript.sml stack_code_bitmaps_nonrecursive_probe.out \
   nonrec_full_statement nonrec_full_proved nonrec_skip_statement nonrec_halt_statement nonrec_ret_statement nonrec_raise_statement nonrec_break_statement nonrec_continue_statement nonrec_get_statement nonrec_set_statement nonrec_opCurrHeap_statement nonrec_tick_statement nonrec_locValue_statement nonrec_stackAlloc_statement nonrec_stackFree_statement nonrec_stackLoad_statement nonrec_stackLoadAny_statement nonrec_stackStore_statement nonrec_stackStoreAny_statement nonrec_stackGetSize_statement nonrec_stackSetSize_statement nonrec_bitmapLoad_statement nonrec_codeBufferWrite_statement nonrec_dataBufferWrite_statement nonrec_shMemOp_statement \
@@ -6394,6 +6415,16 @@ run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq
   comp_correct_seq_obligation_statement comp_correct_seq_obligation_proved comp_correct_seq_obligation_hypotheses comp_correct_seq_first_non_none_statement comp_correct_seq_first_non_none_proved comp_correct_seq_first_non_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_comp_call_full_probeScript.sml word_to_stack_comp_call_full_probe.out \
+  comp_correct_call_full_statement comp_correct_call_full_proved comp_correct_call_full_hypotheses \
+  comp_correct_call_whole_statement comp_correct_call_whole_proved comp_correct_call_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_handler_full_probeScript.sml word_to_stack_comp_handler_full_probe.out \
+  comp_correct_handler_full_statement comp_correct_handler_full_proved \
+  comp_correct_handler_full_hypotheses comp_correct_call_induction_obligation \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_seq_full_probeScript.sml word_to_stack_comp_seq_full_probe.out \
   comp_correct_seq_full_statement comp_correct_seq_full_proved comp_correct_seq_full_hypotheses comp_correct_seq_first_none_statement comp_correct_seq_first_none_proved comp_correct_seq_first_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6485,6 +6516,9 @@ run_probe labprops_evaluate_add_clock_io_events_mono_probeScript.sml labprops_ev
 run_probe stack_rawcall_call_tail_probeScript.sml stack_rawcall_call_tail_probe.out \
   call_tail_full_statement call_tail_full_hypotheses call_tail_case64 call_tail_case80 call_tail_evaluate_ind_obligation call_tail_direct64 call_tail_handler64 call_tail_direct80 call_tail_handler80 \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_simp_gc_fun_sf_gc_consts_probeScript.sml word_simp_gc_fun_sf_gc_consts_probe.out \
+  gc_fun_sf_gc_consts_statement gc_fun_sf_gc_consts_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_simp_proof_compile_exp_thm_probeScript.sml word_simp_proof_compile_exp_thm_probe.out \
   compile_exp_thm_statement compile_exp_thm_hypotheses evaluate_Seq_assoc_statement evaluate_simp_push_out_if_statement evaluate_simp_duplicate_if_statement evaluate_const_fp_statement evaluate_const_fp_loop_statement evaluate_sf_gc_consts_statement evaluate_gc_fun_const_ok_statement evaluate_drop_consts_statement evaluate_Loop_body_cong_gc_statement \
   "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6799,6 +6833,7 @@ run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tic
 run_probe pan_structs_value_shape_conversion_probeScript.sml pan_structs_value_shape_conversion_probe.out \
   shape_of_convert_v_statement shape_of_convert_v_types shape_of_convert_v_hypotheses shape_of_convert_v_proved shape_of_convert_v_ind_statement shape_of_convert_v_ind_types shape_of_convert_v_ind_proved shape_of_convert_v_rev_statement shape_of_convert_v_rev_types shape_of_convert_v_rev_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe lab_filter_semantics_probeScript.sml lab_filter_semantics_probe.out \
   state_rel_IMP_sem_EQ_sem state_rel_IMP_sem_EQ_sem_types state_rel_IMP_sem_EQ_sem_hypotheses state_rel_IMP_sem_EQ_sem_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6810,3 +6845,107 @@ run_probe l3_native_config_probeScript.sml l3_native_config_probe.out \
 run_probe lab_filter_skip_semantics_probeScript.sml lab_filter_skip_semantics_probe.out \
   filter_skip_semantics filter_skip_semantics_types filter_skip_semantics_hypotheses filter_skip_semantics_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_return_raise_probeScript.sml pan_structs_program_return_raise_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_return_statement compile_correct_return_proved compile_correct_raise_statement compile_correct_raise_proved compile_correct_full_types compile_correct_return_types compile_correct_raise_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_structs_code_invariant_probeScript.sml pan_structs_structs_code_invariant_probe.out \
+  evaluate_structs_code_inv_statement evaluate_structs_code_inv_types evaluate_structs_code_inv_hypotheses evaluate_structs_code_inv_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_seq_if_probeScript.sml pan_structs_program_seq_if_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_seq_statement compile_correct_seq_proved compile_correct_if_statement compile_correct_if_proved compile_correct_full_types compile_correct_seq_types compile_correct_if_types evaluate_ind_statement evaluate_ind_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_to_target_make_init_filter_probeScript.sml lab_to_target_make_init_filter_probe.out \
+  make_init_filter_skip make_init_filter_skip_types make_init_filter_skip_hypotheses make_init_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_section_end_probeScript.sml lab_filter_section_end_probe.out \
+  sec_ends_with_label_filter_skip sec_ends_with_label_filter_skip_types sec_ends_with_label_filter_skip_hypotheses sec_ends_with_label_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_flatten_conversion_probeScript.sml pan_structs_flatten_conversion_probe.out \
+  flatten_convert_v_statement flatten_convert_v_types flatten_convert_v_hypotheses flatten_convert_v_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe lab_to_target_filter_preconditions_probeScript.sml lab_to_target_filter_preconditions_probe.out \
+  all_enc_ok_pre_filter_skip all_enc_ok_pre_filter_skip_types all_enc_ok_pre_filter_skip_hypotheses all_enc_ok_pre_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_find_ffi_every_probeScript.sml lab_to_target_find_ffi_every_probe.out \
+  find_ffi_names_EVERY find_ffi_names_EVERY_types find_ffi_names_EVERY_hypotheses find_ffi_names_EVERY_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_store_words_probeScript.sml pan_structs_program_store_words_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_store32_statement compile_correct_store32_proved compile_correct_store_byte_statement compile_correct_store_byte_proved compile_correct_full_types compile_correct_store32_types compile_correct_store_byte_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe lab_to_target_list_subset_probeScript.sml lab_to_target_list_subset_probe.out \
+  list_subset_TAKE list_subset_TAKE_types list_subset_TAKE_hypotheses list_subset_TAKE_proved \
+  list_subset_trans list_subset_trans_types list_subset_trans_hypotheses list_subset_trans_proved \
+  list_subset_refl list_subset_refl_types list_subset_refl_hypotheses list_subset_refl_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_store_probeScript.sml pan_structs_program_store_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_store_statement compile_correct_store_proved compile_correct_full_types compile_correct_store_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe stack_remove_word_list_memory_probeScript.sml stack_remove_word_list_memory_probe.out \
+  mem_val_def_statement mem_val_def_type MAP_mem_val_MAP_INL_statement MAP_mem_val_MAP_INL_proved MAP_mem_val_MAP_INL_hypotheses word_list_and_rev_join_lemma_statement word_list_and_rev_join_lemma_proved word_list_and_rev_join_lemma_hypotheses INSERT_DELETE_EQ_DELETE_statement INSERT_DELETE_EQ_DELETE_proved INSERT_DELETE_EQ_DELETE_hypotheses word_list_exists_addresses_statement word_list_exists_addresses_proved word_list_exists_addresses_hypotheses word_list_wrap_statement word_list_wrap_proved word_list_wrap_hypotheses fmap_simp_lemma1_statement fmap_simp_lemma1_proved fmap_simp_lemma1_hypotheses word_list_set_statement word_list_set_proved word_list_set_hypotheses word_list_seteq_statement word_list_seteq_proved word_list_seteq_hypotheses word_list_EL_in_memory_statement word_list_EL_in_memory_proved word_list_EL_in_memory_hypotheses word_list_in_memory_statement word_list_in_memory_proved word_list_in_memory_hypotheses word_list_exists_addresses_matches_theory word_list_wrap_matches_theory \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_make_probeScript.sml stack_remove_init_make_probe.out \
+  get_stack_heap_limit_prime_def_statement get_stack_heap_limit_prime_def_type get_stack_heap_limit_def_statement get_stack_heap_limit_def_type read_pointers_def_statement read_pointers_def_type make_init_opt_def_statement make_init_opt_def_type init_pre_def_statement init_pre_def_type make_init_any_def_statement make_init_any_def_type discharge_these_def_statement discharge_these_def_type propagate_these_def_statement propagate_these_def_type limit_prime_64_a limit_prime_64_b limit_prime_64_c limit_prime_64_d limit_prime_32_a limit_prime_32_b limit_prime_mixed_a limit_prime_mixed_b get_stack_heap_limit_prime_arg_types limit_64_a limit_64_b limit_64_c limit_32_a limit_32_b \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_any_probeScript.sml stack_remove_init_any_probe.out \
+  MOD_EQ_IMP_MULT_statement MOD_EQ_IMP_MULT_proved MOD_EQ_IMP_MULT_hypotheses star_move_lemma_statement star_move_lemma_proved star_move_lemma_hypotheses memory_addresses_statement memory_addresses_proved memory_addresses_hypotheses make_init_any_bitmaps_statement make_init_any_bitmaps_hypotheses make_init_any_use_stack_statement make_init_any_use_stack_hypotheses make_init_any_use_store_statement make_init_any_use_store_hypotheses make_init_any_use_alloc_statement make_init_any_use_alloc_hypotheses make_init_any_code_statement make_init_any_code_hypotheses make_init_any_stack_limit_statement make_init_any_stack_limit_hypotheses make_init_any_compile_oracle_statement make_init_any_compile_oracle_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
+  evaluate_ind evaluate_ind_types evaluate_ind_hypotheses evaluate_ind_proved \
+  filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutral_probe.out \
+  fupdate_elim2_statement fupdate_elim2_types fupdate_elim2_hypotheses fupdate_elim2_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_target_helper_links_probeScript.sml riscv_target_helper_links_probe.out \
+  helper_binop_statement helper_binop_hypotheses helper_binop_proved helper_shift_imm_statement helper_shift_imm_hypotheses helper_shift_imm_proved helper_shift_reg_statement helper_shift_reg_hypotheses helper_shift_reg_proved \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_code_probe.out \
+  store_list_code_thm_statement store_list_code_thm_hypotheses store_list_code_thm_free_vars \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
+  no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_assign_probeScript.sml pan_structs_program_assign_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_assign_statement compile_correct_assign_proved compile_correct_full_types compile_correct_assign_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_to_target_implements_intro_probeScript.sml lab_to_target_implements_intro_probe.out \
+  implements_intro_gen implements_intro_gen_types implements_intro_gen_hypotheses implements_intro_gen_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_primitive_probeScript.sml pan_structs_program_primitive_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_primitive_statement compile_correct_primitive_proved compile_correct_full_types compile_correct_primitive_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantics_compile_probe.out \
+  semantics_compile_lemma_prime semantics_compile_lemma_prime_types semantics_compile_lemma_prime_hypotheses semantics_compile_lemma_prime_proved semantics_compile_lemma semantics_compile_lemma_types semantics_compile_lemma_hypotheses semantics_compile_lemma_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_register_probe.out \
+  wload_full_register_transport wload_full_continuation wload_original_definition wload_original_register_compiler \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoration_probe.out \
+  res_var_FMAP_MAP2_rev_statement res_var_FMAP_MAP2_rev_types res_var_FMAP_MAP2_rev_hypotheses res_var_FMAP_MAP2_rev_proved FEVERY_res_var_statement FEVERY_res_var_types FEVERY_res_var_hypotheses FEVERY_res_var_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe stack_remove_word_list_exists_add_probeScript.sml stack_remove_word_list_exists_add_probe.out \
+  word_list_exists_ADD_statement word_list_exists_ADD_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_thm_probeScript.sml stack_remove_init_code_thm_probe.out \
+  init_code_thm_statement init_code_thm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_dec_probeScript.sml pan_structs_program_dec_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_dec_statement compile_correct_dec_proved compile_correct_full_types compile_correct_dec_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

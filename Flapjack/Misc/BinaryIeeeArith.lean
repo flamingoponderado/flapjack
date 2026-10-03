@@ -1,17 +1,20 @@
 import Flapjack.Misc.BinaryIeeeRound
-import Flapjack.Misc.MachineIeee
 
 /-!
-# HOL `binary_ieee` arithmetic and the `machine_ieee` fp64 lifts
+# HOL `binary_ieee` arithmetic
 
 A rendering of `float_add`, `float_sub`, `float_mul`, `float_div` and
-`float_mul_add` from `HOL/src/floating-point/binary_ieeeScript.sml:587-722`,
-together with the `fp64_add`/`fp64_sub`/`fp64_mul`/`fp64_div`/`fp64_mul_add`
-lifts that `machine_ieeeLib` generates (bead `flapjack-h29l.6.2.2`).  This is
-the HOL standard library, so nothing here is tagged.
+`float_mul_add` from `HOL/src/floating-point/binary_ieeeScript.sml:587-722`
+(bead `flapjack-h29l.6.2.2`).  The generated `machine_ieee` fp64 lifts are in
+`Flapjack.Misc.MachineIeee.Arith`.
 
-Each operation returns HOL's `(flags, float)` pair.  The fp64 lifts are HOL's
-`float_to_fp64 (SND (float_op mode (fp64_to_float a) ...))`.  The operations
+The five `float_*` operations are tagged after source review against the pinned
+HOL (bead `flapjack-h29l.6.2.10`).  Their only real is the rounded argument
+(`r1 ± r2`, `r1 * r2`, `r1 / r2` with `r2 ≠ 0`, `r1 * r2 + r3`) of float values,
+a rational, which is the representation `reals_as_rational_cuts` records; the
+NaN branches translate HOL `@` in `float_some_qnan` as `Classical.epsilon`.
+
+Each operation returns HOL's `(flags, float)` pair.  The operations
 round through the choice-based `float_round_with_flags`, and produce NaNs
 through `float_some_qnan`, so they are `noncomputable`.  Bead
 `flapjack-h29l.6.2.3` proves a computable binary64 agreement for
@@ -29,7 +32,9 @@ namespace Flapjack
     * two finite values round `r1 + r2`.  The zero sign is `x.Sign = 1w` when
       both are zero with equal signs, and `mode = roundTowardNegative`
       otherwise. -/
-noncomputable def holFloatAdd {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_add_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatAdd {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   match holFloatValue x, holFloatValue y with
   | .nan, _ => (holCheckForSignalling [x, y], holFloatSomeQnan (.fpAdd mode x y))
@@ -49,7 +54,9 @@ noncomputable def holFloatAdd {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * infinities of the same sign are invalid;
     * `_ - Infinity` is `float_negate y`;
     * the zero sign of `0 - 0` uses `x.Sign ≠ y.Sign`. -/
-noncomputable def holFloatSub {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_sub_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatSub {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   match holFloatValue x, holFloatValue y with
   | .nan, _ => (holCheckForSignalling [x, y], holFloatSomeQnan (.fpSub mode x y))
@@ -69,7 +76,9 @@ noncomputable def holFloatSub {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * Infinity times a nonzero value or infinity is an infinity signed by
       `x.Sign = y.Sign`.
     * Two finite values round `r1 * r2` with zero sign `x.Sign ≠ y.Sign`. -/
-noncomputable def holFloatMul {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_mul_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatMul {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   let signedInf : HolFloat t w :=
     if x.sign = y.sign then holFloatPlusInfinity t w else holFloatMinusInfinity t w
@@ -92,7 +101,9 @@ noncomputable def holFloatMul {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * `0 / 0` is invalid, and a nonzero value over zero is a signed infinity
       with the divide-by-zero flag.
     * Otherwise `r1 / r2` is rounded with zero sign `x.Sign ≠ y.Sign`. -/
-noncomputable def holFloatDiv {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_div_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatDiv {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   let signedInf : HolFloat t w :=
     if x.sign = y.sign then holFloatPlusInfinity t w else holFloatMinusInfinity t w
@@ -120,7 +131,9 @@ noncomputable def holFloatDiv {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * otherwise round `r = x*y + z`.  The zero sign is chosen as HOL does:
       when `r = 0` it follows the same rule as `float_add` on `x*y` and `z`,
       and a negative `r` also selects it. -/
-noncomputable def holFloatMulAdd {t w : Nat} (mode : HolRounding) (x y z : HolFloat t w) :
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_mul_add_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holFloatMulAdd {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y z : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   let signP := x.sign ^^^ y.sign
   let infP := holFloatIsInfinite x || holFloatIsInfinite y
@@ -142,27 +155,5 @@ noncomputable def holFloatMulAdd {t w : Nat} (mode : HolRounding) (x y z : HolFl
           (if r1 = 0 ∧ r2 = 0 ∧ signP = z.sign then signP = 1 else mode = .roundTowardNegative)) ||
         decide (r < 0))
       r
-
-/-- HOL `fp64_add mode a b = float_to_fp64 (SND (float_add mode (fp64_to_float a)
-    (fp64_to_float b)))`. -/
-noncomputable def holFp64Add (mode : HolRounding) (a b : BitVec 64) : BitVec 64 :=
-  holFloatToFp64 (holFloatAdd mode (holFp64ToFloat a) (holFp64ToFloat b)).2
-
-/-- HOL `fp64_sub`, lifted like `fp64_add`. -/
-noncomputable def holFp64Sub (mode : HolRounding) (a b : BitVec 64) : BitVec 64 :=
-  holFloatToFp64 (holFloatSub mode (holFp64ToFloat a) (holFp64ToFloat b)).2
-
-/-- HOL `fp64_mul`, lifted like `fp64_add`. -/
-noncomputable def holFp64Mul (mode : HolRounding) (a b : BitVec 64) : BitVec 64 :=
-  holFloatToFp64 (holFloatMul mode (holFp64ToFloat a) (holFp64ToFloat b)).2
-
-/-- HOL `fp64_div`, lifted like `fp64_add`. -/
-noncomputable def holFp64Div (mode : HolRounding) (a b : BitVec 64) : BitVec 64 :=
-  holFloatToFp64 (holFloatDiv mode (holFp64ToFloat a) (holFp64ToFloat b)).2
-
-/-- HOL `fp64_mul_add mode a b c = float_to_fp64 (SND (float_mul_add mode
-    (fp64_to_float a) (fp64_to_float b) (fp64_to_float c)))`. -/
-noncomputable def holFp64MulAdd (mode : HolRounding) (a b c : BitVec 64) : BitVec 64 :=
-  holFloatToFp64 (holFloatMulAdd mode (holFp64ToFloat a) (holFp64ToFloat b) (holFp64ToFloat c)).2
 
 end Flapjack
