@@ -7065,3 +7065,6 @@ through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
 ### Native shared-memory filter terminal clauses
 
 `lab_filter_shared_terminal_probeScript.sml` captures the complete original NONE578 and final646 clauses with independent full state/configuration/oracle/FFI types, zero hypotheses and kernel reproofs (8 rows). All original guards remain; the final original-PC state and FFI equality are existential conclusions.
+`pan_structs_shape_map_codec_probe` captures the external HOL alistTheory right-fold
+definition and unconditional lookup theorem used by PanStructs. Original duplicate
+keys keep the first binding; other, missing and empty lookups are recorded.

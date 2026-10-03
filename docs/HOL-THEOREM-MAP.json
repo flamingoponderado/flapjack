@@ -75855,5 +75855,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.1): Original646 full state/count/op/register/address/sourceCompile/outcome/poststate binders and allSkips, nonzero clock, compiler transform equality, nonfailed and actual filtered transition guards retained. Derives actual existential original-PC poststate with identical final outcome and whole FFI equality. All8 shared operators/address cases; concrete witness is original state with pc=count+t.pc because native final operations preserve every other field. Whole source transition equality projects to FFI equality, not assumed post relation or target execution. Independent of returning stateRel/adjustPc successor theorem. Full alpha word/beta config/gamma FFI source types freshly queried/captured. Positive-width BitVec translation qualified; byte payloads fixed8 and configuration/function/oracle products unchanged. Fresh original complete statement/type/zero hypotheses/kernel reproof capture."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ShapeMap.lean",
+    "lean_name": "shapeMap_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-10-03: Flapjack canonical finite-map codec correspondence to external HOL alistTheory right-fold FUPDATE/FEMPTY, not a CakeML declaration. Arbitrary exact MlS/ShapeHOL entries/key including duplicates; unconditional independent raw alistToFmap lookup equality. Source alistScript21/ALOOKUP_EQ_FLOOKUP67 checked; no distinctness, extra support or desired map relation premise. Enables canonical original shape-map equality hypotheses of faithful PanStructs compile_exp_correct."
   }
 ]

@@ -6626,3 +6626,6 @@ run_probe lab_filter_shared_terminal_probeScript.sml lab_filter_shared_terminal_
   share_mem_op_NONE_filter_correct share_mem_op_NONE_filter_correct_types share_mem_op_NONE_filter_correct_hypotheses share_mem_op_NONE_filter_correct_proved \
   share_mem_op_FFI_final_filter_correct share_mem_op_FFI_final_filter_correct_types share_mem_op_FFI_final_filter_correct_hypotheses share_mem_op_FFI_final_filter_correct_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_shape_map_codec_probeScript.sml pan_structs_shape_map_codec_probe.out \
+  shape_map_definition shape_map_lookup_statement shape_map_lookup_hypotheses shape_map_first_binding shape_map_other_binding shape_map_missing shape_map_empty \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

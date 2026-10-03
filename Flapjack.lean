@@ -1208,6 +1208,8 @@ import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
+import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
