@@ -84824,5 +84824,23 @@
     "reviewer": "flapjack-sol2 source comparison6053-6130 original comp_correct5756/motive5719-5751: entire Seq.Simulation over arbitrary original four registers/constants/source/config/width. Every original premise and full existential targetrun/result/resource conclusion retained. Original convention derives0/2/4/6; source nonerror derives actual word reads/addressguard/fullpoststate. Original insertion/prefix/index guards derive actual bitmap slice/index. Full copy_words_correct gives actual native memory-copy result; relation provides stub/flags/goodDimindex/word-index bound. Actual inst/storeConsts execution with zero additional clock and entire post-state relation proved, including full source local updates/deletions, scratch registers, frame, stack, compiler metadata, domains and memory. No added read/run/postrelation/memory/address/bounds assumptions. Five canonical finite-map owners/positive words and local genuine codecs; inherited reals_as_rational_cuts retained. Original full case obligation and arbitrary theorem specialization captured; no cross-language equivalence claim. Literal original Resume StoreConsts proof6054-6125 replayed on full evaluate_ind obligation with original theory-open order and simplifier setup; hyp0/T, separately closed arbitrary specialization hyp0/T.",
     "inherits_reals_as_rational_cuts": true,
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/CallReturningFull.lean",
+    "lean_name": "compCorrectCallReturning",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 bead9.4: full original returning Call case8166-10048 and comp_correct motive5719-5751. Arbitrary optional handler; literal original three guarded evaluate_ind IHs retain all intermediate tuple/result/descriptor equalities, actual source get/find/cut/clock and normal/exception/pop/domain guards. Fourth tail IH is vacuous under fixed SOME return and omitted. Kernel NONE grouping translation only instantiates original identities; SOME uses accepted full literal-IH theorem. Both accepted complete case executions retain full Seq.Simulation hypotheses and existential target clock/run with every original result/resource conclusion. No targetrun/postrelation/outcome assumptions or strengthened IH. Canonical imported finite-map owners with same-module roundtrip witnesses, positive type-indexed words and Type0 host types; inherited reals_as_rational_cuts evaluator closure limit retained. Fresh original theorem specialization plus original evaluate_ind obligation capture are statement evidence, not a literal local proof replay or cross-language equivalence proof. Whole pass/compiler remains unfinished.",
+    "hol_line": 5756
   }
 ]
