@@ -6441,3 +6441,9 @@ The native theorem retains its sole source-evaluation/neutrality conjunction;
 clock commutation and unchanged post-clock are derived by structural recursion.
 Generic kernel consumers include widths 1/8/64/80 and zero replacement clocks.
 These fixtures do not prove cross-language equivalence or full initialization.
+`stack_rel_definition_probe.out` captures the complete original stack_rel equation, zero hypotheses and polymorphic type. Source frames, rest stack and bitmaps share alpha; the target handler has independent beta. Lean preserves both dimensions and all conjuncts, uses accepted total EL without a chosen default, and represents LASTN by drop(length-n). This proof-side relation is not an executed compiler change or whole pass theorem.
+`l3_machine_csr_codec_probe.out` captures all 14 original machine CSR rec/reg
+codec definitions and 490 observations over every single-bit basis vector,
+zero, all ones, alternating bits and mixed patterns. Independent calculations
+check both packed words and every decoded field, including discontiguous
+reserved-bit segments. Full CSR transitions and Run/Next remain open.

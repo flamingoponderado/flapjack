@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.RiscV.L3.Defs.CSRAccess
+import Flapjack.RiscV.L3.Defs.MachineCSRCodec
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
@@ -294,6 +295,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
