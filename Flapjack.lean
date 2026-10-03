@@ -14,6 +14,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -326,6 +327,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
@@ -796,6 +798,10 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionDecodedSSAMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadFallbackMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
@@ -1886,6 +1892,7 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.InstCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove

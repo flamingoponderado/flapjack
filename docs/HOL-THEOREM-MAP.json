@@ -66785,6 +66785,21 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.2: original stack_allocProofScript.sml:5297-5894. Free HOL anything and compile_rest implicit; !p s r t m n c regs explicit in source order. All twelve premises retained in order: evaluate (p,s) = (r,t), r <> SOME Error, alloc_arg p, code-table keys <> gc_stub_location with alloc_arg, compile_oracle entries likewise (bound variables renamed i k q since HOL reuses n p), s.gc_fun = word_gc_fun c, s.use_alloc, stack byte bound, s.regs SUBMAP regs, s.use_stack, data-buffer/bitmaps bound, s.compile = (λcfg. compile_rest cfg o MAP prog_comp). Conclusion exists ck regs1 with the actual native evaluate of FST (comp n m p) from the full source override (use_store/use_stack T, use_alloc F, clock s.clock+ck, regs, gc_fun anything, compile_oracle (I ## MAP prog_comp ## I) o s.compile_oracle rendered Prod.map id (Prod.map (List.map progComp) id) ∘ oracle, compile compile_rest, code fromAList (compile c (toAList s.code))) equal to (r, t with the same override and regs1), t.regs SUBMAP regs1, the bound for t, and the stack bound for t when r is not Halt. No supplied target evaluation, simulation or success premise. Proof by induction on the evaluator's own (clock, size) measure (HOL recInduct evaluate_ind), with untagged per-constructor case lemmas under CompCorrect/ using exactly the recursive obligations of evaluate_def, alloc_correct, alloc_length_stack, inst_correct, the ProgComp lookup lemmas, evaluate_consts, evaluate_code_bitmaps, evaluate_add_clock, fix_clock_evaluate and spt_eq_thm. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "compile_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CompileSemantics.lean",
+    "lean_name": "compile_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.12: original stack_allocProofScript.sml:5909-6066. Free HOL s c compile_rest start anything implicit. All nine premises retained in order: code keys <> gc_stub_location with alloc_arg, compile_oracle entries likewise (bound vars renamed i k q), s.gc_fun = word_gc_fun c, data-buffer/bitmaps bound, stack byte bound, s.use_stack, s.use_alloc, s.compile = (λcfg. compile_rest cfg o MAP prog_comp), semantics start s <> Fail. Conclusion: semantics start of s with code := fromAList (compile c (toAList s.code)), gc_fun := anything, compile := compile_rest, compile_oracle := (I ## MAP prog_comp ## I) o s.compile_oracle (Prod.map rendering), use_store/use_stack T, use_alloc F equals semantics start s, over the tagged native StackSem semantics. Proof as HOL: comp_correct at every clock of Call NONE (INL start) NONE with regs := s.regs (comp_correct_thm), evaluate_add_clock, evaluate_add_clock_io_events_mono, and IMP_build_lprefix_lub_EQ for the divergence chains (via an untagged clock-shift lemma semanticsAux_shift). No extra premise. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits reals_as_rational_cuts through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
     "hol_name": "dest_case_def",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
@@ -71260,6 +71275,43 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; bead .15.10.182): complete original ISR16 source10352-10504 and literal pre-Suspend goal mapping, precisely entire state_rel conjunct51 share_mem_domain_code_rel of actual makeInit. All original binders/fourteen guards retained. Original allEncOk/removeLabels/goodInitState and accepted getShmemInfo_ok/offset/PREPEND derive initialized extraction, all external-prefix names, suffix natural search and its bound. MAP w2n injectivity plus original entry-offset equality derive no-wrap/shared word search; source fetched encoding positivity and prefix exclusion establish first full-list search at index+i. ZIP/range unique numeric keys supply whole actual MMIO descriptor including fixedword8 size, exact word address offset/register and exit PC. Nonshared full byte interval excludes TAKE by accepted source prefix law, DROP by original natural disjointness: source entry-offset lower bound plus original code-size/successor position bounds prove no modular wrap, with no extra hypothesis. Original alignment/address clauses included. Positive BitVec width/NeZero, separate universe0 FFI host and native states/config/AST/labels retained; all imported EL accesses are under bounds derived from original successful search, no default/HD/EL policy changes. Untagged private extraction/numeric-list lookup/no-wrap helpers are proof infrastructure without separately named HOL declarations. Fresh original complete local theorem/types0hyp and fullguard clause51 projection0hyp/kernelT; native fullguard consumers derive valid full FFI index, descriptor and every nonshared-byte exclusion. Inherits reals_as_rational_cuts through original mcConfOk/encoderCorrect SOUNDNESS item8, no own real rendering. Full151 assembly and larger correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitReduce.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initReduce",
+    "hol_name": "init_reduce_def",
+    "reviewer": "flapjack-sol full original body/type comparison2026-10-03 source2873-2897: arbitrary original gen_gc/jump/off/k/code/bitmaps/data_sp/coracle/source, all four FAPPLY/theWord pointer selections with bitmap word_shift, exact unsigned word-difference before natural dimension-DIV and saturating store-list subtraction. All twelve original updates retained: flags T/T/F, exact addresses characteristic function, lists/code/compiler callback MAP(prog_comp) and plain coracle, complete data buffer including empty bytes/bitmap-scaled position/data_sp, stackSpace and read_mem(stackSpace+1), FEMPTY |++ MAP(CurrHeap::store_list) in original order. Original outside-domain FAPPLY value is shared opaque holFapplyOutside independent of map/key; wordSemTheWord shared holArb handles Loc without zero/default or added successful-input premise. Native List/Spt/WordLoc and callback/config/FFI types retained. Existing StoreName-to-WordStoreHOL constructor codec is bijective with two checked roundtrips including fixed5bit Temp; canonical updateListEq uses actual HOL equality and last-update fold, no BEq side condition. Actual canonical owning StackSemStateFiniteExact, local genuine imported broad/exact roundtrip, positive-width word translation. No extra good_dimindex/register/alias/heap/output/relation premise. Original full kernel definition/type/zero stored hypotheses freshly captured; proof-side source-state construction only, full initialization/executed correctness open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitReduce.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initReduceStackSpace",
+    "hol_name": "init_reduce_stack_space",
+    "reviewer": "flapjack-sol source comparison2026-10-03 local2899-2904: full arbitrary original initializer parameters/source and unconditional actual init_reduce stack_space <= LENGTH stack. Actual native complete initializer/read_mem used, accepted LENGTH_read_mem yields exact stackSpace+1 length; no pointer presence/dimension/word-valuedness/callback/success/bound hypothesis. No simplified evaluator, supplied resource bound or output state. Canonical state/word qualifiers justified as for initReduce and same-module genuine witness; native code remains Spt. Complete unchanged original statement/proof replay with GEN_ALL, original0hyp andT. Original init_code_thm3628 consumes this actual resource invariant, not whole initializer theorem completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAuxStackSize.lean",
+    "lean_name": "stackRelAuxStackSize",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_stack_size",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6.1 original6581-6589: complete universal len/k/source frame list/abstract bits list and sole full stack_rel_aux premise imply exactly misc the(handler_val bits)(stack_size frame)=handler_val bits. Native full stackRelAux is the reviewed four-clause relation, actual wordSemStackSize/Frame and handlerVal preserve option addition, empty sentinel1, normal frame size and handler overhead3. Independent positive source-frame, handler-location and saved-handler word dimensions retained exactly as original polymorphic carrier; all3 own Nat/NeZero obligations, payload lists remain List. Native proof follows source frame recursion, eliminates only relation-impossible source/target mismatch cases, and covers both NONE annotations/recursive NONE sizes and SOME exact sums. Relation original getD frame.length+1 size equation and tail IH establish equality, with no size-success, target length/range/validity/handler assumption. Original argument order len/k is preserved in stackRelAux len k even though its definition names those bound parameters k/len. Full original proof replay and carrier type captured with closed statement/0 hypotheses; probe routes original ML fetch current-theory marker to loaded original word_to_stackProof for its original generated induction theorem, without changing proof tactics or theorem. Only conventional words_as_type_indexed_bitvec carrier translation; no finite-map/name/list-array/real-rendering qualification needed, no evaluator or executable behavior change. Full Raise/pass correctness remains separate and open."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/FullStateRel.lean",
