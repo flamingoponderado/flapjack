@@ -6693,3 +6693,7 @@ run_probe lab_filter_full_simulation_probeScript.sml lab_filter_full_simulation_
 run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
   nextEval_binders nextEval_statement nextEval_hypotheses nextEval_proof nextBranch_binders nextBranch_statement nextBranch_hypotheses nextBranch_proof nextCond_binders nextCond_statement nextCond_hypotheses nextCond_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_decode_transport_probeScript.sml l3_decode_transport_probe.out \
+  decodeWord_binders decodeWord_statement decodeWord_hypotheses decodeWord_proof decodeHalf_binders decodeHalf_statement decodeHalf_hypotheses decodeHalf_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"

@@ -76968,5 +76968,21 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript85-99: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion Boolean b chooses a or nxt PC+Skip; the whole record still clears NextFetch on both branches. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/DecoderTransport.lean",
+    "lean_name": "decode_imp_decodeAny",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Decode_IMP_DecodeAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original step541-551: arbitrary word32 and full native instruction i, exactly original Decode equality premise and DecodeAny(Word) equality conclusion; literal fixed-width source carrier and complete source-reviewed decoder, no opcode restrictions or extra hypotheses. Fresh universal original proof capture includes all binder types and zero open proof assumptions; Lean proof is direct definitional selector reduction using precisely the original premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/DecoderTransport.lean",
+    "lean_name": "decodeRVC_imp_decodeAny",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DecodeRVC_IMP_DecodeAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original step541-551: arbitrary word16 and full native instruction i, exactly original DecodeRVC equality premise and DecodeAny(Half) equality conclusion; literal fixed-width source carrier and complete source-reviewed decoder, no opcode restrictions or extra hypotheses. Fresh universal original proof capture includes all binder types and zero open proof assumptions; Lean proof is direct definitional selector reduction using precisely the original premise."
   }
 ]

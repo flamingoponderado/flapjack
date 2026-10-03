@@ -1598,6 +1598,12 @@
       "sha256": "84ec9d3a4c5aeb8984d2f877b4e5689b3b2ef0705dbfdc6b3bc443ec4ef01f5d"
     },
     {
+      "bytes": 317,
+      "out": "l3_decode_transport_probe.out",
+      "rows": 8,
+      "sha256": "b985e79e5ed331756baf2078b1b2d6b4fa2360a70362c43679f4a1a3d85d0960"
+    },
+    {
       "bytes": 29680,
       "out": "l3_divide_probe.out",
       "rows": 1456,
