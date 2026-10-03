@@ -704,7 +704,7 @@ over pan_structsProof's `compile_shape_n` (`compileShapeNHOL`). -/
 @[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "compile_shape_no_name"]
 theorem compileShapeNoNamePanToWordHOL {α : Type} :
     ∀ (ctxt : List (MlS × List (α × ShapeHOL))) (n : Nat) (sh : ShapeHOL),
-      isWfShapeExactHOL [] (Pancake.PanStructs.CompileShapeExact.compileShapeNHOL ctxt n sh) =
+      isWfShapeExactHOL ([] : Flapjack.Pancake.PanLang.StructContextExact) (Pancake.PanStructs.CompileShapeExact.compileShapeNHOL ctxt n sh) =
         true :=
   Pancake.PanStructs.CompileShapeExact.compileShapeNNoName
 

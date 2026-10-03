@@ -110,6 +110,18 @@
       "sha256": "68e07e4909950a079b51a7856287746c2b27e57c44e375358ce9fb270a4bb200"
     },
     {
+      "bytes": 1421,
+      "out": "ast_backend_operators_probe.out",
+      "rows": 8,
+      "sha256": "afe7bd2c4731d513374e0468a8833455e6ec00b05d1076092d4c4f424bcb4d31"
+    },
+    {
+      "bytes": 784,
+      "out": "backend_common_operators_probe.out",
+      "rows": 2,
+      "sha256": "5fd56c2f8dffc18281e56f14321721bfbc65b953fc2973338c5680c15c1f92bd"
+    },
+    {
       "bytes": 1297,
       "out": "backend_common_trace_probe.out",
       "rows": 16,
@@ -392,6 +404,24 @@
       "sha256": "2568949fab64d29bfc38e41c18259047e2eb05e90ab7ec663383fd61600dcf9e"
     },
     {
+      "bytes": 4729,
+      "out": "bvi_syntax_probe.out",
+      "rows": 2,
+      "sha256": "6f40390288dd6766176b7651017101065fc652243445be64ba164d97928c6b26"
+    },
+    {
+      "bytes": 3543,
+      "out": "bvl_syntax_probe.out",
+      "rows": 2,
+      "sha256": "399b6dbd6071e3d5a8d38e0173881c03910e47d47eafe99a7199083c891f37dc"
+    },
+    {
+      "bytes": 808,
+      "out": "bvl_to_bvi_config_probe.out",
+      "rows": 11,
+      "sha256": "83f2b048e742b8aa20fd372ef07f386f03d885bd857bee655ee00e5a675f0596"
+    },
+    {
       "bytes": 50,
       "out": "byte_align_probe.out",
       "rows": 5,
@@ -438,6 +468,24 @@
       "out": "cexp_heads_probe.out",
       "rows": 5,
       "sha256": "6008ea6cbd045b498a9b2ab282fbd0734ddd6c4760faa5e59cd7aa29a438f184"
+    },
+    {
+      "bytes": 3504,
+      "out": "clos_known_config_probe.out",
+      "rows": 15,
+      "sha256": "25fbbd7c47d72fcac45f61907c1506f62883c0442a5274be816efc4912697b04"
+    },
+    {
+      "bytes": 35713,
+      "out": "clos_lang_syntax_probe.out",
+      "rows": 18,
+      "sha256": "2e8e6be1b0056b188b8fe43b370a9b53ada45ba12641d9476f9d3e0d37e75d31"
+    },
+    {
+      "bytes": 831,
+      "out": "clos_to_bvl_config_probe.out",
+      "rows": 9,
+      "sha256": "2a7c016a3f9936aa89f1e3dadf3697eb7f560c3ae208a859a9a373300b56203b"
     },
     {
       "bytes": 1359,
@@ -4214,6 +4262,12 @@
       "sha256": "e1b9398076d6936e9cf1273ff4944fb9277a0d637a83a2606ad0409568ccbddd"
     },
     {
+      "bytes": 847,
+      "out": "pan_lang_generic_wf_shape_probe.out",
+      "rows": 12,
+      "sha256": "52cfcc3c608826322183ad4fce88361d1c64aaab54c8b72153632f9b8294bb1a"
+    },
+    {
       "bytes": 44,
       "out": "pan_lang_inlinable_probe.out",
       "rows": 3,
@@ -4874,6 +4928,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 418,
+      "out": "pan_structs_compiled_shapes_wf_probe.out",
+      "rows": 3,
+      "sha256": "f97845d48ae0f269843dcaabe3e7fce16276b3a09c112061d98778e13b917b64"
+    },
+    {
       "bytes": 319,
       "out": "pan_structs_convert_code_locals_probe.out",
       "rows": 3,
@@ -4896,6 +4956,12 @@
       "out": "pan_structs_convert_state_probe.out",
       "rows": 6,
       "sha256": "8e64aab07391d3b37254df815d342e62d3184d1fbd01bb1782bf00defa338559"
+    },
+    {
+      "bytes": 2779,
+      "out": "pan_structs_decls_decl_probe.out",
+      "rows": 9,
+      "sha256": "5aa705cb983072355ef44e69a87f2bd34c4b0c44092108d136c505d270114ba9"
     },
     {
       "bytes": 3720,
@@ -5802,6 +5868,12 @@
       "out": "ret_var_probe.out",
       "rows": 5,
       "sha256": "a969c65031a10268edf6af779a5d645a886ca203ace1a4d7657561c1ddfa28a6"
+    },
+    {
+      "bytes": 92,
+      "out": "riscv_addi_decode_probe.out",
+      "rows": 4,
+      "sha256": "d140d2daf5d41250d06f795e36239942e1f05a1a5a0c23656cb8fc283434ce71"
     },
     {
       "bytes": 553,
@@ -9038,6 +9110,18 @@
       "sha256": "e8dd4f6cc42bb9903d50e1cb8f3936240726d3c848cdffcb86780a59b8b2f9a9"
     },
     {
+      "bytes": 1240,
+      "out": "word_cse_intersection_acc_probe.out",
+      "rows": 5,
+      "sha256": "6836be66cff0b9632756ea921cf30d91c6099a5d0f2e4ca550b47d7521636343"
+    },
+    {
+      "bytes": 1947,
+      "out": "word_cse_knowledge_lemmas_probe.out",
+      "rows": 17,
+      "sha256": "fb6f31991fc611d6badb43eaa8856a44c73b2464f7b70ad3ce9254a2484f2b9e"
+    },
+    {
       "bytes": 24945,
       "out": "word_cse_list_order_probe.out",
       "rows": 212,
@@ -9680,6 +9764,12 @@
       "sha256": "6c670ebea193fe0d77f50a928fa64c4d773968749dfb77b82bed672e14ce09be"
     },
     {
+      "out": "word_to_stack_comp_returning_full_probe.out",
+      "sha256": "d590a6395d1532477e9ea9e8e45937ca03ec5890ba2f0e46a5d439a6f37058c6",
+      "bytes": 12767,
+      "rows": 4
+    },
+    {
       "bytes": 9979,
       "out": "word_to_stack_comp_seq_full_probe.out",
       "rows": 6,
@@ -9696,6 +9786,12 @@
       "out": "word_to_stack_comp_set_probe.out",
       "rows": 6,
       "sha256": "ea66dca1c01400b91cae2176b03bfc48b10c22e4ecacb0f8b68e09bb9759ece8"
+    },
+    {
+      "out": "word_to_stack_comp_storeconsts_probe.out",
+      "sha256": "a43cd02802e1605be36e8fcd385e681534bb9616bf712316279ecebb851be9f1",
+      "bytes": 3759,
+      "rows": 6
     },
     {
       "bytes": 89,
@@ -9992,10 +10088,28 @@
       "sha256": "e53cb678e1fdbd30b25d31353606b3625bace978dcb211004bf07d2db5dabf93"
     },
     {
+      "out": "word_to_stack_move_aux_probe.out",
+      "sha256": "fe5139f7754e6f481b09947a69d883b22e5b52a8008178f4c0a370629090f479",
+      "bytes": 204,
+      "rows": 3
+    },
+    {
+      "out": "word_to_stack_move_div2_probe.out",
+      "sha256": "164ae8067d90dba6b9ce7c9567150f59d2977b0917391bdda7de9c4c96015205",
+      "bytes": 716,
+      "rows": 6
+    },
+    {
       "bytes": 556200,
       "out": "word_to_stack_move_reconstruction_probe.out",
       "rows": 580,
       "sha256": "a023f4f74dafc6b5917a985757122efb8eba553c99b762772aa7913fb540d53d"
+    },
+    {
+      "out": "word_to_stack_move_single_probe.out",
+      "sha256": "c666c50cccc64f78c1748b9565ea0c78be962e503884aa76888297115c10fa66",
+      "bytes": 623,
+      "rows": 3
     },
     {
       "bytes": 244184,
@@ -10554,6 +10668,12 @@
       "out": "wordsem_pop_env_const_probe.out",
       "rows": 3,
       "sha256": "0bb9553a915ca459f5d986a7a4aee20f17d9249de93fb02c6f13ff1d7801b1a3"
+    },
+    {
+      "bytes": 38796,
+      "out": "wordsem_state_const_group_probe.out",
+      "rows": 114,
+      "sha256": "e21db22e9227aa9353ff2a51ea2f3a4741746e11c7d2e8f69d5f170016a56981"
     },
     {
       "bytes": 4967,
