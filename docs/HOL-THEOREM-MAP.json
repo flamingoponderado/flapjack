@@ -86437,5 +86437,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3288-3347. Free c c2 c3 sp offset prog implicit. Premises verbatim: EVERY (λn. n ≠ 0 ∧ n ≠ 1 ∧ n ≠ 2 ∧ n ≠ gc_stub_location) (MAP FST prog), EVERY (λ(n,p). let labs = extract_labels p in EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) labs ∧ ALL_DISTINCT labs) prog (let inlined, EVERY as membership, tuple lambdas by projections), ALL_DISTINCT (MAP FST prog); conclusion labels_ok (stack_to_lab$compile c c2 c3 sp offset prog) over the reviewed labelsOk and StackToLab.compile. Proof via prog_to_section_labels_ok, MAP_FST_compile, MAP_FST_compile_compile, stack_names/stack_remove/stack_alloc label preservation, extract_labels_comp, and untagged no-label lemmas for init_code and word_gc_code (HOL EVAL_TAC steps). Axioms propext, Classical.choice, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Loc.lean",
+    "lean_name": "riscv_encoder_correct_loc",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 original737-742 and encoder_correct_def117-133: full Loc constructor with unrestricted natural destination and word64 offset, exact native source/state carriers, original asmStep+targetStateRel premise and existential/every-env/interference/asserts/asserts2 conclusion. Original asmOk discharges register32/avoid-zero and signed offset [-2147483648,2147481599]/align4 guards internally. Literal AUIPC then ADDI byte fetch/unrestricted universal decode/Run/Next derive two real steps; original lem12b reconstructs immediate using only original alignment/range. Projection-preserving env0 and env1 transport complete relations, native writes preserve all memory, intermediate validity/code bytes/PC coverage proved, full source post-state including overwritten register equality retained. Original witness n=1. No target execution/output premise, extra public range or alignment bound, simplified evaluator, or narrowed conclusion. Inherited reals_as_rational_cuts assumption from reviewed native state/Run closure (SOUNDNESS8); no added real assumption. Fresh original Loc specialization captures arbitrary r:num/c:word64, zero stored hypotheses/provedT; capture is not cross-language equivalence."
   }
 ]
