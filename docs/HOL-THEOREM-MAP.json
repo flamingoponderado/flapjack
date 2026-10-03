@@ -83287,5 +83287,60 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison7724-7733: arbitrary original program/state/result, actual source evaluate and cont_loop guard only imply unchanged handler. Original NONE/Continue0 cases follow full accepted evaluate_stack_swap result, no additional success/handler premise. Canonical fmap_as_finite_support fpRegs/store and positive-width words only; inherits reals_as_rational_cuts through evaluator. Fresh literal original proof replay."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "compileCorrectCall",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/Call1161-1220 and complete evaluate_ind Call minor: all ten premises/seven conclusions and exactly original body/exception-handler guarded IHs, retaining every argument/code tuple decomposition, actual body pair/exception, clock, handler identity/lookup/shape/original validity guard. Fixed transparent CallProperty spells full original predicate, no callerP or target compatibility. Full lookup_code_flds_ok yields actual target arguments/code and callee FEVERY. Source failures/NONE/Break/Continue/invalid shapes or bindings excluded solely by original no-Error. Body IH instantiated at actual decremented-clock callee state; faithful structs/WF invariants supply handler preconditions. Zero-clock TimeOut and terminal/exception propagation clear locals; return checks original return shape, handles tail/discarded/local/global targets. Global-map update neutrality derived from body global shape-map equality and original existing binding, no post-map premise. Handler source exception shape lookup and local validity give actual converted exception-shape/validity guards; original handler runs at restored caller locals with updated exception binding, map/fields/WF internally derived. Internal compiler equation maps optional handler program exactly; no changed executed evaluator or assumed target run. Canonical imported four-map owner/full roundtrip plus positive indexed words/Type0 host only. Fresh full/case/evaluate_ind/types closed kernelT. Whole program/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Full imported canonical-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "mapExt",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lookup extensionality."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "mapUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal map2/update commutation."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "updateNeutral",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lawful MlS update agrees internally with HOL equality, existing binding update neutral."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "everyUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
   }
 ]

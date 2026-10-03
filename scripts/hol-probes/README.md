@@ -7626,3 +7626,10 @@ Full Call/whole program/compiler correctness remain open.
 ### Signed native immediate reconstruction
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+
+`pan_structs_program_call_probe` captures full original `compile_correct`, its
+Call specialization and complete original `evaluate_ind`, quantified types and
+closed kernel truth. The Lean case keeps all ten premises/seven conclusions
+and exactly the original body/exception-handler guarded IHs. Actual target
+lookup, return comparisons/bindings and handler execution are derived internally.
+Whole program/compiler correctness remain open.
