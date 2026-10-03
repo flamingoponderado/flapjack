@@ -6072,3 +6072,7 @@ run_probe l3_machine_csr_codec_probeScript.sml l3_machine_csr_codec_probe.out \
 run_probe word_to_stack_state_rel_probeScript.sml word_to_stack_state_rel_probe.out \
   state_rel_definition state_rel_hypotheses state_rel_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_initial_state_rel_probeScript.sml word_to_stack_initial_state_rel_probe.out \
+  init_state_ok_definition init_state_ok_hypotheses init_state_ok_type initial_state_relation_statement initial_state_relation_proved initial_state_relation_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

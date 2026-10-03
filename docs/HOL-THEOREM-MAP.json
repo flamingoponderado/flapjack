@@ -69337,5 +69337,34 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .29.4: full original895-958/equation/hyp0/type freshly captured. Source state config num#beta, target beta, shared alpha words and gamma FFI preserved width/NeZero,C,F:Type. Every conjunct retained including repeated FFI equality, clock/GC/K I permute, flags/memory/domains/Handler-erased store/gc_fun_ok/termdep/be/Handler domain/fpreg/buffers. Compile lambda uses literal generic native compile_word_to_stack ac false k with Nil,bm0, original OPTION_MAP result and updated index/config; oracle lambda/prefix guards all n/full four EVERY conventions/stub exclusions/n=0bm count. Native spt domain insert union/order, all code-entry existential bs/i/bs2/i2/frame/prog compilation, bounds/prefix/lookup/defaultthe, both exact stubs, good_dimindex/8/2^width and buffer bounds, nonempty bitmap and totalHD4w, stack bound/frame conditional/nativewf/fullstackSizeRel, dropped current/rest stack/fullstackRel and EVEN/DIV/register-or-list local placement including trailing bound only in else. Nat modulo/propositional comparison/Option/list prefix translations compared. Map qualifier lists precisely both original fp-reg maps, both store maps and target regs traversed by relation; original locals/code/stack_size remain Spt, not fmap. Same-module witnesses name actual imported owners and genuine broad/finite roundtrips with no shadow carriers. GC callback inherits accepted canonical argument4/result3 translation. Full definition, no conjunction fragment/added success/range/targetrun or postrelation premise, no numerical FP semantics assertion and no executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InitializationStateRel.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initStateOk",
+    "hol_name": "init_state_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "store"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .28.2: complete original10373-10396/full equation/hyp0/type freshly captured. Full k>4/good_dimindex/width>=8, use_stack/store/alloc/gc_fun_ok, stack-space/register0Loc1, bitmap+1/dimword/prefix[4w]/stack-length/drop[Word0]/Handler-domain/data-buffer bounds, complete native compile_oracle lambda and EVERY postalloc/flat/stub exclusions/n0bm-count all preserved. Source oracle Nat×C/targetC and sharedpositiveword/FFI carriers compared. Native compile_word_to_stack ac false k Nil,bm0 and append projection unchanged. Canonical imported target state regs/store map translations have same-module genuine codec roundtrip; tree code remains Spt. No added range/runtime/alignment/run hypothesis. Inherits accepted gc_fun_ok canonical function translation; no numeric FP semantics assertion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InitializationStateRel.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initStateOkImpliesStateRel",
+    "hol_name": "init_state_ok_IMP_state_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .28.2: complete original10429-10466 literal proof replay kernel T/no hypotheses/free variables. Full ac/k/t/code/coracle and original premise conjunction: both native stub lookups, all source code entry allocation/flat conventions plus compile_prog/prefix/bound/targetcode existential witnesses, exact target domain union and full init_state_ok. Conclusion exact full stateRel ac k0 0 native makeInit t[]0, not fragment/postrelation assumption/extra compiler-success or target evaluation. Frame size agreement derived internally by projection of literal compile_prog definition; accepted total lookup_mapi gives actual initial frame map lookup. Bitmap nonempty/HD derive from original prefix, stack arithmetic from original drop singleton; all locals/stack/GC/compile/oracle/memory/code/bounds conjuncts proved. Source config Nat×C,targetC, sharedwidth/NeZero/universe0FFI; code remains native Spt. Named source fpRegs/store +targetregs/fpRegs/store use actual imported canonical owners, same-module genuine codecs, no shadow or vacuous witness. An explicit conclusion type ascription only names the original makeInit result owner; no type restriction. Proof-side full initialization relation theorem, not simulation/end-to-end correctness."
   }
 ]
