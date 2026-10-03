@@ -82858,5 +82858,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Equality decision uniqueness via Subsingleton.elim, no added comparison premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_target_ok",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/TargetOk.lean",
+    "lean_name": "riscv_target_ok",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison 2026-10-03 original477-498: full target_ok riscv_target, no added hypotheses. Full six enc_ok obligations retain skip length4, alignment4 and nonempty arbitrary ASM, both signed offset implications for Jump/JumpCmp every cmp and reg-or-imm/Call/Loc. Native fixed64 carrier and exact full target record/projection; all four projection consistency conjuncts retain memory-domain restriction, complete register function and five stateOk fields. Original fp_reg_count0 makes fp relation antecedents false without choosing omitted whole-ARB record field. No opcode/asmOK weakening, successful execution premise or target-run assumption. Inherits reals_as_rational_cuts via riscvTarget.next/NextRISCV/Run; SOUNDNESS item8 external rendering assumption, unchanged. Original literal full proof replay and Lean kernel proof provide regression evidence, not cross-language equivalence."
   }
 ]
