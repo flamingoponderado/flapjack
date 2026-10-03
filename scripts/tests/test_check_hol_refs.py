@@ -748,7 +748,8 @@ End
             self.assertIn("holFloatAbs", names)
 
     def test_bit_only_ieee_changed_width_or_duplicate_rejected(self):
-        for change in ("width", "duplicate", "namespace", "shadow", "theorem_shadow", "field"):
+        for change in ("width", "duplicate", "namespace", "shadow", "theorem_shadow", "field",
+                       "missing_binder"):
             with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
@@ -766,6 +767,12 @@ End
                     (root / "Flapjack/Shadow.lean").write_text("abbrev Local.holFp64Abs := Nat\n")
                 elif change == "theorem_shadow":
                     (root / "Flapjack/Shadow.lean").write_text("theorem Local.holFp64Abs : True := by trivial\n")
+                elif change == "missing_binder":
+                    # The HOL dimindex positivity binders are part of the pinned carrier.
+                    target = root / "Flapjack/Misc/BinaryIeee.lean"
+                    target.write_text(target.read_text().replace(
+                        "structure HolFloat (t : Nat) (w : Nat) [NeZero t] [NeZero w] where",
+                        "structure HolFloat (t : Nat) (w : Nat) where"))
                 else:
                     target = root / "Flapjack/Misc/BinaryIeee.lean"
                     target.write_text(target.read_text().replace("x.exponent ≠ 0", "x.exponent = 0"))

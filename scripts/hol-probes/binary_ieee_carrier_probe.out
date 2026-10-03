@@ -1,0 +1,51 @@
+float_to_real_def=∀(x :(τ, χ) float).
+  float_to_real x =
+  if x.Exponent = (0w :χ word) then
+    fsign x * ((2 :real) / (2 :real) pow INT_MAX (:χ)) *
+    (((&w2n x.Significand) :real) / (2 :real) pow dimindex (:τ))
+  else
+    fsign x * ((2 :real) pow w2n x.Exponent / (2 :real) pow INT_MAX (:χ)) *
+    ((1 :real) + ((&w2n x.Significand) :real) / (2 :real) pow dimindex (:τ))
+float_value_def=∀(x :(τ, χ) float).
+  float_value x =
+  if x.Exponent = (UINT_MAXw :χ word) then
+    if x.Significand = (0w :τ word) then Infinity else NaN
+  else Float (float_to_real x)
+float_is_nan_def=∀(x :(τ, χ) float).
+  float_is_nan x ⇔
+  case float_value x of Float v1 => F | Infinity => F | NaN => T
+float_is_signalling_def=∀(x :(τ, χ) float).
+  float_is_signalling x ⇔ float_is_nan x ∧ ¬word_msb x.Significand
+float_is_infinite_def=∀(x :(τ, χ) float).
+  float_is_infinite x ⇔
+  case float_value x of Float v1 => F | Infinity => T | NaN => F
+float_is_normal_def=∀(x :(τ, χ) float).
+  float_is_normal x ⇔
+  x.Exponent ≠ (0w :χ word) ∧ x.Exponent ≠ (UINT_MAXw :χ word)
+float_is_subnormal_def=∀(x :(τ, χ) float).
+  float_is_subnormal x ⇔
+  x.Exponent = (0w :χ word) ∧ x.Significand ≠ (0w :τ word)
+float_is_zero_def=∀(x :(τ, χ) float).
+  float_is_zero x ⇔
+  case float_value x of Float r => r = (0 :real) | Infinity => F | NaN => F
+float_is_finite_def=∀(x :(τ, χ) float).
+  float_is_finite x ⇔
+  case float_value x of Float v1 => T | Infinity => F | NaN => F
+float_negate_def=∀(x :(τ, χ) float). float_negate x = x with Sign := ¬x.Sign
+float_abs_def=∀(x :(τ, χ) float). float_abs x = x with Sign := (0w :word1)
+float_plus_infinity_def=float_plus_infinity (:τ # χ) =
+<|Sign := (0w :word1); Exponent := (UINT_MAXw :χ word);
+  Significand := (0w :τ word)|>
+float_plus_zero_def=POS0 =
+<|Sign := (0w :word1); Exponent := (0w :χ word);
+  Significand := (0w :τ word)|>
+float_top_def=FLT_MAX =
+<|Sign := (0w :word1); Exponent := (UINT_MAXw :χ word) − (1w :χ word);
+  Significand := (UINT_MAXw :τ word)|>
+float_plus_min_def=float_plus_min (:τ # χ) =
+<|Sign := (0w :word1); Exponent := (0w :χ word);
+  Significand := (1w :τ word)|>
+float_minus_infinity_def=float_minus_infinity (:τ # χ) = float_negate (float_plus_infinity (:τ # χ))
+float_minus_zero_def=NEG0 = float_negate POS0
+float_bottom_def=float_bottom (:τ # χ) = float_negate FLT_MAX
+float_minus_min_def=float_minus_min (:τ # χ) = float_negate (float_plus_min (:τ # χ))

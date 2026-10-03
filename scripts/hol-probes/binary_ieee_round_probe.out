@@ -1,0 +1,87 @@
+clear_flags_def=clear_flags =
+<|DivideByZero := F; InvalidOp := F; Overflow := F; Precision := F;
+  Underflow_BeforeRounding := F; Underflow_AfterRounding := F|>
+invalidop_flags_def=invalidop_flags = clear_flags with InvalidOp := T
+dividezero_flags_def=dividezero_flags = clear_flags with DivideByZero := T
+is_closest_def=∀(s :(α, β) float -> bool) (x :real) (a :(α, β) float).
+  is_closest s x a ⇔
+  a ∈ s ∧
+  ∀(b :(α, β) float).
+    b ∈ s ⇒ abs (float_to_real a − x) ≤ abs (float_to_real b − x)
+closest_such_def=∀(p :(α, β) float -> bool) (s :(α, β) float -> bool) (x :real).
+  closest_such p s x =
+  @(a :(α, β) float).
+    is_closest s x a ∧ ∀(b :(α, β) float). is_closest s x b ∧ p b ⇒ p a
+closest_def=(closest :((α, β) float -> bool) -> real -> (α, β) float) =
+closest_such (K T :(α, β) float -> bool)
+largest_def=largest (:τ # χ) =
+(2 :real) pow (UINT_MAX (:χ) − (1 :num)) / (2 :real) pow INT_MAX (:χ) *
+((2 :real) − ((2 :real) pow dimindex (:τ))⁻¹)
+threshold_def=threshold (:τ # χ) =
+(2 :real) pow (UINT_MAX (:χ) − (1 :num)) / (2 :real) pow INT_MAX (:χ) *
+((2 :real) − ((2 :real) pow SUC (dimindex (:τ)))⁻¹)
+round_def=∀(mode :rounding) (x :real).
+  (round mode x :(τ, χ) float) =
+  case mode of
+    roundTiesToEven =>
+      (let
+         (t :real) = threshold (:τ # χ)
+       in
+         if x ≤ -t then float_minus_infinity (:τ # χ)
+         else if x ≥ t then float_plus_infinity (:τ # χ)
+         else
+           closest_such (λ(a :(τ, χ) float). ¬word_lsb a.Significand)
+             (float_is_finite :(τ, χ) float -> bool) x)
+  | roundTowardPositive =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_bottom (:τ # χ)
+       else if x > t then float_plus_infinity (:τ # χ)
+       else closest {a | float_is_finite a ∧ float_to_real a ≥ x} x)
+  | roundTowardNegative =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_minus_infinity (:τ # χ)
+       else if x > t then FLT_MAX
+       else closest {a | float_is_finite a ∧ float_to_real a ≤ x} x)
+  | roundTowardZero =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_bottom (:τ # χ)
+       else if x > t then FLT_MAX
+       else closest {a | float_is_finite a ∧ abs (float_to_real a) ≤ abs x} x)
+float_some_qnan_def=∀(fp_op :(τ, χ) fp_op).
+  float_some_qnan fp_op =
+  (@(f :(τ, χ) fp_op -> (τ, χ) float).
+     (let
+        (qnan :(τ, χ) float) = f fp_op
+      in
+        float_is_nan qnan ∧ ¬float_is_signalling qnan)) fp_op
+float_round_def=∀(mode :rounding) (toneg :bool) (r :real).
+  (float_round mode toneg r :(τ, χ) float) =
+  (let
+     (x :(τ, χ) float) = (round mode r :(τ, χ) float)
+   in
+     if float_is_zero x then if toneg then NEG0 else POS0 else x)
+float_round_with_flags_def=∀(mode :rounding) (to_neg :bool) (r :real).
+  (float_round_with_flags mode to_neg r :flags # (τ, χ) float) =
+  (let
+     (x :(τ, χ) float) = (float_round mode to_neg r :(τ, χ) float) and
+     (a :real) = abs r;
+     (inexact :bool) = (float_value x ≠ Float r)
+   in
+     (clear_flags with
+      <|Overflow := (float_is_infinite x ∨ (2 :real) pow INT_MIN (:χ) ≤ a);
+        Underflow_BeforeRounding :=
+          (inexact ∧ a < (2 :real) / (2 :real) pow INT_MAX (:χ));
+        Underflow_AfterRounding :=
+          (inexact ∧
+           (float_round mode to_neg r :(τ, χ + unit) float).Exponent ≤₊
+           (n2w (INT_MIN (:χ)) :(χ + unit) word)); Precision := inexact|>,x))
+check_for_signalling_def=∀(l :(α, β) float list).
+  check_for_signalling l =
+  clear_flags with
+  InvalidOp := EXISTS (float_is_signalling :(α, β) float -> bool) l

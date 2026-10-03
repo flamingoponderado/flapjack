@@ -1,0 +1,15 @@
+load "binary_ieeeTheory";
+open HolKernel Parse boolLib binary_ieeeTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "float_add_def" float_add_def;
+val _ = capture "float_sub_def" float_sub_def;
+val _ = capture "float_mul_def" float_mul_def;
+val _ = capture "float_div_def" float_div_def;
+val _ = capture "float_mul_add_def" float_mul_add_def;
+val _ = capture "float_compare_def" float_compare_def;
+val _ = capture "float_less_than_def" float_less_than_def;
+val _ = capture "float_less_equal_def" float_less_equal_def;
+val _ = capture "float_greater_than_def" float_greater_than_def;
+val _ = capture "float_greater_equal_def" float_greater_equal_def;
+val _ = capture "float_equal_def" float_equal_def;
