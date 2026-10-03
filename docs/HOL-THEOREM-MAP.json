@@ -74299,5 +74299,110 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.3.x): original pan_simpProofScript.sml:137-150: !p s. FST (evaluate (p,s)) <> SOME Error ==> evaluate (seq_call_ret p,s) = evaluate (p,s). Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "retToTailCorrectHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "ret_to_tail_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:182-345: evaluate_ind instance of !prog s. FST (evaluate (prog,s)) <> SOME Error ==> evaluate (ret_to_tail prog,s) = evaluate (prog,s); assembled via evaluateIndHOL from the reviewed case pieces plus Seq/If/While/Call/DecCall cases using exactly the source induction hypotheses. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileSameState.lean",
+    "lean_name": "evaluateWhileNoErrorImpHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "evaluate_while_no_error_imp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:103-115: eval s e = SOME (ValWord w) /\\ w <> 0w /\\ s.clock <> 0 /\\ FST (evaluate (While e c,s)) <> SOME Error ==> FST (evaluate (c,dec_clock s)) <> SOME Error; ValWord w rendered as .val (.word w), eval as the exact evalHOLExact on s.toExact. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileSameState.lean",
+    "lean_name": "evalSeqAssocEqEvaluateHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "eval_seq_assoc_eq_evaluate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:163-170: evaluate (seq_assoc Skip p,s) = (res,t) ==> evaluate (p,s) = (res,t). Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileSameState.lean",
+    "lean_name": "evalSeqAssocNotErrorHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "eval_seq_assoc_not_error",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:172-178: FST (evaluate (p,s)) <> SOME Error ==> FST (evaluate (seq_assoc Skip p,s)) <> SOME Error. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileSameState.lean",
+    "lean_name": "compileCorrectSameStateHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "compile_correct_same_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:347-355: FST (evaluate (p,s)) <> SOME Error ==> evaluate (compile p,s) = evaluate (p,s); compile is panSimpCompileHOL (ret_to_tail (seq_assoc Skip p)). Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileSameState.lean",
+    "lean_name": "evaluateSeqSimpHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "evaluate_seq_simp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:357-362: evaluate (p,s) = (res,t) /\\ res <> SOME Error ==> evaluate (compile p,s) = (res,t). Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "compileCorrectHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:654-667 goal at comp = seq_assoc Skip, as the conclusion of the evaluate_ind instance: !prog s res s1 t. evaluate (prog,s) = (res,s1) /\\ res <> SOME Error /\\ state_rel s t t.code ==> ?t1. evaluate (seq_assoc Skip prog,t) = (res,t1) /\\ state_rel s1 t1 t1.code, with state_rel the reviewed stateRel (state_rel_def). The source goal's ctxt binder occurs nowhere in the formula (vacuous, unconstrained type) and is omitted, as documented beside the theorem. Proved by an untagged code-map simulation CodeSim over evaluateIndHOL; no target run, post-state relation or success is assumed. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
   }
 ]

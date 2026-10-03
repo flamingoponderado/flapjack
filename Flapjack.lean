@@ -660,6 +660,9 @@ import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
 import Flapjack.Pancake.Proofs.PanSimp.SeqAssocAssembly
 import Flapjack.Pancake.Proofs.PanSimp.RetToTailAssembly
+import Flapjack.Pancake.Proofs.PanSimp.CodeUpdate
+import Flapjack.Pancake.Proofs.PanSimp.CompileSameState
+import Flapjack.Pancake.Proofs.PanSimp.CompileCorrect
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
