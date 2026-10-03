@@ -25140,7 +25140,7 @@
       "WordSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.13) against loop_to_wordProofScript.sml:41-52. HOL state_rel s t = EX (len) with t.memory=s.memory, t.mdomain=s.mdomain, t.sh_mdomain=s.sh_mdomain, t.clock=s.clock, t.be=s.be, t.ffi=s.ffi, ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr), ALOOKUP (fmap_to_alist t.store) HeapLength = SOME (Word len), s.top_addr = s.base_addr + 2w*len, globals_rel s.globals t.store, code_rel s.code t.code. Lean loopToWordStateRelHOLExact over LoopSemStateFiniteExact/WordSemStateFiniteExact keeps the same existential length and all eleven conjuncts; ALOOKUP (fmap_to_alist t.store) key is the canonical HolFiniteMapExact lookup, CurrHeap/HeapLength are WordStore .currHeap/.heapLength, Word len is WordLocW.word (BitVec.ofNat width len), and 2w*len is (2 : BitVec width)*BitVec.ofNat width len. The named finite-map carriers are the eligible fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact); code is an Spt tree map and is not named. Same-module witnesses holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact and _WordSemStateFiniteExact re-export the canonical roundtrips."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03 (flapjack-pxn.18.5.9.13.1): original loop_to_wordProofScript41-52 and fresh inferred state_rel type/full typed definition in loop_to_word_state_word_witness_probe.out. Source s:(alpha,beta) loopstate and target t:(alpha,gamma,beta) wordstate retain independent configuration gamma, shared FFI beta and positive machine dimension alpha. Original existential len:alpha word is exactly len:BitVec width, used directly as WordLocW.word len in HeapLength and (2:BitVec width)*len in the top-address equation; no Nat witness/cast or additional hypothesis. All eleven original conjuncts retained: memory/mdomain/sh_mdomain/clock/be/FFI equality, original CurrHeap and HeapLength store observations, top_addr=base_addr+2w*len, complete globals_rel and code_rel. The finite-support relation qualifier names only eligible canonical globals/store fields; source ALOOKUP(fmap_to_alist store) uses reviewed lookup, code remains native Spt. Existing same-module canonical roundtrip witnesses unchanged. Local state_rel_IMP is not a DB export; the capture includes its literal source proof replay at the full independently typed carriers, alongside exported original state_rel_intro/state_rel_with_clock. Standard words_as_type_indexed_bitvec only translates original positive word dimensions; no new representation exception or source-equivalence claim."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -88431,6 +88431,434 @@
     ],
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-03: pinned binary_ieeeScript361-365, fresh original type and complete typed equation in binary_ieee_two_dimensions_probe.out. HOL (alpha # beta) itself -> real has two independent word-free dimensions. word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension(:w) to independent w:Nat/NeZero w. Literal formula (2^(UINT_MAX(:w)-1) / 2^INT_MAX(:w)) * (2 - inverse(2^(t + 1))) retains natural subtraction, multiplication/division grouping and SUC only in threshold precision. Native holUintMax w = 2^w-1 and holFloatBias w = 2^(w-1)-1 match UINT_MAX/INT_MAX; output is arbitrary Mathlib Real, no Rat restriction, word carrier, fixed dimension or added bound. reals_as_rational_cuts is the conservative reviewed IEEE-family marker, SOUNDNESS item 8; the qualifier does not establish independent HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Control.lean",
+    "lean_name": "comp_correct_MustTerminate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, MustTerminate case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor MustTerminate (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Control.lean",
+    "lean_name": "comp_correct_Seq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Seq case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Seq (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Control.lean",
+    "lean_name": "comp_correct_If",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, If case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor If (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Control.lean",
+    "lean_name": "comp_correct_Loop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Loop case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Loop (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Inst.lean",
+    "lean_name": "comp_correct_Inst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Inst case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Inst (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Skip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Skip case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Skip (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Alloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Alloc case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Alloc (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Install",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Install case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Install (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_FFI",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, FFI case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor FFI (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Call",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Call case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Call (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Return",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Return case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Return (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Raise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Raise case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Raise (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Break",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Break case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Break (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Continue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Continue case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Continue (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Store",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Store case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Store (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Assign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Assign case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Assign (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Tick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Tick case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Tick (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_CodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, CodeBufferWrite case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor CodeBufferWrite (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_DataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, DataBufferWrite case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor DataBufferWrite (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_Move",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Move case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Move (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_LocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, LocValue case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor LocValue (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_OpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, OpCurrHeap case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor OpCurrHeap (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Simple.lean",
+    "lean_name": "comp_correct_StoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, StoreConsts case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor StoreConsts (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Store.lean",
+    "lean_name": "comp_correct_ShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, ShareInst case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor ShareInst (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Store.lean",
+    "lean_name": "comp_correct_Get",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Get case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Get (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Store.lean",
+    "lean_name": "comp_correct_Set",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct, Set case piece. Per AGENTS case splitting, the conclusion is HOL's comp_correct statement at program constructor Set (CompCorrectAt, the literal HOL quantified body). The hypotheses are exactly the induction hypotheses evaluate_ind supplies for that constructor and nothing else. The piece is used by the assembled comp_correct; HOL's proof of this case uses the same data_inv/fact-producer lemmas. Kernel-checked with standard axioms only. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect.lean",
+    "lean_name": "comp_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-comp): HOL comp_correct (word_cseProof:3305-3793), the assembled theorem. Full statement: binders v v1 res s' data p' data' in HOL order, the five-conjunct premise (evaluate, flat_exp_conventions, data_inv, res != SOME Error, word_cse) and both conclusions, over the faithful wordSem evaluate, the reviewed dataInv and the tagged wordCse/flatExpConventions. Proved as in HOL by the tagged rebound evaluate_ind with its 26 cases discharged by the same-tagged case pieces in CompCorrect/. The word_cse_comp_correct probe captures the statement (0 hypotheses, typed). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect.lean",
+    "lean_name": "word_common_subexp_elim_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "word_common_subexp_elim_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-correct): HOL word_common_subexp_elim_correct (word_cseProof:3795-3804). Free variables p s res s1 are bound; the premise is the evaluate equation, flat_exp_conventions and res != SOME Error; the conclusion is the evaluate equation of wordCommonSubexpElim p. The proof is HOL's: comp_correct with empty_data (dataInvEmpty). The word_cse_comp_correct probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/LongArithmetic.lean",
+    "lean_name": "evaluateWInstLongMul",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of evaluate_wInst4688-5140 LongMul branch4790-4800. All five original source inst/every-var/max-var/argument-convention/full stateRel guards are retained, even when a guard becomes redundant after the original fixed register convention is derived. Full conclusion is existential actual native wInst run, entire source-post/target-post stateRel and stack length/space equations. Source success internally derives original word operands, complete source double-update and (for LongDiv) divisor nonzero/quotient bound. Actual native Reg1 load derives spill bounds and full operand relation; both result-register updates are derived using original stateRel register update laws with4<k from the original relation. No targetrun, desired final relation, narrowed register variable, extra successful operation or IH premise. WordLangInst source and HolInst target share positive alpha word width; generic host and FFI carriers remain independent. Fresh typed original kernel case specialization passed (proved=T, hypotheses=0), with shared alpha width and independent beta/gamma host/FFI types, not a literal local proof replay or cross-language equivalence claim. Five canonical relation map fields have local genuine source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item8), no new agreement assumption. Other original instruction cases/full constructor and compiler goal remain unfinished.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/LongArithmetic.lean",
+    "lean_name": "evaluateWInstLongDiv",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of evaluate_wInst4688-5140 LongDiv branch4776-4789. All five original source inst/every-var/max-var/argument-convention/full stateRel guards are retained, even when a guard becomes redundant after the original fixed register convention is derived. Full conclusion is existential actual native wInst run, entire source-post/target-post stateRel and stack length/space equations. Source success internally derives original word operands, complete source double-update and (for LongDiv) divisor nonzero/quotient bound. Actual native Reg1 load derives spill bounds and full operand relation; both result-register updates are derived using original stateRel register update laws with4<k from the original relation. No targetrun, desired final relation, narrowed register variable, extra successful operation or IH premise. WordLangInst source and HolInst target share positive alpha word width; generic host and FFI carriers remain independent. Fresh typed original kernel case specialization passed (proved=T, hypotheses=0), with shared alpha width and independent beta/gamma host/FFI types, not a literal local proof replay or cross-language equivalence claim. Five canonical relation map fields have local genuine source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item8), no new agreement assumption. Other original instruction cases/full constructor and compiler goal remain unfinished.",
+    "hol_line": 4688
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/InitialComposition.lean",
