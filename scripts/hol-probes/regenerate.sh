@@ -6225,6 +6225,17 @@ run_probe word_to_stack_comp_flat_probeScript.sml word_to_stack_comp_flat_probe.
   comp_correct_assign_statement comp_correct_assign_proved comp_correct_assign_hypotheses comp_correct_store_statement comp_correct_store_proved comp_correct_store_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_init_clock_probeScript.sml stack_remove_init_clock_probe.out \
+  store_list_neutral_statement store_list_neutral_hypotheses store_list_neutral_proved init_clock_statement init_clock_hypotheses init_clock_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_relation_probeScript.sml stack_remove_init_code_relation_probe.out \
+  init_code_relation_statement init_code_relation_hypotheses init_code_relation_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_pre_probeScript.sml stack_remove_init_code_pre_probe.out \
+  init_code_pre_definition init_code_pre_type init_code_pre_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe wordsem_inst_const_full_probeScript.sml wordsem_inst_const_full_probe.out \
   inst_const_full_statement inst_const_full_proved inst_const_full_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
@@ -6368,6 +6379,9 @@ run_probe lab_to_target_initializer_memory_separation_probeScript.sml lab_to_tar
   ISR1_statement ISR1_hypotheses ISR1_proved ISR12_statement ISR12_hypotheses ISR12_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_stack_heap_limit_probeScript.sml stack_remove_stack_heap_limit_probe.out \
+  stack_heap_limit_definition stack_heap_limit_type stack_heap_limit_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_initializer_domain_probeScript.sml lab_to_target_initializer_domain_probe.out \
   IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
   ISR16_statement ISR16_hypotheses ISR16_proved \
@@ -6399,3 +6413,8 @@ run_probe lprefix_lub_finite_prefix_chain_probeScript.sml lprefix_lub_finite_pre
   prefix_chain_lprefix_chain prefix_chain_lprefix_chain_types prefix_chain_lprefix_chain_hypotheses prefix_chain_lprefix_chain_proved \
   prefix_chain_FILTER prefix_chain_FILTER_types prefix_chain_FILTER_hypotheses prefix_chain_FILTER_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe list_last_probeScript.sml list_last_probe.out \
+  last_definition last_type last_hypotheses last_cons_statement last_cons_hypotheses last_cons_proved \
+  last_total_statement last_total_hypotheses last_total_proved \
+  "$hol_dir/src/list/src/listScript.sml" "$cake_dir/compiler/backend/proofs"

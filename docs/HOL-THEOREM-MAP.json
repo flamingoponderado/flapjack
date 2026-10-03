@@ -72378,6 +72378,311 @@
     "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha, arbitrary Boolean P and arbitrary list set; sole prefix_chain antecedent. IMAGE FILTER is exactly the existential preimage membership predicate. List.IsPrefix.filter proves each original prefix alternative for the same P; no decidability premise or membership restriction is added."
   },
   {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_inj_on_state",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "steps_inj_on_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1115-1119. ∀s1 s2. inj_on_state f s1 ∧ s1 ▷* s2 ⇒ inj_on_state f s2; f implicit with independent Option α → Option β carriers as in the tagged inj_on_state; ▷* is Steps = ReflTransGen Step. Proof by RTC induction with step_inj_on_state (HOL RTC_lifts_invariants)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "steps_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1179-1189 ([local]). ∀s1 s2. s1 ▷* s2 ⇒ inj_on_state f s1 ⇒ map_state f s1 ▷* map_state f s2; f implicit; RTC induction with step_MAP_INJ and step_inj_on_state as HOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "pmov_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1257-1292. ∀p. ⊢ p ∧ inj_on_state f p ⇒ pmov (map_state f p) = map_state f (pmov p); ⊢ is the tagged wf; f implicit; DecidableEq on both register carriers is the executable pmov's requirement (HOL equality). Proof by pmov's own functional induction (HOL pmov_ind) with fstep_dstep, dsteps_steps, wf_steps, steps_inj_on_state, fstep_MAP_INJ."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "parmove_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1294-1333. (let ls1 = MAP FST ls ++ MAP SND ls in ∀x y. MEM x ls1 ∧ MEM y ls1 ∧ f x = f y ⇒ x = y) ∧ windmill ls ⇒ parmove (MAP (f ## f) ls) = MAP (OPTION_MAP f ## OPTION_MAP f) (parmove ls); let kept literally; ## as Prod.map, OPTION_MAP as Option.map; f ls implicit. Proof as HOL via wf_init, pmov_MAP_INJ, pmov_final."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "path_imp_mem",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "path_imp_mem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:81-87 ([local]). path (x::y) ⇒ ¬NULL y ⇒ MEM (SND x) (MAP FST y); NULL y as y = []; x y implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "path_imp_mem2",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "path_imp_mem2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:89-100 ([local]). path x ⇒ ∀y. MEM y (MAP SND x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP FST x); LAST is the tagged holLast port of HOL LAST_DEF; x implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "NoRead_path",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "NoRead_path",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:102-117 ([local]). ∀σ. path σ ∧ windmill σ ∧ LENGTH σ ≥ 2 ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ)); the local overload NoRead μ dn = ¬MEM dn (MAP SND μ) unfolded; HD/TL/LAST as holHd/List.tail/holLast."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "LAST_DEF",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holLast",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackHeapLimitOk.lean",
+    "lean_name": "stackHeapLimitOk",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_heap_limit_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source/body/type comparison2026-10-03 original2906-2911: actual native state then PAIR(stack_lim,heap_lim), all original parameters retained, exactly three original conjunctions. FLOOKUP store HeapLength=SOME(Word(n2w heap_lim*bytes_in_word)) retains modular word construction/multiplication in original order; independent natural heap_lim*(dimindex/8)<dimword becomes heapLimit*(width/8)<2^width without word-modular capacity comparison; stack_lim=LENGTH actual native List stack. No extra good_dimindex, register, separation, evaluation, bound or relation hypothesis. Owning imported StackSemStateFiniteExact canonical regs/fpRegs/store (code still Spt and untouched), same-module genuine imported broad/exact roundtrip and positive-word qualifier. No state duplicate, raw map or BEq assumption. Fresh complete original kernel definition/generic type/zero stored hypotheses3rows; proof-side predicate used by missing full init_prop/init_code_thm, not whole initializer/compiler correctness or executed change."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holLastCons",
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "LAST_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelGetVar.lean",
+    "lean_name": "stateRelGetVarImp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_get_var_imp",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2868-2882: arbitrary f/f'/lens/extra/x/v; premises state_rel, get_var (2*x) s = SOME v, x<k; conclusion FLOOKUP t.regs x = SOME v as canonical regs lookup. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelGetVar.lean",
+    "lean_name": "stateRelGetVarImp'",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_get_var_imp'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2884-2893: EVEN n as n % 2 = 0, n DIV 2 < k; both get_vars are the native WordSem/StackSem lookups. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelGetVar.lean",
+    "lean_name": "stateRelGetVarImp2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_get_var_imp2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2895-2915: extra=0, ~(x<k); conclusion EL (t.stack_space + (f + k - (x+1))) t.stack = v with HOL total EL as holEl. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocSimulation.lean",
+    "lean_name": "stateRelSetStore0",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_store_0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1600-1611: frames 0/0, arbitrary len/extra/w; both stores receive the same AllocSize entry via native setStore. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocSimulation.lean",
+    "lean_name": "allocAlt",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_alt",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2075-2101: premise FST (alloc c names s) <> SOME Error; conclusion is the full nested case expression with (SOME Error, s) in failing branches and push_env env NONE s with <|locals := LN; locals_size := SOME 0|> (record update of the pushed state, HOL application binds tighter than with); s carrier Nat x C as HOL. Imported canonical fpRegs/store translation with same-module witness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "readBitmapNotEmpty",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "read_bitmap_not_empty",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1613-1620: native readBitmap success implies nonempty input; arbitrary word list and result."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "n2wLsr1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "n2w_lsr_1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1622-1627: n < dimword as n < 2^width; n2w n >>> 1 with a Nat shift amount equals n2w (n DIV 2)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "handlerBitmapProps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "handler_bitmap_props",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1629-1638: good_dimindex premise; read_bitmap (4w::stack) = SOME [F;F] for arbitrary stack."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "encStackLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "enc_stack_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1640-1690: HOL free k/len explicit; quantified bs' occurs nowhere in the statement and is omitted (vacuous); all five premises (good_dimindex, LENGTH bs + 1 < dimword, abs_stack success, 1 <= LENGTH bs, HD bs = 4w with HOL total HD as holHd, stack_rel_aux) and conclusion enc_stack bs sstack = SOME (enc_stack wstack) retained; one word dimension as the HOL conclusion forces."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "impEncStack",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "IMP_enc_stack",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1692-1700: state_rel ac k 0 0 s1 t1 lens 0 implies native StackSem enc_stack of DROP stack_space equals WordSem enc_stack. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "decStackLemma1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "dec_stack_lemma1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1827-1960: HOL free k/len explicit; premises good_dimindex, 1 <= LENGTH bs, HD bs = 4w (holHd), abs_stack, stack_rel_aux, WordSem dec_stack success; full existential conclusion (StackSem dec_stack success, abs_stack of decoded stacks, stack_rel_aux, LIST_REL abs_frame_eq as List.Forall2) retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "decStackLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "dec_stack_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 1962-1995: HOL free k/lens/x0/x explicit; all eight premises including the unused enc_stack and LENGTH guards retained; t1.store ' Handler is holFapply; full existential conclusion (dec_stack success, stack_space + LENGTH yy = LENGTH stack, stack_rel of decoded stack). Only the StackSem store is a traversed finite map."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/GcSimulation.lean",
+    "lean_name": "gcStateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "gc_state_rel",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2045-2073: native WordSem gc success and state_rel 0 0; existential native StackSem gc success, state_rel of (s2 with locals := LN), equal stack length and stack_space. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocStateRel.lean",
+    "lean_name": "allocImpAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_IMP_alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2131-2318: HOL free c/names/k/f/f'/lens/envs explicit; domain membership as sptDomain, EVEN as % 2 = 0; both state_rel premises (frame f and pushed frame 0 with f'::lens), cut_envs success, res <> SOME Error retained; full existential with the if res = NONE branch (state_rel f f', equal length/stack_space) and the NotEnoughSpace/Halt (Word 1w)/clock/ffi branch. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocStateRel.lean",
+    "lean_name": "wordGcEmptyFrame",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_gc_empty_frame",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2320-2332 region (word_gc_empty_frame): arbitrary s/x/y/n with native gc and pop_env; conclusion y.locals = LN and gc s = SOME (y with <|locals := s.locals; locals_size := s.locals_size|>). Generic config carrier as in HOL; imported canonical fpRegs/store translation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocStateRel.lean",
+    "lean_name": "interEqEmpty2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "inter_eq_empty_2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source inter_eq_empty_2: domain t = {} as the empty characteristic predicate of sptDomain implies native sptInter s t = LN, for arbitrary (not necessarily wf) trees and independent value types as HOL."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/AllocStateRel.lean",
+    "lean_name": "allocImpAlloc2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "alloc_IMP_alloc2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2334-2380: HOL free c/names/k/lens explicit; premises alloc, state_rel 0 0, both cutset domains empty, res <> SOME Error; full existential conclusion with both result branches as HOL. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
     "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
     "lean_name": "sptDomainFromList2",
     "hol_path": "cakeml/misc/miscScript.sml",
