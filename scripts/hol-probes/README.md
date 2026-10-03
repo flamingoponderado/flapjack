@@ -6348,3 +6348,5 @@ do not claim full Run/Next or compiler correctness.
 
 
 `stack_code_bitmaps_alloc_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Alloc specialization. Native rejected dispatch and actual allocation/GC results derive count zero from full alloc_const, retaining all three original existential conclusions. Whole evaluator assembly remains open.
+
+`stack_remove_copy_loop_full_probeScript.sml` replays the complete literal original `copy_loop_thm` proof (1334–1471), retaining every original premise, arbitrary bitmap recursion, clock allowance, temporary-register alternative and full framed memory result. Two rows capture its full statement and kernel proof success. The native Lean theorem derives execution by the source induction and accepted full CopyEach theorem. This proof-only slice makes no executed compiler parity claim.

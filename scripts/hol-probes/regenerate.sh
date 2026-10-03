@@ -5953,3 +5953,7 @@ run_probe misc_find_index_shift_probeScript.sml misc_find_index_shift_probe.out 
   find_index_shift find_index_shift_types find_index_shift_hypotheses \
   first nonzero shift duplicate empty missing large strings \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_copy_loop_full_probeScript.sml stack_remove_copy_loop_full_probe.out \
+  copy_loop_statement copy_loop_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

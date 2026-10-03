@@ -6038,6 +6038,12 @@
       "sha256": "ad942fc90bf41621dcd05e0ab639ae360ade0e16ef9514f35c729cedb1868d3a"
     },
     {
+      "bytes": 697,
+      "out": "stack_remove_copy_loop_full_probe.out",
+      "rows": 2,
+      "sha256": "5ba18837caaf40a75e7ff016d3d0626b897b9c388628f4352d205106be88f44c"
+    },
+    {
       "bytes": 18738,
       "out": "stack_remove_copy_loop_probe.out",
       "rows": 34,
@@ -6416,10 +6422,10 @@
       "sha256": "5ed33e13f64a4972311c80750d1740ddc36c6425e43153086eebc526220b9dc4"
     },
     {
-      "out": "stackprops_code_bitmaps_probe.out",
-      "sha256": "51794ed80ebcceb93499995ce8c28281856ce12e8e2e8235be444c6bd53672ea",
       "bytes": 1212,
-      "rows": 2
+      "out": "stackprops_code_bitmaps_probe.out",
+      "rows": 2,
+      "sha256": "51794ed80ebcceb93499995ce8c28281856ce12e8e2e8235be444c6bd53672ea"
     },
     {
       "bytes": 267,
