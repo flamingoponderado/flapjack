@@ -6265,3 +6265,5 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 `stack_remove_memory_subset_probeScript.sml` replays the complete literal original generic separated-graph domain inclusion proof. Arbitrary address/value types, functions/domains and frame retained. Two rows capture the full statement and proof success.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
+
+`stack_remove_comp_call_full_probeScript.sml` replays all three original scoped Call proofs and assembles the complete Call constructor across arbitrary return/handler options, using exactly their guarded source IHs. Eight rows capture the three complete branch statements/proof successes and the full assembled statement/proof success; no full `comp_correct` is assumed. The branch source proof tactics remain the reviewed originals; assembly uses direct matching and top-level implication currying rather than proof search.

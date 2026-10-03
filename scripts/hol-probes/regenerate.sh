@@ -5910,3 +5910,8 @@ run_probe lab_to_target_shmem_names_probeScript.sml lab_to_target_shmem_names_pr
   word8_names narrow_names wide_names extcall_prefix all_ops ffi_only empty \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_full_probeScript.sml stack_remove_comp_call_full_probe.out \
+  cc_call_tail_statement cc_call_tail_proved cc_call_return_none_statement cc_call_return_none_proved \
+  cc_call_return_handler_statement cc_call_return_handler_proved cc_call_full_statement cc_call_full_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

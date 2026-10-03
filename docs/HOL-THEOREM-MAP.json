@@ -67993,5 +67993,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-copy-each), stack_removeProofScript.sml1250-1332: full original pattern induction, source successful copy_words_for_pattern and all original premises retained (distinct [1,2,3,t1,t2], dm equality, good_dimindex, all four register reads, d subset dm, word_list MAP Word bs * rest * memory m d). Result derives existential extra clock/y/target memory, native NONE evaluation, complete original state update with sentinel/non-sentinel temporary-register alternatives, and same separated memory frame for source output. Native Boolean mdomain denotes its true predicate set, as in reviewed native state relation. Arbitrary positive width with original good_dimindex, arbitrary compiler/FFI carriers, lists, functions and predicate frames remain; no target execution/read/postrelation premise or added width/range/alias condition. Source iteration heap derives target load/domain and accepted generic memory_write supplies frame transition; exact source low bit matches native Test. Owning imported StackSemStateFiniteExact and canonical regs/fpRegs/store codec witness reviewed, with no duplicate owner; Spt code untouched. Words qualifier records only type-indexed positive BitVec/FFI Type translation. Kernel source induction assembles clock allowance and final map updates, no native_decide. The native evaluator closure inherits the reviewed reals_as_rational_cuts FP real carrier (SOUNDNESS item 8), even though this body executes only integer instructions; no claim of full evaluator carrier independence.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Call.lean",
+    "lean_name": "compCorrectCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-call), full original Call constructor1784-1931 of comp_correct1481-1493. Arbitrary return/handler AST options and all destination/state/result/compiler parameters retained. The original source evaluation/nonError/full stateRel/regBound premises and full target existential/extra clock/evaluation/all-result postcondition remain. Match-indexed calleeIH/returnIH/handlerIH are exactly the three reviewed source-branch IHs: actual successful source callee lookup (ordinary regs for tail or link-erased for returning), tail handlerNONE/nonzero clock; returning nonzero clock/callee entry; successful matching returnLoc continuation or matching exceptionLoc handler. These are conditional on ret/handler AST options, not universally across unrelated source states, programs or current Call runs. Full option assembly applies the already reviewed three original-case proofs, eliminates dependent result matches without statement weakening, and derives every target execution and complete26field postrelation/abnormal FFI result. No current-run simulation, target success or output relation assumption. Actual imported canonical StackSemStateFiniteExact regs/fpRegs/store owner and genuine local broad/exact codec checked; Spt code/list carriers unchanged. Word/FFI positive BitVec/Type translation only. Native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, including arbitrary callees. Full Call constructor only, not full comp_correct/pass/whole compiler theorem."
   }
 ]
