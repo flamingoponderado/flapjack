@@ -1,0 +1,68 @@
+asm_fetch_align_dm=asm_fetch (align_dm (s :(α, β, γ) labSem$state)) = asm_fetch s
+asm_fetch_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+asm_fetch_align_dm_hypotheses=0
+asm_fetch_align_dm_proved=T
+read_reg_align_dm=(read_reg (n :num) (align_dm (s :(α, β, γ) labSem$state)) :α word_loc) =
+(read_reg n s :α word_loc)
+read_reg_align_dm_types=(n :num)::num;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+read_reg_align_dm_hypotheses=0
+read_reg_align_dm_proved=T
+upd_reg_align_dm=upd_reg (x :num) (y :α word_loc) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (upd_reg x y s)
+upd_reg_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(y :α word_loc)::α word_loc;(x :num)::num;
+upd_reg_align_dm_hypotheses=0
+upd_reg_align_dm_proved=T
+upd_mem_align_dm=upd_mem (x :α word) (y :α word_loc) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (upd_mem x y s)
+upd_mem_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(y :α word_loc)::α word_loc;(x :α word)::α word;
+upd_mem_align_dm_hypotheses=0
+upd_mem_align_dm_proved=T
+binop_upd_align_dm=binop_upd (x :num) (y :binop) (z :α word) (w :α word)
+  (align_dm (s :(α, β, γ) labSem$state)) = align_dm (binop_upd x y z w s)
+binop_upd_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(w :α word)::α word;(z :α word)::α word;(y :binop)::binop;(x :num)::num;
+binop_upd_align_dm_hypotheses=0
+binop_upd_align_dm_proved=T
+reg_imm_align_dm=(reg_imm (r :α reg_imm) (align_dm (s :(α, β, γ) labSem$state)) :α word_loc) =
+(reg_imm r s :α word_loc)
+reg_imm_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(r :α reg_imm)::α reg_imm;
+reg_imm_align_dm_hypotheses=0
+reg_imm_align_dm_proved=T
+assert_align_dm=assert (b :bool) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (assert b s)
+assert_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(b :bool)::bool;
+assert_align_dm_hypotheses=0
+assert_align_dm_proved=T
+asm_fetch_align_sdm=asm_fetch (align_sdm (s :(α, β, γ) labSem$state)) = asm_fetch s
+asm_fetch_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+asm_fetch_align_sdm_hypotheses=0
+asm_fetch_align_sdm_proved=T
+read_reg_align_sdm=(read_reg (n :num) (align_sdm (s :(α, β, γ) labSem$state)) :α word_loc) =
+(read_reg n s :α word_loc)
+read_reg_align_sdm_types=(n :num)::num;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+read_reg_align_sdm_hypotheses=0
+read_reg_align_sdm_proved=T
+upd_reg_align_sdm=upd_reg (x :num) (y :α word_loc) (align_sdm (s :(α, β, γ) labSem$state)) =
+align_sdm (upd_reg x y s)
+upd_reg_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(y :α word_loc)::α word_loc;(x :num)::num;
+upd_reg_align_sdm_hypotheses=0
+upd_reg_align_sdm_proved=T
+upd_mem_align_sdm=upd_mem (x :α word) (y :α word_loc) (align_sdm (s :(α, β, γ) labSem$state)) =
+align_sdm (upd_mem x y s)
+upd_mem_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(y :α word_loc)::α word_loc;(x :α word)::α word;
+upd_mem_align_sdm_hypotheses=0
+upd_mem_align_sdm_proved=T
+binop_upd_align_sdm=binop_upd (x :num) (y :binop) (z :α word) (w :α word)
+  (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (binop_upd x y z w s)
+binop_upd_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(w :α word)::α word;(z :α word)::α word;(y :binop)::binop;(x :num)::num;
+binop_upd_align_sdm_hypotheses=0
+binop_upd_align_sdm_proved=T
+reg_imm_align_sdm=(reg_imm (r :α reg_imm) (align_sdm (s :(α, β, γ) labSem$state)) :α word_loc) =
+(reg_imm r s :α word_loc)
+reg_imm_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(r :α reg_imm)::α reg_imm;
+reg_imm_align_sdm_hypotheses=0
+reg_imm_align_sdm_proved=T
+assert_align_sdm=assert (b :bool) (align_sdm (s :(α, β, γ) labSem$state)) =
+align_sdm (assert b s)
+assert_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(b :bool)::bool;
+assert_align_sdm_hypotheses=0
+assert_align_sdm_proved=T

@@ -81060,5 +81060,387 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignDm",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_dm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 repaired full source comparison labProps441-473/870-902: canonical holByteAligned from reviewed Misc.Alignment, exact original aligned(LOG2(dimindex DIV8)) with unconstrained holLOG2 0 retained at widths below8. Earlier Nat.log2 body incorrectly specialized that unconstrained case and is replaced, with no extra good_dimindex or width lower-bound premise. Both original eighteen-field const conjunctions and arbitrary-clock update equalities retained; native fully qualified LabSem.State positive width/C/FFI carriers and Bool set intersection. Fresh original six fulltypes/hyp0/kernelT capture. Word qualifier permits only standard positive width/Type0 translation. Full memory/evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignDmConst",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_dm_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 repaired full source comparison labProps441-473/870-902: canonical holByteAligned from reviewed Misc.Alignment, exact original aligned(LOG2(dimindex DIV8)) with unconstrained holLOG2 0 retained at widths below8. Earlier Nat.log2 body incorrectly specialized that unconstrained case and is replaced, with no extra good_dimindex or width lower-bound premise. Both original eighteen-field const conjunctions and arbitrary-clock update equalities retained; native fully qualified LabSem.State positive width/C/FFI carriers and Bool set intersection. Fresh original six fulltypes/hyp0/kernelT capture. Word qualifier permits only standard positive width/Type0 translation. Full memory/evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignDmWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_dm_with_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 repaired full source comparison labProps441-473/870-902: canonical holByteAligned from reviewed Misc.Alignment, exact original aligned(LOG2(dimindex DIV8)) with unconstrained holLOG2 0 retained at widths below8. Earlier Nat.log2 body incorrectly specialized that unconstrained case and is replaced, with no extra good_dimindex or width lower-bound premise. Both original eighteen-field const conjunctions and arbitrary-clock update equalities retained; native fully qualified LabSem.State positive width/C/FFI carriers and Bool set intersection. Fresh original six fulltypes/hyp0/kernelT capture. Word qualifier permits only standard positive width/Type0 translation. Full memory/evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignSdm",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 repaired full source comparison labProps441-473/870-902: canonical holByteAligned from reviewed Misc.Alignment, exact original aligned(LOG2(dimindex DIV8)) with unconstrained holLOG2 0 retained at widths below8. Earlier Nat.log2 body incorrectly specialized that unconstrained case and is replaced, with no extra good_dimindex or width lower-bound premise. Both original eighteen-field const conjunctions and arbitrary-clock update equalities retained; native fully qualified LabSem.State positive width/C/FFI carriers and Bool set intersection. Fresh original six fulltypes/hyp0/kernelT capture. Word qualifier permits only standard positive width/Type0 translation. Full memory/evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignSdmConst",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 repaired full source comparison labProps441-473/870-902: canonical holByteAligned from reviewed Misc.Alignment, exact original aligned(LOG2(dimindex DIV8)) with unconstrained holLOG2 0 retained at widths below8. Earlier Nat.log2 body incorrectly specialized that unconstrained case and is replaced, with no extra good_dimindex or width lower-bound premise. Both original eighteen-field const conjunctions and arbitrary-clock update equalities retained; native fully qualified LabSem.State positive width/C/FFI carriers and Bool set intersection. Fresh original six fulltypes/hyp0/kernelT capture. Word qualifier permits only standard positive width/Type0 translation. Full memory/evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignSdmWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_with_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 repaired full source comparison labProps441-473/870-902: canonical holByteAligned from reviewed Misc.Alignment, exact original aligned(LOG2(dimindex DIV8)) with unconstrained holLOG2 0 retained at widths below8. Earlier Nat.log2 body incorrectly specialized that unconstrained case and is replaced, with no extra good_dimindex or width lower-bound premise. Both original eighteen-field const conjunctions and arbitrary-clock update equalities retained; native fully qualified LabSem.State positive width/C/FFI carriers and Bool set intersection. Fresh original six fulltypes/hyp0/kernelT capture. Word qualifier permits only standard positive width/Type0 translation. Full memory/evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "asmFetchAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "asm_fetch_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive asm_fetch alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "readRegAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "read_reg_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive read_reg alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "updRegAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "upd_reg_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive upd_reg alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "updMemAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "upd_mem_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive upd_mem alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "binopUpdAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "binop_upd_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive binop_upd alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "regImmAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "reg_imm_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive reg_imm alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "assertAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "assert_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive assert alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "asmFetchAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "asm_fetch_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive asm_fetch alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "readRegAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "read_reg_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive read_reg alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "updRegAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "upd_reg_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive upd_reg alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "updMemAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "upd_mem_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive upd_mem alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "binopUpdAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "binop_upd_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive binop_upd alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "regImmAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "reg_imm_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive reg_imm alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentPrimitives.lean",
+    "lean_name": "assertAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "assert_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps475-517/904-946 full unconditional primitive assert alignment law. Native canonical full qualified LabSem.State generic positive width/C/FFI, source x/y/z/w/r/b types retained. Original read_reg is overload lambda r s.s.regs r at labSemScript77, rendered directly as regs. Native actual asmFetch/register/memory/bitop/operand/assert operations unchanged; exact observation equality or transition commutation as in source, no width/good_dimindex/success/poststate premise. All binop and reg_imm constructor cases retained. Word qualifier records only standard positive-width/Type0 carrier translation. Fresh original fulltype/hyp0/kernelT in lab_props_alignment_primitives_probe.out; full evaluate/refinement alignment remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Return.lean",
+    "lean_name": "compCorrectReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "hol_line": 5756,
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead .27.1.1.10: original full motive5719-5751 and Return6494-6585, entire Seq.Simulation with all original source run/nonerror/fullstateRel/postallocation conventions/flat/nativecompile/bitmap size-prefix/labels/maxVar hypotheses and quantified contexts. Derives successful Loc getVar/getVars from source nonerror, EVEN register and canonical GENLIST one-based even values from conventions, release bound from maxVar+frame relation including frame0, then actual wReg1 load, SeqStackFree and Ret with zero added clock. Full flushed-source stateRel k0 0 with extra LENGTH ys-(k-1), every returned physical register and remaining stack slot proved; stackSizeRel maximum/option/stack size and complete stackRel preserved. No extra bounds, target run, postrelation or placement hypothesis on full case; countBound is case-local infrastructure derived internally. Five named canonical map fields use actual imported source/target owners and genuine same-module roundtrips; HOL List/Spt unchanged, positive BitVec/NeZero width and FFI Type0 standard translation only. Inherits evaluator reals_as_rational_cuts assurance, no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterTwo.lean",
+    "lean_name": "evaluateWStackLoadWReg2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_wReg2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 bead11.1: full original local evaluate_wStackLoad_wReg2 word_to_stackProofScript.sml4478-4510, four original wReg2 tuple/EVEN/source get_var/full state_rel premises and ALL nine actual target run/clock/bitmap/full state_rel/stack length/space/non-k+1 get_var/additive word_exp/exact loaded value conclusions retained. Arbitrary source payload Word or Loc, Nat registers/frame slots/lens, positive shared word width and config/FFI host types; no maxVar/success/range/postrelation/targetrun guard added. wReg2 below-k branch empty load derives physical register lookup; spill branch derives bound and exact target stack value from original full locals relation/source lookup, actual StackLoad writes k+1. Scratch stateRel update uses accepted stateRel_setVar_of_ge; every other register and word_exp(Op Add[Var r;Const c]) are preserved, including missing/Loc/Word values and all constants, by exact canonical lookup update and literal expression equations. Genuine same-module codecs reexport actual imported canonical source fpRegs/store and target regs/fpRegs/store owners; Spt/List unchanged. Fresh original local statement and unchanged HOL proof replay from pinned source, closed hyp0, original wReg2 and stack-load definitions captured. No executable path change, no HOL-to-Lean equivalence/full case or pass completion. Inherits reals_as_rational_cuts from the source/target state relation evaluator assurance limit.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectWhile.lean",
+    "lean_name": "compileCorrectWhile",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/While1062-1089 and faithful panSem evaluate_ind three While minors: original ten premises/seven conclusions and precisely all three guarded IHs. WhileProperty is transparent spelling of full original all10/7 predicate, not a caller-supplied predicate. Body IH binds original v2/v11/word and retains eval SOME v2, v2=Val v11, v11=Word word, word!=0, source.clock!=0; each recursive loop IH retains those plus actual (res,s1)=evaluate(body,dec_clock s), and original SOME v1/v1=Continue or NONE guard. Original zero-word termination, clock-zero timeout with empty locals, body NONE/Continue recursion, Break-to-NONE and propagated Error/TimeOut/Return/Exception/FinalFFI outcomes covered. Error branches excluded only by original no-Error. Full expression theorem supplies target condition, converter preserves clock/commutes dec_clock, full guarded body IH supplies actual target body and all postconditions. Original structs/code and WF-shape evaluation invariants derive all next loop-state preconditions internally; source-result NONE/Continue discharges original local-map preservation guard. Break preserves body fields/maps and NONE result predicates; terminal converted values propagated exactly. No extra target run/clock/postmap/state compatibility or unguarded IH. Imported canonical four-map state/full two-way witness and positive indexed words/Type0 host translation only. Fresh original full/case/induction statements and binder types closed/kernelT reviewed; broader full program/executed compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectWhile.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem5",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "aligned_bit_one",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL67-72 retains the sole aligned2 premise and fixed word64 c. Exact holAligned/holAlign slice clears bit1. HOL free c is explicitly bound in Lean; conclusion negated bit is getLsbD1=false. No target-state or execution premise. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem8",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "singleton_or",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL82-86 retains every Boolean b,x,y and fixed word64 singleton v2w conversion. HOL Boolean equality between propositions is Lean iff; x OR y is Bool disjunction and word OR is BitVec bitwise OR. HOL free variables are explicit Lean binders. No added premise. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem9",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "carry_widen",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL88-100 retains both quantified word64 operands and BOTH conjunctions, including carry-in one. w2n is toNat; w2w to word65 is zero-extending setWidth65, <=+ is unsigned ule=true, and the numeric/word threshold is2^64. No operand bounds or target-run premise supplied; width bounds are internal carrier facts. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "mul_long",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "mul_long",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original120-130 retains both universally quantified word64 operands and fixed word128 unsigned product, then original127..64 extraction to word64. HOL w2n/n2w are toNat/ofNat64, DIV2^64 is natural division, w2w to128 is zero-extending setWidth128, and inclusive127..64 is extractLsb64 length64. Product bound derived internally from64-bit carriers; no added operand/overflow/target premise. Fresh unchanged original local proof replay/full binder types, actual word128 product and word64 result, hyp0 and EQT_INTRO T in riscv_target_wide_arithmetic_probe.out. Full kernel proof and generic consumers; not whole riscv_encoder_correct."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "ror",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "ror",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original147-160 retains arbitrary word64 w and natural n and EXACT sole n<64 premise. Original left shift64-n OR logical right shiftn equals word rotate-rightn, represented by BitVec shifts/or/rotateRight. Rotation bound retained, no compiler/target premise. Fresh unchanged original local proof replay/full binder types, actual word128 product and word64 result, hyp0 and EQT_INTRO T in riscv_target_wide_arithmetic_probe.out. Full kernel proof and generic consumers; not whole riscv_encoder_correct."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "arithUpdAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "arith_upd_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "fpUpdAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "fp_upd_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open. Native FP imports inherit reals_as_rational_cuts assumption of SOUNDNESS item8, including sqrt cut; no full real-number closure or HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "addrAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "addr_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "arithUpdAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "arith_upd_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "fpUpdAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "fp_upd_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open. Native FP imports inherit reals_as_rational_cuts assumption of SOUNDNESS item8, including sqrt cut; no full real-number closure or HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentOperations.lean",
+    "lean_name": "addrAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "addr_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelRegisterUpdate.lean",
+    "lean_name": "stateRelSetVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: original2930-2951 retains full state_rel, x<k and simultaneous source set_var(2*x)/target set_var x, arbitrary extra/value/all state fields. Canonical five finite-map fields and positive width translation as qualified. Spt locals insertion preserves wf and exact lookup; evenness derives unchanged register identities. Inherited reals_as_rational_cuts remains unchanged; no numerical FP claim. Fresh original statement and literal proof replay passed with zero hypotheses; qualification records only the named translations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ConstantInstruction.lean",
+    "lean_name": "evaluateConstInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_const_inst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ConstantInstruction.lean",
+    "lean_name": "evaluateConstInstClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_const_inst_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
   }
 ]

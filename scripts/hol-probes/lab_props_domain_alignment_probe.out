@@ -1,0 +1,51 @@
+align_dm_def=∀(s :(α, γ, 'ffi) labSem$state).
+  align_dm s =
+  s with mem_domain := s.mem_domain ∩ (byte_aligned :α word -> bool)
+align_dm_def_types=(s :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;
+align_dm_def_hypotheses=0
+align_dm_def_proved=T
+align_dm_const=(align_dm (s :(α, β, γ) labSem$state)).clock = s.clock ∧
+(align_dm s).pc = s.pc ∧ (align_dm s).code = s.code ∧
+(align_dm s).mem = s.mem ∧
+(align_dm s).shared_mem_domain = s.shared_mem_domain ∧
+((align_dm s).be ⇔ s.be) ∧ (align_dm s).len_reg = s.len_reg ∧
+(align_dm s).link_reg = s.link_reg ∧ (align_dm s).ptr_reg = s.ptr_reg ∧
+(align_dm s).ptr2_reg = s.ptr2_reg ∧ (align_dm s).len2_reg = s.len2_reg ∧
+(align_dm s).io_regs = s.io_regs ∧ (align_dm s).io_fp_regs = s.io_fp_regs ∧
+(align_dm s).code_buffer = s.code_buffer ∧ (align_dm s).compile = s.compile ∧
+(align_dm s).compile_oracle = s.compile_oracle ∧ (align_dm s).ffi = s.ffi ∧
+((align_dm s).failed ⇔ s.failed)
+align_dm_const_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+align_dm_const_hypotheses=0
+align_dm_const_proved=T
+align_dm_with_clock=align_dm ((s :(α, β, γ) labSem$state) with clock := (k :num)) =
+align_dm s with clock := k
+align_dm_with_clock_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(k :num)::num;
+align_dm_with_clock_hypotheses=0
+align_dm_with_clock_proved=T
+align_sdm_def=∀(s :(α, γ, 'ffi) labSem$state).
+  align_sdm s =
+  s with
+  shared_mem_domain := s.shared_mem_domain ∩ (byte_aligned :α word -> bool)
+align_sdm_def_types=(s :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;
+align_sdm_def_hypotheses=0
+align_sdm_def_proved=T
+align_sdm_const=(align_sdm (s :(α, β, γ) labSem$state)).clock = s.clock ∧
+(align_sdm s).pc = s.pc ∧ (align_sdm s).code = s.code ∧
+(align_sdm s).mem = s.mem ∧ (align_sdm s).mem_domain = s.mem_domain ∧
+((align_sdm s).be ⇔ s.be) ∧ (align_sdm s).len_reg = s.len_reg ∧
+(align_sdm s).link_reg = s.link_reg ∧ (align_sdm s).ptr_reg = s.ptr_reg ∧
+(align_sdm s).ptr2_reg = s.ptr2_reg ∧ (align_sdm s).len2_reg = s.len2_reg ∧
+(align_sdm s).io_regs = s.io_regs ∧ (align_sdm s).io_fp_regs = s.io_fp_regs ∧
+(align_sdm s).code_buffer = s.code_buffer ∧
+(align_sdm s).compile = s.compile ∧
+(align_sdm s).compile_oracle = s.compile_oracle ∧ (align_sdm s).ffi = s.ffi ∧
+((align_sdm s).failed ⇔ s.failed)
+align_sdm_const_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+align_sdm_const_hypotheses=0
+align_sdm_const_proved=T
+align_sdm_with_clock=align_sdm ((s :(α, β, γ) labSem$state) with clock := (k :num)) =
+align_sdm s with clock := k
+align_sdm_with_clock_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(k :num)::num;
+align_sdm_with_clock_hypotheses=0
+align_sdm_with_clock_proved=T
