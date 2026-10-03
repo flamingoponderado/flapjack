@@ -1,5 +1,5 @@
 load "preamble"; load "stack_removeProofTheory";
-open HolKernel Parse bossLib preamble stack_removeProofTheory miscTheory wordSemTheory;
+open HolKernel Parse bossLib preamble stack_removeProofTheory miscTheory wordSemTheory set_sepTheory;
 val _ = Globals.linewidth := 1000000;
 val _ = computeLib.add_funs [byteTheory.set_byte_bit_field_insert,arithmeticTheory.MOD_0];
 fun theoremRow label th = let val th=GEN_ALL th in if null(hyp th) andalso null(free_vars(concl th)) then () else raise Fail "open theorem"; print(label ^ "="); print_thm th; print "\n" end;
@@ -94,3 +94,26 @@ val _ = out "write_w80_be1_6" ``let m1 = (\p:80 word. wordLang$Word 118059162071
 val _ = out "write_w80_be1_7" ``let m1 = (\p:80 word. wordLang$Word 1180591620717411303427w); m = (\p:80 word. if p IN {} then (\p:80 word. wordLang$Word 1180591620717411303427w) p else wordLang$Loc 99 101); d1 = {}; d = {0w;8w;16w}; bs = [17w:word8;34w:word8;51w:word8]; a = 0w; enc = (\x. case x of wordLang$Word w => (0n,w2n w,0n) | wordLang$Loc l1 l2 => (1n,l1,l2)) in (OPTION_MAP (MAP w2n) (misc$read_bytearray a (LENGTH bs) (wordSem$mem_load_byte_aux m1 d1 T)), MAP (\p. (enc (wordSem$write_bytearray a bs m1 d1 T p),enc (wordSem$write_bytearray a bs m d T p))) [0w;1w;7w;8w;9w;16w;1180591620717411303427w])``;
 val _ = theoremRow "write_LOG_original_spec" logrootTheory.LOG;
 val _ = residualRow "write_LOG2_zero_residual" ``LOG2 0``;
+
+val write_bytearray_EQ = GEN_ALL write_bytearray_EQ;
+val write_bytearray_IGNORE = GEN_ALL write_bytearray_IGNORE;
+val write_bytearray_lemma = prove(``  !new_bytes a m1 d1 be x p m d.
+      (memory m1 d1 * p) (fun2set (m,d)) /\
+      read_bytearray a (LENGTH new_bytes) (mem_load_byte_aux m1 d1 be) = SOME x ==>
+      (memory (write_bytearray a new_bytes m1 d1 be) d1 * p)
+        (fun2set (write_bytearray a new_bytes m d be,d))``,
+  simp [STAR_def,set_sepTheory.SPLIT_EQ,memory_def]
+  \\ full_simp_tac(srw_ss())[fun2set_def,SUBSET_DEF,PULL_EXISTS] \\ srw_tac[][]
+  \\ `d1 SUBSET d` by full_simp_tac(srw_ss())[SUBSET_DEF]
+  THEN1 (res_tac \\ full_simp_tac(srw_ss())[] \\ imp_res_tac write_bytearray_EQ \\ full_simp_tac(srw_ss())[])
+  \\ qpat_x_assum `p xx` mp_tac
+  \\ match_mp_tac (METIS_PROVE [] ``(x=y)==>x==>y``) \\ AP_TERM_TAC
+  \\ full_simp_tac(srw_ss())[EXTENSION] \\ srw_tac[][] \\ EQ_TAC \\ srw_tac[][]
+  \\ CCONTR_TAC \\ full_simp_tac(srw_ss())[] \\ srw_tac[][]
+  \\ res_tac \\ full_simp_tac(srw_ss())[]
+  \\ pop_assum mp_tac \\ full_simp_tac(srw_ss())[]
+  \\ rename1 `xx IN d`
+  \\ Cases_on `xx IN d1` \\ res_tac \\ full_simp_tac(srw_ss())[]
+  \\ imp_res_tac write_bytearray_IGNORE \\ full_simp_tac(srw_ss())[]
+  \\ imp_res_tac write_bytearray_EQ \\ rev_full_simp_tac(srw_ss())[] \\ full_simp_tac(srw_ss())[] \\ metis_tac []);
+val _ = theoremRow "write_full_write_bytearray_lemma" write_bytearray_lemma;

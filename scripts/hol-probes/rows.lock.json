@@ -2204,6 +2204,12 @@
       "sha256": "3edeedf49fed826bda2c2ec9fdf0f91ad356ac43d1e59459f0bc98cb50b4b2b6"
     },
     {
+      "bytes": 2138,
+      "out": "lab_to_target_shmem_correctness_probe.out",
+      "rows": 11,
+      "sha256": "9f94b752a094d66faebf7a73c7299c8470880f83b9fd81f6a0d6ddc3a62a233c"
+    },
+    {
       "bytes": 791,
       "out": "lab_to_target_shmem_distinct_probe.out",
       "rows": 11,
@@ -5834,6 +5840,12 @@
       "sha256": "f2a84be3ce19c11c512dc87fea3734c963d8f718a6bf86fa2b68b7dd6b583eef"
     },
     {
+      "bytes": 11717,
+      "out": "stack_remove_comp_call_full_probe.out",
+      "rows": 8,
+      "sha256": "d9960bcd7ad62a71288e1a7f853d6539a9135fa71c64f9b0879a814c565c6398"
+    },
+    {
       "bytes": 3441,
       "out": "stack_remove_comp_call_return_handler_probe.out",
       "rows": 2,
@@ -6266,10 +6278,10 @@
       "sha256": "ce1469356760239739d4f68eb0b1a71104710ee16424d716df287fca79509c46"
     },
     {
-      "bytes": 32471,
+      "bytes": 32762,
       "out": "stack_remove_write_bytearray_probe.out",
-      "rows": 55,
-      "sha256": "3cee9546d0af6c619746598e337c0152ca8fae9e34351933b406e559b842c103"
+      "rows": 56,
+      "sha256": "c50a09f84276d8a11e9541b47c3dd923c554f2b16b100b7de7e1a1c76732cb49"
     },
     {
       "bytes": 560,
