@@ -3571,4 +3571,71 @@ theorem bodyMismatchResult {width : Nat} [NeZero width] {C F : Type}
   cases maximum : sourcePost.stackMax <;>
     simpa only [maximum, miscThe, Option.getD_some, Option.getD_none] using finalOverflow
 
+/-- Actual source Call propagation for the original terminal callee branches.
+Timeout, resource halt and final FFI retain the exact source post-state; no
+continuation is executed. This is case-local evaluator factoring for the
+8620-8666 comp_correct split, with no standalone HOL declaration. -/
+theorem sourceCallTerminal {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
+      ∃ event, bodyResult = some (.finalFfi event)) :
+    result = bodyResult ∧ sourcePost = bodyPost := by
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
+    exact ⟨(Prod.mk.inj execution).1.symm, (Prod.mk.inj execution).2.symm⟩
+
+/-- Lift the matching terminal body IH to the entire original caller result
+predicate. Exact source terminal propagation discharges the whole Call result
+and post-state; the unchanged FFI/clock contract is obtained from the original
+body IH. Mismatches use bodyMismatchResult separately. This is an untagged
+branch component, not the full native Call execution theorem. -/
+theorem bodyTerminalResult {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (targetPost : StackSemStateFiniteExact width C F)
+    (targetResult : Option (StackSemResult width)) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (terminal : bodyResult = some .timeOut ∨ bodyResult = some .notEnoughSpace ∨
+      ∃ event, bodyResult = some (.finalFfi event))
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source)))
+      bodyPost targetPost bodyResult targetResult (callerFrame :: lens))
+    (matching : bodyResult.map compileResult = targetResult) :
+    compCorrectResult ac k callerSize callerFrame source sourcePost targetPost result targetResult lens := by
+  obtain ⟨rfl, rfl⟩ := sourceCallTerminal values names retCode l1 l2 dest args
+    source sourcePost bodyPost result bodyResult xs args1 prog ss envs guards nonzero execution bodyRun terminal
+  rcases terminal with rfl | rfl | ⟨event, rfl⟩ <;>
+    simpa only [compCorrectResult, matching, ne_eq, not_true_eq_false, ↓reduceIte] using bodyConclusion
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
