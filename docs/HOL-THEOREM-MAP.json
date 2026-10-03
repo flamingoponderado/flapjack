@@ -70586,5 +70586,15 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2130-2136: (fp_upd f s1).shared_mem_domain = s1.shared_mem_domain. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide). Inherits reals_as_rational_cuts and the docs/SOUNDNESS.md item 8 assumption through the reviewed LabSem.fpUpd."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstLemma.lean",
+    "lean_name": "instLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "Inst_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original lab_to_targetProofScript.sml:2170-2932 (captured with inferred types in lab_to_target_inst_lemma_probe.out): binders i s1 mc_conf code2 labs p t1 ms1 bytes' ms2; hypotheses ~(asm_inst i s1).failed, the full state_rel (mc_conf,code2,labs,p) s1 t1 ms1 (reviewed native stateRel, s1 with lab_to_target config) and pos_val (s1.pc+1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes'; conclusions ~(inst i t1).failed, !a. a notin s1.mem_domain ==> (inst i t1).mem a = t1.mem a (Bool domain via its truth predicate), and target_state_rel mc_conf.target (upd_pc (t1.pc + n2w (LENGTH bytes')) (inst i t1)) ms2 ==> state_rel of inc_pc (dec_clock (asm_inst i s1)) and that target state at ms2. All kept in order over native asmInst/AsmSem.instUpd/updPc; no target run, post-relation or success assumed. Proof: per-instruction simulation (Skip/Const/Arith/FP via arith_upd_lemma/fp_upd_lemma; Load/Store/Load8/Store8/Load32/Store32 at both 32/64-bit good_dimindex widths, Load16/Store16 failing in the source) and an untagged frame lemma re-establishing every unaffected state_rel conjunct. Kernel axioms propext/Classical.choice/Quot.sound only; no bv_decide/native_decide. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through asm_inst/inst FP semantics."
   }
 ]

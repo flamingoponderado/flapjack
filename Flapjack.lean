@@ -592,6 +592,9 @@ import Flapjack.Byte.GetSetByte
 import Flapjack.Misc.GetByteSetByte
 import Flapjack.Compiler.Backend.LabToTarget.InstAlignment
 import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
+import Flapjack.Compiler.Backend.LabToTarget.InstFrame
+import Flapjack.Compiler.Backend.LabToTarget.InstMem
+import Flapjack.Compiler.Backend.LabToTarget.InstLemma
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
