@@ -79847,5 +79847,82 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison: original local lab_to_targetProofScript10564-10570 forall code c, all_enc_ok_pre c code implies all_enc_ok_pre c(filter_skip code). Fresh original verbatim local proof replay confirms code:alpha sec list and c:alpha asm_config, zero hypotheses. Lean retains code/config binder order and complete native Section/Line/HolAsm/HolAddr/HolRegImm/MlString carriers. EVERY over sections/lines is List membership quantification; actual filterSkip MAP retains each surviving original line with no successful compilation or post-encoding assumption. Native lineOkPreHOL uses the original asm_ok(cbw_to_asm instruction) and ignores cache/length exactly; other constructors true. The words_as_type_indexed_bitvec qualifier records alpha word/dimindex as positive BitVec width/NeZero. Original capture lab_to_target_filter_preconditions_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "call_arg_convention_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2590: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "call_arg_convention_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2603: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_stack_var_is_stack_var_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2612: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_stack_var_is_stack_var_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2628: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "preAllocConventions_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "pre_alloc_conventions_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2637: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_simpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_simpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
   }
 ]
