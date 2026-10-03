@@ -1,0 +1,12 @@
+const32_value_zero=T
+const32_value_low_positive_max=T
+const32_value_low_sign_bit=T
+const32_value_low_all_ones=T
+const32_value_high_one=T
+const32_value_positive_sign_boundary=T
+const32_value_positive_max=T
+const32_value_negative_min=T
+const32_value_negative_min_low_sign=T
+const32_value_negative_low_positive=T
+const32_value_negative_low_sign=T
+const32_value_all_ones=T

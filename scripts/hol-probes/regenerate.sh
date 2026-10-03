@@ -7399,3 +7399,11 @@ run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
   xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_const32_value_probeScript.sml riscv_const32_value_probe.out \
+  const32_value_zero const32_value_low_positive_max const32_value_low_sign_bit \
+  const32_value_low_all_ones const32_value_high_one const32_value_positive_sign_boundary \
+  const32_value_positive_max const32_value_negative_min const32_value_negative_min_low_sign \
+  const32_value_negative_low_positive const32_value_negative_low_sign const32_value_all_ones \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

@@ -7748,3 +7748,19 @@ routing remains separately tracked.
 ### Native Const instruction decoder evidence
 
 `riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
+
+## Native Const32 value reconstruction
+
+`riscv_const32_value_probeScript.sml` evaluates the two literal bit-11 branches
+of `riscv_targetScript.sml:77-85` using the original HOL word operations. All
+12 captured boundary rows are `T`, including positive/negative sign boundaries
+and low-immediate sign boundaries. The concatenated LUI operand is explicitly
+word32, matching the native instruction carrier.
+
+`CorrectnessEncoding/Const32.lean` proves the identity for every word32 and
+composes the actual native LUI plus ADDI/XORI `Run` equations for every native
+state and destination, including zero. These are untagged infrastructure: no
+separately named HOL composition identity exists. They do not establish the
+full Const encoder theorem's fetch, Next, interference, or assertions.
+`check-riscv-const32-value.py` pins the unrestricted signatures and original
+evidence; mutation tests reject an added run premise or a lost oracle row.
