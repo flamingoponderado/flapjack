@@ -6925,3 +6925,7 @@ run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoratio
 run_probe pan_structs_program_dec_probeScript.sml pan_structs_program_dec_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_dec_statement compile_correct_dec_proved compile_correct_full_types compile_correct_dec_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_while_probeScript.sml pan_structs_program_while_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_while_statement compile_correct_while_proved compile_correct_full_types compile_correct_while_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
