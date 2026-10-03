@@ -6397,3 +6397,13 @@ actual helper execution and original `sh_mem_op_const`; no preserved field is
 assumed. The native consumer module kernel-checks all 23 generic statements.
 These captures provide source regression evidence, not cross-language equivalence
 or full evaluator/pass/compiler correctness.
+
+`stack_evaluate_clock_neutral_probeScript.sml` replays the literal original
+local `inst_clock_neutral` proof and then the full original
+`evaluate_clock_neutral` proof (stackPropsScript.sml:679–692). It captures the
+fully generalized theorem and proof success, plus seven independent neutral
+predicate observations including nested Seq/Inst/Halt and excluded Tick/Loop.
+The native theorem retains its sole source-evaluation/neutrality conjunction;
+clock commutation and unchanged post-clock are derived by structural recursion.
+Generic kernel consumers include widths 1/8/64/80 and zero replacement clocks.
+These fixtures do not prove cross-language equivalence or full initialization.

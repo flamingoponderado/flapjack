@@ -68910,5 +68910,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsShMemOp constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateNeutral.lean",
+    "lean_name": "evaluateClockNeutral",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_clock_neutral",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 original679-692 and original fully generalized native type: all original program/source/result/post/replacementclock binders and sole source-evaluation AND clock_neutral premise, complete actual updated-clock evaluation and same result/post-state clock update. Arbitrary positive width and independent compile/FFI host types retained. Actual native HolProg/StackSemStateFiniteExact/evaluate and reviewed clockNeutralHOL used; original-neutral constructors Skip/Inst/LocValue/Halt and recursive Seq/If exactly retained, every other constructor excluded by source predicate. Structural size proof derives full clock-update commutation AND unchanged post-clock internally; Seq min clock clamp identity proved from first recursive result, conditional register/immediate and word comparison failures/successes retained. No desired evaluation/post-clock/free-context extra premise or callback law. Actual canonical regs/fpRegs/store owner and local genuine codec roundtrip; Spt code unchanged. Fresh literal original full inst_clock_neutral local proof then literal original full evaluate_clock_neutral proof, full generalized statement0hyp and7 independent original neutral/nonneutral observations. Full arbitrary kernel consumer and4 mixed Seq/Inst/Halt consumers at widths1/8/64/80 with replacement clocks0/17/0/123456789. Existing evaluator closure inherits reals_as_rational_cuts SOUNDNESS item8, no new real/FP agreement, production behavior/default/HOLD policy unchanged. Actual StackRemove initializer3887 prerequisite, not full initialization/compiler completion."
   }
 ]

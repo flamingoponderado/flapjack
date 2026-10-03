@@ -1,3 +1,4 @@
+import Flapjack.Test.StackEvaluateClockNeutralParity
 import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.BytesInMemoryDomainParity
 import Flapjack.Test.L3AMOMinMaxParity
