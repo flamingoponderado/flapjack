@@ -7035,3 +7035,7 @@ run_probe word_to_stack_comp_locvalue_probeScript.sml word_to_stack_comp_locvalu
 run_probe word_to_stack_store_update_probeScript.sml word_to_stack_store_update_probe.out \
   store_update_full store_update_hypotheses store_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_set_probeScript.sml word_to_stack_comp_set_probe.out \
+  comp_correct_set_full_statement comp_correct_set_full_proved comp_correct_set_full_hypotheses comp_correct_set_whole_statement comp_correct_set_whole_proved comp_correct_set_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

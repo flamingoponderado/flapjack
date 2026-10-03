@@ -7519,3 +7519,7 @@ Statement regression evidence, not literal local proof replay or equivalence.
 `word_to_stack_store_update_probeScript.sml` freshly replays the unchanged
 state_rel_set_store statement and literal proof5132–5147, closed hyp0/T.
 Regression evidence rather than cross-language equivalence.
+
+`word_to_stack_comp_set_probeScript.sml` captures the complete original Set
+induction obligation and whole arbitrary specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.

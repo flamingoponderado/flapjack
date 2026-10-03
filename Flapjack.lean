@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
