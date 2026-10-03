@@ -81511,5 +81511,17 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof plumbing with no independent HOL declaration. Internal parameter/argument shape guard derives exact ordered ZIP shape list."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertCodeLocals.lean",
+    "lean_name": "convertCodeLocalsUpd",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "convert_code_locals_upd",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original991-995: unconditional equality for arbitrary context, arbitrary locals update f and code map; all source quantifiers preserved, arbitrary ignored code-key carrier kappa as reviewed convert_code_def. Both original parameters and compiled bodies/return shapes identical: convert_code overwrites locals with original function parameters, so caller locals update is erased before body compilation. Canonical standalone code finite-map representation named by bare relation qualifier; no carrier state or extra equality/compatibility premise. Positive indexed word ProgHOL width only, no altered width/identifier carrier. Proof rfl kernelchecks definition equality. Fresh original local statement and unchanged simp proof closed/kernelT/types. Call/DecCall remain open."
   }
 ]

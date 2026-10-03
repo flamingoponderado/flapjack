@@ -7455,3 +7455,8 @@ original reverse shape theorem alias, and captures full closed statement,
 quantified types and kernel truth. The Lean theorem retains ten source
 hypotheses and all five conclusions, including actual target lookup and
 existential original callee parameter context. Call/DecCall remain open.
+
+`pan_structs_convert_code_locals_probe` replays the original local
+`convert_code_locals_upd` statement and unchanged simp proof, captures its
+closed statement, quantified types and kernel truth. The Lean theorem retains
+arbitrary caller locals update and unconditional whole code-map equality.
