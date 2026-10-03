@@ -7633,3 +7633,10 @@ closed kernel truth. The Lean case keeps all ten premises/seven conclusions
 and exactly the original body/exception-handler guarded IHs. Actual target
 lookup, return comparisons/bindings and handler execution are derived internally.
 Whole program/compiler correctness remain open.
+
+`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
+its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
+types and closed kernel truth. Lean retains all eight original hypotheses and
+the full target evaluation/existential globals/context/fields/WF/structs/locals/
+shape-map conclusion; Name uses precisely the same-state tail IH. Whole
+declaration correctness and production compiler routing remain open.
