@@ -6593,3 +6593,8 @@ run_probe lab_filter_pc_adjustment_probeScript.sml lab_filter_pc_adjustment_prob
   adjust_pc_all_skips adjust_pc_all_skips_types adjust_pc_all_skips_hypotheses adjust_pc_all_skips_proved \
   all_skips_initial_adjust all_skips_initial_adjust_types all_skips_initial_adjust_hypotheses all_skips_initial_adjust_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_shared_terminal_probeScript.sml lab_filter_shared_terminal_probe.out \
+  share_mem_op_NONE_filter_correct share_mem_op_NONE_filter_correct_types share_mem_op_NONE_filter_correct_hypotheses share_mem_op_NONE_filter_correct_proved \
+  share_mem_op_FFI_final_filter_correct share_mem_op_FFI_final_filter_correct_types share_mem_op_FFI_final_filter_correct_hypotheses share_mem_op_FFI_final_filter_correct_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"

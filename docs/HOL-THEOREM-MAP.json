@@ -75572,5 +75572,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.3): Original281 arbitrary code yields actual existential count, allSkips 0 code count and adjustPc count code=0. Accepted full asmFetchAuxEq derives the witness; literal skipped-prefix PC invariant proves zero. No assumed count or initial alignment. This independent nearby source lemma has no downstream source use found, and is not claimed as a required final-assembler prerequisite. Full original type-indexed word line/section carriers retained with positive-width BitVec qualifier; byte payloads fixed8 and all labels/constructors unchanged. Fresh complete original statement/types/zero hypotheses/kernel reproof captured; unchanged local original proofs replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "share_mem_op_NONE_filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SharedMemory.lean",
+    "lean_name": "shareMemOpNoneFilterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.1): Original578 arbitrary source state/count/op/register/address and independent arbitrary compiler/oracle binders retained. Exact allSkips guard and NONE result from filtered-code/adjusted-pc/compiler/oracle state imply actual original pc=count+t.pc transition NONE. All8 shared operators and native address constructors unfold the actual primitive; no successful transition or desired state premise. Full alpha word/beta config/gamma FFI source types freshly queried/captured. Positive-width BitVec translation qualified; byte payloads fixed8 and configuration/function/oracle products unchanged. Fresh original complete statement/type/zero hypotheses/kernel reproof capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "share_mem_op_FFI_final_filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SharedMemory.lean",
+    "lean_name": "shareMemOpFfiFinalFilterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.1): Original646 full state/count/op/register/address/sourceCompile/outcome/poststate binders and allSkips, nonzero clock, compiler transform equality, nonfailed and actual filtered transition guards retained. Derives actual existential original-PC poststate with identical final outcome and whole FFI equality. All8 shared operators/address cases; concrete witness is original state with pc=count+t.pc because native final operations preserve every other field. Whole source transition equality projects to FFI equality, not assumed post relation or target execution. Independent of returning stateRel/adjustPc successor theorem. Full alpha word/beta config/gamma FFI source types freshly queried/captured. Positive-width BitVec translation qualified; byte payloads fixed8 and configuration/function/oracle products unchanged. Fresh original complete statement/type/zero hypotheses/kernel reproof capture."
   }
 ]

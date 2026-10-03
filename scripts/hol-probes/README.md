@@ -6992,3 +6992,7 @@ The same probe now also fetches the exported original `max_var_intro` kernel the
 ### Native skipped-run PC adjustment
 
 `lab_filter_pc_adjustment_probeScript.sml` replays the unchanged original local proofs211/281 and captures both full statements, all types, zero hypotheses and kernel reproofs (8 rows). The full successor adjustment law is an actual shared-memory filter simulation prerequisite; the initial-alignment lemma is independent nearby source support.
+
+### Native shared-memory filter terminal clauses
+
+`lab_filter_shared_terminal_probeScript.sml` captures the complete original NONE578 and final646 clauses with independent full state/configuration/oracle/FFI types, zero hypotheses and kernel reproofs (8 rows). All original guards remain; the final original-PC state and FFI equality are existential conclusions.
