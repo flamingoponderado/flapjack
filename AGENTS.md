@@ -174,9 +174,11 @@ Lake artifacts, and run focused tests first. Independent reference, mapping,
 and probe checks may run concurrently. `check-warnings.sh` invokes Lake, so
 run it sequentially with other Lake commands; do not run multiple Lake builds
 against the same worktree at once.
-Treat `check_hol_ref_export.py` and the HOL checker unit suite as Lake users,
-too: their native-export regression can build modules. Run them sequentially
-with builds, `lake test`, and the warning check to avoid artifact-write races.
+Treat `check_hol_ref_export.py` as a Lake user: its export can build modules.
+Run it sequentially with builds, `lake test`, and the warning check to avoid
+artifact-write races. The HOL checker unit suite mocks the exporter and does
+not invoke Lake; it may run concurrently with these commands. Keep actual
+elaborated-export coverage in the separate export gate.
 Run the full required suite before reporting a branch ready and again on the
 coordinator's merged tree before integration. Profile a persistently slow
 theorem or checker and fix the bottleneck; never shorten default build targets

@@ -1,0 +1,38 @@
+dec_clock_align_sdm=dec_clock (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (dec_clock s)
+dec_clock_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+dec_clock_align_sdm_hypotheses=0
+dec_clock_align_sdm_proved=T
+inc_pc_align_sdm=inc_pc (align_sdm (s :(α, β, γ) labSem$state)) = align_sdm (inc_pc s)
+inc_pc_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+inc_pc_align_sdm_hypotheses=0
+inc_pc_align_sdm_proved=T
+upd_pc_align_sdm=upd_pc (p :num) (align_sdm (s :(α, β, γ) labSem$state)) =
+align_sdm (upd_pc p s)
+upd_pc_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(p :num)::num;
+upd_pc_align_sdm_hypotheses=0
+upd_pc_align_sdm_proved=T
+get_pc_value_align_sdm=get_pc_value (x :lab) (align_sdm (s :(α, β, γ) labSem$state)) =
+get_pc_value x s
+get_pc_value_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(x :lab)::lab;
+get_pc_value_align_sdm_hypotheses=0
+get_pc_value_align_sdm_proved=T
+get_ret_Loc_align_sdm=(get_ret_Loc (align_sdm (s :(β, γ, δ) labSem$state)) :α word_loc option) =
+(get_ret_Loc s :α word_loc option)
+get_ret_Loc_align_sdm_types=(s :(β, γ, δ) labSem$state)::(β, γ, δ) labSem$state;
+get_ret_Loc_align_sdm_hypotheses=0
+get_ret_Loc_align_sdm_proved=T
+read_bytearray_mem_load_byte_aux_align_sdm=∀(y :num) (x :α word).
+  read_bytearray x y
+    (mem_load_byte_aux (s :(α, β, γ) labSem$state).mem
+       (align_sdm s).mem_domain s.be) =
+  read_bytearray x y (mem_load_byte_aux s.mem s.mem_domain s.be)
+read_bytearray_mem_load_byte_aux_align_sdm_types=(y :num)::num;(x :α word)::α word;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+read_bytearray_mem_load_byte_aux_align_sdm_hypotheses=0
+read_bytearray_mem_load_byte_aux_align_sdm_proved=T
+write_bytearray_align_sdm=∀(y :word8 list) (x :α word).
+  write_bytearray x y (s :(α, β, γ) labSem$state).mem
+    (align_sdm s).mem_domain s.be =
+  write_bytearray x y s.mem s.mem_domain s.be
+write_bytearray_align_sdm_types=(y :word8 list)::word8 list;(x :α word)::α word;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+write_bytearray_align_sdm_hypotheses=0
+write_bytearray_align_sdm_proved=T
