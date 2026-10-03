@@ -6602,6 +6602,12 @@
       "sha256": "a80f64b2e6aec5fd153da4de277af7f9cf92461f06076f6a91e4bdd15bd68e1a"
     },
     {
+      "bytes": 359,
+      "out": "stack_remove_stack_heap_limit_probe.out",
+      "rows": 3,
+      "sha256": "3f9b110ed4651810c0e83c9a98cdec01d744289a5b9c38a75ac72ddab393c448"
+    },
+    {
       "bytes": 130,
       "out": "stack_remove_stack_heap_probe.out",
       "rows": 2,

@@ -6694,3 +6694,5 @@ actual remaining buffer; the native full-guard consumer observes that exclusion.
 No extra successful lookup, overflow bound, exclusion premise or arbitrary
 EL/default policy is used. ISR16 and the full initializer remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
+
+`stack_remove_stack_heap_limit_probeScript.sml` exports the complete original paired stack/heap limit predicate, generic type and zero stored hypotheses (2906–2911). The native definition preserves the store word, natural byte-capacity comparison and actual stack length as separate original conjuncts; it supplies a prerequisite of the full initializer property.

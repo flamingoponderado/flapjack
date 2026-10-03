@@ -71278,5 +71278,19 @@
     "lean_name": "initReduceStackSpace",
     "hol_name": "init_reduce_stack_space",
     "reviewer": "flapjack-sol source comparison2026-10-03 local2899-2904: full arbitrary original initializer parameters/source and unconditional actual init_reduce stack_space <= LENGTH stack. Actual native complete initializer/read_mem used, accepted LENGTH_read_mem yields exact stackSpace+1 length; no pointer presence/dimension/word-valuedness/callback/success/bound hypothesis. No simplified evaluator, supplied resource bound or output state. Canonical state/word qualifiers justified as for initReduce and same-module genuine witness; native code remains Spt. Complete unchanged original statement/proof replay with GEN_ALL, original0hyp andT. Original init_code_thm3628 consumes this actual resource invariant, not whole initializer theorem completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackHeapLimitOk.lean",
+    "lean_name": "stackHeapLimitOk",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_heap_limit_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source/body/type comparison2026-10-03 original2906-2911: actual native state then PAIR(stack_lim,heap_lim), all original parameters retained, exactly three original conjunctions. FLOOKUP store HeapLength=SOME(Word(n2w heap_lim*bytes_in_word)) retains modular word construction/multiplication in original order; independent natural heap_lim*(dimindex/8)<dimword becomes heapLimit*(width/8)<2^width without word-modular capacity comparison; stack_lim=LENGTH actual native List stack. No extra good_dimindex, register, separation, evaluation, bound or relation hypothesis. Owning imported StackSemStateFiniteExact canonical regs/fpRegs/store (code still Spt and untouched), same-module genuine imported broad/exact roundtrip and positive-word qualifier. No state duplicate, raw map or BEq assumption. Fresh complete original kernel definition/generic type/zero stored hypotheses3rows; proof-side predicate used by missing full init_prop/init_code_thm, not whole initializer/compiler correctness or executed change."
   }
 ]
