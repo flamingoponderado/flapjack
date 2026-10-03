@@ -6799,3 +6799,7 @@ run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tic
 run_probe lab_filter_semantics_probeScript.sml lab_filter_semantics_probe.out \
   state_rel_IMP_sem_EQ_sem state_rel_IMP_sem_EQ_sem_types state_rel_IMP_sem_EQ_sem_hypotheses state_rel_IMP_sem_EQ_sem_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_skip_semantics_probeScript.sml lab_filter_skip_semantics_probe.out \
+  filter_skip_semantics filter_skip_semantics_types filter_skip_semantics_hypotheses filter_skip_semantics_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"

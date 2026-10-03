@@ -119,4 +119,25 @@ theorem stateRelImpSemEqSem {width : Nat} [NeZero width] {C : Type} {F : Type}
   unfold semantics
   rw [propext herr, hterm, hlub]
 
+
+/-- Full original zero-PC filter theorem. Both source nonfailed conjuncts are
+retained, together with the existential compiler/oracle record transformation. -/
+@[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_skip_semantics"
+  (words_as_type_indexed_bitvec)]
+theorem filterSkipSemantics {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (s t : Flapjack.Compiler.Backend.LabSem.State width C F) :
+    t.pc = 0 ∧ t.failed = false ∧
+      (∃ sourceCompile,
+        s = {t with
+          code := filterSkip t.code
+          compileOracle := fun n => ((t.compileOracle n).1, filterSkip (t.compileOracle n).2)
+          compile := sourceCompile} ∧
+        t.compile = fun configuration program => sourceCompile configuration (filterSkip program)) ∧
+      t.failed = false → semantics s = semantics t := by
+  rintro ⟨hpc, hfailed, ⟨sourceCompile, hs, hcompile⟩, _⟩
+  apply stateRelImpSemEqSem
+  refine ⟨⟨sourceCompile, ?_, hcompile⟩, hfailed⟩
+  have hadj : adjustPc t.pc t.code = t.pc := by rw [hpc, adjustPc.eq_def]; simp
+  simpa only [hadj] using hs
+
 end Flapjack.Compiler.Backend.LabFilter.Proofs
