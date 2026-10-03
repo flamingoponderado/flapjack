@@ -6819,3 +6819,15 @@ run_probe l3_native_config_probeScript.sml l3_native_config_probe.out \
 run_probe lab_filter_skip_semantics_probeScript.sml lab_filter_skip_semantics_probe.out \
   filter_skip_semantics filter_skip_semantics_types filter_skip_semantics_hypotheses filter_skip_semantics_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_return_raise_probeScript.sml pan_structs_program_return_raise_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_return_statement compile_correct_return_proved compile_correct_raise_statement compile_correct_raise_proved compile_correct_full_types compile_correct_return_types compile_correct_raise_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_structs_code_invariant_probeScript.sml pan_structs_structs_code_invariant_probe.out \
+  evaluate_structs_code_inv_statement evaluate_structs_code_inv_types evaluate_structs_code_inv_hypotheses evaluate_structs_code_inv_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_seq_if_probeScript.sml pan_structs_program_seq_if_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_seq_statement compile_correct_seq_proved compile_correct_if_statement compile_correct_if_proved compile_correct_full_types compile_correct_seq_types compile_correct_if_types evaluate_ind_statement evaluate_ind_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

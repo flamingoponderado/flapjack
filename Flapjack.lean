@@ -412,6 +412,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.FFI
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning.Execution
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1240,6 +1241,9 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectReturnRaise
+import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode

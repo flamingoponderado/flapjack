@@ -79562,5 +79562,104 @@
     "words_as_type_indexed_bitvec": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the pinned HOL source and the definition captured with types by binary_ieee_arith_probe: signP = x.Sign ?? y.Sign, infP = float_is_infinite x \\/ float_is_infinite y; the four if-branches (NaN, invalid, +inf, -inf) and the final rounding of r = r1 + r2 (r1 = float_to_real x * float_to_real y, r2 = float_to_real z) with toneg (r = 0 /\\ (if r1 = 0 /\\ r2 = 0 /\\ signP = z.Sign then signP = 1w else mode = roundTowardNegative)) \\/ r < 0, in HOL order and with HOL precedence. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. The only real is the rounded rational argument of float values, rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8); NaN results translate HOL @ in float_some_qnan as Classical.epsilon on the same predicate. No other difference."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectReturnRaise.lean",
+    "lean_name": "compileCorrectReturn",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and1307-1329 Return case: all ten source hypotheses and seven conclusions retained, no recursive IH or added premise. Actual faithful finite evaluator, compileProgExact, convertStateExact and original result carriers. Source expression/error/size branches retained; Raise additionally uses original exception-map first lookup and value-shape equality. Full expression correctness supplies target child run and field validity; original eval well-formedness and full shapeOfConvertVRev with sizeOfCompileShape derive target size guard. Raise target exception lookup/equality derived by canonical map2 and source condition. Empty-local poststate, unchanged globals/global shape map, false continuing-result guard and both returned-value validity predicates established. No target run/shape/size compatibility assumption. Imported canonical owner and full state two-way roundtrip, four-map/positive-width/Type0 translations only; MlS identifiers remain faithful carrier. Whole program and production correctness remain separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectReturnRaise.lean",
+    "lean_name": "compileCorrectRaise",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and1307-1329 Raise case: all ten source hypotheses and seven conclusions retained, no recursive IH or added premise. Actual faithful finite evaluator, compileProgExact, convertStateExact and original result carriers. Source expression/error/size branches retained; Raise additionally uses original exception-map first lookup and value-shape equality. Full expression correctness supplies target child run and field validity; original eval well-formedness and full shapeOfConvertVRev with sizeOfCompileShape derive target size guard. Raise target exception lookup/equality derived by canonical map2 and source condition. Empty-local poststate, unchanged globals/global shape map, false continuing-result guard and both returned-value validity predicates established. No target run/shape/size compatibility assumption. Imported canonical owner and full state two-way roundtrip, four-map/positive-width/Type0 translations only; MlS identifiers remain faithful carrier. Whole program and production correctness remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectReturnRaise.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/EvaluateStructsCodeInvariant.lean",
+    "lean_name": "evaluateStructsCodeInv",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "evaluate_structs_code_inv",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original793-798: arbitrary program/source/post/result, sole actual evaluate result-pair equality, both post structs and code equal source fields. No success/error/resource/compatibility or extra invariant assumption. Full original evaluate_invariants supplies both conjuncts via field-for-field canonical PanProps ofPanSemFinite codec and genuine total finite evaluator; codec roundtrip discharges evaluator translation internally. Canonical code equality uses reviewed finite-support map extensional carrier, all four imported owner maps and positive-width Type0 word/FFI translations only. Same-module complete two-way carrier witness. Fresh original local statement and unchanged rw/imp_res_tac proof replayed with closed binder types and kernel T."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/EvaluateStructsCodeInvariant.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectSeqIf.lean",
+    "lean_name": "compileCorrectSeq",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and1280-1305 Seq case, with original panSem evaluate_ind clauses: all ten source premises and seven conclusions retained. Genuine IHs only: Seq first at original source and second at actual intermediate state guarded by first pair equality and NONE result; If selected branch guarded by original eval SOME value/Val payload/Word word equalities. Each IH is precisely full theorem property quantified over context/post/result at the source recursive call. Seq uses original line780 fix_clock-free equation, derives intermediate structs, field validity, both well-formed maps and shape maps from faithful first IH/full invariants; no post invariant or target-run premise supplied. If source condition failures contradict original no-Error hypothesis; fullExpr supplies identical target word and guarded branch IH supplies actual run/all seven conclusions. Imported canonical owner/full two-way witness and four-map/positive-word/Type0 translations only. Fresh original whole/case statements/types/kernel T and original evaluator induction reviewed. Whole program/compiler remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectSeqIf.lean",
+    "lean_name": "compileCorrectIf",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and1280-1305 If case, with original panSem evaluate_ind clauses: all ten source premises and seven conclusions retained. Genuine IHs only: Seq first at original source and second at actual intermediate state guarded by first pair equality and NONE result; If selected branch guarded by original eval SOME value/Val payload/Word word equalities. Each IH is precisely full theorem property quantified over context/post/result at the source recursive call. Seq uses original line780 fix_clock-free equation, derives intermediate structs, field validity, both well-formed maps and shape maps from faithful first IH/full invariants; no post invariant or target-run premise supplied. If source condition failures contradict original no-Error hypothesis; fullExpr supplies identical target word and guarded branch IH supplies actual run/all seven conclusions. Imported canonical owner/full two-way witness and four-map/positive-word/Type0 translations only. Fresh original whole/case statements/types/kernel T and original evaluator induction reviewed. Whole program/compiler remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectSeqIf.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

@@ -4850,6 +4850,18 @@
       "sha256": "b3024de29c59ee7decbf435e91f1acf28515a2822e70a6b137a31662c47d6240"
     },
     {
+      "bytes": 3683,
+      "out": "pan_structs_program_return_raise_probe.out",
+      "rows": 9,
+      "sha256": "898f171220424b658e5aadaf86dadad7b4e3b16fd939ca21ae4f937d47600bf7"
+    },
+    {
+      "bytes": 7013,
+      "out": "pan_structs_program_seq_if_probe.out",
+      "rows": 11,
+      "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
+    },
+    {
       "bytes": 3200,
       "out": "pan_structs_program_tick_annot_probe.out",
       "rows": 6,
@@ -4884,6 +4896,12 @@
       "out": "pan_structs_shape_map_codec_probe.out",
       "rows": 7,
       "sha256": "5ad064943706d8f62e4fc9d36731f55a742b991b32bacf1714d34c4c51f42ab4"
+    },
+    {
+      "bytes": 309,
+      "out": "pan_structs_structs_code_invariant_probe.out",
+      "rows": 4,
+      "sha256": "64b6b50dd598b95fda275321085c8e69111c77daaf5fc27ba74d6f67956f74f1"
     },
     {
       "bytes": 1183,
