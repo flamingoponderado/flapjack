@@ -1,0 +1,345 @@
+IMP_state_rel_make_init=good_code (mc_conf :(α, 'state, β) machine_config).target.config
+  (LN :γ sptree$num_map sptree$num_map) (code :α sec list) ∧
+mc_conf_ok mc_conf ∧
+(no_share_mem_inst code ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list)
+   (labs :num sptree$num_map sptree$num_map)
+   (LENGTH (prog_to_bytes (code2 :α sec list))) mc_conf.target.config
+   mc_conf.ffi_names) ∧
+list_subset
+  (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+     (find_ffi_names code)) (TAKE (i :num) mc_conf.ffi_names) ∧
+remove_labels (clock :num) mc_conf.target.config (0 :num)
+  (LN :num sptree$num_map sptree$num_map) (TAKE i mc_conf.ffi_names) code =
+SOME (code2,labs) ∧
+good_init_state mc_conf (ms :'state) (prog_to_bytes code2) (cbspace :num)
+  (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+  (sdm :α word -> bool) ∧
+get_shmem_info code2 (0 :num) ([] :ffiname list) ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(shmem_info :shmem_info_num list)) ∧
+(new_shmem_info :shmem_info_num list) =
+MAP
+  (λ(rec :shmem_info_num).
+       rec with
+       <|entry_pc := w2n (mc_conf.target.get_pc ms) + rec.entry_pc;
+         exit_pc := w2n (mc_conf.target.get_pc ms) + rec.exit_pc|>)
+  shmem_info ∧ DROP i mc_conf.ffi_names = new_ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info =
+DROP i (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH new_shmem_info),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word))) new_shmem_info) ∧
+no_install_or_no_share_mem code mc_conf.ffi_names ∧
+(∀(bn :num).
+   bn < cbspace ⇒
+   ¬MEM
+     ((n2w bn :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
+      mc_conf.target.get_pc ms) (TAKE i mc_conf.ffi_entry_pcs)) ⇒
+(state_rel (mc_conf,code2,labs,mc_conf.target.get_pc ms)
+   (make_init mc_conf (ffi :'ffi ffi_state) t m dm sdm ms code
+      (compile_lab mc_conf.target.config)
+      (mc_conf.target.get_pc ms +
+       (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace coracle) t ms :
+ bool)
+IMP_state_rel_make_init_types=(ffi :'ffi ffi_state)::'ffi ffi_state;(new_shmem_info :shmem_info_num list)::shmem_info_num list;(shmem_info :shmem_info_num list)::shmem_info_num list;(new_ffi_names :ffiname list)::ffiname list;(sdm :α word -> bool)::α word -> bool;(dm :α word -> bool)::α word -> bool;(m :α word -> α word_loc)::α word -> α word_loc;(t :α asm_state)::α asm_state;(cbspace :num)::num;(ms :'state)::'state;(clock :num)::num;(i :num)::num;(code2 :α sec list)::α sec list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(coracle :num -> config # α sec list)::num -> config # α sec list;(code :α sec list)::α sec list;(mc_conf :(α, 'state, β) machine_config)::(α, 'state, β) machine_config;
+IMP_state_rel_make_init_hypotheses=0
+state_rel_conjuncts=53
+ISR2_statement=good_code (mc_conf :(α, 'state, β) machine_config).target.config
+  (LN :γ sptree$num_map sptree$num_map) (code :α sec list) ∧
+mc_conf_ok mc_conf ∧
+(no_share_mem_inst code ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list)
+   (labs :num sptree$num_map sptree$num_map)
+   (LENGTH (prog_to_bytes (code2 :α sec list))) mc_conf.target.config
+   mc_conf.ffi_names) ∧
+list_subset
+  (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+     (find_ffi_names code)) (TAKE (i :num) mc_conf.ffi_names) ∧
+remove_labels (clock :num) mc_conf.target.config (0 :num)
+  (LN :num sptree$num_map sptree$num_map) (TAKE i mc_conf.ffi_names) code =
+SOME (code2,labs) ∧
+good_init_state mc_conf (ms :'state) (prog_to_bytes code2) (cbspace :num)
+  (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+  (sdm :α word -> bool) ∧
+get_shmem_info code2 (0 :num) ([] :ffiname list) ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(shmem_info :shmem_info_num list)) ∧
+(new_shmem_info :shmem_info_num list) =
+MAP
+  (λ(rec :shmem_info_num).
+       rec with
+       <|entry_pc := w2n (mc_conf.target.get_pc ms) + rec.entry_pc;
+         exit_pc := w2n (mc_conf.target.get_pc ms) + rec.exit_pc|>)
+  shmem_info ∧ DROP i mc_conf.ffi_names = new_ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info =
+DROP i (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH new_shmem_info),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word))) new_shmem_info) ∧
+no_install_or_no_share_mem code mc_conf.ffi_names ∧
+(∀(bn :num).
+   bn < cbspace ⇒
+   ¬MEM
+     ((n2w bn :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
+      mc_conf.target.get_pc ms) (TAKE i mc_conf.ffi_entry_pcs)) ⇒
+∀(ms2 :'state) (k :num) (index :num) (new_bytes :word8 list)
+    (t1 :α asm_state) (bytes :word8 list) (bytes2 :word8 list)
+    (st :'ffi ffi_state) (new_st :'ffi ffi_state) (i :num).
+  mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧ index < i ∧
+  read_ffi_bytearrays mc_conf ms2 = (SOME bytes,SOME bytes2) ∧
+  (call_FFI_rel :'ffi ffi_state -> 'ffi ffi_state -> bool)꙳
+    (make_init mc_conf (ffi :'ffi ffi_state) t m dm sdm ms code
+       (compile_lab mc_conf.target.config)
+       (mc_conf.target.get_pc ms +
+        (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace coracle).ffi st ∧
+  call_FFI st mc_conf.ffi_names❲index❳ bytes bytes2 =
+  FFI_return new_st new_bytes ∧ mc_conf.prog_addresses = t1.mem_domain ∧
+  target_state_rel mc_conf.target
+    (t1 with
+     pc :=
+       mc_conf.target.get_pc ms −
+       (n2w (((3 :num) + index) * ffi_offset) :α word)) ms2 ∧
+  aligned mc_conf.target.config.code_alignment
+    (t1.regs
+       (make_init mc_conf ffi t m dm sdm ms code
+          (compile_lab mc_conf.target.config)
+          (mc_conf.target.get_pc ms +
+           (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace coracle).
+       link_reg :α word) ⇒
+  (let
+     (ms' :'state) = mc_conf.ffi_interfer k (index,new_bytes,ms2)
+   in
+     target_state_rel mc_conf.target
+       (t1 with
+        <|regs :=
+            (λ(a :num).
+                 if
+                   MEM a mc_conf.callee_saved_regs ∨
+                   ¬(a < mc_conf.target.config.reg_count) ∨
+                   MEM a mc_conf.target.config.avoid_regs
+                 then
+                   (t1.regs a :α word)
+                 else mc_conf.target.get_reg ms' a);
+          fp_regs := (λ(n :num). mc_conf.target.get_fp_reg ms' n);
+          mem :=
+            asm_write_bytearray
+              (t1.regs
+                 (make_init mc_conf ffi t m dm sdm ms code
+                    (compile_lab mc_conf.target.config)
+                    (mc_conf.target.get_pc ms +
+                     (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace
+                    coracle).ptr2_reg :α word) new_bytes t1.mem;
+          pc :=
+            (t1.regs
+               (make_init mc_conf ffi t m dm sdm ms code
+                  (compile_lab mc_conf.target.config)
+                  (mc_conf.target.get_pc ms +
+                   (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace
+                  coracle).link_reg :α word)|>) ms')
+ISR2_hypotheses=0
+ISR2_proved=T
+ISR3_statement=good_code (mc_conf :(α, 'state, β) machine_config).target.config
+  (LN :γ sptree$num_map sptree$num_map) (code :α sec list) ∧
+mc_conf_ok mc_conf ∧
+(no_share_mem_inst code ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list)
+   (labs :num sptree$num_map sptree$num_map)
+   (LENGTH (prog_to_bytes (code2 :α sec list))) mc_conf.target.config
+   mc_conf.ffi_names) ∧
+list_subset
+  (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+     (find_ffi_names code)) (TAKE (i :num) mc_conf.ffi_names) ∧
+remove_labels (clock :num) mc_conf.target.config (0 :num)
+  (LN :num sptree$num_map sptree$num_map) (TAKE i mc_conf.ffi_names) code =
+SOME (code2,labs) ∧
+good_init_state mc_conf (ms :'state) (prog_to_bytes code2) (cbspace :num)
+  (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+  (sdm :α word -> bool) ∧
+get_shmem_info code2 (0 :num) ([] :ffiname list) ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(shmem_info :shmem_info_num list)) ∧
+(new_shmem_info :shmem_info_num list) =
+MAP
+  (λ(rec :shmem_info_num).
+       rec with
+       <|entry_pc := w2n (mc_conf.target.get_pc ms) + rec.entry_pc;
+         exit_pc := w2n (mc_conf.target.get_pc ms) + rec.exit_pc|>)
+  shmem_info ∧ DROP i mc_conf.ffi_names = new_ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info =
+DROP i (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH new_shmem_info),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word))) new_shmem_info) ∧
+no_install_or_no_share_mem code mc_conf.ffi_names ∧
+(∀(bn :num).
+   bn < cbspace ⇒
+   ¬MEM
+     ((n2w bn :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
+      mc_conf.target.get_pc ms) (TAKE i mc_conf.ffi_entry_pcs)) ⇒
+∀(ms2 :'state) (t1 :α asm_state) (k :num) (a1 :α word) (a2 :α word).
+  target_state_rel mc_conf.target
+    (t1 with
+     pc := mc_conf.target.get_pc ms − (n2w ((2 :num) * ffi_offset) :α word))
+    ms2 ∧
+  aligned mc_conf.target.config.code_alignment
+    (t1.regs
+       (make_init mc_conf (ffi :'ffi ffi_state) t m dm sdm ms code
+          (compile_lab mc_conf.target.config)
+          (mc_conf.target.get_pc ms +
+           (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace coracle).
+       link_reg :α word) ⇒
+  (let
+     (ms' :'state) = mc_conf.ccache_interfer k (a1,a2,ms2)
+   in
+     target_state_rel mc_conf.target
+       (t1 with
+        <|regs :=
+            (λ(a :num).
+                 if
+                   MEM a mc_conf.callee_saved_regs ∨
+                   a =
+                   (make_init mc_conf ffi t m dm sdm ms code
+                      (compile_lab mc_conf.target.config)
+                      (mc_conf.target.get_pc ms +
+                       (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace
+                      coracle).ptr_reg ∨
+                   ¬(a < mc_conf.target.config.reg_count) ∨
+                   MEM a mc_conf.target.config.avoid_regs
+                 then
+                   (t1.regs a :α word)
+                 else mc_conf.target.get_reg ms' a);
+          fp_regs := (λ(n :num). mc_conf.target.get_fp_reg ms' n);
+          pc :=
+            (t1.regs
+               (make_init mc_conf ffi t m dm sdm ms code
+                  (compile_lab mc_conf.target.config)
+                  (mc_conf.target.get_pc ms +
+                   (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace
+                  coracle).link_reg :α word)|>) ms')
+ISR3_hypotheses=0
+ISR3_proved=T
+ISR8_statement=good_code (mc_conf :(α, 'state, β) machine_config).target.config
+  (LN :γ sptree$num_map sptree$num_map) (code :α sec list) ∧
+mc_conf_ok mc_conf ∧
+(no_share_mem_inst code ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list)
+   (labs :num sptree$num_map sptree$num_map)
+   (LENGTH (prog_to_bytes (code2 :α sec list))) mc_conf.target.config
+   mc_conf.ffi_names) ∧
+list_subset
+  (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+     (find_ffi_names code)) (TAKE (i :num) mc_conf.ffi_names) ∧
+remove_labels (clock :num) mc_conf.target.config (0 :num)
+  (LN :num sptree$num_map sptree$num_map) (TAKE i mc_conf.ffi_names) code =
+SOME (code2,labs) ∧
+good_init_state mc_conf (ms :'state) (prog_to_bytes code2) (cbspace :num)
+  (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+  (sdm :α word -> bool) ∧
+get_shmem_info code2 (0 :num) ([] :ffiname list) ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(shmem_info :shmem_info_num list)) ∧
+(new_shmem_info :shmem_info_num list) =
+MAP
+  (λ(rec :shmem_info_num).
+       rec with
+       <|entry_pc := w2n (mc_conf.target.get_pc ms) + rec.entry_pc;
+         exit_pc := w2n (mc_conf.target.get_pc ms) + rec.exit_pc|>)
+  shmem_info ∧ DROP i mc_conf.ffi_names = new_ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info =
+DROP i (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH new_shmem_info),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word))) new_shmem_info) ∧
+no_install_or_no_share_mem code mc_conf.ffi_names ∧
+(∀(bn :num).
+   bn < cbspace ⇒
+   ¬MEM
+     ((n2w bn :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
+      mc_conf.target.get_pc ms) (TAKE i mc_conf.ffi_entry_pcs)) ⇒
+∀(name :ffiname) (i :num).
+  MEM name mc_conf.ffi_names ∧
+  mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+  get_ffi_index mc_conf.ffi_names name < i ⇒
+  (∃(s :mlstring). name = ExtCall s) ∧
+  mc_conf.target.get_pc ms −
+  (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+   α word) ∉ mc_conf.prog_addresses ∧
+  mc_conf.target.get_pc ms −
+  (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+   α word) ≠ mc_conf.halt_pc ∧
+  mc_conf.target.get_pc ms −
+  (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+   α word) ≠ mc_conf.ccache_pc ∧
+  find_index
+    (mc_conf.target.get_pc ms −
+     (n2w (((3 :num) + get_ffi_index mc_conf.ffi_names name) * ffi_offset) :
+      α word)) mc_conf.ffi_entry_pcs (0 :num) =
+  SOME (get_ffi_index mc_conf.ffi_names name)
+ISR8_hypotheses=0
+ISR8_proved=T
+ISR15_statement=good_code (mc_conf :(α, 'state, β) machine_config).target.config
+  (LN :γ sptree$num_map sptree$num_map) (code :α sec list) ∧
+mc_conf_ok mc_conf ∧
+(no_share_mem_inst code ⇒
+ compiler_oracle_ok (coracle :num -> config # α sec list)
+   (labs :num sptree$num_map sptree$num_map)
+   (LENGTH (prog_to_bytes (code2 :α sec list))) mc_conf.target.config
+   mc_conf.ffi_names) ∧
+list_subset
+  (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+     (find_ffi_names code)) (TAKE (i :num) mc_conf.ffi_names) ∧
+remove_labels (clock :num) mc_conf.target.config (0 :num)
+  (LN :num sptree$num_map sptree$num_map) (TAKE i mc_conf.ffi_names) code =
+SOME (code2,labs) ∧
+good_init_state mc_conf (ms :'state) (prog_to_bytes code2) (cbspace :num)
+  (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+  (sdm :α word -> bool) ∧
+get_shmem_info code2 (0 :num) ([] :ffiname list) ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(shmem_info :shmem_info_num list)) ∧
+(new_shmem_info :shmem_info_num list) =
+MAP
+  (λ(rec :shmem_info_num).
+       rec with
+       <|entry_pc := w2n (mc_conf.target.get_pc ms) + rec.entry_pc;
+         exit_pc := w2n (mc_conf.target.get_pc ms) + rec.exit_pc|>)
+  shmem_info ∧ DROP i mc_conf.ffi_names = new_ffi_names ∧
+mmio_pcs_min_index mc_conf.ffi_names = SOME i ∧
+MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info =
+DROP i (MAP (w2n :α word -> num) mc_conf.ffi_entry_pcs) ∧
+mc_conf.mmio_info =
+ZIP
+  (GENLIST (λ(index :num). index + i) (LENGTH new_shmem_info),
+   MAP
+     (λ(rec :shmem_info_num).
+          (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),rec.reg,
+           (n2w rec.exit_pc :α word))) new_shmem_info) ∧
+no_install_or_no_share_mem code mc_conf.ffi_names ∧
+(∀(bn :num).
+   bn < cbspace ⇒
+   ¬MEM
+     ((n2w bn :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
+      mc_conf.target.get_pc ms) (TAKE i mc_conf.ffi_entry_pcs)) ⇒
+share_mem_state_rel mc_conf
+  (make_init mc_conf (ffi :'ffi ffi_state) t m dm sdm ms code
+     (compile_lab mc_conf.target.config)
+     (mc_conf.target.get_pc ms + (n2w (LENGTH (prog_to_bytes code2)) :α word))
+     cbspace coracle) t ms
+ISR15_hypotheses=0
+ISR15_proved=T
