@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
@@ -776,6 +777,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionActualInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallCache
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCountMap
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCounterJoin
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicSelfCall
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicInstructions
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup

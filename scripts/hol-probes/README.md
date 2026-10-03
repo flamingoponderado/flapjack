@@ -6522,7 +6522,16 @@ predicate does not prove initializer simulation or machine/compiler correctness.
 Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.
 
 `word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
-
+The LabToTarget code-safety transport probe captures the full original
+`code_similar_IMP_both_no_share_mem` at7364, both program carriers and zero
+hypotheses. An actual width8 Skip program changes its encoding bytes and length
+while its complete original premise is discharged; a Skip-to-ShareMem change
+fails code similarity. Native generic consumers cover all positive dimensions,
+full forward/reverse safety transport, arbitrary encoding bytes/lengths and
+rejection of instruction changes. Target safety follows from the full original
+fetched-line relation and source safety, without target safety assumptions or
+default/HD/EL use. The full initializer remains open. Selector:
+`HOL_PROBE_ONLY=lab_to_target_code_safety_transport_probeScript.sml`.
 
 
 `word_to_stack_location_labels_probe.out` freshly replays the unchanged full `state_rel_code_domain`, `get_labels_wStackLoad` and `loc_check_SUBSET` proofs. All statements are closed with proof=T/hypotheses=0. Arbitrary states/frames/lists/continuations/code trees are retained; location inclusion has only the original subspt premise and covers both membership and label-lookup branches. The load-label equality is reused from the existing full `LoadContinuations.lean` port, verified by this fresh replay; no duplicate port is added. The new code-domain/location inclusion results remove the location prerequisite of the full Seq simulation; native WordSem resource monotonicity remains a separate blocking obligation.

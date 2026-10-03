@@ -9,6 +9,7 @@ import Flapjack.Test.L3TLBFlushParity
 import Flapjack.Test.L3SystemSignalsParity
 import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.BytesInMemoryDomainParity
+import Flapjack.Test.LabToTargetCodeSafetyTransportParity
 import Flapjack.Test.TargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationParity
