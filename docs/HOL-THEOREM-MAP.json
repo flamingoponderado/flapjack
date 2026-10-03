@@ -80865,5 +80865,59 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison original11012-11171: full original prime sixteen guards and machine_sem equality, and derived nonprime fifteen guards/implements-prime T conclusion. Original independent alpha word, beta machine state, gamma projection, delta empty-label value and epsilon FFI types preserved as positive width and S/Q/G/F; generic LN remains Spt(Spt G). Native exact config, code/compile, all oracle/non-sharing, initial-state, MMIO entry/exit/address tuples, boundary, strict whole-buffer bound and provided ExtCall classification retained verbatim. No target execution/result or simulation premise. Actual compile success is decomposed through both FFI choices, removeLabels and shared-info recursion; accepted filtering/initializer proof supplies semantics equality. Last buffer guard derived via bounded native list-search entries and modular arithmetic, no total EL/LEAST adoption. Final implements lift internally discharges non-Fail; no extra outer premise. words_as_type_indexed_bitvec records only standard positive word/Type0 host translation. Imported semantic real operations inherit reals_as_rational_cuts assumption, SOUNDNESS section8 rational-cut assurance; no full real closure or cross-language equivalence claim. Fresh mechanically extracted verbatim original prime proof and original nonprime REWRITE_RULE/MATCH_MP chain kernel replay/fulltypes/hyp0 in lab_to_target_semantics_compile_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignDm",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_dm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps441-473/870-902: full native width/C/FFI state carriers. Each domain projection updates only the named Bool-set field by conjunction with byte_aligned; original external alignmentScript18-29 defines aligned(LOG2(dimindex DIV8)), faithfully computed by native asmAligned(Nat.log2(width/8)) with divisibility by2^alignment (equivalent to clearing low bits). Both const theorems retain all eighteen original fields in source order including function-valued compiler/oracle and both Boolean equalities, and both with_clock equalities retain arbitrary natural k. No good_dimindex or narrower word-width premise added to these unconditional source declarations. Positive type-indexed word/Type0 C/FFI translation only; no new word policy/default/HOL source adoption. Fresh allsix original fulltypes/hyp0/kernelT in lab_props_domain_alignment_probe.out. Actual evaluator/refinement alignment theorems and full final semanticsCompile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignDmConst",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_dm_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps441-473/870-902: full native width/C/FFI state carriers. Each domain projection updates only the named Bool-set field by conjunction with byte_aligned; original external alignmentScript18-29 defines aligned(LOG2(dimindex DIV8)), faithfully computed by native asmAligned(Nat.log2(width/8)) with divisibility by2^alignment (equivalent to clearing low bits). Both const theorems retain all eighteen original fields in source order including function-valued compiler/oracle and both Boolean equalities, and both with_clock equalities retain arbitrary natural k. No good_dimindex or narrower word-width premise added to these unconditional source declarations. Positive type-indexed word/Type0 C/FFI translation only; no new word policy/default/HOL source adoption. Fresh allsix original fulltypes/hyp0/kernelT in lab_props_domain_alignment_probe.out. Actual evaluator/refinement alignment theorems and full final semanticsCompile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignDmWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_dm_with_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps441-473/870-902: full native width/C/FFI state carriers. Each domain projection updates only the named Bool-set field by conjunction with byte_aligned; original external alignmentScript18-29 defines aligned(LOG2(dimindex DIV8)), faithfully computed by native asmAligned(Nat.log2(width/8)) with divisibility by2^alignment (equivalent to clearing low bits). Both const theorems retain all eighteen original fields in source order including function-valued compiler/oracle and both Boolean equalities, and both with_clock equalities retain arbitrary natural k. No good_dimindex or narrower word-width premise added to these unconditional source declarations. Positive type-indexed word/Type0 C/FFI translation only; no new word policy/default/HOL source adoption. Fresh allsix original fulltypes/hyp0/kernelT in lab_props_domain_alignment_probe.out. Actual evaluator/refinement alignment theorems and full final semanticsCompile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignSdm",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps441-473/870-902: full native width/C/FFI state carriers. Each domain projection updates only the named Bool-set field by conjunction with byte_aligned; original external alignmentScript18-29 defines aligned(LOG2(dimindex DIV8)), faithfully computed by native asmAligned(Nat.log2(width/8)) with divisibility by2^alignment (equivalent to clearing low bits). Both const theorems retain all eighteen original fields in source order including function-valued compiler/oracle and both Boolean equalities, and both with_clock equalities retain arbitrary natural k. No good_dimindex or narrower word-width premise added to these unconditional source declarations. Positive type-indexed word/Type0 C/FFI translation only; no new word policy/default/HOL source adoption. Fresh allsix original fulltypes/hyp0/kernelT in lab_props_domain_alignment_probe.out. Actual evaluator/refinement alignment theorems and full final semanticsCompile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignSdmConst",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_const",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps441-473/870-902: full native width/C/FFI state carriers. Each domain projection updates only the named Bool-set field by conjunction with byte_aligned; original external alignmentScript18-29 defines aligned(LOG2(dimindex DIV8)), faithfully computed by native asmAligned(Nat.log2(width/8)) with divisibility by2^alignment (equivalent to clearing low bits). Both const theorems retain all eighteen original fields in source order including function-valued compiler/oracle and both Boolean equalities, and both with_clock equalities retain arbitrary natural k. No good_dimindex or narrower word-width premise added to these unconditional source declarations. Positive type-indexed word/Type0 C/FFI translation only; no new word policy/default/HOL source adoption. Fresh allsix original fulltypes/hyp0/kernelT in lab_props_domain_alignment_probe.out. Actual evaluator/refinement alignment theorems and full final semanticsCompile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignment.lean",
+    "lean_name": "alignSdmWithClock",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "align_sdm_with_clock",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps441-473/870-902: full native width/C/FFI state carriers. Each domain projection updates only the named Bool-set field by conjunction with byte_aligned; original external alignmentScript18-29 defines aligned(LOG2(dimindex DIV8)), faithfully computed by native asmAligned(Nat.log2(width/8)) with divisibility by2^alignment (equivalent to clearing low bits). Both const theorems retain all eighteen original fields in source order including function-valued compiler/oracle and both Boolean equalities, and both with_clock equalities retain arbitrary natural k. No good_dimindex or narrower word-width premise added to these unconditional source declarations. Positive type-indexed word/Type0 C/FFI translation only; no new word policy/default/HOL source adoption. Fresh allsix original fulltypes/hyp0/kernelT in lab_props_domain_alignment_probe.out. Actual evaluator/refinement alignment theorems and full final semanticsCompile remain separately open."
   }
 ]
