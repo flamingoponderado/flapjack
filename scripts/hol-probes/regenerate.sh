@@ -6986,3 +6986,7 @@ run_probe lab_props_alignment_operations_probeScript.sml lab_props_alignment_ope
 run_probe pan_structs_program_shmem_store_probeScript.sml pan_structs_program_shmem_store_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_shmem_store_statement compile_correct_shmem_store_proved compile_correct_full_types compile_correct_shmem_store_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_extcall_probeScript.sml pan_structs_program_extcall_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_extcall_statement compile_correct_extcall_proved compile_correct_full_types compile_correct_extcall_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

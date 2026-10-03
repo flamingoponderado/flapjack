@@ -7437,3 +7437,8 @@ theorem and its `ShMemStore opsz e1 e2` specialization, binder types and closed
 kernel proofs. The Lean case keeps all ten premises/seven conclusions without
 an IH, covers original byte-count/domain and MappedWrite FFI final/ret branches,
 and derives target arguments/outcomes and finite state repacking internally.
+
+`pan_structs_program_extcall_probe` captures the original full `compile_correct`
+and its ExtCall specialization, all quantified types and closed kernel truth.
+The Lean case retains all ten premises/seven conclusions without an IH or
+additional FFI agreement premise; full compiler correctness remains open.
