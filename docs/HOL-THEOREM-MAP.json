@@ -82530,5 +82530,13 @@
     "hol_name": "map_insert_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:149-154: exact empty and pair-cons equations; tail processed first then sparse insert of head key/value. Arbitrary Spt Nat retained, including malformed trees; duplicate head bindings win as in source. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/CanonicalMove.lean",
+    "lean_name": "canonicalMoveRegs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalMoveRegs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-canonical-move-production), word_cseScript155-170: exact register_reads over MAP SND before EVERY keep_data over MAP FST; arbitrary parallel moves retained. Odd/odd FILTER, MAP canonicalRegs on source, tail-first map_insert to_canonical, inverted pairs then tail-first map_insert to_latest, other three fields unchanged; false guard returns empty_data. Native Knowledge preserves Spt Nat, ordered store-name alist with fixed Temp5 and literal balanced-map cached sizes; no output relation or target run assumption. Source self-interference/duplicate order retained. Actual all-five-field transition proved separately; full CSE/routing remains open."
   }
 ]
