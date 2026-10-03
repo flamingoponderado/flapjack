@@ -626,6 +626,7 @@ import Flapjack.Misc.Sptree.Map
 import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
+import Flapjack.Misc.Sptree.MapiLookup
 import Flapjack.Misc.ListLookup
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
@@ -743,6 +744,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
 import Flapjack.Compiler.Backend.WordAlloc.ProductionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlySets
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
+import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnly
 import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCosts
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
