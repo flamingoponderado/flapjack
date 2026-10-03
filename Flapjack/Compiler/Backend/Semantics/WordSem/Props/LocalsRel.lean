@@ -406,6 +406,13 @@ theorem cutState_withLocals (names : WordLangCutsetsHOL) (s : WordSemStateFinite
   unfold cutState
   simp only [h]
 
+theorem decClock_withLocals (s : WordSemStateFiniteExact width C F) (a : Spt (WordLocW width)) :
+    decClock { s with locals := a } = { decClock s with locals := a } := rfl
+
+theorem callEnv_withLocals (args : List (WordLocW width)) (ss : Option Nat)
+    (s : WordSemStateFiniteExact width C F) (a : Spt (WordLocW width)) :
+    callEnv args ss { s with locals := a } = callEnv args ss s := rfl
+
 end WithLocals
 
 /-! ## `locals_rel_evaluate_thm` cases (Flapjack infrastructure) -/
@@ -550,10 +557,6 @@ theorem lr_store (temp v : Nat) (e : WordLangExpHOL (BitVec width))
       simp only [Prod.mk.injEq, Option.map_some] at he ⊢
       obtain ⟨rfl, rfl⟩ := he
       exact ⟨loc, ⟨rfl, rfl⟩, by rw [(memStoreConst a w st s1 hm).1]; exact hl⟩
-
-/-- Error results are excluded by the `res ≠ SOME Error` premise. -/
-local macro "lr_err" : tactic =>
-  `(tactic| (simp only [Prod.mk.injEq] at *; exact absurd (by assumption : _ = _).1.symm ‹_ ≠ _›))
 
 theorem lr_opCurrHeap (temp : Nat) (b : BinOp) (dst src : Nat)
     (st : WordSemStateFiniteExact width C F) : LrGoal temp (.opCurrHeap b dst src) st := by
@@ -834,7 +837,234 @@ theorem lr_shareInst (temp : Nat) (op : WordMemOp) (v : Nat) (exp : WordLangExpH
        refine ⟨_, ?_, locals_rel_set_var temp _ _ _ _ hl⟩
        simp only [*, setVar, if_true])
 
+theorem lr_loop (temp : Nat) (names : WordLangNumSetHOL) (c : WordLangProgHOL (BitVec width))
+    (exitNames : WordLangNumSetHOL) (st : WordSemStateFiniteExact width C F) :
+    LrGoal temp (.loop names c exitNames) st := by
+  intro res rst loc he herr hv hl
+  have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+  have hn : everyNameHOL (fun x => decide (x < temp)) (names, Spt.ln) = true := by
+    simp only [everyVarHOL, Bool.and_eq_true] at hv
+    simp only [everyNameHOL, hv.1.1, Bool.true_and]
+    rfl
+  rw [ht] at he
+  cases hc : wordSemCutEnv (names, .ln) st.locals with
+  | none =>
+      have : cutState (names, .ln) st = none := by unfold cutState; rw [hc]
+      rw [this] at he
+      simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some env =>
+      have hc' := locals_rel_cut_env temp st.locals loc (names, .ln) env ⟨hl, hn, hc⟩
+      have hcs : cutState (names, .ln) st = some { st with locals := env } := by
+        unfold cutState; rw [hc]
+      refine ⟨rst.locals, ?_, lrPost_refl temp res rst.locals⟩
+      rw [ht, cutState_withLocals _ st loc (hc'.trans hc.symm), hcs]
+      rw [hcs] at he
+      exact he
+
+theorem lr_call (temp : Nat)
+    (ret : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (st : WordSemStateFiniteExact width C F) : LrGoal temp (.call ret dest args handler) st := by
+  intro res rst loc he herr hv hl
+  have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  have hargs : ∀ x ∈ args, x < temp := by
+    rcases ret with _ | ⟨n, names, retHandler, l1, l2⟩ <;>
+      rcases handler with _ | ⟨a, b, c, d⟩ <;>
+      simp only [everyVarHOL, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hv <;>
+      first | exact hv | exact hv.1
+  have hnames : ∀ n names r l1 l2, ret = some (n, names, r, l1, l2) →
+      everyNameHOL (fun x => decide (x < temp)) names = true := by
+    intro n names r l1 l2 hr
+    subst hr
+    rcases handler with _ | ⟨a, b, c, d⟩ <;>
+      simp only [everyVarHOL, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hv <;>
+      exact hv.2.1.1.2
+  rw [ht] at he ⊢
+  rw [locals_rel_get_vars_simp args temp st loc ⟨hargs, hl⟩]
+  refine ⟨rst.locals, ?_, lrPost_refl temp res rst.locals⟩
+  change _ = (res, rst)
+  rw [← he]
+  cases hg : getVars args st with
+  | none => rw [hg] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+  | some xs =>
+      rw [hg] at he
+      simp only at he ⊢
+      by_cases hbad : wordSemBadDestArgs dest args = true
+      · simp only [hbad, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+      simp only [hbad, Bool.false_eq_true, if_false] at he ⊢
+      cases hf : wordSemFindCode dest (wordSemAddRetLoc ret xs) st.code st.stackSize with
+      | none => rw [hf] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+      | some fc =>
+          obtain ⟨args1, prog, ss⟩ := fc
+          rw [hf] at he
+          simp only at he ⊢
+          cases ret with
+          | none =>
+              cases handler with
+              | some _ => simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+              | none =>
+                  simp only
+                  by_cases hz : st.clock = 0
+                  · have hz' : ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
+                    rw [if_pos hz', if_pos hz, flushState_withLocals]
+                  · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
+                    rw [if_neg hz', if_neg hz]
+                    rfl
+          | some rv =>
+              obtain ⟨n, names, retHandler, l1, l2⟩ := rv
+              have hnm := hnames n names retHandler l1 l2 rfl
+              simp only at he ⊢
+              by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
+              · simp only [hdc, if_true, Prod.mk.injEq] at he; exact absurd he.1.symm herr
+              simp only [hdc, if_false] at he ⊢
+              cases hce : wordSemCutEnvs names st.locals with
+              | none => rw [hce] at he; simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+              | some envs =>
+                  have hce' := locals_rel_cut_envs temp st.locals loc names envs
+                    ⟨hl, hnm, hce⟩
+                  rw [hce']
+                  simp only
+                  have e1 : callEnv args1 ss (pushEnv envs handler (decClock { st with locals := loc })) =
+                      callEnv args1 ss (pushEnv envs handler (decClock st)) := by
+                    rcases handler with _ | ⟨_, _, _, _⟩ <;> rfl
+                  have e2 : (callEnv args1 ss (pushEnv envs handler { st with locals := loc })).stackMax =
+                      (callEnv args1 ss (pushEnv envs handler st)).stackMax := by
+                    rcases handler with _ | ⟨_, _, _, _⟩ <;> rfl
+                  rw [e1, e2]
+                  by_cases hz : st.clock = 0
+                  · have hz' : ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
+                    rw [if_pos hz', if_pos hz]
+                    rfl
+                  · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).clock = 0 := hz
+                    rw [if_neg hz', if_neg hz]
+
+/-- `locals_rel_evaluate_thm` by recursion on `evaluate`'s measure (HOL:
+    `completeInduct_on prog_size`). -/
+theorem lr_aux (temp : Nat) :
+    ∀ (p : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F),
+      LrGoal temp p st
+  | .mustTerminate q, st => by
+      intro res rst loc he herr hv hl
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
+      simp only [everyVarHOL] at hv
+      rw [ht] at he ⊢
+      by_cases hz : st.termdep = 0
+      · rw [if_pos hz] at he
+        simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+      · have hz' : ¬ ({ st with locals := loc } : WordSemStateFiniteExact width C F).termdep = 0 := hz
+        rw [if_neg hz] at he
+        rw [if_neg hz']
+        rcases hq : evaluate q { st with
+            clock := wordSemMustTerminateLimit width
+            termdep := st.termdep - 1 } with ⟨r, s1⟩
+        rw [hq] at he
+        have hr : r ≠ some .error := by
+          rintro rfl
+          simp only [Prod.mk.injEq] at he; exact herr he.1.symm
+        obtain ⟨loc', h1, h2⟩ := lr_aux temp q { st with
+            clock := wordSemMustTerminateLimit width
+            termdep := st.termdep - 1 } r s1 loc hq hr hv hl
+        have e : ({ ({ st with locals := loc } : WordSemStateFiniteExact width C F) with
+            clock := wordSemMustTerminateLimit width
+            termdep := ({ st with locals := loc } : WordSemStateFiniteExact width C F).termdep - 1 }) =
+            { ({ st with
+              clock := wordSemMustTerminateLimit width
+              termdep := st.termdep - 1 } : WordSemStateFiniteExact width C F) with locals := loc } := rfl
+        rw [e, h1]
+        rcases r with _ | (_ | _ | _ | _ | _ | _ | _ | _) <;> simp only [Prod.mk.injEq] at he ⊢ <;>
+          first
+            | exact absurd he.1.symm herr
+            | (obtain ⟨rfl, rfl⟩ := he; exact ⟨loc', ⟨rfl, rfl⟩, h2⟩)
+  | .seq c1 c2, st => by
+      intro res rst loc he herr hv hl
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.1
+      simp only [everyVarHOL, Bool.and_eq_true] at hv
+      rw [ht] at he ⊢
+      rcases h1 : evaluate c1 st with ⟨r1, s1⟩
+      rw [h1] at he
+      have hc1 := evaluate_clock c1 st r1 s1 h1
+      have hr1 : r1 ≠ some .error := by
+        rintro rfl
+        simp only [Prod.mk.injEq] at he; exact herr he.1.symm
+      obtain ⟨loc1, e1, p1⟩ := lr_aux temp c1 st r1 s1 loc h1 hr1 hv.1 hl
+      rw [e1]
+      cases r1 with
+      | none => exact lr_aux temp c2 s1 res rst loc1 he herr hv.2 p1
+      | some x =>
+          simp only [Prod.mk.injEq] at he ⊢
+          obtain ⟨rfl, rfl⟩ := he
+          exact ⟨loc1, ⟨rfl, rfl⟩, p1⟩
+  | .ite cmp r1 ri c1 c2, st => by
+      intro res rst loc he herr hv hl
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+      simp only [everyVarHOL, Bool.and_eq_true, decide_eq_true_eq] at hv
+      rw [ht] at he ⊢
+      rw [locals_rel_get_var_simp r1 temp st loc ⟨hv.1.1.1, hl⟩,
+        locals_rel_get_var_imm_simp temp ri st loc ⟨hv.1.1.2, hl⟩]
+      rcases hx : getVar r1 st with _ | x <;> rcases hy : getVarImm ri st with _ | y <;>
+        simp only [hx, hy] at he ⊢ <;>
+        first | (simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr) | skip
+      rcases hc : wordSemWordCmp cmp x y with _ | _ | _ <;> simp only [hc] at he ⊢
+      · simp only [Prod.mk.injEq] at he; exact absurd he.1.symm herr
+      · exact lr_aux temp c2 st res rst loc he herr hv.2 hl
+      · exact lr_aux temp c1 st res rst loc he herr hv.1.2 hl
+  | .loop names c exitNames, st => lr_loop temp names c exitNames st
+  | .call ret dest args handler, st => lr_call temp ret dest args handler st
+  | .skip, st => lr_skip temp st
+  | .move a b, st => lr_move temp a b st
+  | .inst a, st => lr_inst temp a st
+  | .assign a b, st => lr_assign temp a b st
+  | .get a b, st => lr_get temp a b st
+  | .set a b, st => lr_set temp a b st
+  | .store a b, st => lr_store temp b a st
+  | .alloc a b, st => lr_alloc temp a b st
+  | .storeConsts a b c d f, st => lr_storeConsts temp a b c d f st
+  | .raise a, st => lr_raise temp a st
+  | WordLangProgHOL.return a b, st => lr_return temp a b st
+  | WordLangProgHOL.break a, st => lr_break temp a st
+  | WordLangProgHOL.continue a, st => lr_continue temp a st
+  | .tick, st => lr_tick temp st
+  | .opCurrHeap a b c, st => lr_opCurrHeap temp a b c st
+  | .locValue a b, st => lr_locValue temp a b st
+  | .install a b c d f, st => lr_install temp a b c d f st
+  | .codeBufferWrite a b, st => lr_codeBufferWrite temp a b st
+  | .dataBufferWrite a b, st => lr_dataBufferWrite temp a b st
+  | .ffi a b c d f g, st => lr_ffi temp a b c d f g st
+  | .shareInst a b c, st => lr_shareInst temp a b c st
+termination_by p st => (st.termdep, st.clock, sizeOf p)
+decreasing_by
+  all_goals
+    simp_wf
+    apply wordSemLex
+    try (rcases hc1 with ⟨_, _⟩)
+    omega
+
 end EvaluateCases
+
+/-- Exact HOL `locals_rel_evaluate_thm` (`wordPropsScript.sml:3575-3850`, with
+    every `Resume` case): extra temporaries at or above `temp` do not affect
+    evaluation of a program whose variables are all below `temp`.  HOL's
+    `res ≠ SOME Error` and `every_var (λx. x < temp)` premises are kept; the
+    conclusion is HOL's case split on the result.  Inherits
+    `reals_as_rational_cuts` through `evaluate`. -/
+@[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "locals_rel_evaluate_thm"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem locals_rel_evaluate_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (prog : WordLangProgHOL (BitVec width)) (st : WordSemStateFiniteExact width C F)
+      (res : Option (WordSemResult width)) (rst : WordSemStateFiniteExact width C F)
+      (loc : Spt (WordLocW width)) (temp : Nat),
+      evaluate prog st = (res, rst) ∧ res ≠ some .error ∧
+        everyVarHOL (fun x => decide (x < temp)) prog = true ∧ localsRel temp st.locals loc →
+      ∃ loc', evaluate prog { st with locals := loc } = (res, { rst with locals := loc' }) ∧
+        match res with
+        | none => localsRel temp rst.locals loc'
+        | some (.break _) => localsRel temp rst.locals loc'
+        | some (.continue _) => localsRel temp rst.locals loc'
+        | some _ => rst.locals = loc' := by
+  rintro prog st res rst loc temp ⟨he, herr, hv, hl⟩
+  obtain ⟨loc', h1, h2⟩ := lr_aux temp prog st res rst loc he herr hv hl
+  rcases res with _ | (_ | _ | _ | _ | _ | _ | _ | _) <;> exact ⟨loc', h1, h2⟩
 
 end WordSemStateFiniteExact
 
