@@ -2,6 +2,7 @@ import Flapjack.Test.L3SetLessParity
 import Flapjack.Test.L3ImmediateALUParity
 import Flapjack.Test.L3RegisterALUParity
 import Flapjack.Test.L3ConditionalBranchParity
+import Flapjack.Test.LabToTargetInitializerMemorySeparationParity
 import Flapjack.Test.L3UpperJumpParity
 import Flapjack.Test.L3CSRInstructionsParity
 import Flapjack.Test.LabToTargetInitializerInterferenceParity

@@ -6674,3 +6674,16 @@ clauses contain no JAL-style alignment trap. Full Run/Next remains open.
 
 `word_to_stack_comp_seq_full_probe.out` freshly captures the complete original Seq induction obligation and its first-source NONE branch by direct specialization of the original complete `comp_correct`; six closed proof=T/hypotheses=0 rows are statement evidence, not literal case-proof replay or cross-language equivalence. Native Lean now assembles both original Seq branches with only the exact guarded IHs. It derives resource HaltWord2 mismatch, propagates original strict resource/event bounds through the second source run, and derives second target execution using original bitmap accounting/code monotonicity/location inclusion and clock extension. Original source handler preservation transports the entire exception LASTN result. Full pass and end-to-end correctness remain open.
 `l3_set_less_probeScript.sml` checks436 whole-state SLT/SLTU/SLTI/SLTIU original equations with matching kernel fixtures. Register forms use ten operand groups, selectors0/2/3 and destinations0/1/2/7; immediate forms ten groups and destinations0/1/7. Sixteen invalidselector1 guards check exact error/priorretention with zero operands independent of canonical ARB. RV32 registerSLTU zeroextendslow32, while SLTIU signextendslow32; this literal distinction is tested at allones low32 and minus-one immediate. All other state remains arbitrary. Standard original bitstring v2w conversion reduces the Booleanword; the strict checker requires every unique complete label to be T. FullRun/Next remains open.
+### Full initializer memory separation cases
+
+`lab_to_target_initializer_memory_separation_probeScript.sml` freshly captures
+the original complete local initializer theorem, all free-variable types and
+zero hypotheses. Both original ISR1/12 projections retain all fourteen guards
+and establish complete state relation clauses15/37 with zero hypotheses and
+kernel proof T. Their case mapping comes from replaying the literal original
+pre-Suspend proof prefix, captured in the basic-cases probe. Native proofs
+derive the entire MMIO lookup domain and exclusion of every FFI entry from the
+actual remaining buffer; the native full-guard consumer observes that exclusion.
+No extra successful lookup, overflow bound, exclusion premise or arbitrary
+EL/default policy is used. ISR16 and the full initializer remain open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
