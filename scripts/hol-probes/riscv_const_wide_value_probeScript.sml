@@ -4,6 +4,8 @@ val _ = Globals.linewidth := 1000000;
 val _ = Globals.show_types := true;
 (* Literal wide Const branch value operations; ground evidence supplements the unrestricted kernel theorem. *)
 fun out label tm = (print(label ^ "="); print_term(rhs(concl(EVAL tm))); print "\n");
+fun replay label tm =
+  (print (label ^ "="); print_term tm; print "\n");
 val _ = out "const_wide_value_zero" ``let c = (0w : word64) in
  (if c ' 31 then
    ((sw2sw (~((63 >< 32) c : word32)) : word64) << 32) ??
@@ -88,12 +90,13 @@ val _ = out "const_wide_value_all_ones" ``let c = (18446744073709551615w : word6
   else
    ((sw2sw ((63 >< 32) c : word32) : word64) << 32) ||
      (sw2sw ((31 >< 0) c : word32) : word64)) = c``;
-val _ = (print "const_wide_value_statement="; print_term ``let c = (0w : word64) in
+val _ = (print "const_wide_value_source_clause="; print "HOL cakeml/compiler/encoders/riscv/riscv_targetScript.sml riscv_ast_def Const wide branches (l.104-114); value formula stated for arbitrary c, both branches."; print "\n");
+val _ = replay "const_wide_value_replay" ``!(c:word64).
  (if c ' 31 then
    ((sw2sw (~((63 >< 32) c : word32)) : word64) << 32) ??
      (sw2sw ((31 >< 0) c : word32) : word64)
   else
    ((sw2sw ((63 >< 32) c : word32) : word64) << 32) ||
-     (sw2sw ((31 >< 0) c : word32) : word64)) = c``; print "\n");
-val _ = print ("const_wide_value_types=" ^ String.concatWith ", " (map (fn (n, t) => n ^ " : " ^ type_to_string t) [("c", type_of ``(0w : word64)``), ("result", type_of ``(sw2sw (0w : word32) : word64)``)]) ^ "\n");
+     (sw2sw ((31 >< 0) c : word32) : word64)) = c``;
+val _ = print ("const_wide_value_carriers=" ^ String.concatWith ", " (map (fn (n, t) => n ^ " : " ^ type_to_string t) [("c", type_of ``(ARB:word64)``), ("result", type_of ``(ARB:word64)``)]) ^ "\n");
 val _ = OS.Process.exit OS.Process.success;

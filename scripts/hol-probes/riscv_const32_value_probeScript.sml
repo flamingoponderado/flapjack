@@ -5,6 +5,8 @@ val _ = Globals.show_types := true;
 (* Ground original word-value boundaries supplement the unrestricted Lean
    theorem and literal riscv_const32/dfn'LUI/XORI/ADDI source review. *)
 fun out label tm = (print(label ^ "="); print_term(rhs(concl(EVAL tm))); print "\n");
+fun replay label tm =
+  (print (label ^ "="); print_term tm; print "\n");
 val _ = out "const32_value_zero" ``let c = (0w : word32) in
  (if c ' 11 then
    (sw2sw (((~((31 >< 12) c : word20)) @@ (0w : word12)) : word32) : word64) ??
@@ -89,12 +91,13 @@ val _ = out "const32_value_all_ones" ``let c = (4294967295w : word32) in
   else
    (sw2sw ((((31 >< 12) c : word20) @@ (0w : word12)) : word32) : word64) +
      (sw2sw ((11 >< 0) c : word12) : word64)) = (sw2sw c : word64)``;
-val _ = (print "const32_value_statement="; print_term ``let c = (0w : word32) in
+val _ = (print "const32_value_source_clause="; print "HOL cakeml/compiler/encoders/riscv/riscv_targetScript.sml riscv_const32_def (l.77) and riscv_ast_def Const branch (l.96); value formula stated for arbitrary c, both branches."; print "\n");
+val _ = replay "const32_value_replay" ``!(c:word32).
  (if c ' 11 then
    (sw2sw (((~((31 >< 12) c : word20)) @@ (0w : word12)) : word32) : word64) ??
      (sw2sw ((11 >< 0) c : word12) : word64)
   else
    (sw2sw ((((31 >< 12) c : word20) @@ (0w : word12)) : word32) : word64) +
-     (sw2sw ((11 >< 0) c : word12) : word64)) = (sw2sw c : word64)``; print "\n");
-val _ = print ("const32_value_types=" ^ String.concatWith ", " (map (fn (n, t) => n ^ " : " ^ type_to_string t) [("c", type_of ``(0w : word32)``), ("result", type_of ``(sw2sw (0w : word32) : word64)``)]) ^ "\n");
+     (sw2sw ((11 >< 0) c : word12) : word64)) = (sw2sw c : word64)``;
+val _ = print ("const32_value_carriers=" ^ String.concatWith ", " (map (fn (n, t) => n ^ " : " ^ type_to_string t) [("c", type_of ``(ARB:word32)``), ("result", type_of ``(ARB:word64)``)]) ^ "\n");
 val _ = OS.Process.exit OS.Process.success;

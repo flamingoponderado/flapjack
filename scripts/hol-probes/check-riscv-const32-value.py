@@ -5,7 +5,7 @@ Syntactic regression only; Lean checks the proof and source review establishes s
 from pathlib import Path
 import hashlib
 ROOT = Path(__file__).resolve().parents[2]
-CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/Const32.lean': 'a9a43a7853dbb007b1a85c2989f7648aee3f77ba43c12bdb5042899139f43cc4', 'scripts/hol-probes/riscv_const32_value_probeScript.sml': '3f57a5a6d8c9cc3a979dec94e9609739ae19cb7c63ea014c449687c8d9307162', 'scripts/hol-probes/riscv_const32_value_probe.out': 'a73e4531b1ab9ab637087ba3241fd9f29c7ef88d08fed9142666ebd1132b7932'}
+CHECKS = {'Flapjack/RiscV/CorrectnessEncoding/Const32.lean': 'a9a43a7853dbb007b1a85c2989f7648aee3f77ba43c12bdb5042899139f43cc4', 'scripts/hol-probes/riscv_const32_value_probeScript.sml': '4a673cde8d99b6380b8ba0edce93991085bb384e41a42ae680cc5f320333dc8f', 'scripts/hol-probes/riscv_const32_value_probe.out': '2cfc2ae53e517fab43e948e33d0ee751fef489649cad104a83c2ae7eba533238'}
 def check(root=ROOT):
     for name, expected in CHECKS.items():
         text = (root / name).read_text()

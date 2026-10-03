@@ -7311,7 +7311,7 @@ run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe riscv_addi_decode_probeScript.sml riscv_addi_decode_probe.out \
-  addi_decode_zero addi_decode_all_ones addi_decode_sign_bit addi_decode_positive_max addi_decode_statement addi_decode_types \
+  addi_decode_zero addi_decode_all_ones addi_decode_sign_bit addi_decode_positive_max addi_decode_source_clause addi_decode_replay addi_decode_carriers \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe riscv_target_jumpReg_probeScript.sml riscv_target_jumpReg_probe.out \
@@ -7443,7 +7443,7 @@ run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_s
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \
-  lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max upper_decode_statement upper_decode_types \
+  lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max upper_decode_source_clause upper_decode_replay upper_decode_carriers \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
@@ -7478,7 +7478,7 @@ run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
   xori_decode_zero xori_decode_all_ones xori_decode_sign_bit xori_decode_positive_max \
   slli_decode_zero slli_decode_all_ones slli_decode_sign_bit slli_decode_positive_max \
   or_decode_zero or_decode_all_ones or_decode_sign_bit or_decode_positive_max \
-  xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max const_decode_statement const_decode_types \
+  xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max const_decode_source_clause const_decode_replay const_decode_carriers \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
@@ -7497,7 +7497,7 @@ run_probe riscv_const32_value_probeScript.sml riscv_const32_value_probe.out \
   const32_value_zero const32_value_low_positive_max const32_value_low_sign_bit \
   const32_value_low_all_ones const32_value_high_one const32_value_positive_sign_boundary \
   const32_value_positive_max const32_value_negative_min const32_value_negative_min_low_sign \
-  const32_value_negative_low_positive const32_value_negative_low_sign const32_value_all_ones const32_value_statement const32_value_types \
+  const32_value_negative_low_positive const32_value_negative_low_sign const32_value_all_ones const32_value_source_clause const32_value_replay const32_value_carriers \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
@@ -7512,7 +7512,7 @@ run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrap
   pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
   "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.out \
-  const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones const_wide_value_statement const_wide_value_types \
+  const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones const_wide_value_source_clause const_wide_value_replay const_wide_value_carriers \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
