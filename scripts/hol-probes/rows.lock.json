@@ -9278,6 +9278,12 @@
       "sha256": "45468de39ef9c6d1be497bd407ea2f612de9aa148eee3e34919eb673ad8fc364"
     },
     {
+      "bytes": 3597,
+      "out": "word_to_stack_comp_locvalue_probe.out",
+      "rows": 6,
+      "sha256": "fbe6440d1b91c04c25a1047f94c52885beed89862a78ae0c038ac0bb3617b857"
+    },
+    {
       "bytes": 305,
       "out": "word_to_stack_comp_native_probe.out",
       "rows": 19,

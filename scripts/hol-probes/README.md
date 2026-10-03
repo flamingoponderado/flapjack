@@ -7450,3 +7450,7 @@ provide regression evidence rather than cross-language equivalence.
 evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
 both closed hyp0/T. These are original statement regression captures, not
 literal local-case proof replay or cross-language equivalence.
+
+`word_to_stack_comp_locvalue_probeScript.sml` captures the full original
+LocValue induction obligation and arbitrary full specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
