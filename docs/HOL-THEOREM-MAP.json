@@ -79191,5 +79191,321 @@
     "words_as_type_indexed_bitvec": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the pinned HOL source and the definition captured with types by binary_ieee_arith_probe: signP = x.Sign ?? y.Sign, infP = float_is_infinite x \\/ float_is_infinite y; the four if-branches (NaN, invalid, +inf, -inf) and the final rounding of r = r1 + r2 (r1 = float_to_real x * float_to_real y, r2 = float_to_real z) with toneg (r = 0 /\\ (if r1 = 0 /\\ r2 = 0 /\\ signP = z.Sign then signP = 1w else mode = roundTowardNegative)) \\/ r < 0, in HOL order and with HOL precedence. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. The only real is the rounded rational argument of float values, rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8); NaN results translate HOL @ in float_some_qnan as Classical.epsilon on the same predicate. No other difference."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainJump",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainJumpCmp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainCall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PlainAsmErrorCases.lean",
+    "lean_name": "filterCorrectPlainLoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-main source comparison 2026-10-03: original669-696 complete simulation statement, original labSem evaluate default Asmi Jump/JumpCmp/Call/Loc clauses (distinct from labAsm control). Arbitrary full source/target states/result/final, source evaluate/state_rel/nonfailed hypotheses and literal fetch constructor guard; exact original existential target run with source clock plus derived skips and full FFI equality. No induction, target-run, successful-result or unreachable-code premise. Native all-width HolAsm carriers and real-rendering inheritance unchanged. Shared private constructor predicate/proof factoring is Flapjack infrastructure; four public pieces are actual original default-error cases. Full original closed typed filter_correct capture and kernel reproof replayed; full evaluator assembly remains separate. The imported evaluator inherits reals_as_rational_cuts (SOUNDNESS item8); these default branches perform no FP operation and do not discharge that broader rendering assumption."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCorrectExact.lean",
+    "lean_name": "compileExpCorrectExact",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol whole source comparison2026-10-03 original686-791 compile_exp_correct: arbitrary faithful source state, exact expression/value and context; all seven original hypotheses and three conclusions retained. Actual evalHOLFinite, first-binding shapeMap/FM‌AP_MAP2, fields context equality, FEVERY local/global validity and structInfosOk; old expression shape, result fields validity and actual converted target evaluation proved. No recursive IH or target run, memory adapter, compatibility, range or postrelation premise in public statement. Full faithful source-guarded evalIndExact assembles all16 expression constructors, preserving NStruct UNZIP/lookup/name/member guards and Load is_wf_shape guard. Local first-binding lookup equality proves the equivalent faithful MlS key orientation without extra premise. Imported canonical state/full two-way witness and explicit four-map/positive-word Type0 qualifiers only. Fresh closed whole original theorem/type/hyp0/kernel T captured. Whole program/declaration/production correctness remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCorrectExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvEncodeFail",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_encode_fail_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: full singleton native ADDI(0,0,0) list. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvEncode",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_encode_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: complete native instruction input, original Encode word32, allfour byte extractions7:0,15:8,23:16,31:24 in original little-endian list order. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvBopR",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_bop_r_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: complete five-constructor binop table to uncurried native ArithR constructors, original fixedword5 triple. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvBopIClauses",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_bop_i_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: the tagged theorem is exactly the original four function-equality conjuncts Add/And/Or/Xor to ADDI/ANDI/ORI/XORI. Untagged total helper extension uses canonical holArb for source-unspecified Sub, with no claimed source equation there; original EVAL stays unreduced. Full executable AST handles Sub separately and directly splits the four defined cases. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvShClauses",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_sh_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: the tagged theorem is exactly the three original function-equality conjuncts Lsl/Lsr/Asr to SLLI/SRLI/SRAI on word5/5/6. Untagged total extension leaves missing Ror canonical arbitrary; original EVAL stays unreduced. Complete AST has the separate original rotation expansion. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvShvClauses",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_shv_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: the tagged theorem is exactly the three original function-equality conjuncts Lsl/Lsr/Asr to SLL/SRL/SRA on word5/5/5. Untagged total extension leaves missing Ror canonical arbitrary; original EVAL stays unreduced. Complete AST keeps full original register rotation expansion. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvMemop",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_memop_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: complete eight-constructor memop table: LD/LWU/LHU/LBU left constructors and SD/SW/SH/SB right constructors, original uncurried word5/5/12 function payloads. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvConst32",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_const32_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: word5 register/word32 input, original bit11 conditional: complemented high20 LUI plus XORI when set, high20 LUI plus ADDI otherwise. Original list order and low12 retained. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvAst",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_ast_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: entire exact HolAsm64 carrier to complete native instruction lists. All inst/arith/reg-imm/mem/FP/Jump/JumpCmp/Call/JumpReg/Loc branches retained. Fixed signed min21/max21 and -0xFFC/0xFFF tests use BitVec.sle; >>> uses signed shift; casts use exact extract/setWidth/signExtend; n2w registers wrap at5bits without bound premise. Full constant build/sign-bit branches, original overflow/carry/rotation sequences and all32 comparison/reg-imm/short-far cases retained. Operator case splitting avoids evaluating underspecified helper cases without restricting inputs. Unsupported source FP/LongDiv emit original NOP list, not new failures. No target-run, source-validity or post-evaluation premise. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target.lean",
+    "lean_name": "riscvEnc",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_enc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript29-275: original combin C LIST_BIND riscv_encode composed with complete riscv_ast rendered as flatMap over whole AST result. Full HolAsm64 input and original List(BitVec8) output; no asm_ok/range/target-run hypothesis. Accepted exact ASM/native AST carriers reused; fixed original word widths and products retained. Fresh original full types/hyp0/partial-clause evidence and300 complete AST+byte observations kernel replayed. Finite observations are regression evidence, not a universal HOL-to-Lean equivalence proof. Configuration/production integration remain separate .1.3."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "compileCorrectSkip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Skip leaf: all ten original hypotheses and seven conclusions, no recursive IH. Faithful evaluateHOLFiniteState yields the original result and unchanged source state; compileProgExact preserves this constructor, convertResHOL preserves its result, actual target evaluator yields converted state. Both FEVERY postconditions and global/guarded-local shape-map equalities follow from unchanged source; original result-value EVERY predicates hold on empty resVsHOL. Imported canonical state owner, full local two-way roundtrip, four finite-map/positive-word Type0 translations only. No extra target-run, resource, range, adapter, compatibility or postrelation premise. Original whole theorem and constructor specialization closed/kernel captured; remaining constructors/program/declaration assembly separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "compileCorrectBreak",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Break leaf: all ten original hypotheses and seven conclusions, no recursive IH. Faithful evaluateHOLFiniteState yields the original result and unchanged source state; compileProgExact preserves this constructor, convertResHOL preserves its result, actual target evaluator yields converted state. Both FEVERY postconditions and global/guarded-local shape-map equalities follow from unchanged source; original result-value EVERY predicates hold on empty resVsHOL. Imported canonical state owner, full local two-way roundtrip, four finite-map/positive-word Type0 translations only. No extra target-run, resource, range, adapter, compatibility or postrelation premise. Original whole theorem and constructor specialization closed/kernel captured; remaining constructors/program/declaration assembly separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "compileCorrectContinue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Continue leaf: all ten original hypotheses and seven conclusions, no recursive IH. Faithful evaluateHOLFiniteState yields the original result and unchanged source state; compileProgExact preserves this constructor, convertResHOL preserves its result, actual target evaluator yields converted state. Both FEVERY postconditions and global/guarded-local shape-map equalities follow from unchanged source; original result-value EVERY predicates hold on empty resVsHOL. Imported canonical state owner, full local two-way roundtrip, four finite-map/positive-word Type0 translations only. No extra target-run, resource, range, adapter, compatibility or postrelation premise. Original whole theorem and constructor specialization closed/kernel captured; remaining constructors/program/declaration assembly separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExp.lean",
+    "lean_name": "instSelectExp_noLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_no_lab",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:845: entire native inst_select_exp over arbitrary expressions/configuration/registers; all load/op/shift/fallback branches. Original unconditional no-label and flat conclusions; instruction validity retains only original addr_offset_ok config zero premise. Positive BitVec width/AsmConfigExact matches reviewed native word_inst carriers. Structural size induction avoids imported functional-induction kernel issue. No target assumptions or narrowed operands/widths; proof-only convention result, no executable route change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExp.lean",
+    "lean_name": "instSelectExp_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:865: entire native inst_select_exp over arbitrary expressions/configuration/registers; all load/op/shift/fallback branches. Original unconditional no-label and flat conclusions; instruction validity retains only original addr_offset_ok config zero premise. Positive BitVec width/AsmConfigExact matches reviewed native word_inst carriers. Structural size induction avoids imported functional-induction kernel issue. No target assumptions or narrowed operands/widths; proof-only convention result, no executable route change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExp.lean",
+    "lean_name": "instSelectExp_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:910: entire native inst_select_exp over arbitrary expressions/configuration/registers; all load/op/shift/fallback branches. Original unconditional no-label and flat conclusions; instruction validity retains only original addr_offset_ok config zero premise. Positive BitVec width/AsmConfigExact matches reviewed native word_inst carriers. Structural size induction avoids imported functional-induction kernel issue. No target assumptions or narrowed operands/widths; proof-only convention result, no executable route change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/InstallCases.lean",
+    "lean_name": "filterCorrectInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.7): Full original filter_correct669 Install branch982-1033 against native labSem Evaluate Install. Retains source s1/t1/res/s2 evaluate/stateRel/nonfailed, literal native fetch guard, full existential target execution/result/extra clock/FFI conclusion, all positive-width word/configuration/FFI carriers and fixed byte widths. All three register patterns, buffer flush and locator NONE/SOME, compiler failure, empty/nonempty program, and both actual bytes/next-configuration consistency outcomes are covered without success narrowing or added configuration equality instances. IH only simulates the literal successful installed source successor under existentially packaged actual source register/flush/locator/oracle/compiler/nonempty/consistency choices; no desired target evaluation, compiler result or postrelation premise. Private installReturnState names exactly original inline record update with appended code, shifted compile oracle and cc registers, ptr/register/FP/buffer/PC/clock updates, with no separate HOL declaration. Full target compile output derives from original stateRel compiler clause; full installed successor relation derives from accepted filter_skip_MAP/append and loc_to_pc_adjust_pc_append. Target skip execution, recursive run, result/clock/FFI derive from source IH and actual guards. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full filter_correct assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "compileCorrectTick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Tick leaf: all ten source hypotheses and seven conclusions retained, no recursive IH. Actual faithful evaluateHOLFiniteState/compileProgExact/convertStateExact/result carriers. Tick treats original zero-clock TimeOut/emptyLocals and nonzero decrement branches; converter preserves clock and commutes with empty locals and decrement, canonical empty-map mapping by definitional equality. Annot ignores faithful MlS tag/text and preserves original NONE/source state. Post FEVERY and global/conditional-local shape maps follow from unchanged fields or empty locals; both original result EVERY predicates hold on empty result-value list. No additional clock, bounds, resource, adapter, compatibility or target-run premise. Imported canonical owner/full state roundtrip, explicit four-map/positive-word Type0 qualifiers only. Original whole theorem and case kernel captures reviewed. Whole program/declaration/compiler remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "compileCorrectAnnot",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Annot leaf: all ten source hypotheses and seven conclusions retained, no recursive IH. Actual faithful evaluateHOLFiniteState/compileProgExact/convertStateExact/result carriers. Tick treats original zero-clock TimeOut/emptyLocals and nonzero decrement branches; converter preserves clock and commutes with empty locals and decrement, canonical empty-map mapping by definitional equality. Annot ignores faithful MlS tag/text and preserves original NONE/source state. Post FEVERY and global/conditional-local shape maps follow from unchanged fields or empty locals; both original result EVERY predicates hold on empty result-value list. No additional clock, bounds, resource, adapter, compatibility or target-run premise. Imported canonical owner/full state roundtrip, explicit four-map/positive-word Type0 qualifiers only. Original whole theorem and case kernel captures reviewed. Whole program/declaration/compiler remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/FilterCorrect.lean",
+    "lean_name": "filterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6): Full original filter_correct669, forall s1 t1 res s2, original conjunction evaluate s1=(res,s2), state_rel s1 t1, not t1.failed implies exists extra t2, evaluate target with source.clock+extra=(res,t2) and s2.ffi=t2.ffi. All four independent state/result binders, arbitrary native configuration and FFI carriers, positive-width HOL word dimension and fixed bytes retained. All native evaluator outcomes included: zero clock, absent fetch, label, ordinary Inst including failure, JumpReg Loc/Word, four plain-ASM default errors, buffer write, shared memory NONE/final/ret, every labAsm Jump/JumpCmp/Call/LocValue/Halt/Install/CallFFI branch. Case IHs are entirely discharged internally by strong induction on native source clock, using exact asmInstConsts and shareMemOp_ret_clock; this is a proof organization change from original evaluate induction, not an external simulation or successful-pass premise. Reviewed ordinary Inst IH source.failed=false guard retained; compiler/oracle/flush/locator/register/nonempty/consistency choices remain actual helper path guards. Target execution/result/extra clock and final FFI equality are derived for every branch, with no desired target result or postrelation hypothesis. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay byte-identical. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. This completes original evaluator simulation only; state_rel_IMP_sem_EQ_sem, filter_skip_semantics and end-to-end correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "shape_of_convert_v_ind",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ValueShapeConversion.lean",
+    "lean_name": "shapeOfConvertVInd",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source comparison2026-10-03 original835-885. Original arbitrary Nat n/shape/value with all5 source conjuncts; full compileShapeNHOL equality. Faithful source-context DROP and wf guard retained. Actual native compiler induction includes both list and shape motives; named index bounds, first-binding lookup, matching field-shape lists and later-context wf are derived from original structInfosOk and valueFldsOk. No desired shape/size premise. Exact MlS/InfoHOL/ShapeHOL/ValueHOL, actual convertV/compileShapeExact/compileShapeNHOL. Only positive type-indexed word translation, no finite-map or String translation. Original whole/induction/reversed statements, binder types and closed kernel T captured; local induction proof and its local wf helper replay original statements and unchanged source proof text. Return/Raise and full program remain separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "shape_of_convert_v",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ValueShapeConversion.lean",
+    "lean_name": "shapeOfConvertV",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source comparison2026-10-03 original835-885. All4 original premises/full equality, original independently polymorphic unused n:β retained at β:Type rather than restricted to Nat. Applies full arbitrary-n induction theorem at zero using actual wf-shape-of-value and original compile_shape_n_eq. Exact MlS/InfoHOL/ShapeHOL/ValueHOL, actual convertV/compileShapeExact/compileShapeNHOL. Only positive type-indexed word translation, no finite-map or String translation. Original whole/induction/reversed statements, binder types and closed kernel T captured; local induction proof and its local wf helper replay original statements and unchanged source proof text. Return/Raise and full program remain separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "shape_of_convert_v_rev",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ValueShapeConversion.lean",
+    "lean_name": "shapeOfConvertVRev",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source comparison2026-10-03 original835-885. Exact original SIMP_RULE std_ss [] (GSYM shape_of_convert_v): only value-fields-validity, wf-value and struct-infos hypotheses remain; original unused n and context-map binder/equality simplify away. Whole equality reversed at actual field-map context, not an assumed target shape. Exact MlS/InfoHOL/ShapeHOL/ValueHOL, actual convertV/compileShapeExact/compileShapeNHOL. Only positive type-indexed word translation, no finite-map or String translation. Original whole/induction/reversed statements, binder types and closed kernel T captured; local induction proof and its local wf helper replay original statements and unchanged source proof text. Return/Raise and full program remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ValueShapeConversion.lean",
+    "lean_name": "fields_values_valid",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only mutual Bool list projection plumbing, no independent HOL declaration."
   }
 ]
