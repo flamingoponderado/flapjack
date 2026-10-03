@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
 import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InitialStateContracts

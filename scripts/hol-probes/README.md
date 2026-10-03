@@ -6781,3 +6781,15 @@ conjuncts and each original nonzero-clock guard. Instruction FP dependencies
 retain inherited real-rendering assurance (SOUNDNESS item8); these laws supply
 actual prerequisites of clock-event monotonicity, not a machine simulation.
 Regenerate with `HOL_PROBE_ONLY=labprops_clock_support_probeScript.sml`.
+
+### Full native Lab clock-extension event theorem
+
+`labprops_evaluate_add_clock_io_events_mono_probeScript.sml` freshly captures
+original whole statement, complete arbitrary state/extra types, zero hypotheses
+and kernel proof T. Native functional induction retains all36 evaluator
+branches with unconditional event-prefix conclusion, including zero-clock,
+Install and all shared/FFI outcomes. The derived native two-clock comparability
+consequence supplies actual observational trace-chain inputs. This retains
+inherited real rendering (SOUNDNESS item8); whole machine/compile simulation
+and end-to-end correctness remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_add_clock_io_events_mono_probeScript.sml`.

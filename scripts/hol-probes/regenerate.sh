@@ -6411,3 +6411,7 @@ run_probe labprops_clock_support_probeScript.sml labprops_clock_support_probe.ou
   addr_add_clock_eq addr_add_clock_eq_types addr_add_clock_eq_hypotheses addr_add_clock_eq_proved \
   share_mem_op_add_clock_same share_mem_op_add_clock_same_types share_mem_op_add_clock_same_hypotheses share_mem_op_add_clock_same_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe labprops_evaluate_add_clock_io_events_mono_probeScript.sml labprops_evaluate_add_clock_io_events_mono_probe.out \
+  evaluate_add_clock_io_events_mono evaluate_add_clock_io_events_mono_types evaluate_add_clock_io_events_mono_hypotheses evaluate_add_clock_io_events_mono_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
