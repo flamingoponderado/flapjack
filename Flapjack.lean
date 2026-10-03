@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
