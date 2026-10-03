@@ -1,0 +1,39 @@
+asm_fetch_not_skip_adjust_pc=∀(pc :num) (code :α sec list) (inst :β).
+  (∀(x :word8 list) (y :num).
+     asm_fetch_aux pc code ≠
+     SOME (Asm (Asmi (Inst (Skip :α inst) :α asm)) x y)) ⇒
+  asm_fetch_aux pc code =
+  asm_fetch_aux (adjust_pc pc code) (filter_skip code)
+asm_fetch_not_skip_adjust_pc_types=(pc :num)::num;(code :α sec list)::α sec list;(inst :β)::β;
+asm_fetch_not_skip_adjust_pc_hypotheses=0
+asm_fetch_not_skip_adjust_pc_proved=T
+state_rel_def=∀(s1 :(α, γ, 'ffi) labSem$state) (t1 :(α, γ, 'ffi) labSem$state).
+  state_rel s1 t1 ⇔
+  (∃(s1compile :γ -> α sec list -> (word8 list # γ) option).
+     s1 =
+     t1 with
+     <|code := filter_skip t1.code; pc := adjust_pc t1.pc t1.code;
+       compile_oracle :=
+         (λ(n :num).
+              (λ((a :γ),(b :α sec list)). (a,filter_skip b))
+                (t1.compile_oracle n :γ # α sec list));
+       compile := s1compile|> ∧
+     t1.compile = (λ(c :γ) (p :α sec list). s1compile c (filter_skip p))) ∧
+  ¬t1.failed
+state_rel_def_types=(s1 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;(t1 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;
+state_rel_def_hypotheses=0
+state_rel_def_proved=T
+asm_fetch_aux_eq2=asm_fetch_aux (adjust_pc (pc :num) (code :α sec list)) (filter_skip code) =
+(x :α line option) ⇒
+∃(k :num). asm_fetch_aux (pc + k) code = x ∧ all_skips pc code k
+asm_fetch_aux_eq2_types=(x :α line option)::α line option;(code :α sec list)::α sec list;(pc :num)::num;
+asm_fetch_aux_eq2_hypotheses=0
+asm_fetch_aux_eq2_proved=T
+all_skips_evaluate_rw=all_skips (s :(α, β, γ) labSem$state).pc s.code (k :num) ∧ ¬s.failed ∧
+s.clock = (clk :num) + k ∧
+(t :(α, β, γ) labSem$state) = s with <|pc := s.pc + k; clock := clk|> ⇒
+(evaluate s :machine_result # (α, β, γ) labSem$state) =
+(evaluate t :machine_result # (α, β, γ) labSem$state)
+all_skips_evaluate_rw_types=(t :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(clk :num)::num;(k :num)::num;(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+all_skips_evaluate_rw_hypotheses=0
+all_skips_evaluate_rw_proved=T

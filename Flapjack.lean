@@ -1,6 +1,7 @@
 import Flapjack.Test.L3DecodeParity
 import Flapjack.RiscV.L3.Defs.Decode
 import Flapjack.RiscV.L3.Defs.Run
+import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
@@ -18,7 +19,6 @@ import Flapjack.RiscV.L3.Defs.ImmediateShift
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
 import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono

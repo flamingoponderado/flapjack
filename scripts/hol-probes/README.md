@@ -7054,3 +7054,14 @@ proof or universal word32 equivalence. Kernel fixture equality includes full
 constructor and numeric payloads. No instruction/mode acceptance assumption
 is added to the definitions. Regenerate with `HOL_PROBE_ONLY=l3_decode_probeScript.sml`
 through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
+### Native filter state relation and skipped-run consequences
+
+`lab_filter_state_relation_probeScript.sml` captures four complete original declarations125/199/252/263 with full types, zero hypotheses and kernel reproofs (16 rows). The unchanged local proofs and their unchanged local state/skip-run prerequisites are replayed from the original source. The unused fetch lemma inst binder is captured explicitly.
+
+### Native skipped-run PC adjustment
+
+`lab_filter_pc_adjustment_probeScript.sml` replays the unchanged original local proofs211/281 and captures both full statements, all types, zero hypotheses and kernel reproofs (8 rows). The full successor adjustment law is an actual shared-memory filter simulation prerequisite; the initial-alignment lemma is independent nearby source support.
+
+### Native shared-memory filter terminal clauses
+
+`lab_filter_shared_terminal_probeScript.sml` captures the complete original NONE578 and final646 clauses with independent full state/configuration/oracle/FFI types, zero hypotheses and kernel reproofs (8 rows). All original guards remain; the final original-PC state and FFI equality are existential conclusions.
