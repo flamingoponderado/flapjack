@@ -2267,6 +2267,7 @@ import Flapjack.Misc.BalancedMap.LookupSemantics
 import Flapjack.Misc.BalancedMap.RotationAux
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
+import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 
 -- Tagged modules required by the HOL reference coverage gate.
 
