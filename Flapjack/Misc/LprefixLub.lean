@@ -536,6 +536,35 @@ theorem IMP_build_lprefix_lub_EQ {ls1 ls2 : HolLList α → Prop}
   (lprefix_lub_equiv_chain2 (buildLprefixLub_thm h1) (buildLprefixLub_thm h2)).mpr
     (IMP_equiv_lprefix_chain h1 h2 hr12 hr21)
 
+/-- HOL finite-list prefix chains, with the full arbitrary element carrier and
+predicate-backed set. Ordinary lists retain HOL's constructor representation. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "prefix_chain_def"]
+def prefixChain (ls : List α → Prop) : Prop :=
+  ∀ l1 l2, ls l1 → ls l2 → l1 <+: l2 ∨ l2 <+: l1
+
+/-- HOL's image of a finite-list prefix chain is a lazy-list prefix chain.
+The existential image retains every member and the full generic carrier. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "prefix_chain_lprefix_chain"]
+theorem prefixChain_lprefixChain {ls : List α → Prop} (h : prefixChain ls) :
+    lprefixChain (fun ll => ∃ l, ls l ∧ fromList l = ll) := by
+  intro ll1 ll2 h1 h2
+  obtain ⟨l1, hl1, rfl⟩ := h1
+  obtain ⟨l2, hl2, rfl⟩ := h2
+  exact (h l1 l2 hl1 hl2).elim
+    (fun hp => Or.inl ((lprefix_fromList l1 l2).mpr hp))
+    (fun hp => Or.inr ((lprefix_fromList l2 l1).mpr hp))
+
+/-- HOL's arbitrary Boolean filter preserves finite-list prefix chains. -/
+@[hol "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml" "prefix_chain_FILTER"]
+theorem prefixChain_filter {ls : List α → Prop} (P : α → Bool) (h : prefixChain ls) :
+    prefixChain (fun filtered => ∃ l, ls l ∧ l.filter P = filtered) := by
+  intro l1 l2 h1 h2
+  obtain ⟨xs, hxs, rfl⟩ := h1
+  obtain ⟨ys, hys, rfl⟩ := h2
+  exact (h xs ys hxs hys).elim
+    (fun hp => Or.inl (hp.filter P))
+    (fun hp => Or.inr (hp.filter P))
+
 end HolLList
 
 end Flapjack

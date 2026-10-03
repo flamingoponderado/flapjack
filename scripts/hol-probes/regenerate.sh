@@ -6388,3 +6388,14 @@ run_probe l3_register_shift_probeScript.sml l3_register_shift_probe.out \
 run_probe word_to_stack_inter_union_left_probeScript.sml word_to_stack_inter_union_left_probe.out \
   inter_union_left_statement inter_union_left_proved inter_union_left_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_initial_entry_contracts_probeScript.sml lab_to_target_initial_entry_contracts_probe.out \
+  init_ok_def init_ok_def_types init_ok_def_hypotheses init_ok_def_proved \
+  oracle_tie_make_init oracle_tie_make_init_types oracle_tie_make_init_hypotheses oracle_tie_make_init_proved \
+  make_init_simp make_init_simp_types make_init_simp_hypotheses make_init_simp_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lprefix_lub_finite_prefix_chain_probeScript.sml lprefix_lub_finite_prefix_chain_probe.out \
+  prefix_chain_def prefix_chain_def_types prefix_chain_def_hypotheses prefix_chain_def_proved \
+  prefix_chain_lprefix_chain prefix_chain_lprefix_chain_types prefix_chain_lprefix_chain_hypotheses prefix_chain_lprefix_chain_proved \
+  prefix_chain_FILTER prefix_chain_FILTER_types prefix_chain_FILTER_hypotheses prefix_chain_FILTER_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

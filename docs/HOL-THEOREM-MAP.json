@@ -72325,5 +72325,56 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.6): original lab_to_targetProofScript.sml:7528-7558 compile_correct, Halt case, source 9282-9351; no recursive call; target reaches halt_pc and returns the source Halt result from the related ptr_reg. Each piece concludes the original compile_correct statement for the fetched instruction through CompileCorrectFor (CompileCorrect/Common.lean): binders res mc_conf s2 code2 labs t1 ms1 and the free p, hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel; conclusion exists k ms2 with target evaluate at s1.clock + k equal to (res, ms2, s2.ffi). The original existential's unused t2 (a free type, see lab_to_target_compile_correct_probe.out) is omitted. Case guards are exactly the evaluate_ind guards (s.clock <> 0, the asm_fetch shape) and the only extra hypotheses are the evaluate_ind induction hypotheses for this instruction's recursive calls (captured lab_evaluate_ind row); no target run, post-state relation or oracle fact is assumed. Proof follows the source case script via asm_step_IMP_evaluate_step_find_next / asm_step_IMP_evaluate_step_nop, state_rel frame/shift transport and oracle_tie_step. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "initOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "init_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead183 source9357-9362, complete existential semantic entry over original concrete Config: arbitrary pair(mc,p), source state/target state, existential whole code2/labs/asm state and full stateRel AND oracleTie. Fresh full HOL type confirms Config is fixed here, no arbitrary compiler-carrier specialization. Body retains both entire relations and unrestricted witnesses, no successful simulation premise. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "oracleTie_makeInit",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "oracle_tie_make_init",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead184 source9579-9584, unconditional entire four-function oracle tie for actual initializer. Fresh full HOL type confirms arbitrary compiler configuration C independent of machine/state/projection/FFI host and all twelve original input families. Definitional actual constructed-oracle equality proves all4clauses with no assumed oracle/targetrun/result fact. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/InitialStateContracts.lean",
+    "lean_name": "makeInit_simp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "make_init_simp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source/type/body comparison 2026-10-03; bead185 source10516-10522, whole unconditional conjunction actual FFI equality AND PC=0 AND code equality. All twelve original inputs/generic independent compiler configuration remain; no conjunct dropped or selected source state. Actual makeInit body supplies all3equations. Positive-width BitVec width/NeZero, fixed byte8/FP64, original native AST/state/config/projection and separate universe0 FFI host retained. No HD/EL/default or provenance policy change. Fresh complete original declaration/types0hyp/kernelT captured; same-module untagged makeInit_initOk consumer derives actual semantic entry with concrete code2/labs/t from full original151 guards and unconditional native oracle theorem, no desired initialized relation supplied. This is initializer contract group only; full machine_sem_EQ_sem31/semantics_make_init152/semantics_compile153/end-to-end remain open."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "prefix_chain_def",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "prefixChain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. HOL full arbitrary alpha list set; native predicate-backed set and List.IsPrefix retain both universally quantified members and the membership antecedent, curried equivalently. No word/FFI/map carrier occurs."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "prefix_chain_lprefix_chain",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "prefixChain_lprefixChain",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha list set and sole prefix_chain antecedent. IMAGE fromList is exactly the existential preimage membership predicate. Native lprefix_fromList equates the reviewed HolLList prefix with ordinary List.IsPrefix; neither members nor witnesses are restricted."
+  },
+  {
+    "hol_path": "hol4/examples/pl-semantics/lprefix_lub/lprefix_lubScript.sml",
+    "hol_name": "prefix_chain_FILTER",
+    "lean_path": "Flapjack/Misc/LprefixLub.lean",
+    "lean_name": "prefixChain_filter",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha, arbitrary Boolean P and arbitrary list set; sole prefix_chain antecedent. IMAGE FILTER is exactly the existential preimage membership predicate. List.IsPrefix.filter proves each original prefix alternative for the same P; no decidability premise or membership restriction is added."
   }
 ]
