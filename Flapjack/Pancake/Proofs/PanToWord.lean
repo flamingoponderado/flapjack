@@ -628,4 +628,33 @@ theorem sizeOfEidsCompileTopHOL {width : Nat} [NeZero width]
   rw [← exceptionsHOL_length_eq_sizeOfEidsHOL, ← exceptionsHOL_length_eq_sizeOfEidsHOL,
     PanGlobalsCompileDecsStructural.exceptions_compile_topHOL pan_code main _ hl]
 
+
+/-- Exact HOL `lookup_first_name_compile_prog_main`
+(`pan_to_wordProofScript.sml:63-75`). `make_funcs` is the reviewed
+crep_to_loop `crepToLoopMakeFuncsExactHOL`, `first_name` is `firstLoopName`,
+`fromAList`/`lookup` are the Sptree renderings, and the free `c` and
+`crep_code` are bound explicitly. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "lookup_first_name_compile_prog_main"
+  (fmap_as_finite_support_result_observations := [crepToLoopMakeFuncsExactHOL])]
+theorem lookupFirstNameCompileProgMainHOL {width : Nat} [NeZero width] (c : AsmArchitecture)
+    (crep_code : List (MlString × List Nat × CrepProgHOL width)) :
+    (crepToLoopMakeFuncsExactHOL crep_code).lookup (ofString "main") = some (firstLoopName, 0) →
+    ∃ prog, sptLookup firstLoopName (sptFromAList (compileProgHOLExact c crep_code)) =
+      some ([], prog) := by
+  intro h
+  obtain ⟨heq, hlen⟩ := initialProgMakeFuncsElExact crep_code (ofString "main") 0
+    (by simpa using h)
+  cases crep_code with
+  | nil => simp at hlen
+  | cons e rest =>
+    have he : (ofString "main", ([] : List Nat), e.2.2) = e := heq
+    obtain ⟨name, params, body⟩ := e
+    have hp : params = [] := by
+      have := congrArg (fun x => x.2.1) he
+      simpa using this.symm
+    subst hp
+    simp only [compileProgHOLExact, List.length_cons, List.range_succ_eq_map, List.map_cons,
+      List.zipWith_cons_cons, sptFromAList]
+    exact ⟨_, sptLookup_sptInsert_same _ _ _⟩
+
 end Flapjack

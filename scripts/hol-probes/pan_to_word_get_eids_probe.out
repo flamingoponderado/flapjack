@@ -6,6 +6,15 @@ FDOM_get_eids_pan_globals_compile_eq=∀(pan_code :α decl list) (main :mlstring
   ALOOKUP (functions pan_code) main = SOME (args,body,rshape) ⇒
   FDOM (get_eids_from_decls (compile_top pan_code main :α decl list)) =
   FDOM (get_eids_from_decls pan_code)
+lookup_first_name_compile_prog_main=FLOOKUP
+  (make_funcs (crep_code :(mlstring # num list # α crepLang$prog) list) :
+   mlstring |-> num # num) «main» = SOME (first_name,(0 :num)) ⇒
+∃(prog :α loopLang$prog).
+  lookup first_name
+    (fromAList
+       (compile_prog (c :architecture) crep_code :
+        (num # num list # α loopLang$prog) list)) =
+  SOME (([] :num list),prog)
 size_of_eids_compile_top=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
 SOME ((args :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
 size_of_eids (compile_top pan_code main :α decl list) = size_of_eids pan_code

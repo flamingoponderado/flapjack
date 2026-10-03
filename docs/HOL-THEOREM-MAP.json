@@ -77209,5 +77209,16 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: pan_structs compile_decs keeps exception names in order; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "lookupFirstNameCompileProgMainHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "lookup_first_name_compile_prog_main",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "crepToLoopMakeFuncsExactHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): FLOOKUP (make_funcs crep_code) «main» = SOME (first_name,0) ==> ?prog. lookup first_name (fromAList (crep_to_loop$compile_prog c crep_code)) = SOME ([],prog). make_funcs is the reviewed crepToLoopMakeFuncsExactHOL producer, first_name is firstLoopName, fromAList/lookup are sptFromAList/sptLookup, «main» is ofString \"main\", and the free c and crep_code are bound explicitly. Statement captured with types by pan_to_word_get_eids_probe."
   }
 ]
