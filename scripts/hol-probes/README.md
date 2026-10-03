@@ -6405,3 +6405,7 @@ Independent expectations cover ASID zero/nonzero, global entries, optional maske
 addresses, empty entries, surviving arbitrary records, register-zero semantics,
 other-core tables and the entire frame outside c_tlb. No entry-validity/core-bound
 premise is assumed; these regressions do not establish whole Run/Next correctness.
+
+
+
+`stack_rel_aux_definition_probe.out` captures the complete original generated equations, zero hypotheses and polymorphic type. Three independent source-frame/location/saved-handler word dimensions are retained; total HOL EL applies without an invented source bound. All four clauses including catch-all mismatches remain.

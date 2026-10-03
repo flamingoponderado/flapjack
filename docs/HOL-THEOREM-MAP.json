@@ -68697,5 +68697,14 @@
     "hol_name": "dfn'SFENCE_VM_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source10709-10727. Fullword6 ASID/optionalword64 address/arbitraryword4 function TLB map, exact native state. Original5022 TLBEntries=16 and FORinclusive0..15 retained. ASID0 clears global and nonglobal matching addresses; nonzeroASID clears only sameASID/nonglobal. Address match is e.vAddr=(va AND e.vMatchMask), no entry-validity premise. SFENCE logicalGPR0 omits addressfilter; othersread GPRrs1, currentASID andcurrentTLB, write onlycurrentcore. Existing reviewed helper/carrier owners used. Complete10definition closure0fail and unconditional SFENCE whole-state normalform kernelchecked. Fresh original64mixedentry observations independently compared: differingASIDs/global/empty/invalidmaskedaddress andslot15; survivingentries exactlyequal original arbitrary records; othercore andfullframe outsidec_tlb unchanged,core255 totalCore1. Independent check caught earlier mistaken slot15 note; corrected from literal source constant, rendered behavior unchanged. No wholeRun/Next/compiler equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackRelAux.lean",
+    "lean_name": "stackRelAux",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "stack_rel_aux_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead l65y: full original815-838/generated stack_rel_aux_def equations and hyp0/type freshly replayed. Original alpha source-frame/frame-list words, beta handler loc words and gamma handler saved words are THREE independent dimensions, preserved as frameWidth/locWidth/width with separate NeZero. Literal nil/NONE-handler/SOME-handler/catchall clauses, all quantified cutsets/frame/labels and conjuncts retained. ALOOKUP first-match Nat equality vs native Nat lawful BEq lookup, LLOOKUP optional zero-based index, misc the_def21-24 vs Option.getD, LASTN_DROP_UNCOND rich_list2824-2830 vs drop(length-n) including overlength, MAP_FST/name adjustment, index_list/filter_bitmap and handler_val all compared. Accepted total HOL EL retains shared unspecified holArb on empty/out-of-range; no concrete frame default or added source-bound/success premise. Handler guard uses target rest length exactly, EL indexes source xs exactly. Positive word translation only; no old narrowed two-dimension tag restored. Useful full definition is proof-side relation, no compiler runtime change."
   }
 ]
