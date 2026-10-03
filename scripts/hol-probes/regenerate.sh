@@ -6990,3 +6990,7 @@ run_probe pan_structs_program_shmem_store_probeScript.sml pan_structs_program_sh
 run_probe pan_structs_program_extcall_probeScript.sml pan_structs_program_extcall_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_extcall_statement compile_correct_extcall_proved compile_correct_full_types compile_correct_extcall_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_shmem_load_probeScript.sml pan_structs_program_shmem_load_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_shmem_load_statement compile_correct_shmem_load_proved compile_correct_full_types compile_correct_shmem_load_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

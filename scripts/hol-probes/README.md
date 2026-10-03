@@ -7442,3 +7442,9 @@ and derives target arguments/outcomes and finite state repacking internally.
 and its ExtCall specialization, all quantified types and closed kernel truth.
 The Lean case retains all ten premises/seven conclusions without an IH or
 additional FFI agreement premise; full compiler correctness remains open.
+
+`pan_structs_program_shmem_load_probe` captures full original `compile_correct`
+and its ShMemLoad specialization, quantified types and closed kernel truth.
+The Lean case preserves all ten premises/seven conclusions, derives the actual
+mapped-read FFI and returned-word assignment internally, and adds no IH or
+oracle agreement premise. Full compiler correctness remains open.
