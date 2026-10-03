@@ -7619,3 +7619,7 @@ run_probe word_to_stack_inst_shift_probeScript.sml word_to_stack_inst_shift_prob
 run_probe pan_globals_shape_localised_probeScript.sml pan_globals_shape_localised_probe.out \
   localised_exp_shape_val_statement localised_exp_shape_val_proved localised_exp_shape_val_types \
   "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_target_compile_prog_max_source_replay_probeScript.sml pan_to_target_compile_prog_max_source_replay_probe.out \
+  compile_prog_max_local_replay_type compile_prog_max_local_replay_def_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake"
