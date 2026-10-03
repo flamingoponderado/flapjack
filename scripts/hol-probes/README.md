@@ -7041,3 +7041,7 @@ proof or universal word32 equivalence. Kernel fixture equality includes full
 constructor and numeric payloads. No instruction/mode acceptance assumption
 is added to the definitions. Regenerate with `HOL_PROBE_ONLY=l3_decode_probeScript.sml`
 through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
+
+## Native PC writer and DecodeAny
+
+`l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.

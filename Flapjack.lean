@@ -1,3 +1,5 @@
+import Flapjack.RiscV.L3.Step.DecodeAny
+import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
 import Flapjack.RiscV.L3.Defs.Decode
 import Flapjack.RiscV.L3.Defs.Run
