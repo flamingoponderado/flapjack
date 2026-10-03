@@ -1,0 +1,3 @@
+max_var_exp_intro_statement=∀P exp. P 0 ∧ every_var_exp P exp ⇒ P (max_var_exp exp)
+max_var_exp_intro_proved=T
+max_var_exp_intro_hypotheses=0
