@@ -7390,3 +7390,8 @@ run_probe pan_structs_decls_function_exn_probeScript.sml pan_structs_decls_funct
 run_probe pan_structs_decls_correct_probeScript.sml pan_structs_decls_correct_probe.out \
   compile_decls_correct_statement compile_decls_correct_proved compile_decls_correct_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_seqsem_probe.out \
+  moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
