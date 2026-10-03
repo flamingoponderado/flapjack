@@ -1,0 +1,77 @@
+upper_jump_definition_0=∀state. Skip state = state.c_Skip state.procID
+upper_jump_definition_1=∀newPC. branchTo newPC = (λstate. write'NextFetch (SOME (BranchTo newPC)) state)
+upper_jump_definition_2=∀rd imm. dfn'LUI (rd,imm) = (λstate. write'GPR (sw2sw (imm @@ 0w),rd) state)
+upper_jump_definition_3=∀rd imm. dfn'AUIPC (rd,imm) = (λstate. write'GPR (PC state + sw2sw (imm @@ 0w),rd) state)
+upper_jump_definition_4=∀rd imm. dfn'JAL (rd,imm) = (λstate. (let v = PC state + sw2sw imm ≪ 1 in if word_bit 0 v then signalAddressException (Fetch_Misaligned,v) state else branchTo v (write'GPR (PC state + Skip state,rd) state)))
+upper_jump_definition_5=∀rd rs1 imm. dfn'JALR (rd,rs1,imm) = (λstate. (let v = GPR rs1 state + sw2sw imm && sw2sw 2w in if word_bit 0 v then signalAddressException (Fetch_Misaligned,v) state else branchTo v (write'GPR (PC state + Skip state,rd) state)))
+upper_jump_LUI_0_0=T
+upper_jump_LUI_0_1=T
+upper_jump_LUI_0_7=T
+upper_jump_LUI_1_0=T
+upper_jump_LUI_1_1=T
+upper_jump_LUI_1_7=T
+upper_jump_LUI_2_0=T
+upper_jump_LUI_2_1=T
+upper_jump_LUI_2_7=T
+upper_jump_LUI_3_0=T
+upper_jump_LUI_3_1=T
+upper_jump_LUI_3_7=T
+upper_jump_LUI_4_0=T
+upper_jump_LUI_4_1=T
+upper_jump_LUI_4_7=T
+upper_jump_AUIPC_0_0=T
+upper_jump_AUIPC_0_1=T
+upper_jump_AUIPC_0_7=T
+upper_jump_AUIPC_1_0=T
+upper_jump_AUIPC_1_1=T
+upper_jump_AUIPC_1_7=T
+upper_jump_AUIPC_2_0=T
+upper_jump_AUIPC_2_1=T
+upper_jump_AUIPC_2_7=T
+upper_jump_AUIPC_3_0=T
+upper_jump_AUIPC_3_1=T
+upper_jump_AUIPC_3_7=T
+upper_jump_AUIPC_4_0=T
+upper_jump_AUIPC_4_1=T
+upper_jump_AUIPC_4_7=T
+upper_jump_JAL_0_0=T
+upper_jump_JAL_0_1=T
+upper_jump_JAL_0_7=T
+upper_jump_JAL_1_0=T
+upper_jump_JAL_1_1=T
+upper_jump_JAL_1_7=T
+upper_jump_JAL_2_0=T
+upper_jump_JAL_2_1=T
+upper_jump_JAL_2_7=T
+upper_jump_JAL_3_0=T
+upper_jump_JAL_3_1=T
+upper_jump_JAL_3_7=T
+upper_jump_JAL_4_0=T
+upper_jump_JAL_4_1=T
+upper_jump_JAL_4_7=T
+upper_jump_JALR_0_0=T
+upper_jump_JALR_0_1=T
+upper_jump_JALR_0_7=T
+upper_jump_JALR_1_0=T
+upper_jump_JALR_1_1=T
+upper_jump_JALR_1_7=T
+upper_jump_JALR_2_0=T
+upper_jump_JALR_2_1=T
+upper_jump_JALR_2_7=T
+upper_jump_JALR_3_0=T
+upper_jump_JALR_3_1=T
+upper_jump_JALR_3_7=T
+upper_jump_JALR_4_0=T
+upper_jump_JALR_4_1=T
+upper_jump_JALR_4_7=T
+upper_jump_zero_JALR_0_0=T
+upper_jump_zero_JALR_0_1=T
+upper_jump_zero_JALR_0_7=T
+upper_jump_zero_JALR_1_0=T
+upper_jump_zero_JALR_1_1=T
+upper_jump_zero_JALR_1_7=T
+upper_jump_zero_JALR_4095_0=T
+upper_jump_zero_JALR_4095_1=T
+upper_jump_zero_JALR_4095_7=T
+upper_jump_helper_Skip=T
+upper_jump_helper_branchTo=T

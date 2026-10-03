@@ -1,3 +1,4 @@
+import Flapjack.Test.WordUnreachEncoderBoundary
 import Flapjack.Test.SetNewTriggerParity
 import Flapjack.Test.SSAStateMapRouteParity
 import Flapjack.Test.GenGcMoveRefsParity

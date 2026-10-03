@@ -1,7 +1,16 @@
-import Flapjack.Test.StackRawCallJumpLowerParity
+import Flapjack.Test.L3UpperJumpParity
+import Flapjack.Test.L3CSRInstructionsParity
+import Flapjack.Test.LabToTargetInitializerInterferenceParity
+import Flapjack.Test.LabToTargetInitializerBasicCasesParity
+import Flapjack.Test.LabToTargetCodeSafetyTransportParity
+import Flapjack.Test.L3CSRDispatchParity
+import Flapjack.Test.L3CSRCounterParity
+import Flapjack.Test.L3FPCSRParity
+import Flapjack.Test.L3ExtStatusParity
 import Flapjack.Test.L3SupervisorCSRParity
 import Flapjack.Test.L3MachineCSRCodecParity
 import Flapjack.Test.L3CSRAccessParity
+import Flapjack.Test.StackRawCallJumpLowerParity
 import Flapjack.Test.StackRawCallStackAccessParity
 import Flapjack.Test.StackRawCallMemoryFfiParity
 import Flapjack.Test.StackRawCallAllocationStoreParity
