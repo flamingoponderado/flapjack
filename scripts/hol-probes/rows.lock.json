@@ -1508,6 +1508,12 @@
       "sha256": "792489b120d9de648eca301411a986c7c9cfd61f8480532698c161f7d16c45ea"
     },
     {
+      "bytes": 12227,
+      "out": "l3_integer_store_probe.out",
+      "rows": 68,
+      "sha256": "d5223a0563fddd8ee6b7e98360401b4cda7593ef55324248c5d54ef3dc386749"
+    },
+    {
       "bytes": 2665,
       "out": "l3_lrd_probe.out",
       "rows": 20,

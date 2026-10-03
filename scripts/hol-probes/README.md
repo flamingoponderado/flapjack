@@ -6292,6 +6292,7 @@ are replayed. Reservation/current-core/other-core and entire frame outside the
 six potentially changed fields are observed. This is the LR_D clause only,
 not full atomic/Run/Next or compiler correctness.
 
+
 `word_props_gc_fun_ok_probe` captures the complete original higher-order GC contract, zero definition hypotheses, the guarded FLOOKUP/FAPPLY correspondence and the always-failing callback theorem. The Lean predicate keeps all original quantifiers and guards; generic kernel tests reject returned Handler and cover location values. This is definition/guard evidence, not whole initialization or compiler correctness.
 
 `stack_remove_copy_each_probeScript.sml` replays the complete literal original `copy_each_thm` proof (1250–1332), with every original premise and full clock/register/separated-memory conclusion. Two rows capture the complete statement and kernel proof success. Native full source induction derives target execution; no full pass theorem or executed compiler parity is claimed by this proof-only slice.
