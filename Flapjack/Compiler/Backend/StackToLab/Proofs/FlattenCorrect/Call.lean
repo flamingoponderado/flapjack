@@ -160,6 +160,114 @@ theorem callEnter {s1 : StackSemStateFiniteExact width C F}
     locValueStep _ fetchA locL]
   exact stepB (t1.clock - 1 + ck1)
 
+theorem chainRun {t1 t2 t3 : Flapjack.Compiler.Backend.LabSem.State width C F} {a b : Nat}
+    (r1 : ∀ ck1, evaluate { t1 with clock := t1.clock + a + ck1 } =
+      evaluate { t2 with clock := t2.clock + ck1 })
+    (r2 : ∀ ck1, evaluate { t2 with clock := t2.clock + b + ck1 } =
+      evaluate { t3 with clock := t3.clock + ck1 }) :
+    ∀ ck1, evaluate { t1 with clock := t1.clock + (a + b) + ck1 } =
+      evaluate { t3 with clock := t3.clock + ck1 } := by
+  intro ck1
+  rw [show t1.clock + (a + b) + ck1 = t1.clock + a + (b + ck1) by omega, r1,
+    ← Nat.add_assoc, r2]
+
+theorem setVarDecClockLt {s : StackSemStateFiniteExact width C F} {link : Nat}
+    {v : WordLocW width} (h0 : s.clock ≠ 0) :
+    (StackSemStateOps.decClock (StackSemStateOps.setVar link v s)).clock < s.clock := by
+  simp [StackSemStateOps.decClock, StackSemStateOps.setVar]; omega
+
+/-- The returning call's evaluation equation, with the callee result exposed. -/
+theorem callRetEval {s1 : StackSemStateFiniteExact width C F} {rp : HolProg width}
+    {link l1 l2 : Nat} {handler : Option (HolProg width × Nat × Nat)}
+    {prog : HolProg width} {res0 : Option (StackSemResult width)}
+    {s2' : StackSemStateFiniteExact width C F} {r : Option (StackSemResult width)}
+    {s2 : StackSemStateFiniteExact width C F}
+    (e2 : StackSemEvaluate.evaluate (prog, StackSemStateOps.decClock
+      (StackSemStateOps.setVar link (.loc l1 l2) s1)) = (res0, s2'))
+    (ev : (match StackSemControl.fixClock (StackSemStateOps.decClock
+        (StackSemStateOps.setVar link (.loc l1 l2) s1))
+        (StackSemEvaluate.evaluate (prog, StackSemStateOps.decClock
+          (StackSemStateOps.setVar link (.loc l1 l2) s1))) with
+      | (some (.result x), s2) =>
+          if x ≠ .loc l1 l2 then (some .error, s2) else StackSemEvaluate.evaluate (rp, s2)
+      | (some (.exception x), s2) =>
+          match handler with
+          | none => (some (.exception x), s2)
+          | some (h, hl1, hl2) =>
+              if x ≠ .loc hl1 hl2 then (some .error, s2) else StackSemEvaluate.evaluate (h, s2)
+      | (none, s2) => (some .error, s2)
+      | (some (.break _), s2) => (some .error, s2)
+      | (some (.continue _), s2) => (some .error, s2)
+      | (res, s2) => (res, s2)) = (r, s2)) :
+    (match (generalizing := false) res0 with
+      | some (.result x) =>
+          if x ≠ .loc l1 l2 then (some .error, s2') else StackSemEvaluate.evaluate (rp, s2')
+      | some (.exception x) =>
+          match handler with
+          | none => (some (.exception x), s2')
+          | some (h, hl1, hl2) =>
+              if x ≠ .loc hl1 hl2 then (some .error, s2') else StackSemEvaluate.evaluate (h, s2')
+      | none => (some .error, s2')
+      | some (.break _) => (some .error, s2')
+      | some (.continue _) => (some .error, s2')
+      | res => (res, s2')) = (r, s2) := by
+  rw [StackSemEvaluateClock.fixClockEvaluate, e2] at ev
+  rcases res0 with _ | ⟨_ | _ | _ | _ | _ | _ | _ | _⟩ <;>
+    first | exact ev | (rcases handler with _ | ⟨h, hl1, hl2⟩ <;> exact ev)
+
+/-- Unpacked `Vloc` conclusion. -/
+theorem flattenConclVloc {p : HolProg width} {t : Bool} {x : StackSemResult width}
+    {s2 : StackSemStateFiniteExact width C F} {n l : Nat} {cs bs : List Nat}
+    {t1 : Flapjack.Compiler.Backend.LabSem.State width C F} {n1 n2 : Nat}
+    (hh : haltView (some x) = none) (hr : resultView x n cs bs = .vloc n1 n2)
+    (h : FlattenConcl p t (some x) s2 n l cs bs t1) :
+    ∃ (ck : Nat) (t2 : Flapjack.Compiler.Backend.LabSem.State width C F),
+      (∀ ck1, evaluate { t1 with clock := t1.clock + ck + ck1 } =
+        evaluate { t2 with clock := t2.clock + ck1 }) ∧
+      t2.lenReg = t1.lenReg ∧ t2.ptrReg = t1.ptrReg ∧ t2.len2Reg = t1.len2Reg ∧
+      t2.ptr2Reg = t1.ptr2Reg ∧ t2.linkReg = t1.linkReg ∧ t1.code <+: t2.code ∧
+      ∀ w, locToPc n1 n2 t2.code = some w → w = t2.pc ∧ stateRel s2 t2 := by
+  obtain ⟨ck, t2, h⟩ := h
+  refine ⟨ck, t2, ?_⟩
+  revert h
+  rw [hh]
+  simp only [Option.map_some, hr]
+  rintro ⟨a, b, c, d, e, f, g, -, w⟩
+  exact ⟨a, b, c, d, e, f, g, w⟩
+
+/-- Shared structure of a returning call: the prelude lines and the
+continuation code. -/
+theorem callRetPrelude {t : Bool} {rp : HolProg width} {link l1 l2 : Nat}
+    {dest : Nat ⊕ Nat} {handler : Option (HolProg width × Nat × Nat)} {n l : Nat}
+    {cs bs : List Nat} {xs : AppList (LabLineHOL width)} {nr1 : Bool} {m1 : Nat}
+    (h1 : flattenHOL false rp n l cs bs = (xs, nr1, m1)) :
+    ∃ rest, appListAppend (flattenHOL t (.call (some (rp, link, l1, l2)) dest handler)
+        n l cs bs).1 = .labAsm (.locValue link (.lab l1 l2)) 0 [] 0 :: compileJumpHOL dest ::
+          .label l1 l2 0 :: (appListAppend xs ++ rest) ∧
+      (handler = none → rest = []) := by
+  rcases handler with _ | ⟨hp, hs, hl⟩
+  · exact ⟨[], by rw [flattenHOL]; simp [h1, appListAppendAppend, appListAppendList], fun _ => rfl⟩
+  · rcases h2 : flattenHOL false hp n m1 cs bs with ⟨ys, nr2, m2⟩
+    exact ⟨.labAsm (.jump (.lab n m2)) 0 [] 0 :: .label hs hl 0 ::
+        (appListAppend ys ++ [.label n m2 0]),
+      by rw [flattenHOL]; simp [h1, h2, appListAppendAppend, appListAppendList],
+      fun h => by cases h⟩
+
+/-- Result propagation through a returning call (results other than a
+matching return or a handled exception). -/
+theorem callPropagate {p p' : HolProg width} {t : Bool} {x : StackSemResult width}
+    {s2 : StackSemStateFiniteExact width C F} {d n l l' : Nat} {cs bs : List Nat}
+    {t1 tE : Flapjack.Compiler.Backend.LabSem.State width C F}
+    (run1 : ∀ ck1, evaluate { t1 with clock := t1.clock + 1 + ck1 } =
+      evaluate { tE with clock := tE.clock + ck1 })
+    (f1 : tE.lenReg = t1.lenReg) (f2 : tE.ptrReg = t1.ptrReg) (f3 : tE.len2Reg = t1.len2Reg)
+    (f4 : tE.ptr2Reg = t1.ptr2Reg) (f5 : tE.linkReg = t1.linkReg) (fcode : tE.code = t1.code)
+    (hind : ∀ cs bs cs' bs' : List Nat, ∀ m m', resultView x m cs bs = resultView x m' cs' bs')
+    (ph : FlattenConcl p true (some x) s2 d l' [] [] tE) :
+    FlattenConcl p' t (some x) s2 n l cs bs t1 :=
+  flattenConclComposeSome run1 f1 f2 f3 f4 f5 (by rw [fcode])
+    (flattenConclResult (p' := p) (t' := true) (l' := 0) (h := ph) rfl (hind _ _ _ _ _ _))
+
 end
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
