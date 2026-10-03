@@ -7362,3 +7362,12 @@ hypotheses, closedness and kernel proofs. Lean uses canonical finite-support
 maps and classical HOL key equality, with no comparison premise; the
 complement-singleton restriction has a checked unconditional literal lookup
 witness. The Dec and DecCall consumers remain separate obligations.
+
+`word_to_stack_comp_call_full_probe.out` records the complete original Call
+constructor induction obligation with all four literal guarded IHs, plus the
+whole arbitrary-ret/arbitrary-handler Call specialization of comp_correct.
+Both statements are closed kernel theorems, proved=T and hypotheses=0. The
+native enclosing constructor assembles checked tail/NONE/SOME cases with every
+original quantifier and result/resource conclusion. These captures are statement
+evidence via the original full theorem, not a replay of the local case proof or
+a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.
