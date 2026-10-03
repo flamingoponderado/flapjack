@@ -522,7 +522,8 @@ def StructContextByteRanged (c : Flapjack.StructContextHOL) : Prop :=
 
 /-- HOL `ALOOKUP` over the exact MlString-keyed structure context
 (`panLangScript.sml:164-171` uses `ALOOKUP ctxt name`): first name match. -/
-def structContextLookupHOL (name : MlS) : StructContextExact → Option StructInfoHOLExact
+def structContextLookupHOL {α : Type} (name : MlS) :
+    List (MlS × α) → Option α
   | [] => none
   | (candidate, info) :: rest =>
       if name = candidate then some info else structContextLookupHOL name rest
@@ -609,19 +610,29 @@ when `nm` is present in the context (`ALOOKUP ctxt nm = SOME _`); the context
 predicate additionally requires that no earlier structure shares a name and
 that every structure's fields are well formed. -/
 mutual
+  /-- Full original payload-polymorphic shape predicate. HOL uses only presence
+  of a name in an arbitrary association-list payload carrier; the payload is
+  never inspected. Existing faithful state paths instantiate this same definition
+  at StructInfoHOLExact. Empty-context uses must name their payload type;
+  arbitrary α remains universally available without a default carrier. -/
   @[hol "cakeml/pancake/panLangScript.sml" "is_wf_shape_def"]
-  def isWfShapeExactHOL (context : StructContextExact) : ShapeHOL → Bool
+  def isWfShapeExactHOL {α : Type}
+      (context : List (MlS × α)) : ShapeHOL → Bool
     | .one => true
     | .comb shapes => isWfShapesExactHOL context shapes
     | .named name => (structContextLookupHOL name context).isSome
 
   /- `EVERY (is_wf_shape ctxt) shs` over a shape list. -/
-  def isWfShapesExactHOL (context : StructContextExact) : List ShapeHOL → Bool
+  def isWfShapesExactHOL {α : Type}
+      (context : List (MlS × α)) : List ShapeHOL → Bool
     | [] => true
     | shape :: rest => isWfShapeExactHOL context shape && isWfShapesExactHOL context rest
 
+  /-- Full original field predicate: context payloads and ignored field keys
+  are independently polymorphic. Faithful state fields instantiate β at MlS. -/
   @[hol "cakeml/pancake/panLangScript.sml" "is_wf_flds_def"]
-  def isWfFldsExactHOL (context : StructContextExact) : List (MlS × ShapeHOL) → Bool
+  def isWfFldsExactHOL {α β : Type}
+      (context : List (MlS × α)) : List (β × ShapeHOL) → Bool
     | [] => true
     | (_, shape) :: rest => isWfShapeExactHOL context shape && isWfFldsExactHOL context rest
 

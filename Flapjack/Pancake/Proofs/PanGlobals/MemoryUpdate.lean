@@ -78,7 +78,7 @@ mutual
         (stcs : StructContextExact) (v : HolWordLab width) (addr' : BitVec width),
         memLoadsHOLExact (vals.map shapeOfHOLExact) addr' addrs memory stcs = some vals →
         ¬ addresses addr' (sizeOfShapesHOL (vals.map shapeOfHOLExact)) addr'' →
-        isWfShapesExactHOL [] (vals.map shapeOfHOLExact) = true →
+        isWfShapesExactHOL ([] : Flapjack.Pancake.PanLang.StructContextExact) (vals.map shapeOfHOLExact) = true →
         memLoadsHOLExact (vals.map shapeOfHOLExact) addr' addrs
           (fun x => if x = addr'' then v else memory x) stcs = some vals
     | [], _, _, _, _, _, _, _, _ => by
@@ -127,7 +127,7 @@ private theorem sum_map_size {width : Nat} [NeZero width] (vals : List (ValueHOL
 
 /-- Local support: `EVERY is_wf_shape_nil` as the list helper. -/
 private theorem every_wf_iff : ∀ shapes : List ShapeHOL,
-    (∀ s ∈ shapes, isWfShapeNilHOL s = true) ↔ isWfShapesExactHOL [] shapes = true
+    (∀ s ∈ shapes, isWfShapeNilHOL s = true) ↔ isWfShapesExactHOL ([] : Flapjack.Pancake.PanLang.StructContextExact) shapes = true
   | [] => by simp
   | shape :: rest => by
       rw [isWfShapesExactHOL_cons, Bool.and_eq_true, ← every_wf_iff rest]
