@@ -7482,3 +7482,15 @@ regression evidence rather than HOL-to-Lean equivalence.
 wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
 continuation premise and full run/relation/resources. Closed hyp0/T captures
 provide regression evidence rather than cross-language equivalence.
+
+## Full native target state definition group
+
+`riscv_target_state_probeScript.sml` captures all four original definition
+theorems (`riscv_next`, `riscv_ok`, `riscv_proj`, `riscv_target`) with complete
+statements, inferred types, zero hypotheses and kernel truth. It also reduces
+the omitted floating-register field: the result is `ARB.get_fp_reg`, not an
+arbitrary function chosen independently and not zero. Lean preserves the
+projection from the arbitrary whole target record. The local nonempty witness
+is only a carrier inhabitation proof and does not define that arbitrary record.
+The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
+These captures/regressions do not establish HOL-to-Lean equivalence.

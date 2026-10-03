@@ -1,0 +1,28 @@
+(* Inspect full original native target definition theorems and inferred types. *)
+load "preamble"; load "riscv_targetTheory";
+open HolKernel Parse bossLib preamble riscv_targetTheory;
+val _ = Globals.linewidth := 1000000;
+val th = DB.fetch "riscv_target" "riscv_next_def";
+val _ = (print "riscv_next_statement="; print_term (concl (GEN_ALL th)); print "\n");
+val _ = print ("riscv_next_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = (print "riscv_next_proved="; print_term (rhs (concl (EQT_INTRO (GEN_ALL th)))); print "\n");
+val _ = print ("riscv_next_type=" ^ type_to_string (type_of ``riscv_next``) ^ "\n");
+val th = DB.fetch "riscv_target" "riscv_ok_def";
+val _ = (print "riscv_ok_statement="; print_term (concl (GEN_ALL th)); print "\n");
+val _ = print ("riscv_ok_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = (print "riscv_ok_proved="; print_term (rhs (concl (EQT_INTRO (GEN_ALL th)))); print "\n");
+val _ = print ("riscv_ok_type=" ^ type_to_string (type_of ``riscv_ok``) ^ "\n");
+val th = DB.fetch "riscv_target" "riscv_proj_def";
+val _ = (print "riscv_proj_statement="; print_term (concl (GEN_ALL th)); print "\n");
+val _ = print ("riscv_proj_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = (print "riscv_proj_proved="; print_term (rhs (concl (EQT_INTRO (GEN_ALL th)))); print "\n");
+val _ = print ("riscv_proj_type=" ^ type_to_string (type_of ``riscv_proj``) ^ "\n");
+val th = DB.fetch "riscv_target" "riscv_target_def";
+val _ = (print "riscv_target_statement="; print_term (concl (GEN_ALL th)); print "\n");
+val _ = print ("riscv_target_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = (print "riscv_target_proved="; print_term (rhs (concl (EQT_INTRO (GEN_ALL th)))); print "\n");
+val _ = print ("riscv_target_type=" ^ type_to_string (type_of ``riscv_target``) ^ "\n");
+val fp = SIMP_CONV (srw_ss()) [riscv_target_def] ``riscv_target.get_fp_reg``;
+val _ = (print "riscv_target_fp_field="; print_term (rhs (concl fp)); print "\n");
+val _ = print ("riscv_target_fp_type=" ^ type_to_string (type_of (rhs (concl fp))) ^ "\n");
+val _ = OS.Process.exit OS.Process.success;
