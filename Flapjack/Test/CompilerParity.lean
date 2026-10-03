@@ -1,12 +1,11 @@
 import Flapjack.Test.L3AMOSwapParity
-import Flapjack.Test.L3IntegerStoreParity
-import Flapjack.Test.L3SCDParity
-import Flapjack.Test.L3SCWParity
-import Flapjack.Test.LabToTargetShmemCorrectnessParity
+import Flapjack.Test.MiscFindIndexShiftParity
+import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity
 import Flapjack.Test.LabToTargetShmemCorrectnessParity
 import Flapjack.Test.L3SCDParity
 import Flapjack.Test.L3SCWParity
+import Flapjack.Test.L3IntegerStoreParity
 import Flapjack.Test.L3LRDParity
 import Flapjack.Test.L3LRWParity
 import Flapjack.Test.L3IntegerLoadParity
