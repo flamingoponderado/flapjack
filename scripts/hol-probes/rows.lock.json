@@ -2072,6 +2072,12 @@
       "sha256": "0f324e2bc9dc33217e7535d6afa1d8d1bfdd08dc33e8dffa0dab5aa3e5561800"
     },
     {
+      "bytes": 707,
+      "out": "lab_props_alignment_dm_evaluate_probe.out",
+      "rows": 8,
+      "sha256": "bea7689f7a18ec7340494f4b28dfad4323bcc8b4d2a2482c07a7d447cbc35cbb"
+    },
+    {
       "bytes": 2010,
       "out": "lab_props_alignment_dm_memory_probe.out",
       "rows": 24,

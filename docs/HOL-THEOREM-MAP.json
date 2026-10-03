@@ -82767,5 +82767,25 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison original labProps586/614/667/694/708/718: six complete original good_dimindex guarded narrow memory and instruction commutation laws. Generic native positive word width/C/FFI state, address/register/memory/instruction carriers and all8dispatch/allarithmetic/allFP cases retained. Direct actual native byte-helper/domain equivalence uses accepted numerical/canonical byte alignment agreement only under original32/64 guard, preserving every success/error/assertion/register/memory update. No new guard, success/result/simulation premise, unconditional auxiliary weakening or LOG2zero/runtime change. Actual signed wordQuot semantic repair8f52 ordinarily merged before final proof gates. Fresh original all6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_memory_probe.out; full DM evaluator/refinement remains open. Native FP dispatch inherits reals_as_rational_cuts assumption of SOUNDNESS item8; no full real-carrier closure/equivalence claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmEvaluate.lean",
+    "lean_name": "evaluateAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "evaluate_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison labProps803-868: full original good_dimindex guard and forall generic positive word width/C/FFI state retained; evaluate equality preserves original let result/poststate shape, implements precise true singleton unaligned-state first/aligned-state second direction. Genuine complete native evaluator induction with all instruction/navigation/shared-memory/Install/FFI/error/clock cases, actual signedwordQuot fix8f52 already ordinarily merged and checked. Faithful complete behavior equality retains existential clocks, optional termination choice and lazy-list trace LUB. Private guarded native byte-load/store/bytearray infrastructure uses only full803 source guard and is untagged, explicitly not a narrowed port of separate HOL unconditional auxiliary declarations. No assumed execution/simulation/result/postcondition, no LOG2zero/runtime choice or HD/EL policy change. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through native FP evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltyped statements/hyp0/kernelT captured in lab_props_alignment_dm_evaluate_probe.out; final semantics_compile composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmEvaluate.lean",
+    "lean_name": "implementsAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "implements_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison labProps803-868: full original good_dimindex guard and forall generic positive word width/C/FFI state retained; evaluate equality preserves original let result/poststate shape, implements precise true singleton unaligned-state first/aligned-state second direction. Genuine complete native evaluator induction with all instruction/navigation/shared-memory/Install/FFI/error/clock cases, actual signedwordQuot fix8f52 already ordinarily merged and checked. Faithful complete behavior equality retains existential clocks, optional termination choice and lazy-list trace LUB. Private guarded native byte-load/store/bytearray infrastructure uses only full803 source guard and is untagged, explicitly not a narrowed port of separate HOL unconditional auxiliary declarations. No assumed execution/simulation/result/postcondition, no LOG2zero/runtime choice or HD/EL policy change. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through native FP evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltyped statements/hyp0/kernelT captured in lab_props_alignment_dm_evaluate_probe.out; final semantics_compile composition remains open."
   }
 ]

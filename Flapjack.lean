@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
