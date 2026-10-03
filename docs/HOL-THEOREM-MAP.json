@@ -69081,5 +69081,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-pxn.18.5.15.6.8): complete original StackRemove comp_correct1481–1493, not an assumed simulation or constructor slice. Arbitrary original program/source/result/postsource/target/register bound/word offset pair/jump parameters, exactly source evaluate equality/non-Error/full stateRelHOL/regBound premises; existential extra clock and actual compiled evaluate same result with full Halt/TimeOut/FinalFFI FFI equality versus full postrelation otherwise. Original evaluate_ind is realized through the exact evaluator clock-first lexicographic measure; all 34 constructors use reviewed native case proofs. Seq second, Loop reentry and Call continuations obtain actual source clock bounds through unconditional fixClockEvaluate; structural subterms and guarded callee decrements discharge every induction measure. No supplied target run, desired postrelation, simulation, compiler success, alias restriction, width restriction or recursion premise survives in the theorem. Canonical imported state regs/fpRegs/store relation-map translation has non-vacuous broad/exact codec; code remains Spt; positive type-indexed BitVec and Type FFI carriers match original word/universe translation. Inherits reviewed reals_as_rational_cuts through native evaluator FP closure (SOUNDNESS item8), explicitly retained. Full unchanged original comp_correct proof and original local helper proofs replayed for the entire theorem; kernel native proof uses standard Lean axioms only. This pass theorem does not claim downstream compile_semantics, executable-path replacement or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluateIoEventsMono",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-stack-io-events-mono): full stackPropsScript.sml454-475 original !program source result post. evaluate(program,source)=(result,post) implies source.ffi.io_events prefix post.ffi.io_events. Native evaluate, arbitrary original carriers/quantifiers, all result outcomes and sole source-run equation retained; HOL IS_PREFIX is List.IsPrefix. Full clock-first evaluator induction covers all34constructors; successful instructions/alloc/constant stores preserve FFI, external FFI and all8shared-memory operations use the checked exact callFFIHOL return append law. Seq/Loop/call return/exception prefixes are composed from actual recursive source runs; original fixClock/decClock preserve FFI and supply genuine measure decreases. No target-run, desired trace, clock/simulation, oracle-extension, non-Error, domain or success premise added. Canonical owning native StackSemStateFiniteExact regs/fpRegs/store finite maps and positive type-indexed BitVec/FFI Type carriers use reviewed combined qualifiers with a genuine imported-state broad/exact roundtrip witness. Code remains Spt, not named as finite map. Inherits reviewed reals_as_rational_cuts through evaluator FP closure (SOUNDNESS item8); event monotonicity is independent of numeric FP result and does not claim numerical parity. Complete unchanged original HOL proof replay produces a closed theorem with two fresh statement/proved rows. This is the single-run law, not the extra-clock theorem or full StackRemove observational semantics."
   }
 ]

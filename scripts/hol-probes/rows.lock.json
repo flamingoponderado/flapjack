@@ -5810,6 +5810,12 @@
       "sha256": "c919a689288e8afb3e3a3833dc7304067b87da9dbbc2190117c3c663673c5153"
     },
     {
+      "bytes": 146,
+      "out": "stack_props_evaluate_io_events_mono_probe.out",
+      "rows": 2,
+      "sha256": "d40d87d90f674951b043b245ff5aae125ebdf342da87525c326542089182b32c"
+    },
+    {
       "bytes": 52,
       "out": "stack_props_fixed_names_probe.out",
       "rows": 4,

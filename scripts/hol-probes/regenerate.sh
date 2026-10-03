@@ -6058,3 +6058,7 @@ run_probe stack_rel_aux_definition_probeScript.sml stack_rel_aux_definition_prob
 run_probe stack_remove_comp_correct_full_probeScript.sml stack_remove_comp_correct_full_probe.out \
   cc_full_statement cc_full_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_props_evaluate_io_events_mono_probeScript.sml stack_props_evaluate_io_events_mono_probe.out \
+  single_run_events_statement single_run_events_proved \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
