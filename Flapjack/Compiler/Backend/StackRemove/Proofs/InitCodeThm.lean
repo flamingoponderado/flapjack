@@ -464,6 +464,193 @@ theorem runLocValue (s : StackSemStateFiniteExact width C F) (entry : sptDomain 
   rw [StackSemEvaluate.evaluate_locValue, if_pos check]
   rfl
 
+/-- The literal initializer is the concatenation of the verified segments. -/
+theorem initCode_segments (generateGc : Bool) (maxHeap k : Nat) :
+    initCode (width := width) generateGc maxHeap k =
+      listSeqHOL (segmentMiddle width ++
+        (.ite .lower 3 (.reg 2) (moveHOL 3 0) (.ite .lower 4 (.reg 3) (moveHOL 3 0) .skip) ::
+          (segmentLimits width maxHeap ++
+            (.ite .lower 5 (.reg 0) (.seq (moveHOL 3 2) (addInst 3 5)) .skip ::
+              (segmentRound width k ++ (segmentLoads width k ++
+                [initMemory k (storeList.reverse.map (storeInit generateGc k)),
+                  .locValue 0 1 0])))))) := by
+  rfl
+
+/-- Registers named by the store initialisation values. -/
+theorem storeInit_registers (generateGc : Bool) (k n : Nat) (name : StoreName)
+    (h : storeInit (width := width) generateGc k name = .inr n) :
+    n = k + 2 ∨ n = 2 ∨ n = 5 ∨ n = 3 ∨ n = 4 ∨ n = 6 ∨ n = 7 ∨ n = 1 := by
+  cases name <;> simp only [storeInit, Sum.inr.injEq, reduceCtorEq] at h <;>
+    first | omega | (split at h <;> omega)
+
+set_option linter.unusedSimpArgs false in
+/-- Goal-shaped execution of the initializer tail (stack bottom, store list,
+location value) from any state with the needed registers and heap. -/
+theorem runTailGoal (generateGc : Bool) (k : Nat) (s6 : StackSemStateFiniteExact width C F)
+    (p4 reg3 : BitVec width) (k8 : 8 ≤ k)
+    (readK : s6.regs.lookup k = some (.word p4))
+    (readBase : s6.regs.lookup (k + 1) = some (.word reg3))
+    (present : ∀ r, (r = k + 2 ∨ r = 2 ∨ r = 5 ∨ r = 3 ∨ r = 4 ∨ r = 6 ∨ r = 7 ∨ r = 1) →
+      s6.regs.lookup r ≠ none)
+    (lastDomain : s6.mdomain (p4 - bytesInWord width) = true)
+    (entry : sptDomain s6.code 1)
+    (ys : List (WordLocW width)) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (ylen : ys.length = storeList.length)
+    (storeHeap : SetSep.star (Misc.wordList reg3 ys) frame
+      (SetSep.fun2Set ((fun key => if key = p4 - bytesInWord width then .word 0 else s6.memory key),
+        fun a => s6.mdomain a = true)))
+    (Q : StackSemStateFiniteExact width C F → Prop)
+    (finish : ∀ (r1 : WordLocW width) (m1 : BitVec width → WordLocW width),
+      SetSep.star (Misc.wordList reg3 ((storeList.reverse.map (storeInit generateGc k)).map
+          (MemVal.memVal ((((s6.regs.updateEq (0, .word (bytesInWord width))).updateEq
+            (k, .word (p4 - bytesInWord width))).updateEq (0, .word 0)))))) frame
+        (SetSep.fun2Set (m1, fun a => s6.mdomain a = true)) →
+      Q {s6 with
+        memory := m1
+        regs := ((((((s6.regs.updateEq (0, .word (bytesInWord width))).updateEq
+            (k, .word (p4 - bytesInWord width))).updateEq (0, .word 0)).updateListEq
+            [(k + 1, .word (reg3 + bytesInWord width *
+              BitVec.ofNat width (storeList.reverse.map (storeInit (width := width) generateGc k)).length)),
+              (0, r1)])).updateEq (0, .loc 1 0))}) :
+    ∃ t, StackSemEvaluate.evaluate
+        (listSeqHOL [initMemory k (storeList.reverse.map (storeInit generateGc k)),
+          .locValue 0 1 0], s6) = (none, t) ∧ Q t := by
+  have k0 : k ≠ 0 := by omega
+  set values := storeList.reverse.map (storeInit (width := width) generateGc k)
+  set s7 : StackSemStateFiniteExact width C F := {s6 with
+    memory := fun key => if key = p4 - bytesInWord width then .word 0 else s6.memory key
+    regs := ((s6.regs.updateEq (0, .word (bytesInWord width))).updateEq
+      (k, .word (p4 - bytesInWord width))).updateEq (0, .word 0)} with hs7
+  obtain ⟨r1, m1, heap, run⟩ := StoreListCodeThm.storeListCodeThm (k + 1) 0 values s7 reg3 frame
+    ys s7.memory (fun a => s7.mdomain a = true)
+    ⟨storeHeap, rfl, rfl, by simp [values, ylen], by omega,
+      by simp [s7, StackSemStateOps.getVar, FUPDATE_HOL, readBase, show k + 1 ≠ k by omega],
+      by simp [s7, FUPDATE_HOL],
+      fun x member n eq => by
+        simp only [values, List.mem_map, List.mem_reverse] at member
+        obtain ⟨name, _, rfl⟩ := member
+        have regs := storeInit_registers generateGc k n name eq.symm
+        refine ⟨by omega, by omega, ?_⟩
+        have hn0 : n ≠ 0 := by omega
+        have hnk : n ≠ k := by omega
+        simpa [s7, FUPDATE_HOL, hn0, hnk] using present n regs⟩
+  have initRun : StackSemEvaluate.evaluate (initMemory k values, s6) =
+      (none, {s7 with memory := m1, regs := (s7.regs.updateListEq
+        [(k + 1, .word (reg3 + bytesInWord width * BitVec.ofNat width values.length)), (0, r1)])}) := by
+    rw [runInitMemory k values s6 p4 k8 readK lastDomain]
+    exact run
+  refine ⟨_, ?_, finish r1 m1 heap⟩
+  show StackSemEvaluate.evaluate (.seq _ _, s6) = _
+  rw [StoreListCodeThm.evaluateSeqNormal _ _ s6 _ initRun rfl]
+  exact runLocValue _ entry
+
+set_option linter.unusedSimpArgs false in
+/-- The full native initializer run from its register, header and heap
+preconditions: the post-state differs from the input only in registers and
+memory, with the original register outcomes and the stored initial values. -/
+theorem runInitCode (generateGc : Bool) (maxHeap k : Nat) (s : StackSemStateFiniteExact width C F)
+    (p2 p3 p4 bitmapPointer : BitVec width) (v1 v2 v3 v4 : WordLocW width)
+    (good : goodDimindex width) (k8 : 8 ≤ k)
+    (read2 : s.regs.lookup 2 = some (.word p2)) (read3 : s.regs.lookup 3 = some (.word p3))
+    (read4 : s.regs.lookup 4 = some (.word p4))
+    (domain : ∀ i, i < 5 → s.mdomain (p2 + BitVec.ofNat width i * bytesInWord width) = true)
+    (load0 : s.memory p2 = .word bitmapPointer)
+    (load1 : s.memory (p2 + bytesInWord width) = v1)
+    (load2 : s.memory (p2 + bytesInWord width + bytesInWord width) = v2)
+    (load3 : s.memory (p2 + bytesInWord width + bytesInWord width + bytesInWord width) = v3)
+    (load4 : s.memory (p2 + bytesInWord width + bytesInWord width + bytesInWord width +
+      bytesInWord width) = v4)
+    (lastDomain : s.mdomain (p4 - bytesInWord width) = true)
+    (entry : sptDomain s.code 1)
+    (ys : List (WordLocW width)) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
+    (ylen : ys.length = storeList.length)
+    (storeHeap : SetSep.star
+      (Misc.wordList (roundedThird p2 (shrunkThird p2 (adjustedThird p3 (middleWord p2 p4)
+        (p2 + marginWord width) (p4 - marginWord width)) (maxHeapWord width maxHeap))) ys) frame
+      (SetSep.fun2Set ((fun key => if key = p4 - bytesInWord width then .word 0 else s.memory key),
+        fun a => s.mdomain a = true))) :
+    let reg3 := roundedThird p2 (shrunkThird p2 (adjustedThird p3 (middleWord p2 p4)
+      (p2 + marginWord width) (p4 - marginWord width)) (maxHeapWord width maxHeap))
+    let half := (reg3 - p2) >>> (1 : Nat)
+    ∃ t : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (initCode generateGc maxHeap k, s) = (none, t) ∧
+      t = {s with memory := t.memory, regs := t.regs} ∧
+      t.regs.lookup 0 = some (.loc 1 0) ∧ t.regs.lookup 1 = some v4 ∧
+      t.regs.lookup 2 = some (.word (p2 + half)) ∧
+      t.regs.lookup 3 = some (.word (bitmapPointer >>> wordShiftAmount width)) ∧
+      t.regs.lookup 4 = some v1 ∧ t.regs.lookup 5 = some (.word half) ∧
+      t.regs.lookup 6 = some v2 ∧ t.regs.lookup 7 = some v3 ∧
+      t.regs.lookup k = some (.word (p4 - bytesInWord width)) ∧
+      t.regs.lookup (k + 1) =
+        some (.word (reg3 + bytesInWord width * BitVec.ofNat width storeList.length)) ∧
+      t.regs.lookup (k + 2) = some (.word p2) ∧
+      (∀ r, 8 ≤ r → r ≠ k → r ≠ k + 1 → r ≠ k + 2 → t.regs.lookup r = s.regs.lookup r) ∧
+      SetSep.star
+        (Misc.wordList reg3 ((storeList.reverse.map (storeInit generateGc k)).map
+          (MemVal.memVal t.regs))) frame
+        (SetSep.fun2Set (t.memory, fun a => s.mdomain a = true)) := by
+  intro reg3 half
+  have hk : k ≠ 0 ∧ k ≠ 1 ∧ k ≠ 2 ∧ k ≠ 3 ∧ k ≠ 4 ∧ k ≠ 5 ∧ k ≠ 6 ∧ k ≠ 7 := by omega
+  obtain ⟨k0, k1, k2, k3, k4, k5, k6, k7⟩ := hk
+  rw [initCode_segments, runSegmentMiddle _ (by simp) s p2 p4 good read2 read4]
+  rw [stepCons _ _ _ _ (by simp)
+    (runAdjust _ p3 (middleWord p2 p4) (p2 + marginWord width) (p4 - marginWord width)
+      (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL, read3])
+      (by simp [FUPDATE_HOL])) rfl]
+  set adjusted := adjustedThird p3 (middleWord p2 p4) (p2 + marginWord width)
+    (p4 - marginWord width) with hadjusted
+  set shrunk := shrunkThird p2 adjusted (maxHeapWord width maxHeap) with hshrunk
+  rw [runSegmentLimits maxHeap _ (by simp) _ p2 p4 adjusted
+    (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL])]
+  rw [stepCons _ _ _ _ (by simp)
+    (runShrink _ p2 adjusted (maxHeapWord width maxHeap)
+      (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL])
+      (by simp [FUPDATE_HOL])) rfl]
+  rw [runSegmentRound k _ (by simp) _ p2 p4 shrunk good k8
+    (by simp [FUPDATE_HOL]) (by simp [FUPDATE_HOL, hshrunk]) (by simp [FUPDATE_HOL])]
+  rw [runSegmentLoads k _ (by simp) _ p2 bitmapPointer v1 v2 v3 v4 good k8
+    (by simp [FUPDATE_HOL, k0, k1, k2, k3]) (by simpa using domain) (by simpa using load0) (by simpa using load1)
+    (by simpa using load2) (by simpa using load3) (by simpa using load4)]
+  have kk : (0 : Nat) ≠ k ∧ (1 : Nat) ≠ k ∧ (2 : Nat) ≠ k ∧ (3 : Nat) ≠ k ∧ (4 : Nat) ≠ k ∧
+      (5 : Nat) ≠ k ∧ (6 : Nat) ≠ k ∧ (7 : Nat) ≠ k := by omega
+  obtain ⟨k0', k1', k2', k3', k4', k5', k6', k7'⟩ := kk
+  dsimp only
+  refine runTailGoal generateGc k _ p4 reg3 k8 ?_ ?_ ?_ ?_ ?_ ys frame ylen ?_ _ ?_
+  · simp [FUPDATE_HOL, k0, k1, k2, k3, k4, k5, k6, k7]
+  · simp [FUPDATE_HOL, k0, k1, k2, k3, k4, k5, k6, k7, reg3, hshrunk, hadjusted]
+  · intro r hr
+    rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+      simp [FUPDATE_HOL, k0, k1, k2, k3, k4, k5, k6, k7, k0', k1', k2', k3', k4', k5', k6', k7']
+  · simpa using lastDomain
+  · simpa using entry
+  · simpa [reg3, hshrunk] using storeHeap
+  · intro r1 m1 heap
+    have sl : (storeList.reverse.map (storeInit (width := width) generateGc k)).length =
+        storeList.length := by simp
+    refine ⟨rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?others, ?heapGoal⟩
+    case others =>
+      intro r h8 hk hk1 hk2
+      have r0 : r ≠ 0 := by omega
+      have r1' : r ≠ 1 := by omega
+      have r2 : r ≠ 2 := by omega
+      have r3 : r ≠ 3 := by omega
+      have r4 : r ≠ 4 := by omega
+      have r5 : r ≠ 5 := by omega
+      have r6 : r ≠ 6 := by omega
+      have r7 : r ≠ 7 := by omega
+      simp [FUPDATE_HOL, FUPDATE_LIST_HOL, r0, r1', r2, r3, r4, r5, r6, r7, hk, hk1, hk2]
+    case heapGoal =>
+      rw [StoreListCodeThm.mapMemValCongr _ _ _ (fun n member => ?_)] at heap
+      · exact heap
+      simp only [List.mem_map, List.mem_reverse] at member
+      obtain ⟨name, _, eq⟩ := member
+      have regs := storeInit_registers generateGc k n name eq
+      have n0 : n ≠ 0 := by omega
+      have nk1 : n ≠ k + 1 := by omega
+      simp [FUPDATE_HOL, FUPDATE_LIST_HOL, n0, nk1]
+    all_goals simp [FUPDATE_HOL, FUPDATE_LIST_HOL, k0, k1, k2, k3, k4, k5, k6, k7,
+      k0', k1', k2', k3', k4', k5', k6', k7', sl, half, reg3, hshrunk, hadjusted]
+
 /-! ### Layout arithmetic of the computed pointers -/
 
 theorem middleNat (good : goodDimindex width) (p2 p4 : BitVec width)
