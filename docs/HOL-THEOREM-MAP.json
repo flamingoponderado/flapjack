@@ -68056,15 +68056,6 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
-    "lean_path": "Flapjack/Compiler/Backend/StackProps/ExtractLabels.lean",
-    "lean_name": "extractLabels",
-    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
-    "hol_name": "extract_labels_def",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison 2026-10-02: complete source771-787 five clauses on reviewed HolProg with shared positive word dimension. Both optional tuple arities, return/handler label-before-body ordering, duplicates and ignored NONE-return handler retained; target/immediate/instruction/mlstring payloads ignored exactly as source. No finite map/list-array/default substitution. Fresh original56 ordered list observations at widths1/8/64/80 independently kernel replayed."
-  },
-  {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WriteBytearray.lean",
     "lean_name": "writeBytearrayIgnoreNonAligned",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
