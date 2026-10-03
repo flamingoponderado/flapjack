@@ -4613,6 +4613,9 @@ run_probe word_cse_moves_probeScript.sml word_cse_moves_probe.out \
   MEM_FST_reduc_hypotheses canonicalMoveRegs_lemma_statement canonicalMoveRegs_lemma_hypotheses data_inv_clock_statement data_inv_clock_hypotheses \
   canonicalMoveRegs_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_comp_correct_probeScript.sml word_cse_comp_correct_probe.out \
+  comp_correct_statement comp_correct_hypotheses word_common_subexp_elim_correct_statement word_common_subexp_elim_correct_hypotheses comp_correct_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7548,3 +7551,7 @@ run_probe riscv_const_next_probeScript.sml riscv_const_next_probe.out \
 run_probe binary_ieee_two_dimensions_probeScript.sml binary_ieee_two_dimensions_probe.out \
   largest_type largest_def_typed threshold_type threshold_def_typed \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"
+
+run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_long_arithmetic_probe.out \
+  longMul_typed longMul_proved longMul_hypotheses longDiv_typed longDiv_proved longDiv_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
