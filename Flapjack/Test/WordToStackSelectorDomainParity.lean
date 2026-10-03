@@ -4,8 +4,7 @@ namespace Flapjack.Test.WordToStackSelectorDomainParity
 open Flapjack Flapjack.RiscV
 
 -- Compare complete same-input output trees with original inst_select at
--- riscv_config/temp23. Positive-offset Store is the existing pxn.10 gap;
--- codec closure does not make that source difference disappear.
+-- riscv_config/temp23, including the executed positive-offset Store repair.
 private def rows : List Bool :=
   [match wordInstSelectProgram 23 (.skip : WordProg (BitVec 64)) with
    | .skip => true | _ => false,
@@ -36,17 +35,17 @@ private def rows : List Bool :=
    | .call (some ([],([],[]),.seq (.inst (.const 2 7)) .tick,3,4)) (some 7) []
       (some (1,.seq (.inst (.const 3 9)) .tick,5,6)) => true | _ => false]
 
-example : rows = [true,true,true,true,true,false,true,true,true,true,true,true,true] := by
-  simp only [rows, wordInstSelectProgram, wordInstSelectAddressAtom,
+example : rows = [true,true,true,true,true,true,true,true,true,true,true,true,true] := by
+  simp only [rows, wordInstSelectProgram, wordInstSelectStoreCake, wordInstSelectAddressAtom,
     wordDeadSelectSeq]
   decide +kernel
 
--- Preserve the actual counter-tree beside the unchanged original oracle.
+-- The executed Store now has the original selected memory-instruction tree.
 example : (match wordInstSelectProgram 23
     (.store (.op .add [.var 18,.const 7]) 10 : WordProg (BitVec 64)) with
-    | .seq (.move 0 [(23,18)]) (.store (.op .add [.var 23,.const 7]) 10) => true
+    | .seq (.move 0 [(23,18)]) (.inst (.memOffset .store 10 23 7)) => true
     | _ => false) = true := by
-  simp only [wordInstSelectProgram, wordInstSelectAddressAtom,
+  simp only [wordInstSelectProgram, wordInstSelectStoreCake, wordInstSelectAddressAtom,
     wordDeadSelectSeq]
   decide +kernel
 
