@@ -6459,3 +6459,4 @@ five generic theorem consumers include Error, TimeOut and successful results,
 and preservation of a source code lookup. The theorem retains its sole source
 execution premise and both original conclusions. These captures are regression
 evidence, not cross-language equivalence or whole compiler correctness.
+`word_to_stack_initial_state_rel_probe.out` captures full init_state_ok equation/type and freshly replays the literal complete original init_state_ok_IMP_state_rel proof. Full statements have zero hypotheses/free variables. The Lean family preserves the two stub/code-entry/domain/full-contract premises and derives the complete native initial state relation at frame0/lens[]/extra0. Frame-map and stack arithmetic are proved internally; no post-relation or extra success premise is supplied. This is initialization relation correctness, not whole pass/semantics correctness.

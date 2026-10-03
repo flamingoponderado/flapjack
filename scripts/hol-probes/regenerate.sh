@@ -6082,3 +6082,6 @@ run_probe lab_to_target_make_init_probeScript.sml lab_to_target_make_init_probe.
 run_probe stack_remove_comp_correct_full_probeScript.sml stack_remove_comp_correct_full_probe.out \
   cc_full_statement cc_full_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_initial_state_rel_probeScript.sml word_to_stack_initial_state_rel_probe.out \
+  init_state_ok_definition init_state_ok_hypotheses init_state_ok_type initial_state_relation_statement initial_state_relation_proved initial_state_relation_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
