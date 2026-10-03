@@ -6383,3 +6383,10 @@ do not establish whole Run/Next or compiler correctness.
 `stack_code_bitmaps_ffi_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and native FFI specialization. All four word reads, both bytearray reads and final/return outcomes preserve oracle/code/bitmaps with count zero; no name/alignment or poststate premise is introduced. Whole evaluator assembly remains open.
 
 `stack_code_bitmaps_rawcall_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and RawCall specialization. The recursive IH follows only actual lookup/destSeq/nonzero-clock dispatch at decClock source; errors and timeout preserve fields/count zero, bad-function-return changes result only. Whole evaluator assembly remains open.
+
+`l3_tlb_flush_probe.out` captures complete flushTLB/SFENCE_VM definitions/types
+and 64 mixed-entry observations. Original TLBEntries=16 visits all slots0..15.
+Independent expectations cover ASID zero/nonzero, global entries, optional masked
+addresses, empty entries, surviving arbitrary records, register-zero semantics,
+other-core tables and the entire frame outside c_tlb. No entry-validity/core-bound
+premise is assumed; these regressions do not establish whole Run/Next correctness.

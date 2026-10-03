@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.RiscV.L3.Defs.SystemSignals
 import Flapjack.Misc.BytesInMem.Imp
 import Flapjack.Compiler.Backend.LabToTarget.WordSearch
