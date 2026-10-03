@@ -416,6 +416,12 @@
       "sha256": "2568949fab64d29bfc38e41c18259047e2eb05e90ab7ec663383fd61600dcf9e"
     },
     {
+      "out": "binary_ieee_two_dimensions_probe.out",
+      "sha256": "dac324b1ba6bab4a5f355e7a8aa5ef7ede95445de4ac5b3d27ab2fe956196373",
+      "bytes": 424,
+      "rows": 4
+    },
+    {
       "bytes": 4729,
       "out": "bvi_syntax_probe.out",
       "rows": 2,

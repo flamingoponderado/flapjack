@@ -88405,5 +88405,31 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison of full evaluate_wInst4688-5140 SubOverflow branch4721-4737. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
     "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatLargestR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "largest_def",
+    "statement_status": "reviewed_word_dimensions_as_widths",
+    "word_dimensions_as_widths": [
+      "t",
+      "w"
+    ],
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: pinned binary_ieeeScript355-359, fresh original type and complete typed equation in binary_ieee_two_dimensions_probe.out. HOL (alpha # beta) itself -> real has two independent word-free dimensions. word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension(:w) to independent w:Nat/NeZero w. Literal formula (2^(UINT_MAX(:w)-1) / 2^INT_MAX(:w)) * (2 - inverse(2^(t))) retains natural subtraction, multiplication/division grouping and SUC only in threshold precision. Native holUintMax w = 2^w-1 and holFloatBias w = 2^(w-1)-1 match UINT_MAX/INT_MAX; output is arbitrary Mathlib Real, no Rat restriction, word carrier, fixed dimension or added bound. reals_as_rational_cuts is the conservative reviewed IEEE-family marker, SOUNDNESS item 8; the qualifier does not establish independent HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatThresholdR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "threshold_def",
+    "statement_status": "reviewed_word_dimensions_as_widths",
+    "word_dimensions_as_widths": [
+      "t",
+      "w"
+    ],
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: pinned binary_ieeeScript361-365, fresh original type and complete typed equation in binary_ieee_two_dimensions_probe.out. HOL (alpha # beta) itself -> real has two independent word-free dimensions. word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension(:w) to independent w:Nat/NeZero w. Literal formula (2^(UINT_MAX(:w)-1) / 2^INT_MAX(:w)) * (2 - inverse(2^(t + 1))) retains natural subtraction, multiplication/division grouping and SUC only in threshold precision. Native holUintMax w = 2^w-1 and holFloatBias w = 2^(w-1)-1 match UINT_MAX/INT_MAX; output is arbitrary Mathlib Real, no Rat restriction, word carrier, fixed dimension or added bound. reals_as_rational_cuts is the conservative reviewed IEEE-family marker, SOUNDNESS item 8; the qualifier does not establish independent HOL-to-Lean equivalence."
   }
 ]
