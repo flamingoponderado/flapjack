@@ -1,0 +1,2 @@
+word_list_exists_ADD_statement=∀m n a. word_list_exists a (m + n) = word_list_exists a m * word_list_exists (a + bytes_in_word * n2w m) n
+word_list_exists_ADD_hypotheses=0

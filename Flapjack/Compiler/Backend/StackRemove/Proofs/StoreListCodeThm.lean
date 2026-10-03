@@ -93,7 +93,7 @@ theorem mapMemValCongr {width : Nat} [NeZero width]
 
 /-- `write_fun2set` with the word-key decidable conditional used by the native
 memory store. Local factoring; no separate HOL declaration. -/
-private theorem writeWord {width : Nat} [NeZero width] (newValue oldValue : WordLocW width)
+theorem writeWord {width : Nat} [NeZero width] (newValue oldValue : WordLocW width)
     (address : BitVec width) (frame : ((BitVec width × WordLocW width) → Prop) → Prop)
     (memory : BitVec width → WordLocW width) (domain : BitVec width → Prop)
     (h : SetSep.star (SetSep.one (address, oldValue)) frame (SetSep.fun2Set (memory, domain))) :

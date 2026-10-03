@@ -1,0 +1,8 @@
+res_var_FMAP_MAP2_rev_statement=∀x nm fmap f. FMAP_MAP2 f (res_var fmap (nm,x)) = res_var (FMAP_MAP2 f fmap) (nm,OPTION_MAP (λy. f (nm,y)) x)
+res_var_FMAP_MAP2_rev_types=x::γ option;nm::α;fmap::α |-> γ;f::α # γ -> β
+res_var_FMAP_MAP2_rev_hypotheses=0
+res_var_FMAP_MAP2_rev_proved=T
+FEVERY_res_var_statement=∀opt_v k fmap P. FEVERY P (res_var fmap (k,opt_v)) ⇔ FEVERY P (DRESTRICT fmap (COMPL {k})) ∧ ∀v. opt_v = SOME v ⇒ P (k,v)
+FEVERY_res_var_types=opt_v::β option;k::α;fmap::α |-> β;P::α # β -> bool
+FEVERY_res_var_hypotheses=0
+FEVERY_res_var_proved=T
