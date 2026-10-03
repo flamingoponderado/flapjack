@@ -53599,6 +53599,24 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "select_eq_select_0",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "select_eq_select_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:282-286. k <= n ==> (n -- k) w = (n - k -- 0) (w >>> k) with k n w implicit; HOL word_bits (h -- l) rendered by the untagged library helper gcWordBits h l w = ofNat ((w / 2^l) % 2^(h+1-l)) (the bits l..MIN h (dimindex-1) moved down, zero when l > h), whose l = 0 case is the existing gcWordBitsLow rendering of (h -- 0); >>> is logical shift right."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "lt_dimindex_MOD_dimword",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
+    "lean_name": "lt_dimindex_MOD_dimword",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:364-370. n < dimindex (:'a) ==> n MOD dimword (:'a) = n; the dimension is word-free and used only numerically (dimindex as width, dimword as 2 ^ width); n implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
     "hol_name": "is_fwd_ptr_iff",
     "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/WordLemmas.lean",
     "lean_name": "is_fwd_ptr_iff",
@@ -66792,6 +66810,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.2: original stack_allocProofScript.sml:5297-5894. Free HOL anything and compile_rest implicit; !p s r t m n c regs explicit in source order. All twelve premises retained in order: evaluate (p,s) = (r,t), r <> SOME Error, alloc_arg p, code-table keys <> gc_stub_location with alloc_arg, compile_oracle entries likewise (bound variables renamed i k q since HOL reuses n p), s.gc_fun = word_gc_fun c, s.use_alloc, stack byte bound, s.regs SUBMAP regs, s.use_stack, data-buffer/bitmaps bound, s.compile = (λcfg. compile_rest cfg o MAP prog_comp). Conclusion exists ck regs1 with the actual native evaluate of FST (comp n m p) from the full source override (use_store/use_stack T, use_alloc F, clock s.clock+ck, regs, gc_fun anything, compile_oracle (I ## MAP prog_comp ## I) o s.compile_oracle rendered Prod.map id (Prod.map (List.map progComp) id) ∘ oracle, compile compile_rest, code fromAList (compile c (toAList s.code))) equal to (r, t with the same override and regs1), t.regs SUBMAP regs1, the bound for t, and the stack bound for t when r is not Halt. No supplied target evaluation, simulation or success premise. Proof by induction on the evaluator's own (clock, size) measure (HOL recInduct evaluate_ind), with untagged per-constructor case lemmas under CompCorrect/ using exactly the recursive obligations of evaluate_def, alloc_correct, alloc_length_stack, inst_correct, the ProgComp lookup lemmas, evaluate_consts, evaluate_code_bitmaps, evaluate_add_clock, fix_clock_evaluate and spt_eq_thm. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "with_same_regs_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/CompileSemantics.lean",
+    "lean_name": "with_same_regs_lemma",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:5901-5905. s with <| regs := s.regs; compile := cc; compile_oracle := oracle; gc_fun := anything; use_stack := T; use_store := T; use_alloc := F; clock := k; code := c |> = the same update without regs; free s cc oracle anything k c implicit; proved definitionally (record eta). Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module witness; positive BitVec width with NeZero."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
