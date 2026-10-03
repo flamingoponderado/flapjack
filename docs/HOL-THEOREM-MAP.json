@@ -83920,5 +83920,43 @@
     "hol_name": "TotOrder_imp_good_cmp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: comparisonScript79-83 arbitrary cmp, sole TotOrd premise, original full good_cmp conclusion. Imported exact Toto.totOrd retains all3 original clauses; existing exact goodCmp retains all7 original comparison clauses. Key types and comparison constructors are identity translations; proof derives reflexivity, symmetry, reversal, equality substitutions and both transitivity cases with no extra assumptions."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectNilName.lean",
+    "lean_name": "compileDeclsCorrectNil",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decls_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original compile_decls_correct1357-1380, evaluate_decls813-841 and compile_decs213-238 compared. Nil/Name genuine minors retain original8 hypotheses and full target evaluation plus existential final global-context extension, global fields/WF, unchanged structs/locals and shape-map equality. Name has exactly source same-state tail IH with fixed full property; no target run/poststate/globalmap assumed. Nil compiler/evaluator identities; Name removed from both source paths. Canonical imported PanSemStateFiniteExact four maps and full same-module broad/state roundtrip; positive indexed words/Type0 host only. Fresh full/Nil/Name/original evaluate_decls_ind closed kernel captures/types. Whole declaration theorem and production routing remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectNilName.lean",
+    "lean_name": "compileDeclsCorrectName",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decls_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original compile_decls_correct1357-1380, evaluate_decls813-841 and compile_decs213-238 compared. Nil/Name genuine minors retain original8 hypotheses and full target evaluation plus existential final global-context extension, global fields/WF, unchanged structs/locals and shape-map equality. Name has exactly source same-state tail IH with fixed full property; no target run/poststate/globalmap assumed. Nil compiler/evaluator identities; Name removed from both source paths. Canonical imported PanSemStateFiniteExact four maps and full same-module broad/state roundtrip; positive indexed words/Type0 host only. Fresh full/Nil/Name/original evaluate_decls_ind closed kernel captures/types. Whole declaration theorem and production routing remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectNilName.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing; canonical imported-state genuine two-way roundtrip, no independent HOL original."
   }
 ]

@@ -7654,3 +7654,10 @@ not a cross-language equivalence proof.
 inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
 is arbitrary, not restricted to register numbers. These signatures are review
 and regression evidence, not a HOL-to-Lean equivalence proof.
+
+`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
+its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
+types and closed kernel truth. Lean retains all eight original hypotheses and
+the full target evaluation/existential globals/context/fields/WF/structs/locals/
+shape-map conclusion; Name uses precisely the same-state tail IH. Whole
+declaration correctness and production compiler routing remain open.

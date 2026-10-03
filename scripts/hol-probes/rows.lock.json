@@ -4880,6 +4880,12 @@
       "sha256": "8e64aab07391d3b37254df815d342e62d3184d1fbd01bb1782bf00defa338559"
     },
     {
+      "bytes": 3720,
+      "out": "pan_structs_decls_nil_name_probe.out",
+      "rows": 12,
+      "sha256": "9631579c1a8826356f3351b4808cf91adcb93f713375e53bd80a4cdd927b1058"
+    },
+    {
       "bytes": 191,
       "out": "pan_structs_decs_stcnames_compile_decs_probe.out",
       "rows": 3,
