@@ -1525,6 +1525,15 @@ run_probe dup_exn_eids_probeScript.sml dup_exn_eids_probe.out \
 run_probe compile_prog_probeScript.sml compile_prog_probe.out \
   empty inline_call global_dest handled_missing_dest done \
   "$cake_dir/pancake/pan_to_crepScript.sml"
+run_probe binary_ieee_carrier_probeScript.sml binary_ieee_carrier_probe.out \
+  float_to_real_def float_minus_min_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_round_probeScript.sml binary_ieee_round_probe.out \
+  clear_flags_def check_for_signalling_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_arith_probeScript.sml binary_ieee_arith_probe.out \
+  float_add_def float_equal_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
   distinct_names duplicate_names \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"
@@ -6810,3 +6819,15 @@ run_probe l3_native_config_probeScript.sml l3_native_config_probe.out \
 run_probe lab_filter_skip_semantics_probeScript.sml lab_filter_skip_semantics_probe.out \
   filter_skip_semantics filter_skip_semantics_types filter_skip_semantics_hypotheses filter_skip_semantics_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_return_raise_probeScript.sml pan_structs_program_return_raise_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_return_statement compile_correct_return_proved compile_correct_raise_statement compile_correct_raise_proved compile_correct_full_types compile_correct_return_types compile_correct_raise_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_structs_code_invariant_probeScript.sml pan_structs_structs_code_invariant_probe.out \
+  evaluate_structs_code_inv_statement evaluate_structs_code_inv_types evaluate_structs_code_inv_hypotheses evaluate_structs_code_inv_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_seq_if_probeScript.sml pan_structs_program_seq_if_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_seq_statement compile_correct_seq_proved compile_correct_if_statement compile_correct_if_proved compile_correct_full_types compile_correct_seq_types compile_correct_if_types evaluate_ind_statement evaluate_ind_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
