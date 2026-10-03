@@ -6058,4 +6058,8 @@ run_probe l3_csr_access_probeScript.sml l3_csr_access_probe.out \
 run_probe stack_remove_comp_storeconsts_probeScript.sml stack_remove_comp_storeconsts_probe.out \
   cc_storeconsts_statement cc_storeconsts_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_ffi_entry_exclusion_probeScript.sml lab_to_target_ffi_entry_exclusion_probe.out \
+  asm_fetch_NOT_ffi_entry_pcs asm_fetch_NOT_ffi_entry_pcs_types asm_fetch_NOT_ffi_entry_pcs_hypotheses \
+  first wrap next next_last shift_wrap shift shift_next byte_bound_guard fetch_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
