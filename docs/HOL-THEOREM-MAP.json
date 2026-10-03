@@ -83956,5 +83956,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5938-5946. Complete word_msb equality with LENGTH words = dimindex-1; preserves both LENGTH words < dimindex and good_dimindex guards. Arbitrary payload word list and native chunkToBitsW retained. Bool decide renders HOL boolean equality. Only words_as_type_indexed_bitvec carrier translation, using standard goodDimindex32-or64. Kernel checked; literal original HOL proof replay."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CopyWordsShort.lean",
+    "lean_name": "copyWordsShort",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_words",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5948-5971 entire native outer-copy equality. Retains original const_addresses, good_dimindex and LENGTH words < dimindex guards, arbitrary prefix/suffix/address/offset/domain/memory. Full dimension-1 boundary uses actual recursive copyWordsExact at prefixlength+(wordlength+1) and updated address/const_writes memory; otherwise full SOME address/memory pair. No assumed target run or weakened continuation. Native chunkToBitmapW and copyWordsExact definitions unchanged; Prop-domain set mapped by decide for native Bool const_addresses. Only words_as_type_indexed_bitvec positive-width word translation. Original proof replay and Lean kernel proof."
   }
 ]
