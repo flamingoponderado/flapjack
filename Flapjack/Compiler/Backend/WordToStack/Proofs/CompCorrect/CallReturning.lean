@@ -2215,4 +2215,93 @@ theorem callerKeyPastReturns (values : List Nat) (key : Nat)
   rw [canonical]
   exact List.mem_map.mpr ⟨key / 2 - 1, List.mem_range.mpr (by omega), keyEq⟩
 
+/-- A lookup in the actual popped GC/non-GC union has a concrete caller-frame
+slot, including the bitmap word's offset. GC takes precedence exactly as in
+popEnv; both key bounds and the slot are derived from the full stack relation.
+This is case-local infrastructure, not the completed caller state relation. -/
+theorem poppedCallerSlot {width handlerWidth : Nat}
+    [NeZero width] [NeZero handlerWidth]
+    (k handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (targetHandler : Option (WordLocW handlerWidth)) (stack : List (WordLocW width))
+    (length : Nat) (bitmaps : List (BitVec width)) (frame : Nat) (lens : List Nat)
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      targetHandler stack length bitmaps (frame :: lens))
+    (key : Nat) (value : WordLocW width)
+    (lookup : sptLookup key (sptUnion (sptFromAList gc) (sptFromAList nonGC)) = some value) :
+    k ≤ key / 2 ∧ key / 2 < k + frame ∧
+      (stack.take (frame + 1))[frame - (key / 2 - k)]? = some value := by
+  rw [sptLookup_sptUnion, sptLookup_sptFromAList, sptLookup_sptFromAList] at lookup
+  have recovered : ∃ bitmap rest, stack = bitmap :: rest ∧ frame ≤ rest.length ∧
+      k ≤ key / 2 ∧ key / 2 < k + frame ∧
+      (rest.take frame)[frame - 1 - (key / 2 - k)]? = some value := by
+    cases found : sptAListLookup key gc with
+    | none =>
+      rw [found] at lookup
+      obtain ⟨bitmap, rest, shape, bound, slots⟩ :=
+        savedCallerNonGCSlots k handler size nonGC gc tail targetHandler stack length bitmaps
+          frame lens relation
+      obtain ⟨lower, upper, slot⟩ := slots key value lookup found
+      exact ⟨bitmap, rest, shape, bound, lower, upper, slot⟩
+    | some gcValue =>
+      rw [found] at lookup
+      simp only [Option.some.injEq] at lookup
+      subst gcValue
+      obtain ⟨bitmap, rest, shape, bound, slots⟩ :=
+        savedCallerGCSlots k handler size nonGC gc tail targetHandler stack length bitmaps
+          frame lens relation
+      obtain ⟨lower, upper, slot⟩ := slots key value found
+      exact ⟨bitmap, rest, shape, bound, lower, upper, slot⟩
+  obtain ⟨bitmap, rest, shape, _, lower, upper, slot⟩ := recovered
+  refine ⟨lower, upper, ?_⟩
+  rw [CallReturnSupport.llookupTake _ _ stack (by omega), shape,
+    show frame - (key / 2 - k) = (frame - 1 - (key / 2 - k)) + 1 by omega,
+    List.getElem?_cons_succ]
+  rwa [CallReturnSupport.llookupTake _ frame rest (by omega)] at slot
+
+/-- Execute the actual no-handler return wrapper and recover every popped
+caller local outside the return-name range. Original canonical names and the
+full saved-frame relation discharge unchanged-region selection internally;
+there is no successful target run or target-slot correspondence premise.
+This remains case-local restoration infrastructure, not full comp_correct. -/
+theorem copyReturnPreservesPoppedLocals {width : Nat} [NeZero width] {C F : Type}
+    (k frame handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (values : List Nat) (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (canonical : values = (List.range values.length).map (fun index => 2 * (index + 1)))
+    (useStack : target.useStack = true)
+    (bound : frame + 1 ≤ target.stack.length -
+      (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      (target.store.lookup .handler)
+      (target.stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+      target.stack.length target.bitmaps (frame :: lens)) :
+    ∃ restored, StackSemEvaluate.evaluate
+      (copyRetNative false false (k, frame + 1, frame) values .skip, target) = (none, restored) ∧
+      ∀ key value,
+        sptLookup key (sptUnion (sptFromAList gc) (sptFromAList nonGC)) = some value →
+        key % 2 = 0 → 0 < key → key ∉ values →
+        k ≤ key / 2 ∧ key / 2 < k + frame ∧
+        ((restored.stack.drop restored.stackSpace).take (frame + 1))[frame - (key / 2 - k)]? =
+          some value := by
+  let count := Compiler.Backend.WordToStack.numStackRet k values
+  obtain ⟨restored, stack, regs, execution, shape, _, _, _, live, _⟩ :=
+    evaluateReturnCopyFreeLookup k (frame + 1) frame values target useStack (by omega) bound
+  refine ⟨restored, execution, ?_⟩
+  intro key value lookup physical positive absent
+  obtain ⟨lower, upper, slot⟩ := poppedCallerSlot k handler size nonGC gc tail
+    (target.store.lookup .handler) (target.stack.drop (target.stackSpace + count))
+    target.stack.length target.bitmaps frame lens relation key value lookup
+  have past := callerKeyPastReturns values key canonical physical positive absent
+  have unchanged : frame - (key / 2 - k) < frame + 1 - count := by
+    dsimp [count, Compiler.Backend.WordToStack.numStackRet]; omega
+  have preserved := live (frame - (key / 2 - k)) unchanged
+  refine ⟨lower, upper, ?_⟩
+  rw [shape]
+  simp only
+  rw [CallReturnSupport.llookupTake _ _ _ (by omega)]
+  rw [CallReturnSupport.llookupTake _ _ _ (by omega)] at slot
+  rw [Nat.add_comm target.stackSpace count] at slot
+  simpa only [Nat.add_comm] using preserved.trans slot
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
