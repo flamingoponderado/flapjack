@@ -89533,5 +89533,683 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst4688 Shift branch4823-4869. All five original guards retained and full native wInst existential, entire stateRel and target stack length/space. Actual source Shift success derives word operand reads and original successful wordShiftHOL; actual native Reg1/Reg2 loads and register/spill destination write are internally proved with arbitrary aliasing and all positive widths. Immediate case retains arbitrary BitVec operand. Canonical source fpRegs/store and target regs/fpRegs/store qualified, sptree locals/code unchanged; common source/instruction/target/result word width and independent host/FFI types. Inherited reals_as_rational_cuts remains SOUNDNESS item8 external boundary. Fresh typed original kernel specializations regenerated and reviewed: both T/hypotheses0 with complete guards/result and independent carriers; neither probes nor Lean kernel establish HOL-to-Lean equivalence.",
     "hol_line": 4688
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_cse_extract_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_cse_extract_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_word_common_subexp_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "extract_labels_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_cseInst_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_cseInst_not_created_subprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_cse_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_cse_not_created_subprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_common_subexp_elim_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_common_subexp_elim_not_created_subprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_word_common_subexp_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_good_handlers_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_cse_get_code_labels",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_cse_get_code_labels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_word_common_subexp_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_get_code_labels_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_cse_flat_exp_conventions",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_cse_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_word_common_subexp_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "flat_exp_conventions_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_cse_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "word_cse_wf_cutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "wf_cutsets_word_common_subexp_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "wf_cutsets_word_common_subexp_elim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof word_common_subexp_elim section (1605-1850). Statement kept with HOL binders in order (free P/q/p as leading binders) over the tagged wordCse/wordCseInst/wordCommonSubexpElim and the tagged predicates extractLabels, notCreatedSubprogsHOL, goodHandlersHOL (word_good_handlers overload), getCodeLabelsHOL, flatExpConventions, wfCutsets; SND is .2. Proof via the CseOut output-shape relation (structure kept, only leaf statements Inst/Get/Set/OpCurrHeap/LocValue become Moves). Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "wf_cutsets_copy_prop_aux",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "wf_cutsets_copy_prop_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "wf_cutsets_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "wf_cutsets_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_distinct_tar_reg_copy_prop_aux",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "every_inst_distinct_tar_reg_copy_prop_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_inst_distinct_tar_reg_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "every_inst_distinct_tar_reg_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_copy_prop_aux",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "extract_labels_copy_prop_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "extract_labels_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_copy_prop_aux",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "flat_exp_conventions_copy_prop_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "flat_exp_conventions_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "flat_exp_conventions_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "copy_prop_prog_not_alloc_var_aux1",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copy_prop_prog_not_alloc_var_aux1",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. No word carrier. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "copy_prop_prog_not_alloc_var_aux2",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copy_prop_prog_not_alloc_var_aux2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. No word carrier. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "copy_prop_prog_not_alloc_var",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copy_prop_prog_not_alloc_var",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "pre_alloc_conventions_copy_prop_aux",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "pre_alloc_conventions_copy_prop_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "pre_alloc_conventions_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "pre_alloc_conventions_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_inst_ok_less_copy_prop_aux",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "full_inst_ok_less_copy_prop_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_inst_ok_less_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "full_inst_ok_less_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "word_get_code_labels_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_copy_prop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "word_good_handlers_copy_prop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "copy_prop_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copy_prop_not_created_subprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof copy_prop section (1852-2192). Statement kept with HOL binders in order (free ac/n/P/ps/p leading), FST/SND as .1/.2, over the tagged copyPropProg/copyProp/removeEq/removeEqs and tagged predicates; HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror (as in the accepted inst_select/word_cse convention theorems); HOL bool ¬is_alloc_var x is ¬isAllocVar x = true. Proof via the CopyOut output-shape relation, whose leaf states carry the not_alloc_var invariant for pre_alloc_conventions. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "fakeSeq_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof SSA wf_cutsets lemmas (1011, 1041, 1091, 1477-1516). Mirrors the accepted SSA flat_exp_conventions ports: literal native SSA producers (ssaCcTrans, fixInconsistencies, fakeMoves, loopSetup, ssaReconcile, fullSsaCcTrans), producer equations as sole premises, HOL let-pattern conclusion as .1; emitted cut sets are apply_nummaps_key (fromAList) hence wf by the reviewed sptWfFromAList. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "ssaReconcile_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof SSA wf_cutsets lemmas (1011, 1041, 1091, 1477-1516). Mirrors the accepted SSA flat_exp_conventions ports: literal native SSA producers (ssaCcTrans, fixInconsistencies, fakeMoves, loopSetup, ssaReconcile, fullSsaCcTrans), producer equations as sole premises, HOL let-pattern conclusion as .1; emitted cut sets are apply_nummaps_key (fromAList) hence wf by the reviewed sptWfFromAList. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "loopSetup_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof SSA wf_cutsets lemmas (1011, 1041, 1091, 1477-1516). Mirrors the accepted SSA flat_exp_conventions ports: literal native SSA producers (ssaCcTrans, fixInconsistencies, fakeMoves, loopSetup, ssaReconcile, fullSsaCcTrans), producer equations as sole premises, HOL let-pattern conclusion as .1; emitted cut sets are apply_nummaps_key (fromAList) hence wf by the reviewed sptWfFromAList. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_moves_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "fakeMoves_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof SSA wf_cutsets lemmas (1011, 1041, 1091, 1477-1516). Mirrors the accepted SSA flat_exp_conventions ports: literal native SSA producers (ssaCcTrans, fixInconsistencies, fakeMoves, loopSetup, ssaReconcile, fullSsaCcTrans), producer equations as sole premises, HOL let-pattern conclusion as .1; emitted cut sets are apply_nummaps_key (fromAList) hence wf by the reviewed sptWfFromAList. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "ssaCcTrans_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof SSA wf_cutsets lemmas (1011, 1041, 1091, 1477-1516). Mirrors the accepted SSA flat_exp_conventions ports: literal native SSA producers (ssaCcTrans, fixInconsistencies, fakeMoves, loopSetup, ssaReconcile, fullSsaCcTrans), producer equations as sole premises, HOL let-pattern conclusion as .1; emitted cut sets are apply_nummaps_key (fromAList) hence wf by the reviewed sptWfFromAList. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "fullSsaCcTrans_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof SSA wf_cutsets lemmas (1011, 1041, 1091, 1477-1516). Mirrors the accepted SSA flat_exp_conventions ports: literal native SSA producers (ssaCcTrans, fixInconsistencies, fakeMoves, loopSetup, ssaReconcile, fullSsaCcTrans), producer equations as sole premises, HOL let-pattern conclusion as .1; emitted cut sets are apply_nummaps_key (fromAList) hence wf by the reviewed sptWfFromAList. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "wf_cutsets_SimpSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "wfCutsets_simpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof remove_unreach wf_cutsets lemmas (2668-2703): SimpSeq conjunction premise and Seq_assoc_right ∀p1 p2 kept literally, over the tagged simpSeq/seqAssocRight/removeUnreach; mirrors the accepted flat_exp_conventions_SimpSeq/Seq_assoc_right ports. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "wf_cutsets_Seq_assoc_right_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "wfCutsets_seqAssocRight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof remove_unreach wf_cutsets lemmas (2668-2703): SimpSeq conjunction premise and Seq_assoc_right ∀p1 p2 kept literally, over the tagged simpSeq/seqAssocRight/removeUnreach; mirrors the accepted flat_exp_conventions_SimpSeq/Seq_assoc_right ports. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "wf_cutsets_remove_unreach",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "wfCutsets_removeUnreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof remove_unreach wf_cutsets lemmas (2668-2703): SimpSeq conjunction premise and Seq_assoc_right ∀p1 p2 kept literally, over the tagged simpSeq/seqAssocRight/removeUnreach; mirrors the accepted flat_exp_conventions_SimpSeq/Seq_assoc_right ports. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_wf_cutsets",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/ThreeToTwo.lean",
+    "lean_name": "threeToTwoRegProg_wfCutsets",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.45): wordConvsProof three_to_two_reg_prog_wf_cutsets (2227-2236): free flag b leading, ∀prog premise/conclusion kept, over tagged threeToTwoRegProg; mirrors the accepted three_to_two_reg_prog_flat_exp_conventions port. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_convs_cse_copy probe ([local] ones reviewed against the script)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copyPropProg_out",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "CopyOut.mono",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notCreatedSubprogs_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "fixWf",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof SSA wf_cutsets group (apply_nummaps_key cut sets are wf by the reviewed sptWfFromAList); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "fullInstOkLess_copyPropInst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "lookupEq_notAlloc",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_setEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_setStoreEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "getCodeLabels_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "distinctTarReg_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_emptyEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "getCodeLabels_cseOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_removeEqs",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "extractLabels_cseOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "fullInstOkLess_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "expToAddr_copyPropShare",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "callArg_copyPropInst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "notCreatedSubprogs_cseOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_copyPropInst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "callArg_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "wordCommonSubexpElim_out",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocVar_even",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_mergeEqs",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_copyPropProg",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "flatExpConventions_cseOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_copyPropMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/Unreach.lean",
+    "lean_name": "wfCutsets_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only constructor factoring inside the original wf_cutsets_SimpSeq proof; no separately named HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "wfCutsets_cseOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copyProp_out",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAWfCutsets.lean",
+    "lean_name": "wfNames_applyNummapsKey",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof SSA wf_cutsets group (apply_nummaps_key cut sets are wf by the reviewed sptWfFromAList); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "notAllocInv_removeEq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "flatExp_copyPropShare",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "wfCutsets_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "everyStackVar_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordCse.lean",
+    "lean_name": "goodHandlers_cseOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_common_subexp_elim group: CseOut output-shape transport of a convention predicate (or the shape of word_common_subexp_elim); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "extractLabels_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "distinctTarReg_copyPropInst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "flatExpConventions_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "goodHandlers_copyOut",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/CopyProp.lean",
+    "lean_name": "copyPropInst_shape",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof copy_prop group: CopyOut output-shape construction/transport, copy_prop_inst leaf facts, or the not_alloc_var state invariant through the copy-state operations; no independent HOL declaration."
   }
 ]

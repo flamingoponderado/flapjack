@@ -9146,6 +9146,12 @@
       "sha256": "648cd55496ad0023cee21e84d8f4b98d40f95ab1654b733eae6ef7d3dba353d4"
     },
     {
+      "bytes": 1970,
+      "out": "word_convs_cse_copy_probe.out",
+      "rows": 26,
+      "sha256": "d62923effb6a3fd68ce35c3b2a54ea7bb3fe09996cca802f7f05bab1fab92c97"
+    },
+    {
       "bytes": 363,
       "out": "word_convs_every_var_inst_mono_probe.out",
       "rows": 16,
