@@ -28,6 +28,8 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_knowledge_lemmas_probe.out` captures the full zero-hypothesis statements of the word_cseProof knowledge lemmas ported in `WordCse/Proofs/KnowledgeLemmas.lean` (`firstRegOfArith_canonicalArith`, `lookup_listCmp_empty`, `invariant_listCmp_empty`, `lookup_insert_listCmp` (also typed), `register_read(s)_simps`, `lookup_register_read(s)`). Statement evidence for source review only.
 `word_cse_wf_data_preservation_probe.out` captures the full zero-hypothesis statements of the 13 exported word_cseProof `wf_data` preservation theorems ported in `WordCse/Proofs/WfDataPreservation.lean` (`wf_data_empty` through `wf_canonicalMoveRegs`, with `wf_add_to_data_aux` also typed); the 16 local ones are not exported. Statement evidence for source review only.
 `word_cse_transform_probe.out` captures the types of `word_cseInst` (`knowledge -> α inst -> knowledge # α prog`), `word_cse` and `word_common_subexp_elim`, the full `word_cseInst_def` and `word_common_subexp_elim_def`, the clause count (26) of `word_cse_def`, and the zero-hypothesis `word_cse_wf_data`. The built theory exports `Seqs_ind` but no `Seqs_def`, so the `Seqs` test helper is compared against the script text only. Statement evidence for source review only.
+`word_cse_data_inv_transport_probe.out` captures the full zero-hypothesis statements of word_cseProof `canonicalArith_correct`, `data_inv_locals`, `wf_data_untracked`, `data_inv_set_var`, `data_inv_unset_var`, `not_seen_data_inv_alist_insert`, `data_inv_memory` and `data_inv_state_agree` (also typed: one state type for s1 and s2). Statement evidence for source review only.
+`word_cse_data_inv_updates_probe.out` captures the full zero-hypothesis statements of the 12 exported word_cseProof `data_inv` knowledge-update theorems ported in `WordCse/Proofs/DataInvUpdates.lean` (`data_inv_merge_l` through `evaluate_Move1`, with `data_inv_set_store` also typed); the 10 local ones are not exported. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
 `word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
@@ -7774,3 +7776,43 @@ datatype. Faithful evaluator wrapper correspondence remains separate.
 ### Native Const instruction decoder evidence
 
 `riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
+## Native Const instruction decoder evidence
+
+`riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
+
+## Native Const32 value reconstruction
+
+`riscv_const32_value_probeScript.sml` evaluates the two literal bit-11 branches
+of `riscv_targetScript.sml:77-85` using the original HOL word operations. All
+12 captured boundary rows are `T`, including positive/negative sign boundaries
+and low-immediate sign boundaries. The concatenated LUI operand is explicitly
+word32, matching the native instruction carrier.
+
+`CorrectnessEncoding/Const32.lean` proves the identity for every word32 and
+composes the actual native LUI plus ADDI/XORI `Run` equations for every native
+state and destination, including zero. These are untagged infrastructure: no
+separately named HOL composition identity exists. They do not establish the
+full Const encoder theorem's fetch, Next, interference, or assertions.
+`check-riscv-const32-value.py` pins the unrestricted signatures and original
+evidence; mutation tests reject an added run premise or a lost oracle row.
+`pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
+PanSem wrapper equality, quantified state/start types and closed kernel truth.
+Lean retains the faithful evaluator, every overwritten clock, TailCall as
+Call NONE, exact result classification and FFI event projection. It derives
+forbidden/termination predicate equivalence internally, with the original
+choice/LUB formulas and canonical finite-support/positive-word translations.
+Whole-pass semantics correspondence and production routing remain separate.
+
+
+## Native wide Const value reconstruction
+
+`riscv_const_wide_value_probeScript.sml` evaluates the literal wide branches of
+`riscv_ast_def` at riscv_targetScript.sml:111-122. Twelve original word64
+boundaries cover low and high sign bits, zero, and all ones. Every row is `T`.
+`CorrectnessEncoding/ConstWide.lean` proves the same OR/XOR reconstruction for
+every word64 without range or target-run premises. The high sign extension is
+shifted by32; the low sign bit determines complement/XOR versus ordinary OR.
+This is untagged infrastructure because HOL has no separately named identity.
+It does not establish full native fetch/Next/interference/assertion execution.
+`check-riscv-const-wide-value.py` and its mutation regressions protect the
+unrestricted signature, original evidence, and all driver labels.

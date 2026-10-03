@@ -1,5 +1,5 @@
-import Flapjack.Test.BackendConfigAttachBitmaps
 import Flapjack.Test.WordFindCodeGenericCarriers
+import Flapjack.Test.BackendConfigAttachBitmaps
 import Flapjack.Test.L3DecodeImmediatesParity
 import Flapjack.Test.WordSimpGenericCarriersParity
 import Flapjack.Test.L3FPMemoryParity
