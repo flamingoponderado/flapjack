@@ -210,5 +210,3 @@ theorem stackCache_merge (base left right : CakeStackOnlyState)
   rfl
 
 end Flapjack.WordAlloc
-
-

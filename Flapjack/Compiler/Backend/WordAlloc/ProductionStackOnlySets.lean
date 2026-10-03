@@ -172,5 +172,3 @@ theorem stackRemove_nodup (keys temporary fixed : List Nat)
   ⟨deleteFold_nodup _ _ ht, hf⟩
 
 end Flapjack.WordAlloc
-
-
