@@ -1,0 +1,15 @@
+make_init_filter_skip=(semantics
+   (make_init (mc_conf :(α, γ, δ) machine_config) (ffi :β ffi_state)
+      (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+      (sdm :α word -> bool) (ms :γ) (filter_skip (code :α sec list))
+      (compile_lab mc_conf.target.config) (cbpos :α word) (cbspace :num)
+      ((λ((a :config),(b :α sec list)). (a,filter_skip b)) ∘
+       (coracle :num -> config # α sec list))) :behaviour) =
+(semantics
+   (make_init mc_conf ffi t m dm sdm ms code
+      (λ(c :config) (p :α sec list).
+           compile_lab mc_conf.target.config c (filter_skip p)) cbpos cbspace
+      coracle) :behaviour)
+make_init_filter_skip_types=(coracle :num -> config # α sec list)::num -> config # α sec list;(cbspace :num)::num;(cbpos :α word)::α word;(code :α sec list)::α sec list;(ms :γ)::γ;(sdm :α word -> bool)::α word -> bool;(dm :α word -> bool)::α word -> bool;(m :α word -> α word_loc)::α word -> α word_loc;(t :α asm_state)::α asm_state;(ffi :β ffi_state)::β ffi_state;(mc_conf :(α, γ, δ) machine_config)::(α, γ, δ) machine_config;
+make_init_filter_skip_hypotheses=0
+make_init_filter_skip_proved=T

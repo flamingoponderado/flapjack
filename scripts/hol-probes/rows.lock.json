@@ -2000,6 +2000,12 @@
       "sha256": "8529a95e2b964f082d5ce9f123dd41787fc414e5f93103d67681df57a24a6386"
     },
     {
+      "bytes": 334,
+      "out": "lab_filter_section_end_probe.out",
+      "rows": 4,
+      "sha256": "44b7cb1fe35fd9dea94d6855647b7f955d06849ebede1481e12e0e5863a22fd6"
+    },
+    {
       "bytes": 383,
       "out": "lab_filter_semantics_probe.out",
       "rows": 4,
@@ -2228,6 +2234,12 @@
       "sha256": "bb6c0c13b4412c765d1a8ac584906a8b8932ca4380a63701dcf86fbca4d1cb50"
     },
     {
+      "bytes": 311,
+      "out": "lab_to_target_filter_preconditions_probe.out",
+      "rows": 4,
+      "sha256": "00545ce6bfed2ca1dec279b641d31faeab3178715dca0443a3af6c283acbffeb"
+    },
+    {
       "bytes": 2723,
       "out": "lab_to_target_filter_skip_probe.out",
       "rows": 36,
@@ -2406,6 +2418,12 @@
       "out": "lab_to_target_machine_sem_eq_sem_probe.out",
       "rows": 4,
       "sha256": "2197f4c15e8775fcd574215fa61e50ce71da9e867f2466f0d3661c2c3f7e8b7c"
+    },
+    {
+      "bytes": 1173,
+      "out": "lab_to_target_make_init_filter_probe.out",
+      "rows": 4,
+      "sha256": "1c3fdcc271c1d019666d5a73cf0000502991258a0d3b0a8ffbd50172fba3f0b6"
     },
     {
       "bytes": 2085,
@@ -4814,6 +4832,12 @@
       "sha256": "13a093f192c867994eb660357b493e06b0dcc5a5390d3a609b1f0726cf13843b"
     },
     {
+      "bytes": 158,
+      "out": "pan_structs_flatten_conversion_probe.out",
+      "rows": 4,
+      "sha256": "2876138350d93f552f09dbdcf888a895fa70f108947846133516a0b3dd57273e"
+    },
+    {
       "bytes": 3155,
       "out": "pan_structs_leaves_probe.out",
       "rows": 12,
@@ -4850,6 +4874,18 @@
       "sha256": "b3024de29c59ee7decbf435e91f1acf28515a2822e70a6b137a31662c47d6240"
     },
     {
+      "bytes": 3683,
+      "out": "pan_structs_program_return_raise_probe.out",
+      "rows": 9,
+      "sha256": "898f171220424b658e5aadaf86dadad7b4e3b16fd939ca21ae4f937d47600bf7"
+    },
+    {
+      "bytes": 7013,
+      "out": "pan_structs_program_seq_if_probe.out",
+      "rows": 11,
+      "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
+    },
+    {
       "bytes": 3200,
       "out": "pan_structs_program_tick_annot_probe.out",
       "rows": 6,
@@ -4884,6 +4920,12 @@
       "out": "pan_structs_shape_map_codec_probe.out",
       "rows": 7,
       "sha256": "5ad064943706d8f62e4fc9d36731f55a742b991b32bacf1714d34c4c51f42ab4"
+    },
+    {
+      "bytes": 309,
+      "out": "pan_structs_structs_code_invariant_probe.out",
+      "rows": 4,
+      "sha256": "64b6b50dd598b95fda275321085c8e69111c77daaf5fc27ba74d6f67956f74f1"
     },
     {
       "bytes": 1183,
