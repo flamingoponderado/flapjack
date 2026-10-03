@@ -1,0 +1,38 @@
+dec_clock_align_dm=dec_clock (align_dm (s :(α, β, γ) labSem$state)) = align_dm (dec_clock s)
+dec_clock_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+dec_clock_align_dm_hypotheses=0
+dec_clock_align_dm_proved=T
+inc_pc_align_dm=inc_pc (align_dm (s :(α, β, γ) labSem$state)) = align_dm (inc_pc s)
+inc_pc_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+inc_pc_align_dm_hypotheses=0
+inc_pc_align_dm_proved=T
+upd_pc_align_dm=upd_pc (p :num) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (upd_pc p s)
+upd_pc_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(p :num)::num;
+upd_pc_align_dm_hypotheses=0
+upd_pc_align_dm_proved=T
+get_pc_value_align_dm=get_pc_value (x :lab) (align_dm (s :(α, β, γ) labSem$state)) =
+get_pc_value x s
+get_pc_value_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(x :lab)::lab;
+get_pc_value_align_dm_hypotheses=0
+get_pc_value_align_dm_proved=T
+get_ret_Loc_align_dm=(get_ret_Loc (align_dm (s :(β, γ, δ) labSem$state)) :α word_loc option) =
+(get_ret_Loc s :α word_loc option)
+get_ret_Loc_align_dm_types=(s :(β, γ, δ) labSem$state)::(β, γ, δ) labSem$state;
+get_ret_Loc_align_dm_hypotheses=0
+get_ret_Loc_align_dm_proved=T
+share_mem_op_align_dm_simp=(share_mem_op (m :memop) (r :num) (a :β addr) (s :(β, γ, α) labSem$state) =
+ (NONE :(α ffi_result # (β, γ, α) labSem$state) option) ⇒
+ share_mem_op m r a (align_dm s) =
+ (NONE :(α ffi_result # (β, γ, α) labSem$state) option)) ∧
+(share_mem_op m r a s =
+ SOME
+   ((FFI_final (f :final_event) :α ffi_result),(s' :(β, γ, α) labSem$state)) ⇒
+ share_mem_op m r a (align_dm s) =
+ SOME ((FFI_final f :α ffi_result),align_dm s')) ∧
+(share_mem_op m r a s =
+ SOME (FFI_return (fs :α ffi_state) (l :word8 list),s') ⇒
+ share_mem_op m r a (align_dm s) = SOME (FFI_return fs l,align_dm s'))
+share_mem_op_align_dm_simp_types=(l :word8 list)::word8 list;(fs :α ffi_state)::α ffi_state;(s' :(β, γ, α) labSem$state)::(β, γ, α) labSem$state;(f :final_event)::final_event;(s :(β, γ, α) labSem$state)::(β, γ, α) labSem$state;(a :β addr)::β addr;(r :num)::num;(m :memop)::memop;
+share_mem_op_align_dm_simp_hypotheses=0
+share_mem_op_align_dm_simp_proved=T

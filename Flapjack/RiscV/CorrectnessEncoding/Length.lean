@@ -34,6 +34,11 @@ private theorem encodeList_length (l : List instruction) :
       ih, List.length_cons]
     omega
 
+/-- Flapjack full list-fold length equation used by offset-length proofs. -/
+theorem riscvEnc_length_eq (i : HolAsm 64) :
+    (riscvEnc i).length = 4 * (riscvAst i).length :=
+  encodeList_length _
+
 @[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "riscv_encoding"]
 theorem riscv_encoding (i : HolAsm 64) :
     (riscvEnc i).length % 4 = 0 ∧ riscvEnc i ≠ [] := by
