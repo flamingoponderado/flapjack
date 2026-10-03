@@ -1892,6 +1892,9 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.InstCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CompileSemantics
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.MakeInit
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Labels
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove
