@@ -9002,6 +9002,12 @@
       "sha256": "d0852f3c7657cdb6af8885b39b05a24ec1dd5192fb05cde36885e9bc5de2d9c6"
     },
     {
+      "bytes": 318,
+      "out": "word_cse_add_to_data_typed_probe.out",
+      "rows": 3,
+      "sha256": "ffbc44358aa4ce7d7c20b437c9275d176cd879ac46569344b974f7f01809ce7e"
+    },
+    {
       "bytes": 23546,
       "out": "word_cse_arithmetic_keys_probe.out",
       "rows": 65,
