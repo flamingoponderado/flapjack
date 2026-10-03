@@ -6344,3 +6344,7 @@ run_probe lab_to_target_initializer_memory_separation_probeScript.sml lab_to_tar
 run_probe word_simp_compile_exp_probeScript.sml word_simp_compile_exp_probe.out \
   fold_chain call_drop_consts static_if push_out_if hoist_if shift_move_loop ffi_install_share inst_alloc_ret_call \
   "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
+  add3 sub_const big_imm store_off load_off shifts curr_heap share_load8 set_and const_fold two_reg \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"

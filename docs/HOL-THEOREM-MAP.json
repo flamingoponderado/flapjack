@@ -71574,5 +71574,131 @@
     "hol_name": "filter_v_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38: all four filter_v clauses literal with mk_BN/mk_BS collapsing; HOL bool predicate as Bool function. Used by word_simp const_fp_loop; covered by the word_simp_compile_exp probe replay (Call/Alloc/Install rows)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "pullOps",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "pull_ops_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: both clauses; same-op Op args prepended (ls ++ acc) else consed. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "isConst",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "is_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: both clauses. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "rmConst",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "rm_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: Const w => w else 0w. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "convertSub",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "convert_sub_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: three clauses in source order ([Const;Const], [x;Const w] => Op Add [Const (-w); x], else Op Sub). Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "opConsts",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "op_consts_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: And => Const (~0w) else Const 0w. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "reduceConst",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "reduce_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: all branches (w = 0 with Add/Or/Xor list cases, And, else). Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "optimizeConsts",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "optimize_consts_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: PARTITION is tagged holPartition (PART accumulators, reversed sublists); THE is tagged holThe (unspecified THE NONE), so noncomputable. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "pullExp",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "pull_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: clauses in source order: every Op Sub to convert_sub (MAP pull_exp), Op op [] => op_consts, Op op [x] => pull_exp x, Op op ls => optimize_consts (pull_ops op (MAP pull_exp ls) []), Load, Shift, identity; MAP as attached map for termination. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "flattenExp",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "flatten_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: clauses in source order incl. Op op (x::xs) => Op op [flatten_exp (Op op xs); flatten_exp x]. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "isLookupCurrHeap",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "is_Lookup_CurrHeap_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: Lookup CurrHeap => T else F. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "instSelectExp",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "inst_select_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: every clause: Load with Op Add [exp'; Const w] addr_offset_ok split, Const, Var (Move 0 [tar,v]), Lookup (Get), binary Op with CurrHeap cases (op <> Sub guard), valid_imm (INL op), Add-to-Sub negated immediate, temp+1 constant, Shift with w2n < dimindex (=width), n = 0 Move, else Inst Const tar 0w, register shift, catch-all Skip. addr_offset_ok overload = offset_ok 0 c.addr_offset (asmOffsetOkExact 0). Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "instSelect",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "inst_select_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: every clause: Assign, Set, Store (addr_offset_ok), Seq, MustTerminate, ShareInst (Load/Store addr, Load32/Store32 addr, Load16/Store16 hw, Load8/Store8 byte offset guards), If, Call (ret/handler bodies), Loop, identity. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "threeToTwoReg",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "three_to_two_reg_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: every clause: Binop, Shift, AddCarry, AddOverflow, SubOverflow, OpCurrHeap two-address rewrites with Move 0 [r1,r2]; structural cases; identity. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst.lean",
+    "lean_name": "threeToTwoRegProg",
+    "hol_path": "cakeml/compiler/backend/word_instScript.sml",
+    "hol_name": "three_to_two_reg_prog_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.39 word_inst: if b then three_to_two_reg prog else prog. Fresh original EVAL (word_inst_select probe: 11 rows of inst_select under an ARB-with asm_config fixing valid_imm/addr_offset/hw_offset/byte_offset, and three_to_two_reg_prog) replayed exactly by kernel reduction in Flapjack/Test/WordInstSelectExactParity.lean; this replay caught and fixed a List.partition vs HOL PARTITION order difference. Regression evidence, not an equivalence proof. Proof-side port; executed RiscV/WordInstSelect.lean unchanged (routing tracked separately). 'a word is positive-width BitVec width; wordLang carriers are the reviewed WordLangProgHOL/WordLangExpHOL; asm_config is the reviewed AsmConfigExact."
   }
 ]
