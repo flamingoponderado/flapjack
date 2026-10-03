@@ -1,18 +1,16 @@
 import Flapjack.Misc.BinaryIeeeRoundFp64
-import Flapjack.Misc.MachineIeee
 
 /-!
-# HOL `binary_ieee` integer conversions and their binary64 lifts
+# HOL `binary_ieee` integer conversions
 
 A rendering of `float_to_int` and of `real_to_float` restricted to rational
-inputs (`HOL/src/floating-point/binary_ieeeScript.sml:539-572`), with the
-`fp64_to_int`, `real_to_fp64` and `int_to_fp64` encodings that
-`machine_ieeeLib` generates (bead `flapjack-h29l.6.3.1`).  These are used by
-wordSem `inst_def`'s `FPToInt` and `FPFromInt` cases.  HOL `INT_FLOOR` and
-`INT_CEILING` are `Rat.floor` and `Rat.ceil`, and `Num (ABS f)` is
-`Int.natAbs`.  `float_to_int` is tagged; the `Rat`-input `real_to_float`
-rendering is not (see `holRealToFloat`), and the generated `machine_ieeeLib`
-wrappers stay untagged here.
+inputs (`HOL/src/floating-point/binary_ieeeScript.sml:539-572`) (bead
+`flapjack-h29l.6.3.1`).  The generated `machine_ieee` `fp64_to_int`,
+`real_to_fp64` and `int_to_fp64`, used by wordSem `inst_def`'s `FPToInt` and
+`FPFromInt` cases, are in `Flapjack.Misc.MachineIeee.ConvertInt`.  HOL
+`INT_FLOOR` and `INT_CEILING` are `Rat.floor` and `Rat.ceil`, and
+`Num (ABS f)` is `Int.natAbs`.  `float_to_int` is tagged; the `Rat`-input
+`real_to_float` rendering is not (see `holRealToFloat`).
 -/
 
 namespace Flapjack
@@ -49,25 +47,5 @@ def holFloatToInt {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
     `real_of_int a` is an integer and so lies in the covered domain. -/
 noncomputable def holRealToFloat {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : Rat) : HolFloat t w :=
   holFloatRound mode (decide (mode = .roundTowardNegative)) r
-
-/-- HOL `fp64_to_int mode = float_to_int mode o fp64_to_float`. -/
-def holFp64ToInt (mode : HolRounding) (a : BitVec 64) : Option Int :=
-  holFloatToInt mode (holFp64ToFloat a)
-
-/-- HOL `real_to_fp64 mode = float_to_fp64 o real_to_float mode`, restricted
-    to rational inputs like `holRealToFloat`. -/
-noncomputable def holRealToFp64 (mode : HolRounding) (r : Rat) : BitVec 64 :=
-  holFloatToFp64 (holRealToFloat mode r)
-
-/-- HOL `int_to_fp64 mode a = real_to_fp64 mode (real_of_int a)`. -/
-noncomputable def holIntToFp64 (mode : HolRounding) (a : Int) : BitVec 64 :=
-  holRealToFp64 mode (a : Rat)
-
-/-- `int_to_fp64 roundTiesToEven` through the computable rounding. -/
-theorem holIntToFp64_rte (a : Int) :
-    holIntToFp64 .roundTiesToEven a = holFloatToFp64 (holFp64RoundTiesToEven false (a : Rat)) := by
-  unfold holIntToFp64 holRealToFp64 holRealToFloat
-  rw [holFloatRound_rte_fp64]
-  rfl
 
 end Flapjack

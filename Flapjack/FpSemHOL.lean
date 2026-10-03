@@ -1,6 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.AstHOL
-import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.MachineIeee.Arith
 import Flapjack.Misc.BinaryIeeeSqrt
 
 /-!

@@ -2385,7 +2385,7 @@ operand. FPFromInt covers the 64-bit low-32-bit read (`0x0000000000000003` ->
 missing-operand failure. `Flapjack/Test/StackSemFpRegisterInstParity.lean`
 kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
 `Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
-`holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
+`holIntToFp64_rte` from `Flapjack/Misc/MachineIeee/ConvertInt.lean`, and the FPToInt
 rows use the computable `holFp64ToInt`. The untagged partial case helper
 `Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
 not the whole HOL `inst_def`. Regenerate read-only using

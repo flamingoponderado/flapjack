@@ -1,4 +1,5 @@
 import Flapjack.Misc.MachineIeee.Convert
+import Flapjack.Misc.MachineIeee.ConvertInt
 import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
 
 /-!
