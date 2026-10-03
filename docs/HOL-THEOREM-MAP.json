@@ -68185,6 +68185,21 @@
     "reviewer": "flapjack-sol2 full source comparison2026-10-03 original372-393: retains all original newbytes/address/source-memory/source-domain/endian/read-result/arbitrary-frame-predicate/whole-memory/whole-domain binders. Original separation-memory premise and actual source read are the only hypotheses; conclusion is full original SetSep.star(memoryHOL updatedSource sourceDomain)p(fun2Set(updatedWhole,wholeDomain)), not only pointwise agreement or assumed frame preservation. Consumes published reviewed StackRemove.Proofs.Memory.memoryHOL and Misc.SetSep.star/split/fun2Set/fun2SetThm, via explicitly authorized public ordinarymerge; no carrier duplicate or expanded parallel variant. HOL set domains translated by existing Bool predicates, heap sets by unrestricted propositions, source/target wordLoc width fixed same arbitrary positive width. The proof derives source-domain subset and matching old memory from original whole partition, uses full EQ on owned cells and IGNORE outside source domain, derives frame-domain disjointness then reconstructs exact updated whole-heap union/disjointness with unchanged frame/p. Numerical alignment portability follows original symbolic common-key proof and user LOG2 correction; no width>=8 premise/runtime rewrite/equality with unspecified LOG2zero or cross-prover equivalence claim. Individual held HD/EL/default/dispatch declarations are not new dependencies or retagged by this port."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/If.lean",
+    "lean_name": "evaluateCodeBitmapsIf",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.4: original evaluate_code_bitmaps421-440 If constructor. CodeBitmaps definitionally retains full original three-conjunct existential shifted oracle/code union left-fold/bitmap append flatten. Sole execution premise actual native If evaluate. Recursive IHs only at source and guarded by actual successful getVar/getVarImm operands and original comparison true/false selecting that branch. Failed register/immediate reads and failed comparison retain source/count0; selected branch supplies original result without extra success/postfield/count assumptions. Canonical imported regs/fpRegs/store same-module witness; positive BitVec/NeZero,C/F Type0, tree-map code excluded. Inherited reals_as_rational_cuts assumption explicitly retained; no numeric byte-alignment or FP equivalence claim and no runtime rewrite. Full theorem and other cases remain open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/IntegerStore.lean",
     "lean_name": "«dfn'SW»",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",

@@ -6333,3 +6333,4 @@ do not claim full Run/Next or compiler correctness.
 
 
 `stack_code_bitmaps_seq_probe.out` captures complete original evaluate_code_bitmaps, zero hypotheses and native Seq specialization. The native case keeps only actual source-path recursive hypotheses, derives fixClock clamping and concatenates oracle prefixes in original left-fold/bitmap order. Whole evaluator assembly remains open.
+`stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
