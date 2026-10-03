@@ -74193,7 +74193,7 @@
     "hol_name": "stack_rel_raise",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2: full local2687-2796 six original premises n bound/source handler bound/strict adjacent source env sort/source LASTN equation/actual decoder/full stackRelAux. Complete existential ex/payload, target LASTN head+tail, both3 length bounds, absolute Loc l3 l4 and conditional saved-handler Word n2w, cleared source handler with exact env_to_list(fromAList l)(K I), full cleared auxiliary relation and successful original DROP(offset+3) decoder conclusion. All actual target payload/header/run facts derived; no supplied postrelation/success/safety premise. Source/raw/frame word dimension unified by original decoder and relation; positive BitVec with NeZero; actual Option/List/Spt/word_loc carriers preserved. Total original EL keeps unspecified out-of-range behavior, local inhabitation does not select it. Native source-sized helpers derive suffix/absolute offsets/header obligations/unwinding; full original bounds kept even redundant. Source comparison recorded; coordinator acceptance tracked on bead."
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2: full local2687-2796 six original premises n bound/source handler bound/strict adjacent source env sort/source LASTN equation/actual decoder/full stackRelAux. Complete existential ex/payload, target LASTN head+tail, both3 length bounds, absolute Loc l3 l4 and conditional saved-handler Word n2w, cleared source handler with exact env_to_list(fromAList l)(K I), full cleared auxiliary relation and successful original DROP(offset+3) decoder conclusion. All actual target payload/header/run facts derived; no supplied postrelation/success/safety premise. Source/raw/frame word dimension unified by original decoder and relation; positive BitVec with NeZero; actual Option/List/Spt/word_loc carriers preserved. Total original EL keeps unspecified out-of-range behavior, local inhabitation does not select it. Native source-sized helpers derive suffix/absolute offsets/header obligations/unwinding; full original bounds kept even redundant. Source comparison recorded;"
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Stubs.lean",
@@ -74632,7 +74632,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6: complete original comp_correct motive5719-5751 and Raise6627-6747. Simulation retains every original source execution/nonError/full stateRel/convention/bitmap/label/max bound premise and full existential clock/actual target run/compCorrectResult conclusion, with no extra IH or target-run/postrelation/resource assumption. Source getVar then jumpExc succeeds from nonError; postAllocConventions forces register2. Actual LASTN handler frame and full stackRel derive strict gc sorting, handler pointer, raw width/index/space bounds, location/saved-handler reads. Native comp emits Call NONE raiseStubLocation NONE; exact eight-command raiseStubFalse and actual call evaluator derive extraClock1, unchanged returned clock, Handler update and three-slot free. Full stackRelRaise, environment identity and decoder/aux suffix facts derive cleared stack relation including conditional saved-handler pointer; LASTN_stack_size_SOME and full aux size derive all optional stackSizeRel/max branches. Empty pushed locals discharge original wf/placement; erased Handler update preserves original store, all other state fields/oracle/code conventions unchanged. Original source handler count determines LASTN lens, exception value preserved in reg1 from actual getVar2 and k>4. Original gc existential chosen directly because reviewed sorted env identity proves original env_to_list output equals gc. Imported canonical source/target owners retain actual five fmap fields, Spt code/locals and List fields unchanged; same-module genuine codec roundtrips, positive BitVec width NeZero and C/F Type0 retained. Evaluator closure inherits reals_as_rational_cuts assurance limit; no numerical FP correspondence claim. Original capture specializes original complete comp_correct to its evaluate_ind Raise obligation: statement evidence, not literal case replay or cross-language equivalence. Proof-only, no executed compiler change; coordinator acceptance tracked on bead.",
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6: complete original comp_correct motive5719-5751 and Raise6627-6747. Simulation retains every original source execution/nonError/full stateRel/convention/bitmap/label/max bound premise and full existential clock/actual target run/compCorrectResult conclusion, with no extra IH or target-run/postrelation/resource assumption. Source getVar then jumpExc succeeds from nonError; postAllocConventions forces register2. Actual LASTN handler frame and full stackRel derive strict gc sorting, handler pointer, raw width/index/space bounds, location/saved-handler reads. Native comp emits Call NONE raiseStubLocation NONE; exact eight-command raiseStubFalse and actual call evaluator derive extraClock1, unchanged returned clock, Handler update and three-slot free. Full stackRelRaise, environment identity and decoder/aux suffix facts derive cleared stack relation including conditional saved-handler pointer; LASTN_stack_size_SOME and full aux size derive all optional stackSizeRel/max branches. Empty pushed locals discharge original wf/placement; erased Handler update preserves original store, all other state fields/oracle/code conventions unchanged. Original source handler count determines LASTN lens, exception value preserved in reg1 from actual getVar2 and k>4. Original gc existential chosen directly because reviewed sorted env identity proves original env_to_list output equals gc. Imported canonical source/target owners retain actual five fmap fields, Spt code/locals and List fields unchanged; same-module genuine codec roundtrips, positive BitVec width NeZero and C/F Type0 retained. Evaluator closure inherits reals_as_rational_cuts assurance limit; no numerical FP correspondence claim. Original capture specializes original complete comp_correct to its evaluate_ind Raise obligation: statement evidence, not literal case replay or cross-language equivalence. Proof-only, no executed compiler change;",
     "hol_line": 5756
   },
   {
@@ -74999,7 +74999,7 @@
     "hol_name": "word_list_EQ_rev",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 original2817-2825: complete unconditional predicate equality for arbitrary payload list xs and address a, forward word_list a xs equals word_list_rev at a+n2w LENGTH xs*bytes_in_word applied to REVERSE xs. Native Misc.wordList and wordListRev retain exact singleton/tail separation and modular address addition/subtraction, independent arbitrary payload Type; forward append uses opposite multiplication order justified by BitVec.mul_comm. Original HOL positive type dimension becomes width Nat with NeZero and BitVec width; no fixed width, word-only payload, successful heap, address injectivity, no-wrap or length bound added. Reverse induction/append/separation commutativity and modular add-sub cancellation prove entire original equality even when predicates are unsatisfiable from wrapped address collisions. Original unchanged SNOC_INDUCT proof replay with original simplifier context captures full statement/T/hyp0; no supplied target relation. Proof-only initializer prerequisite; coordinator acceptance tracked on bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original2817-2825: complete unconditional predicate equality for arbitrary payload list xs and address a, forward word_list a xs equals word_list_rev at a+n2w LENGTH xs*bytes_in_word applied to REVERSE xs. Native Misc.wordList and wordListRev retain exact singleton/tail separation and modular address addition/subtraction, independent arbitrary payload Type; forward append uses opposite multiplication order justified by BitVec.mul_comm. Original HOL positive type dimension becomes width Nat with NeZero and BitVec width; no fixed width, word-only payload, successful heap, address injectivity, no-wrap or length bound added. Reverse induction/append/separation commutativity and modular add-sub cancellation prove entire original equality even when predicates are unsatisfiable from wrapped address collisions. Original unchanged SNOC_INDUCT proof replay with original simplifier context captures full statement/T/hyp0; no supplied target relation. Proof-only initializer prerequisite;"
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListInjective.lean",
@@ -75008,7 +75008,7 @@
     "hol_name": "word_list_inj",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 original3089-3098: complete forall xs,a,u,uPrime and sole conjunction word_list a xs u and word_list a xs uPrime implies u=uPrime. Actual native forward wordList recurrence retains current singleton, modular bytesInWord tail and full STAR partition over arbitrary predicate heaps; independent payload Type and address BitVec width with NeZero translate original positive word dimension. No finite heap, word-valued payload, no-wrap, address distinctness or numeric bound added. Nil uses original empty heap equalities; cons extracts actual two partitions, singleton equalities and tail assertions, genuine tail IH derives equal rest heaps, actual union equations yield whole heap equality. Original literal unchanged induction/DIFF/SPLIT_EQ proof replay with original simplifier context captured full statement/T/hyp0; source review compares full statements and actual carriers, not inferred from test or name. Proof-only initializer prerequisite, no executed compiler behavior change; coordinator acceptance tracked on bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original3089-3098: complete forall xs,a,u,uPrime and sole conjunction word_list a xs u and word_list a xs uPrime implies u=uPrime. Actual native forward wordList recurrence retains current singleton, modular bytesInWord tail and full STAR partition over arbitrary predicate heaps; independent payload Type and address BitVec width with NeZero translate original positive word dimension. No finite heap, word-valued payload, no-wrap, address distinctness or numeric bound added. Nil uses original empty heap equalities; cons extracts actual two partitions, singleton equalities and tail assertions, genuine tail IH derives equal rest heaps, actual union equations yield whole heap equality. Original literal unchanged induction/DIFF/SPLIT_EQ proof replay with original simplifier context captured full statement/T/hyp0; source review compares full statements and actual carriers, not inferred from test or name. Proof-only initializer prerequisite, no executed compiler behavior change;"
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
@@ -81271,7 +81271,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead .27.1.1.10: original full motive5719-5751 and Return6494-6585, entire Seq.Simulation with all original source run/nonerror/fullstateRel/postallocation conventions/flat/nativecompile/bitmap size-prefix/labels/maxVar hypotheses and quantified contexts. Derives successful Loc getVar/getVars from source nonerror, EVEN register and canonical GENLIST one-based even values from conventions, release bound from maxVar+frame relation including frame0, then actual wReg1 load, SeqStackFree and Ret with zero added clock. Full flushed-source stateRel k0 0 with extra LENGTH ys-(k-1), every returned physical register and remaining stack slot proved; stackSizeRel maximum/option/stack size and complete stackRel preserved. No extra bounds, target run, postrelation or placement hypothesis on full case; countBound is case-local infrastructure derived internally. Five named canonical map fields use actual imported source/target owners and genuine same-module roundtrips; HOL List/Spt unchanged, positive BitVec/NeZero width and FFI Type0 standard translation only. Inherits evaluator reals_as_rational_cuts assurance, no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead .27.1.1.10: original full motive5719-5751 and Return6494-6585, entire Seq.Simulation with all original source run/nonerror/fullstateRel/postallocation conventions/flat/nativecompile/bitmap size-prefix/labels/maxVar hypotheses and quantified contexts. Derives successful Loc getVar/getVars from source nonerror, EVEN register and canonical GENLIST one-based even values from conventions, release bound from maxVar+frame relation including frame0, then actual wReg1 load, SeqStackFree and Ret with zero added clock. Full flushed-source stateRel k0 0 with extra LENGTH ys-(k-1), every returned physical register and remaining stack slot proved; stackSizeRel maximum/option/stack size and complete stackRel preserved. No extra bounds, target run, postrelation or placement hypothesis on full case; countBound is case-local infrastructure derived internally. Five named canonical map fields use actual imported source/target owners and genuine same-module roundtrips; HOL List/Spt unchanged, positive BitVec/NeZero width and FFI Type0 standard translation only. Inherits evaluator reals_as_rational_cuts assurance, no numerical FP equivalence claim."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterTwo.lean",
@@ -81440,7 +81440,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ConstantInstruction.lean",
@@ -81455,7 +81455,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
@@ -81684,7 +81684,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 original4470-4476: entire unconditional evaluation pair equality for arbitrary load list/state/clock, literal wStackLoad loads Skip and I##postclock update. Native list induction covers every register/index, disabled stack, out-of-range emptyEnv failure and successful setVar followed by remaining loads; actual fixClock min-self reduced with no bounds/useStack/source or targetrun hypothesis. Every result and complete poststate retained. Only three actual imported StackSemStateFiniteExact canonical map fields translated, same-module genuine codec roundtrip, original List/Spt unchanged, positive NeZero/BitVec width and Type0 host. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original4470-4476: entire unconditional evaluation pair equality for arbitrary load list/state/clock, literal wStackLoad loads Skip and I##postclock update. Native list induction covers every register/index, disabled stack, out-of-range emptyEnv failure and successful setVar followed by remaining loads; actual fixClock min-self reduced with no bounds/useStack/source or targetrun hypothesis. Every result and complete poststate retained. Only three actual imported StackSemStateFiniteExact canonical map fields translated, same-module genuine codec roundtrip, original List/Spt unchanged, positive NeZero/BitVec width and Type0 host. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectExtCall.lean",
@@ -81946,7 +81946,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol-b source comparison2026-10-03 full original If6767-6903, complete motive5719-5751 and evaluate_ind literal two guarded branch IHs: all v3/v4/x/y/v source read pair/some operands/actual word_cmp SOME Boolean true versus not true guards preserved, with whole Seq.Simulation conclusions. Full original source run/nonerror/stateRel/conventions/flat/actual comp/bitmap bounds-prefix/labels/maxVar quantified premises and every target existential clock/run/result/full resource branch retained. Actual source nonerror derives selected operands/branch; source conventions derive even registers and branch conventions. Native conditionProgram mirrors actual comp order, both child compilers and Reg1+Reg2 appended loads, accepted immediate, rejected immediate Const(k+1) then Reg1 loads. Scratch preservation and same wordSemWordCmp establish actual target branch at arbitrary clock via full original load-clock and const-clock laws; no target run/postrelation/clock law/bounds assumption on full constructor. Branch compiler length/prefix and actual prefix evaluation monotonicity discharge loaded bitmap/drop offset and label subset, original max3 bound derives both branches. Selected guarded IH supplies entire result-resource conclusion unchanged. Five canonical actual imported source/target map fields with genuine same-module codec roundtrips, HOL List/Spt unchanged, positive BitVec/NeZero and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fresh original whole specialization and literal full If induction obligation closed provedT/hyp0, statement evidence via original full comp_correct rather than proof replay. Fleet acceptance tracked separately on open bead."
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 full original If6767-6903, complete motive5719-5751 and evaluate_ind literal two guarded branch IHs: all v3/v4/x/y/v source read pair/some operands/actual word_cmp SOME Boolean true versus not true guards preserved, with whole Seq.Simulation conclusions. Full original source run/nonerror/stateRel/conventions/flat/actual comp/bitmap bounds-prefix/labels/maxVar quantified premises and every target existential clock/run/result/full resource branch retained. Actual source nonerror derives selected operands/branch; source conventions derive even registers and branch conventions. Native conditionProgram mirrors actual comp order, both child compilers and Reg1+Reg2 appended loads, accepted immediate, rejected immediate Const(k+1) then Reg1 loads. Scratch preservation and same wordSemWordCmp establish actual target branch at arbitrary clock via full original load-clock and const-clock laws; no target run/postrelation/clock law/bounds assumption on full constructor. Branch compiler length/prefix and actual prefix evaluation monotonicity discharge loaded bitmap/drop offset and label subset, original max3 bound derives both branches. Selected guarded IH supplies entire result-resource conclusion unchanged. Five canonical actual imported source/target map fields with genuine same-module codec roundtrips, HOL List/Spt unchanged, positive BitVec/NeZero and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fresh original whole specialization and literal full If induction obligation closed provedT/hyp0, statement evidence via original full comp_correct rather than proof replay."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelStoreUpdate.lean",
@@ -82129,7 +82129,7 @@
     "lean_name": "wordShWordShift",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original32: word_sh a b c = SOME z implies c < dimindex and z = word_shift a b c, over accepted wordShiftHOL (wordLang word_sh) and AsmSem.wordShift; all shift/value/amount binders arbitrary. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original32: word_sh a b c = SOME z implies c < dimindex and z = word_shift a b c, over accepted wordShiftHOL (wordLang word_sh) and AsmSem.wordShift; all shift/value/amount binders arbitrary. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82138,7 +82138,7 @@
     "lean_name": "assertT",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original39: labSem assert T s = s for every LabSem state (accepted assertState, failed := !T || failed). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original39: labSem assert T s = s for every LabSem state (accepted assertState, failed := !T || failed). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82147,7 +82147,7 @@
     "lean_name": "asmFetchAuxNoLabel",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original45: forall pc code, asm_fetch_aux pc code = SOME (Label l1 l2 x) implies F, l1 l2 x free as in HOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original45: forall pc code, asm_fetch_aux pc code = SOME (Label l1 l2 x) implies F, l1 l2 x free as in HOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82159,7 +82159,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original53: definition over dest : num + beta and regs : beta |-> alpha word_loc: INL p is p; INR r cases FAPPLY regs r, Loc loc _ gives loc and the incomplete Word case is HOL's ARB, rendered by accepted holFapply (opaque absent-key value) and holArb Nat. Register map is the canonical HolFiniteMapExact standalone parameter with same-module holFmapAsFiniteSupportParamWitness_destToLoc_regs. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original53: definition over dest : num + beta and regs : beta |-> alpha word_loc: INL p is p; INR r cases FAPPLY regs r, Loc loc _ gives loc and the incomplete Word case is HOL's ARB, rendered by accepted holFapply (opaque absent-key value) and holArb Nat. Register map is the canonical HolFiniteMapExact standalone parameter with same-module holFmapAsFiniteSupportParamWitness_destToLoc_regs. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82168,7 +82168,7 @@
     "lean_name": "destToLoc'",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original58: definition over dest : num + beta and total regs : beta -> alpha word_loc: INL p is p; INR r cases regs r, Loc loc _ gives loc, incomplete Word case is holArb Nat (HOL ARB). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original58: definition over dest : num + beta and total regs : beta -> alpha word_loc: INL p is p; INR r cases regs r, Loc loc _ gives loc, incomplete Word case is holArb Nat (HOL ARB). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82180,7 +82180,7 @@
       "regs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original63: stackSem find_code dest regs code = SOME p implies lookup (dest_to_loc regs dest) code = SOME p and (forall r. dest = INR r implies r IN FDOM regs); FDOM membership is (regs.lookup r).isSome on the canonical bare regs binder (same convention as accepted findCode), code is Spt with polymorphic payload, register key arbitrary beta. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original63: stackSem find_code dest regs code = SOME p implies lookup (dest_to_loc regs dest) code = SOME p and (forall r. dest = INR r implies r IN FDOM regs); FDOM membership is (regs.lookup r).isSome on the canonical bare regs binder (same convention as accepted findCode), code is Spt with polymorphic payload, register key arbitrary beta. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82189,7 +82189,7 @@
     "lean_name": "notIsLabelCompileJump",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original72: is_Label (compile_jump dest) = F for every dest : num + num over accepted compileJumpHOL/isLabelHOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original72: is_Label (compile_jump dest) = F for every dest : num + num over accepted compileJumpHOL/isLabelHOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82198,7 +82198,7 @@
     "lean_name": "wordCmpNotNone",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original78: wordSem word_cmp cmp (Word w1) (Word w2) <> NONE for all cmp w1 w2 (accepted wordSemWordCmp). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original78: wordSem word_cmp cmp (Word w1) (Word w2) <> NONE for all cmp w1 w2 (accepted wordSemWordCmp). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82207,7 +82207,7 @@
     "lean_name": "wordCmpNegateAlt",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original84: asm word_cmp (negate cmp) w1 w2 <=> ~word_cmp cmp w1 w2, Bool equality with negation over accepted wordCmpHOL/negateHOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original84: asm word_cmp (negate cmp) w1 w2 <=> ~word_cmp cmp w1 w2, Bool equality with negation over accepted wordCmpHOL/negateHOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82216,7 +82216,7 @@
     "lean_name": "wordCmpNegate",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original90: wordSem word_cmp (negate cmp) w1 w2 = OPTION_MAP $~ (wordSem word_cmp cmp w1 w2) for arbitrary word_loc operands (Option.map (!.)). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original90: wordSem word_cmp (negate cmp) w1 w2 = OPTION_MAP $~ (wordSem word_cmp cmp w1 w2) for arbitrary word_loc operands (Option.map (!.)). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82225,7 +82225,7 @@
     "lean_name": "codeInstalled",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original102: definition: [] is T; x::xs: if is_Label x then (Label l1 l2 _ => loc_to_pc l1 l2 code = SOME n) and rest at n, else asm_fetch_aux n code = SOME x and rest at n+1. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original102: definition: [] is T; x::xs: if is_Label x then (Label l1 l2 _ => loc_to_pc l1 l2 code = SOME n) and rest at n, else asm_fetch_aux n code = SOME x and rest at n+1. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82234,7 +82234,7 @@
     "lean_name": "codeInstalledAppendImp",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original113: forall l1 pc l2 code, code_installed pc (l1++l2) code implies code_installed pc l1 code and code_installed (pc + LENGTH (FILTER (~ o is_Label) l1)) l2 code. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original113: forall l1 pc l2 code, code_installed pc (l1++l2) code implies code_installed pc l1 code and code_installed (pc + LENGTH (FILTER (~ o is_Label) l1)) l2 code. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82243,7 +82243,7 @@
     "lean_name": "codeInstalledGetLabelsImp",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original122: local theorem: forall top e n q cs bs pc, code_installed pc (append (FST (flatten top e n q cs bs))) c and (l1,l2) IN get_labels e implies ?v. loc_to_pc l1 l2 c = SOME v; c l1 l2 free; stackSem get_labels is accepted getLabelsExact (set as predicate). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original122: local theorem: forall top e n q cs bs pc, code_installed pc (append (FST (flatten top e n q cs bs))) c and (l1,l2) IN get_labels e implies ?v. loc_to_pc l1 l2 c = SOME v; c l1 l2 free; stackSem get_labels is accepted getLabelsExact (set as predicate). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82252,7 +82252,7 @@
     "lean_name": "asmFetchAuxSomeAppend",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original155: forall pc code l code2, asm_fetch_aux pc code = SOME l implies asm_fetch_aux pc (code++code2) = SOME l. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original155: forall pc code l code2, asm_fetch_aux pc code = SOME l implies asm_fetch_aux pc (code++code2) = SOME l. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82261,7 +82261,7 @@
     "lean_name": "asmFetchAuxSomeIsPrefix",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original163: forall pc code l code2, asm_fetch_aux pc code = SOME l and code isPREFIX code2 (List prefix) implies asm_fetch_aux pc code2 = SOME l. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original163: forall pc code l code2, asm_fetch_aux pc code = SOME l and code isPREFIX code2 (List prefix) implies asm_fetch_aux pc code2 = SOME l. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82270,7 +82270,7 @@
     "lean_name": "locToPcAppend",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original173: forall n m code pc code2, loc_to_pc n m code = SOME pc implies loc_to_pc n m (code++code2) = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original173: forall n m code pc code2, loc_to_pc n m code = SOME pc implies loc_to_pc n m (code++code2) = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82279,7 +82279,7 @@
     "lean_name": "codeInstalledAppend",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original195: forall ls pc code code2, code_installed pc ls code implies code_installed pc ls (code++code2). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original195: forall ls pc code code2, code_installed pc ls code implies code_installed pc ls (code++code2). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82288,7 +82288,7 @@
     "lean_name": "codeInstalledIsPrefix",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original208: forall ls pc code code2, code_installed pc ls code and code isPREFIX code2 implies code_installed pc ls code2. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original208: forall ls pc code code2, code_installed pc ls code and code isPREFIX code2 implies code_installed pc ls code2. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82297,7 +82297,7 @@
     "lean_name": "locToPcIsPrefix",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original219: forall n m code pc code2, loc_to_pc n m code = SOME pc and code isPREFIX code2 implies loc_to_pc n m code2 = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original219: forall n m code pc code2, loc_to_pc n m code = SOME pc and code isPREFIX code2 implies loc_to_pc n m code2 = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82307,7 +82307,7 @@
     "lean_name": "mapProgToSectionFst",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original228: first (line 228) local declaration of the duplicated name: MAP (\\s. case s of Section n v => n) (MAP prog_to_section prog) = MAP FST prog for arbitrary prog; tag carries line 228. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original228: first (line 228) local declaration of the duplicated name: MAP (\\s. case s of Section n v => n) (MAP prog_to_section prog) = MAP FST prog for arbitrary prog; tag carries line 228. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82316,7 +82316,7 @@
     "lean_name": "mapProgToSectionSectionNum",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original236: MAP Section_num (MAP prog_to_section prog) = MAP FST prog. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original236: MAP Section_num (MAP prog_to_section prog) = MAP FST prog. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82325,7 +82325,7 @@
     "lean_name": "asmFetchAuxSomeAppend2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original245: forall pc code l code2, asm_fetch_aux pc code2 = SOME l implies asm_fetch_aux (LENGTH (FLAT (MAP (FILTER (~ o is_Label) o Section_lines) code)) + pc) (code++code2) = SOME l. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original245: forall pc code l code2, asm_fetch_aux pc code2 = SOME l implies asm_fetch_aux (LENGTH (FLAT (MAP (FILTER (~ o is_Label) o Section_lines) code)) + pc) (code++code2) = SOME l. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82334,7 +82334,7 @@
     "lean_name": "locToPcAppend2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original257: forall k ll code code2 pc, ~MEM k (MAP Section_num code) and EVERY sec_labels_ok code and loc_to_pc k ll code2 = SOME pc implies loc_to_pc k ll (code++code2) = SOME (pc + LENGTH (FLAT (MAP (FILTER (~ o is_Label) o Section_lines) code))); sec_labels_ok is the accepted LabProps port. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original257: forall k ll code code2 pc, ~MEM k (MAP Section_num code) and EVERY sec_labels_ok code and loc_to_pc k ll code2 = SOME pc implies loc_to_pc k ll (code++code2) = SOME (pc + LENGTH (FLAT (MAP (FILTER (~ o is_Label) o Section_lines) code))); sec_labels_ok is the accepted LabProps port. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82343,7 +82343,7 @@
     "lean_name": "codeInstalledAppend2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original278: forall lines pc c1 c2 k, ~MEM k (MAP Section_num c1), EVERY sec_labels_ok c1, EVERY (sec_label_ok k) lines and code_installed pc lines c2 imply code_installed (LENGTH (FLAT (MAP (FILTER (~ o is_Label) o Section_lines) c1)) + pc) lines (c1++c2). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original278: forall lines pc c1 c2 k, ~MEM k (MAP Section_num c1), EVERY sec_labels_ok c1, EVERY (sec_label_ok k) lines and code_installed pc lines c2 imply code_installed (LENGTH (FLAT (MAP (FILTER (~ o is_Label) o Section_lines) c1)) + pc) lines (c1++c2). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82351,7 +82351,7 @@
     "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/CodeInstalled.lean",
     "lean_name": "alookupPartition",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original309: forall ls n v, ALOOKUP ls n = SOME v implies ?ls1 ls2. ls = ls1 ++ [(n,v)] ++ ls2 and ~MEM n (MAP FST ls1), over accepted holAlookup with arbitrary key/value types (DecidableEq key for HOL equality). Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original309: forall ls n v, ALOOKUP ls n = SOME v implies ?ls1 ls2. ls = ls1 ++ [(n,v)] ++ ls2 and ~MEM n (MAP FST ls1), over accepted holAlookup with arbitrary key/value types (DecidableEq key for HOL equality). Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82360,7 +82360,7 @@
     "lean_name": "codeInstalled'",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original325: definition: [] is T; x::xs: if is_Label x then rest at n else asm_fetch_aux n code = SOME x and rest at n+1. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original325: definition: [] is T; x::xs: if is_Label x then rest at n else asm_fetch_aux n code = SOME x and rest at n+1. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82369,7 +82369,7 @@
     "lean_name": "codeInstalled'ConsLabel",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original332: forall lines pos, is_Label h implies code_installed' pos lines (Section n (h::xs)::other) = code_installed' pos lines (Section n xs::other) (Prop equality as iff). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original332: forall lines pos, is_Label h implies code_installed' pos lines (Section n (h::xs)::other) = code_installed' pos lines (Section n xs::other) (Prop equality as iff). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82378,7 +82378,7 @@
     "lean_name": "codeInstalled'ConsNonLabel",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original342: the stored theorem is the Q.SPECL [lines, 0] / SIMP_RULE instance of the proved pos statement: ~is_Label h implies code_installed' 1 lines (Section n (h::xs)::other) = code_installed' 0 lines (Section n xs::other); the general pos form is proved internally. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original342: the stored theorem is the Q.SPECL [lines, 0] / SIMP_RULE instance of the proved pos statement: ~is_Label h implies code_installed' 1 lines (Section n (h::xs)::other) = code_installed' 0 lines (Section n xs::other); the general pos form is proved internally. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82387,7 +82387,7 @@
     "lean_name": "codeInstalled'Simp",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original351: forall lines, code_installed' 0 lines (Section n (lines ++ rest)::other). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original351: forall lines, code_installed' 0 lines (Section n (lines ++ rest)::other). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82396,7 +82396,7 @@
     "lean_name": "locToPcSkipSection",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original360: forall lines, n <> p implies loc_to_pc n 0 (Section p lines :: xs) = case loc_to_pc n 0 xs of NONE => NONE | SOME k => SOME (k + LENGTH (FILTER (\\x. ~is_Label x) lines)). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original360: forall lines, n <> p implies loc_to_pc n 0 (Section p lines :: xs) = case loc_to_pc n 0 xs of NONE => NONE | SOME k => SOME (k + LENGTH (FILTER (\\x. ~is_Label x) lines)). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82405,7 +82405,7 @@
     "lean_name": "asmFetchAuxAdd",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original373: forall ys pc rest, asm_fetch_aux (pc + LENGTH (FILTER (\\x. ~is_Label x) ys)) (Section pos ys::rest) = asm_fetch_aux pc rest. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original373: forall ys pc rest, asm_fetch_aux (pc + LENGTH (FILTER (\\x. ~is_Label x) ys)) (Section pos ys::rest) = asm_fetch_aux pc rest. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82414,7 +82414,7 @@
     "lean_name": "labsCorrect",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original381: definition: [] is T; x::xs: if is_Label x then rest at n and (Label l1 l2 _ => loc_to_pc l1 l2 code = SOME n | _ => T) else rest at n+1. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original381: definition: [] is T; x::xs: if is_Label x then rest at n and (Label l1 l2 _ => loc_to_pc l1 l2 code = SOME n | _ => T) else rest at n+1. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82423,7 +82423,7 @@
     "lean_name": "codeInstalledEq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original393: forall pc xs code, code_installed pc xs code <=> code_installed' pc xs code and labs_correct pc xs code. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original393: forall pc xs code, code_installed pc xs code <=> code_installed' pc xs code and labs_correct pc xs code. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82432,7 +82432,7 @@
     "lean_name": "codeInstalledCons",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original406: forall xs ys pos pc, code_installed' pc xs rest implies code_installed' (pc + LENGTH (FILTER (\\x. ~is_Label x) ys)) xs (Section pos ys :: rest). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original406: forall xs ys pos pc, code_installed' pc xs rest implies code_installed' (pc + LENGTH (FILTER (\\x. ~is_Label x) ys)) xs (Section pos ys :: rest). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82441,7 +82441,7 @@
     "lean_name": "codeInstalledProgToSectionLemma",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original417: local: forall prog4 n prog3, ALOOKUP prog4 n = SOME prog3 implies ?pc. code_installed' pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) and loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc; next_lab is accepted StackAlloc.nextLab. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original417: local: forall prog4 n prog3, ALOOKUP prog4 n = SOME prog3 implies ?pc. code_installed' pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) and loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc; next_lab is accepted StackAlloc.nextLab. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82450,7 +82450,7 @@
     "lean_name": "labsCorrectHd",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original437: forall extra l, ALL_DISTINCT (extract_labels (extra++l)) and EVERY (\\(l1,l2). l1 = n and l2 <> 0) (extract_labels (extra++l)) imply labs_correct (LENGTH (FILTER (\\x. ~is_Label x) extra)) l (Section n (extra++l)::code). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original437: forall extra l, ALL_DISTINCT (extract_labels (extra++l)) and EVERY (\\(l1,l2). l1 = n and l2 <> 0) (extract_labels (extra++l)) imply labs_correct (LENGTH (FILTER (\\x. ~is_Label x) extra)) l (Section n (extra++l)::code). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82459,7 +82459,7 @@
     "lean_name": "labelsOk",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original468: definition: ALL_DISTINCT section names and, for every Section n lines, EVERY (l1,l2) of extract_labels lines has l1 = n and l2 <> 0 and extract_labels lines is ALL_DISTINCT; HOL EVERY is bounded membership and the let-bound labs is inlined. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original468: definition: ALL_DISTINCT section names and, for every Section n lines, EVERY (l1,l2) of extract_labels lines has l1 = n and l2 <> 0 and extract_labels lines is ALL_DISTINCT; HOL EVERY is bounded membership and the let-bound labs is inlined. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82468,7 +82468,7 @@
     "lean_name": "labelsOkImp",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original478: forall code, labels_ok code implies EVERY sec_labels_ok code, ALL_DISTINCT (MAP Section_num code) and EVERY (ALL_DISTINCT o extract_labels o Section_lines) code (EVERY as bounded membership). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original478: forall code, labels_ok code implies EVERY sec_labels_ok code, ALL_DISTINCT (MAP Section_num code) and EVERY (ALL_DISTINCT o extract_labels o Section_lines) code (EVERY as bounded membership). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82477,7 +82477,7 @@
     "lean_name": "labelsOkLabsCorrect",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original499: forall code, labels_ok code implies EVERY (\\s. case s of Section n lines => case loc_to_pc n 0 code of SOME pc => labs_correct pc lines code | _ => T) code (EVERY as bounded membership, option case as match). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original499: forall code, labels_ok code implies EVERY (\\s. case s of Section n lines => case loc_to_pc n 0 code of SOME pc => labs_correct pc lines code | _ => T) code (EVERY as bounded membership, option case as match). HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82486,7 +82486,7 @@
     "lean_name": "labsCorrectAppend",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original569: forall ls pc, labs_correct pc (ls ++ rest) code implies labs_correct pc ls code; rest and code free. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original569: forall ls pc, labs_correct pc (ls ++ rest) code implies labs_correct pc ls code; rest and code free. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82495,7 +82495,7 @@
     "lean_name": "codeInstalledProgToSection",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original577: forall prog4 n prog3, labels_ok (MAP prog_to_section prog4) and ALOOKUP prog4 n = SOME prog3 imply ?pc. code_installed pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) and loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.6."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original577: forall prog4 n prog3, labels_ok (MAP prog_to_section prog4) and ALOOKUP prog4 n = SOME prog3 imply ?pc. code_installed pc (append (FST (flatten T prog3 n (next_lab prog3 2) [] []))) (MAP prog_to_section prog4) and loc_to_pc n 0 (MAP prog_to_section prog4) = SOME pc. HOL 'a word is positive-width BitVec width with [NeZero width]; native LabLang/StackLang carriers are the accepted Native.lean ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_code_installed_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.6."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertCodeLocals.lean",
@@ -82624,7 +82624,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original601: definition over stackSem state s and labSem state t, all 29 source conjuncts in order: FLOOKUP regs/fp_regs agreement; mem, mem_domain, shared_mem_domain, be, ffi, clock equalities; every code lookup n prog has call_args prog with t's ptr/len/ptr2/len2/link regs and ?pc. code_installed pc (append (FST (flatten T prog n (next_lab prog 2) [] []))) t.code and loc_to_pc n 0 t.code = SOME pc (next_lab is accepted nextLabHOL); domain s.code = set (MAP Section_num t.code) as pointwise membership iff; EVERY sec_labels_ok t.code; ~t.failed; link_reg distinct from len/ptr/len2/ptr2; link_reg not in ffi_save_regs; io_regs n i k = NONE and cc_regs n k = NONE for saved k; mdomain/sh_mdomain alignment w2n x MOD (dimindex DIV 8) = 0; code_buffer equality; compile = (\\c p. t.compile c (MAP prog_to_section p)); compile_oracle = (\\n. let (c,p,_) = s.compile_oracle n in (c, MAP prog_to_section p)) rendered by projections; oracle EVERY call_args, extract_labels (n,l2<>0,l2<>1) and ALL_DISTINCT plus ALL_DISTINCT (MAP FST ps); ~use_stack, ~use_store, ~use_alloc; good_dimindex. stackProps extract_labels is accepted StackPropsCodeLabels.extractLabels. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original601: definition over stackSem state s and labSem state t, all 29 source conjuncts in order: FLOOKUP regs/fp_regs agreement; mem, mem_domain, shared_mem_domain, be, ffi, clock equalities; every code lookup n prog has call_args prog with t's ptr/len/ptr2/len2/link regs and ?pc. code_installed pc (append (FST (flatten T prog n (next_lab prog 2) [] []))) t.code and loc_to_pc n 0 t.code = SOME pc (next_lab is accepted nextLabHOL); domain s.code = set (MAP Section_num t.code) as pointwise membership iff; EVERY sec_labels_ok t.code; ~t.failed; link_reg distinct from len/ptr/len2/ptr2; link_reg not in ffi_save_regs; io_regs n i k = NONE and cc_regs n k = NONE for saved k; mdomain/sh_mdomain alignment w2n x MOD (dimindex DIV 8) = 0; code_buffer equality; compile = (\\c p. t.compile c (MAP prog_to_section p)); compile_oracle = (\\n. let (c,p,_) = s.compile_oracle n in (c, MAP prog_to_section p)) rendered by projections; oracle EVERY call_args, extract_labels (n,l2<>0,l2<>1) and ALL_DISTINCT plus ALL_DISTINCT (MAP FST ps); ~use_stack, ~use_store, ~use_alloc; good_dimindex. stackProps extract_labels is accepted StackPropsCodeLabels.extractLabels. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82637,7 +82637,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original645: loc_check s.code (l1,l2) and state_rel s t1 imply ?v. loc_to_pc l1 l2 t1.code = SOME v, over accepted locCheckExact; s t1 l1 l2 free. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original645: loc_check s.code (l1,l2) and state_rel s t1 imply ?v. loc_to_pc l1 l2 t1.code = SOME v, over accepted locCheckExact; s t1 l1 l2 free. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82650,7 +82650,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original655: state_rel s t implies state_rel (dec_clock s) (dec_clock t) with stackSem and labSem dec_clock. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original655: state_rel s t implies state_rel (dec_clock s) (dec_clock t) with stackSem and labSem dec_clock. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82663,7 +82663,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original662: state_rel s t implies state_rel s (upd_pc pc t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original662: state_rel s t implies state_rel s (upd_pc pc t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82676,7 +82676,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original669: state_rel s t implies state_rel (s with clock := k) (t with clock := k). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original669: state_rel s t implies state_rel (s with clock := k) (t with clock := k). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82689,7 +82689,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original675: state_rel s t implies state_rel (set_var a b s) (upd_reg a b t) for arbitrary word_loc b. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original675: state_rel s t implies state_rel (set_var a b s) (upd_reg a b t) for arbitrary word_loc b. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82702,7 +82702,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original683: state_rel s t implies state_rel (set_var a (Word b) s) (upd_reg a (Word b) t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original683: state_rel s t implies state_rel (set_var a (Word b) s) (upd_reg a (Word b) t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82715,7 +82715,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original690: state_rel s t implies state_rel (set_fp_var a b s) (upd_fp_reg a b t), b a 64-bit FP word. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original690: state_rel s t implies state_rel (set_fp_var a b s) (upd_fp_reg a b t), b a 64-bit FP word. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82728,7 +82728,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original698: state_rel s t and stackSem mem_store x y s = SOME s1 imply state_rel s1 (upd_mem x y t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original698: state_rel s t and stackSem mem_store x y s = SOME s1 imply state_rel s1 (upd_mem x y t). Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82741,7 +82741,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original711: state_rel s t and FLOOKUP s.regs x = SOME y imply y = read_reg x t; read_reg is labSem's overload \\r s. s.regs r, rendered as t.regs x. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original711: state_rel s t and FLOOKUP s.regs x = SOME y imply y = read_reg x t; read_reg is labSem's overload \\r s. s.regs r, rendered as t.regs x. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82754,7 +82754,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original719: state_rel s t and get_fp_var n s = SOME x imply x = read_fp_reg n t. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original719: state_rel s t and get_fp_var n s = SOME x imply x = read_fp_reg n t. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -82767,7 +82767,7 @@
       "StackSemStateFiniteExact.fpRegs"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original728: state_rel s t and get_var_imm r s = SOME x imply reg_imm r t = x for arbitrary asm$reg_imm r (exact HolRegImm carrier); the accepted StackSem getVarImm mirror reads the same operand through the checked HolRegImm.toWordRegImm codec, exactly as the accepted StackSem evaluator does, so the statement is the source equality at the same operand. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.7."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original728: state_rel s t and get_var_imm r s = SOME x imply reg_imm r t = x for arbitrary asm$reg_imm r (exact HolRegImm carrier); the accepted StackSem getVarImm mirror reads the same operand through the checked HolRegImm.toWordRegImm codec, exactly as the accepted StackSem evaluator does, so the statement is the source equality at the same operand. Canonical maps: only s.regs and s.fp_regs (FLOOKUP) are traversed, via the StackSemStateFiniteExact HolFiniteMapExact fields with same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact; LabSem.State has no finite-map field. HOL 'a word is positive-width BitVec width with [NeZero width]; HOL sets are Bool predicates. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_state_rel_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.7."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/NativeStackStore.lean",
@@ -83066,7 +83066,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original737-740: forall i s1 s2 t1, inst i s1 = SOME s2 and state_rel s1 t1 imply state_rel s2 (asm_inst i t1), over the accepted native StackSem instHOL (stackSem inst_def) and LabSem asmInst (labSem asm_inst_def) and the reviewed stateRel. Proved for every constructor: Skip, Const, all eight Arith (incl. Or self-copy, shift range via word_sh_word_shift, signed Div after the bead pxn.18.5.12.13 word_quot fix, AddCarry/LongMul/LongDiv/overflow), all eight Mem opcodes (aligned word load/store via state_rel alignment and domain, byte and 32-bit ops through the shared WordSem helpers, Load16/Store16 vacuous) and all sixteen FP opcodes (FPSqrt via holFp64Sqrt_agreement, FPFma via fpSemFpfma operand order, 64/non-64 register transfers and conversions). Canonical maps: only s.regs and s.fp_regs, same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact. Inherited assumption: instHOL/asmInst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call in the statement. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_inst_correct_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.8."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original737-740: forall i s1 s2 t1, inst i s1 = SOME s2 and state_rel s1 t1 imply state_rel s2 (asm_inst i t1), over the accepted native StackSem instHOL (stackSem inst_def) and LabSem asmInst (labSem asm_inst_def) and the reviewed stateRel. Proved for every constructor: Skip, Const, all eight Arith (incl. Or self-copy, shift range via word_sh_word_shift, signed Div after the bead pxn.18.5.12.13 word_quot fix, AddCarry/LongMul/LongDiv/overflow), all eight Mem opcodes (aligned word load/store via state_rel alignment and domain, byte and 32-bit ops through the shared WordSem helpers, Load16/Store16 vacuous) and all sixteen FP opcodes (FPSqrt via holFp64Sqrt_agreement, FPFma via fpSemFpfma operand order, 64/non-64 register transfers and conversions). Canonical maps: only s.regs and s.fp_regs, same-module holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact. Inherited assumption: instHOL/asmInst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call in the statement. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_inst_correct_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.8."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/OpCurrHeap.lean",
@@ -83109,7 +83109,7 @@
     "lean_name": "flattenLeq",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original890: forall t x y z cs bs, z <= SND (SND (flatten t x y z cs bs)) over accepted flattenHOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original890: forall t x y z cs bs, z <= SND (SND (flatten t x y z cs bs)) over accepted flattenHOL. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83118,7 +83118,7 @@
     "lean_name": "notBadFunReturnImpSome",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original903: local theorem: ~bad_fun_return q implies ?n. q = SOME n for arbitrary q (replayed with source proof). HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original903: local theorem: ~bad_fun_return q implies ?n. q = SOME n for arbitrary q (replayed with source proof). HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83128,7 +83128,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original909: forall t p y z cs bs, FST (SND (flatten t p y z cs bs)) implies forall s. IS_SOME (FST (evaluate (p,s))) over the accepted native StackSem evaluate. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Inherited assumption: the statement reaches a native evaluator whose FP instruction cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original909: forall t p y z cs bs, FST (SND (flatten t p y z cs bs)) implies forall s. IS_SOME (FST (evaluate (p,s))) over the accepted native StackSem evaluate. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Inherited assumption: the statement reaches a native evaluator whose FP instruction cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83138,7 +83138,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original928: asm_fetch_aux pc code = SOME (compile_jump dest), loc_to_pc (dest_to_loc' regs dest) 0 code = SOME pc', (forall r. dest = INR r implies ?p. read_reg r s = Loc p 0), s.pc = pc, s.code = code, s.regs = regs and s.clock <> 0 imply labSem evaluate s = evaluate (upd_pc pc' (dec_clock s)); all variables free as in source; read_reg is s.regs. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Inherited assumption: the statement reaches a native evaluator whose FP instruction cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original928: asm_fetch_aux pc code = SOME (compile_jump dest), loc_to_pc (dest_to_loc' regs dest) 0 code = SOME pc', (forall r. dest = INR r implies ?p. read_reg r s = Loc p 0), s.pc = pc, s.code = code, s.regs = regs and s.clock <> 0 imply labSem evaluate s = evaluate (upd_pc pc' (dec_clock s)); all variables free as in source; read_reg is s.regs. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Inherited assumption: the statement reaches a native evaluator whose FP instruction cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83146,7 +83146,7 @@
     "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean",
     "lean_name": "ResultView",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original941: datatype result_view = Vloc num num | Vcont num num | Vtimeout | Verr, constructor for constructor (nchotomy captured). Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original941: datatype result_view = Vloc num num | Vcont num num | Vtimeout | Verr, constructor for constructor (nchotomy captured). Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83155,7 +83155,7 @@
     "lean_name": "resultView",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original945: definition: Result (Loc n1 n2) and Exception (Loc n1 n2) give Vloc n1 n2, TimeOut gives Vtimeout, Continue n gives Vcont l (find_lab n cs), Break n gives Vloc l (find_lab n bs), every other result (Word payloads, Halt, FinalFFI, Error) gives Verr. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original945: definition: Result (Loc n1 n2) and Exception (Loc n1 n2) give Vloc n1 n2, TimeOut gives Vtimeout, Continue n gives Vcont l (find_lab n cs), Break n gives Vloc l (find_lab n bs), every other result (Word payloads, Halt, FinalFFI, Error) gives Verr. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83164,7 +83164,7 @@
     "lean_name": "haltWordView",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original954: definition: Word 0w gives Halt Success, other Word gives Halt Resource_limit_hit, Loc gives Error, over accepted MachineResult/HolOutcome. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original954: definition: Word 0w gives Halt Success, other Word gives Halt Resource_limit_hit, Loc gives Error, over accepted MachineResult/HolOutcome. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83173,7 +83173,7 @@
     "lean_name": "haltView",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original960: definition: SOME (Halt w) gives SOME (halt_word_view w), SOME (FinalFFI outcome) gives SOME (Halt (FFI_outcome outcome)), all other options NONE. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original960: definition: SOME (Halt w) gives SOME (halt_word_view w), SOME (FinalFFI outcome) gives SOME (Halt (FFI_outcome outcome)), all other options NONE. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83183,7 +83183,7 @@
     "lean_name": "nextLabNonZero",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1022: line-1022 declaration (rebound at 3211 with a different conjunction; tag carries line 1022): forall p, 2 <= next_lab p 2 over accepted nextLabHOL; replayed with source proof. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1022: line-1022 declaration (rebound at 3211 with a different conjunction; tag carries line 1022): forall p, 2 <= next_lab p 2 over accepted nextLabHOL; replayed with source proof. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83193,7 +83193,7 @@
     "lean_name": "stackToLabLabPres",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1028: forall t p n nl cs bs, labels of p have section n and second component <> 0,1, are ALL_DISTINCT, ~t and next_lab p 2 <= nl imply, for (cp,nr,nl') = flatten t p n nl cs bs (let-tuple as projections), the same label property and ALL_DISTINCT for labPropsTheory extract_labels (append cp), every such label is in extract_labels p or in [nl,nl'), and nl <= nl'. stackProps extract_labels is accepted StackPropsCodeLabels.extractLabels; EVERY/MEM as bounded membership; tag carries line 1028 (a later same-named declaration at 3219 is commented out). HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1028: forall t p n nl cs bs, labels of p have section n and second component <> 0,1, are ALL_DISTINCT, ~t and next_lab p 2 <= nl imply, for (cp,nr,nl') = flatten t p n nl cs bs (let-tuple as projections), the same label property and ALL_DISTINCT for labPropsTheory extract_labels (append cp), every such label is in extract_labels p or in [nl,nl'), and nl <= nl'. stackProps extract_labels is accepted StackPropsCodeLabels.extractLabels; EVERY/MEM as bounded membership; tag carries line 1028 (a later same-named declaration at 3219 is commented out). HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83202,7 +83202,7 @@
     "lean_name": "stackToLabLabPresT",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1091: tail variant: same premises with t instead of ~t; conclusions: labels have section n and nonzero second component, ALL_DISTINCT, each in extract_labels p or below nl', and nl <= nl'. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1091: tail variant: same premises with t instead of ~t; conclusions: labels have section n and nonzero second component, ALL_DISTINCT, each in extract_labels p or below nl', and nl <= nl'. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83211,7 +83211,7 @@
     "lean_name": "flattenTF",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1139: ~is_Seq p_2 implies flatten T p_2 p_1 m cs bs = flatten F p_2 p_1 m cs bs. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1139: ~is_Seq p_2 implies flatten T p_2 p_1 m cs bs = flatten F p_2 p_1 m cs bs. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83220,7 +83220,7 @@
     "lean_name": "progToSectionLabelsOk",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1147: EVERY (\\(n,p). let labs = extract_labels p in EVERY (\\(l1,l2). l1 = n and l2 <> 0 and l2 <> 1) labs and ALL_DISTINCT labs) prog and ALL_DISTINCT (MAP FST prog) imply labels_ok (MAP prog_to_section prog), let inlined, EVERY as bounded membership. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1147: EVERY (\\(n,p). let labs = extract_labels p in EVERY (\\(l1,l2). l1 = n and l2 <> 0 and l2 <> 1) labs and ALL_DISTINCT labs) prog and ALL_DISTINCT (MAP FST prog) imply labels_ok (MAP prog_to_section prog), let inlined, EVERY as bounded membership. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83228,7 +83228,7 @@
     "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean",
     "lean_name": "notMemFindLabImp",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1183: forall bs n, ~MEM (find_lab n bs) bs implies find_lab n bs = 0, over accepted findLabHOL. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1183: forall bs n, ~MEM (find_lab n bs) bs implies find_lab n bs = 0, over accepted findLabHOL. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83237,7 +83237,7 @@
     "lean_name": "isSomeLocToPcPrefix",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1192: IS_SOME (loc_to_pc n k c1) and c1 isPREFIX c2 imply IS_SOME (loc_to_pc n k c2). HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1192: IS_SOME (loc_to_pc n k c1) and c1 isPREFIX c2 imply IS_SOME (loc_to_pc n k c2). HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -83246,7 +83246,7 @@
     "lean_name": "everyIsSomeLocToPcPrefix",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1200: EVERY (\\k. IS_SOME (loc_to_pc n k c1)) cs and c1 isPREFIX c2 imply the same for c2. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead flapjack-pxn.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original1200: EVERY (\\k. IS_SOME (loc_to_pc n k c1)) cs and c1 isPREFIX c2 imply the same for c2. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
   },
   {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
