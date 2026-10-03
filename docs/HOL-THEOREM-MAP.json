@@ -74404,5 +74404,253 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.x): original pan_simpProofScript.sml:654-667 goal at comp = seq_assoc Skip, as the conclusion of the evaluate_ind instance: !prog s res s1 t. evaluate (prog,s) = (res,s1) /\\ res <> SOME Error /\\ state_rel s t t.code ==> ?t1. evaluate (seq_assoc Skip prog,t) = (res,t1) /\\ state_rel s1 t1 t1.code, with state_rel the reviewed stateRel (state_rel_def). The source goal's ctxt binder occurs nowhere in the formula (vacuous, unconstrained type) and is omitted, as documented beside the theorem. Proved by an untagged code-map simulation CodeSim over evaluateIndHOL; no target run, post-state relation or success is assumed. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width/Type0 FFI translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Annot",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Assign",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Break",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Continue",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_ExtCall",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Primitive",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Raise",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Return",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_ShMemLoad",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_ShMemStore",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Skip",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Store",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Store32",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_StoreByte",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "evaluateCodeUpd_Tick",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CodeUpdate.lean",
+    "lean_name": "shMemLoadHOLFiniteExact_codeUpd",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map update commutation for a non-calling statement over the exact evaluator evaluateHOLFiniteState; no independent HOL declaration (pan_simp compile_correct re-derives it per case via state_rel_def). Full source-run premise, no success or target-run assumption."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSimAll",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_atomic",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_body",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_call",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_dec",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_decCall",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_ite",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_seq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "codeSim_while",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "evalListCodeUpd",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileCorrect.lean",
+    "lean_name": "lookupCodeRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific code-map simulation infrastructure (CodeRel/CodeSim and its per-constructor cases over evaluateIndHOL) for the tagged pan_simp compile_correct; no independent HOL declaration. No target run, post-state relation or success assumed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/CompileSameState.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocAssembly.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip; derived representation infrastructure with no separately named HOL original."
   }
 ]
