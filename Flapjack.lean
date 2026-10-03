@@ -1,3 +1,5 @@
+import Flapjack.Test.L3DecodeParity
+import Flapjack.RiscV.L3.Defs.Decode
 import Flapjack.RiscV.L3.Defs.Run
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
