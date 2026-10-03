@@ -8005,3 +8005,13 @@ at `riscv_targetScript.sml:103-126`; the full original Const constructor at
 `riscv_targetProofScript.sml:533-545` remains open until its intermediate and
 final source-state assertions are assembled. Existing oracle captures retain
 their original scope; this addition does not claim a new full-Next oracle.
+
+`CorrectnessEncoding/ConstRelation.lean` derives the literal source Const
+post-state using the original encoded byte length, then proves the final
+`targetStateRel` for the complete native step fold. Its public relation lemma
+assumes only original `asmStep` and the initial `targetStateRel`. Register
+bounds and nonzero destination follow from `asm_ok`; scratch31 is retained in
+the native post-state and excluded from source observations by the original
+`avoidRegs`. The memory domain and exact PC increment are preserved. These
+untagged composition lemmas have no separately named HOL original; the full
+original interference/assertions constructor remains open.
