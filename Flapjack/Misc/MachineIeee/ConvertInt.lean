@@ -16,6 +16,7 @@ untagged; its tagged arbitrary-real port is `holRealToFp64R`
 namespace Flapjack
 
 /-- HOL `fp64_to_int mode = float_to_int mode o fp64_to_float`. -/
+@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "fp64_to_int_def" 16 (reals_as_rational_cuts)]
 def holFp64ToInt (mode : HolRounding) (a : BitVec 64) : Option Int :=
   holFloatToInt mode (holFp64ToFloat a)
 
@@ -24,7 +25,11 @@ def holFp64ToInt (mode : HolRounding) (a : BitVec 64) : Option Int :=
 noncomputable def holRealToFp64 (mode : HolRounding) (r : Rat) : BitVec 64 :=
   holFloatToFp64 (holRealToFloat mode r)
 
-/-- HOL `int_to_fp64 mode a = real_to_fp64 mode (real_of_int a)`. -/
+/-- HOL `int_to_fp64 mode a = real_to_fp64 mode (real_of_int a)`.  The integer
+    argument is in the rational domain of the executed `holRealToFp64`, and
+    `holIntToFp64_eq_real` (`Flapjack.Misc.MachineIeee.ConvertReal`) proves
+    it equals the arbitrary-real `real_to_fp64` at `real_of_int a`. -/
+@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "int_to_fp64_def" 16 (reals_as_rational_cuts)]
 noncomputable def holIntToFp64 (mode : HolRounding) (a : Int) : BitVec 64 :=
   holRealToFp64 mode (a : Rat)
 
