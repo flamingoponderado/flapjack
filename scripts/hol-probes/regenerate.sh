@@ -7588,3 +7588,6 @@ run_probe word_depth_probeScript.sml word_depth_probe.out \
 run_probe pan_to_target_option_lt_source_replay_probeScript.sml pan_to_target_option_lt_source_replay_probe.out \
   option_lt_local_replay_type option_lt_local_replay_def_typed none_none some_none none_some less equal greater \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" /tmp
+run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_division_probe.out \
+  division_typed division_proved division_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
