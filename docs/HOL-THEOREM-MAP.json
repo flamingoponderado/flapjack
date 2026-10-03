@@ -26536,6 +26536,57 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "locals_rel_cut_envs_local",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "locals_rel_cut_envs_local",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL local locals_rel_cut_envs_local (word_instProofScript.sml:985-1004): locals_rel temp loc loc' ∧ every_name (λx. x < temp) names ∧ cut_envs names loc = SOME x ⇒ cut_envs names loc' = SOME x, free temp loc loc' names x as explicit binders, over the tagged wordLocalsRel/everyNameHOL/wordSemCutEnvs; the same statement as wordProps locals_rel_cut_envs, from which it is derived. words_as_type_indexed_bitvec records only the positive BitVec width translation. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "three_to_two_reg_Loop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "three_to_two_reg_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL three_to_two_reg_Loop (word_instProofScript.sml:1144-1169): ∀s names prog exit_names res s'. (∀v res s'. evaluate (prog,v) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (three_to_two_reg prog,v) = (res,s')) ∧ evaluate (Loop names prog exit_names,s) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (Loop names (three_to_two_reg prog) exit_names,s) = (res,s'); binders in HOL order over the tagged threeToTwoReg and exact evaluate; proved by strong induction on s.clock as HOL. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstThreeToTwoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "three_to_two_reg_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "three_to_two_reg_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL three_to_two_reg_correct (word_instProofScript.sml:1172-1243): ∀prog s res s'. every_inst distinct_tar_reg prog ∧ evaluate (prog,s) = (res,s') ∧ res ≠ SOME Error ⇒ evaluate (three_to_two_reg prog,s) = (res,s'); binders and premise order as HOL over the tagged threeToTwoReg and exact evaluate; recursion on the program (HOL three_to_two_reg_ind) covering Binop/Shift/AddCarry/AddOverflow/SubOverflow (copy then two-register form, insert_shadow), OpCurrHeap, Seq, MustTerminate, If, both Call shapes and Loop. HOL distinct_tar_reg on the wordLang instruction carrier is the clause-for-clause Flapjack distinctTarReg (WordConvs.lean; untagged only because its own width binder admits zero, here instantiated at the theorem's positive width), and every_inst is the tagged everyInst. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstThreeToTwoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "evaluate_three_to_two_reg_prog",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "evaluate_three_to_two_reg_prog",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL evaluate_three_to_two_reg_prog (word_instProofScript.sml:1245-1254): evaluate (prog,s) = (res,s') ∧ res ≠ SOME Error ∧ every_inst distinct_tar_reg prog ⇒ evaluate (three_to_two_reg_prog t prog,s) = (res,s'), free prog s res s' t as explicit binders, over the tagged threeToTwoRegProg. HOL distinct_tar_reg on the wordLang instruction carrier is the clause-for-clause Flapjack distinctTarReg (WordConvs.lean; untagged only because its own width binder admits zero, here instantiated at the theorem's positive width), and every_inst is the tagged everyInst. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstThreeToTwoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
     "lean_name": "wordLocalsRel",
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",

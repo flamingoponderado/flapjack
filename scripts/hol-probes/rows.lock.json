@@ -9026,6 +9026,12 @@
       "sha256": "aa3a2e5d92c472ac664129a1be69cc13d5d3fba2270c969df0c5ac88baf03c95"
     },
     {
+      "bytes": 1127,
+      "out": "word_inst_three_to_two_probe.out",
+      "rows": 7,
+      "sha256": "c8a137f908b6b70edbeb01a91d1ff62dda85bc5365a9ea286c2041b996edd698"
+    },
+    {
       "bytes": 273,
       "out": "word_lang_every_name_probe.out",
       "rows": 19,
