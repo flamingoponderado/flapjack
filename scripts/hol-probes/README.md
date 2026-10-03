@@ -6720,10 +6720,15 @@ and aligned target-memory bytes through the complete relation.
 Machine/compile semantics and end-to-end correctness remain open; inherited
 real-rendering assurance and totalHD/EL holds are unchanged.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
-
+`stack_rawcall_install_probe` freshly captures the full original comp_correct with zero hypotheses and full Install specializations at64/80, plus old-entry collision and new-entry union observations. Five full paired final-theorem consumers cover arbitrary positive and1/8/64/80 widths. Independent kernel/runtime union fixtures replay both observations. The native proof derives oracle/compiler/buffer success and full postrelation from the original three premises; old code wins the union and new entries use empty information. Captures are regression/statement evidence, not HOL-to-Lean equivalence.
 ### Native register-shift equations
 
 `l3_register_shift_probeScript.sml` checks735 full-state original SLL/SLLW/SRL/SRLW/SRA/SRAW equations with matching kernel fixtures. Sixinstructions, selectors0/2/3, ten source/count groups and destinations0/1/2/7 cover countmask0/31/32/63/64/65/127/129, signs/high32/wrap/sourcezero/sourcealiases/rdzero. RV32Willegal routes compare the original exact signalException helper. Twelve ordinary invalidselector1 equations preserve exact error/priorretention; three W equations retain a symbolic architecture-dependent illegal branch, without selecting canonical ARB. The strict checker requires every unique label to be T. RV32SLL full64 source, SRLlow32zeroextend, SRAlow32signextend and Wsignextension remain literal. FullRun/Next is open.
+`word_to_stack_inter_union_left_probeScript.sml` replays the literal original
+`inter_union_left` proof (word_to_stackProof2678–2685), preserving its essential
+`wf s` premise and arbitrary Spt payload carrier. Statement, proved=T, and zero
+hypotheses are captured; this is original HOL evidence, not a cross-assistant
+equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
 
 ### Native immediate shifts
 

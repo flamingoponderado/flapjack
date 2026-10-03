@@ -1,9 +1,9 @@
 import Flapjack.Test.L3MultiplyParity
 import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
-import Flapjack.Test.L3RegisterShiftParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
+import Flapjack.Test.L3RegisterShiftParity
 import Flapjack.Test.L3SetLessParity
 import Flapjack.Test.L3ImmediateALUParity
 import Flapjack.Test.L3RegisterALUParity
@@ -25,6 +25,7 @@ import Flapjack.Test.StackRawCallJumpLowerParity
 import Flapjack.Test.StackRawCallStackAccessParity
 import Flapjack.Test.StackRawCallMemoryFfiParity
 import Flapjack.Test.StackRawCallAllocationStoreParity
+import Flapjack.Test.StackRawCallInstallParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
