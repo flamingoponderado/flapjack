@@ -1583,6 +1583,18 @@ run_probe ret_to_tail_probeScript.sml ret_to_tail_probe.out \
   "$cake_dir/pancake/pan_simpScript.sml"
 run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
   skip seq_skip_tick tail_call "$cake_dir/pancake/pan_simpScript.sml"
+run_probe pan_to_word_get_eids_probeScript.sml pan_to_word_get_eids_probe.out \
+  get_eids_pan_simp_compile_eq size_of_eids_compile_top \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_structs_names_probeScript.sml pan_to_word_structs_names_probe.out \
+  function_names_structs_compile_top functions_compile_decs_exns \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_exp_ids_probeScript.sml pan_to_word_exp_ids_probe.out \
+  map_map2_fst_lemma functions_resort_decls \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_to_word_structural_probeScript.sml pan_to_word_structural_probe.out \
+  wloc_wlab_wlab_wloc no_names_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_word_definitions_probeScript.sml pan_to_word_definitions_probe.out \
   compile_prog_def globals_allocatable_def \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
