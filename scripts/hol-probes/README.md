@@ -6562,3 +6562,5 @@ requires all generic equations to evaluate to true and checks exact error bytes.
 writes shift word32 by32, clearing high32 rather than performing a widened shift;
 CSR3 replaces fullword32 although its read exposes low8. These are model-section
 regressions; fullRun/Next/pass correctness remains open.
+
+`word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.

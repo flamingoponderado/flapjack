@@ -6184,3 +6184,7 @@ run_probe l3_csr_read_value_probeScript.sml l3_csr_read_value_probe.out \
 run_probe l3_csr_unknown_probeScript.sml l3_csr_unknown_probe.out \
   csr_unknown_read_0 csr_prior_read_0 csr_arb_0 csr_unknown_write_0 csr_prior_write_0 csr_unknown_read_773 csr_prior_read_773 csr_arb_773 csr_unknown_write_773 csr_prior_write_773 csr_unknown_read_1922 csr_prior_read_1922 csr_arb_1922 csr_unknown_write_1922 csr_prior_write_1922 csr_unknown_read_4095 csr_prior_read_4095 csr_arb_4095 csr_unknown_write_4095 csr_prior_write_4095 \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe word_to_stack_comp_flat_probeScript.sml word_to_stack_comp_flat_probe.out \
+  comp_correct_assign_statement comp_correct_assign_proved comp_correct_assign_hypotheses comp_correct_store_statement comp_correct_store_proved comp_correct_store_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
