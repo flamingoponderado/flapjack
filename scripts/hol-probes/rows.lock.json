@@ -7430,6 +7430,12 @@
       "sha256": "9f564c734d08a248f472daafbbff9b3ea9ba0114fe7a32dcc9deecfa0432dda3"
     },
     {
+      "bytes": 630,
+      "out": "stack_remove_store_list_code_probe.out",
+      "rows": 3,
+      "sha256": "73d1db09de4d35444454126a7299c429c9a08c679ed320c1d805e51991f06195"
+    },
+    {
       "bytes": 817,
       "out": "stack_remove_stub_names_probe.out",
       "rows": 10,

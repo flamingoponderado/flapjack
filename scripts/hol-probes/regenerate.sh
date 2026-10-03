@@ -6895,3 +6895,6 @@ run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutra
 run_probe riscv_target_helper_links_probeScript.sml riscv_target_helper_links_probe.out \
   helper_binop_statement helper_binop_hypotheses helper_binop_proved helper_shift_imm_statement helper_shift_imm_hypotheses helper_shift_imm_proved helper_shift_reg_statement helper_shift_reg_hypotheses helper_shift_reg_proved \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_code_probe.out \
+  store_list_code_thm_statement store_list_code_thm_hypotheses store_list_code_thm_free_vars \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
