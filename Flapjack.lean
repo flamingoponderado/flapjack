@@ -1,4 +1,6 @@
 import Flapjack.RiscV.L3.Step.FetchTheorems
+import Flapjack.RiscV.L3.Defs.Encode
+import Flapjack.Test.L3EncodeParity
 import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
