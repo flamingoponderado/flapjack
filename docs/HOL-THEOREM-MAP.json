@@ -70805,5 +70805,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6.1 original6581-6589: complete universal len/k/source frame list/abstract bits list and sole full stack_rel_aux premise imply exactly misc the(handler_val bits)(stack_size frame)=handler_val bits. Native full stackRelAux is the reviewed four-clause relation, actual wordSemStackSize/Frame and handlerVal preserve option addition, empty sentinel1, normal frame size and handler overhead3. Independent positive source-frame, handler-location and saved-handler word dimensions retained exactly as original polymorphic carrier; all3 own Nat/NeZero obligations, payload lists remain List. Native proof follows source frame recursion, eliminates only relation-impossible source/target mismatch cases, and covers both NONE annotations/recursive NONE sizes and SOME exact sums. Relation original getD frame.length+1 size equation and tail IH establish equality, with no size-success, target length/range/validity/handler assumption. Original argument order len/k is preserved in stackRelAux len k even though its definition names those bound parameters k/len. Full original proof replay and carrier type captured with closed statement/0 hypotheses; probe routes original ML fetch current-theory marker to loaded original word_to_stackProof for its original generated induction theorem, without changing proof tactics or theorem. Only conventional words_as_type_indexed_bitvec carrier translation; no finite-map/name/list-array/real-rendering qualification needed, no evaluator or executable behavior change. Full Raise/pass correctness remains separate and open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InterUnionLeft.lean",
+    "lean_name": "interUnionLeft",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "inter_union_left",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.6.2.2: original2678-2685 arbitrary s,t Spt payload, sole wf s hypothesis, conclusion inter(union s t)s=s. Native exact four-constructor Spt, sptWf Boolean truth retains original predicate, sptUnion left bias and sptInter mkBN/mkBS normalization compared clause-wise. No BEq/DecidableEq or extra target equality premise. Structural induction proves full equation including original empty-branch exclusion. Original literal proof replay captured in word_to_stack_inter_union_left_probe.out. Source comparison recorded by flapjack-sol-b; acceptance tracked on shared bead .6.2.2."
   }
 ]

@@ -6314,3 +6314,7 @@ run_probe word_to_stack_comp_seq_full_probeScript.sml word_to_stack_comp_seq_ful
 run_probe word_to_stack_stack_rel_aux_size_probeScript.sml word_to_stack_stack_rel_aux_size_probe.out \
   stack_rel_aux_stack_size_statement stack_rel_aux_stack_size_proved stack_rel_aux_stack_size_hypotheses stack_rel_aux_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inter_union_left_probeScript.sml word_to_stack_inter_union_left_probe.out \
+  inter_union_left_statement inter_union_left_proved inter_union_left_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

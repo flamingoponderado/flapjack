@@ -6667,3 +6667,9 @@ clauses contain no JAL-style alignment trap. Full Run/Next remains open.
 `word_to_stack_comp_seq_full_probe.out` freshly captures the complete original Seq induction obligation and its first-source NONE branch by direct specialization of the original complete `comp_correct`; six closed proof=T/hypotheses=0 rows are statement evidence, not literal case-proof replay or cross-language equivalence. Native Lean now assembles both original Seq branches with only the exact guarded IHs. It derives resource HaltWord2 mismatch, propagates original strict resource/event bounds through the second source run, and derives second target execution using original bitmap accounting/code monotonicity/location inclusion and clock extension. Original source handler preservation transports the entire exception LASTN result. Full pass and end-to-end correctness remain open.
 
 `word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
+
+`word_to_stack_inter_union_left_probeScript.sml` replays the literal original
+`inter_union_left` proof (word_to_stackProof2678–2685), preserving its essential
+`wf s` premise and arbitrary Spt payload carrier. Statement, proved=T, and zero
+hypotheses are captured; this is original HOL evidence, not a cross-assistant
+equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
