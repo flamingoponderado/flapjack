@@ -85120,5 +85120,21 @@
     "hol_name": "reset_inline_factor_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_to_bvlScript687-705 literal seven-field config retains Nat next_loc/start/max_app, Bool do_mti/do_call, Option actual ClosKnown.Config and call_state num_set # (num,num # ClosLang.Exp) alist. NumSet=Spt Unit, alist=List(Nat x (Nat x Exp)); no raw finite-map or generic syntax parameter. Exact default next_loc0/start1/do_mtiT/known_conf SOME(clos_known default_config10)/do_callT/call_state(LN,[])/max_app10. Full source/default types captured; no omitted unused fields, extra defaults or executed production-adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Config.lean",
+    "lean_name": "defaultConfig",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "default_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_to_bvlScript687-705 literal seven-field config retains Nat next_loc/start/max_app, Bool do_mti/do_call, Option actual ClosKnown.Config and call_state num_set # (num,num # ClosLang.Exp) alist. NumSet=Spt Unit, alist=List(Nat x (Nat x Exp)); no raw finite-map or generic syntax parameter. Exact default next_loc0/start1/do_mtiT/known_conf SOME(clos_known default_config10)/do_callT/call_state(LN,[])/max_app10. Full source/default types captured; no omitted unused fields, extra defaults or executed production-adoption claim."
   }
 ]
