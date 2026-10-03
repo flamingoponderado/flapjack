@@ -5606,6 +5606,12 @@
       "sha256": "15cbe3769187816460a6ec7478b0b2224efe576c3e43688c52d00e6f79e1dc14"
     },
     {
+      "out": "stack_code_bitmaps_ffi_probe.out",
+      "bytes": 669,
+      "rows": 3,
+      "sha256": "8187c19c63e736f2eb801c46ec181b6f16f7da58eb264eef56d41d7656578ad4"
+    },
+    {
       "bytes": 652,
       "out": "stack_code_bitmaps_if_probe.out",
       "rows": 3,

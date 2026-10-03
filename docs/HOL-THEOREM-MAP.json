@@ -68333,5 +68333,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.1: original evaluate_code_bitmaps421-440 Install case. Literal complete three-conjunct existential shifted compile_oracle/code FOLDL union of GENLIST fromALists/bitmap append FLAT retained. Actual native full evaluate equation sole premise. All failed register/nonword reads, code/data buffer flush, compiler NONE, empty progs and bytes/data/nextconfig comparison failures return source/count0; actual success updates oracle shift1/code left-accumulator union/bitmap append, deriving count1 without count/prefix/target/postfield assumptions. Original buffer/useStack/compiler/equality branches unchanged. Imported canonical regs/fpRegs/store same-module codec witness; positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP equivalence claim or runtime rewrite. Full parent assembly remains open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/FFI.lean",
+    "lean_name": "evaluateCodeBitmapsFFI",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.8: original evaluate_code_bitmaps421-440 FFI induction case retains full existential oracle shift/code FOLDL left union of GENLIST fromALists/bitmap append FLAT. Sole actual full native evaluate equality premise. Original stackSem FFI clause943-960 compared: same four word reads/order, both bytearray reads, call_FFI final and return outcomes; all errors/final unchanged and return changes only memory, DRESTRICT regs, empty fpRegs, ffi. Derive count0 in every branch without target/count/prefix/postfield/name or alignment assumptions. Native MlString ffiIndex retained, no String translation. Imported canonical regs/fpRegs/store, local genuine codec witness, positive BitVec/NeZero,C/F Type0; Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence or runtime rewrite claim. Whole theorem assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

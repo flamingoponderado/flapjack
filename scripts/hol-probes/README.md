@@ -6351,3 +6351,5 @@ do not claim full Run/Next or compiler correctness.
 
 
 `stack_code_bitmaps_install_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Install specialization. Native complete dispatch derives count zero on all failures and count one on actual success, retaining original oracle shift/code left-union/bitmap append conclusions. Whole evaluator assembly remains open.
+
+`stack_code_bitmaps_ffi_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and native FFI specialization. All four word reads, both bytearray reads and final/return outcomes preserve oracle/code/bitmaps with count zero; no name/alignment or poststate premise is introduced. Whole evaluator assembly remains open.
