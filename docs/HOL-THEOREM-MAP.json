@@ -83863,5 +83863,23 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison original7767-7922 and motive5719-5751/comp_correct5756. Complete original guarded body/recursive IHs and every original simulation premise retained. Actual cut/body target witness, mismatch overflow with original trace/resource propagation, continuation timeout, recursive clocks+monotone bitmap/labels, passthrough incl original exception handler, Break0 source exit cut all assembled. No extra target-run or postrelation hypothesis in tagged theorem; internal execution equations consume derived actual IH witnesses only. Canonical fmap_as_finite_support_relation/positive word width translation, inherits reals_as_rational_cuts. Fresh original full guarded obligation and unconditional specialization capture are statement evidence, not literal local-case proof replay.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ChunkBits.lean",
+    "lean_name": "chunkToBitsBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "chunk_to_bits_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5855-5879; native chunkToBitsW unchanged, arbitrary Bool/word payload lists. Bound retains exactly LENGTH ws < dimindex, sentinel true and every higher in-range bit false; lowbit law unconditional including overflowing chunks. HOL word indexing rendered getLsbD with original in-range guards. Positive-width BitVec is sole words_as_type_indexed_bitvec translation; Bool equality renders HOL boolean iff. Literal original proof replay and Lean kernel check."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ChunkBits.lean",
+    "lean_name": "chunkToBitsZero",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "chunk_to_bits_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5855-5879; native chunkToBitsW unchanged, arbitrary Bool/word payload lists. Bound retains exactly LENGTH ws < dimindex, sentinel true and every higher in-range bit false; lowbit law unconditional including overflowing chunks. HOL word indexing rendered getLsbD with original in-range guards. Positive-width BitVec is sole words_as_type_indexed_bitvec translation; Bool equality renders HOL boolean iff. Literal original proof replay and Lean kernel check."
   }
 ]

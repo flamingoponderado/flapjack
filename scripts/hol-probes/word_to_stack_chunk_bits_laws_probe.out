@@ -1,0 +1,6 @@
+chunk_to_bits_bound_full=⊢ ∀ws. LENGTH ws < dimindex (:α) ⇒ chunk_to_bits ws ' (LENGTH ws) ∧ ∀i. LENGTH ws < i ∧ i < dimindex (:α) ⇒ ¬chunk_to_bits ws ' i
+chunk_to_bits_bound_hypotheses=0
+chunk_to_bits_bound_proved=T
+chunk_to_bits_0_full=⊢ ∀words w b. chunk_to_bits ((b,w)::words) ' 0 ⇔ b
+chunk_to_bits_0_hypotheses=0
+chunk_to_bits_0_proved=T

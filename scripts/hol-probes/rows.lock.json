@@ -9368,6 +9368,12 @@
       "sha256": "31809cde7d06059d7725a1e3227605c6d8e994d9bfba348ea4513f47cdffc3a8"
     },
     {
+      "out": "word_to_stack_chunk_bits_laws_probe.out",
+      "sha256": "12c0c3e194ed1b0086534ffa11a590770e1b2c011808c1eae804c991d2567af8",
+      "bytes": 366,
+      "rows": 6
+    },
+    {
       "bytes": 202,
       "out": "word_to_stack_chunk_to_bitmap_probe.out",
       "rows": 7,

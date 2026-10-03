@@ -7146,3 +7146,7 @@ run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.
   comp_correct_loop_full_statement comp_correct_loop_full_proved comp_correct_loop_full_hypotheses \
   comp_correct_loop_whole_statement comp_correct_loop_whole_proved comp_correct_loop_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_chunk_bits_laws_probeScript.sml word_to_stack_chunk_bits_laws_probe.out \
+  chunk_to_bits_bound_full chunk_to_bits_bound_hypotheses chunk_to_bits_bound_proved chunk_to_bits_0_full chunk_to_bits_0_hypotheses chunk_to_bits_0_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
