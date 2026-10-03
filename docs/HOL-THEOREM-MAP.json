@@ -69891,6 +69891,15 @@
     "hol_line": 5756
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/InitializationContracts.lean",
+    "lean_name": "goodInitState",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "good_init_state_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 complete original434-472 and fresh full typed definition0hyp: all eight inputs and all eighteen clauses retained over independent MachineConfig state/projection, generic positive word dimension, fixed word8 bytes, exact AsmState and WordLocW memory. Source data/shared domains remain Boolean functions, translated pointwise as equality-to-true only when entering reviewed Prop-backed ASM/machine sets; same-module checked initDomainTruth_roundtrip and initDomainTruth_surjective establish every Boolean membership and all Prop-domain representatives, without new input premise. Full targetStateRel/configured/actualPC/startPcOk/alignment/next-interference/FFI/cache/codeLoaded/bytesInMem/subset/byte-alignment/shared-domain equality/disjoint/word-memory/codebuffer/dimension clauses preserved in source order. Actual HolByte.getByte/holByteAlign used; LOG2(0) unchanged at widths1-7. Full original startPcOk length clause plus FFI index<names.length bounds imported entry-PC EL; generic native consumers derive ordinary bounded getElem without added original guard or total-default/individual hold change. Fresh original fullbody/types0hyp and four generic word-memory/entry-bound/space/overflow kernel observations allT, native no-location memory and overflow rejection consumers. Proof-script contract only: actual175 dependent initializer151, whole machine/evaluator/compiler and end-to-end remain open. No supplied desired target execution, successful compilation or cross-language equivalence claim."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Clock.lean",
     "lean_name": "stateRelDecClock",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",

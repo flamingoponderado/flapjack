@@ -6986,6 +6986,12 @@
       "sha256": "eff6553096062ec2f547257e0e1748962b834a1f72a17261725879b7407cb887"
     },
     {
+      "bytes": 1768,
+      "out": "target_good_init_state_probe.out",
+      "rows": 7,
+      "sha256": "4bcd2f82edb4547298eb2628248b0fe1ac8181b6b992133ff880021f8f6076cd"
+    },
+    {
       "bytes": 4301,
       "out": "target_interference_contracts_probe.out",
       "rows": 4,

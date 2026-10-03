@@ -6501,13 +6501,26 @@ unchanged. This contract is a prerequisite of still-open target initialization
 and compiler correctness, not their completion. Selector:
 `HOL_PROBE_ONLY=target_start_pc_ok_probeScript.sml`.
 
+
 `word_to_stack_semantics_helpers_probe.out` freshly replays the complete original synchronized-clock and WordSem/StackSem tail-call result exclusion proofs (10116–10151). All three full universally closed statements have zero hypotheses and prove T. Lean retains arbitrary native states, destinations, arguments and handlers, with only the original relation or execution premise. These helpers do not establish the full pass simulation.
 
 
 `word_to_stack_comp_results_probe.out` captures complete original `compile_result_def` and `push_locals_def` equations and polymorphic types, and freshly replays the unchanged full `Halt_EQ_compile_result` proof. All three declarations are closed with zero hypotheses. The Lean family preserves all eight results, unconditional Word1 equivalence, good-dimension-guarded Word2 exclusion, and all original pushed-local frame updates. This is a prerequisite of the full native `comp_correct` simulation, not an assembly of that theorem.
 `stack_rawcall_stack_access_probe` freshly captures original full comp_correct/zero hypotheses and all ten LocValue/stack/bitmap constructor statements (original562-581). Twenty full Lean consumers retain both existential simulations at arbitrary positive and 1/8/64/80 widths. LocValue checking is derived through actual code labels, not arbitrary code transport. Statement evidence does not prove cross-language equivalence.
 
-
 `word_to_stack_comp_control_probe.out` freshly replays the unchanged original `comp_correct` Skip/Break/Continue case proofs against the complete constructor-specialized original goal (5719–5751). All premises, the target clock/run existential and every resource/result branch remain in all three captured statements; proof=T and hypotheses=0 with no free variables. The Lean cases prove the complete conclusion factored in `compCorrectResult`, rather than only successful-state preservation. These three cases do not assemble the full pass simulation.
+The target initial-state contract probe captures the complete original
+`good_init_state_def` at434, all eight typed inputs and zero hypotheses.
+Four original kernel observations extract word-valued aligned memory, the
+source FFI entry-PC bound, code-buffer size, and overflow rejection. Native
+consumers exclude labels in actual aligned memory and recover bounded ordinary
+entry-PC lookup. Boolean data/shared domains retain their source types; checked
+pointwise truth codecs connect them to reviewed proposition-backed ASM/machine
+sets without restricting sets or membership. Every original clause remains;
+small-width LOG2(0) and the individual total-HD/EL hold are unchanged. This
+predicate does not prove initializer simulation or machine/compiler correctness.
+Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.
+
 
 `word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
+
