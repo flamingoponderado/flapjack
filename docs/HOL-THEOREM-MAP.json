@@ -70529,5 +70529,37 @@
     "hol_name": "dfn'XORI_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 bead .8.1.24 literal XORI at5823: fullword5 registers/word12 immediate/word64GPR/native state. All four operators use signExtend12to64, including logic. Full64 source before destination, currentcore GPR update with zero suppression, no mode query or truncation, prior exception/allother fields unchanged. No success/core/mode/targetrun premise. Original whole-state fixtures and kernel counterparts cover signbit2048/maxpositive2047/minus1/wrap/high32/rd0/source0/alias. FullRun remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SetLess.lean",
+    "lean_name": "«dfn'SLT»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLT_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison2026-10-03 bead .8.1.25 literal SLT at6094: fixedword5 register tuple/word12 immediate/fullword64/native state preserved. Register forms sequence two in32BitMode calls with firstsource froms and secondsource/writestate froms0; immediateforms one modecheck. RV32 SLT signedextendslow32, SLTU zeroextendslow32, SLTI/SLTIU BOTH signedextendlow32 with signed12immediate; asymmetry preserved. Signed/unsigned less-than Boolean is cast via exact singleton v2w into64 then original writeGPR, rd0 suppression/sourcealias/sourcezero retained. Invalidselector1 invokes exactUNDEFINED/canonicalARBarchitecture without assigneddefault and preserves prior exception. No mode/core/success/targetrun premise. Fresh436 originalwhole-state guards/kernel counterparts cover validselectors0/2/3, low32vs64sign/bounds/immediates/allrdaliases/source0, invalid1/error/priorretention with modeindependentzerooperands. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SetLess.lean",
+    "lean_name": "«dfn'SLTU»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLTU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison2026-10-03 bead .8.1.25 literal SLTU at6131: fixedword5 register tuple/word12 immediate/fullword64/native state preserved. Register forms sequence two in32BitMode calls with firstsource froms and secondsource/writestate froms0; immediateforms one modecheck. RV32 SLT signedextendslow32, SLTU zeroextendslow32, SLTI/SLTIU BOTH signedextendlow32 with signed12immediate; asymmetry preserved. Signed/unsigned less-than Boolean is cast via exact singleton v2w into64 then original writeGPR, rd0 suppression/sourcealias/sourcezero retained. Invalidselector1 invokes exactUNDEFINED/canonicalARBarchitecture without assigneddefault and preserves prior exception. No mode/core/success/targetrun premise. Fresh436 originalwhole-state guards/kernel counterparts cover validselectors0/2/3, low32vs64sign/bounds/immediates/allrdaliases/source0, invalid1/error/priorretention with modeindependentzerooperands. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SetLess.lean",
+    "lean_name": "«dfn'SLTI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLTI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison2026-10-03 bead .8.1.25 literal SLTI at5749: fixedword5 register tuple/word12 immediate/fullword64/native state preserved. Register forms sequence two in32BitMode calls with firstsource froms and secondsource/writestate froms0; immediateforms one modecheck. RV32 SLT signedextendslow32, SLTU zeroextendslow32, SLTI/SLTIU BOTH signedextendlow32 with signed12immediate; asymmetry preserved. Signed/unsigned less-than Boolean is cast via exact singleton v2w into64 then original writeGPR, rd0 suppression/sourcealias/sourcezero retained. Invalidselector1 invokes exactUNDEFINED/canonicalARBarchitecture without assigneddefault and preserves prior exception. No mode/core/success/targetrun premise. Fresh436 originalwhole-state guards/kernel counterparts cover validselectors0/2/3, low32vs64sign/bounds/immediates/allrdaliases/source0, invalid1/error/priorretention with modeindependentzerooperands. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SetLess.lean",
+    "lean_name": "«dfn'SLTIU»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLTIU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison2026-10-03 bead .8.1.25 literal SLTIU at5773: fixedword5 register tuple/word12 immediate/fullword64/native state preserved. Register forms sequence two in32BitMode calls with firstsource froms and secondsource/writestate froms0; immediateforms one modecheck. RV32 SLT signedextendslow32, SLTU zeroextendslow32, SLTI/SLTIU BOTH signedextendlow32 with signed12immediate; asymmetry preserved. Signed/unsigned less-than Boolean is cast via exact singleton v2w into64 then original writeGPR, rd0 suppression/sourcealias/sourcezero retained. Invalidselector1 invokes exactUNDEFINED/canonicalARBarchitecture without assigneddefault and preserves prior exception. No mode/core/success/targetrun premise. Fresh436 originalwhole-state guards/kernel counterparts cover validselectors0/2/3, low32vs64sign/bounds/immediates/allrdaliases/source0, invalid1/error/priorretention with modeindependentzerooperands. FullRun/Next correctness remains open."
   }
 ]

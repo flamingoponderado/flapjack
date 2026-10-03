@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.SetLess
 import Flapjack.RiscV.L3.Defs.ImmediateALU
 import Flapjack.RiscV.L3.Defs.RegisterALU
 import Flapjack.RiscV.L3.Defs.ConditionalBranch

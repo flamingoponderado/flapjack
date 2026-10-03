@@ -6657,3 +6657,7 @@ wrap and direct odd-target BranchTo. Selector1 fixtures preserve exact error
 bytes/prior exceptions using zero operands without choosing architecture ARB.
 Both mode checks and returned states are retained. The original conditional
 clauses contain no JAL-style alignment trap. Full Run/Next remains open.
+
+### Native set-less-than equations
+
+`l3_set_less_probeScript.sml` checks436 whole-state SLT/SLTU/SLTI/SLTIU original equations with matching kernel fixtures. Register forms use ten operand groups, selectors0/2/3 and destinations0/1/2/7; immediate forms ten groups and destinations0/1/7. Sixteen invalidselector1 guards check exact error/priorretention with zero operands independent of canonical ARB. RV32 registerSLTU zeroextendslow32, while SLTIU signextendslow32; this literal distinction is tested at allones low32 and minus-one immediate. All other state remains arbitrary. Standard original bitstring v2w conversion reduces the Booleanword; the strict checker requires every unique complete label to be T. FullRun/Next remains open.
