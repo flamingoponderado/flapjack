@@ -6140,3 +6140,7 @@ run_probe target_good_init_state_probeScript.sml target_good_init_state_probe.ou
 run_probe word_to_stack_comp_clock_probeScript.sml word_to_stack_comp_clock_probe.out \
   comp_correct_tick_statement comp_correct_tick_proved comp_correct_tick_hypotheses comp_correct_mustterminate_statement comp_correct_mustterminate_proved comp_correct_mustterminate_hypotheses state_rel_dec_clock_statement state_rel_dec_clock_proved state_rel_dec_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_compile_semantics_full_probeScript.sml stack_remove_compile_semantics_full_probe.out \
+  compile_semantics_full_statement compile_semantics_full_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
