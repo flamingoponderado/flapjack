@@ -5786,6 +5786,12 @@
       "sha256": "e628b5dd4ff98863483c04f077f9e8ff0b2646dfa73249644ab138ba6a97f698"
     },
     {
+      "bytes": 227,
+      "out": "stack_evaluate_mono_probe.out",
+      "rows": 6,
+      "sha256": "e76f8acf6b2b0f08b65c72841f2a7e56dd745a0dd889b1b072e7328e13fccc08"
+    },
+    {
       "bytes": 2330,
       "out": "stack_initialized_boundary_probe.out",
       "rows": 40,
