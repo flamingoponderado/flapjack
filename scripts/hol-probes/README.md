@@ -7565,6 +7565,9 @@ The Lean case preserves all ten premises/seven conclusions, derives the actual
 mapped-read FFI and returned-word assignment internally, and adds no IH or
 oracle agreement premise. Full compiler correctness remains open.
 
+### Native target validity
+
+`riscv_target_ok_probeScript.sml` replays the complete original local target validity theorem (477–498), retaining the full native target type, zero stored hypotheses and truth proof. `check-riscv-target-ok.py` checks the literal original proof, unrestricted Lean conclusion and complete regeneration registration. The proof covers all encoder offset and projection consistency obligations; it does not establish native execution simulation or whole compiler correctness.
 ### Full If constructor
 
 `word_to_stack_comp_if_full_probe.out` freshly captures the complete literal
@@ -7590,18 +7593,39 @@ original reverse shape theorem alias, and captures full closed statement,
 quantified types and kernel truth. The Lean theorem retains ten source
 hypotheses and all five conclusions, including actual target lookup and
 existential original callee parameter context. Call/DecCall remain open.
+`stack_to_lab_code_installed_probeScript.sml` prints the stored originals of `stack_to_labProofScript.sml:32-600` (word shift, `assert_T`, `dest_to_loc`, `find_code_lookup`, comparison negation, and the `code_installed`/`loc_to_pc`/`labs_correct`/`labels_ok` group) and replays the five local theorems (`code_installed_get_labels_IMP`, `asm_fetch_aux_SOME_append`, `asm_fetch_aux_SOME_isPREFIX`, the line-228 `MAP_prog_to_section_FST`, `code_installed_prog_to_section_lemma`) with their source proofs; every statement is closed with zero hypotheses.
 
 `pan_structs_convert_code_locals_probe` replays the original local
 `convert_code_locals_upd` statement and unchanged simp proof, captures its
 closed statement, quantified types and kernel truth. The Lean theorem retains
 arbitrary caller locals update and unconditional whole code-map equality.
 
+`word_to_stack_comp_codebufferwrite_probeScript.sml` freshly captures the full
+original CodeBufferWrite obligation and arbitrary whole specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+
+`word_to_stack_comp_databufferwrite_probeScript.sml` captures the full original
+DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+`stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.
+
+`word_to_stack_native_stackstore_probeScript.sml` captures the original full
+wStackStore definition and empty/reverse/repeated-slot continuation cases.
+Original production script uses it only at its definition; compiler direct
+store clauses are retained. Regression evidence, not equivalence.
 `pan_structs_program_deccall_probe` captures full original `compile_correct`,
 its DecCall specialization and complete original `evaluate_ind`, quantified
 types and closed kernel truth. The Lean case retains all ten premises/seven
 conclusions and exactly two original guarded IHs; lookup, return comparisons,
 continuation preconditions and final binding restoration are derived internally.
 Full Call/whole program/compiler correctness remain open.
+`stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.
+
+`stack_to_lab_flatten_helpers_probeScript.sml` prints the stored flatten helper lemmas and result views of `stack_to_labProofScript.sml:890-1206` and replays the local `NOT_bad_fun_return_IMP_SOME` and the line-1022 `next_lab_non_zero` (rebound at 3211) with their source proofs; all closed with zero hypotheses.
+
+### Signed native immediate reconstruction
+
+`riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
 
 `pan_structs_program_call_probe` captures full original `compile_correct`, its
 Call specialization and complete original `evaluate_ind`, quantified types and

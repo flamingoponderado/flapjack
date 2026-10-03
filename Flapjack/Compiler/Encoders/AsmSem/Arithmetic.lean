@@ -53,8 +53,10 @@ def arithUpd {width : Nat} [NeZero width] (operation : HolArith width)
     assertState (match ri with | .reg r => decide ((readReg r s).toNat < width) | .imm _ => true)
       (updReg r1 (wordShift operator (readReg r2 s) (regImm ri s).toNat) s)
   | .div r1 r2 r3 =>
+    -- HOL `/` on words is the signed `word_quot` (wordsScript.sml:355-366,
+    -- overloaded at 397-398); `BitVec.sdiv` has exactly its four sign cases.
     let q := readReg r3 s
-    assertState (q != 0) (updReg r1 (BitVec.ofNat width ((readReg r2 s).toNat / q.toNat)) s)
+    assertState (q != 0) (updReg r1 ((readReg r2 s).sdiv q) s)
   | .longMul r1 r2 r3 r4 =>
     let r := (readReg r3 s).toNat * (readReg r4 s).toNat
     updReg r2 (BitVec.ofNat width r) (updReg r1 (BitVec.ofNat width (r / 2 ^ width)) s)
