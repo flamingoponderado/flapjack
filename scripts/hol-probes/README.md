@@ -7083,6 +7083,10 @@ equivalence or a new representation exception.
 ## Native PC writer and DecodeAny
 
 `l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.
+`pan_structs_exp_atomic_faithful_probe` captures the complete original expression
+correctness theorem and its genuine Const/BaseAddr/TopAddr specializations. Each
+retains all seven hypotheses and all three conclusions, with no extra assumptions.
+The parent whole expression/declaration/pass proofs remain open.
 
 ## Complete native model drift coverage
 
