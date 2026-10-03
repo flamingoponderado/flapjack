@@ -71970,7 +71970,7 @@
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
     "hol_name": "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 72-81 ALL_DISTINCT (MAP FST xs) /\\ MEM (x,y) xs ==> ALOOKUP xs x = SOME y over Nat keys (all wordProps uses are num-keyed alists). Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+    "reviewer": "flapjack-main PR1204 review repair: original wordPropsScript72-81 quantifies generic key and value types. Lean preserves both via {κ α : Type}[DecidableEq κ], List (κ × α), exact key equality through lawful List.lookup, key Nodup and pair membership imply lookup=some y. Fresh original literal proof replay and show_types capture verify generic carriers; no Nat specialization or extra semantic premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
@@ -74224,6 +74224,41 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.3: original74-86 entire arbitrary-k equation retained. Actual native raiseStubNative false expands Get Handler, StackSetSize, Skip, StackLoad2, Set Handler, StackLoad1, StackFree3, Raise in identical nested Seq order. Original handler_slots F=3; no instruction omitted, register changed, state/run/success premise or conclusion added. Positive type-indexed word carrier only translation, no maps/real evaluator dependency in this syntax equation. Source comparison recorded; acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Raise.lean",
+    "lean_name": "compCorrectRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 bead6: complete original comp_correct motive5719-5751 and Raise6627-6747. Simulation retains every original source execution/nonError/full stateRel/convention/bitmap/label/max bound premise and full existential clock/actual target run/compCorrectResult conclusion, with no extra IH or target-run/postrelation/resource assumption. Source getVar then jumpExc succeeds from nonError; postAllocConventions forces register2. Actual LASTN handler frame and full stackRel derive strict gc sorting, handler pointer, raw width/index/space bounds, location/saved-handler reads. Native comp emits Call NONE raiseStubLocation NONE; exact eight-command raiseStubFalse and actual call evaluator derive extraClock1, unchanged returned clock, Handler update and three-slot free. Full stackRelRaise, environment identity and decoder/aux suffix facts derive cleared stack relation including conditional saved-handler pointer; LASTN_stack_size_SOME and full aux size derive all optional stackSizeRel/max branches. Empty pushed locals discharge original wf/placement; erased Handler update preserves original store, all other state fields/oracle/code conventions unchanged. Original source handler count determines LASTN lens, exception value preserved in reg1 from actual getVar2 and k>4. Original gc existential chosen directly because reviewed sorted env identity proves original env_to_list output equals gc. Imported canonical source/target owners retain actual five fmap fields, Spt code/locals and List fields unchanged; same-module genuine codec roundtrips, positive BitVec width NeZero and C/F Type0 retained. Evaluator closure inherits reals_as_rational_cuts assurance limit; no numerical FP correspondence claim. Original capture specializes original complete comp_correct to its evaluate_ind Raise obligation: statement evidence, not literal case replay or cross-language equivalence. Proof-only, no executed compiler change; coordinator acceptance tracked on bead.",
+    "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitModOrder.lean",
+    "lean_name": "modLessEqModImp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "MOD_LESS_EQ_MOD_IMP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original2805-2809: full universally quantified natural m,k,n, sole original conjunction m MOD k <= n and m < k, conclusion m <= n unchanged. Nat modulo and order have original total natural semantics; m<k derives modulus identity without extra divisor positivity. Zero divisor remains quantified (original premise is impossible there), no word/FFI/map or representation qualifier. Original literal rw[] then fs[] proof replay captured closed full statement/T/hyp0. Kernel proof uses Nat.mod_eq_of_lt only; proof-only prerequisite, no executed compiler behavior change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListReverse.lean",
+    "lean_name": "wordListEqRev",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_EQ_rev",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original2817-2825: complete unconditional predicate equality for arbitrary payload list xs and address a, forward word_list a xs equals word_list_rev at a+n2w LENGTH xs*bytes_in_word applied to REVERSE xs. Native Misc.wordList and wordListRev retain exact singleton/tail separation and modular address addition/subtraction, independent arbitrary payload Type; forward append uses opposite multiplication order justified by BitVec.mul_comm. Original HOL positive type dimension becomes width Nat with NeZero and BitVec width; no fixed width, word-only payload, successful heap, address injectivity, no-wrap or length bound added. Reverse induction/append/separation commutativity and modular add-sub cancellation prove entire original equality even when predicates are unsatisfiable from wrapped address collisions. Original unchanged SNOC_INDUCT proof replay with original simplifier context captures full statement/T/hyp0; no supplied target relation. Proof-only initializer prerequisite; coordinator acceptance tracked on bead."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitProp.lean",

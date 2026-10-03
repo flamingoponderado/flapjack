@@ -6358,6 +6358,9 @@ run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq
 run_probe word_to_stack_comp_seq_full_probeScript.sml word_to_stack_comp_seq_full_probe.out \
   comp_correct_seq_full_statement comp_correct_seq_full_proved comp_correct_seq_full_hypotheses comp_correct_seq_first_none_statement comp_correct_seq_first_none_proved comp_correct_seq_first_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_comp_raise_full_probeScript.sml word_to_stack_comp_raise_full_probe.out \
+  comp_correct_raise_full_statement comp_correct_raise_full_proved comp_correct_raise_full_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe wordsem_evaluate_consts_probeScript.sml wordsem_evaluate_consts_probe.out \
   evaluate_consts_statement evaluate_consts_hypotheses \
@@ -6493,4 +6496,12 @@ run_probe word_to_stack_raise_stub_false_probeScript.sml word_to_stack_raise_stu
 
 run_probe stack_remove_init_read_memory_probeScript.sml stack_remove_init_read_memory_probe.out \
   init_read_memory_statement init_read_memory_hypotheses init_read_memory_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_mod_order_probeScript.sml stack_remove_init_mod_order_probe.out \
+  init_mod_order_statement init_mod_order_proved init_mod_order_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_reverse_probeScript.sml stack_remove_word_list_reverse_probe.out \
+  word_list_reverse_statement word_list_reverse_proved word_list_reverse_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
