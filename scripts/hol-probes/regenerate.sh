@@ -6499,3 +6499,7 @@ run_probe lab_filter_skip_runs_probeScript.sml lab_filter_skip_runs_probe.out \
   state_rw state_rw_types state_rw_hypotheses state_rw_proved \
   all_skips_evaluate all_skips_evaluate_types all_skips_evaluate_hypotheses all_skips_evaluate_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine_sem_eq_sem_probe.out \
+  machine_sem_EQ_sem machine_sem_EQ_sem_types machine_sem_EQ_sem_hypotheses machine_sem_EQ_sem_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

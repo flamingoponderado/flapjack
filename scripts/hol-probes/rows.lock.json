@@ -2186,6 +2186,12 @@
       "sha256": "767ce000d5991bf953db9bba278281a09f3e5e5758595dac05c509246ea7e143"
     },
     {
+      "bytes": 580,
+      "out": "lab_to_target_machine_sem_eq_sem_probe.out",
+      "rows": 4,
+      "sha256": "2197f4c15e8775fcd574215fa61e50ce71da9e867f2466f0d3661c2c3f7e8b7c"
+    },
+    {
       "bytes": 2085,
       "out": "lab_to_target_make_init_probe.out",
       "rows": 26,

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
 import Flapjack.Compiler.Backend.LabFilter.Proofs
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono

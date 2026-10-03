@@ -6868,3 +6868,17 @@ its original not-failed guard and arbitrary count/state/extra clock binders.
 Evaluator FP closure retains inherited real rendering (SOUNDNESS item8).
 Whole filtering simulation and machine semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lab_filter_skip_runs_probeScript.sml`.
+
+### Full native source-to-machine behavior equality
+
+`lab_to_target_machine_sem_eq_sem_probeScript.sml` freshly captures original
+machine_sem_EQ_sem9364, its complete generic machine/source types, zero
+hypotheses and kernel proof T. Native proof retains the three original guards
+and exact singleton behavior conclusion. Actual compileCorrect derives every
+clock-indexed matching target run; completed clock stability preserves halt
+outcomes and excludes errors, and cofinal all-clock source/target prefix chains
+give the exact infinite divergence trace LUB. No simulation/run/trace premise
+is supplied. Existing total EL/HD and inherited FP real-rendering assurance
+(SOUNDNESS item8) remain unchanged. Full initializer/final-pass composition
+remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_machine_sem_eq_sem_probeScript.sml`.
