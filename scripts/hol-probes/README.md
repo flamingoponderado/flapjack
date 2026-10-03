@@ -6430,4 +6430,5 @@ access combinations each, and 18 unspecified-mode exception/frame observations.
 Original signed word12 range comparisons, unsigned privilege comparison, MPRV,
 ignored rs1 and returned states are preserved. Arbitrary architecture remains
 arbitrary. These regressions do not establish whole Run/Next/compiler correctness.
+`stack_remove_comp_storeconsts_probeScript.sml` replays the complete literal original `comp_correct` StoreConsts case (1504–1575) with its original four premises, together with the original local `state_rel_get_var` and `mem_load_lemma` proofs. Two rows record the closed specialized statement and kernel proof success. The full Lean constructor case derives the actual bitmap prefix, CopyLoop memory transition, final moves and full post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
 
