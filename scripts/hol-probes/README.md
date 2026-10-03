@@ -6379,3 +6379,5 @@ unrelated state; this does not establish whole Run/Next or compiler correctness.
 `stack_code_bitmaps_rawcall_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and RawCall specialization. The recursive IH follows only actual lookup/destSeq/nonzero-clock dispatch at decClock source; errors and timeout preserve fields/count zero, bad-function-return changes result only. Whole evaluator assembly remains open.
 
 `stack_code_bitmaps_jumplower_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and JumpLower specialization. Callee IH follows only actual word reads/lower comparison/code lookup/nonzero clock at decClock source; all failures/false comparison/timeout preserve fields with count zero. Whole evaluator assembly remains open.
+
+`stack_code_bitmaps_calltail_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Call NONE specialization. Callee IH follows actual lookup/absent handler/nonzero clock at decClock source; fixClock changes clock only, badFunReturn changes result only. Returning/exception branches and whole evaluator assembly remain open.

@@ -5993,3 +5993,7 @@ run_probe l3_amo_minmax_probeScript.sml l3_amo_minmax_probe.out \
 run_probe stack_code_bitmaps_jumplower_probeScript.sml stack_code_bitmaps_jumplower_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_jumplower_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_calltail_probeScript.sml stack_code_bitmaps_calltail_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_calltail_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
