@@ -6531,3 +6531,10 @@ run_probe stack_remove_init_prop_probeScript.sml stack_remove_init_prop_probe.ou
 run_probe stack_remove_init_read_memory_probeScript.sml stack_remove_init_read_memory_probe.out \
   init_read_memory_statement init_read_memory_hypotheses init_read_memory_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_word_list_reverse_probeScript.sml stack_remove_word_list_reverse_probe.out \
+  word_list_reverse_statement word_list_reverse_proved word_list_reverse_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_inj_probeScript.sml stack_remove_word_list_inj_probe.out \
+  word_list_inj_statement word_list_inj_proved word_list_inj_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

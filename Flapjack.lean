@@ -251,6 +251,8 @@ import Flapjack.Misc.WordList
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
