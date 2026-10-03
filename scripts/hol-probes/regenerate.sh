@@ -7437,12 +7437,6 @@ run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_s
 run_probe bvl_to_bvi_default_probeScript.sml bvl_to_bvi_default_probe.out \
   bvl_num_stubs_def bvl_to_bvi_namespaces_def bvl_num_stub_MOD bvl_num_stub_MOD_hypotheses default_config_def default_config_type bvl_stub_count_value bvl_namespace_count_value default_next_name1 default_next_name2 default_next_name3 \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
-<<<<<<< HEAD
-
-run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bitmaps_probe.out \
-  config_component_equality_typed source_conf_type clos_conf_type bvl_conf_type data_conf_type word_to_word_conf_type word_conf_type stack_conf_type lab_conf_type symbols_type tap_conf_type exported_type attach_bitmaps_type attach_bitmaps_def_typed \
-  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
-=======
 run_probe pan_props_semantics_wrapper_eq_probeScript.sml pan_props_semantics_wrapper_eq_probe.out \
   semantics_wrapper_eq_statement semantics_wrapper_eq_proved semantics_wrapper_eq_types \
   "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
@@ -7465,4 +7459,7 @@ run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
 run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_reverse_probe.out \
   alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
->>>>>>> origin/fleet-integration-post-1211-stack
+
+run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bitmaps_probe.out \
+  config_component_equality_typed source_conf_type clos_conf_type bvl_conf_type data_conf_type word_to_word_conf_type word_conf_type stack_conf_type lab_conf_type symbols_type tap_conf_type exported_type attach_bitmaps_type attach_bitmaps_def_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"

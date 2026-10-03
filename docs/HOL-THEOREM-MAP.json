@@ -86607,22 +86607,6 @@
     "reviewer": "flapjack-sol3 source comparison 2026-10-03 (bead flapjack-backend-from-word.1.3.2): original backend_commonScript136-155 and bvl_to_bviScript537-549 full declarations captured in bvl_to_bvi_default_probe.out. Literal Nat stub chain data_num_stubs+9+1, four namespaces and unconditional MOD equality; complete ten-field Config initializer 10/1000/T/bvl_num_stubs+1/+2/+3/T/T/LN/LN with actual distinct Bvl.Exp/Bvi.Exp Spt inline trees. HOL local num_stubs denotes backend_common bvl_num_stubs, reused directly through the checked shared dataNumStubs. No generic expression placeholder, fixed word carrier change, omitted field, added hypothesis or runtime-policy change. Original values72/4/73/74/75 independently queried."
   },
   {
-<<<<<<< HEAD
-    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
-    "lean_name": "Config",
-    "hol_path": "cakeml/compiler/backend/backendScript.sml",
-    "hol_name": "config",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
-    "lean_name": "attachBitmaps",
-    "hol_path": "cakeml/compiler/backend/backendScript.sml",
-    "hol_name": "attach_bitmaps_def",
-    "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
-=======
     "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
     "hol_name": "reg_bound_comp",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
@@ -87035,6 +87019,21 @@
     "hol_name": "alist_insert_REVERSE",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison2026-10-03 full original miscScript4086–4096. Arbitrary natural key list, independent generic payload list and arbitrary native Spt payload tree; only ALL_DISTINCT keys and equal key/value list lengths imply equality reversing both insertion lists. No WF/tree shape/read/lookup/postcondition hypothesis added. Both complete tree expressions use actual native alist_insert, including truncation behavior; proof derives paired append and pull-insert from existing literal unrestricted native insert_swap. Original finite native tree carrier is constructor-for-constructor, no finite-map qualifier appropriate. Fresh literal original proof replay and typed closed theorem capture regression evidence, no cross-language equivalence claim."
->>>>>>> origin/fleet-integration-post-1211-stack
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "attachBitmaps",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "attach_bitmaps_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
   }
 ]

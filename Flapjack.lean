@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import Flapjack.Compiler.Backend.Backend
-=======
 import Flapjack.Misc.Sptree.AlistInsertReverse
->>>>>>> origin/fleet-integration-post-1211-stack
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
