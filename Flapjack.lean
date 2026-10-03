@@ -2282,6 +2282,7 @@ import Flapjack.Misc.BalancedMap.RotationAux
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
 import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
 
 -- Tagged modules required by the HOL reference coverage gate.
 
@@ -2297,5 +2298,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-
-import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
