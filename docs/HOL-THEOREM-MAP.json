@@ -70824,5 +70824,53 @@
     "hol_name": "dfn'SLTIU_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c full source/carrier comparison2026-10-03 bead .8.1.25 literal SLTIU at5773: fixedword5 register tuple/word12 immediate/fullword64/native state preserved. Register forms sequence two in32BitMode calls with firstsource froms and secondsource/writestate froms0; immediateforms one modecheck. RV32 SLT signedextendslow32, SLTU zeroextendslow32, SLTI/SLTIU BOTH signedextendlow32 with signed12immediate; asymmetry preserved. Signed/unsigned less-than Boolean is cast via exact singleton v2w into64 then original writeGPR, rd0 suppression/sourcealias/sourcezero retained. Invalidselector1 invokes exactUNDEFINED/canonicalARBarchitecture without assigneddefault and preserves prior exception. No mode/core/success/targetrun premise. Fresh436 originalwhole-state guards/kernel counterparts cover validselectors0/2/3, low32vs64sign/bounds/immediates/allrdaliases/source0, invalid1/error/priorretention with modeindependentzerooperands. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SLL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SLL_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SLLW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SLLW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SLLW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRL_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRLW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRLW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRLW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRA»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRA_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRA_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/RegisterShift.lean",
+    "lean_name": "«dfn'SRAW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SRAW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source and carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.26): the full literal dfn'SRAW_def has word5 rd/rs1/rs2 and the reviewed native state. RV32 SLL shifts the full word64 source by its low5 count; RV32 SRL shifts low32 and zero-extends, whereas SRA shifts low32 arithmetically and sign-extends. Other valid selectors shift full64 by low6 count. W forms signal Illegal_Instr in RV32; otherwise they shift low32 by low5 and sign-extend every result, including SRLW. The mode check threads its returned state into all GPR reads and the destination update; rd0 suppression and source aliases remain literal. Canonical ARB Architecture and the exact error state remain unspecified, with the possible W illegal branch preserved. There is no mode, core, success or target-run premise. Fresh original and Lean kernel fixtures cover 720 valid-mode numeric/illegal routes, twelve ordinary invalid-mode error/prior-exception routes, and three symbolic W invalid-mode equations: all 735 whole-state equations pass. Illegal routes compare the already reviewed signalException helper; they do not invent a trap default. Full Run/Next correctness remains open."
   }
 ]

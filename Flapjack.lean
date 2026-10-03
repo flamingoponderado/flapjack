@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.RegisterShift
 import Flapjack.RiscV.L3.Defs.SetLess
 import Flapjack.RiscV.L3.Defs.ImmediateALU
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
