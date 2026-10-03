@@ -1880,6 +1880,12 @@
       "sha256": "0b0f291f19dabc107ea6573d2765b0415cf327fd649ab84096a3725e76ba6532"
     },
     {
+      "bytes": 1495,
+      "out": "lab_filter_shared_return_probe.out",
+      "rows": 4,
+      "sha256": "2fdc99705ea3ad8eb236a3c9f1c23eb87422333750e8c129c25a43dfe3d0a822"
+    },
+    {
       "bytes": 2251,
       "out": "lab_filter_shared_terminal_probe.out",
       "rows": 8,

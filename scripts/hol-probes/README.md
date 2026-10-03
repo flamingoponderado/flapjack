@@ -6996,3 +6996,7 @@ The same probe now also fetches the exported original `max_var_intro` kernel the
 ### Native shared-memory filter terminal clauses
 
 `lab_filter_shared_terminal_probeScript.sml` captures the complete original NONE578 and final646 clauses with independent full state/configuration/oracle/FFI types, zero hypotheses and kernel reproofs (8 rows). All original guards remain; the final original-PC state and FFI equality are existential conclusions.
+
+### Full native shared-memory filter return clause
+
+`lab_filter_shared_return_probeScript.sml` captures the complete original return614 theorem, independent full carriers, zero hypotheses and kernel reproof (4 rows). The existential poststate and full state relation/nonfailed/forall-clock conjunction remain conclusions. Together with the terminal probe it covers the complete original shared-memory filter prerequisite group.

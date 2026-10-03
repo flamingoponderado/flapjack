@@ -1,0 +1,24 @@
+share_mem_op_FFI_return_filter_correct=all_skips (t1 :(α, β, γ) labSem$state).pc t1.code (k :num) ∧
+t1.clock ≠ (0 :num) ∧
+t1.compile =
+(λ(c :β) (p :α sec list).
+     (s1compile :β -> α sec list -> (word8 list # β) option) c
+       (filter_skip p)) ∧ ¬t1.failed ∧
+share_mem_op (m :memop) (r :num) (a :α addr)
+  (t1 with
+   <|pc := adjust_pc t1.pc t1.code; code := filter_skip t1.code;
+     compile := s1compile;
+     compile_oracle :=
+       (λ(n :num).
+            (λ((a :β),(b :α sec list)). (a,filter_skip b))
+              (t1.compile_oracle n :β # α sec list))|>) =
+SOME
+  (FFI_return (f :γ ffi_state) (l :word8 list),(s :(α, β, γ) labSem$state)) ⇒
+∃(s2 :(α, β, γ) labSem$state). ∀(k' :num).
+  share_mem_op m r a (t1 with pc := k + t1.pc) = SOME (FFI_return f l,s2) ∧
+  state_rel s s2 ∧ ¬s.failed ∧ ¬s2.failed ∧
+  share_mem_op m r a (t1 with <|pc := k + t1.pc; clock := k' + t1.clock|>) =
+  SOME (FFI_return f l,s2 with clock := k' + s2.clock)
+share_mem_op_FFI_return_filter_correct_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(l :word8 list)::word8 list;(f :γ ffi_state)::γ ffi_state;(a :α addr)::α addr;(r :num)::num;(m :memop)::memop;(s1compile :β -> α sec list -> (word8 list # β) option)::β -> α sec list -> (word8 list # β) option;(k :num)::num;(t1 :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+share_mem_op_FFI_return_filter_correct_hypotheses=0
+share_mem_op_FFI_return_filter_correct_proved=T
