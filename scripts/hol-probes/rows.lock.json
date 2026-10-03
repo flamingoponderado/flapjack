@@ -1868,6 +1868,12 @@
       "sha256": "5314604e00a91739b302f7d35e6f72a66e0c2cf0ad5cf9d2a41bb2dc472898b0"
     },
     {
+      "bytes": 1074,
+      "out": "l3_step_bit_rewrites_probe.out",
+      "rows": 18,
+      "sha256": "742e44329a201404353a04be5336e5c4da77302b3f69349639eeb90dc3a21f5b"
+    },
+    {
       "bytes": 304,
       "out": "l3_step_fetch_probe.out",
       "rows": 3,
