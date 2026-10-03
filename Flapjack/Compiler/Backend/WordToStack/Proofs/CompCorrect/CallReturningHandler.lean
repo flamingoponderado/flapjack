@@ -2460,4 +2460,143 @@ theorem copyHandlerCallerNonGcSlot {width : Nat} [NeZero width] {C F : Type}
   simpa only [Nat.add_assoc] using preserved.trans
     (by simpa only [Nat.add_assoc] using originalSlot)
 
+/-- A lookup in the actual popped SOME-handler GC/non-GC union has its
+concrete caller-frame slot after dropping the three handler words. GC
+precedence and both bounds are derived from the full relation. No slot or
+range correspondence is assumed. Flapjack caller-local case factoring. -/
+theorem poppedHandlerCallerSlot {width : Nat} [NeZero width]
+    (k currentHandler : Nat) (size : Option Nat)
+    (nonGc gc : List (Nat × WordLocW width)) (savedHandler h1 h2 : Nat)
+    (rest : List (WordSemStackFrame width)) (handler : Option (WordLocW width))
+    (stack : List (WordLocW width)) (length : Nat) (bitmaps : List (BitVec width))
+    (frameSize : Nat) (lens : List Nat)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      handler stack length bitmaps (frameSize :: lens))
+    (key : Nat) (value : WordLocW width)
+    (lookup : sptLookup key (sptUnion (sptFromAList gc) (sptFromAList nonGc)) = some value) :
+    k ≤ key/2 ∧ key/2 < k + frameSize ∧
+      ((stack.drop 3).take (frameSize+1))[frameSize-(key/2-k)]? = some value := by
+  rw [sptLookup_sptUnion,sptLookup_sptFromAList,sptLookup_sptFromAList] at lookup
+  have recovered : ∃ saved bitmap payload,
+      stack = .word 1 :: .loc h1 h2 :: saved :: bitmap :: payload ∧
+      frameSize ≤ payload.length ∧ k ≤ key/2 ∧ key/2 < k + frameSize ∧
+      (payload.take frameSize)[frameSize-1-(key/2-k)]? = some value := by
+    cases found : sptAListLookup key gc with
+    | none =>
+      rw [found] at lookup
+      have nonGcLookup : nonGc.lookup key = some value := by
+        rw [GcSimulation.lookup_eq_sptAListLookup]
+        exact lookup
+      have gcMissing : gc.lookup key = none := by
+        rw [GcSimulation.lookup_eq_sptAListLookup]
+        exact found
+      obtain ⟨saved,bitmap,payload,bits,shape,read,bitsLength,bound,lower,upper,slot⟩ :=
+        savedHandlerCallerNonGcSlot k currentHandler size nonGc gc savedHandler h1 h2
+          rest handler stack length bitmaps frameSize lens key value relation nonGcLookup gcMissing
+      exact ⟨saved,bitmap,payload,shape,bound,lower,upper,slot⟩
+    | some gcValue =>
+      rw [found] at lookup
+      simp only [Option.some.injEq] at lookup
+      subst gcValue
+      obtain ⟨saved,bitmap,payload,bits,shape,read,bitsLength,bound,sizeEq,gcSlots,nonGcSlots⟩ :=
+        savedHandlerCallerFrameSlots k currentHandler size nonGc gc savedHandler h1 h2
+          rest handler stack length bitmaps frameSize lens relation
+      obtain ⟨lower,upper,slot⟩ := gcSlots key value (sptAListLookup_mem key gc value found)
+      refine ⟨saved,bitmap,payload,shape,bound,lower,upper,?_⟩
+      simpa only [adjustNames,show frameSize-1-(key/2-k) = frameSize-(key/2-k+1) by omega] using slot
+  obtain ⟨saved,bitmap,payload,shape,bound,lower,upper,slot⟩ := recovered
+  refine ⟨lower,upper,?_⟩
+  rw [CallReturnSupport.llookupTake _ _ _ (by omega),shape]
+  simp only [List.drop_succ_cons,List.drop_zero]
+  rw [show frameSize-(key/2-k) = (frameSize-1-(key/2-k))+1 by omega,
+    List.getElem?_cons_succ]
+  rwa [CallReturnSupport.llookupTake _ _ _ (by omega)] at slot
+
+/-- Execute actual handler copy/free/PopHandler and preserve every popped
+caller local outside the returned-name range. Full SOME relation and original
+canonical/physical/name guards derive slots and untouched-region bounds;
+no target execution or slot correspondence is supplied. Flapjack assembly
+of the non-return caller-local conjunct, not the full caller relation. -/
+theorem copyHandlerReturnPreservesPoppedLocals {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (k currentHandler : Nat)
+    (size : Option Nat) (nonGc gc : List (Nat × WordLocW width))
+    (savedHandler h1 h2 frameSize : Nat)
+    (rest : List (WordSemStackFrame width)) (lens : List Nat) (values : List Nat)
+    (canonical : values = (List.range values.length).map (fun index => 2*(index+1)))
+    (enabled : target.useStack = true) (storeEnabled : target.useStore = true)
+    (countBound : Compiler.Backend.WordToStack.numStackRet k values ≤ frameSize)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      (target.store.lookup .handler)
+      (target.stack.drop (target.stackSpace + Compiler.Backend.WordToStack.numStackRet k values))
+      target.stack.length target.bitmaps (frameSize :: lens)) :
+    ∃ restored, StackSemEvaluate.evaluate
+      (copyRetNative false true (k,frameSize+1,frameSize) values
+        (popHandlerNative false (k,frameSize+1,frameSize) .skip),target) = (none,restored) ∧
+      ∀ key value,
+        sptLookup key (sptUnion (sptFromAList gc) (sptFromAList nonGc)) = some value →
+        key % 2 = 0 → 0 < key → key ∉ values →
+        k ≤ key/2 ∧ key/2 < k+frameSize ∧
+        ((restored.stack.drop restored.stackSpace).take (frameSize+1))[frameSize-(key/2-k)]? =
+          some value := by
+  let count := Compiler.Backend.WordToStack.numStackRet k values
+  have room := stackRelConsLenSome k currentHandler size nonGc gc savedHandler h1 h2 rest
+    (target.store.lookup .handler) (target.stack.drop (target.stackSpace+count))
+    target.stack.length target.bitmaps frameSize lens relation
+  simp only [List.length_drop] at room
+  obtain ⟨stack,regs,copyRun,length,tail,live,returned,registers⟩ :=
+    copyHandlerCallerFrame target k frameSize count enabled room countBound
+  let copied : StackSemStateFiniteExact width C F := {target with stack := stack,regs := regs}
+  obtain ⟨copiedAgain,copyAgain,restoreRun,_,_,_⟩ := evaluateHandlerReturnRestore
+    target k (frameSize+1) count (frameSize+1) frameSize (.skip : HolProg width)
+    enabled storeEnabled (by omega) (by omega)
+  have same : copiedAgain = copied := by
+    have normalized : StackSemEvaluate.evaluate (copyRetAuxNative k (frameSize+4) count,target) =
+        (none,copiedAgain) := by
+      simpa only [show frameSize+1+3 = frameSize+4 by omega] using copyAgain
+    exact congrArg Prod.snd (normalized.symm.trans copyRun)
+  subst copiedAgain
+  let restored := poppedHandlerState
+    {copied with stackSpace := copied.stackSpace+count} k
+    (holEl 2 (target.stack.drop (target.stackSpace+count)))
+  have execution : StackSemEvaluate.evaluate
+      (copyRetNative false true (k,frameSize+1,frameSize) values
+        (popHandlerNative false (k,frameSize+1,frameSize) .skip),target) = (none,restored) := by
+    rw [evaluateHandlerCopyRetNative target k (frameSize+1) frameSize values
+      (popHandlerNative false (k,frameSize+1,frameSize) .skip) enabled (by omega)]
+    rw [restoreRun,StackSemEvaluate.evaluate_skip]
+  refine ⟨restored,execution,?_⟩
+  intro key value lookup physical positive absent
+  obtain ⟨lower,upper,slot⟩ := poppedHandlerCallerSlot k currentHandler size nonGc gc
+    savedHandler h1 h2 rest (target.store.lookup .handler)
+    (target.stack.drop (target.stackSpace+count)) target.stack.length target.bitmaps
+    frameSize lens relation key value lookup
+  have past := CallReturning.callerKeyPastReturns values key canonical physical positive absent
+  have untouched : 3+(frameSize-(key/2-k)) < frameSize+4-count := by
+    dsimp [count,Compiler.Backend.WordToStack.numStackRet]
+    omega
+  have preserved := live (3+(frameSize-(key/2-k))) untouched
+  rw [CallReturnSupport.llookupTake _ _ _ (by omega)] at slot
+  simp only [List.drop_drop,List.getElem?_drop] at slot
+  refine ⟨lower,upper,?_⟩
+  rw [CallReturnSupport.llookupTake _ _ _ (by omega)]
+  simp only [restored,poppedHandlerState,copied,List.getElem?_drop]
+  simpa only [Nat.add_assoc] using preserved.trans
+    (by simpa only [Nat.add_assoc] using slot)
+
+/-- Restoring the saved handler preserves the original non-handler store and
+establishes its successful handler lookup without a poststate premise.
+Flapjack handler-return infrastructure; no standalone HOL declaration. -/
+theorem restoredHandlerStoreFacts {width : Nat} [NeZero width] {C F : Type}
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (register : Nat)
+    (saved : WordLocW width)
+    (prior : source.store = target.store.eraseEq .handler) :
+    source.store = (target.store.updateEq (.handler,saved)).eraseEq .handler ∧
+    (target.store.updateEq (.handler,saved)).lookup .handler = some saved := by
+  constructor
+  · exact prior.trans (poppedStoreErase target register saved).symm
+  · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
