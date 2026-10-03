@@ -52,12 +52,12 @@ theorem loopReentry {body : HolProg width} {s1' : StackSemStateFiniteExact width
 /-- Results with the same halt view and result view have the same
 conclusion, for any program, label stacks and next label. -/
 theorem flattenConclResult {p p' : HolProg width} {t t' : Bool} {x y : StackSemResult width}
-    {s2 : StackSemStateFiniteExact width C F} {n l l' : Nat} {cs bs cs' bs' : List Nat}
+    {s2 : StackSemStateFiniteExact width C F} {n n' l l' : Nat} {cs bs cs' bs' : List Nat}
     {t1 : Flapjack.Compiler.Backend.LabSem.State width C F}
     (hh : haltView (some x) = haltView (some y))
-    (hr : resultView x n cs bs = resultView y n cs' bs')
+    (hr : resultView x n cs bs = resultView y n' cs' bs')
     (h : FlattenConcl p t (some x) s2 n l cs bs t1) :
-    FlattenConcl p' t' (some y) s2 n l' cs' bs' t1 := by
+    FlattenConcl p' t' (some y) s2 n' l' cs' bs' t1 := by
   obtain ⟨ck, t2, h⟩ := h
   refine ⟨ck, t2, ?_⟩
   revert h
@@ -66,7 +66,7 @@ theorem flattenConclResult {p p' : HolProg width} {t t' : Bool} {x y : StackSemR
   | some res => exact id
   | none =>
     simp only [Option.map_some, hr]
-    cases resultView y n cs' bs' <;> exact id
+    cases resultView y n' cs' bs' <;> exact id
 
 /-- `Loop` case. -/
 theorem flattenCorrectLoop (s1 : StackSemStateFiniteExact width C F) (body : HolProg width)
