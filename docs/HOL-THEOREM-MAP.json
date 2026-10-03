@@ -81298,5 +81298,45 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem5",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "aligned_bit_one",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL67-72 retains the sole aligned2 premise and fixed word64 c. Exact holAligned/holAlign slice clears bit1. HOL free c is explicitly bound in Lean; conclusion negated bit is getLsbD1=false. No target-state or execution premise. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem8",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "singleton_or",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL82-86 retains every Boolean b,x,y and fixed word64 singleton v2w conversion. HOL Boolean equality between propositions is Lean iff; x OR y is Bool disjunction and word OR is BitVec bitwise OR. HOL free variables are explicit Lean binders. No added premise. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem9",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "carry_widen",
+    "statement_status": "reviewed_exact",
+    "reviewer": "HOL88-100 retains both quantified word64 operands and BOTH conjunctions, including carry-in one. w2n is toNat; w2w to word65 is zero-extending setWidth65, <=+ is unsigned ule=true, and the numeric/word threshold is2^64. No operand bounds or target-run premise supplied; width bounds are internal carrier facts. Fresh unchanged original local proofs replayed with closed GEN_ALL statement/types, zero hypotheses and EQT_INTRO T in riscv_target_arithmetic_probe.out. Kernel Lean proof; not whole encoder correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "mul_long",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "mul_long",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original120-130 retains both universally quantified word64 operands and fixed word128 unsigned product, then original127..64 extraction to word64. HOL w2n/n2w are toNat/ofNat64, DIV2^64 is natural division, w2w to128 is zero-extending setWidth128, and inclusive127..64 is extractLsb64 length64. Product bound derived internally from64-bit carriers; no added operand/overflow/target premise. Fresh unchanged original local proof replay/full binder types, actual word128 product and word64 result, hyp0 and EQT_INTRO T in riscv_target_wide_arithmetic_probe.out. Full kernel proof and generic consumers; not whole riscv_encoder_correct."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "ror",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "ror",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Original147-160 retains arbitrary word64 w and natural n and EXACT sole n<64 premise. Original left shift64-n OR logical right shiftn equals word rotate-rightn, represented by BitVec shifts/or/rotateRight. Rotation bound retained, no compiler/target premise. Fresh unchanged original local proof replay/full binder types, actual word128 product and word64 result, hyp0 and EQT_INTRO T in riscv_target_wide_arithmetic_probe.out. Full kernel proof and generic consumers; not whole riscv_encoder_correct."
   }
 ]

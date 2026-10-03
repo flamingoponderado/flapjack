@@ -6918,6 +6918,7 @@ run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safet
   no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+
 run_probe pan_structs_program_assign_probeScript.sml pan_structs_program_assign_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_assign_statement compile_correct_assign_proved compile_correct_full_types compile_correct_assign_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
@@ -6967,3 +6968,13 @@ run_probe word_to_stack_comp_return_probeScript.sml word_to_stack_comp_return_pr
 run_probe pan_structs_program_while_probeScript.sml pan_structs_program_while_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_while_statement compile_correct_while_proved compile_correct_full_types compile_correct_while_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_target_arithmetic_probeScript.sml riscv_target_arithmetic_probe.out \
+  arithmetic_lem5_statement arithmetic_lem5_types arithmetic_lem5_hypotheses arithmetic_lem5_proved \
+  arithmetic_lem8_statement arithmetic_lem8_types arithmetic_lem8_hypotheses arithmetic_lem8_proved \
+  arithmetic_lem9_statement arithmetic_lem9_types arithmetic_lem9_sum_type arithmetic_lem9_hypotheses arithmetic_lem9_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_wide_arithmetic_probeScript.sml riscv_target_wide_arithmetic_probe.out \
+  wide_mul_long_statement wide_mul_long_types wide_mul_long_hypotheses wide_mul_long_proved wide_product_type wide_slice_type \
+  wide_ror_statement wide_ror_types wide_ror_hypotheses wide_ror_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
