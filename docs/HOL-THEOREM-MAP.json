@@ -69592,6 +69592,25 @@
     "reviewer": "flapjack-sol2 source comparison 2026-10-03 original382-407/full135-149: genuine RawCall case preserves both compTop/comp existential results and original source evaluation/nonError/stateRel premises. Actual fixed-source callee IH is guarded only by original Seq code lookup and nonzero source clock; unused compTop motive component omitted. Target lookup and per-entry info derived from literal stateRel; compTop Seq preserves compiled first/body. Timeout derives emptyEnv relation and equal clocks. Nonzero case derives actual decClock target run from callee IH, original bad_fun_return dispatch from source nonError, and decClock additive-clock identity. Outer postframe stateOk derived using full evaluateMono and subsptLookup, not supplied as premise. Original stackSpace guard retained unchanged. Canonical actual owning regs/fpRegs/store roundtrip witness; code native Spt, stacks native List, positive type-indexed words and Type0 configuration/FFI; inherited reals_as_rational_cuts SOUNDNESS8. No target-run/postrelation/success assumption or individual hold release."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitializationContracts.lean",
+    "lean_name": "mcConfOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "mc_conf_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison9602-9614 and original full typed definition0hyp: arbitrary positive word dimension and independent native MachineConfig state/projection types retained. Complete eight conjuncts: original good_dimindex32-or64, actual full encoderCorrect simulation, all four pointer/length register validities, exact source Option link register NONE0/SOME n validity, full encOk. Reviewed Boolean asmRegOkExact validity enters Prop as equality to true, preserving both register bound and avoided-register membership; no new register guards, default or target evaluation premise. Intrinsic NeZero does not replace original dimension clause. Fresh original fullbody/types0hyp, full iff, encoder/target projections and universal dimension8/128 rejection allT, with corresponding generic native consumers. Inherited reals_as_rational_cuts through encoderCorrect/asmStep and FP instruction semantics, docs/SOUNDNESS.md item8; definition uses no real rendering itself. Full151 initializer remains open; no whole machine correctness or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/InitializationContracts.lean",
+    "lean_name": "startPcOk",
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "start_pc_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 complete original279-309 and fresh HOL fullbody/fulltype0hyp: both actual MachineConfig and word PC binders, arbitrary positive word dimension and independent target state/projection carriers. Literal four program/shared halt/cache exclusions, both fixed ffi_offset16 subtraction equations, bit0 alignment, existential actual mmioPcsMinIndex boundary, all external prefix program/shared/halt/cache exclusions and findIndex zero-offset equality, shared suffix halt/cache inequalities using original EL, final whole FFI-name/entry-PC length equality inside existential retained. No successful compiler/evaluation/desired state or extra boundary premise. Reviewed native Spt/ASM/word/FFI carriers and exact first-match propositional findIndex reused. Original suffix index<names.length plus final lengths equality bounds every entry-PC EL; native untagged projections derive that bound and ordinary getElem suffix inequalities, without changing the full source predicate or past-end default/individual hold. Fresh original full definition/types0hyp and generic length/bound/halt-cache projections allT; native arbitrary-width/config consumers retain full source guards. Full175/151 and end-to-end remain open; no cross-language equivalence claim."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/SemanticsHelpers.lean",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "words_as_type_indexed_bitvec": true,
@@ -69666,6 +69685,156 @@
       "fpRegs",
       "store"
     ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 locValue: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackAlloc: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackFree",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackFree: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackLoad: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackLoadAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackLoadAny: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackStore",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackStore: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackStoreAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackStoreAny: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackGetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackGetSize: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectStackSetSize",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 stackSetSize: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/StackAccess.lean",
+    "lean_name": "compCorrectBitmapLoad",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 bitmapLoad: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Control.lean",
