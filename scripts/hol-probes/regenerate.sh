@@ -7041,3 +7041,7 @@ run_probe lab_props_alignment_sdm_navigation_probeScript.sml lab_props_alignment
 run_probe pan_structs_program_shmem_load_probeScript.sml pan_structs_program_shmem_load_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_shmem_load_statement compile_correct_shmem_load_proved compile_correct_full_types compile_correct_shmem_load_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_ok_probeScript.sml riscv_target_ok_probe.out \
+  riscv_target_ok_statement riscv_target_ok_types riscv_target_ok_hypotheses riscv_target_ok_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

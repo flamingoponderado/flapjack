@@ -7563,3 +7563,7 @@ and its ShMemLoad specialization, quantified types and closed kernel truth.
 The Lean case preserves all ten premises/seven conclusions, derives the actual
 mapped-read FFI and returned-word assignment internally, and adds no IH or
 oracle agreement premise. Full compiler correctness remains open.
+
+### Native target validity
+
+`riscv_target_ok_probeScript.sml` replays the complete original local target validity theorem (477–498), retaining the full native target type, zero stored hypotheses and truth proof. `check-riscv-target-ok.py` checks the literal original proof, unrestricted Lean conclusion and complete regeneration registration. The proof covers all encoder offset and projection consistency obligations; it does not establish native execution simulation or whole compiler correctness.
