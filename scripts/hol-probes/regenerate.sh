@@ -6689,3 +6689,6 @@ run_probe l3_next_step_probeScript.sml l3_next_step_probe.out \
 run_probe lab_filter_full_simulation_probeScript.sml lab_filter_full_simulation_probe.out \
   filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_reorder_faithful_probeScript.sml pan_structs_reorder_faithful_probe.out \
+  fields_in_order_reorder_noop_statement fields_in_order_reorder_noop_types fields_in_order_reorder_noop_hypotheses fields_in_order_reorder_noop_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
