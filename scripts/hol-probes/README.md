@@ -7805,6 +7805,12 @@ separately named HOL composition identity exists. They do not establish the
 full Const encoder theorem's fetch, Next, interference, or assertions.
 `check-riscv-const32-value.py` pins the unrestricted signatures and original
 evidence; mutation tests reject an added run premise or a lost oracle row.
+
+`pan_structs_semantics_eq_probeScript.sml` captures the closed original
+`semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
+and quantified types. The Lean counterpart retains all eight source hypotheses
+and faithful semantics equality; production routing remains independent.
+Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
 `pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
 PanSem wrapper equality, quantified state/start types and closed kernel truth.
 Lean retains the faithful evaluator, every overwritten clock, TailCall as
@@ -7832,3 +7838,45 @@ unrestricted signature, original evidence, and all driver labels.
 and quantified types. The Lean counterpart retains all eight source hypotheses
 and faithful semantics equality; production routing remains independent.
 Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
+## Whole native Const Run composition
+
+`riscv_const_run_probeScript.sml` executes original `riscv_ast_def` Const
+lowering and native `Run` using a RV64 register fixture. Twelve `T` observations
+cover signed12 ORI, both Const32 branches, and both wide paths with low/high
+bit11 choices. Each checks destination and scratch31 values, other-register
+and other-core preservation, physical register0 preservation, and complete
+state equality after restoring the GPR field. These are actual computation
+oracles; the unrestricted theorem is separately kernel-checked.
+
+`CorrectnessEncoding/ConstRun.lean` proves the full native state result for
+every constant/destination allowed by original `asm_ok` and `riscv_ok`. The
+latter discharges original SLLI RV32 trap exclusion. `constRunPost` preserves
+the exact wide-path scratch31 update, rather than discarding it. This untagged
+Run-fold infrastructure has no separately named HOL identity and does not
+establish fetch/Next/interference/assertion execution. The signature, complete
+post-state body, source probe, outputs, and driver labels are regression-pinned.
+`pan_structs_compile_top_semantics_decls_probeScript.sml` captures the closed
+original whole `compile_top_semantics_decls` theorem at pan_structsProof1535-1564,
+kernel truth and quantified types. Its Lean port retains four original premises,
+faithful declaration semantics and the original eshapes update. Executed routing
+is independent. Regenerate with
+`HOL_PROBE_ONLY=pan_structs_compile_top_semantics_decls_probeScript.sml`.
+
+## Native Const instruction Next family
+
+`CorrectnessEncoding/ConstNext.lean` derives actual native NextRISCV equations
+for LUI, ADDI, ORI, XORI, SLLI, OR, and XOR from the four literal encoding bytes,
+original riscv_ok, and a nonzero destination. All intrinsic immediate/register
+values are retained. Native Run and Decode equations are proved internally;
+none of the seven specialized statements assumes target execution.
+
+`InstructionStep.lean` reuses the accepted Loc byte-fetch, PC-update, and
+complete native write-state proofs. Loc retains its original tagged statement.
+These composition helpers have no separately named HOL declarations and remain
+untagged. Full Const instruction-list interference/assertions are still open.
+
+`riscv_const_next_probeScript.sml` captures original typed NextRISCV/Fetch
+wrappers and fourteen original encoding boundary EVALs establishing the full
+word-instruction low bits. These width oracles are not Next execution replays.
+The already captured whole native Const Run observations and unrestricted
+Lean fetch/decode/Next proofs supply separate evidence for their own scopes.

@@ -1,3 +1,8 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
+import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
+import Flapjack.RiscV.CorrectnessEncoding.ConstRun
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
@@ -1426,6 +1431,7 @@ import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapperEquality
 import Flapjack.Pancake.Semantics.PanProps.PanSemIsWrapper
 import Flapjack.Pancake.Proofs.PanStructs.SemanticsEq
+import Flapjack.Pancake.Proofs.PanStructs.CompileTopSemanticsDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion

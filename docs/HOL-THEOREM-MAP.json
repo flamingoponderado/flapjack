@@ -87881,6 +87881,24 @@
     "reviewer": "flapjack-sol compared original1473-1533, convert_s58-67 and faithful PanSem semantics785-809. All eight source conjuncts retained in original order: non-Fail, ctxt structs fields projection, source empty locals, globals fields/wellformed shape, ctxt empty locals, alist shape map=FMAP_MAP2 shape_of, struct_infos_ok. Conclusion is actual semantics(convertStateExact ctxt source) start=semantics source start with no targetrun/trace equality/IH/hooks premise. Same canonical imported owner four maps, full two-way state roundtrip; positive indexed BitVec and Type0 FFI host. Full compileCorrectExact supplies actual compiled TailCall target run at identical clock; empty locals discharge FEVERY/map premises, compile args empty preserves TailCall, convertRes classification preserves original outcome and state conversion preserves ffi.ioEvents. Original tagged clock stability and event monotonicity discharge full six-premise PanProps wrapper equality internally. Fresh closed original statement/types/kernel truth capture; no executed production route completion claim."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Constant.lean",
+    "lean_name": "evaluateWInstConst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source review of evaluate_wInst4688-5140, Const branch4705-4714. Full original five guards and existential native run/full state relation/stack length and stack-space conclusion retained on the Const constructor. Source inst on WordLangInst and target HolInst use the same positive alpha word width; gamma host and FFI types remain arbitrary. EveryVar/maxVar/argument convention retain reviewed literal clauses. Actual source post-state derived from inst, actual register/stack write derived from evaluateWRegWrite1Seq and evaluateWStackStoreWReg1, without target execution/postrelation assumptions. Fresh typed original kernel specialization of evaluate_wInst at asm Const proves entire case with zero hypotheses; not a local literal proof replay or cross-language equivalence proof. Five canonical relation map fields have genuine local source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item 8), no independent IEEE agreement. Other instruction cases and arbitrary-instruction assembly remain open.",
+    "hol_line": 4688
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
     "lean_name": "data_inv_insert_instrs_Const",
     "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
@@ -88075,6 +88093,47 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_load_correct (word_cseProof:1879). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegisterZero.lean",
+    "lean_name": "evaluateWStackStoreWReg1Zero",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg1_0",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full local evaluate_wStackStore_wReg1_0 at4629-4654. Same six original compiled/even/range/full stateRel/length/space guards and complete existential native store run/full double source update relation/resource conclusion; arbitrary alpha word_loc values, shared alpha word width, independent c host and ffi type retained. The r=0 alias shadows the first write; nonzero source and physical register writes commute, and original stateRel internally provides4<k to relate physical/source register0 updates. No additional positivity, execution or postrelation premise. Fresh typed literal original local proof replay, with original supporting store-Reg1 proof replay, passedT/hyp0. Five canonical relation map fields have local genuine roundtrip witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators, no independent IEEE agreement. Needed by actual evaluate_wInst carry/overflow source4736/4753/4774; full primitive/constructor remain unfinished.",
+    "hol_line": 4629
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileTopSemanticsDeclsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported two-way broad/state roundtrip, Flapjack representation infrastructure with no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileTopSemanticsDeclsExact.lean",
+    "lean_name": "compileTopSemanticsDeclsExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_top_semantics_decls",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared full original1535-1564, sourcecompile_top243-247/get_names236-242, exact semantics_decls861-869 and convert_s58-67. All four hypotheses in source order retained: semantics_decls non-Fail, empty locals, empty code, empty globals. Full original equality to actual semanticsDecls of the original state updated only at eshapes by FMAP_MAP2 compile_shape(get_names initial code).structs and compileTopExact code. HOL partial struct-only initial record is observed only through get_names structs projection; get_names changes only structs, so empty locals/globals from the standard compile_top initial context are immaterial there. Full source declaration simulation supplies actual target evaluateDeclsHOLFinite and final context/globals/invariants internally, original decs_stcnames lemmas supply names/info facts, then full eight-hypothesis semanticsEq applies; no targetrun/observation/traceeq/caller relation premise. State equality transported through the canonical evaluator with classically supplied memory-domain evidence; no new domain hypothesis. Canonical imported owner4maps with full same-module broad/state two-way roundtrip and positive indexedwords/Type0 FFI. Fresh closed whole original statement/types/kerneltruth capture. This is source semantics correctness, not an executed production-routing completion claim."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/MoveLemmas.lean",
@@ -88292,6 +88351,86 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-12s83): HOL data_inv_clock (word_cseProof:2273). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion; HOL's polymorphic pair components stay generic type parameters, as in the typed source. It is stated over the reviewed dataInv, canonicalMoveRegs/canonicalRegs/mapInsert and the faithful WordSemStateFiniteExact. Renderings: set_vars/get_vars as setVars/getVars; alist_insert as sptAlistInsert; ALOOKUP as List.lookup; ALL_DISTINCT as Nodup; EVERY as a forall-over-membership; MEM as list membership; ODD/EVEN as % 2; with clock/termdep updates as structure updates. Kernel-checked with standard axioms only. The word_cse_moves probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/CarryOverflow.lean",
+    "lean_name": "evaluateWInstCarry",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full evaluate_wInst4688-5140 Carry branch4755-4775. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/CarryOverflow.lean",
+    "lean_name": "evaluateWInstAddOverflow",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full evaluate_wInst4688-5140 AddOverflow branch4738-4754. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/CarryOverflow.lean",
+    "lean_name": "evaluateWInstSubOverflow",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of full evaluate_wInst4688-5140 SubOverflow branch4721-4737. All five original guards and complete existential actual native wInst run/full stateRel and both stack-resource equations retained for arbitrary operand/destination aliases and spilled variables. Source success internally yields actual word reads and full source post; original argument convention derives flag register0, and original stateRel derives4<k. Native Reg1/Reg2 operand loads retain full relation and expose both actual values; carry input read is derived through the original relation only for AddCarry. Primitive target execution and paired zero-register store law complete the actual compiler output, including destination0 alias. No target execution, desired postrelation, extra successful compiler or IH premise. Source WordLangInst and native HolInst share positive alpha width, with independent generic host/FFI types; fresh typed original kernel specializations passed (proved=T, hypotheses=0), not local literal proof replay or cross-language equivalence. Five canonical finite-map relation fields have same-module genuine source/target codec witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators; no new IEEE agreement. Remaining arbitrary instruction cases/full constructor and compiler theorem stay open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatLargestR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "largest_def",
+    "statement_status": "reviewed_word_dimensions_as_widths",
+    "word_dimensions_as_widths": [
+      "t",
+      "w"
+    ],
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: pinned binary_ieeeScript355-359, fresh original type and complete typed equation in binary_ieee_two_dimensions_probe.out. HOL (alpha # beta) itself -> real has two independent word-free dimensions. word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension(:w) to independent w:Nat/NeZero w. Literal formula (2^(UINT_MAX(:w)-1) / 2^INT_MAX(:w)) * (2 - inverse(2^(t))) retains natural subtraction, multiplication/division grouping and SUC only in threshold precision. Native holUintMax w = 2^w-1 and holFloatBias w = 2^(w-1)-1 match UINT_MAX/INT_MAX; output is arbitrary Mathlib Real, no Rat restriction, word carrier, fixed dimension or added bound. reals_as_rational_cuts is the conservative reviewed IEEE-family marker, SOUNDNESS item 8; the qualifier does not establish independent HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "holFloatThresholdR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "threshold_def",
+    "statement_status": "reviewed_word_dimensions_as_widths",
+    "word_dimensions_as_widths": [
+      "t",
+      "w"
+    ],
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: pinned binary_ieeeScript361-365, fresh original type and complete typed equation in binary_ieee_two_dimensions_probe.out. HOL (alpha # beta) itself -> real has two independent word-free dimensions. word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension(:w) to independent w:Nat/NeZero w. Literal formula (2^(UINT_MAX(:w)-1) / 2^INT_MAX(:w)) * (2 - inverse(2^(t + 1))) retains natural subtraction, multiplication/division grouping and SUC only in threshold precision. Native holUintMax w = 2^w-1 and holFloatBias w = 2^(w-1)-1 match UINT_MAX/INT_MAX; output is arbitrary Mathlib Real, no Rat restriction, word carrier, fixed dimension or added bound. reals_as_rational_cuts is the conservative reviewed IEEE-family marker, SOUNDNESS item 8; the qualifier does not establish independent HOL-to-Lean equivalence."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CompCorrect/Control.lean",
