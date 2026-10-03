@@ -78717,5 +78717,58 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "compileCorrectSkip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Skip leaf: all ten original hypotheses and seven conclusions, no recursive IH. Faithful evaluateHOLFiniteState yields the original result and unchanged source state; compileProgExact preserves this constructor, convertResHOL preserves its result, actual target evaluator yields converted state. Both FEVERY postconditions and global/guarded-local shape-map equalities follow from unchanged source; original result-value EVERY predicates hold on empty resVsHOL. Imported canonical state owner, full local two-way roundtrip, four finite-map/positive-word Type0 translations only. No extra target-run, resource, range, adapter, compatibility or postrelation premise. Original whole theorem and constructor specialization closed/kernel captured; remaining constructors/program/declaration assembly separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "compileCorrectBreak",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Break leaf: all ten original hypotheses and seven conclusions, no recursive IH. Faithful evaluateHOLFiniteState yields the original result and unchanged source state; compileProgExact preserves this constructor, convertResHOL preserves its result, actual target evaluator yields converted state. Both FEVERY postconditions and global/guarded-local shape-map equalities follow from unchanged source; original result-value EVERY predicates hold on empty resVsHOL. Imported canonical state owner, full local two-way roundtrip, four finite-map/positive-word Type0 translations only. No extra target-run, resource, range, adapter, compatibility or postrelation premise. Original whole theorem and constructor specialization closed/kernel captured; remaining constructors/program/declaration assembly separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "compileCorrectContinue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Continue leaf: all ten original hypotheses and seven conclusions, no recursive IH. Faithful evaluateHOLFiniteState yields the original result and unchanged source state; compileProgExact preserves this constructor, convertResHOL preserves its result, actual target evaluator yields converted state. Both FEVERY postconditions and global/guarded-local shape-map equalities follow from unchanged source; original result-value EVERY predicates hold on empty resVsHOL. Imported canonical state owner, full local two-way roundtrip, four finite-map/positive-word Type0 translations only. No extra target-run, resource, range, adapter, compatibility or postrelation premise. Original whole theorem and constructor specialization closed/kernel captured; remaining constructors/program/declaration assembly separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAtomic.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

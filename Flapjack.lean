@@ -1228,6 +1228,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
 import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState

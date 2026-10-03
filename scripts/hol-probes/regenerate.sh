@@ -6784,3 +6784,7 @@ run_probe pansem_eval_ind_probeScript.sml pansem_eval_ind_probe.out \
 run_probe pan_structs_exp_correct_full_probeScript.sml pan_structs_exp_correct_full_probe.out \
   compile_exp_correct_statement compile_exp_correct_types compile_exp_correct_hypotheses compile_exp_correct_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_atomic_probeScript.sml pan_structs_program_atomic_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_skip_statement compile_correct_skip_proved compile_correct_break_statement compile_correct_break_proved compile_correct_continue_statement compile_correct_continue_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

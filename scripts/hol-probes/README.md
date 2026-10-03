@@ -7215,3 +7215,8 @@ checking, while the native theorem still requires independent statement review.
 correctness theorem, binder types, closed hypotheses and kernel proof. Native
 assembly preserves all seven hypotheses and three conclusions across all sixteen
 constructors through the original guarded evaluator induction principle.
+
+`pan_structs_program_atomic_probe` captures the complete original program
+correctness theorem and Skip/Break/Continue specializations, all closed and
+kernel-proved. Native cases preserve all ten premises and seven conclusions,
+including actual compiled evaluation, state invariants and result validity.
