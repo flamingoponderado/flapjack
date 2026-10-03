@@ -2,7 +2,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHan
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClock
 
 namespace Flapjack.WordToStackProofs.CompCorrect.CallReturning
-open Flapjack.Compiler.Backend.StackLang
+open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 open Flapjack.Compiler.Backend.WordToStack.Native
 
 /-- Actual enclosing native NONE Call for the terminal callee branches. The
@@ -298,5 +298,126 @@ theorem completeCallFromPrelude {width : Nat} [NeZero width] {C F : Type}
   rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
     StackSemEvaluate.evaluate_skip]
   exact callRun
+
+/-- Connect the original guarded normal continuation IH and actual callee
+history to execution of the entire literal compiled Call. The continuation
+run, restored caller relation, source return-location guard, moved nonzero
+clock and total extra clock are derived internally. The prelude/body history
+and body contract are outputs of earlier source/setup/callee simulation;
+only its actual code lookup remains an explicit setup output here. This is
+untagged normal-branch assembly, not the final all-outcome guarded port. -/
+theorem normalCompiledCallFromHistory {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k callerSize frame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result : Option (WordSemResult width))
+    (location : WordLocW width) (returned : List (WordLocW width))
+    (saved target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize frame source saved lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args none) < 2 * frame + 2 * k)
+    (ih : InductionHypotheses ac values names retCode l1 l2 dest args source)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args none) source =
+      (result, sourcePost)) (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source))) =
+      (some (.result location returned), bodyPost))
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs none (WordSemStateFiniteExact.decClock source)))
+      bodyPost target (some (.result location returned)) (some (.result location)) (frame :: lens))
+    (initial moved : StackSemStateFiniteExact width C F)
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width)) (n savedIndex finalIndex : Nat)
+    (destinationCode savedCode returnCode compiled callee : HolProg width)
+    (destination : Sum Nat Nat) (bodyExtraClock : Nat)
+    (flat : flatExpConventions
+      (.call (some (values, names, retCode, l1, l2)) dest args none) = true)
+    (destinationCompile : callDestNative dest args (k, callerSize, frame) =
+      (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, callerSize, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, callerSize, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (compilation : compNative ac false
+      (.call (some (values, names, retCode, l1, l2)) dest args none) (bs, n) (k, callerSize, frame) =
+      (compiled, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ initial.bitmaps.length)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (initial.bitmaps.drop (n - (appListAppend bs).length)))
+    (labels : ∀ loc, StackSem.getLabelsExact compiled loc → StackSem.locCheckExact initial.code loc)
+    (preludeRun : StackSemEvaluate.evaluate (.seq destinationCode savedCode, initial) = (none, saved))
+    (argumentsRun : StackSemEvaluate.evaluate
+      (stackArgsNative destination (args.length + 1) (k, callerSize, frame), saved) = (none, moved))
+    (calleeRun : StackSemEvaluate.evaluate
+      (callee, {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+        clock := (StackSemStateOps.decClock moved).clock + bodyExtraClock}) =
+      (some (.result location), target))
+    (found : StackSemControl.findCode destination (moved.regs.eraseEq 0) moved.code = some callee) :
+    ∃ (extraClock : Nat) (targetPost : StackSemStateFiniteExact width C F)
+      (targetResult : Option (StackSemResult width)),
+      StackSemEvaluate.evaluate (compiled, {initial with clock := initial.clock + extraClock}) =
+        (targetResult, targetPost) ∧
+      compCorrectResult ac k callerSize frame source sourcePost targetPost result targetResult lens := by
+  obtain ⟨_, _, _, _, _, _, _, _, _, _, valid, _, _⟩ := sourceReturningContinuation ac values names
+    retCode l1 l2 dest args source sourcePost bodyPost result xs args1 prog ss envs location
+    returned guards ih nonzero execution notError bodyRun
+  have locationEq : location = .loc l1 l2 := by
+    by_contra different
+    exact valid (Or.inl different)
+  obtain ⟨popped, restored, continuationClock, finalTarget, finalResult, _, _, continuationRun,
+    conclusion⟩ := simulateReturningContinuationFromHistory ac k callerSize frame calleeSize
+    calleeFrame values names retCode l1 l2 dest args source sourcePost bodyPost result location
+    returned saved target lens xs args1 prog ss envs guards callerRelation conventions maximum
+    ih nonzero execution notError bodyRun bodyConclusion initial moved bs savedBitmaps finalBitmaps
+    n savedIndex finalIndex destinationCode savedCode returnCode compiled callee destination
+    bodyExtraClock flat destinationCompile savedCompile returnCompile compilation lengthBound
+    bitmapBound bitmapPrefix labels preludeRun argumentsRun calleeRun
+  have argumentClock := stackArgumentsClockFree (C := C) (F := F) k callerSize frame
+    destination (args.length + 1) saved saved.clock
+  change StackSemEvaluate.evaluate
+      (stackArgsNative destination (args.length + 1) (k, callerSize, frame), saved) =
+    Prod.map id (fun state => {state with clock := saved.clock})
+      (StackSemEvaluate.evaluate
+        (stackArgsNative destination (args.length + 1) (k, callerSize, frame), saved)) at argumentClock
+  rw [argumentsRun] at argumentClock
+  have movedClock : moved.clock = saved.clock :=
+    congrArg (fun state => state.clock) (Prod.mk.inj argumentClock).2
+  have movedNonzero : moved.clock ≠ 0 := by
+    rw [movedClock, ← callerRelation.1]
+    exact nonzero
+  have actualContinuation : StackSemEvaluate.evaluate
+      (.seq .skip (copyRetNative false false (k, callerSize, frame) values returnCode),
+        {target with clock := target.clock + continuationClock}) = (finalResult, finalTarget) := by
+    rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+      StackSemEvaluate.evaluate_skip]
+    exact continuationRun
+  rw [locationEq] at calleeRun
+  have callRun := returningCallContinuationRun moved target finalTarget l1 l2 bodyExtraClock
+    continuationClock destination callee
+    (.seq .skip (copyRetNative false false (k, callerSize, frame) values returnCode)) finalResult
+    found movedNonzero calleeRun actualContinuation
+  have completePrelude : StackSemEvaluate.evaluate
+      (.seq destinationCode (.seq savedCode
+        (stackArgsNative destination (args.length + 1) (k, callerSize, frame))), initial) =
+      (none, moved) := by
+    rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
+      StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, preludeRun]
+    exact argumentsRun
+  refine ⟨bodyExtraClock + continuationClock, finalTarget, finalResult, ?_, conclusion⟩
+  exact completeCallFromPrelude ac k callerSize frame values names retCode l1 l2 dest args
+    bs savedBitmaps finalBitmaps n savedIndex finalIndex destinationCode savedCode returnCode compiled
+    destination initial moved finalTarget (bodyExtraClock + continuationClock) finalResult
+    destinationCompile savedCompile returnCompile compilation completePrelude callRun
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
