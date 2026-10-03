@@ -83125,10 +83125,15 @@
     "hol_name": "no_ret_correct",
     "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean",
     "lean_name": "noRetCorrect",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original909: forall t p y z cs bs, FST (SND (flatten t p y z cs bs)) implies forall s. IS_SOME (FST (evaluate (p,s))) over the accepted native StackSem evaluate. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Inherited assumption: the statement reaches a native evaluator whose FP instruction cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original909: forall t p y z cs bs, FST (SND (flatten t p y z cs bs)) implies forall s. IS_SOME (FST (evaluate (p,s))) over the accepted native StackSem evaluate. HOL 'a word is positive-width BitVec width with [NeZero width]; native StackLang/LabLang carriers are the accepted ports. Inherited assumption: the statement reaches a native evaluator whose FP instruction cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_to_lab_flatten_helpers_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change.18.5.12.9. flapjack-sol3 PR1210 source re-review: original no_ret_correct909 retains all six program/flatten binders, original flatten nonreturning guard and forall native state/existing evaluate IS_SOME result. Exact StackSem source record84-108 regs/fp_regs/store are the three HOL |-> fields, represented canonically by native HolFiniteMapExact; code is sptree num_map and remains excluded. fmap_as_finite_support_relation names all three fields with the same imported unique StackSemStateFiniteExact owner and same-module unconditional two-way ofBroad/toBroad witness. Original theorem statement/proof and every nonmap carrier unchanged. Combined word translation and inherited reals_as_rational_cuts SOUNDNESS8 preserved. Original no_ret_correct proof and full typed theorem freshly replayed in stack_to_lab_no_ret_review_probe.out, with hypotheses0/kernelT and full regs/fp_regs/store/code projection types; no source policy/runtime/compiler completion claim.",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ]
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
