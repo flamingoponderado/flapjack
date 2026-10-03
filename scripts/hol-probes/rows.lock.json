@@ -4214,6 +4214,12 @@
       "sha256": "e1b9398076d6936e9cf1273ff4944fb9277a0d637a83a2606ad0409568ccbddd"
     },
     {
+      "bytes": 847,
+      "out": "pan_lang_generic_wf_shape_probe.out",
+      "rows": 12,
+      "sha256": "52cfcc3c608826322183ad4fce88361d1c64aaab54c8b72153632f9b8294bb1a"
+    },
+    {
       "bytes": 44,
       "out": "pan_lang_inlinable_probe.out",
       "rows": 3,

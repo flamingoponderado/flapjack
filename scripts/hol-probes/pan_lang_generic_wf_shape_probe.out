@@ -1,0 +1,12 @@
+is_wf_shape_def_statement=(∀ctxt. is_wf_shape ctxt One ⇔ T) ∧ (∀shs ctxt. is_wf_shape ctxt (Comb shs) ⇔ EVERY (λa. is_wf_shape ctxt a) shs) ∧ ∀nm ctxt. is_wf_shape ctxt (Named nm) ⇔ case ALOOKUP ctxt nm of NONE => F | SOME flds => T
+is_wf_shape_def_proved=T
+is_wf_shape_def_types=ctxt::(mlstring # α) list;shs::shape list;ctxt::(mlstring # α) list;nm::mlstring;ctxt::(mlstring # α) list
+is_wf_flds_def_statement=(∀ctxt. is_wf_flds ctxt [] ⇔ T) ∧ ∀sh flds fld ctxt. is_wf_flds ctxt ((fld,sh)::flds) ⇔ is_wf_shape ctxt sh ∧ is_wf_flds ctxt flds
+is_wf_flds_def_proved=T
+is_wf_flds_def_types=ctxt::(mlstring # α) list;sh::shape;flds::(β # shape) list;fld::β;ctxt::(mlstring # α) list
+nat_zero_present=T
+bool_false_present=T
+bool_false_nested=T
+nat_nested_missing=F
+generic_fields_present=T
+generic_fields_missing=F

@@ -7246,3 +7246,6 @@ run_probe source_to_flat_config_probeScript.sml source_to_flat_config_probe.out 
 run_probe word_to_stack_copy_words_correct_full_probeScript.sml word_to_stack_copy_words_correct_full_probe.out \
   copy_full copy_hypotheses copy_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_lang_generic_wf_shape_probeScript.sml pan_lang_generic_wf_shape_probe.out \
+  is_wf_shape_def_statement is_wf_shape_def_proved is_wf_shape_def_types is_wf_flds_def_statement is_wf_flds_def_proved is_wf_flds_def_types nat_zero_present bool_false_present bool_false_nested nat_nested_missing generic_fields_present generic_fields_missing \
+  "$cake_dir/pancake/panLangScript.sml" "$cake_dir/pancake"

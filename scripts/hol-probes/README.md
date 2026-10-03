@@ -7685,3 +7685,12 @@ actual native byte fetch/decode/JALR/branch Next, and full post-relation under
 every projection-preserving environment. `check-riscv-target-jumpReg.py` pins
 the unrestricted statement and complete original evidence; these checks do
 not themselves prove cross-language equivalence.
+
+`pan_lang_generic_wf_shape_probe` captures original payload-polymorphic
+`is_wf_shape_def`, complete quantified types, closed kernel truth and four
+Nat/Bool payload observations plus original independently polymorphic
+`is_wf_flds_def` and two generic Nat/Bool field-key observations. Zero/false
+payloads still give true name presence; nested missing names fail. The executed faithful source predicate is
+the same generalized definition used by existing StructInfoHOLExact states,
+with explicit prior payload types at empty-context calls. The separate
+full generic compiled-shape theorem and production inventory remain open.

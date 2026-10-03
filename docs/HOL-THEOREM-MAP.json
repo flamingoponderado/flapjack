@@ -13627,7 +13627,7 @@
     "lean_path": "Flapjack/Pancake/PanLang/Decl.lean",
     "lean_name": "isWfShapeExactHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison against panLangScript.sml:139-144: ShapeHOL matches the One/Comb/Nam stcname=mlstring datatype, StructContextExact is the `(stcname # struct_info) list`, and structContextLookupHOL implements first-match ALOOKUP using exact MlString equality. isWfShapeExactHOL preserves One=T, Comb=EVERY, Named=case ALOOKUP with SOME=T/NONE=F, with no additional hypotheses or side conditions. The iwf_one/iwf_comb/iwf_named_hit/iwf_named_miss rows from pan_lang_is_wf_shape_probe.out are reproduced by PanLangIsWfShapeParity.lean on exact carriers."
+    "reviewer": "flapjack-sol correction/source comparison2026-10-03 panLang139-146: HOL is_wf_shape_def is payload-polymorphic ctxt :(mlstring x alpha)list and only checks ALOOKUP presence. Generalized existing structContextLookupHOL and mutually recursive isWfShapeExactHOL/isWfShapesExactHOL/isWfFldsExactHOL to arbitrary alpha at Type0, preserving fixed faithful MlS keys, One=true, Comb=EVERY, Named=first equality-key lookup isSome. Existing source-state evaluators instantiate same generalized definitions at StructInfoHOLExact, so no duplicate or bridge/run premise. Full alpha : Type universal retained without default; existing empty-context calls explicitly name prior StructContextExact payload, changing elaboration only. All specialized source constructors/carriers, lookup order/equality, Bool behavior unchanged. Closed original full definition with complete bound-carrier types and direct Nat/Bool payload observations captured; kernel replays confirm zero/false payload presence and nested missing names. Generic full compiled-shape theorem tracked separately; production String paths remain open inventory."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -13635,7 +13635,7 @@
     "lean_path": "Flapjack/Pancake/PanLang/Decl.lean",
     "lean_name": "isWfFldsExactHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.1.24). HOL panLangScript.sml:148-152 defines is_wf_flds ctxt [] = T and is_wf_flds ctxt ((fld,sh)::flds) = is_wf_shape ctxt sh and is_wf_flds ctxt flds. Lean isWfFldsExactHOL has exactly the same two clauses over the exact carriers: the field list is List (MlS x ShapeHOL) with MlS the mlstring name and ShapeHOL the exact shape carrier; the field name fld is ignored exactly as HOL ignores it, and is_wf_shape is the tagged exact isWfShapeExactHOL. No extra hypotheses or side conditions."
+    "reviewer": "flapjack-sol original is_wf_flds_def148-153 source correction: context is arbitrary (MlS x alpha)list, ignored field keys independently polymorphic beta : Type, shapes faithful ShapeHOL; Nil true and Cons conjunction of generalized is_wf_shape on head and recursive tail preserve both original equations/operator order. Same executed faithful source helper now generalized at alpha : Type; all state uses instantiate StructInfoHOLExact automatically. No extra hypotheses/carrier restrictions/defaults; direct original closed full definition/types and generic false-payload field observations plus kernel replays captured. Original state-context predicate remains fixed StructInfo as source demands."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
