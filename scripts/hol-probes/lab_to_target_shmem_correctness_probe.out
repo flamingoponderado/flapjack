@@ -1,0 +1,39 @@
+get_shmem_info_ok_lemma=all_enc_ok (c :α asm_config) (labs :num sptree$num_map sptree$num_map)
+  (ffis' :ffiname list) (p' :num) (code2 :α sec list) ∧ enc_ok c ∧
+LENGTH (prog_to_bytes code2) < dimword (:α) ∧
+EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) (ffis :ffiname list) ∧
+get_shmem_info code2 (p :num) ffis ([] :shmem_info_num list) =
+((new_ffi_names :ffiname list),(new_shmem_info :shmem_info_num list)) ⇒
+(∀(pc :num) (op :memop) (re :num) (a :α addr) (inst :word8 list) (len :num)
+     (i :num).
+   asm_fetch_aux pc code2 = SOME (Asm (ShareMem op re a) inst len) ∧
+   mmio_pcs_min_index new_ffi_names = SOME i ⇒
+   ∃(index :num).
+     find_index (p + pos_val pc (0 :num) code2)
+       (MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info) (0 :num) =
+     SOME index ∧
+     (let
+        ((name :shmem_op),(nb :word8)) = get_memop_info op
+      in
+        new_ffi_names❲index + i❳ = SharedMem name ∧
+        new_shmem_info❲index❳ =
+        <|entry_pc := new_shmem_info❲index❳.entry_pc; nbytes := nb;
+          addr_reg := case a of Addr r off => r;
+          addr_off := case a of Addr r off => w2n off; reg := re;
+          exit_pc := p + (pos_val pc (0 :num) code2 + len)|>)) ∧
+∀(pc :num) (line :α line).
+  asm_fetch_aux pc code2 = SOME line ∧
+  (∀(op :memop) (re :num) (a :α addr) (inst :word8 list) (len :num).
+     line ≠ Asm (ShareMem op re a) inst len) ⇒
+  DISJOINT (set (MAP (λ(rec :shmem_info_num). rec.entry_pc) new_shmem_info))
+    {p + a + pos_val pc (0 :num) code2 | a < LENGTH (line_bytes line)}
+get_shmem_info_ok_lemma_types=(new_shmem_info :shmem_info_num list)::shmem_info_num list;(new_ffi_names :ffiname list)::ffiname list;(p :num)::num;(ffis :ffiname list)::ffiname list;(code2 :α sec list)::α sec list;(p' :num)::num;(ffis' :ffiname list)::ffiname list;(labs :num sptree$num_map sptree$num_map)::num sptree$num_map sptree$num_map;(c :α asm_config)::α asm_config;
+get_shmem_info_ok_lemma_hypotheses=0
+full_instance=T
+first_index=T
+last_index=T
+prefixed_load_name=T
+prefixed_store_name=T
+load_record=T
+store_record=T
+nonshared_intervals=T

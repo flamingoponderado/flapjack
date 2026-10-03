@@ -5805,7 +5805,7 @@ run_probe lab_to_target_byte_interval_distinct_probeScript.sml lab_to_target_byt
   "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_remove_write_bytearray_probeScript.sml stack_remove_write_bytearray_probe.out \
-  write_full_write_bytearray_IGNORE_non_aligned write_full_write_bytearray_IGNORE write_full_write_bytearray_EQ write_w1_be0_0 write_w1_be1_0 write_w8_be0_0 write_w8_be0_1 write_w8_be0_2 write_w8_be0_3 write_w8_be0_4 write_w8_be0_5 write_w8_be0_6 write_w8_be0_7 write_w8_be1_0 write_w8_be1_1 write_w8_be1_2 write_w8_be1_3 write_w8_be1_4 write_w8_be1_5 write_w8_be1_6 write_w8_be1_7 write_w64_be0_0 write_w64_be0_1 write_w64_be0_2 write_w64_be0_3 write_w64_be0_4 write_w64_be0_5 write_w64_be0_6 write_w64_be0_7 write_w64_be1_0 write_w64_be1_1 write_w64_be1_2 write_w64_be1_3 write_w64_be1_4 write_w64_be1_5 write_w64_be1_6 write_w64_be1_7 write_w80_be0_0 write_w80_be0_1 write_w80_be0_2 write_w80_be0_3 write_w80_be0_4 write_w80_be0_5 write_w80_be0_6 write_w80_be0_7 write_w80_be1_0 write_w80_be1_1 write_w80_be1_2 write_w80_be1_3 write_w80_be1_4 write_w80_be1_5 write_w80_be1_6 write_w80_be1_7 write_LOG_original_spec write_LOG2_zero_residual \
+  write_full_write_bytearray_IGNORE_non_aligned write_full_write_bytearray_IGNORE write_full_write_bytearray_EQ write_w1_be0_0 write_w1_be1_0 write_w8_be0_0 write_w8_be0_1 write_w8_be0_2 write_w8_be0_3 write_w8_be0_4 write_w8_be0_5 write_w8_be0_6 write_w8_be0_7 write_w8_be1_0 write_w8_be1_1 write_w8_be1_2 write_w8_be1_3 write_w8_be1_4 write_w8_be1_5 write_w8_be1_6 write_w8_be1_7 write_w64_be0_0 write_w64_be0_1 write_w64_be0_2 write_w64_be0_3 write_w64_be0_4 write_w64_be0_5 write_w64_be0_6 write_w64_be0_7 write_w64_be1_0 write_w64_be1_1 write_w64_be1_2 write_w64_be1_3 write_w64_be1_4 write_w64_be1_5 write_w64_be1_6 write_w64_be1_7 write_w80_be0_0 write_w80_be0_1 write_w80_be0_2 write_w80_be0_3 write_w80_be0_4 write_w80_be0_5 write_w80_be0_6 write_w80_be0_7 write_w80_be1_0 write_w80_be1_1 write_w80_be1_2 write_w80_be1_3 write_w80_be1_4 write_w80_be1_5 write_w80_be1_6 write_w80_be1_7 write_LOG_original_spec write_LOG2_zero_residual write_full_write_bytearray_lemma \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe lab_to_target_shmem_extraction_probeScript.sml lab_to_target_shmem_extraction_probe.out \
   get_shmem_info_thm get_shmem_info_thm_types get_shmem_info_thm_hypotheses \
@@ -5895,4 +5895,21 @@ run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_prob
   find_index_ALL_DISTINCT_EL_eq find_index_ALL_DISTINCT_EL_eq_types find_index_ALL_DISTINCT_EL_eq_hypotheses \
   first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
   "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_inst_probeScript.sml stack_code_bitmaps_inst_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_inst_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_call_full_probeScript.sml stack_remove_comp_call_full_probe.out \
+  cc_call_tail_statement cc_call_tail_proved cc_call_return_none_statement cc_call_return_none_proved \
+  cc_call_return_handler_statement cc_call_return_handler_proved cc_call_full_statement cc_call_full_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_code_bitmaps_seq_probeScript.sml stack_code_bitmaps_seq_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_seq_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_shmem_correctness_probeScript.sml lab_to_target_shmem_correctness_probe.out \
+  get_shmem_info_ok_lemma get_shmem_info_ok_lemma_types get_shmem_info_ok_lemma_hypotheses \
+  full_instance first_index last_index prefixed_load_name prefixed_store_name load_record store_record nonshared_intervals \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"

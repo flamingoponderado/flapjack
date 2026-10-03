@@ -6229,6 +6229,13 @@ This is the full model Fetch, distinct from riscv_step Fetch; probes are
 regression evidence, not cross-assistant equivalence or full modelRun coverage.
 
 `stack_remove_write_bytearray_probe` replays the three full original IGNORE_non_aligned/IGNORE/EQ proofs (324–370), captures 50 complete original reads and paired writes at seven observed keys, and records the original LOG specification plus its symbolic `LOG2 0` boundary. Widths 8/64/80 cover both endiannesses, empty writes, wraparound, Loc/domain failures and differing memories; width 1 has empty writes only. Nonempty width-one observations remain symbolic and are not assigned invented numeric expectations. Kernel/runtime checks compare only values decoded from the original outputs. The original support proofs use byte alignment symbolically: its unspecified zero-logarithm value does not itself require changing the executable Lean implementation. Native theorem instances and their dependencies still require independent proof and source review; these fixtures establish neither cross-language equivalence nor compiler correctness.
+
+The final `write_full_write_bytearray_lemma` row replays the complete original
+frame proof (372–393), with its local EQ/IGNORE prerequisites generalized as
+they are when saved in the original theory. It retains the arbitrary frame
+predicate and the complete separated-heap conclusion. The native counterpart
+uses the reviewed `memoryHOL` and SetSep carriers; the capture is regression
+evidence, not a cross-language equivalence proof.
 `l3_address_exception_probe.out` captures the complete original native
 `signalAddressException` definition/type and four fault-kind/address/current-core
 observations. The corresponding Lean guard proves an unconditional full-state
@@ -6252,6 +6259,8 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 
 
 `word_to_stack_bitmap_frame_updates_probe.out` replays the three complete original bitmap/frame-list proofs and captures the independently polymorphic Spt/word-location binder types. Its 63 original overwrite observations cover empty, truncated and location-valued stacks across widths 8/64/80 and terminal/continuation boundaries. The Lean generic proofs retain every original guard; the parity module checks the same concrete native operations. No evaluator simulation, source pipeline unreachability or provenance hold release is claimed.
+
+`stack_remove_copy_each_probeScript.sml` replays the complete literal original `copy_each_thm` proof (1250–1332), with every original premise and full clock/register/separated-memory conclusion. Two rows capture the complete statement and kernel proof success. Native full source induction derives target execution; no full pass theorem or executed compiler parity is claimed by this proof-only slice.
 `stack_remove_comp_call_tail_probeScript.sml` replays the literal original ret=NONE Call case with arbitrary handlers and actual source lookup/handler-NONE/nonzero-clock guarded callee IH. Original local lookup/dec-clock proofs are recreated; no full `comp_correct` assumed. Two rows capture the scoped statement and proof success.
 
 `stack_remove_comp_call_return_none_probeScript.sml` replays the original returning Call prefix and handler-NONE exception branch, with actual source guarded callee and successful-return continuation IHs. Specializing the AST option omits the handler-SOME branch and its selector combinator; branch proof tactics remain unchanged. Original local erased lookup/clock relation helpers are recreated, full `comp_correct` is not assumed. Two rows capture the scoped statement and proof success.
@@ -6296,8 +6305,6 @@ the current reservation, while faults/misalignment retain it. All order bits,
 rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
 are covered. Independent byte-wise expectations and arbitrary-base Lean state
 frames provide regressions only, not whole atomic/runtime correctness.
-<<<<<<< HEAD
-=======
 
 `l3_scd_probe.out` captures the complete original SC_D definition/type and
 24 whole-state observations: RV32 rejects before address/reservation/VM checks,
@@ -6312,4 +6319,9 @@ offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
 and executed deltas; the complete accepted-instruction producer relation uses
 the real instruction encoder, retaining every ordered operand. No whole
 allocator or source-program producer correctness is claimed.
->>>>>>> 99fe107a6
+`stack_code_bitmaps_inst_probe.out` freshly captures the complete original evaluate_code_bitmaps theorem, zero open hypotheses, and its native Inst specialization. The Lean case retains all three existential conjuncts and derives count zero on primitive success and failure; inherited rational-cut limits remain, with no numeric byte-alignment equivalence claim.
+
+`stack_remove_comp_call_full_probeScript.sml` replays all three original scoped Call proofs and assembles the complete Call constructor across arbitrary return/handler options, using exactly their guarded source IHs. Eight rows capture the three complete branch statements/proof successes and the full assembled statement/proof success; no full `comp_correct` is assumed. The branch source proof tactics remain the reviewed originals; assembly uses direct matching and top-level implication currying rather than proof search.
+
+
+`stack_code_bitmaps_seq_probe.out` captures complete original evaluate_code_bitmaps, zero hypotheses and native Seq specialization. The native case keeps only actual source-path recursive hypotheses, derives fixClock clamping and concatenates oracle prefixes in original left-fold/bitmap order. Whole evaluator assembly remains open.
