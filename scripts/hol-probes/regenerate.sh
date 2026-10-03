@@ -6335,3 +6335,8 @@ run_probe lab_to_target_initializer_memory_separation_probeScript.sml lab_to_tar
   IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
   ISR1_statement ISR1_hypotheses ISR1_proved ISR12_statement ISR12_hypotheses ISR12_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_initializer_domain_probeScript.sml lab_to_target_initializer_domain_probe.out \
+  IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
+  ISR16_statement ISR16_hypotheses ISR16_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
