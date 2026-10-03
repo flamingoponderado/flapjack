@@ -7131,3 +7131,7 @@ run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.ou
 run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_semantics_compile_final_probe.out \
   semantics_compile semantics_compile_types semantics_compile_hypotheses semantics_compile_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_loop_handler_probeScript.sml word_to_stack_loop_handler_probe.out \
+  loop_handler_full loop_handler_hypotheses loop_handler_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
