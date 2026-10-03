@@ -7511,3 +7511,8 @@ run_probe riscv_const_run_probeScript.sml riscv_const_run_probe.out \
   const_run_small_zero const_run_small_positive const_run_small_negative const_run_small_all_ones const_run_medium_positive const_run_medium_positive_max const_run_medium_negative const_run_medium_negative_low11 const_run_wide_or const_run_wide_or_high11 const_run_wide_xor const_run_wide_xor_low11_high11 \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_const_next_probeScript.sml riscv_const_next_probe.out \
+  const_next_wrapper_type const_next_fetch_type const_next_lui_zero const_next_lui_all_ones const_next_addi_zero const_next_addi_all_ones const_next_ori_zero const_next_ori_all_ones const_next_xori_zero const_next_xori_all_ones const_next_slli_zero const_next_slli_all_ones const_next_or_zero const_next_or_all_ones const_next_xor_zero const_next_xor_all_ones \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
