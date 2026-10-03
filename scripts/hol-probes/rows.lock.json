@@ -2078,6 +2078,12 @@
       "sha256": "bdc12e7c62ef0db37f2c9bb0eb313056b6c6b85afb2b5be57f7e836c81e3b236"
     },
     {
+      "bytes": 718,
+      "out": "lab_props_alignment_sdm_evaluate_probe.out",
+      "rows": 8,
+      "sha256": "f776109b9afe8f239414d399e423a387ab38b21e8f741592256b5bb0e5d9a3c9"
+    },
+    {
       "bytes": 2630,
       "out": "lab_props_alignment_sdm_memory_probe.out",
       "rows": 32,
@@ -4824,6 +4830,12 @@
       "out": "pan_structs_compile_prog_probe.out",
       "rows": 6,
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
+    },
+    {
+      "bytes": 319,
+      "out": "pan_structs_convert_code_locals_probe.out",
+      "rows": 3,
+      "sha256": "f90182b8adcbbb23305a6be9f4f7ad1494a681bcc7ee65f5dbff34ac278b74f9"
     },
     {
       "bytes": 392,
@@ -9338,10 +9350,22 @@
       "sha256": "ee6ae651e6d67c1715dd3b3ab9926afeeaa6d5e80a490a4b1ac7f9c2de8a42f5"
     },
     {
+      "bytes": 3643,
+      "out": "word_to_stack_comp_codebufferwrite_probe.out",
+      "rows": 6,
+      "sha256": "92c244ab6c9a3db794a24b2f504ec4c8299a3906550412746d334f0153fbfc63"
+    },
+    {
       "bytes": 5147,
       "out": "word_to_stack_comp_control_probe.out",
       "rows": 9,
       "sha256": "9f853d50ae21d593b1b0dddbea76f71b1a2e641ca56e23d89b15fc5e5abcce5e"
+    },
+    {
+      "bytes": 3643,
+      "out": "word_to_stack_comp_databufferwrite_probe.out",
+      "rows": 6,
+      "sha256": "3be80d5346637365c3d5d70bf535957602f309b94f68f0b05a154e17bfc1eaf3"
     },
     {
       "bytes": 3566,
