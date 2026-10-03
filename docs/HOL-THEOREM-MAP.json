@@ -74317,5 +74317,23 @@
     "lean_name": "holFmapAsFiniteSupportResultWitness_convertEshapesExact",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical-to-raw exception map lookup codec witness, not an independent HOL declaration. Compares tagged output lookup against independent raw Option.map operation with no desired-relation premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "convert_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertCode.lean",
+    "lean_name": "convertCodeExact",
+    "statement_status": "reviewed_fmap_as_finite_support_result_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "fmap_as_finite_support_result": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: complete original53-56 FMAP_MAP2 definition and kernel type. Arbitrary map-key Type kappa retained because callback ignores key; exact ContextExact/MlS/ShapeHOL/List carriers, positive-word ProgHOL width. Parameters preserve names and compile each shape using initial structs; body compiles under initial context with locals replaced by ORIGINAL source parameters, not compiled shapes; return shape compiles against same structs. Canonical map2 preserves domain/absent lookups, no BEq/key uniqueness/rangedness premise. Finite-support result and positive-word qualifiers only. Same-module unconditional lookup witness against independent raw Option.map codec, no assumed target relation. Full original kernel definition/type/hyp0 captured; not a declaration-evaluation or whole pass correctness claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ConvertCode.lean",
+    "lean_name": "holFmapAsFiniteSupportResultWitness_convertCodeExact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical-to-raw lookup codec witness. Unconditional independent Option.map expression, no relation premise or self-equality; not an independent HOL declaration."
   }
 ]
