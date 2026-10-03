@@ -76182,5 +76182,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.5.1): Original522 all section/label/code/PC/appended-section binders and sole original successful locToPc guard retained; conclusion entire adjustPc equality before/after append. Native actual locToPc functional induction follows the real successful locator, including section-entry zero, matching and skipped labels, empty sections and nonlabel increments; no bound, append-safety or alignment premise. Full original alpha word-indexed sec/line carriers translated constructor-for-constructor with fixed8 encoded bytes, arbitrary positive-width BitVec qualifier and ordinary Nat numeric binders. Full types freshly captured. Unchanged original local statements/proofs replayed with exact original temporary simplifier setup from script10/12 (lift_disj_eq/lift_imp_disj/NORMEQ_CONV removed), producing full statement/type/zero hypotheses/kernel reproof12rows. No source changes, arbitrary carrier specialization, target evaluation or relation premise. These are genuine filter_correct669 prerequisites, not full simulation completion."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpdatePC.lean",
+    "lean_name": "update_pc",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "update_pc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_stepScript34-35: full fixedword64/native-state update_pc v s=SOME(writePC v s); entire Option result and original complete function-valued PC update retained. No current-core bounds, target-run assumption or chosen defaults. Generic whole option and full-record equations kernel checked and original HOL proofs captured with zero hypotheses."
   }
 ]

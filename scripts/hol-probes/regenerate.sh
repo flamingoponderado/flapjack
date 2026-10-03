@@ -6649,3 +6649,6 @@ run_probe lab_filter_location_lookup_probeScript.sml lab_filter_location_lookup_
   loc_to_pc_eq_SOME loc_to_pc_eq_SOME_types loc_to_pc_eq_SOME_hypotheses loc_to_pc_eq_SOME_proved \
   loc_to_pc_adjust_pc_append loc_to_pc_adjust_pc_append_types loc_to_pc_adjust_pc_append_hypotheses loc_to_pc_adjust_pc_append_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
+  updatePC_type updatePC_hypotheses updatePC_some_equation updatePC_some_proof updatePC_fullRecord_equation updatePC_fullRecord_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
