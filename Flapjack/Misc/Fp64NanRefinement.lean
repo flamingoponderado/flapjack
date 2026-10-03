@@ -13,11 +13,10 @@ bit-determined.  An executed implementation must instead produce a concrete
 quiet NaN, e.g. the canonical `0x7FF8000000000000`.
 
 This module supplies the data every such executable connection needs, as
-untagged HOL standard-library infrastructure (no CakeML source declaration
-lives here, so there is no `@[hol]` tag):
+untagged Flapjack infrastructure over the tagged `fp64_isNan` /
+`fp64_isSignallingNan` lifts `holFp64IsNan` / `holFp64IsSignalling`
+(`Flapjack.Misc.MachineIeee`):
 
-* `holFp64IsNan` / `holFp64IsSignalling`: the `fp64` lifts of the HOL
-  `float_is_nan` / `float_is_signalling` predicates;
 * `defaultQuietNan` and `defaultQuietNanFloat`: canonical concrete quiet NaNs
   at the `BitVec 64` and `HolFloat 52 11` carriers;
 * `holFloatSomeQnan_isQuiet`: the chosen `float_some_qnan` result is a quiet
@@ -37,14 +36,6 @@ They do not assert that HOL's chosen NaN differs from the canonical value.
 -/
 
 namespace Flapjack
-
-/-- HOL `float_is_nan` lifted to `fp64` through `fp64_to_float`. -/
-def holFp64IsNan (a : BitVec 64) : Bool :=
-  holFloatIsNan (holFp64ToFloat a)
-
-/-- HOL `float_is_signalling` lifted to `fp64` through `fp64_to_float`. -/
-def holFp64IsSignalling (a : BitVec 64) : Bool :=
-  holFloatIsSignalling (holFp64ToFloat a)
 
 /-- The canonical quiet NaN at binary64: all-ones exponent and a significand
     whose most significant bit is set (so it is not signalling). -/

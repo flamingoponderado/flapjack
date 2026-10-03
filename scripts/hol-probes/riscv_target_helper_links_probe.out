@@ -1,0 +1,9 @@
+helper_binop_statement=∀b r1 r2 i. riscv_ast (Inst (Arith (Binop b r1 r2 (Imm i)))) = if b = Sub then [ArithI (ADDI (n2w r1,n2w r2,-w2w i))] else [ArithI (riscv_bop_i b (n2w r1,n2w r2,w2w i))]
+helper_binop_hypotheses=0
+helper_binop_proved=T
+helper_shift_imm_statement=∀sh r1 r2 i. riscv_ast (Inst (Arith (Shift sh r1 r2 (Imm i)))) = if sh = Ror then [Shift (SRLI (31w,n2w r2,n2w (w2n i))); Shift (SLLI (n2w r1,n2w r2,n2w (64 − w2n i))); ArithR (OR (n2w r1,n2w r1,31w))] else [Shift (riscv_sh sh (n2w r1,n2w r2,n2w (w2n i)))]
+helper_shift_imm_hypotheses=0
+helper_shift_imm_proved=T
+helper_shift_reg_statement=∀sh r1 r2 r. riscv_ast (Inst (Arith (Shift sh r1 r2 (Reg r)))) = if sh = Ror then [ArithI (ORI (31w,0w,64w)); ArithR (SUB (31w,31w,n2w r)); Shift (SLL (31w,n2w r2,31w)); Shift (SRL (n2w r1,n2w r2,n2w r)); ArithR (OR (n2w r1,n2w r1,31w))] else [Shift (riscv_shv sh (n2w r1,n2w r2,n2w r))]
+helper_shift_reg_hypotheses=0
+helper_shift_reg_proved=T
