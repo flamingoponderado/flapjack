@@ -1,12 +1,13 @@
-import Flapjack.RiscV.CorrectnessEncoding.ConstWide
-import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.Const32
+import Flapjack.RiscV.CorrectnessEncoding.ConstWide
+import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
 import Flapjack.RiscV.CorrectnessEncoding.Loc
 import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningFull
@@ -710,6 +711,8 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.WellFormedData
 import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionAccumulator
 import Flapjack.Compiler.Backend.WordCse.Proofs.KnowledgeLemmas
+import Flapjack.Compiler.Backend.WordCse.Transform
+import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames

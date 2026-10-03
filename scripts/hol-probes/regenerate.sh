@@ -4578,6 +4578,18 @@ run_probe word_cse_knowledge_lemmas_probeScript.sml word_cse_knowledge_lemmas_pr
   register_reads_simps_statement register_reads_simps_hypotheses lookup_register_read_statement lookup_register_read_hypotheses lookup_register_reads_statement \
   lookup_register_reads_hypotheses lookup_insert_listCmp_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_wf_data_preservation_probeScript.sml word_cse_wf_data_preservation_probe.out \
+  wf_data_empty_statement wf_data_empty_hypotheses wf_data_loads_wipe_statement wf_data_loads_wipe_hypotheses wf_data_invalidate_statement \
+  wf_data_invalidate_hypotheses wf_data_invalidate_regs_statement wf_data_invalidate_regs_hypotheses wf_data_insert_to_canonical_statement wf_data_insert_to_canonical_hypotheses \
+  wf_data_insert_to_latest_statement wf_data_insert_to_latest_hypotheses wf_data_register_read_statement wf_data_register_read_hypotheses wf_data_register_reads_statement \
+  wf_data_register_reads_hypotheses wf_add_to_data_aux_statement wf_add_to_data_aux_hypotheses wf_add_to_data_const_statement wf_add_to_data_const_hypotheses \
+  wf_add_to_load_aux_statement wf_add_to_load_aux_hypotheses wf_data_merge_statement wf_data_merge_hypotheses wf_canonicalMoveRegs_statement \
+  wf_canonicalMoveRegs_hypotheses wf_add_to_data_aux_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_transform_probeScript.sml word_cse_transform_probe.out \
+  word_cseInst_type word_cse_type word_common_subexp_elim_type word_cseInst_def_statement \
+  word_cse_def_clauses word_common_subexp_elim_def_statement word_cse_wf_data_statement word_cse_wf_data_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7399,6 +7411,11 @@ run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrappe
 run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
   wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_seqsem_probe.out \
+  moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \
   lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
@@ -7430,7 +7447,6 @@ run_probe wordsem_shmem_independent_result_probeScript.sml wordsem_shmem_indepen
 run_probe wordsem_find_code_generic_probeScript.sml wordsem_find_code_generic_probe.out \
   find_code_type find_code_def_typed find_code_map_I_typed find_code_map_I_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordSemScript.sml" "$cake_dir/compiler/backend/proofs"
-
 run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
   ori_decode_zero ori_decode_all_ones ori_decode_sign_bit ori_decode_positive_max \
   xori_decode_zero xori_decode_all_ones xori_decode_sign_bit xori_decode_positive_max \
@@ -7439,6 +7455,10 @@ run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
   xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_reverse_probe.out \
+  alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 
 run_probe riscv_const32_value_probeScript.sml riscv_const32_value_probe.out \
   const32_value_zero const32_value_low_positive_max const32_value_low_sign_bit \
