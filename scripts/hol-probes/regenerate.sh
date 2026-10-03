@@ -7395,3 +7395,6 @@ run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_s
   moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrapper_probe.out \
+  semantics_wrapper_def_statement semantics_wrapper_def_proved semantics_wrapper_def_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"

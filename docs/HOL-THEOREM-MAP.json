@@ -86565,5 +86565,13 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 full original evaluate_wMoveAux_seqsem3130–3285 whole list induction. OriginalGuards expands all seven original guards including actual real-source read success, scratch first-read/write ordering, EVERY endpoint bound and distinct real destinations. Simulation expands entire actual native existential evaluation NONE/post, full state_rel to original reversed-destination seqsem set_vars expression, target stack length and stack_space preservation. Structural tail IH discharged by list induction; empty case derives actual native run and original unchanged complete source expression. No IH remains in final theorem. Head value and run derived internally, every tail guard proved, actual evaluator fixClock law used, complete source reconstruction proved. Positive width and arbitrary Word/Loc/source/target/environment retained. No target-run, postrelation, scheduler or success assumptions added. THE defaults unobserved below SOME filters; no total HD/EL approval bypass. Five canonical fields qualified with genuine same-module source/target codec witnesses; inherited reals_as_rational_cuts evaluator assurance retained. Fresh literal original whole proof replay provides regression evidence only, no HOL-to-Lean equivalence claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/SemanticsWrapper.lean",
+    "lean_name": "panPropsSemanticsWrapper",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "semantics_wrapper_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol compared original1824-1829 and full quantified HOL function/result types. Original arbitrary Nat→SemanticsRunResHOL HolOutcome×List HolIoEvent retained with distinct PanProps datatype. Same existential RunError test, SOME-choice CompleteResult/Terminate predicate and none/Diverge image-of-fromList branch using reviewed holOptionSome/chain-free prefix-shaped HolLList.buildLprefixLub. No supplied LUB or chain condition. Standard HOL @/Lean Classical.choose formula translation as accepted generic LUB carrier; no equality claim for independently unspecified selections, consistent with SOUNDNESS trust boundary. Full fresh closed original equation/types/kernel truth capture. Noncomputable observation formula; wrapper equality and faithful evaluator wrapper correspondence remain separate obligations."
   }
 ]
