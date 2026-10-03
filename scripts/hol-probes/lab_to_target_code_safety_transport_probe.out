@@ -1,0 +1,15 @@
+code_similar_IMP_both_no_share_mem=code_similar (code :α sec list) (sec_list :α sec list) ∧
+no_share_mem_inst code ⇒
+no_share_mem_inst sec_list
+code_similar_IMP_both_no_share_mem_types=(sec_list :α sec list)::α sec list;(code :α sec list)::α sec list;
+code_similar_IMP_both_no_share_mem_hypotheses=0
+code_similar_IMP_both_no_install_or_no_share_mem=code_similar (code :α sec list) (sec_list :α sec list) ∧
+no_install_or_no_share_mem code (ffi_names :ffiname list) ⇒
+no_install_or_no_share_mem sec_list ffi_names
+code_similar_IMP_both_no_install_or_no_share_mem_types=(ffi_names :ffiname list)::ffiname list;(sec_list :α sec list)::α sec list;(code :α sec list)::α sec list;
+code_similar_IMP_both_no_install_or_no_share_mem_hypotheses=0
+changed_bytes_length_safe=T
+instruction_change_rejected=T
+install_external_branch=T
+skip_shared_name_branch=T
+install_shared_name_rejected=T

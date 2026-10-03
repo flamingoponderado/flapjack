@@ -1,7 +1,9 @@
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
+import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
+import Flapjack.RiscV.L3.Defs.CSRDispatch
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
@@ -15,6 +17,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.JumpLower
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
@@ -314,6 +317,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize
@@ -777,6 +782,10 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionActualInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallCache
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCountMap
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCounterJoin
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicSelfCall
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCondition
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCachePreservation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicProgram
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicInstructions
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup

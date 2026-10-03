@@ -6526,3 +6526,43 @@ Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.
 `word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
 
 `stack_remove_compile_semantics_full_probeScript.sml` replays the complete unchanged original `compile_semantics` proof (2418–2615). The original non-exported `comp_correct` and `state_rel_with_clock` prerequisites are freshly replayed through the existing complete comp-correct probe using HOL's quotation-aware loader, retaining the original local simplifier settings. Its two rows record the universally closed full statement and kernel proof success. Lean retains exactly the native state relation and source non-Fail premises, deriving target failure exclusion, termination-choice equivalence, and both divergence-family prefix directions from actual entry simulations and accepted native clock/IO theorems. The inherited rational-cut FP carrier is explicit. This is full StackRemove observational preservation; remaining initialization and whole compiler correctness are separate obligations.
+The LabToTarget code-safety transport probe captures the full original
+`code_similar_IMP_both_no_share_mem` at7364, both program carriers and zero
+hypotheses. An actual width8 Skip program changes its encoding bytes and length
+while its complete original premise is discharged; a Skip-to-ShareMem change
+fails code similarity. Native generic consumers cover all positive dimensions,
+full forward/reverse safety transport, arbitrary encoding bytes/lengths and
+rejection of instruction changes. Target safety follows from the full original
+fetched-line relation and source safety, without target safety assumptions or
+default/HD/EL use. The full initializer remains open. Selector:
+`HOL_PROBE_ONLY=lab_to_target_code_safety_transport_probeScript.sml`.
+
+The same code-safety transport group now captures full
+`code_similar_IMP_both_no_install_or_no_share_mem` at7380 and every free-variable
+carrier. Actual original theorem instances discharge their complete source
+premises for Install with external-only FFI names and changed word positions,
+bytes and lengths, and for Skip with a shared-memory FFI name. Install with that
+shared name fails the original safety predicate. Native generic consumers cover
+both branches, arbitrary annotation payloads and unchanged exact HolFfiName
+lists. Neither alternative is strengthened or discarded, and no target safety
+premise/default/HD/EL dependency is introduced. The single original capture is
+regenerated in full; prior shared-memory transport rows remain unchanged.
+`stack_rawcall_jumplower_case_probe` freshly captures original paired comp_correct/zero hypotheses, the complete JumpLower case statement and exact evaluate_ind callee guards. Six independent original unsigned comparisons at widths1/8/64/80 are replayed in the kernel and runtime; five full theorem consumers retain both existential simulations. Captures do not prove cross-language equivalence or the full pass theorem.
+
+
+
+`word_to_stack_location_labels_probe.out` freshly replays the unchanged full `state_rel_code_domain`, `get_labels_wStackLoad` and `loc_check_SUBSET` proofs. All statements are closed with proof=T/hypotheses=0. Arbitrary states/frames/lists/continuations/code trees are retained; location inclusion has only the original subspt premise and covers both membership and label-lookup branches. The load-label equality is reused from the existing full `LoadContinuations.lean` port, verified by this fresh replay; no duplicate port is added. The new code-domain/location inclusion results remove the location prerequisite of the full Seq simulation; native WordSem resource monotonicity remains a separate blocking obligation.
+The l3_csr_dispatch/read_value/direct_write/special_write/unknown/counter probes
+cover the complete native CSR read/write section. All66 read clauses and41 write
+clauses retain literal counter widths, masks, supervisor lowering, timer clears,
+FP Dirty effects, truncated-core IPI bounds, byte messages and post-write Delta
+readback. Original equations and arbitrary-state kernel regressions complement
+independent numeric FPCSR and counter expectations. The l3_fpcsr_codec probe
+checks every decoded field including reserved31..8; check-l3-fpcsr-codec.py and
+check-l3-csr-counters.py independently validate their captured values. check-l3-csr-equations.py also
+requires all generic equations to evaluate to true and checks exact error bytes. High-counter
+writes shift word32 by32, clearing high32 rather than performing a widened shift;
+CSR3 replaces fullword32 although its read exposes low8. These are model-section
+regressions; fullRun/Next/pass correctness remains open.
+
+`word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
