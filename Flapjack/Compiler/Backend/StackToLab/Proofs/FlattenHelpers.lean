@@ -473,6 +473,143 @@ private theorem labPresAux {width : Nat} [NeZero width] (n : Nat) :
     exact labPresNil' _ le_rfl
 termination_by p => sizeOf p
 
+/-- Non-tail flattening keeps the program's labels, which all belong to the
+section and avoid 0 and 1, distinct, and adds only fresh labels in
+`[nl, nl')`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_to_lab_lab_pres" 1028
+  (words_as_type_indexed_bitvec)]
+theorem stackToLabLabPres {width : Nat} [NeZero width] :
+    ∀ (t : Bool) (p : HolProg width) (n nl : Nat) (cs bs : List Nat),
+      (∀ l ∈ StackPropsCodeLabels.extractLabels p, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧
+        (StackPropsCodeLabels.extractLabels p).Nodup ∧ ¬t = true ∧
+        StackAlloc.nextLabHOL p 2 ≤ nl →
+      (∀ l ∈ LabProps.LabelSets.extractLabels (appListAppend (flattenHOL t p n nl cs bs).1),
+          l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧
+        (LabProps.LabelSets.extractLabels (appListAppend (flattenHOL t p n nl cs bs).1)).Nodup ∧
+        (∀ lab ∈ LabProps.LabelSets.extractLabels (appListAppend (flattenHOL t p n nl cs bs).1),
+          lab ∈ StackPropsCodeLabels.extractLabels p ∨
+            (nl ≤ lab.2 ∧ lab.2 < (flattenHOL t p n nl cs bs).2.2)) ∧
+        nl ≤ (flattenHOL t p n nl cs bs).2.2 := by
+  rintro t p n nl cs bs ⟨hE, hD, ht, hnl⟩
+  simp only [Bool.not_eq_true] at ht
+  subst ht
+  exact labPresAux n p nl cs bs hE hD hnl
+
+/-- Tail flattening keeps the program's labels distinct within the section,
+adding the `Seq` continuation label 1 and fresh labels below `nl'`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "stack_to_lab_lab_pres_T"
+  (words_as_type_indexed_bitvec)]
+theorem stackToLabLabPresT {width : Nat} [NeZero width] :
+    ∀ (t : Bool) (p : HolProg width) (n nl : Nat) (cs bs : List Nat),
+      (∀ l ∈ StackPropsCodeLabels.extractLabels p, l.1 = n ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧
+        (StackPropsCodeLabels.extractLabels p).Nodup ∧ t = true ∧
+        StackAlloc.nextLabHOL p 2 ≤ nl →
+      (∀ l ∈ LabProps.LabelSets.extractLabels (appListAppend (flattenHOL t p n nl cs bs).1),
+          l.1 = n ∧ l.2 ≠ 0) ∧
+        (LabProps.LabelSets.extractLabels (appListAppend (flattenHOL t p n nl cs bs).1)).Nodup ∧
+        (∀ lab ∈ LabProps.LabelSets.extractLabels (appListAppend (flattenHOL t p n nl cs bs).1),
+          lab ∈ StackPropsCodeLabels.extractLabels p ∨ lab.2 < (flattenHOL t p n nl cs bs).2.2) ∧
+        nl ≤ (flattenHOL t p n nl cs bs).2.2 := by
+  rintro t p n nl cs bs ⟨hE, hD, ht, hnl⟩
+  subst ht
+  by_cases hs : isSeqHOL p = true
+  · obtain ⟨a, b, rfl⟩ : ∃ a b, p = .seq a b := by
+      cases p <;> simp [isSeqHOL] at hs; exact ⟨_, _, rfl⟩
+    have two : 2 ≤ nl := le_trans (nextLabNonZero _) hnl
+    have bnd := labelsBound hnl
+    rw [StackAlloc.next_lab_thm] at hnl
+    dsimp only at hnl
+    simp only [StackPropsCodeLabels.extractLabels] at hE hD bnd ⊢
+    rcases h1 : flattenHOL false a n nl cs bs with ⟨ys1, nr1, nl1⟩
+    have pa := labPresAux n a nl cs bs (fun l h => hE l (List.mem_append_left _ h))
+      (nodupLeft hD) (by omega)
+    rw [h1] at pa; dsimp only at pa
+    rcases h2 : flattenHOL false b n nl1 cs bs with ⟨ys2, nr2, nl2⟩
+    have pb := labPresAux n b nl1 cs bs (fun l h => hE l (List.mem_append_right _ h))
+      (nodupRight hD) (by have := pa.2.2.2; omega)
+    rw [h2] at pb; dsimp only at pb
+    obtain ⟨g, d, m, o⟩ := labPresApp pa pb hD bnd
+    rw [flattenHOL]
+    simp only [h1, h2, if_true, appAppend, appList, LabProps.LabelSets.extractLabels_append,
+      LabProps.LabelSets.extractLabels]
+    have one : (n, 1) ∉ LabProps.LabelSets.extractLabels (appListAppend ys1) ++
+        LabProps.LabelSets.extractLabels (appListAppend ys2) := fun h => (g _ h).2.2 rfl
+    refine ⟨?_, ?_, ?_, o⟩
+    · intro l hl
+      simp only [List.mem_append, List.mem_singleton] at hl
+      rcases hl with (hl | rfl) | hl
+      · exact ⟨(g l (List.mem_append_left _ hl)).1, (g l (List.mem_append_left _ hl)).2.1⟩
+      · exact ⟨rfl, by simp⟩
+      · exact ⟨(g l (List.mem_append_right _ hl)).1, (g l (List.mem_append_right _ hl)).2.1⟩
+    · have : (LabProps.LabelSets.extractLabels (appListAppend ys1) ++
+          LabProps.LabelSets.extractLabels (appListAppend ys2) ++ [(n, 1)]).Nodup := by
+        rw [List.nodup_append]
+        exact ⟨d, by simp, fun x hx y hy hxy => by simp at hy; subst hy; subst hxy; exact one hx⟩
+      refine (List.Perm.nodup_iff ?_).mp this
+      rw [List.perm_iff_count]; intro x; simp only [List.count_append]; omega
+    · intro lab hl
+      simp only [List.mem_append, List.mem_singleton] at hl
+      rcases hl with (hl | rfl) | hl
+      · rcases m lab (List.mem_append_left _ hl) with h | h
+        · exact .inl h
+        · exact .inr h.2
+      · right; simp only; omega
+      · rcases m lab (List.mem_append_right _ hl) with h | h
+        · exact .inl h
+        · exact .inr h.2
+  · rw [flattenTF hs]
+    obtain ⟨g, d, m, o⟩ := labPresAux n p nl cs bs hE hD hnl
+    exact ⟨fun l hl => ⟨(g l hl).1, (g l hl).2.1⟩, d,
+      fun lab hl => (m lab hl).imp id (fun h => h.2), o⟩
+
+/-- Every program section produced from well-labelled source programs with
+distinct names satisfies `labels_ok`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "prog_to_section_labels_ok"
+  (words_as_type_indexed_bitvec)]
+theorem progToSectionLabelsOk {width : Nat} [NeZero width] {prog : List (Nat × HolProg width)} :
+    (∀ np ∈ prog, (∀ l ∈ StackPropsCodeLabels.extractLabels np.2,
+        l.1 = np.1 ∧ l.2 ≠ 0 ∧ l.2 ≠ 1) ∧ (StackPropsCodeLabels.extractLabels np.2).Nodup) ∧
+      (prog.map Prod.fst).Nodup →
+    labelsOk (prog.map progToSectionHOL) := by
+  rintro ⟨hall, hnames⟩
+  refine ⟨by rw [mapProgToSectionFst]; exact hnames, ?_⟩
+  intro sec hsec
+  obtain ⟨⟨n, p⟩, hmem, rfl⟩ := List.mem_map.mp hsec
+  obtain ⟨hE, hD⟩ := hall (n, p) hmem
+  rw [progToSection_eq]
+  have hnl : StackAlloc.nextLabHOL p 2 ≤ StackAlloc.nextLab p 2 := le_rfl
+  obtain ⟨g, d, m, o⟩ := stackToLabLabPresT true p n (StackAlloc.nextLab p 2) [] []
+    ⟨hE, hD, rfl, hnl⟩
+  have two : 2 ≤ StackAlloc.nextLab p 2 := nextLabNonZero p
+  simp only [LabProps.LabelSets.extractLabels_append, LabProps.LabelSets.extractLabels]
+  set L := LabProps.LabelSets.extractLabels
+    (appListAppend (flattenHOL true p n (StackAlloc.nextLab p 2) [] []).1) with hL
+  set k := (if isSeqHOL p = true then (flattenHOL true p n (StackAlloc.nextLab p 2) [] []).2.2
+    else 1) with hk
+  have notin : (n, k) ∉ L := by
+    intro h
+    by_cases hs : isSeqHOL p = true
+    · rw [if_pos hs] at hk
+      rcases m _ h with e | lt
+      · have := labelsBound (p := p) hnl _ e
+        simp only at this
+        omega
+      · simp only at lt; omega
+    · rw [if_neg hs] at hk
+      rw [hL, flattenTF hs] at h
+      have := (labPresAux n p _ [] [] hE hD hnl).1 _ h
+      exact this.2.2 hk
+  refine ⟨?_, ?_⟩
+  · intro l hl
+    simp only [List.mem_append, List.mem_singleton] at hl
+    rcases hl with hl | rfl
+    · exact g l hl
+    · refine ⟨rfl, ?_⟩
+      simp only [hk]
+      split_ifs <;> omega
+  · rw [List.nodup_append]
+    exact ⟨d, by simp, fun x hx y hy hxy => by simp at hy; subst hy; subst hxy; exact notin hx⟩
+
 /-- A fetched compiled jump to an installed destination takes one LabSem
 step to the destination position. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "compile_jump_correct"
