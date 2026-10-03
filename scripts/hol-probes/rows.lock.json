@@ -7082,6 +7082,12 @@
       "sha256": "43d14b6bdd51f0dc6ac5cda03d88eecca0ecf4502f7d7242f5b634e969dae2e2"
     },
     {
+      "bytes": 2205,
+      "out": "stack_remove_init_any_probe.out",
+      "rows": 23,
+      "sha256": "a95c43de0a080cd155009e3e3943172448869e0e8c11c2926a34a1e51561b444"
+    },
+    {
       "bytes": 374,
       "out": "stack_remove_init_clock_probe.out",
       "rows": 6,

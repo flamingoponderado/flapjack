@@ -287,6 +287,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.MemVal
 import Flapjack.Compiler.Backend.StackRemove.Proofs.FmapSimp
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders

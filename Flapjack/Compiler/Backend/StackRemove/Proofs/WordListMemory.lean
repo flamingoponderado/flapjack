@@ -246,6 +246,23 @@ private theorem readMem_getElem {width : Nat} [NeZero width] {β : Type}
       BitVec.ofNat_add, BitVec.add_mul, BitVec.one_mul]
     ac_rfl
 
+/-- Flapjack proof factoring: the memory graph on an address range is the
+indexed graph of the words read there. No separate HOL declaration. -/
+private theorem fun2SetAddresses {width : Nat} [NeZero width] {β : Type}
+    (m : BitVec width → β) (n : Nat) (a : BitVec width) :
+    SetSep.fun2Set (m, addresses a n) =
+      (fun e => ∃ i, ∃ h : i < (readMem a m n).length,
+        e = (a + BitVec.ofNat width i * bytesInWord width, (readMem a m n)[i])) := by
+  funext e
+  apply propext
+  simp only [SetSep.fun2Set, mem_addresses]
+  constructor
+  · rintro ⟨_, ⟨i, hi, rfl⟩, rfl⟩
+    exact ⟨i, by rw [length_readMem]; exact hi, by rw [readMem_getElem]⟩
+  · rintro ⟨i, hi, rfl⟩
+    rw [length_readMem] at hi
+    exact ⟨_, ⟨i, hi, rfl⟩, by rw [readMem_getElem]⟩
+
 /-- Complete original existence of a word list covering exactly the address
 range, for an arbitrary memory function and base address. Only the original
 range-size bound and good dimension are assumed; the base may wrap. -/
@@ -258,18 +275,30 @@ theorem wordListExistsAddresses {width : Nat} [NeZero width] {β : Type}
       Misc.wordListExists a n (SetSep.fun2Set (m1, addresses a n)) := by
   rintro n a ⟨bound, good⟩
   refine ⟨readMem a m1 n, (WordListExists.starCond _ _ _).mpr ⟨?_, length_readMem n a m1⟩⟩
-  have indexed := wordListIndexed good (readMem a m1 n) a
+  rw [fun2SetAddresses]
+  exact wordListIndexed good (readMem a m1 n) a
     (by rw [length_readMem, Nat.mul_comm]; exact bound)
-  convert indexed using 1
-  funext e
+
+/-- Complete original identification of the memory assertion on an address
+range with the forward list of the words read there. Only the original
+range-size bound and good dimension are assumed; the base may wrap. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "memory_addresses"
+  (words_as_type_indexed_bitvec)]
+theorem memoryAddresses {width : Nat} [NeZero width] :
+    ∀ (n : Nat) (a : BitVec width) (m : BitVec width → WordLocW width),
+      n * (width / 8) < 2 ^ width ∧ goodDimindex width →
+      memoryHOL m (addresses a n) = Misc.wordList a (readMem a m n) := by
+  rintro n a m ⟨bound, good⟩
+  have indexed := wordListIndexed good (readMem a m n) a
+    (by rw [length_readMem]; exact bound)
+  funext heap
   apply propext
-  simp only [SetSep.fun2Set, mem_addresses]
+  simp only [memoryHOL, fun2SetAddresses]
   constructor
-  · rintro ⟨_, ⟨i, hi, rfl⟩, rfl⟩
-    exact ⟨i, by rw [length_readMem]; exact hi, by rw [readMem_getElem]⟩
-  · rintro ⟨i, hi, rfl⟩
-    rw [length_readMem] at hi
-    exact ⟨_, ⟨i, hi, rfl⟩, by rw [readMem_getElem]⟩
+  · rintro rfl
+    exact indexed
+  · intro assertion
+    exact WordListInjective.wordListInj _ a heap _ ⟨assertion, indexed⟩
 
 /-- Complete original wrap decomposition: a list longer than the address space
 splits into two non-empty lists starting at the same base address. -/
@@ -312,5 +341,19 @@ theorem wordListWrap {width : Nat} [NeZero width] {β : Type}
     | cons y ys =>
       rw [hTake, hDrop] at split
       exact ⟨x, xs, y, ys, a, split, rfl⟩
+
+private instance {α : Type} : Std.Associative (SetSep.star (α := α)) :=
+  ⟨fun p q r => (SetSep.starAssoc p q r).symm⟩
+
+private instance {α : Type} : Std.Commutative (SetSep.star (α := α)) :=
+  ⟨SetSep.starComm⟩
+
+/-- Complete original separation rearrangement over arbitrary assertions on
+an arbitrary heap-element type; HOL `*` is left-associated `STAR`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "star_move_lemma"]
+theorem starMoveLemma {α : Type} (p0 p1 p1' p2 p3 p4 : (α → Prop) → Prop) :
+    SetSep.star (SetSep.star (SetSep.star (SetSep.star (SetSep.star p0 p1) p1') p2) p3) p4 =
+      SetSep.star p2 (SetSep.star (SetSep.star p1 p1') (SetSep.star p3 (SetSep.star p4 p0))) := by
+  ac_rfl
 
 end Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
