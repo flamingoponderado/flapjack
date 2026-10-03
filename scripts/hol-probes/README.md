@@ -6769,3 +6769,15 @@ are independently replayed against original HOL. FP dependencies retain the
 inherited real-rendering assumption (SOUNDNESS item8); full clock extension,
 compiler simulation and machine semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=labprops_evaluate_io_events_mono_probeScript.sml`.
+
+### Full native Lab instruction and shared-memory clock laws
+
+`labprops_clock_support_probeScript.sml` freshly captures all four original
+reg_imm/asm_inst/addr/shared-op clock declarations, complete generic types,
+zero hypotheses and kernel proof T (sixteen rows). Native proofs retain all
+arbitrary compiler configurations and FFI hosts, all instruction constructors
+and all eight shared operators. The shared law keeps all three NONE/return/final
+conjuncts and each original nonzero-clock guard. Instruction FP dependencies
+retain inherited real-rendering assurance (SOUNDNESS item8); these laws supply
+actual prerequisites of clock-event monotonicity, not a machine simulation.
+Regenerate with `HOL_PROBE_ONLY=labprops_clock_support_probeScript.sml`.

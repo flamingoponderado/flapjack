@@ -2612,6 +2612,12 @@
       "sha256": "167e997a47efd3a23257f16167854374737ed1e386c949567b3877869a51b4b6"
     },
     {
+      "bytes": 2291,
+      "out": "labprops_clock_support_probe.out",
+      "rows": 16,
+      "sha256": "b08ff2b12b935d626f7e888959d42154f6f90b0064e17180122e11c0ab2b0fd1"
+    },
+    {
       "bytes": 484,
       "out": "labprops_evaluate_io_events_mono_probe.out",
       "rows": 4,
