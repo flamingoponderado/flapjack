@@ -7610,3 +7610,9 @@ Statement regression evidence, not literal local proof replay or equivalence.
 wStackStore definition and empty/reverse/repeated-slot continuation cases.
 Original production script uses it only at its definition; compiler direct
 store clauses are retained. Regression evidence, not equivalence.
+`pan_structs_program_deccall_probe` captures full original `compile_correct`,
+its DecCall specialization and complete original `evaluate_ind`, quantified
+types and closed kernel truth. The Lean case retains all ten premises/seven
+conclusions and exactly two original guarded IHs; lookup, return comparisons,
+continuation preconditions and final binding restoration are derived internally.
+Full Call/whole program/compiler correctness remain open.

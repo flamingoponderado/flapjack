@@ -7088,3 +7088,7 @@ run_probe word_to_stack_native_stackstore_probeScript.sml word_to_stack_native_s
 run_probe word_to_stack_store_register_probeScript.sml word_to_stack_store_register_probe.out \
   store_reg1_full store_reg1_hypotheses store_reg1_proved write_seq_full write_seq_hypotheses write_seq_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_deccall_probeScript.sml pan_structs_program_deccall_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_deccall_statement compile_correct_deccall_proved compile_correct_full_types compile_correct_deccall_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
