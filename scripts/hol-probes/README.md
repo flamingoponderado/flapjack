@@ -7231,3 +7231,10 @@ induction and exactly simplified reversed shape-conversion theorems, binder
 types and closed kernel proofs. Local statements and original unchanged proof
 text are replayed. The whole unused binder is polymorphic; induction n is num.
 Native proofs retain original guards and derive named lookup/field shapes.
+
+`pan_structs_program_return_raise_probe` captures the original whole program
+correctness theorem and Return/Raise specializations as closed kernel theorems.
+Native cases retain all ten hypotheses and seven conclusions. Original source
+size guards, Raise exception-shape lookup/equality and error branches are
+preserved; target guards follow from full faithful expression correctness,
+value well-formedness, shape conversion and compiled-shape size preservation.
