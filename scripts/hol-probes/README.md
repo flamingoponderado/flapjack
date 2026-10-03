@@ -7203,3 +7203,9 @@ original HOL model route. Finite fixtures and literal rendering drift checks
 are regression/transcription evidence, not a universal HOL-to-Lean proof.
 The native executed encoder configuration and final encoder correctness are
 separate downstream beads; this batch does not replace the compiler route.
+`pansem_eval_ind_probe` captures the original generated faithful expression
+induction theorem with its predicate type, closed hypotheses and kernel proof.
+The reference checker recognizes only this exact source path and the reviewed
+complete terminating `eval_def` block; its hash pin prevents unrelated source
+changes from silently authorizing the generated name. This is provenance
+checking, while the native theorem still requires independent statement review.
