@@ -84987,6 +84987,66 @@
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FullMakeInit.lean",
+    "lean_name": "fullMakeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3056-3071. Parameters stack_conf data_conf max_heap sp offset bitmaps code s4 save_regs data_sp coracle in order (save_regs num set as Bool predicate). The let chain verbatim: ggc = is_gen_gc data_conf.gc_kind, jump, code1 = stack_alloc$compile data_conf (stack_rawcall$compile code), code2 = stack_remove$compile jump offset ggc max_heap sp InitGlobals_location code1, code3 = fromAList (stack_names$compile stack_conf.reg_names code2), coracle1/2/3 = (I ## MAP stack_alloc$prog_comp ## I), (I ## MAP (stack_remove$prog_comp jump offset sp) ## I), (I ## stack_names$compile reg_names ## I) composed on coracle (Prod.map id (Prod.map _ id) ∘ _), s3 = stack_to_lab make_init code3 coracle3 (MAP (find_name reg_names) [2;3;4]) save_regs s4, s2 = stack_names make_init, s1 = stack_remove make_init_any, result (stack_alloc make_init data_conf (fromAList code) coracle s1, stack_remove make_init_opt ...), each over the reviewed tagged Lean definition. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module witness; positive BitVec width with NeZero. Inherits the reals_as_rational_cuts assumption through make_init_opt's evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_buffer",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FullMakeInit.lean",
+    "lean_name": "fullMakeInitBuffer",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3073-3084. Free a..k as explicit parameters in HOL argument order; conclusion both (FST (full_make_init a b c d e f g h i j k)).code_buffer.buffer = [] and data_buffer.buffer = [], no premise. Proof via an untagged make_init_any field lemma (init_prop buffers on success, literal empty buffers otherwise). Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through make_init_opt's evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_ffi",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FullMakeInit.lean",
+    "lean_name": "fullMakeInitFfi",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3086-3091: (FST (full_make_init a b c d e f g h i j k)).ffi = h.ffi, no premise; via the ported make_init_any_ffi. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through make_init_opt's evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FullMakeInit.lean",
+    "lean_name": "fullMakeInitCompile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3093-3104: (FST (full_make_init a b c d e f g h i j k)).compile = (λc. (λp. h.compile c (MAP prog_to_section (MAP (stack_names$prog_comp a.reg_names) (MAP (stack_remove$prog_comp a.jump e d) p)))) o MAP stack_alloc$prog_comp), no premise; prog_comp overloads resolved by HOL type (probe), rendered with progCompEntryHOL, StackRemove.progComp and StackAlloc.progComp. Proof uses evaluate_consts for the success branch of make_init_any. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through make_init_opt's evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
     "hol_name": "good_code_def",
     "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/GoodCode.lean",
     "lean_name": "goodCode",
