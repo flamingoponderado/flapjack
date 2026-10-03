@@ -677,6 +677,7 @@ import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
