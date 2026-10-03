@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
 import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
@@ -2210,5 +2211,97 @@ theorem compiledHandlerCallTimeout {width : Nat} [NeZero width] {C F : Type}
     simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
       not_true_eq_false, ↓reduceIte]
     exact ⟨movedFfi.symm,zero.trans movedZero.symm⟩
+
+/-- Recover actual SOME-handler frame slots from the full saved stack
+relation. Bitmap decoding determines the header/payload; the original
+filterBitmap and indexList membership laws derive each GC optional slot and
+its range. Non-GC observations retain the original stackRelAux guards.
+No target slot value or lookup is assumed. This is Flapjack factoring of the
+original normal/exception caller-local reconstruction, not a separate HOL
+port or a completed caller relation. -/
+theorem savedHandlerCallerFrameSlots {width : Nat} [NeZero width]
+    (k currentHandler : Nat) (size : Option Nat)
+    (nonGc gc : List (Nat × WordLocW width)) (savedHandler h1 h2 : Nat)
+    (rest : List (WordSemStackFrame width)) (handler : Option (WordLocW width))
+    (stack : List (WordLocW width)) (length : Nat) (bitmaps : List (BitVec width))
+    (frameSize : Nat) (lens : List Nat)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      handler stack length bitmaps (frameSize :: lens)) :
+    ∃ saved bitmap payload bits,
+      stack = .word 1 :: .loc h1 h2 :: saved :: bitmap :: payload ∧
+      StackSem.fullReadBitmap bitmaps bitmap = some bits ∧
+      bits.length = frameSize ∧ frameSize ≤ payload.length ∧
+      size.getD (frameSize + 1) = frameSize + 1 ∧
+      (∀ key value, (key,value) ∈ gc →
+        k ≤ adjustNames key ∧ adjustNames key < k + frameSize ∧
+        (payload.take frameSize)[frameSize - (adjustNames key-k+1)]? = some value) ∧
+      (∀ key value, nonGc.lookup key = some value → gc.lookup key = none →
+        adjustNames key < k + bits.length ∧
+        bits[k + bits.length - (adjustNames key + 1)]? = some false ∧
+        (indexList (payload.take frameSize) k).lookup (key/2) = some value) := by
+  obtain ⟨sorted,decodedFrames,decoded,handlerRelation,auxiliary⟩ := relation
+  obtain ⟨location,saved,bitmap,payload,bits,tail,stackEq,read,bitsLength,
+    frameBound,tailDecoded,decodedEq⟩ := absStackConsSome bitmaps size nonGc gc
+      (savedHandler,h1,h2) rest stack frameSize lens decodedFrames decoded
+  rw [decodedEq] at auxiliary
+  simp only [stackRelAux] at auxiliary
+  obtain ⟨savedValue,locationEq,nonGcSlots,filtered,sizeEq,tailAux⟩ := auxiliary
+  have payloadLength : (payload.take frameSize).length = frameSize := by
+    simp only [List.length_take,Nat.min_eq_left frameBound]
+  refine ⟨saved,bitmap,payload,bits,?_,read,bitsLength,frameBound,?_,?_,nonGcSlots⟩
+  · simpa only [locationEq] using stackEq
+  · simpa only [payloadLength] using sizeEq
+  · intro key value member
+    have indexed : (adjustNames key,value) ∈ indexList (payload.take frameSize) k :=
+      Compiler.Backend.WordToStack.filterBitmapMem bits (indexList (payload.take frameSize) k)
+        (gc.map (fun p => (adjustNames p.1,p.2))) (adjustNames key,value) filtered
+        (List.mem_map.mpr ⟨(key,value),member,rfl⟩)
+    have position := memIndexListEl
+      (payload.take frameSize) (adjustNames key) value k indexed
+    have keys : adjustNames key ∈ (indexList (payload.take frameSize) k).map Prod.fst :=
+      List.mem_map.mpr ⟨(adjustNames key,value),indexed,rfl⟩
+    rw [mapFstIndexList] at keys
+    simp only [List.mem_reverse,List.mem_map,List.mem_range] at keys
+    obtain ⟨index,indexBound,indexEq⟩ := keys
+    have keyBound : k ≤ adjustNames key ∧ adjustNames key < k + frameSize := by
+      rw [payloadLength] at indexBound
+      omega
+    refine ⟨keyBound.1,keyBound.2,?_⟩
+    have slotBound : frameSize - (adjustNames key-k+1) < (payload.take frameSize).length := by
+      rw [payloadLength]
+      omega
+    rw [List.getElem?_eq_getElem slotBound]
+    simpa only [payloadLength] using congrArg some position
+
+/-- Actual SOME-handler source pop/set_vars lookup precedence at every key.
+Return entries precede restored GC entries and saved non-GC values, including
+all duplicate and missing-key behavior. The optional saved size and handler
+are retained; no lookup outcome or target relation is assumed. Flapjack
+source factoring for the original caller-local reconstruction. -/
+theorem restoredHandlerCallerLookup {width : Nat} [NeZero width] {C F : Type}
+    (bodyPost : WordSemStateFiniteExact width C F) (size : Option Nat)
+    (nonGc : Spt (WordLocW width)) (gc : List (Nat × WordLocW width))
+    (savedHandler h1 h2 : Nat) (rest : List (WordSemStackFrame width))
+    (values : List Nat) (returned : List (WordLocW width)) (key : Nat)
+    (frame : bodyPost.stack =
+      .stackFrame size (sptToAList nonGc) gc (some (savedHandler,h1,h2)) :: rest) :
+    ∃ popped, WordSemStateFiniteExact.popEnv bodyPost = some popped ∧
+      popped.handler = savedHandler ∧ popped.localsSize = size ∧
+      sptLookup key (WordSemStateFiniteExact.setVars values returned popped).locals =
+        match holAlookup (values.zip returned) key with
+        | some value => some value
+        | none => match sptAListLookup key gc with
+          | some value => some value
+          | none => sptLookup key nonGc := by
+  refine ⟨{bodyPost with
+    locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList nonGc)),
+    stack := rest, localsSize := size, handler := savedHandler},?_,rfl,rfl,?_⟩
+  · simp only [WordSemStateFiniteExact.popEnv,frame]
+  · have savedLookup : sptAListLookup key (sptToAList nonGc) = sptLookup key nonGc := by
+      rw [← sptLookup_sptFromAList,sptLookup_sptFromAList_sptToAList]
+    simp only [WordSemStateFiniteExact.setVars,lookup_alist_insert_any,
+      sptLookup_sptUnion,sptLookup_sptFromAList,savedLookup]
+    cases holAlookup (values.zip returned) key <;> cases sptAListLookup key gc <;> rfl
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
