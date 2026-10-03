@@ -76964,5 +76964,91 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: s.code = FEMPTY /\\ ALL_DISTINCT (MAP FST (functions code)) /\\ semantics_decls s start code <> Fail ==> ?body rshape. ALOOKUP (functions code) start = SOME ([],body,rshape); ALOOKUP is List.lookup, and the free s start code are bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "mapMap2FstLemmaHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "map_map2_fst_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !xs ys. MAP FST (MAP2 (\\x y. (x,y)) xs ys) = TAKE (MIN (LENGTH xs) (LENGTH ys)) xs over polymorphic α β; MAP2 is List.zipWith (both truncate)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsNestedSeqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_nested_seq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ps. exp_ids (nested_seq ps) = FLAT (MAP exp_ids ps)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsCompileGlobalsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_compile_globals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ctxt p. exp_ids (pan_globals$compile ctxt p) = exp_ids p over compileProgExactHOL, by compile_ind (Lean functional induction). Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsFpermHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_fperm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !f g p. exp_ids (fperm f g p) = exp_ids p."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "compileDecsExpIdsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "compile_decs_exp_ids",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ctxt pan_code. MAP (exp_ids o FST o SND o SND) (functions (FST (SND (compile_decs ctxt pan_code)))) = MAP (...) (functions pan_code); the composite projection of (name,params,body,rshape) is the body, written fun e => expIdsHOL e.2.2.1. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fpermExpIdsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "fperm_exp_ids",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !f g pan_code. MAP (exp_ids o FST o SND o SND) (functions (fperm_decs f g pan_code)) = MAP (...) (functions pan_code), with the same projection rendering."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "compileDecsNoExpIdsMainHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "compile_decs_no_exp_ids_main",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ctxt prog. EVERY (\\x. exp_ids x = []) (FST (compile_decs ctxt prog)); EVERY rendered as membership quantification. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionsResortDeclsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "functions_resort_decls",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: functions (resort_decls xs) = functions xs, with the free xs bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical pan_globals context roundtrip, re-exported for the fmap_as_finite_support_relation [PanGlobalsContextExact.globals] qualifier; no separately named HOL original."
   }
 ]

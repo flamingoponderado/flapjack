@@ -16,6 +16,7 @@ import Flapjack.Pancake.CrepToLoop.Proofs.MakeFuncsLemmas
 import Flapjack.Pancake.CrepToLoop.Proofs.RelationsExact
 import Flapjack.Pancake.Semantics.PanProps.HasMain
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
+import Flapjack.Pancake.PanGlobals.CompileExpExact
 
 /-!
 The source-level lemmas from CakeML's `pan_to_wordProofScript.sml`.
@@ -74,6 +75,18 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} {σ : Type} [NeZero width] :
     (∀ state : PanSemStateFiniteExact width σ,
       PanSemStateFiniteExact.ofExact state.toExact state.toExact_finiteSupport = state) :=
   PanSemStateFiniteExact.holFmapAsFiniteSupportWitness
+
+end PanToWordProofWitnesses
+
+namespace PanToWordProofWitnesses
+
+/-- Canonical roundtrip of the pan_globals context carrier, re-exported for the
+`fmap_as_finite_support_relation := [PanGlobalsContextExact.globals]`
+qualifier of the `compile_decs` lemmas. -/
+theorem holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact
+    {width : Nat} [NeZero width] (context : PanGlobalsContextExact width) :
+    PanGlobalsContextExact.ofBroad (PanGlobalsContextExact.toBroad context) = context :=
+  PanGlobalsContextExact.holFmapAsFiniteSupportWitness context
 
 end PanToWordProofWitnesses
 
@@ -293,5 +306,126 @@ theorem semanticsDeclsHasMainPanToWordHOL {width : Nat} {σ : Type} [NeZero widt
   obtain ⟨body, rshape, h⟩ := PanPropsHasMain.semanticsDeclsHasMainPrime s start code hsem
   rw [hcode, PanGlobalsCompileTopSemanticsDecls.emptyUpdateListLookup _ _ hnd] at h
   exact ⟨body, rshape, h⟩
+
+
+/-- Exact HOL `map_map2_fst_lemma` (`pan_to_wordProofScript.sml:118-126`);
+`MAP2 (λx y. (x,y))` is `List.zip`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "map_map2_fst_lemma"]
+theorem mapMap2FstLemmaHOL {α β : Type} :
+    ∀ (xs : List α) (ys : List β),
+      (List.zipWith (fun x y => (x, y)) xs ys).map Prod.fst =
+        xs.take (min xs.length ys.length) := by
+  intro xs
+  induction xs with
+  | nil => intro ys; simp
+  | cons x xs ih =>
+    intro ys
+    cases ys with
+    | nil => simp
+    | cons y ys => simp [ih, Nat.succ_min_succ]
+
+/-- Exact HOL `exp_ids_nested_seq` (`pan_to_wordProofScript.sml:128-133`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "exp_ids_nested_seq"]
+theorem expIdsNestedSeqHOL {width : Nat} [NeZero width] :
+    ∀ (ps : List (ProgHOL width)), expIdsHOL (nestedSeqHOL ps) = (ps.map expIdsHOL).flatten := by
+  intro ps
+  induction ps with
+  | nil => simp [nestedSeqHOL, expIdsHOL]
+  | cons p ps ih => simp [nestedSeqHOL, expIdsHOL, ih]
+
+/-- Exact HOL `exp_ids_compile_globals` (`pan_to_wordProofScript.sml:135-142`),
+by the source's `compile_ind` recursion realised as strong induction on the
+program size. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "exp_ids_compile_globals"
+  (fmap_as_finite_support_relation := [PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem expIdsCompileGlobalsHOL {width : Nat} [NeZero width] :
+    ∀ (ctxt : PanGlobalsContextExact width) (p : ProgHOL width),
+      expIdsHOL (compileProgExactHOL ctxt p) = expIdsHOL p := by
+  intro ctxt p
+  induction p using compileProgExactHOL.induct ctxt
+  case case30 =>
+    rename_i p _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+    cases p <;> simp_all [compileProgExactHOL, expIdsHOL]
+  all_goals
+    rw [compileProgExactHOL]
+    try simp_all [expIdsHOL]
+    try split <;> simp_all [expIdsHOL]
+
+/-- Exact HOL `exp_ids_fperm` (`pan_to_wordProofScript.sml:144-151`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "exp_ids_fperm"
+  (words_as_type_indexed_bitvec)]
+theorem expIdsFpermHOL {width : Nat} [NeZero width] :
+    ∀ (f g : MlS) (p : ProgHOL width), expIdsHOL (fpermHOL f g p) = expIdsHOL p := by
+  intro f g p
+  induction p using fpermHOL.induct
+  case case7 =>
+    rename_i p _ _ _ _ _ _
+    cases p <;> simp_all [fpermHOL, expIdsHOL]
+  case case5 info _ _ ih =>
+    rcases info with _ | ⟨k, _ | ⟨e, b, h⟩⟩ <;> simp_all [fpermHOL, expIdsHOL]
+  all_goals
+    rw [fpermHOL]
+    try simp_all [expIdsHOL]
+    try split <;> simp_all [expIdsHOL]
+
+/-- Exact HOL `compile_decs_exp_ids` (`pan_to_wordProofScript.sml:153-161`);
+`exp_ids ∘ FST ∘ SND ∘ SND` on a function entry `(name, params, body, rshape)`
+is `expIdsHOL` of the body. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "compile_decs_exp_ids"
+  (fmap_as_finite_support_relation := [PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem compileDecsExpIdsHOL {width : Nat} [NeZero width] :
+    ∀ (ctxt : PanGlobalsContextExact width) (pan_code : List (DeclHOL width)),
+      (functionsHOL (compileDecsExactHOL ctxt pan_code).2.1).map (fun e => expIdsHOL e.2.2.1) =
+        (functionsHOL pan_code).map (fun e => expIdsHOL e.2.2.1) := by
+  intro ctxt pan_code
+  induction pan_code generalizing ctxt with
+  | nil => simp [compileDecsExactHOL, functionsHOL]
+  | cons d ds ih =>
+    cases d <;> simp_all [compileDecsExactHOL, functionsHOL, expIdsCompileGlobalsHOL]
+
+/-- Exact HOL `fperm_exp_ids` (`pan_to_wordProofScript.sml:163-172`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "fperm_exp_ids"
+  (words_as_type_indexed_bitvec)]
+theorem fpermExpIdsHOL {width : Nat} [NeZero width] :
+    ∀ (f g : MlS) (pan_code : List (DeclHOL width)),
+      (functionsHOL (fpermDecsHOL f g pan_code)).map (fun e => expIdsHOL e.2.2.1) =
+        (functionsHOL pan_code).map (fun e => expIdsHOL e.2.2.1) := by
+  intro f g pan_code
+  induction pan_code with
+  | nil => simp [fpermDecsHOL, functionsHOL]
+  | cons d ds ih =>
+    cases d <;> simp_all [fpermDecsHOL, functionsHOL, expIdsFpermHOL]
+
+/-- Exact HOL `compile_decs_no_exp_ids_main` (`pan_to_wordProofScript.sml:174-180`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "compile_decs_no_exp_ids_main"
+  (fmap_as_finite_support_relation := [PanGlobalsContextExact.globals])
+  (words_as_type_indexed_bitvec)]
+theorem compileDecsNoExpIdsMainHOL {width : Nat} [NeZero width] :
+    ∀ (ctxt : PanGlobalsContextExact width) (prog : List (DeclHOL width)),
+      ∀ x ∈ (compileDecsExactHOL ctxt prog).1, expIdsHOL x = [] := by
+  intro ctxt prog
+  induction prog generalizing ctxt with
+  | nil => simp [compileDecsExactHOL]
+  | cons d ds ih =>
+    cases d <;> simp [compileDecsExactHOL, expIdsHOL] <;> exact ih _
+
+/-- Exact HOL `functions_resort_decls` (`pan_to_wordProofScript.sml:182-187`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "functions_resort_decls"]
+theorem functionsResortDeclsHOL {width : Nat} [NeZero width] (xs : List (DeclHOL width)) :
+    functionsHOL (resortDeclsHOL xs) = functionsHOL xs := by
+  have hname : ∀ ys : List (DeclHOL width), functionsHOL (ys.filter isNameHOL) = [] := by
+    intro ys
+    induction ys with
+    | nil => rfl
+    | cons d ds ih => cases d <;> simp_all [functionsHOL, isNameHOL, List.filter]
+  have hexn : ∀ ys : List (DeclHOL width), functionsHOL (ys.filter isExnDeclHOL) = [] := by
+    intro ys
+    induction ys with
+    | nil => rfl
+    | cons d ds ih => cases d <;> simp_all [functionsHOL, isExnDeclHOL, List.filter]
+  simp only [resortDeclsHOL, functionsHOL_append, hname, hexn, functionsHOL_filter_isDecl,
+    functionsHOL_filter_isFunction, List.nil_append]
 
 end Flapjack
