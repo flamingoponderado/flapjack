@@ -2072,4 +2072,82 @@ theorem savedCallerFrameSlots {width handlerWidth : Nat}
   refine ⟨indexBound, ?_⟩
   rw [List.getElem?_eq_getElem (by omega), slot]
 
+/-- Derive concrete non-GC caller slots from the original auxiliary relation.
+Both lower and upper key bounds follow from the successful indexed-frame
+lookup; neither a register/stack decision nor a target slot is assumed.
+This is case-local restoration infrastructure, not a separate HOL port. -/
+theorem savedCallerNonGCSlots {width handlerWidth : Nat}
+    [NeZero width] [NeZero handlerWidth]
+    (k handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (targetHandler : Option (WordLocW handlerWidth)) (stack : List (WordLocW width))
+    (length : Nat) (bitmaps : List (BitVec width)) (frame : Nat) (lens : List Nat)
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      targetHandler stack length bitmaps (frame :: lens)) :
+    ∃ bitmap rest, stack = bitmap :: rest ∧ frame ≤ rest.length ∧
+      ∀ key value, sptAListLookup key nonGC = some value → sptAListLookup key gc = none →
+        k ≤ key / 2 ∧ key / 2 < k + frame ∧
+        (rest.take frame)[frame - 1 - (key / 2 - k)]? = some value := by
+  obtain ⟨bitmap, rest, bits, shape, _, bitsLength, bound, _, nonGCSlots⟩ :=
+    savedCallerFrameSlots k handler size nonGC gc tail targetHandler stack length bitmaps
+      frame lens relation
+  refine ⟨bitmap, rest, shape, bound, ?_⟩
+  intro key value lookup absent
+  obtain ⟨keyBound, _, slot⟩ := nonGCSlots key value
+    (by rwa [GcSimulation.lookup_eq_sptAListLookup])
+    (by rwa [GcSimulation.lookup_eq_sptAListLookup])
+  simp only [adjustNames] at keyBound
+  rw [bitsLength] at keyBound
+  have frameLength : (rest.take frame).length = frame := by
+    rw [List.length_take, Nat.min_eq_left bound]
+  rw [GcSimulation.lookup_eq_sptAListLookup, aLookupIndexList _ _ _
+    (by rw [frameLength]; omega), frameLength] at slot
+  have positionBound := (List.getElem?_eq_some_iff.mp slot).1
+  rw [frameLength] at positionBound
+  have lower : k ≤ key / 2 := by omega
+  refine ⟨lower, keyBound, ?_⟩
+  rwa [show frame + k - (key / 2 + 1) = frame - 1 - (key / 2 - k) by omega] at slot
+
+/-- Recover concrete GC caller slots from actual bitmap-filter membership.
+Indexed-frame membership proves the lower key bound as well as the upper bound
+and actual value. This adds no convention, range or target-slot premise and is
+case-local infrastructure for the full normal-return caller restoration. -/
+theorem savedCallerGCSlots {width handlerWidth : Nat}
+    [NeZero width] [NeZero handlerWidth]
+    (k handler : Nat) (size : Option Nat)
+    (nonGC gc : List (Nat × WordLocW width)) (tail : List (WordSemStackFrame width))
+    (targetHandler : Option (WordLocW handlerWidth)) (stack : List (WordLocW width))
+    (length : Nat) (bitmaps : List (BitVec width)) (frame : Nat) (lens : List Nat)
+    (relation : stackRel k handler (.stackFrame size nonGC gc none :: tail)
+      targetHandler stack length bitmaps (frame :: lens)) :
+    ∃ bitmap rest, stack = bitmap :: rest ∧ frame ≤ rest.length ∧
+      ∀ key value, sptAListLookup key gc = some value →
+        k ≤ key / 2 ∧ key / 2 < k + frame ∧
+        (rest.take frame)[frame - 1 - (key / 2 - k)]? = some value := by
+  obtain ⟨_, abstract, decoded, _, auxiliary⟩ := relation
+  obtain ⟨bitmap, rest, bits, ys, shape, _, _, bound, _, abstractShape⟩ :=
+    CallReturnSupport.absStack_cons_none bitmaps size nonGC gc tail stack frame lens abstract decoded
+  rw [abstractShape] at auxiliary
+  simp only [stackRelAux] at auxiliary
+  refine ⟨bitmap, rest, shape, bound, ?_⟩
+  intro key value lookup
+  have member := sptAListLookup_mem key gc value lookup
+  have mapped : (adjustNames key, value) ∈ gc.map (fun p => (adjustNames p.1, p.2)) :=
+    List.mem_map.mpr ⟨(key, value), member, rfl⟩
+  have indexMember := Compiler.Backend.WordToStack.filterBitmapMem bits
+    (indexList (rest.take frame) k) _ (adjustNames key, value) auxiliary.2.1 mapped
+  have keyMember : adjustNames key ∈ (indexList (rest.take frame) k).map Prod.fst :=
+    List.mem_map.mpr ⟨(adjustNames key, value), indexMember, rfl⟩
+  rw [mapFstIndexList, List.mem_reverse] at keyMember
+  obtain ⟨offset, _, keyEq⟩ := List.mem_map.mp keyMember
+  have lower : k ≤ key / 2 := by simp only [adjustNames] at keyEq; omega
+  have upper := memIndexListLim (rest.take frame) (adjustNames key) value k indexMember
+  have slot := memIndexListEl (rest.take frame) (adjustNames key) value k indexMember
+  have frameLength : (rest.take frame).length = frame := by
+    rw [List.length_take, Nat.min_eq_left bound]
+  have optional := List.getElem?_eq_some_iff.mpr ⟨_, slot⟩
+  simp only [adjustNames, frameLength] at upper optional
+  refine ⟨lower, by omega, ?_⟩
+  rwa [show frame - (key / 2 - k + 1) = frame - 1 - (key / 2 - k) by omega] at optional
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
