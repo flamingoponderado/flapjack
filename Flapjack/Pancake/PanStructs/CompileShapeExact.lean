@@ -38,13 +38,14 @@ private theorem dropWhile_suffix_length_lt {α : Type} (p : α → Bool)
         simp
 
 /-! Exact source `compile_shape` (`pan_structsScript.sml:37-67`), over HOL's
-    structure-list argument. The named case uses HOL's first-match
+    structure-list argument. Field names retain HOL’s arbitrary type parameter:
+    compilation reads only their shape component. The named case uses HOL's first-match
     `dropWhile (\(n,fs). ~(n = nm))`; a found entry compiles its field shapes
     in the suffix context. An absent name maps to `One`, as in the source's
     defensive fallback. -/
 mutual
   @[hol "cakeml/pancake/pan_structsScript.sml" "compile_shape_def" 37]
-  def compileShapeExact (context : List (MlS × List (MlS × ShapeHOL))) : ShapeHOL → ShapeHOL
+  def compileShapeExact {α : Type} (context : List (MlS × List (α × ShapeHOL))) : ShapeHOL → ShapeHOL
     | .one => .one
     | .comb shapes => .comb (compileShapesExact context shapes)
     | .named name =>
@@ -62,7 +63,7 @@ mutual
       | omega
 
   @[hol "cakeml/pancake/pan_structsScript.sml" "compile_shape_def" 37]
-  def compileShapesExact (context : List (MlS × List (MlS × ShapeHOL))) : List ShapeHOL → List ShapeHOL
+  def compileShapesExact {α : Type} (context : List (MlS × List (α × ShapeHOL))) : List ShapeHOL → List ShapeHOL
     | [] => []
     | shape :: shapes => compileShapeExact context shape :: compileShapesExact context shapes
   termination_by shapes => (context.length, sizeOf shapes)

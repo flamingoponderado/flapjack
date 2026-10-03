@@ -1,0 +1,62 @@
+compile_correct=∀(v :α panLang$prog) (v1 :(α, β) state) (res :α result option)
+    (s1 :(α, β) state) (t :(α, β) state).
+  evaluate (v,v1) = (res,s1) ∧ res ≠ SOME (Error :α result) ∧
+  state_rel v1 t t.code ⇒
+  ∃(t1 :(α, β) state).
+    evaluate (seq_assoc (Skip :α panLang$prog) v,t) = (res,t1) ∧
+    state_rel s1 t1 t1.code
+compile_correct_types=(v :α panLang$prog)::α panLang$prog;(v1 :(α, β) state)::(α, β) state;(res :α result option)::α result option;(s1 :(α, β) state)::(α, β) state;(t :(α, β) state)::(α, β) state;
+compile_correct_hypotheses=0
+state_rel_def=∀(s :(α, β) state) (t :(α, β) state)
+    (c :mlstring |-> (mlstring # shape) list # α panLang$prog # shape).
+  state_rel s t c ⇔
+  t = s with code := c ∧
+  (∀(f :mlstring).
+     FLOOKUP s.code f =
+     (NONE :((mlstring # shape) list # α panLang$prog # shape) option) ⇒
+     FLOOKUP c f =
+     (NONE :((mlstring # shape) list # α panLang$prog # shape) option)) ∧
+  ∀(f :mlstring) (vshs :(mlstring # shape) list) (prog :α panLang$prog)
+      (rshape :shape).
+    FLOOKUP s.code f = SOME (vshs,prog,rshape) ⇒
+    FLOOKUP c f = SOME (vshs,compile prog,rshape)
+state_rel_def_types=(s :(α, β) state)::(α, β) state;(t :(α, β) state)::(α, β) state;(c :mlstring |-> (mlstring # shape) list # α panLang$prog # shape)::mlstring |-> (mlstring # shape) list # α panLang$prog # shape;
+state_rel_imp_semantics=∀(s :(α, β) state) (t :(α, β) state) (pan_code :α decl list)
+    (start :mlstring).
+  state_rel s t t.code ∧
+  ALL_DISTINCT
+    (MAP
+       (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+             mlstring) (functions pan_code)) ∧
+  s.code = alist_to_fmap (functions pan_code) ∧
+  t.code = alist_to_fmap (functions (compile_prog pan_code)) ∧
+  semantics s start ≠ Fail ⇒
+  semantics t start = semantics s start
+state_rel_imp_semantics_types=(s :(α, β) state)::(α, β) state;(t :(α, β) state)::(α, β) state;(pan_code :α decl list)::α decl list;(start :mlstring)::mlstring;
+state_rel_imp_evaluate_decls=∀(s :(α, β) state) (pan_code :α decl list) (t :(α, β) state)
+    (s' :(α, β) state) (start :γ).
+  state_rel s t t.code ∧
+  ALL_DISTINCT
+    (MAP
+       (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+             mlstring) (functions pan_code)) ∧
+  evaluate_decls s pan_code = SOME s' ⇒
+  ∃(t' :(α, β) state).
+    evaluate_decls t (compile_prog pan_code) = SOME t' ∧
+    state_rel s' t' t'.code
+state_rel_imp_evaluate_decls_types=(s :(α, β) state)::(α, β) state;(pan_code :α decl list)::α decl list;(t :(α, β) state)::(α, β) state;(s' :(α, β) state)::(α, β) state;(start :γ)::γ;
+state_rel_imp_semantics_decls=∀(s :(α, β) state) (t :(α, β) state) (pan_code :α decl list)
+    (start :mlstring).
+  state_rel s t t.code ∧
+  ALL_DISTINCT
+    (MAP
+       (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+             mlstring) (functions pan_code)) ∧
+  s.code =
+  (FEMPTY :mlstring |-> (mlstring # shape) list # α panLang$prog # shape) ∧
+  t.code =
+  (FEMPTY :mlstring |-> (mlstring # shape) list # α panLang$prog # shape) ∧
+  semantics_decls s start pan_code ≠ Fail ⇒
+  semantics_decls s start pan_code =
+  semantics_decls t start (compile_prog pan_code)
+state_rel_imp_semantics_decls_types=(s :(α, β) state)::(α, β) state;(t :(α, β) state)::(α, β) state;(pan_code :α decl list)::α decl list;(start :mlstring)::mlstring;

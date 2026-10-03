@@ -201,6 +201,35 @@ def machine_ieee_fp32_source_error(root: Path) -> str | None:
     return None
 
 
+# Source-reviewed generated definitions from the pinned L3 BL factory. The
+# first BL call at each fixed width creates the word-to-Bool-tuple definition
+# in the riscv theory. This recognizes declaration identity only; it does not
+# certify a Lean equation or permit other dynamically generated names.
+L3_BOOLIFY_SCRIPT = "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml"
+L3_BOOLIFY_GENERATORS = (
+    "HOL/examples/l3-machine-code/common/Import.sml",
+    "HOL/src/n-bit/bitstringLib.sml",
+)
+L3_BOOLIFY_DECLARATIONS = {
+    "boolify8_def": (8, 4536),
+    "boolify32_def": (32, 12179),
+    "boolify16_def": (16, 20507),
+}
+
+
+def l3_boolify_source_error(root: Path) -> str | None:
+    """Require all model/factory bytes pinned before recognizing three names."""
+    for source in (L3_BOOLIFY_SCRIPT, *L3_BOOLIFY_GENERATORS):
+        error = hol_submodule_source_error(root, source)
+        if error:
+            return f"L3 boolify generated declaration source {source}: {error}"
+    lines = (root / L3_BOOLIFY_SCRIPT).read_text().splitlines()
+    for width, line in L3_BOOLIFY_DECLARATIONS.values():
+        if len(lines) < line or not lines[line - 1].strip().startswith(f"BL({width},"):
+            return "L3 boolify generation trigger differs from reviewed fixed-width BL call"
+    return None
+
+
 def hol_source_error(root: Path, path: str) -> str | None:
     """Validate a repository-relative source, including external byte pins."""
     parts = path.split("/")
@@ -3499,26 +3528,26 @@ def holFloatToFp32 (a : HolFloat 23 8) : BitVec 32 :=
   (a.sign ++ a.exponent ++ a.significand).cast (by decide)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsNormal"): """
-def holFloatIsNormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsNormal {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent ≠ 0) && decide (x.exponent ≠ BitVec.allOnes w)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsSubnormal"): """
-def holFloatIsSubnormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsSubnormal {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent = 0) && decide (x.significand ≠ 0)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "HolFloat"): """
-structure HolFloat (t w : Nat) where
+structure HolFloat (t : Nat) (w : Nat) [NeZero t] [NeZero w] where
   sign : BitVec 1
   exponent : BitVec w
   significand : BitVec t
   deriving DecidableEq, Repr
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatNegate"): """
-def holFloatNegate {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatNegate {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := ~~~x.sign }
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatAbs"): """
-def holFloatAbs {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatAbs {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := 0 }
 """,
     ("Flapjack/Misc/MachineIeee.lean", "holFp64ToFloat"): """
@@ -4092,6 +4121,25 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
         )
     return errors
 
+# HOL's terminating eval_def generates eval_ind; the complete source block is
+# reviewed against the closed original kernel capture in the faithful expression
+# probes. This bounded recognition records provenance, not Lean/HOL equivalence.
+PANSEM_EVAL_IND_PATH = "cakeml/pancake/semantics/panSemScript.sml"
+PANSEM_EVAL_DEF_SHA256 = "21a7f3b7c750de70e880511098d0317098d3486515d226bdad734f651a61a715"
+
+
+def pansem_eval_ind_declaration(path: Path, source: str) -> int | None:
+    if path.parts[-4:] != tuple(PANSEM_EVAL_IND_PATH.split("/")):
+        return None
+    blocks = list(re.finditer(r"^Definition eval_def:\n.*?^End\b", source, re.M | re.S))
+    if len(blocks) != 1:
+        return None
+    block = blocks[0]
+    if hashlib.sha256(block.group().encode()).hexdigest() != PANSEM_EVAL_DEF_SHA256:
+        return None
+    return source.count("\n", 0, block.start()) + 1
+
+
 def hol_declaration_lines(
     path: Path, cache: dict[Path, dict[str, list[int]]]
 ) -> dict[str, list[int]]:
@@ -4152,6 +4200,9 @@ def hol_declaration_lines(
         ):
             names.setdefault(carrier, []).append(number)
         source_text = path.read_text(encoding="utf-8", errors="replace")
+        eval_ind_line = pansem_eval_ind_declaration(path, source_text)
+        if eval_ind_line is not None:
+            names.setdefault("eval_ind", []).append(eval_ind_line)
         # `val NAME = fetch "-" "NAME";` re-binds the theorem the factory
         # generated under its own name; it is the same declaration, already
         # recorded at the alias line, so the factory line is not a second one.
@@ -4172,6 +4223,11 @@ def hol_declaration_lines(
             if machine_ieee_fp32_source_error(path.parents[3]) is None:
                 for name in MACHINE_IEEE_FP32_NAMES:
                     names.setdefault(name, []).append(MACHINE_IEEE_FP32_LINE)
+        if path.parts[-len(Path(L3_BOOLIFY_SCRIPT).parts):] == Path(L3_BOOLIFY_SCRIPT).parts:
+            root = path.parents[len(Path(L3_BOOLIFY_SCRIPT).parts) - 1]
+            if l3_boolify_source_error(root) is None:
+                for name, (_width, line) in L3_BOOLIFY_DECLARATIONS.items():
+                    names.setdefault(name, []).append(line)
         for locations in names.values():
             locations.sort()
         cache[path] = names

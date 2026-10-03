@@ -46,56 +46,68 @@ theorem pop_env_stack_gc {width : Nat} [NeZero width] {C : Type} {F : Type}
     ∀ s : WordSemStateFiniteExact width C F, popEnv s = some s' → s'.gcFun = s.gcFun :=
   fun s h => (popEnvConst s s' h).2.2.2.2.2.2.2.2.2.2.1
 
+/-- Numeric instances of the generic first-match lookup coincide with the
+native Spt association-list lookup. Flapjack infrastructure; no HOL original. -/
+private theorem natLookup {β : Type} (values : List (Nat × β)) (key : Nat) :
+    values.lookup key = sptAListLookup key values := by
+  induction values with
+  | nil => rfl
+  | cons entry values ih =>
+    rcases entry with ⟨name, value⟩
+    by_cases equal : key = name
+    · subst name; simp [sptAListLookup]
+    · simp only [List.lookup_cons, beq_eq_false_iff_ne.mpr equal,
+        sptAListLookup, equal, if_false, ih]
+
 /-- Exact HOL `ALOOKUP_LIST_REL_sf_gc_consts` (`word_simpProofScript.sml:436-448`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "ALOOKUP_LIST_REL_sf_gc_consts"
   (words_as_type_indexed_bitvec)]
-theorem ALOOKUP_LIST_REL_sf_gc_consts {width : Nat} [NeZero width] :
-    ∀ (l1 l2 : List (Nat × WordLocW width)) (k : Nat) (v : WordLocW width),
-      List.Forall₂ (fun (a b : Nat × WordLocW width) =>
+theorem ALOOKUP_LIST_REL_sf_gc_consts {κ : Type} [DecidableEq κ]
+    {width : Nat} [NeZero width] :
+    ∀ (l1 l2 : List (κ × WordLocW width)) (k : κ) (v : WordLocW width),
+      List.Forall₂ (fun (a b : κ × WordLocW width) =>
           a.1 = b.1 ∧ (isGcWordConst a.2 = true → b.2 = a.2)) l1 l2 ∧
-        isGcWordConst v = true ∧ sptAListLookup k l1 = some v →
-        sptAListLookup k l2 = some v := by
+        isGcWordConst v = true ∧ l1.lookup k = some v →
+        l2.lookup k = some v := by
   intro l1 l2 k v ⟨h, hv, hl⟩
   induction h with
   | nil => cases hl
   | @cons a b as bs hab _ ih =>
     rcases a with ⟨ak, av⟩
     rcases b with ⟨bk, bv⟩
-    obtain ⟨rfl, hgc⟩ := hab
-    simp only [sptAListLookup] at hl ⊢
-    split at hl
-    · rename_i hk
-      simp only [Option.some.injEq] at hl
-      subst hl
-      rw [if_pos hk]; exact congrArg some (hgc hv)
-    · rename_i hk
-      rw [if_neg hk]
-      exact ih hl
+    dsimp only at hab
+    obtain ⟨equal, hgc⟩ := hab
+    subst bk
+    by_cases hk : k = ak
+    · simp [hk] at hl
+      subst v
+      simpa [hk] using hgc hv
+    · simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr hk] using
+        ih (by simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr hk] using hl)
 
-/-- Exact HOL `ALOOKUP_LIST_REL_sf_gc_consts_NONE` (`word_simpProofScript.sml:450-461`); HOL's
-    unused binder `v` is kept. -/
+/-- Full generic HOL lookup law; the key carrier is arbitrary with decidable
+HOL equality, and the source's unused binder retains its independent arbitrary type. -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "ALOOKUP_LIST_REL_sf_gc_consts_NONE"
   (words_as_type_indexed_bitvec)]
-theorem ALOOKUP_LIST_REL_sf_gc_consts_NONE {width : Nat} [NeZero width]
-    (_v : WordLocW width) :
-    ∀ (l1 l2 : List (Nat × WordLocW width)) (k : Nat),
-      List.Forall₂ (fun (a b : Nat × WordLocW width) =>
+theorem ALOOKUP_LIST_REL_sf_gc_consts_NONE {κ : Type} [DecidableEq κ]
+    {width : Nat} [NeZero width] {ν : Type} (_v : ν) :
+    ∀ (l1 l2 : List (κ × WordLocW width)) (k : κ),
+      List.Forall₂ (fun (a b : κ × WordLocW width) =>
           a.1 = b.1 ∧ (isGcWordConst a.2 = true → b.2 = a.2)) l1 l2 ∧
-        sptAListLookup k l1 = none →
-        sptAListLookup k l2 = none := by
+        l1.lookup k = none → l2.lookup k = none := by
   intro l1 l2 k ⟨h, hl⟩
   induction h with
   | nil => rfl
   | @cons a b as bs hab _ ih =>
     rcases a with ⟨ak, av⟩
     rcases b with ⟨bk, bv⟩
-    obtain ⟨rfl, -⟩ := hab
-    simp only [sptAListLookup] at hl ⊢
-    split at hl
-    · cases hl
-    · rename_i hk
-      rw [if_neg hk]
-      exact ih hl
+    dsimp only at hab
+    obtain ⟨equal, -⟩ := hab
+    subst bk
+    by_cases hk : k = ak
+    · simp [hk] at hl
+    · simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr hk] using
+        ih (by simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr hk] using hl)
 
 /-- Exact HOL `ALL_DISTINCT_PERM_FST` (`word_simpProofScript.sml:463-470`); HOL's
     free function `f` is an explicit binder. -/
@@ -107,45 +119,69 @@ theorem ALL_DISTINCT_PERM_FST {α β : Type} (f : List (α × β) → List (α �
 
 /-- Exact HOL `ALOOKUP_LIST_REL_value_rel` (`word_simpProofScript.sml:472-480`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "ALOOKUP_LIST_REL_value_rel"]
-theorem ALOOKUP_LIST_REL_value_rel {β : Type} :
-    ∀ (f : β → Prop) (l' l : List (Nat × β)) (k : Nat) (v : β),
-      List.Forall₂ (fun (a b : Nat × β) => a.1 = b.1 ∧ (f a.2 → b.2 = a.2)) l' l ∧
-        sptAListLookup k l' = some v ∧ f v →
-        sptAListLookup k l = some v := by
+theorem ALOOKUP_LIST_REL_value_rel {κ β : Type} [DecidableEq κ] :
+    ∀ (f : β → Prop) (l' l : List (κ × β)) (k : κ) (v : β),
+      List.Forall₂ (fun (a b : κ × β) => a.1 = b.1 ∧ (f a.2 → b.2 = a.2)) l' l ∧
+        l'.lookup k = some v ∧ f v → l.lookup k = some v := by
   intro f l' l k v ⟨h, hl, hv⟩
   induction h with
   | nil => cases hl
   | @cons a b as bs hab _ ih =>
     rcases a with ⟨ak, av⟩
     rcases b with ⟨bk, bv⟩
-    obtain ⟨rfl, hgc⟩ := hab
-    simp only [sptAListLookup] at hl ⊢
-    split at hl
-    · rename_i hk
-      simp only [Option.some.injEq] at hl
-      subst hl
-      rw [if_pos hk]; exact congrArg some (hgc hv)
-    · rename_i hk
-      rw [if_neg hk]
-      exact ih hl
+    dsimp only at hab
+    obtain ⟨equal, hgc⟩ := hab
+    subst bk
+    by_cases hk : k = ak
+    · simp [hk] at hl
+      subst v
+      simpa [hk] using hgc hv
+    · simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr hk] using
+        ih (by simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr hk] using hl)
 
-/-- Exact HOL `ALOOKUP_ALL_DISTINCT_FST_PERM` (`word_simpProofScript.sml:482-486`). -/
+/-- Generic first-match lookup of an absent key. Flapjack infrastructure. -/
+private theorem lookupNone {κ β : Type} [DecidableEq κ]
+    (values : List (κ × β)) (key : κ) (absent : key ∉ values.map Prod.fst) :
+    values.lookup key = none := by
+  induction values with
+  | nil => rfl
+  | cons entry values ih =>
+    rcases entry with ⟨name, value⟩
+    simp only [List.map_cons, List.mem_cons, not_or] at absent
+    simp only [List.lookup_cons, beq_eq_false_iff_ne.mpr absent.1]
+    exact ih absent.2
+
+/-- Lookup equality under an arbitrary-key distinct-key permutation.
+Flapjack proof infrastructure; no separate HOL declaration. -/
+private theorem lookupPerm {κ β : Type} [DecidableEq κ]
+    (l1 l2 : List (κ × β)) (permutation : l1.Perm l2)
+    (distinct : (l1.map Prod.fst).Nodup) (key : κ) : l1.lookup key = l2.lookup key := by
+  have distinct2 := (permutation.map Prod.fst).nodup_iff.mp distinct
+  by_cases member : key ∈ l1.map Prod.fst
+  · obtain ⟨⟨name, value⟩, found, rfl⟩ := List.mem_map.mp member
+    rw [allDistinctMemImpALookupSome l1 name value ⟨distinct, found⟩,
+      allDistinctMemImpALookupSome l2 name value ⟨distinct2, permutation.mem_iff.mp found⟩]
+  · have absent2 : key ∉ l2.map Prod.fst :=
+      fun found => member ((permutation.map Prod.fst).mem_iff.mpr found)
+    rw [lookupNone l1 key member, lookupNone l2 key absent2]
+
+/-- Full original lookup-function equality with arbitrary HOL key/value types. -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "ALOOKUP_ALL_DISTINCT_FST_PERM"]
-theorem ALOOKUP_ALL_DISTINCT_FST_PERM {β : Type} :
-    ∀ l1 l2 : List (Nat × β), (l1.map Prod.fst).Nodup ∧ holPerm l1 l2 →
-      (fun k => sptAListLookup k l1) = (fun k => sptAListLookup k l2) := by
+theorem ALOOKUP_ALL_DISTINCT_FST_PERM {κ β : Type} [DecidableEq κ] :
+    ∀ l1 l2 : List (κ × β), (l1.map Prod.fst).Nodup ∧ holPerm l1 l2 →
+      (fun k => l1.lookup k) = (fun k => l2.lookup k) := by
   intro l1 l2 ⟨hnd, hp⟩
   funext k
-  exact sptAListLookup_perm l1 l2 ((holPerm_iff _ _).mp hp) hnd k
+  exact lookupPerm l1 l2 ((holPerm_iff _ _).mp hp) hnd k
 
-/-- Exact HOL `ALOOKUP_ALL_DISTINCT_FST_PERM_SOME` (`word_simpProofScript.sml:488-495`). -/
+/-- Full original SOME lookup law with arbitrary HOL key/value types. -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "ALOOKUP_ALL_DISTINCT_FST_PERM_SOME"]
-theorem ALOOKUP_ALL_DISTINCT_FST_PERM_SOME {β : Type} :
-    ∀ (l1 : List (Nat × β)) (f : List (Nat × β) → List (Nat × β)) (k : Nat) (v : β),
-      (l1.map Prod.fst).Nodup ∧ holPerm l1 (f l1) ∧ sptAListLookup k l1 = some v →
-        sptAListLookup k (f l1) = some v := by
+theorem ALOOKUP_ALL_DISTINCT_FST_PERM_SOME {κ β : Type} [DecidableEq κ] :
+    ∀ (l1 : List (κ × β)) (f : List (κ × β) → List (κ × β)) (k : κ) (v : β),
+      (l1.map Prod.fst).Nodup ∧ holPerm l1 (f l1) ∧ l1.lookup k = some v →
+        (f l1).lookup k = some v := by
   intro l1 f k v ⟨hnd, hp, hl⟩
-  rw [← sptAListLookup_perm l1 (f l1) ((holPerm_iff _ _).mp hp) hnd k, hl]
+  rw [← lookupPerm l1 (f l1) ((holPerm_iff _ _).mp hp) hnd k, hl]
 
 /-- Exact HOL `pop_env_gc_fun` (`word_simpProofScript.sml:497-501`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "pop_env_gc_fun"
@@ -485,7 +521,9 @@ theorem push_env_pop_env_locals_thm {width : Nat} [NeZero width] {C : Type} {F :
         · -- not in the GC-ed cut: fall back to the kept cut
           have hnone : sptAListLookup v (wordSemEnvToList (sptInter s.locals names.2) s.permute).1 = none := by
             rw [envToList_alookup, sptLookup_sptInterCases, hn2]; split <;> simp_all
-          rw [ALOOKUP_LIST_REL_sf_gc_consts_NONE w _ _ v ⟨hlist, hnone⟩]
+          have transported := ALOOKUP_LIST_REL_sf_gc_consts_NONE w _ _ v
+            ⟨hlist, by simpa only [natLookup] using hnone⟩
+          rw [show sptAListLookup v _ = none from by simpa only [natLookup] using transported]
           simp only
           rw [sptLookup_sptInterCases, hv']
           have hn1 : sptLookup v names.1 ≠ none := by
@@ -499,7 +537,9 @@ theorem push_env_pop_env_locals_thm {width : Nat} [NeZero width] {C : Type} {F :
         · have hsome : sptAListLookup v (wordSemEnvToList (sptInter s.locals names.2) s.permute).1 =
               some w := by
             rw [envToList_alookup, sptLookup_sptInterCases, hv', hn2]
-          rw [ALOOKUP_LIST_REL_sf_gc_consts _ _ v w ⟨hlist, hgc, hsome⟩]
+          have transported := ALOOKUP_LIST_REL_sf_gc_consts _ _ v w
+            ⟨hlist, hgc, by simpa only [natLookup] using hsome⟩
+          rw [show sptAListLookup v _ = some w from by simpa only [natLookup] using transported]
       · cases h2
     · cases h1
   · cases hcut

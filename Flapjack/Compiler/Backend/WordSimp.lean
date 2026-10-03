@@ -181,7 +181,7 @@ def getVarImmCs {width : Nat} [NeZero width] :
 
 /-- Exact HOL `all_names_def` (`word_simpScript.sml:258-260`). -/
 @[hol "cakeml/compiler/backend/word_simpScript.sml" "all_names_def"]
-def allNames (names : WordLangCutsetsHOL) : Spt Unit :=
+def allNames {α : Type} (names : Spt α × Spt α) : Spt α :=
   sptUnion names.1 names.2
 
 /-- Exact HOL `drop_consts_def` (`word_simpScript.sml:265-271`). -/

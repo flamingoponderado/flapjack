@@ -748,7 +748,8 @@ End
             self.assertIn("holFloatAbs", names)
 
     def test_bit_only_ieee_changed_width_or_duplicate_rejected(self):
-        for change in ("width", "duplicate", "namespace", "shadow", "theorem_shadow", "field"):
+        for change in ("width", "duplicate", "namespace", "shadow", "theorem_shadow", "field",
+                       "missing_binder"):
             with self.subTest(change=change), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 for relative in {path for path, _ in CHECKER["REAL_FREE_IEEE_FORMS"]}:
@@ -766,6 +767,12 @@ End
                     (root / "Flapjack/Shadow.lean").write_text("abbrev Local.holFp64Abs := Nat\n")
                 elif change == "theorem_shadow":
                     (root / "Flapjack/Shadow.lean").write_text("theorem Local.holFp64Abs : True := by trivial\n")
+                elif change == "missing_binder":
+                    # The HOL dimindex positivity binders are part of the pinned carrier.
+                    target = root / "Flapjack/Misc/BinaryIeee.lean"
+                    target.write_text(target.read_text().replace(
+                        "structure HolFloat (t : Nat) (w : Nat) [NeZero t] [NeZero w] where",
+                        "structure HolFloat (t : Nat) (w : Nat) where"))
                 else:
                     target = root / "Flapjack/Misc/BinaryIeee.lean"
                     target.write_text(target.read_text().replace("x.exponent ≠ 0", "x.exponent = 0"))
@@ -3747,3 +3754,23 @@ class FmapResultObservationAmbiguityTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PanSemGeneratedEvalIndTest(unittest.TestCase):
+    def test_real_source_and_bounded_negative_cases(self):
+        path = CHECKER["ROOT"] / CHECKER["PANSEM_EVAL_IND_PATH"]
+        source = path.read_text()
+        recognize = CHECKER["pansem_eval_ind_declaration"]
+        line = recognize(path, source)
+        self.assertIsNotNone(line)
+        self.assertEqual(CHECKER["hol_declaration_lines"](path, {})["eval_ind"], [line])
+        self.assertIsNotNone(REF_ERROR(path, "other_ind", None, {}))
+        for changed in [source.replace("Definition eval_def:", "Definition other_def:"),
+                        source.replace("Termination\n  wf_rel_tac `measure (exp_size ARB o SND)`", "Termination\n  cheat"),
+                        source.replace("(eval s BytesInWord =", "(eval s TopAddr =")]:
+            with self.subTest(source=changed[-100:]):
+                self.assertIsNone(recognize(path, changed))
+        self.assertIsNone(recognize(path.with_name("otherScript.sml"), source))
+        self.assertIsNone(recognize(Path("other/pancake/semantics/panSemScript.sml"), source))
+        block = source[source.index("Definition eval_def:"):]
+        self.assertIsNone(recognize(path, source + "\n" + block))

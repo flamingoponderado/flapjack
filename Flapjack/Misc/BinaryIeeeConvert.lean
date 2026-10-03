@@ -22,7 +22,7 @@ namespace Flapjack
     * roundTowardPositive: the ceiling; roundTowardNegative: the floor;
     * roundTowardZero: the ceiling for a negative sign, else the floor.
     Infinities and NaNs give `NONE`. -/
-def holFloatToInt {t w : Nat} (mode : HolRounding) (x : HolFloat t w) : Option Int :=
+def holFloatToInt {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) : Option Int :=
   match holFloatValue x with
   | .float r =>
       some (match mode with
@@ -41,7 +41,7 @@ def holFloatToInt {t w : Nat} (mode : HolRounding) (x : HolFloat t w) : Option I
     has no general-real version, so this is not an exact port of the full HOL
     definition; its only use here is `int_to_fp64`, whose argument
     `real_of_int a` is an integer and so lies in the covered domain. -/
-noncomputable def holRealToFloat {t w : Nat} (mode : HolRounding) (r : Rat) : HolFloat t w :=
+noncomputable def holRealToFloat {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : Rat) : HolFloat t w :=
   holFloatRound mode (decide (mode = .roundTowardNegative)) r
 
 /-- HOL `fp64_to_int mode = float_to_int mode o fp64_to_float`. -/

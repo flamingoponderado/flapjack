@@ -1,0 +1,26 @@
+code_info_domain_statement=domain (fromAList (compile code)) = domain (fromAList code)
+code_info_domain_hypotheses=0
+code_info_domain_case64=domain (fromAList (compile codeRows)) = domain (fromAList codeRows)
+code_info_domain_case80=domain (fromAList (compile codeRows)) = domain (fromAList codeRows)
+code_info_lookup_statement=∀xs n rest. ALL_DISTINCT (MAP FST xs) ⇒ lookup n (collect_info xs rest) = case ALOOKUP xs n of NONE => lookup n rest | SOME body => lookup n (collect_info [(n,body)] rest)
+code_info_lookup_hypotheses=0
+code_info_lookup_case64=∀n rest. ALL_DISTINCT (MAP FST codeRows) ⇒ lookup n (collect_info codeRows rest) = case ALOOKUP codeRows n of NONE => lookup n rest | SOME body => lookup n (collect_info [(n,body)] rest)
+code_info_lookup_case80=∀n rest. ALL_DISTINCT (MAP FST codeRows) ⇒ lookup n (collect_info codeRows rest) = case ALOOKUP codeRows n of NONE => lookup n rest | SOME body => lookup n (collect_info [(n,body)] rest)
+code_info_frames_statement=ALL_DISTINCT (MAP FST code) ⇒ state_ok (collect_info code LN) (fromAList code)
+code_info_frames_hypotheses=0
+code_info_frames_case64=ALL_DISTINCT (MAP FST codeRows) ⇒ state_ok (collect_info codeRows LN) (fromAList codeRows)
+code_info_frames_case80=ALL_DISTINCT (MAP FST codeRows) ⇒ state_ok (collect_info codeRows LN) (fromAList codeRows)
+code_info_duplicate_keys64=MAP FST (compile [(3,Skip); (5,Skip); (3,StackAlloc 0)]) = [3; 5; 3] ⇔ T
+code_info_lookup_absent64=lookup 77 (collect_info [] (insert 3 99 LN)) = NONE ⇔ T
+code_info_lookup_bare_rest64=lookup 3 (collect_info [(3,StackAlloc 4)] (insert 3 99 LN)) = SOME 99 ⇔ T
+code_info_lookup_zero64=lookup 3 (collect_info [(3,Seq (StackAlloc 0) Skip)] (insert 3 99 LN)) = SOME 0 ⇔ T
+code_info_lookup_large64=lookup 6 (collect_info [(3,StackAlloc 4); (6,Seq (StackAlloc (2 ** 70)) Skip)] (insert 3 99 LN)) = SOME (2 ** 70) ⇔ T
+code_info_frame_application64=state_ok (collect_info [(3,Seq (StackAlloc 0) Skip); (5,StackAlloc 4)] LN) (fromAList [(3,Seq (StackAlloc 0) Skip); (5,StackAlloc 4)])
+code_info_frame_hypotheses64=0
+code_info_duplicate_keys80=MAP FST (compile [(3,Skip); (5,Skip); (3,StackAlloc 0)]) = [3; 5; 3] ⇔ T
+code_info_lookup_absent80=lookup 77 (collect_info [] (insert 3 99 LN)) = NONE ⇔ T
+code_info_lookup_bare_rest80=lookup 3 (collect_info [(3,StackAlloc 4)] (insert 3 99 LN)) = SOME 99 ⇔ T
+code_info_lookup_zero80=lookup 3 (collect_info [(3,Seq (StackAlloc 0) Skip)] (insert 3 99 LN)) = SOME 0 ⇔ T
+code_info_lookup_large80=lookup 6 (collect_info [(3,StackAlloc 4); (6,Seq (StackAlloc (2 ** 70)) Skip)] (insert 3 99 LN)) = SOME (2 ** 70) ⇔ T
+code_info_frame_application80=state_ok (collect_info [(3,Seq (StackAlloc 0) Skip); (5,StackAlloc 4)] LN) (fromAList [(3,Seq (StackAlloc 0) Skip); (5,StackAlloc 4)])
+code_info_frame_hypotheses80=0

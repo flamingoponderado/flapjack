@@ -1,3 +1,15 @@
+import Flapjack.Test.L3DecodeImmediatesParity
+import Flapjack.Test.WordSimpGenericCarriersParity
+import Flapjack.Test.L3FPMemoryParity
+import Flapjack.Test.L3ControlFetchParity
+import Flapjack.Test.L3FPBitsParity
+import Flapjack.Test.L3DivideParity
+import Flapjack.Test.L3MultiplyParity
+import Flapjack.Test.L3WordArithmeticParity
+import Flapjack.Test.L3ImmediateShiftParity
+import Flapjack.Test.StackRawCallCompileSemanticsParity
+import Flapjack.Test.WordToStackCallReturnHandlerParity
+import Flapjack.Test.StackRawCallCompCorrectParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3RegisterShiftParity
@@ -27,6 +39,7 @@ import Flapjack.Test.StackRawCallSeqStandardParity
 import Flapjack.Test.StackRawCallSeqParity
 import Flapjack.Test.StackRawCallCallTailParity
 import Flapjack.Test.StackRawCallCallParity
+import Flapjack.Test.StackRawCallCompileCodeInfoParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
@@ -326,6 +339,7 @@ import Flapjack.Test.WordAllocLimitPropertiesParity
 import Flapjack.Test.SSAMapStepParity
 import Flapjack.Test.SSALocalsInsertParity
 import Flapjack.Test.BinaryIeeeArithExecParity
+import Flapjack.Test.BinaryIeeeSqrtExecParity
 import Flapjack.Test.LoopToWordProgramNamesParity
 import Flapjack.Test.SSAMergeMoveLookupsParity
 import Flapjack.Test.LoopToWordLabelHandlersParity

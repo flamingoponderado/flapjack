@@ -1,0 +1,10 @@
+shape_of_convert_v_statement=∀ctxt v str_ctxt n. v_flds_ok ctxt v ∧ str_ctxt = MAP (λ(nm,info). (nm,info.fields)) ctxt ∧ is_wf_shape_v ctxt v ∧ struct_infos_ok ctxt ⇒ compile_shape str_ctxt (shape_of v) = shape_of (convert_v v)
+shape_of_convert_v_types=ctxt::(mlstring # struct_info) list;v::α v;str_ctxt::(mlstring # (mlstring # shape) list) list;n::β
+shape_of_convert_v_hypotheses=0
+shape_of_convert_v_proved=T
+shape_of_convert_v_ind_statement=∀ctxt str_ctxt n sh v. struct_infos_ok ctxt ∧ is_wf_shape (DROP n ctxt) sh ∧ v_flds_ok ctxt v ∧ str_ctxt = MAP (λ(nm,info). (nm,info.fields)) ctxt ∧ shape_of v = sh ⇒ compile_shape_n str_ctxt n sh = shape_of (convert_v v)
+shape_of_convert_v_ind_types=ctxt::(mlstring # struct_info) list;str_ctxt::(mlstring # (mlstring # shape) list) list;n::num;sh::shape;v::α v
+shape_of_convert_v_ind_proved=T
+shape_of_convert_v_rev_statement=∀ctxt v. v_flds_ok ctxt v ∧ is_wf_shape_v ctxt v ∧ struct_infos_ok ctxt ⇒ shape_of (convert_v v) = compile_shape (MAP (λ(nm,info). (nm,info.fields)) ctxt) (shape_of v)
+shape_of_convert_v_rev_types=ctxt::(mlstring # struct_info) list;v::α v
+shape_of_convert_v_rev_proved=T

@@ -1,0 +1,7 @@
+first_compile_prog_all_distinct=ALL_DISTINCT
+  (MAP
+     (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+           mlstring) (functions (prog :α decl list))) ⇒
+ALL_DISTINCT
+  (MAP (FST :mlstring # num list # α crepLang$prog -> mlstring)
+     (compile_prog prog))

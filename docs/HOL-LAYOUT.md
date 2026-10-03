@@ -76,6 +76,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/lab_to_targetScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`cbw_to_asm` carrier boundary only; target encoding remains open), `Flapjack/Compiler/Backend/LabToTarget/` (exact encoding/labels/positions/second-pass/padding/remove-labels/shmem-info and the `config`/`compile_lab`/`compile` entry) |
 | `compiler/backend/lab_filterScript.sml` | `Flapjack/Compiler/Backend/LabFilter.lean` |
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
+| `compiler/backend/proofs/lab_filterProofScript.sml` | `Flapjack/Compiler/Backend/LabFilter/Proofs.lean` (submodules in `LabFilter/Proofs/`) |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
@@ -102,6 +103,7 @@ the cited name occurs in one of the two syntactic forms.
 | `proofs/pan_globalsProofScript.sml` | `Flapjack/Pancake/Proofs/PanGlobals.lean`, `PanGlobals/ShapeInfrastructure.lean` |
 | `proofs/pan_to_crepProofScript.sml` | `Flapjack/Pancake/Proofs/PanToCrep.lean`, `PanToCrep/CompileExpVmax.lean`, `PanToCrep/CompileProgParams.lean`, `PanToCrep/Primop.lean` |
 | `pan_to_crepScript.sml` | `Flapjack/Pancake/PanToCrep.lean`, `PanToCrep/Compile.lean`, `PanToCrep/CompileProg.lean` |
+| `pan_to_wordScript.sml` | `Flapjack/Pancake/PanToWord.lean` |
 | `crepLangScript.sml` | `Flapjack/Pancake/CrepLang.lean`, `Flapjack/Pancake/CrepLang/Exp.lean` (exact width-indexed `CrepExpHOL`), `Flapjack/Pancake/CrepLang/Prog.lean` (exact width-indexed `CrepProgHOL`) |
 | `crep_arithScript.sml` | `Flapjack/Pancake/CrepArith.lean` |
 | `crep_inlineScript.sml` | `Flapjack/Pancake/CrepInline.lean`, `CrepInline/Pass.lean` |
@@ -209,3 +211,9 @@ The pinned `HOL/src/monad/more_monads/state_transformerScript.sml` iteration cou
 Pinned `HOL/src/list/src/numposrepScript.sml` digit conversion maps to `Flapjack/Misc/Numposrep.lean`; `HOL/src/string/ASCIInumbersScript.sml` character conversion maps to `Flapjack/Misc/ASCIInumbers.lean`; wordsScript `w2s_def`/`word_to_hex_string_def` map to `Flapjack/Misc/Words/Formatting.lean`.
 
 The riscvScript MMU exception group counterpart is `Flapjack/RiscV/L3/Defs/MMU/Exception.lean`; `Nonempty` records HOL type variables intrinsic nonempty kind, as in the reviewed HD/EL/THE/LINV counterparts.
+
+The primary counterpart of `cakeml/compiler/encoders/riscv/riscv_targetScript.sml`
+is `Flapjack/Compiler/Encoders/RiscV/Target.lean`. Its native RISC-V instruction
+carrier and Encode body are in the original L3 model counterpart under
+`Flapjack/RiscV/L3/`; the exact assembly carrier is in
+`Flapjack/Compiler/Encoders/Asm.lean`.
