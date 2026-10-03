@@ -4826,6 +4826,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 319,
+      "out": "pan_structs_convert_code_locals_probe.out",
+      "rows": 3,
+      "sha256": "f90182b8adcbbb23305a6be9f4f7ad1494a681bcc7ee65f5dbff34ac278b74f9"
+    },
+    {
       "bytes": 392,
       "out": "pan_structs_convert_code_probe.out",
       "rows": 3,
