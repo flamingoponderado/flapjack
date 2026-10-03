@@ -1,4 +1,6 @@
 import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
+import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
+import Flapjack.RiscV.CorrectnessEncoding.Loc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosLang.Syntax

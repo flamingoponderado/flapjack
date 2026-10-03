@@ -85120,5 +85120,14 @@
     "hol_name": "reset_inline_factor_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Loc.lean",
+    "lean_name": "riscv_encoder_correct_loc",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 original737-742 and encoder_correct_def117-133: full Loc constructor with unrestricted natural destination and word64 offset, exact native source/state carriers, original asmStep+targetStateRel premise and existential/every-env/interference/asserts/asserts2 conclusion. Original asmOk discharges register32/avoid-zero and signed offset [-2147483648,2147481599]/align4 guards internally. Literal AUIPC then ADDI byte fetch/unrestricted universal decode/Run/Next derive two real steps; original lem12b reconstructs immediate using only original alignment/range. Projection-preserving env0 and env1 transport complete relations, native writes preserve all memory, intermediate validity/code bytes/PC coverage proved, full source post-state including overwritten register equality retained. Original witness n=1. No target execution/output premise, extra public range or alignment bound, simplified evaluator, or narrowed conclusion. Inherited reals_as_rational_cuts assumption from reviewed native state/Run closure (SOUNDNESS8); no added real assumption. Fresh original Loc specialization captures arbitrary r:num/c:word64, zero stored hypotheses/provedT; capture is not cross-language equivalence."
   }
 ]
