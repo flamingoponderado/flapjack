@@ -1,0 +1,11 @@
+compile_exp_thm_statement=∀s2 s res prog. evaluate (prog,s) = (res,s2) ∧ res ≠ SOME Error ∧ gc_fun_const_ok s.gc_fun ⇒ evaluate (compile_exp prog,s) = (res,s2)
+compile_exp_thm_hypotheses=0
+evaluate_Seq_assoc_statement=∀p s. evaluate (Seq_assoc Skip p,s) = evaluate (p,s)
+evaluate_simp_push_out_if_statement=∀p s. evaluate (push_out_if p,s) = evaluate (p,s)
+evaluate_simp_duplicate_if_statement=∀p s. gc_fun_const_ok s.gc_fun ⇒ evaluate (simp_duplicate_if p,s) = evaluate (p,s)
+evaluate_const_fp_statement=∀p s. gc_fun_const_ok s.gc_fun ⇒ evaluate (const_fp p,s) = evaluate (p,s)
+evaluate_const_fp_loop_statement=∀p cs p' cs' s res s'. evaluate (p,s) = (res,s') ∧ const_fp_loop p cs = (p',cs') ∧ gc_fun_const_ok s.gc_fun ∧ (∀v w. lookup v cs = SOME w ⇒ get_var v s = SOME (Word w)) ⇒ evaluate (p',s) = (res,s') ∧ (res = NONE ⇒ ∀v w. lookup v cs' = SOME w ⇒ get_var v s' = SOME (Word w))
+evaluate_sf_gc_consts_statement=∀p s s' res. evaluate (p,s) = (res,s') ∧ gc_fun_const_ok s.gc_fun ⇒ case res of NONE => LIST_REL sf_gc_consts s.stack s'.stack ∧ s'.handler = s.handler | SOME (Result v9 v10) => LIST_REL sf_gc_consts s.stack s'.stack ∧ s'.handler = s.handler | SOME (Exception v11 v12) => s.handler < LENGTH s.stack ⇒ LIST_REL sf_gc_consts (LASTN s.handler s.stack) s'.stack ∧ s'.handler = get_above_handler s | SOME (Break v13) => LIST_REL sf_gc_consts s.stack s'.stack ∧ s'.handler = s.handler | SOME (Continue v14) => LIST_REL sf_gc_consts s.stack s'.stack ∧ s'.handler = s.handler | SOME TimeOut => T | SOME NotEnoughSpace => T | SOME (FinalFFI v15) => T | SOME Error => T
+evaluate_gc_fun_const_ok_statement=∀p s res s'. evaluate (p,s) = (res,s') ∧ gc_fun_const_ok s.gc_fun ⇒ gc_fun_const_ok s'.gc_fun
+evaluate_drop_consts_statement=∀vs s p cs. (∀v w. lookup v cs = SOME w ⇒ get_var v s = SOME (Word w)) ⇒ evaluate (SmartSeq (drop_consts cs vs) p,s) = evaluate (p,s)
+evaluate_Loop_body_cong_gc_statement=∀R s names c c' exit_names. (∀v. R v.gc_fun ⇒ evaluate (c',v) = evaluate (c,v)) ⇒ R s.gc_fun ⇒ evaluate (Loop names c' exit_names,s) = evaluate (Loop names c exit_names,s)
