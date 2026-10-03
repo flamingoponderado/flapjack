@@ -7021,6 +7021,19 @@ shape definition and polymorphic field-name types, and replays the unchanged who
 `pan_structs_convert_code_probe` captures the complete original kernel definition,
 polymorphic map-key/program-carrier type and zero hypotheses. Parameters keep
 source names; body compilation scopes original parameters rather than compiled ones.
+`stack_rawcall_compile_semantics_probeScript.sml` freshly reads the original full
+`compile_semantics` theorem and zero-HOL-hypothesis count, with 1/8/64/80 word
+instances (six rows). The Lean consumers apply the full observational equality
+with all four original premises at arbitrary positive/1/8/64/80 widths. The Lean
+proof derives entry simulations and native clock/event-chain obligations; these
+captures are regression evidence, not a HOL-to-Lean equivalence proof or evidence
+of production routing or whole compiler completion.
+
+The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.
+
+`pan_structs_convert_state_probe` captures the entire original state and value
+conversion kernel definitions/types and zero hypotheses. The state record updates
+exactly locals, globals, structs, code and exception shapes.
 
 ## Complete native Decode and DecodeRVC
 
@@ -7041,6 +7054,20 @@ proof or universal word32 equivalence. Kernel fixture equality includes full
 constructor and numeric payloads. No instruction/mode acceptance assumption
 is added to the definitions. Regenerate with `HOL_PROBE_ONLY=l3_decode_probeScript.sml`
 through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
+### Native filter state relation and skipped-run consequences
+
+`lab_filter_state_relation_probeScript.sml` captures four complete original declarations125/199/252/263 with full types, zero hypotheses and kernel reproofs (16 rows). The unchanged local proofs and their unchanged local state/skip-run prerequisites are replayed from the original source. The unused fetch lemma inst binder is captured explicitly.
+
+### Native skipped-run PC adjustment
+
+`lab_filter_pc_adjustment_probeScript.sml` replays the unchanged original local proofs211/281 and captures both full statements, all types, zero hypotheses and kernel reproofs (8 rows). The full successor adjustment law is an actual shared-memory filter simulation prerequisite; the initial-alignment lemma is independent nearby source support.
+
+### Native shared-memory filter terminal clauses
+
+`lab_filter_shared_terminal_probeScript.sml` captures the complete original NONE578 and final646 clauses with independent full state/configuration/oracle/FFI types, zero hypotheses and kernel reproofs (8 rows). All original guards remain; the final original-PC state and FFI equality are existential conclusions.
+`pan_structs_shape_map_codec_probe` captures the external HOL alistTheory right-fold
+definition and unconditional lookup theorem used by PanStructs. Original duplicate
+keys keep the first binding; other, missing and empty lookups are recorded.
 
 ## Native PC writer and DecodeAny
 

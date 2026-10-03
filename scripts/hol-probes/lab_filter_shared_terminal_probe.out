@@ -1,0 +1,33 @@
+share_mem_op_NONE_filter_correct=all_skips (t1 :(α, β, γ) labSem$state).pc t1.code (k :num) ∧
+share_mem_op (m :memop) (r :num) (a :α addr)
+  (t1 with
+   <|pc := adjust_pc t1.pc t1.code; code := filter_skip t1.code;
+     compile := (arb_compile :β -> α sec list -> (word8 list # β) option);
+     compile_oracle := (arb_oracle :num -> β # α sec list)|>) =
+(NONE :(γ ffi_result # (α, β, γ) labSem$state) option) ⇒
+share_mem_op m r a (t1 with pc := k + t1.pc) =
+(NONE :(γ ffi_result # (α, β, γ) labSem$state) option)
+share_mem_op_NONE_filter_correct_types=(arb_oracle :num -> β # α sec list)::num -> β # α sec list;(arb_compile :β -> α sec list -> (word8 list # β) option)::β -> α sec list -> (word8 list # β) option;(a :α addr)::α addr;(r :num)::num;(m :memop)::memop;(k :num)::num;(t1 :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+share_mem_op_NONE_filter_correct_hypotheses=0
+share_mem_op_NONE_filter_correct_proved=T
+share_mem_op_FFI_final_filter_correct=all_skips (t1 :(α, β, γ) labSem$state).pc t1.code (k :num) ∧
+t1.clock ≠ (0 :num) ∧
+t1.compile =
+(λ(c :β) (p :α sec list).
+     (s1compile :β -> α sec list -> (word8 list # β) option) c
+       (filter_skip p)) ∧ ¬t1.failed ∧
+share_mem_op (m :memop) (r :num) (a :α addr)
+  (t1 with
+   <|pc := adjust_pc t1.pc t1.code; code := filter_skip t1.code;
+     compile := s1compile;
+     compile_oracle :=
+       (λ(n :num).
+            (λ((a :β),(b :α sec list)). (a,filter_skip b))
+              (t1.compile_oracle n :β # α sec list))|>) =
+SOME ((FFI_final (f :final_event) :γ ffi_result),(s :(α, β, γ) labSem$state)) ⇒
+∃(s2 :(α, β, γ) labSem$state).
+  share_mem_op m r a (t1 with pc := k + t1.pc) =
+  SOME ((FFI_final f :γ ffi_result),s2) ∧ s.ffi = s2.ffi
+share_mem_op_FFI_final_filter_correct_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(f :final_event)::final_event;(a :α addr)::α addr;(r :num)::num;(m :memop)::memop;(s1compile :β -> α sec list -> (word8 list # β) option)::β -> α sec list -> (word8 list # β) option;(k :num)::num;(t1 :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+share_mem_op_FFI_final_filter_correct_hypotheses=0
+share_mem_op_FFI_final_filter_correct_proved=T

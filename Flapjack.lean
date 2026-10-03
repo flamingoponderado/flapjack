@@ -3,6 +3,7 @@ import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
 import Flapjack.RiscV.L3.Defs.Decode
 import Flapjack.RiscV.L3.Defs.Run
+import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
 import Flapjack.Pancake.WordConvs.MaxVarIntro
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
@@ -17,9 +18,9 @@ import Flapjack.RiscV.L3.Defs.Divide
 import Flapjack.RiscV.L3.Defs.Multiply
 import Flapjack.RiscV.L3.Defs.WordArithmetic
 import Flapjack.RiscV.L3.Defs.ImmediateShift
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect
-import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.LabProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.LabProps.ClockSupport
 import Flapjack.Compiler.Backend.LabProps.EvaluateIoEventsMono
@@ -397,6 +398,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.FFI
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1207,6 +1209,9 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
+import Flapjack.Pancake.Proofs.PanStructs.ConvertState
+import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
@@ -2094,6 +2099,9 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.AllocationConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
