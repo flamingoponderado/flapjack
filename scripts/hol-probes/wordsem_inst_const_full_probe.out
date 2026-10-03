@@ -1,0 +1,3 @@
+inst_const_full_statement=∀s' s i. inst i s = SOME s' ⇒ s'.code = s.code ∧ s'.code_buffer = s.code_buffer ∧ s'.data_buffer = s.data_buffer ∧ s'.compile = s.compile ∧ s'.compile_oracle = s.compile_oracle ∧ s'.clock = s.clock ∧ s'.ffi = s.ffi ∧ s'.handler = s.handler ∧ s'.stack = s.stack ∧ s'.locals_size = s.locals_size ∧ s'.stack_limit = s.stack_limit ∧ s'.stack_max = s.stack_max ∧ s'.stack_size = s.stack_size
+inst_const_full_proved=T
+inst_const_full_hypotheses=0
