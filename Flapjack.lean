@@ -1224,6 +1224,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
 import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState

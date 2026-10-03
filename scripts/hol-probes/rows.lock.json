@@ -4778,6 +4778,12 @@
       "sha256": "53fae3c0b1d0aedf63af74420ff9a3b48ca9b6940dbb185946e0f7276c60755c"
     },
     {
+      "bytes": 2127,
+      "out": "pan_structs_mem_load_probe.out",
+      "rows": 5,
+      "sha256": "4ac790c7665df96c13c7d848f523c2505cb5759517d11fde91e00a4435761426"
+    },
+    {
       "bytes": 491,
       "out": "pan_structs_mmap_faithful_probe.out",
       "rows": 4,
