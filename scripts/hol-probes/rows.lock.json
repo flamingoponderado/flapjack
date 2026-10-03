@@ -5978,6 +5978,12 @@
       "sha256": "48d70b137356e30ef7f04a228b2cc4ddf3fc2fd7f54d5ee0b743a530fe873451"
     },
     {
+      "out": "stack_rel_definition_probe.out",
+      "bytes": 698,
+      "rows": 3,
+      "sha256": "cb90553ac4415dc62f2860ff33d788429e3ce4d397cc1f9efd75896e26a0733f"
+    },
+    {
       "bytes": 558,
       "out": "stack_remove_alloc_guard_probe.out",
       "rows": 12,

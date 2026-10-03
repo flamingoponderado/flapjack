@@ -6062,3 +6062,6 @@ run_probe lab_to_target_ffi_entry_exclusion_probeScript.sml lab_to_target_ffi_en
   asm_fetch_NOT_ffi_entry_pcs asm_fetch_NOT_ffi_entry_pcs_types asm_fetch_NOT_ffi_entry_pcs_hypotheses \
   first wrap next next_last shift_wrap shift shift_next byte_bound_guard fetch_guard \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rel_definition_probeScript.sml stack_rel_definition_probe.out \
+  stack_rel_definition stack_rel_hypotheses stack_rel_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
