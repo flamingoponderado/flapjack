@@ -1694,6 +1694,18 @@
       "sha256": "405e910e0fda61b17875346b9461591a21401816c5428eee64977b7f54b5667e"
     },
     {
+      "bytes": 4778,
+      "out": "l3_system_signals_probe.out",
+      "rows": 90,
+      "sha256": "c9f78cdabc2d185359ee04a4d53843d48a37118404f8eaaa2e1d6a2bc3b97fdd"
+    },
+    {
+      "bytes": 9516,
+      "out": "l3_tlb_flush_probe.out",
+      "rows": 68,
+      "sha256": "72d95b8104f5737e98827d84eccaa5addceaa5309496c2c24fd07dec38c35d56"
+    },
+    {
       "bytes": 413,
       "out": "lab_code_safety_probe.out",
       "rows": 14,
@@ -2972,6 +2984,12 @@
       "sha256": "027136120f48a95073b598d0ccfcd72f2c83b060c217769b867afdf4ab775b44"
     },
     {
+      "bytes": 340,
+      "out": "misc_find_index_mem_probe.out",
+      "rows": 12,
+      "sha256": "0f2ab483d1baad86b1f756bd817b1b3b897624e684bad4f9785d0b7f43e518ac"
+    },
+    {
       "bytes": 351,
       "out": "misc_find_index_shift_probe.out",
       "rows": 11,
@@ -2982,6 +3000,12 @@
       "out": "misc_find_index_shift_zero_probe.out",
       "rows": 10,
       "sha256": "964070548e0fbe277287e90cefc05a908c42e18494e537cfb85a09b56b5c9c16"
+    },
+    {
+      "bytes": 313,
+      "out": "misc_find_index_successful_mem_probe.out",
+      "rows": 12,
+      "sha256": "06cbbc8727d684de295041ea6242a7b85e82a2f6b9185664769d39e284634f0b"
     },
     {
       "bytes": 130,
@@ -5648,10 +5672,34 @@
       "sha256": "15cbe3769187816460a6ec7478b0b2224efe576c3e43688c52d00e6f79e1dc14"
     },
     {
+      "out": "stack_code_bitmaps_call_probe.out",
+      "bytes": 657,
+      "rows": 3,
+      "sha256": "70aa5cabe85dff671736c3c95ff02b9080a550d6ae69158b43e3f4fcc640b287"
+    },
+    {
+      "out": "stack_code_bitmaps_callreturn_probe.out",
+      "bytes": 684,
+      "rows": 3,
+      "sha256": "3721f4c64f2133510bfd0a914e5e971f6cea07b04209cf963bfadbddfe908611"
+    },
+    {
+      "out": "stack_code_bitmaps_calltail_probe.out",
+      "bytes": 662,
+      "rows": 3,
+      "sha256": "74fbc3d19ae0b577ad8360be34c77f1ecb79136a5e38eb06ff50c02042d2f4cf"
+    },
+    {
       "out": "stack_code_bitmaps_ffi_probe.out",
       "bytes": 669,
       "rows": 3,
       "sha256": "8187c19c63e736f2eb801c46ec181b6f16f7da58eb264eef56d41d7656578ad4"
+    },
+    {
+      "out": "stack_code_bitmaps_full_probe.out",
+      "bytes": 367,
+      "rows": 4,
+      "sha256": "42f40b08a33ef058bd2141ad62f1769ba6697b4c7fc11b152638044e303e0a57"
     },
     {
       "bytes": 652,
@@ -5670,6 +5718,12 @@
       "out": "stack_code_bitmaps_install_probe.out",
       "rows": 3,
       "sha256": "9facf63a25ece1df7fb60cc395fd651b372c302577a16669f94c66519af2e33b"
+    },
+    {
+      "out": "stack_code_bitmaps_jumplower_probe.out",
+      "bytes": 661,
+      "rows": 3,
+      "sha256": "b3b87c8806d1cf64b80ba6606861ff92438667a1943059f65cc1ea91a970130d"
     },
     {
       "bytes": 643,
@@ -5900,6 +5954,12 @@
       "sha256": "ac1f65acba3d79713c36b260d2be89c27cf9eeeae370b339b888c7484cb60083"
     },
     {
+      "out": "stack_rel_aux_definition_probe.out",
+      "bytes": 1818,
+      "rows": 3,
+      "sha256": "48d70b137356e30ef7f04a228b2cc4ddf3fc2fd7f54d5ee0b743a530fe873451"
+    },
+    {
       "bytes": 558,
       "out": "stack_remove_alloc_guard_probe.out",
       "rows": 12,
@@ -6012,6 +6072,12 @@
       "out": "stack_remove_comp_inst_probe.out",
       "rows": 3,
       "sha256": "762ffd3c2927f08374a27d6cc1a03343a5d9cad35ac80c7f420200be5bd58abc"
+    },
+    {
+      "bytes": 761,
+      "out": "stack_remove_comp_install_probe.out",
+      "rows": 2,
+      "sha256": "c74ad6752461397604b7b3d7862ec90ae147109d045cd3aee2747c87d7b8d95d"
     },
     {
       "bytes": 1548,
