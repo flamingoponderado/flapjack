@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.DecodeBits
 import Flapjack.RiscV.L3.Defs.DecodeImmediates
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.RiscV.L3.Defs.FPMemory

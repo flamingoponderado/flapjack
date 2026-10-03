@@ -74749,5 +74749,32 @@
     "hol_name": "asSImm12_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 .8.4.1 literal line12167: complete fixedword field widths7/5, right-associated tuple shape and concatenation order match CC exactly; standard nested append/setWidth yields original total12/20 bits. Encoded sign bits retained without signed arithmetic/offset shift, no hypothesis. Independent numerical field split plus original103 T/kernel rows covers every output position onehot/onecold, sign/max/wrap-adjacent and alternating boundaries. These definitions are actual original Decode prerequisites; no fullDecode/Run/Next/equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
+    "lean_name": "boolify8",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "boolify8_def",
+    "hol_line": 4536,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(8) at line4536 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word8 to right-associated 8-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 8/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
+    "lean_name": "boolify32",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "boolify32_def",
+    "hol_line": 12179,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(32) at line12179 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word32 to right-associated 32-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 32/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
+    "lean_name": "boolify16",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "boolify16_def",
+    "hol_line": 20507,
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(16) at line20507 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word16 to right-associated 16-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 16/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
   }
 ]
