@@ -1,0 +1,8 @@
+no_alloc_code_def=∀code. no_alloc_code code ⇔ ∀k n p. lookup k code = SOME (n,p) ⇒ no_alloc p
+no_install_code_def=∀code. no_install_code code ⇔ ∀k n p. lookup k code = SOME (n,p) ⇒ no_install p
+no_alloc_find_code_statement=∀code dest args lsize args1 expr ps. find_code dest args code lsize = SOME (args1,expr,ps) ∧ no_alloc_code code ⇒ no_alloc expr
+no_alloc_find_code_hypotheses=0
+no_install_find_code_statement=∀code dest args lsize args1 expr ps. no_install_code code ∧ find_code dest args code lsize = SOME (args1,expr,ps) ⇒ no_install expr
+no_install_find_code_hypotheses=0
+no_install_evaluate_const_code_statement=∀prog s result s1. evaluate (prog,s) = (result,s1) ∧ no_install prog ∧ no_install_code s.code ⇒ s.code = s1.code
+no_install_evaluate_const_code_hypotheses=0
