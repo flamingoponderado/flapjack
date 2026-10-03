@@ -7679,3 +7679,12 @@ assembly proves the full eight-hypothesis result with actual target execution
 and every existential context/state conjunct over all five source constructors,
 without public induction or target/post-state premises. Executed production
 routing remains separately tracked.
+
+`pan_props_semantics_wrapper_probe` captures the full generic PanProps wrapper
+equation, quantified function type and closed kernel truth. Lean retains the
+original distinct result datatype, arbitrary clock-indexed function,
+error/complete/incomplete observations, SOME-choice and chain-free generic LUB
+formula. No supplied LUB or chain premise is required. Standard choice
+translation leaves independently unspecified selections outside the
+cross-language agreement claim. Wrapper equality and PanSem correspondence
+remain separately tracked proof obligations.

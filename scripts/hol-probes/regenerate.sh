@@ -7165,3 +7165,7 @@ run_probe pan_structs_decls_function_exn_probeScript.sml pan_structs_decls_funct
 run_probe pan_structs_decls_correct_probeScript.sml pan_structs_decls_correct_probe.out \
   compile_decls_correct_statement compile_decls_correct_proved compile_decls_correct_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrapper_probe.out \
+  semantics_wrapper_def_statement semantics_wrapper_def_proved semantics_wrapper_def_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
