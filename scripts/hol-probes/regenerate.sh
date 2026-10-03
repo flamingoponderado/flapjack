@@ -4637,6 +4637,10 @@ run_probe word_alloc_distinct_tar_reg_probeScript.sml word_alloc_distinct_tar_re
   ssa_cc_trans_distinct_tar_reg_statement ssa_cc_trans_distinct_tar_reg_hypotheses ssa_cc_trans_distinct_tar_reg_typed \
   full_ssa_cc_trans_distinct_tar_reg_statement full_ssa_cc_trans_distinct_tar_reg_hypotheses full_ssa_cc_trans_distinct_tar_reg_typed \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_compile_single_probeScript.sml word_to_word_compile_single_probe.out \
+  FST_compile_single_statement FST_compile_single_hypotheses FST_compile_single_typed \
+  compile_single_lem_statement compile_single_lem_hypotheses compile_single_lem_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
   compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
   compile compile_typed compile_hypotheses \
