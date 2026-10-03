@@ -7054,3 +7054,32 @@ proof or universal word32 equivalence. Kernel fixture equality includes full
 constructor and numeric payloads. No instruction/mode acceptance assumption
 is added to the definitions. Regenerate with `HOL_PROBE_ONLY=l3_decode_probeScript.sml`
 through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
+### Native filter state relation and skipped-run consequences
+
+`lab_filter_state_relation_probeScript.sml` captures four complete original declarations125/199/252/263 with full types, zero hypotheses and kernel reproofs (16 rows). The unchanged local proofs and their unchanged local state/skip-run prerequisites are replayed from the original source. The unused fetch lemma inst binder is captured explicitly.
+
+### Native skipped-run PC adjustment
+
+`lab_filter_pc_adjustment_probeScript.sml` replays the unchanged original local proofs211/281 and captures both full statements, all types, zero hypotheses and kernel reproofs (8 rows). The full successor adjustment law is an actual shared-memory filter simulation prerequisite; the initial-alignment lemma is independent nearby source support.
+
+### Native shared-memory filter terminal clauses
+
+`lab_filter_shared_terminal_probeScript.sml` captures the complete original NONE578 and final646 clauses with independent full state/configuration/oracle/FFI types, zero hypotheses and kernel reproofs (8 rows). All original guards remain; the final original-PC state and FFI equality are existential conclusions.
+`pan_structs_shape_map_codec_probe` captures the external HOL alistTheory right-fold
+definition and unconditional lookup theorem used by PanStructs. Original duplicate
+keys keep the first binding; other, missing and empty lookups are recorded.
+
+### Full native shared-memory filter return clause
+
+`lab_filter_shared_return_probeScript.sml` captures the complete original return614 theorem, independent full carriers, zero hypotheses and kernel reproof (4 rows). The existential poststate and full state relation/nonfailed/forall-clock conjunction remain conclusions. Together with the terminal probe it covers the complete original shared-memory filter prerequisite group.
+
+`word_simp_generic_carriers_probeScript.sml` captures the original seven generic
+lookup/move/name declarations with `Globals.show_types := true`, plus zero HOL
+hypothesis counts (14 rows). It exposes arbitrary association keys/value types,
+the independently typed unused NONE binder, arbitrary second move components
+and arbitrary Spt payloads. Full Lean consumers cover generic and String/Bool
+instances. These source captures are regression evidence, not cross-language
+equivalence or a new representation exception.
+## Native PC writer and DecodeAny
+
+`l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.

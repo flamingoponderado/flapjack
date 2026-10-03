@@ -73068,7 +73068,7 @@
     "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
     "hol_name": "all_names_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all_names (n,m) = union n m over num_set pair. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
@@ -73559,7 +73559,7 @@
       "store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 232-235: !moves x s s' v. set_vars (MAP FST moves) x s = s' /\\ ALOOKUP moves v = NONE ==> get_var v s' = get_var v s Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSimpConstFpLemmasSupport.holFmapAsFiniteSupportWitness; positive width only."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/ConstFpLemmas.lean",
@@ -73761,7 +73761,7 @@
     "hol_name": "ALOOKUP_LIST_REL_sf_gc_consts",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 436-440: !l1 l2 k v. LIST_REL (\\(ak, av) (bk, bv). ak = bk /\\ (is_gc_word_const av ==> bv = av)) l1 l2 /\\ is_gc_word_const v /\\ ALOOKUP l1 k = SOME v ==> ALOOKUP l2 k = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -73770,7 +73770,7 @@
     "hol_name": "ALOOKUP_LIST_REL_sf_gc_consts_NONE",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 450-453: !l1 l2 k v. LIST_REL (\\(ak, av) (bk, bv). ak = bk /\\ (is_gc_word_const av ==> bv = av)) l1 l2 /\\ ALOOKUP l1 k = NONE ==> ALOOKUP l2 k = NONE Lean keeps the same binders, premises and conclusion; HOL's unused binder v is kept.. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations. HOL 'a word as positive-width BitVec width with [NeZero width]; no other carrier change."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -73786,7 +73786,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
     "hol_name": "ALOOKUP_LIST_REL_value_rel",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 472-475: !f l' l k v. LIST_REL (\\(ak, av) (bk, bv). (ak = bk) /\\ (f av ==> bv = av)) l' l /\\ ALOOKUP l' k = SOME v /\\ f v ==> ALOOKUP l k = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -73794,7 +73794,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
     "hol_name": "ALOOKUP_ALL_DISTINCT_FST_PERM",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 482-482: !l1 l2. ALL_DISTINCT (MAP FST l1) /\\ PERM l1 l2 ==> ALOOKUP l1 = ALOOKUP l2 Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -73802,7 +73802,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
     "hol_name": "ALOOKUP_ALL_DISTINCT_FST_PERM_SOME",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead flapjack-pxn.18.5.15.2.41 word_simpProof: original 488-491: !l1 f k v. ALL_DISTINCT (MAP FST l1) /\\ PERM l1 (f l1) /\\ ALOOKUP l1 k = SOME v ==> ALOOKUP (f l1) k = SOME v Lean keeps the same binders, premises and conclusion. wordLang/wordSem names are the tagged native definitions (word_simp definitions from bead .38); LIST_REL/EVERY2 is List.Forall2, ALOOKUP is sptAListLookup, sptree lookup/insert/delete/inter/filter_v the tagged Spt operations."
+    "reviewer": "flapjack-sol2 PR1206 source re-review2026-10-03 original232-242/436-495 and all_names258-260: restore full generic HOL carriers. Five association-list theorems quantify arbitrary key type with DecidableEq used only to implement HOL equality in List.lookup (lawful first-match lookup), and arbitrary value type where original is word-free. The unused v in NONE has an independent arbitrary type, as typed HOL confirms. set_vars_move_NONE keeps numeric destination keys but arbitrary independent second move component; native numeric lookup is generic in values. allNames accepts Spt alpha pairs and returns Spt alpha, preserving union left priority/malformed carriers with no new guard. All original quantified guards and conclusions remain, no narrowing/qualifier/allowlist exception. Generic and non-Nat/full-payload consumers and fresh show_types original captures expose the key/value/unused binders. Word carriers retain existing positive width translation and state canonical fpRegs/store qualifier where applicable; no other carrier change."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
@@ -75764,5 +75764,280 @@
     "hol_name": "DecodeRVC_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c complete source/body comparison2026-10-03 riscvScript20502: whole fixedword16->exact instruction, all nested 51 Boolean source guards and full ISA constructor payloads retained. Source Boolean variables b-prime-i map to b_i via complete boolify16 MSB-to-LSB product; negation/conjunction/nested if order unchanged. Bitstring v2w rendered by reviewed MSB list/testbit helper, concatenation/replication/three immediate codecs preserve original widths and tuple order; no architecture/accepted-opcode premise, reserved and UnknownInstruction branches preserved including redundant compressed paths. Complete original declared type/zero hypotheses and621 full numeric instruction observations across all213 feasible source leaves captured/replayed in Lean kernel; original v2w payloads independently normalized to numerals with bitstringLib.v2w_n2w_CONV. Finite observations and sampling solver are regression evidence, not universal cross-language equivalence or end-to-end correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "setupSSAProps2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "setup_ssa_props_2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10745-10761: same positive word width for source program and prologue as explicitly annotated in HOL; sole is_alloc_var limit premise gives all four actual setupSSA output conclusions (ssa_map_ok, allocation class, pre_alloc_conventions, limit bound). Derived from literal original rename properties and empty map invariant, with no evaluation or post-state assumption. words_as_type_indexed_bitvec records only positive HOL word dimension. Original List/Spt/WordLang carriers retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "loopSetup_propsLocal",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "loop_setup_props_local",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10470-10481: original loopSetup producer equation, ssa_map_ok and allocation-class premises imply output class, output map invariant and source counter bound. Literal two rename stages and original list_next_var_rename_props/list_next_var_rename_move_props discharge all conclusions; no extra freshness or target invariant premise. words_as_type_indexed_bitvec records only positive HOL word dimension. Original List/Spt/WordLang carriers retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "asm_fetch_not_skip_adjust_pc",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "asmFetchNotSkipAdjustPc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2 and coordinator followup .187.2.1): original lab_filterProofScript.sml125 full pc/code/inst binder order retained. Explicit unused inst has independent arbitrary carrier I : Type u, matching original unconstrained beta; no concrete instruction or other carrier specialization. Entire universal no-Skip bytes/length guard and complete actual fetch equality preserved. Count from actual asmFetchAuxEq is proved zero from real allSkips predecessor exclusion, not supplied. Positive-width type-indexed word line/section representation qualified; byte payloads fixed8 and all constructors unchanged. Fresh fulltype/statement/0hyp/T capture explicitly includes inst:beta; unchanged local original proof replayed after repair. Caller audit finds no current callers to update."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "state_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "stateRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original199 full native state relation with independent word/config/FFI carriers: existential arbitrary sourceCompile, actual filtered code, adjusted pc, pointwise oracle second-component filter, compile transformation function equality and original nonfailed guard. Entire conjunction/exists/state equality retained, no target run or error premise. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "asm_fetch_aux_eq2",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "asmFetchAuxEq2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original252 full arbitrary adjusted native fetch=x guard yields actual existential count with original fetch(pc+count)=x and entire allSkips predicate. All pc/code/x binders retained; no supplied count. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "all_skips_evaluate_rw",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/StateRelation.lean",
+    "lean_name": "allSkipsEvaluateRw",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original263 full native state/count/clock/target binders, conjunction of allSkips, nonfailed, clock=clk+count and target exact pc/clock update; conclusion entire native evaluator result-pair equality. Retains Error/TimeOut outcomes; no target evaluator premise. Native allSkipsEvaluate derives clock accounting. Inherits reals_as_rational_cuts via actual evaluator FP closure, SOUNDNESS item 8 unchanged. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "adjust_pc_all_skips",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PcAdjustment.lean",
+    "lean_name": "adjustPcAllSkips",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.3): Original211 all count/pc/code binders and entire allSkips guard preserved; conclusion adjustPc pc code+1=adjustPc(pc+count+1)code. Literal PC/fetch induction establishes the single-position Skip/nonSkip derivative; finite skipped-prefix induction and actual stop-position exclusion derive the full result. Source shared-return proof uses this exact law through share_mem_load/store_filter_correct_tac. No extra supplied alignment or fetch premise. Full original type-indexed word line/section carriers retained with positive-width BitVec qualifier; byte payloads fixed8 and all labels/constructors unchanged. Fresh complete original statement/types/zero hypotheses/kernel reproof captured; unchanged local original proofs replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "all_skips_initial_adjust",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PcAdjustment.lean",
+    "lean_name": "allSkipsInitialAdjust",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.3): Original281 arbitrary code yields actual existential count, allSkips 0 code count and adjustPc count code=0. Accepted full asmFetchAuxEq derives the witness; literal skipped-prefix PC invariant proves zero. No assumed count or initial alignment. This independent nearby source lemma has no downstream source use found, and is not claimed as a required final-assembler prerequisite. Full original type-indexed word line/section carriers retained with positive-width BitVec qualifier; byte payloads fixed8 and all labels/constructors unchanged. Fresh complete original statement/types/zero hypotheses/kernel reproof captured; unchanged local original proofs replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "share_mem_op_NONE_filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SharedMemory.lean",
+    "lean_name": "shareMemOpNoneFilterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.1): Original578 arbitrary source state/count/op/register/address and independent arbitrary compiler/oracle binders retained. Exact allSkips guard and NONE result from filtered-code/adjusted-pc/compiler/oracle state imply actual original pc=count+t.pc transition NONE. All8 shared operators and native address constructors unfold the actual primitive; no successful transition or desired state premise. Full alpha word/beta config/gamma FFI source types freshly queried/captured. Positive-width BitVec translation qualified; byte payloads fixed8 and configuration/function/oracle products unchanged. Fresh original complete statement/type/zero hypotheses/kernel reproof capture."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "share_mem_op_FFI_final_filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SharedMemory.lean",
+    "lean_name": "shareMemOpFfiFinalFilterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.1): Original646 full state/count/op/register/address/sourceCompile/outcome/poststate binders and allSkips, nonzero clock, compiler transform equality, nonfailed and actual filtered transition guards retained. Derives actual existential original-PC poststate with identical final outcome and whole FFI equality. All8 shared operators/address cases; concrete witness is original state with pc=count+t.pc because native final operations preserve every other field. Whole source transition equality projects to FFI equality, not assumed post relation or target execution. Independent of returning stateRel/adjustPc successor theorem. Full alpha word/beta config/gamma FFI source types freshly queried/captured. Positive-width BitVec translation qualified; byte payloads fixed8 and configuration/function/oracle products unchanged. Fresh original complete statement/type/zero hypotheses/kernel reproof capture."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ShapeMap.lean",
+    "lean_name": "shapeMap_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-10-03: Flapjack canonical finite-map codec correspondence to external HOL alistTheory right-fold FUPDATE/FEMPTY, not a CakeML declaration. Arbitrary exact MlS/ShapeHOL entries/key including duplicates; unconditional independent raw alistToFmap lookup equality. Source alistScript21/ALOOKUP_EQ_FLOOKUP67 checked; no distinctness, extra support or desired map relation premise. Enables canonical original shape-map equality hypotheses of faithful PanStructs compile_exp_correct."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "everyName_def2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "every_name_def2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source review word_allocProofScript.sml:10413-10418: arbitrary Boolean predicate and native cutset pair; exact equality every_name with EVERY P over MAP FST toAList of union. Literal unrestricted Spt domains, native List and Boolean reflection, no extra hypothesis or representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "union_applyNummapsKey",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "union_apply_nummaps_key",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source review word_allocProofScript.sml:10420-10432: arbitrary renaming and pair of unrestricted same-payload native Spt maps; exact domain equality between union of both renamed components and renaming of their union. Full arbitrary key collisions retained, no injectivity or tree validity premise; derived from original apply_nummap_key_domain and domain_union."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "share_mem_op_FFI_return_filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SharedMemory.lean",
+    "lean_name": "shareMemOpFfiReturnFilterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.4.2): original lab_filterProofScript.sml614-644 and fresh complete original HOL type capture preserve independent alpha word/beta arbitrary configuration/gamma FFI carriers, all t/count/op/register/address/sourceCompile/ffi/bytes/sourcePost binders, actual native filtered-state transition plus allSkips/nonzero-clock/compiler-transform/nonfailed guards. Conclusion retains original exists targetPost then forall extra scope over all five clauses: actual original-PC return transition, entire stateRel, both nonfailed facts, and whole clock-extended return transition with targetPost.clock+extra in original extra+clock order. Native all8 shared operators/address constructors derive concrete returning load/store states; source primitive equality determines sourcePost, real adjustPcAllSkips211 establishes complete successor relation, existential compiler witness proves full stateRel, and accepted full shareMemOpAddClockSame supplies arbitrary-clock transition. No supplied target state/run, desired relation, poststate fact, clock bound, result equality or outcome premise beyond original source transition. Positive-width BitVec translation qualified; fixed8 byte and unchanged function/oracle/config/FFI carriers. Fresh original complete statement/types/zero hypotheses/kernel reproof4rows. Together with checked NONE578/final646 this completes the original shared-memory filter prerequisite group, not full filter_correct669 or filter semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Skip constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Move constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original StoreConsts constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Assign constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocGet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Get constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Store constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Raise constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original OpCurrHeap constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Return constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Tick constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original Set constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original LocValue constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original CodeBufferWrite constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original DataBufferWrite constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Primitives.lean",
+    "lean_name": "ssaCcTrans_preAllocShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, original ShareInst constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/WritePC.lean",
+    "lean_name": "«write'PC»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "write'PC_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: Full original word64 writer over arbitrary riscv_state: only c_PC changes by UPDATE at unrestricted word8 procID; all other fields retained. Original universal full-record, arbitrary-key and current-PC equations proved without hypotheses and checked against Lean kernel equations. No totalCore bound or chosen state defaults."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/DecodeAny.lean",
+    "lean_name": "DecodeAny",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DecodeAny_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-03: Complete literal Half word16 / Word word32 case split over rawInstType, selecting complete source-reviewed DecodeRVC / Decode respectively. Original universal clauses proved without hypotheses and Lean clauses kernel checked. No accepted-opcode, ISA mode or successful-decoding premise."
   }
 ]

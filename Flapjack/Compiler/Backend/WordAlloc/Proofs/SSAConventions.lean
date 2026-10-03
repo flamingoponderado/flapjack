@@ -1,5 +1,9 @@
 import Flapjack.Compiler.Backend.WordAlloc.SSAFixInconsistencies
 import Flapjack.Compiler.Backend.WordAlloc.SSAHelpers
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSASetupProps
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
+import Flapjack.Misc.Sptree.ToAList
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyMaps
 import Flapjack.Pancake.WordConvs
 
 /-! Original SSA reconciliation convention group from word_allocProof. -/
@@ -99,5 +103,84 @@ theorem loopSetup_preAllocConventions {width : Nat} [NeZero width]
   simp only [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL,
     Bool.and_eq_true] at fake moveConvention ⊢
   exact ⟨⟨fake.1, moveConvention.1⟩, fake.2, moveConvention.2⟩
+
+/-- Original syntactic setup properties, requiring only the source allocation
+class of the limit. No evaluator run or target-state fact is assumed. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
+  "setup_ssa_props_2" (words_as_type_indexed_bitvec)]
+theorem setupSSAProps2 {width : Nat} [NeZero width] (limit count : Nat)
+    (program : WordLangProgHOL (BitVec width)) (allocated : isAllocVar limit) :
+    let (move, ssa, next) := setupSSA (outputWidth := width) count limit program
+    ssaMapOK next ssa ∧ isAllocVar next ∧
+      preAllocConventionsHOL move = true ∧ limit ≤ next := by
+  generalize renamed : listNextVarRename (evenList count) .ln limit = output
+  rcases output with ⟨names, ssa, next⟩
+  have properties := listNextVarRenameProps (evenList count) .ln limit
+    names ssa next renamed ⟨Or.inl allocated, setupEmptyMapOK limit⟩
+  simp only [setupSSA, renamed]
+  refine ⟨properties.2.2.2, properties.2.1 allocated, ?_, properties.1⟩
+  simp [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
+
+/-- Original local loop setup invariant and counter properties. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
+  "loop_setup_props_local" (words_as_type_indexed_bitvec)]
+theorem loopSetup_propsLocal {width : Nat} [NeZero width]
+    (names exitNames : Spt Unit) (ssa : Spt Nat) (na : Nat)
+    (setupProg : WordLangProgHOL (BitVec width)) (ssaRefreshed : Spt Nat)
+    (naRefreshed : Nat)
+    (h : loopSetup names exitNames ssa na = (setupProg, ssaRefreshed, naRefreshed) ∧
+      ssaMapOK na ssa ∧ isAllocVar na) :
+    isAllocVar naRefreshed ∧ ssaMapOK naRefreshed ssaRefreshed ∧ na ≤ naRefreshed := by
+  rcases h with ⟨setup, valid, allocated⟩
+  unfold loopSetup at setup
+  generalize hr : listNextVarRename
+    (((sptToAList (sptUnion names exitNames)).map Prod.fst).filter
+      fun v => (sptLookup v ssa).isNone) ssa na = renamed at setup
+  rcases renamed with ⟨fresh, extended, next⟩
+  have first := listNextVarRenameProps _ ssa na fresh extended next hr
+    ⟨Or.inl allocated, valid⟩
+  simp only [hr] at setup
+  generalize hm : listNextVarRenameMove (width := width) extended next
+    (((sptToAList (sptUnion names exitNames)).map Prod.fst).filter
+      fun v => (sptLookup v ssa).isSome) = moved at setup
+  rcases moved with ⟨moves, refreshed, nextOut⟩
+  have second := listNextVarRenameMoveProps _ extended next moves refreshed nextOut hm
+    ⟨Or.inl (first.2.1 allocated), first.2.2.2⟩
+  simp only [Prod.mk.injEq] at setup
+  rcases setup with ⟨_, rfl, rfl⟩
+  exact ⟨second.2.1 (first.2.1 allocated), second.2.2.2, Nat.le_trans first.1 second.1⟩
+
+/-- Original Boolean cutset predicate equals the predicate over union keys.
+The native Spt union and list key enumeration retain the HOL carriers. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "every_name_def2"]
+theorem everyName_def2 (P : Nat → Bool) (t : WordLangCutsetsHOL) :
+    everyNameHOL P t = ((sptToAList (sptUnion t.1 t.2)).map Prod.fst).all P := by
+  apply Bool.eq_iff_iff.mpr
+  simp only [everyNameHOL, Bool.and_eq_true, List.all_eq_true,
+    sptMemMapFstToAList, sptDomain_sptUnion]
+  constructor
+  · rintro ⟨left, right⟩ key (member | member)
+    · exact left key member
+    · exact right key member
+  · intro all
+    exact ⟨fun key member => all key (Or.inl member),
+      fun key member => all key (Or.inr member)⟩
+
+/-- Original union domain transport for arbitrary key renaming, including
+collisions. Both component maps retain the same unrestricted HOL payload. -/
+@[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml" "union_apply_nummaps_key"]
+theorem union_applyNummapsKey {α : Type} (f : Nat → Nat) (p : Spt α × Spt α) :
+    sptDomain (sptUnion (applyNummapsKey f p).1 (applyNummapsKey f p).2) =
+      sptDomain (applyNummapKey f (sptUnion p.1 p.2)) := by
+  funext key
+  apply propext
+  simp only [applyNummapsKey, sptDomain_sptUnion, applyNummapKeyDomain]
+  constructor
+  · rintro (⟨source, member, equal⟩ | ⟨source, member, equal⟩)
+    · exact ⟨source, Or.inl member, equal⟩
+    · exact ⟨source, Or.inr member, equal⟩
+  · rintro ⟨source, (member | member), equal⟩
+    · exact Or.inl ⟨source, member, equal⟩
+    · exact Or.inr ⟨source, member, equal⟩
 
 end Flapjack.WordAlloc
