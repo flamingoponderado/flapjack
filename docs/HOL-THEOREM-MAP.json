@@ -68564,5 +68564,13 @@
     "hol_name": "find_index_MEM",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 full original source1088 and fresh fulltype0hyp comparison: generic alpha list/target/arbitrary Nat offset, sole membership premise and complete existential find_index success at offset+i, original i<length bound and EL i list=target. DecidableEq supplies same propositional equality; Nonempty exposes intrinsic HOL inhabited carrier for existing bounded EL. No Nodup, extra outer bound, assumed search/target/default or hold change; structural first-match recursion retains duplicates. Fresh original seven complete theorem instances with original membership guards kernel discharged and two missing/empty guard observations allT; generic native full consumer and actual arbitrary machineConfig FFI-entry-PC/word/offset consumer. Every EL remains under original existential bound. Evidence is source comparison/regression, not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/SuccessfulMembership.lean",
+    "lean_name": "findIndex_isMem",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_is_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison miscScript.sml1227 and fresh fulltype0hyp: full generic target/list/offset/result, sole successful-search premise and original membership conclusion. Generic alpha retained; DecidableEq supplies propositional equality. No fixed word specialization, Nodup, index bound or HD/EL/default dependency. Fresh original complete theorem instances discharge actual successful-search guards; kernel structural proof and arbitrary MachineConfig.ffiEntryPcs consumer. Source/regression evidence does not establish cross-language equivalence or full FFI/initializer/compiler correctness."
   }
 ]

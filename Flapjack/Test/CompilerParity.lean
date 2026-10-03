@@ -1,3 +1,4 @@
+import Flapjack.Test.MiscFindIndexSuccessfulMemParity
 import Flapjack.Test.MiscFindIndexMemParity
 import Flapjack.Test.MiscBytesInMemImpParity
 import Flapjack.Test.LabToTargetWordSearchParity
