@@ -2,6 +2,7 @@ import Flapjack.Test.L3SystemSignalsParity
 import Flapjack.Test.L3AMOMinMaxParity
 import Flapjack.Test.L3AMOArithmeticParity
 import Flapjack.Test.BytesInMemoryDomainParity
+import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.L3AMOSwapParity
 import Flapjack.Test.MiscBytesInMemImpParity
 import Flapjack.Test.LabToTargetWordSearchParity
