@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
 import Flapjack.Compiler.Backend.LabProps.DomainAlignment
