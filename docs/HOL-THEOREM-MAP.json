@@ -82673,5 +82673,19 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison7750-7765: arbitrary original names native unit Spt; full original state_rel and actual cut_state(names,LN)=SOME post imply entire same-target relation. Cut preserves all other fields, native inter/union wf and lookup laws preserve every local placement. Original two premises only, no added wf/lookup/target-run assumptions. Canonical fmap_as_finite_support_relation codecs and positive-width word translation reviewed; structural theorem introduces no real evaluator assumption. Fresh literal original proof replay."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_cont_loop_handler",
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoopHandler.lean",
+    "lean_name": "evaluateContLoopHandler",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison7724-7733: arbitrary original program/state/result, actual source evaluate and cont_loop guard only imply unchanged handler. Original NONE/Continue0 cases follow full accepted evaluate_stack_swap result, no additional success/handler premise. Canonical fmap_as_finite_support fpRegs/store and positive-width words only; inherits reals_as_rational_cuts through evaluator. Fresh literal original proof replay."
   }
 ]
