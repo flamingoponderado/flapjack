@@ -7711,3 +7711,37 @@ including register zero and register31. These finite oracle rows are regression
 evidence, not exhaustive equivalence; the universal Lean proof and literal
 source comparison are separate obligations. The guard pins the unrestricted
 signature and all four original sentinels.
+`pan_structs_decls_decl_probe` captures the full original declaration theorem,
+its Decl initializer specialization and complete source declaration induction,
+with closed kernel truth and quantified types. The Lean minor retains all eight
+hypotheses and every target/existential conclusion, with exactly the successful
+empty-locals initializer and declared-shape guarded tail IH. Final-context code
+transport and global update conversion are derived internally. Whole declaration
+correctness and executed compiler routing remain separately open.
+
+`pan_structs_compiled_shapes_wf_probe` captures the entire original mutual
+compiled-shape well-formedness theorem, kernel truth, and quantified types from
+both nested conjuncts. The target context retains arbitrary payload alpha;
+the compilation context retains original MlS field names. Both unconditional
+single-shape and EVERY list conclusions are ported without source-WF premises.
+This is a prerequisite for original Function/ExnDecl declaration minors.
+### Native Loc and upper-immediate decoder evidence
+
+`riscv_upper_decode_probeScript.sml` captures eight original HOL LUI/AUIPC Encode/Decode boundary EVALs (zero, all ones, sign bit, positive maximum). All are `T`; these finite oracles supplement the unconditional Lean proofs over every intrinsic register/immediate bitvector, and do not constitute a universal HOL proof.
+
+`riscv_target_loc_probeScript.sml` specializes the proved original encoder theorem only to unrestricted `Loc r c`, retaining native types, zero stored hypotheses, and the full original assertion conclusion. `Loc.lean` proves the complete two-step constructor case using literal native AUIPC/ADDI execution and original interference projection transport. The statement guard pins the public type and original capture; it supplements kernel checking and manual source comparison. The inherited native real-state representation assumption remains as documented in SOUNDNESS item 8.
+
+`pan_structs_decls_function_exn_probe` captures full declaration correctness,
+the Function/ExnDecl specializations and original source induction, including
+quantified types and closed kernel truth. Lean retains all eight hypotheses,
+full target run and every existential conclusion. Precisely the original
+source guard-success tail IHs are used; compiled-shape WF, absence lookup and
+code/exception-update transport derive target guards and evaluation internally.
+Whole declaration assembly and executed production routing remain separate.
+
+`pan_structs_decls_correct_probe` captures the whole original declaration
+correctness theorem, all quantified types and closed kernel truth. The Lean
+assembly proves the full eight-hypothesis result with actual target execution
+and every existential context/state conjunct over all five source constructors,
+without public induction or target/post-state premises. Executed production
+routing remains separately tracked.

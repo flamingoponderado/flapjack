@@ -7210,6 +7210,30 @@ run_probe stack_to_lab_make_init_probeScript.sml stack_to_lab_make_init_probe.ou
   make_init_def_statement make_init_semantics_statement memory_assumption_def_statement halt_assum_lemma_statement FLOOKUP_regs_statement state_rel_make_init_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_to_lab_compile_probeScript.sml stack_to_lab_compile_probe.out \
+  is_gen_gc_def_statement config_accessors_statement compile_def_statement compile_no_stubs_def_statement data_num_stubs_def_statement AllocGlobal_location_def_statement CopyGlobals_location_def_statement InitGlobals_location_def_statement \
+  "$cake_dir/compiler/backend/stack_to_labScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_to_lab_good_code_probeScript.sml stack_to_lab_good_code_probe.out \
+  good_code_def_statement contain_def_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_full_make_init_probeScript.sml stack_to_lab_full_make_init_probe.out \
+  full_make_init_def_statement full_make_init_buffer_statement full_make_init_ffi_statement full_make_init_compile_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_compile_lab_pres_probeScript.sml stack_to_lab_compile_lab_pres_probe.out \
+  MAP_FST_compile_compile_statement next_lab_non_zero_3211_statement MAP_prog_to_section_FST_3272_statement extract_label_store_list_code_statement stack_to_lab_compile_lab_pres_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_lab_pres_probeScript.sml stack_remove_lab_pres_probe.out \
+  stack_remove_lab_pres_statement \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_rawcall_extract_labels_comp_probeScript.sml stack_rawcall_extract_labels_comp_probe.out \
+  extract_labels_comp_statement \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
   flatten_leq_statement no_ret_correct_statement compile_jump_correct_statement result_view_nchotomy_statement result_view_def_statement halt_word_view_def_statement halt_view_def_statement stack_to_lab_lab_pres_statement stack_to_lab_lab_pres_T_statement flatten_T_F_statement prog_to_section_labels_ok_statement NOT_MEM_find_lab_IMP_statement is_some_loc_to_pc_prefix_statement every_is_some_loc_to_pc_prefix_statement NOT_bad_fun_return_IMP_SOME_statement next_lab_non_zero_1022_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7304,6 +7328,13 @@ run_probe word_to_stack_comp_storeconsts_probeScript.sml word_to_stack_comp_stor
   comp_correct_storeconsts_full_statement comp_correct_storeconsts_full_proved comp_correct_storeconsts_full_hypotheses comp_correct_storeconsts_whole_statement comp_correct_storeconsts_whole_proved comp_correct_storeconsts_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_comp_returning_full_probeScript.sml word_to_stack_comp_returning_full_probe.out \
+  comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_move_div2_probeScript.sml word_to_stack_move_div2_probe.out \
+  times2_div2_statement times2_div2_proved times2_div2_hypotheses parsem_parmove_div2_statement parsem_parmove_div2_proved parsem_parmove_div2_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ast_backend_operators_probeScript.sml ast_backend_operators_probe.out \
   word_size_case_def word_size_nchotomy thunk_mode_case_def thunk_mode_nchotomy thunk_op_case_def thunk_op_nchotomy test_case_def test_nchotomy \
   "$cake_dir/semantics/astScript.sml" "$cake_dir/semantics"
@@ -7323,12 +7354,9 @@ run_probe clos_known_config_probeScript.sml clos_known_config_probe.out \
 run_probe clos_to_bvl_config_probeScript.sml clos_to_bvl_config_probe.out \
   config_component_equality default_config_def next_loc_type start_type do_mti_type known_conf_type do_call_type call_state_type max_app_type \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
-run_probe word_to_stack_comp_returning_full_probeScript.sml word_to_stack_comp_returning_full_probe.out \
-  comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation \
-  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe word_to_stack_move_div2_probeScript.sml word_to_stack_move_div2_probe.out \
-  times2_div2_statement times2_div2_proved times2_div2_hypotheses parsem_parmove_div2_statement parsem_parmove_div2_proved parsem_parmove_div2_hypotheses \
+run_probe word_to_stack_move_single_probeScript.sml word_to_stack_move_single_probe.out \
+  wMoveSingle_statement wMoveSingle_proved wMoveSingle_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_syntax_probeScript.sml bvl_syntax_probe.out \
@@ -7342,3 +7370,31 @@ run_probe bvi_syntax_probeScript.sml bvi_syntax_probe.out \
 run_probe bvl_to_bvi_config_probeScript.sml bvl_to_bvi_config_probe.out \
   config_component_equality inline_size_limit_type exp_cut_type split_main_at_seq_type next_name1_type next_name2_type next_name3_type do_tailrec_type do_tmc_type inlines_type bvi_inlines_type \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.out \
+  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_decl_statement compile_decls_correct_decl_proved compile_decls_correct_decl_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_shapes_wf_probe.out \
+  is_wf_shape_compile_shape_statement is_wf_shape_compile_shape_proved is_wf_shape_compile_shape_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
+  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \
+  lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
+  riscv_encoder_correct_loc_statement riscv_encoder_correct_loc_types \
+  riscv_encoder_correct_loc_hypotheses riscv_encoder_correct_loc_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_structs_decls_function_exn_probeScript.sml pan_structs_decls_function_exn_probe.out \
+  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_function_statement compile_decls_correct_function_proved compile_decls_correct_function_types compile_decls_correct_exn_statement compile_decls_correct_exn_proved compile_decls_correct_exn_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_decls_correct_probeScript.sml pan_structs_decls_correct_probe.out \
+  compile_decls_correct_statement compile_decls_correct_proved compile_decls_correct_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

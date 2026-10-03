@@ -1,0 +1,1 @@
+extract_labels_comp_statement=∀i p. extract_labels (comp i p) = extract_labels p ∧ extract_labels (comp_top i p) = extract_labels p
