@@ -205,6 +205,3 @@ theorem everyVar_isPhyVar_totalColour {width : Nat} [NeZero width]
   simp [Function.comp_apply, isPhyVar]
 
 end Flapjack.WordAlloc
-
-
-
