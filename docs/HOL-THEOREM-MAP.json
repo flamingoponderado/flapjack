@@ -81296,5 +81296,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison labProps517/524/531 and946/953/960: full unconditional native operation alignment commutation or address observation equality. All generic positive width/C/FFI state and original arithmetic/FP/address payload carriers retained. Exact actual arithmetic/native FP/read-address operations, every constructor, both word/Loc register outcomes, assertion/failure and aliased destination ordering preserved. No dimension/good_dimindex/success/poststate premise added. Standard word/Type0 carrier qualifier only. Fresh original allsix fulltypes/hyp0/kernelT in lab_props_alignment_operations_probe.out. Full evaluator/refinement/final semantics_compile remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentWordMemory.lean",
+    "lean_name": "memLoadAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps537-570/624-657 full original good_dimindex guard and exact mem_load/store align_dm commutation. Native positive width/C/FFI full state and original Nat register/HolAddr carriers retained; no additional success/nonfailure/domain/poststate condition. Same original32/64 guard derives exact canonical holByteAligned iff word-byte modulo from accepted InstMem.holAligned_word_iff, without choosing unspecified LOG2 zero or rewriting runtime. Both address failure/success branches use actual native operations, preserve assertion result, memory/register updates and failures retaining writes. Internal Boolean helper has no independent HOL original and is not tagged. Standard word/Type0 qualifier only. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_word_memory_probe.out. Full evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentWordMemory.lean",
+    "lean_name": "memStoreAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps537-570/624-657 full original good_dimindex guard and exact mem_load/store align_dm commutation. Native positive width/C/FFI full state and original Nat register/HolAddr carriers retained; no additional success/nonfailure/domain/poststate condition. Same original32/64 guard derives exact canonical holByteAligned iff word-byte modulo from accepted InstMem.holAligned_word_iff, without choosing unspecified LOG2 zero or rewriting runtime. Both address failure/success branches use actual native operations, preserve assertion result, memory/register updates and failures retaining writes. Internal Boolean helper has no independent HOL original and is not tagged. Standard word/Type0 qualifier only. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_word_memory_probe.out. Full evaluator/refinement/final semantics_compile remain open."
   }
 ]
