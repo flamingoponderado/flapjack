@@ -7382,3 +7382,11 @@ run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
   riscv_encoder_correct_loc_hypotheses riscv_encoder_correct_loc_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_structs_decls_function_exn_probeScript.sml pan_structs_decls_function_exn_probe.out \
+  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_function_statement compile_decls_correct_function_proved compile_decls_correct_function_types compile_decls_correct_exn_statement compile_decls_correct_exn_proved compile_decls_correct_exn_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_decls_correct_probeScript.sml pan_structs_decls_correct_probe.out \
+  compile_decls_correct_statement compile_decls_correct_proved compile_decls_correct_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
