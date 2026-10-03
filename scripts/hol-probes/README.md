@@ -6520,3 +6520,15 @@ sets without restricting sets or membership. Every original clause remains;
 small-width LOG2(0) and the individual total-HD/EL hold are unchanged. This
 predicate does not prove initializer simulation or machine/compiler correctness.
 Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.
+
+`word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
+The LabToTarget code-safety transport probe captures the full original
+`code_similar_IMP_both_no_share_mem` at7364, both program carriers and zero
+hypotheses. An actual width8 Skip program changes its encoding bytes and length
+while its complete original premise is discharged; a Skip-to-ShareMem change
+fails code similarity. Native generic consumers cover all positive dimensions,
+full forward/reverse safety transport, arbitrary encoding bytes/lengths and
+rejection of instruction changes. Target safety follows from the full original
+fetched-line relation and source safety, without target safety assumptions or
+default/HD/EL use. The full initializer remains open. Selector:
+`HOL_PROBE_ONLY=lab_to_target_code_safety_transport_probeScript.sml`.

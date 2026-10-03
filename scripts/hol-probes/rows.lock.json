@@ -1796,6 +1796,12 @@
       "sha256": "f074c186c4835a90214f1e905db72d1c3ac1628326a17e94ccf3e9ca7d758a00"
     },
     {
+      "bytes": 368,
+      "out": "lab_to_target_code_safety_transport_probe.out",
+      "rows": 5,
+      "sha256": "d188292d36c455b3ff9490e07b6328a3910ab4bb52ba1d2c6ce117be0c3db0bb"
+    },
+    {
       "bytes": 1060,
       "out": "lab_to_target_compile_probe.out",
       "rows": 21,
@@ -8130,6 +8136,12 @@
       "out": "word_to_stack_colour_domain_probe.out",
       "rows": 13,
       "sha256": "da868a9e87fcb4af4689997e0d64a9d875b11abe42c21139955615f5e6de52fa"
+    },
+    {
+      "out": "word_to_stack_comp_clock_probe.out",
+      "bytes": 3675,
+      "rows": 9,
+      "sha256": "9b319528805c7c5fe358a68d0759b233526a1ec4abb5f58e324e6645f36a1b3b"
     },
     {
       "bytes": 222,
