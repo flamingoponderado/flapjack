@@ -360,6 +360,7 @@
     "scripts/hol-probes/check-l3-update-pc.py",
     "scripts/hol-probes/check-l3-upper-jump.py",
     "scripts/hol-probes/check-l3-word-arithmetic.py",
-    "scripts/hol-probes/check-l3-write-pc.py"
+    "scripts/hol-probes/check-l3-write-pc.py",
+    "scripts/hol-probes/check-l3-decode-transport.py"
   ]
 }
