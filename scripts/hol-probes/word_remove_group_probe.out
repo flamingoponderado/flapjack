@@ -1,0 +1,75 @@
+evaluate_dec_clock_statement=∀prog st res rst. evaluate (prog,st) = (res,rst) ⇒ evaluate (prog,st with clock := st.clock − rst.clock) = (res,rst with clock := 0)
+evaluate_dec_clock_hypotheses=0
+evaluate_dec_clock_typed=∀(prog :α prog) (st :(α, β, γ) state) (res :α result option) (rst :(α, β, γ) state). evaluate (prog,st) = (res,rst) ⇒ evaluate (prog,st with clock := st.clock − rst.clock) = (res,rst with clock := (0 :num))
+compile_state_type=:num -> (α -> (num # num # β prog) list -> (word8 list # β word list # α) option) -> (β, α, γ) state -> (β, α, γ) state
+compile_state_def_statement=∀clk c s. compile_state clk c s = s with <|clock := s.clock + clk; termdep := 0; code := map (I ## remove_must_terminate) s.code; compile_oracle := (I ## MAP (I ## I ## remove_must_terminate)) ∘ s.compile_oracle; compile := c|>
+compile_state_def_hypotheses=0
+compile_state_const_statement=(compile_state clk c s).locals = s.locals ∧ (compile_state clk c s).permute = s.permute ∧ (compile_state clk c s).ffi = s.ffi ∧ (compile_state clk c s).code_buffer = s.code_buffer ∧ (compile_state clk c s).data_buffer = s.data_buffer ∧ (compile_state clk c s).code = map (I ## remove_must_terminate) s.code ∧ (compile_state clk c s).clock = s.clock + clk ∧ (compile_state clk c s).termdep = 0 ∧ (compile_state clk c s).compile_oracle = (I ## MAP (I ## I ## remove_must_terminate)) ∘ s.compile_oracle ∧ (compile_state clk c s).compile = c ∧ (compile_state clk c s).stack = s.stack ∧ (compile_state clk c s).store = s.store ∧ (compile_state clk c s).fp_regs = s.fp_regs ∧ (compile_state clk c s).memory = s.memory ∧ (compile_state clk c s).mdomain = s.mdomain ∧ (compile_state clk c s).sh_mdomain = s.sh_mdomain ∧ ((compile_state clk c s).be ⇔ s.be) ∧ (compile_state clk c s).gc_fun = s.gc_fun ∧ (compile_state clk c s).handler = s.handler ∧ (compile_state clk c s).locals_size = s.locals_size ∧ (compile_state clk c s).stack_size = s.stack_size ∧ (compile_state clk c s).stack_max = s.stack_max ∧ (compile_state clk c s).stack_limit = s.stack_limit
+compile_state_const_hypotheses=0
+find_code_map_I_statement=find_code d l (map (I ## f) t) lsz = OPTION_MAP (I ## f ## I) (find_code d l t lsz)
+find_code_map_I_hypotheses=0
+compile_state_update_statement=compile_state clk c s with stack := f1 = compile_state clk c (s with stack := f1) ∧ compile_state clk c s with permute := f2 = compile_state clk c (s with permute := f2) ∧ compile_state clk c s with ffi := f10 = compile_state clk c (s with ffi := f10) ∧ compile_state clk c s with data_buffer := f9 = compile_state clk c (s with data_buffer := f9) ∧ compile_state clk c s with code_buffer := f8 = compile_state clk c (s with code_buffer := f8) ∧ compile_state clk c s with memory := f7 = compile_state clk c (s with memory := f7) ∧ compile_state clk c s with locals := f6 = compile_state clk c (s with locals := f6) ∧ compile_state clk c s with memory := f5 = compile_state clk c (s with memory := f5) ∧ compile_state clk c s with store := f4 = compile_state clk c (s with store := f4) ∧ compile_state clk c s with fp_regs := f11 = compile_state clk c (s with fp_regs := f11) ∧ compile_state clk c s with handler := f3 = compile_state clk c (s with handler := f3) ∧ compile_state clk c s with locals_size := f12 = compile_state clk c (s with locals_size := f12) ∧ compile_state clk c s with stack_size := f13 = compile_state clk c (s with stack_size := f13) ∧ compile_state clk c s with stack_max := f14 = compile_state clk c (s with stack_max := f14) ∧ compile_state clk c s with stack_limit := f15 = compile_state clk c (s with stack_limit := f15)
+compile_state_update_hypotheses=0
+get_var_compile_state_statement=get_var x (compile_state clk c s) = get_var x s
+get_var_compile_state_hypotheses=0
+get_fp_var_compile_state_statement=get_fp_var x (compile_state clk c s) = get_fp_var x s
+get_fp_var_compile_state_hypotheses=0
+get_vars_compile_state_statement=get_vars xs (compile_state clk c s) = get_vars xs s
+get_vars_compile_state_hypotheses=0
+set_var_compile_state_statement=set_var x y (compile_state clk c s) = compile_state clk c (set_var x y s)
+set_var_compile_state_hypotheses=0
+unset_var_compile_state_statement=unset_var x (compile_state clk c s) = compile_state clk c (unset_var x s)
+unset_var_compile_state_hypotheses=0
+set_fp_var_compile_state_statement=set_fp_var x y (compile_state clk c s) = compile_state clk c (set_fp_var x y s)
+set_fp_var_compile_state_hypotheses=0
+set_vars_compile_state_statement=set_vars xs ys (compile_state clk c s) = compile_state clk c (set_vars xs ys s)
+set_vars_compile_state_hypotheses=0
+get_store_compile_state_statement=get_store x (compile_state clk c s) = get_store x s
+get_store_compile_state_hypotheses=0
+set_store_compile_state_statement=set_store x y (compile_state clk c s) = compile_state clk c (set_store x y s)
+set_store_compile_state_hypotheses=0
+push_env_compile_state_statement=push_env env h (compile_state clk c s) = compile_state clk c (push_env env h s)
+push_env_compile_state_hypotheses=0
+pop_env_compile_state_statement=pop_env (compile_state clk c s) = OPTION_MAP (compile_state clk c) (pop_env s)
+pop_env_compile_state_hypotheses=0
+call_env_compile_state_statement=call_env x lsz (compile_state clk c z) = compile_state clk c (call_env x lsz z)
+call_env_compile_state_hypotheses=0
+flush_state_compile_state_statement=flush_state x (compile_state clk c z) = compile_state clk c (flush_state x z)
+flush_state_compile_state_hypotheses=0
+has_space_compile_state_statement=has_space n (compile_state clk c s) = has_space n s
+has_space_compile_state_hypotheses=0
+gc_compile_state_statement=gc (compile_state clk c s) = OPTION_MAP (compile_state clk c) (gc s)
+gc_compile_state_hypotheses=0
+alloc_compile_state_statement=alloc w names (compile_state clk c s) = (I ## compile_state clk c) (alloc w names s)
+alloc_compile_state_hypotheses=0
+mem_load_compile_state_statement=mem_load w (compile_state clk c s) = mem_load w s
+mem_load_compile_state_hypotheses=0
+mem_store_compile_state_statement=mem_store x y (compile_state clk c s) = OPTION_MAP (compile_state clk c) (mem_store x y s)
+mem_store_compile_state_hypotheses=0
+word_exp_compile_state_statement=∀s y. word_exp (compile_state clk c s) y = word_exp s y
+word_exp_compile_state_hypotheses=0
+assign_compile_state_statement=assign x y (compile_state clk c s) = OPTION_MAP (compile_state clk c) (assign x y s)
+assign_compile_state_hypotheses=0
+inst_compile_state_statement=inst i (compile_state clk c s) = OPTION_MAP (compile_state clk c) (inst i s)
+inst_compile_state_hypotheses=0
+cut_state_compile_state_statement=cut_state names (compile_state clk c s) = OPTION_MAP (compile_state clk c) (cut_state names s)
+cut_state_compile_state_hypotheses=0
+compile_state_dec_clock_statement=s.clock ≠ 0 ⇒ compile_state clk c (dec_clock s) = dec_clock (compile_state clk c s)
+compile_state_dec_clock_hypotheses=0
+jump_exc_compile_state_statement=jump_exc (compile_state clk c s) = OPTION_MAP (compile_state clk c ## I) (jump_exc s)
+jump_exc_compile_state_hypotheses=0
+get_var_imm_compile_state_statement=get_var_imm x (compile_state clk c s) = get_var_imm x s
+get_var_imm_compile_state_hypotheses=0
+push_env_case_handler_statement=push_env x (case handler of NONE => NONE | SOME (v,prog,l1,l2) => SOME (v,f prog,l1,l2)) = push_env x handler
+push_env_case_handler_hypotheses=0
+word_remove_correct_statement=∀prog st res rst. evaluate (prog,st) = (res,rst) ∧ st.compile = (λcfg. c cfg ∘ MAP (I ## I ## remove_must_terminate)) ∧ res ≠ SOME Error ⇒ ∃clk. evaluate (remove_must_terminate prog,compile_state clk c st) = (res,compile_state 0 c rst)
+word_remove_correct_hypotheses=0
+word_remove_correct_typed=∀(prog :α prog) (st :(α, β, γ) state) (res :α result option) (rst :(α, β, γ) state). evaluate (prog,st) = (res,rst) ∧ st.compile = (λ(cfg :β). (c :β -> (num # num # α prog) list -> (word8 list # α word list # β) option) cfg ∘ MAP ((I :num -> num) ## (I :num -> num) ## (remove_must_terminate :α prog -> α prog))) ∧ res ≠ SOME (Error :α result) ⇒ ∃(clk :num). evaluate (remove_must_terminate prog,compile_state clk c st) = (res,compile_state (0 :num) c rst)
+sptree_domain_map_statement=∀s. domain (map f s) = domain s
+sptree_domain_map_hypotheses=0
+sptree_map_insert_statement=∀f x y z. map f (insert x y z) = insert x (f y) (map f z)
+sptree_map_insert_hypotheses=0
+sptree_map_fromAList_statement=map f (fromAList ls) = fromAList (MAP (λ(k,v). (k,f v)) ls)
+sptree_map_fromAList_hypotheses=0
+sptree_map_union_statement=∀t1 t2. map f (union t1 t2) = union (map f t1) (map f t2)
+sptree_map_union_hypotheses=0

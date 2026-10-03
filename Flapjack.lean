@@ -4,8 +4,14 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
+import Flapjack.Compiler.Backend.SourceToFlat.Config
+import Flapjack.Compiler.Backend.FlatPattern.Config
+import Flapjack.Compiler.Backend.BackendCommon.Trace
+import Flapjack.NamespaceHOL
+import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.RiscV.CorrectnessEncoding.Skip
+import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
@@ -665,6 +671,8 @@ import Flapjack.Compiler.Backend.StackProps.RegisterBounds
 import Flapjack.Compiler.Backend.WordCse.Knowledge
 import Flapjack.Compiler.Backend.WordCse.RegisterData
 import Flapjack.Compiler.Backend.WordCse.ProductionKnowledge
+import Flapjack.Compiler.Backend.WordCse.ProductionFactInsert
+import Flapjack.Compiler.Backend.WordCse.ProductionConst
 import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
 import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
@@ -674,7 +682,10 @@ import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
 import Flapjack.Compiler.Backend.WordCse.ProductionGet
 import Flapjack.Compiler.Backend.WordCse.ProductionSet
 import Flapjack.Compiler.Backend.WordCse.FactProducers
+import Flapjack.Compiler.Backend.WordCse.Join
+import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
+import Flapjack.Compiler.Backend.WordCse.Proofs.IntersectionInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.LoadEvaluation
@@ -696,6 +707,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
 import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
@@ -1352,6 +1364,7 @@ import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
@@ -1473,6 +1486,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.LocalsRel
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
@@ -2124,6 +2138,8 @@ import Flapjack.Misc.ListEl
 import Flapjack.Misc.Pair
 import Flapjack.Misc.Relation
 import Flapjack.Misc.Sorting
+import Flapjack.Misc.Sorting.PartsHaveProp
+import Flapjack.Misc.PermPartition
 import Flapjack.Misc.Mergesort
 import Flapjack.Misc.Anub
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.SpInverts
@@ -2338,6 +2354,9 @@ import Flapjack.Compiler.Backend.WordUnreach.ProductionCanonicalImage
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordInst
+import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
+import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
+import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
