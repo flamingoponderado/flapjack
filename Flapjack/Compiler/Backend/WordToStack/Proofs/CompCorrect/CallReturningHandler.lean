@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
@@ -1561,5 +1562,137 @@ theorem poppedTailRelation {width : Nat} [NeZero width] {C F : Type}
     frameSize lens relation
   simpa [poppedHandlerState, HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL,
     List.drop_drop, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using tail
+
+/-- Execute the original normal-return copy with its three-word handler offset.
+The saved handler slot is derived from the copy operation's untouched prefix;
+no successful target execution or restoration relation is supplied. This is
+Flapjack case factoring for the original normal-return branch, not a separate
+HOL theorem. -/
+theorem copyHandlerReturn {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (register frame count : Nat)
+    (enabled : target.useStack = true)
+    (room : frame + 3 ≤ target.stack.length - (target.stackSpace + count))
+    (countBound : count ≤ frame) :
+    ∃ copied : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (copyRetAuxNative register (frame + 3) count, target) =
+        (none, copied) ∧
+      copied.stack.length = target.stack.length ∧
+      copied.stackSpace = target.stackSpace ∧
+      copied.store = target.store ∧ copied.ffi = target.ffi ∧
+      copied.clock = target.clock ∧
+      holEl 2 (copied.stack.drop (copied.stackSpace + count)) =
+        holEl 2 (target.stack.drop (target.stackSpace + count)) ∧
+      copied.stack.drop (copied.stackSpace + count + (frame + 3)) =
+        target.stack.drop (target.stackSpace + count + (frame + 3)) ∧
+      (∀ other, other ≠ register →
+        StackSemStateOps.getVar other copied = StackSemStateOps.getVar other target) ∧
+      (∀ index, index < count →
+        holEl (index + (frame + 3)) (copied.stack.drop copied.stackSpace) =
+          holEl index (target.stack.drop target.stackSpace)) := by
+  obtain ⟨copied, execution, stack, regs, state, length, space, tail,
+    registers, untouched, values⟩ := CallReturnEval.evaluateCopyRetAux
+      register (frame + 3) count target ⟨enabled, by omega, room⟩
+  have saved := untouched 2 (by omega)
+  refine ⟨copied, execution, ?_, space, ?_, ?_, ?_, ?_, ?_, registers, ?_⟩
+  · simpa only [state] using length
+  · simp only [state]
+  · simp only [state]
+  · simp only [state]
+  · simpa only [state, Nat.add_comm] using saved
+  · simpa only [state, Nat.add_assoc, Nat.add_comm, Nat.add_left_comm] using tail
+  · simpa only [state] using values
+
+/-- Compute the normal-return copy, result-slot free, and handler restore
+before an arbitrary continuation. Every target transition is constructed from
+primitive original frame bounds. The restored handler is the actual saved
+slot before copying, not a requested target poststate. Flapjack case support. -/
+theorem evaluateHandlerReturnRestore {width : Nat} [NeZero width] {C F β γ : Type}
+    (target : StackSemStateFiniteExact width C F) (register frame count : Nat)
+    (f : β) (f' : γ) (continuation : HolProg width)
+    (enabled : target.useStack = true) (storeEnabled : target.useStore = true)
+    (room : frame + 3 ≤ target.stack.length - (target.stackSpace + count))
+    (countBound : count ≤ frame) :
+    ∃ copied : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate (copyRetAuxNative register (frame + 3) count, target) =
+        (none, copied) ∧
+      StackSemEvaluate.evaluate
+        (.seq (copyRetAuxNative register (frame + 3) count)
+          (.seq (.stackFree count) (popHandlerNative false (register,f,f') continuation)),
+          target) =
+        StackSemEvaluate.evaluate
+          (continuation, poppedHandlerState
+            {copied with stackSpace := copied.stackSpace + count} register
+            (holEl 2 (target.stack.drop (target.stackSpace + count)))) ∧
+      copied.stack.length = target.stack.length ∧
+      copied.stackSpace = target.stackSpace ∧ copied.clock = target.clock := by
+  obtain ⟨copied, execution, length, space, store, ffi, clock, saved, tail,
+    registers, values⟩ := copyHandlerReturn target register frame count enabled room countBound
+  have stateBound : target.stackSpace + count + 3 ≤ target.stack.length := by omega
+  have copiedEnabled : copied.useStack = true := by
+    exact (Compiler.Backend.StackProps.evaluateConsts
+      (copyRetAuxNative register (frame + 3) count) target none copied execution).2.2.1.trans enabled
+  have copiedStoreEnabled : copied.useStore = true := by
+    exact (Compiler.Backend.StackProps.evaluateConsts
+      (copyRetAuxNative register (frame + 3) count) target none copied execution).2.1.trans storeEnabled
+  let freed : StackSemStateFiniteExact width C F :=
+    {copied with stackSpace := copied.stackSpace + count}
+  have freeRun : StackSemEvaluate.evaluate (.stackFree count, copied) = (none, freed) := by
+    simp only [StackSemEvaluate.evaluate_stackFree, copiedEnabled, Bool.not_true,
+      Bool.false_eq_true, if_false]
+    rw [if_neg (by omega)]
+    simp only [freed, copiedEnabled]
+  have freedRoom : freed.stackSpace + 3 ≤ freed.stack.length := by
+    dsimp [freed]; omega
+  have savedSlot : freed.stack[freed.stackSpace + 2] =
+      holEl 2 (target.stack.drop (target.stackSpace + count)) := by
+    rw [← saved, holElDrop,
+      holEl_eq_getElem (copied.stackSpace + count + 2) copied.stack (by omega)]
+  have popRun := evaluatePopHandler freed register f f' continuation
+    (holEl 2 (target.stack.drop (target.stackSpace + count)))
+    copiedEnabled copiedStoreEnabled freedRoom savedSlot
+  refine ⟨copied, execution, ?_, length, space, clock⟩
+  rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate,
+    execution]
+  simp only
+  rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, freeRun]
+  exact popRun
+
+/-- The original call conventions and maximum imply the actual number of
+stack return values fits the caller frame. This discharges the copy/restore
+count bound from source hypotheses rather than strengthening the full case.
+Flapjack arithmetic factoring of the original normal-return proof. -/
+theorem handlerReturnCountBound {width : Nat} [NeZero width]
+    (k frame localsFrame : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) < 2 * localsFrame + 2 * k)
+    (frameShape : if localsFrame = 0 then frame = 0 else frame = localsFrame + 1) :
+    Compiler.Backend.WordToStack.numStackRet k values ≤ frame := by
+  have sequence : values = (List.range values.length).map (fun x => 2 * (x + 1)) := by
+    simp only [postAllocConventionsHOL, everyVarHOL, everyStackVarHOL,
+      callArgConventionHOL, Bool.and_eq_true, beq_iff_eq] at conventions
+    aesop (config := { enableSimp := false })
+  have valueMaximum : 2 * values.length ≤ maxList values := by
+    by_cases empty : values.length = 0
+    · simp [empty]
+    · have member : 2 * values.length ∈ values := by
+        rw [sequence]
+        apply List.mem_map.mpr
+        refine ⟨values.length - 1, List.mem_range.mpr (by omega), ?_⟩
+        simp only [List.length_map, List.length_range]
+        omega
+      exact maxList_ge_of_mem values (2 * values.length) member
+  have maximumBound : maxList values ≤ maxVarHOL
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) := by
+    simp only [maxVarHOL, Flapjack.WordAlloc.max3Eq]
+    omega
+  unfold Compiler.Backend.WordToStack.numStackRet
+  split at frameShape <;> omega
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
