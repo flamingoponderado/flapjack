@@ -8013,3 +8013,8 @@ and the original compiler definition's extracted first LET argument. Eight
 kernel observations cover empty/default/already-first/later main, first-only
 relocation with duplicate names, and exported flags/duplicates. Regenerate with
 `HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+
+The `backend_lower_pipeline` probe also captures the complete original closed
+`from_word_0_def` and its inferred type, including the actual WordToWord tuple
+and oracle update before `from_word`. This is definition evidence, not an
+executed-route or complete compiler-correctness result.

@@ -140,10 +140,10 @@
       "sha256": "9e7a6e3bab7cd7bd395f9888d3047b1f46d58bd1bfc9d5c903c7aeb7d392ad5f"
     },
     {
-      "bytes": 1698,
+      "bytes": 2404,
       "out": "backend_lower_pipeline_probe.out",
-      "rows": 6,
-      "sha256": "0ed2469e403995e9e75a886329bd33f9b0dca3a9a991ed39fedc070551363e1f"
+      "rows": 8,
+      "sha256": "7a930fdeef3bc4785296eafea38528275a5ac756869e40d67089ff1563e69673"
     },
     {
       "bytes": 203,

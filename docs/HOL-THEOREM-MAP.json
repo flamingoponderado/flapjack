@@ -90374,5 +90374,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_to_targetScript10-50 and fresh complete typed original definitions/types in pan_to_target_source_probe.out, no local replay. Positive native DeclHOL width retains the reviewed exact syntax family and native byte-backed MlString names; no String or unrestricted-map substitute. Standard word dimension/positive NeZero translation only. Full original main SPLITP three branches, including empty input staying empty and default main only for nonempty missing-main programs, Return(Const0), One, no params/inline/export. Native complement List.span mirrors actual rich_listTheory.SPLITP clauses; extracted actual original first LET captured and six kernel main observations replayed. Actual panToWordCompileProgHOL ISA and WordToWord.compile, returned col_oracle update only within wordToWordConf; native mllist sort strict Nat comparison, original prog2 labels zipped with generated_main::original prog1 function names, left-biased native Spt union of three stub lists; exports from original program, full backend fromWord with original Option/list-byte/native-word/config result and no supplied pass result/stack-bound premise. Actual listTheory.ZIP_def fresh capture has both arbitrary-list empty clauses, so native List.zip is faithful even for unequal lengths; no unsupported equal-length guard. Production main/exports and full wrapper path are separate source-audited routing work, not claimed executed here."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromWord0",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_word_0_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original backendScript235-240 and actual closed typed from_word_0_def/inferred type captured in backend_lower_pipeline_probe.out. Arbitrary positive shared word dimension, native AsmConfigExact/backend Config, original byte MlString Spt names and complete (num,num,native word program) list retained. Actual WordToWord.compile consumes original wordToWordConf/asmConf/program; both returned oracle and transformed program are used, only colOracle updated inside wordToWordConf, complete native fromWord receives actual transformed output and original names. Output Option retains fixed word8 bytes, native-width bitmap words and full config; no success or supplied-pass-result premise. words_as_type_indexed_bitvec covers standard positive word-dimension translation only. Source-shaped definition is proof-side; executed routing and complete machine/compiler theorem remain independent OPEN requirements."
   }
 ]
