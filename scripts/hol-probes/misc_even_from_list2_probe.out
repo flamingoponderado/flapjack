@@ -1,0 +1,3 @@
+even_from_list2_statement=∀l n. n ∈ domain (fromList2 l) ⇒ EVEN n
+even_from_list2_proved=T
+even_from_list2_hypotheses=0

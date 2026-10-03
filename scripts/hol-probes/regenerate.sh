@@ -6558,3 +6558,7 @@ run_probe word_convs_max_var_exp_intro_probeScript.sml word_convs_max_var_exp_in
   max_var_exp_intro_statement max_var_exp_intro_proved max_var_exp_intro_hypotheses \
   max_var_intro_statement max_var_intro_proved max_var_intro_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe misc_even_from_list2_probeScript.sml misc_even_from_list2_probe.out \
+  even_from_list2_statement even_from_list2_proved even_from_list2_hypotheses \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"

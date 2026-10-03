@@ -75325,5 +75325,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead9.4.2.2: wordConvsScript.sml473-493 forall arbitrary P and prog, P0 and every_var P prog imply P(max_var prog), retained as Bool=true conjunction and conclusion. Complete max_var/every_var equation families wordLangScript.sml127 onward compared: all source operands and both Spt cut-set key lists retained; recursive Call return body and handler only under SOME return; Seq, MustTerminate, If and Loop use actual body hypotheses. Instruction subproof retains width=64 FP transfer branch and all integer operand maxima; zero/empty-list cases use original P0, no bounds, conventions, successful-run or target assumptions. Original exported HOL kernel theorem captured via DB.fetch, closed forall P/prog, proved=T hypotheses=0; source comparison rather than cross-language equivalence. Only dimension translation BitVec width with NeZero is qualified."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
+    "lean_name": "sptEvenFromList2",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "EVEN_fromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 child9.4.2.3: miscScript.sml367-375 forall arbitrary payload list l and natural n, n in domain(fromList2 l) implies EVEN n. Lean retains both quantified arguments, List and exact native Spt/fromList2/domain; sole premise is original membership. Natural Even means exists index key=index+index, HOL EVEN_EXISTS equivalently2*index; no WF, bounds, payload or target-run hypothesis. Checked source-ready exact domain_fromList2 supplies actual GENLIST range index and equality2*index=key, deriving Even by arithmetic. Original exported Misc kernel theorem DB.fetch capture closed, proved=T hypotheses0; no cross-language equivalence claim. Both returning-call entry consumers8503/9340 recorded."
   }
 ]
