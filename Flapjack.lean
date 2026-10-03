@@ -2447,6 +2447,7 @@ import Flapjack.Compiler.Backend.WordUnreach.ProductionCanonicalImage
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordInst
+import Flapjack.Compiler.Backend.WordInst.ExecutablePullExp
 import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
 import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
 import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
