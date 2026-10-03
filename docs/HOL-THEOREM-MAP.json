@@ -83994,5 +83994,67 @@
     "hol_name": "is_wf_shape_compile_shape",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol compared full original298-308 and compiler213-independent shape definition/induction. Both unconditional conjuncts retained: arbitrary MlS x alpha target context, original MlS x List(MlS x shape) compilation context, single compiled shape and EVERY over compiled shape list. Generic target payload alpha retained after accepted in-place PanLang predicate repair; no source-WF or target-result premise, no String/cache carrier. HOL EVERY encoded by forall list member, BOOL truth by equality true. Mutual compile_shape induction handles scalar/comb/named dropWhile hit/miss and list nil/cons; named expansion strictly removes names. Full source nested bound types/closed theorem capture accompany port. Production routing remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectFunctionExn.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack declaration state-update infrastructure; no independent HOL declaration. Canonical map2 update proof and state roundtrip support full original minors."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectFunctionExn.lean",
+    "lean_name": "mappedUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack declaration state-update infrastructure; no independent HOL declaration. Canonical map2 update proof and state roundtrip support full original minors."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectFunctionExn.lean",
+    "lean_name": "convertedExn",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack declaration state-update infrastructure; no independent HOL declaration. Canonical map2 update proof and state roundtrip support full original minors."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectFunctionExn.lean",
+    "lean_name": "convertedFunction",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack declaration state-update infrastructure; no independent HOL declaration. Canonical map2 update proof and state roundtrip support full original minors."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectFunctionExn.lean",
+    "lean_name": "compileDeclsCorrectExn",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decls_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol compared original1357-1380 Function/ExnDecl1407-1435 and full evaluate_decls_ind, faithful compiler213-238/evaluator813-841. Both full8 source hypotheses/full target evaluation and all existential context/globalfields/WF/structs/locals/shape-map conclusions retained. Exactly source successful parameter-EVERY/return-WF or absent-exception/shape-WF guarded updated-state tail IH uses fixed full property. Target guards derived unconditionally from full compiled-shapes theorem and lookup-preserving map2; actual source/target code or exception-shape updates commute with convert_s. Function retains final globals, original parameter locals and unchanged struct context for compiled body; no evaluator/target/postmap compatibility premise. Canonical imported state four finite maps/full same-module roundtrip and positive indexed words/Type0 FFI host only. Fresh closed full/Function/ExnDecl/induction captures/types. Whole declaration assembly/production routing remains separate.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectFunctionExn.lean",
+    "lean_name": "compileDeclsCorrectFunction",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decls_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol compared original1357-1380 Function/ExnDecl1407-1435 and full evaluate_decls_ind, faithful compiler213-238/evaluator813-841. Both full8 source hypotheses/full target evaluation and all existential context/globalfields/WF/structs/locals/shape-map conclusions retained. Exactly source successful parameter-EVERY/return-WF or absent-exception/shape-WF guarded updated-state tail IH uses fixed full property. Target guards derived unconditionally from full compiled-shapes theorem and lookup-preserving map2; actual source/target code or exception-shape updates commute with convert_s. Function retains final globals, original parameter locals and unchanged struct context for compiled body; no evaluator/target/postmap compatibility premise. Canonical imported state four finite maps/full same-module roundtrip and positive indexed words/Type0 FFI host only. Fresh closed full/Function/ExnDecl/induction captures/types. Whole declaration assembly/production routing remains separate.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]

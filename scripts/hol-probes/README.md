@@ -7664,3 +7664,11 @@ both nested conjuncts. The target context retains arbitrary payload alpha;
 the compilation context retains original MlS field names. Both unconditional
 single-shape and EVERY list conclusions are ported without source-WF premises.
 This is a prerequisite for original Function/ExnDecl declaration minors.
+
+`pan_structs_decls_function_exn_probe` captures full declaration correctness,
+the Function/ExnDecl specializations and original source induction, including
+quantified types and closed kernel truth. Lean retains all eight hypotheses,
+full target run and every existential conclusion. Precisely the original
+source guard-success tail IHs are used; compiled-shape WF, absence lookup and
+code/exception-update transport derive target guards and evaluation internally.
+Whole declaration assembly and executed production routing remain separate.
