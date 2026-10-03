@@ -1,0 +1,3 @@
+code_bitmaps_full_statement=∀c s r s1. evaluate (c,s) = (r,s1) ⇒ ∃n. s1.compile_oracle = shift_seq n s.compile_oracle ∧ s1.code = FOLDL union s.code (MAP (fromAList ∘ FST ∘ SND) (GENLIST s.compile_oracle n)) ∧ s1.bitmaps = s.bitmaps ++ FLAT (MAP (SND ∘ SND) (GENLIST s.compile_oracle n))
+code_bitmaps_full_hypotheses=0
+code_bitmaps_alloc_statement=∀s r s1. evaluate (Alloc n,s) = (r,s1) ⇒ ∃n. s1.compile_oracle = shift_seq n s.compile_oracle ∧ s1.code = FOLDL union s.code (MAP (fromAList ∘ FST ∘ SND) (GENLIST s.compile_oracle n)) ∧ s1.bitmaps = s.bitmaps ++ FLAT (MAP (SND ∘ SND) (GENLIST s.compile_oracle n))

@@ -6345,3 +6345,6 @@ do not claim full Run/Next or compiler correctness.
 
 
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
+
+
+`stack_code_bitmaps_alloc_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Alloc specialization. Native rejected dispatch and actual allocation/GC results derive count zero from full alloc_const, retaining all three original existential conclusions. Whole evaluator assembly remains open.
