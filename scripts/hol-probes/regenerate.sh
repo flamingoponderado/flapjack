@@ -5883,3 +5883,8 @@ run_probe stack_remove_copy_each_probeScript.sml stack_remove_copy_each_probe.ou
 run_probe l3_scw_probeScript.sml l3_scw_probe.out \
   scw_definition scw_type scw_negative scw_positive scw_rd_zero scw_core_wrap scw_fault_sv32 scw_rv32_mode scw_rv128_mode scw_walk_returned_state scw_misaligned_1 scw_misaligned_2 scw_misaligned_3 scw_order_0_1 scw_order_1_0 scw_order_1_1 scw_reservation_mismatch scw_reservation_none scw_read_only_page scw_rs2_zero scw_address_four \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_probe.out \
+  find_index_ALL_DISTINCT_EL_eq find_index_ALL_DISTINCT_EL_eq_types find_index_ALL_DISTINCT_EL_eq_hypotheses \
+  first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
