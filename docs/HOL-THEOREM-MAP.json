@@ -74254,5 +74254,50 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.3: original74-86 entire arbitrary-k equation retained. Actual native raiseStubNative false expands Get Handler, StackSetSize, Skip, StackLoad2, Set Handler, StackLoad1, StackFree3, Raise in identical nested Seq order. Original handler_slots F=3; no instruction omitted, register changed, state/run/success premise or conclusion added. Positive type-indexed word carrier only translation, no maps/real evaluator dependency in this syntax equation. Source comparison recorded; acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/SeqAssocAssembly.lean",
+    "lean_name": "evaluateSeqAssocHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "evaluate_seq_assoc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.3.x): original pan_simpProofScript.sml:117-135: !p q s. evaluate (seq_assoc p q,s) = evaluate (Seq p q,s); assembled from the reviewed case pieces by strong induction on sizeOf q (seq_assoc_ind). Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "evaluateSeqNoErrorFstHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "evaluate_seq_no_error_fst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.3.x): original pan_simpProofScript.sml:153-160: FST (evaluate (Seq p p',s)) <> SOME Error ==> FST (evaluate (p,s)) <> SOME Error. Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width translations; no hypothesis added."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanSimp/RetToTailAssembly.lean",
+    "lean_name": "evaluateSeqCallRetEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_simpProofScript.sml",
+    "hol_name": "evaluate_seq_call_ret_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.1.3.x): original pan_simpProofScript.sml:137-150: !p s. FST (evaluate (p,s)) <> SOME Error ==> evaluate (seq_call_ret p,s) = evaluate (p,s). Exact PanSemStateFiniteExact evaluator evaluateHOLFiniteState; only canonical finite-map and positive BitVec width translations; no hypothesis added."
   }
 ]
