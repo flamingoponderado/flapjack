@@ -6543,3 +6543,15 @@ lists. Neither alternative is strengthened or discarded, and no target safety
 premise/default/HD/EL dependency is introduced. The single original capture is
 regenerated in full; prior shared-memory transport rows remain unchanged.
 `word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
+
+### Full initializer basic case group
+
+`lab_to_target_initializer_basic_cases_probeScript.sml` captures the complete
+original local `IMP_state_rel_make_init`, every free-variable type and zero
+hypotheses, then projects genuine state relation conjuncts19/20/22/23/31/34/35/41/48/53
+under its unchanged full guard. These are original ISR4/5/6/7/9/10/11/13/14/17.
+Every projected implication is kernel checked and has zero hypotheses; no
+separate guard or successful target state is assumed. Remaining cases and the
+full initializer are open. The native consumer derives actual target memory
+bytes and initial PC from these cases and full source guards.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_basic_cases_probeScript.sml`.

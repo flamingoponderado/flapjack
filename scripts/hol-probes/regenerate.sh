@@ -6140,3 +6140,17 @@ run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code
   changed_bytes_length_safe instruction_change_rejected \
   install_external_branch skip_shared_name_branch install_shared_name_rejected \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_initializer_basic_cases_probeScript.sml lab_to_target_initializer_basic_cases_probe.out \
+  IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
+  ISR4_statement ISR4_hypotheses ISR4_proved \
+  ISR5_statement ISR5_hypotheses ISR5_proved \
+  ISR6_statement ISR6_hypotheses ISR6_proved \
+  ISR7_statement ISR7_hypotheses ISR7_proved \
+  ISR9_statement ISR9_hypotheses ISR9_proved \
+  ISR10_statement ISR10_hypotheses ISR10_proved \
+  ISR11_statement ISR11_hypotheses ISR11_proved \
+  ISR13_statement ISR13_hypotheses ISR13_proved \
+  ISR14_statement ISR14_hypotheses ISR14_proved \
+  ISR17_statement ISR17_hypotheses ISR17_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

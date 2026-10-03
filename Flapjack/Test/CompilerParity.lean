@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetInitializerBasicCasesParity
 import Flapjack.Test.LabToTargetCodeSafetyTransportParity
 import Flapjack.Test.L3SupervisorCSRParity
 import Flapjack.Test.L3MachineCSRCodecParity

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
