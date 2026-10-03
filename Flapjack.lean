@@ -764,6 +764,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
 import Flapjack.Compiler.Backend.WordAlloc.ProductionActualInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallCache
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCountMap
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicInstructions
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
