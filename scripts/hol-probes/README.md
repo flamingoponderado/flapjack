@@ -7210,3 +7210,8 @@ The reference checker recognizes only this exact source path and the reviewed
 complete terminating `eval_def` block; its hash pin prevents unrelated source
 changes from silently authorizing the generated name. This is provenance
 checking, while the native theorem still requires independent statement review.
+
+`pan_structs_exp_correct_full_probe` captures the whole original expression
+correctness theorem, binder types, closed hypotheses and kernel proof. Native
+assembly preserves all seven hypotheses and three conclusions across all sixteen
+constructors through the original guarded evaluator induction principle.
