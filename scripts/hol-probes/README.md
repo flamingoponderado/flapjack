@@ -7290,10 +7290,26 @@ Seq derives intermediate invariants; If uses the source-word-selected branch.
 The native theorem preserves flattened words for arbitrary nested records and
 named structs; erasing names retains field order and requires no validity guard.
 
+`pan_structs_program_store_words_probe` captures the full original program
+correctness theorem and Store32/StoreByte specializations, closed binder types
+and kernel proofs. Native cases keep all ten premises/seven conclusions, actual
+source memory-domain/error/endian/cast behavior and arbitrary positive width.
+The target memory operation is the same source operation, derived internally.
+
+`pan_structs_program_store_probe` captures the full original program theorem
+and general Store specialization, closed binder types and kernel proofs.
+Native general Store retains arbitrary nested values, all ten premises/seven
+conclusions and original memory/domain/error behavior. Full expression and
+unconditional flatten conversion derive the identical target memory operation.
 `stack_remove_word_list_memory_probeScript.sml` captures the full original `mem_val_def` equations and type and replays unchanged original proofs of `MAP_mem_val_MAP_INL`, `word_list_and_rev_join_lemma`, `INSERT_DELETE_EQ_DELETE` (with its local `IN_addresses` prerequisite), `word_list_exists_addresses`, `word_list_wrap` and `fmap_simp_lemma1` (stack_removeProofScript.sml:2631-3046), and prints the stored `word_list_set`, `word_list_seteq`, `word_list_EL_in_memory` and `word_list_in_memory` theorems (3101-3222). Every row has proved=T and zero hypotheses; the two exported replays are also checked `aconv` against the stored theory.
 
 `stack_remove_init_make_probeScript.sml` captures the full original equations and constant types of `get_stack_heap_limit'_def`, `get_stack_heap_limit_def`, `read_pointers_def`, `make_init_opt_def`, `init_pre_def`, `make_init_any_def`, `discharge_these_def` and `propagate_these_def` (stack_removeProofScript.sml:3053-3089, 3839-3854, 4007-4067), the argument types of `get_stack_heap_limit'` (its first two pointers have independent word types; only the last pointer shares the arithmetic width), and 13 EVAL rows of both limit functions over 16/32/64-bit words, including heap-bound overflow, midpoint selection and wrapped pointers. `Flapjack.Test.StackRemoveInitLimits` kernel-replays every EVAL row.
 
 `stack_remove_init_any_probeScript.sml` replays the unchanged local originals `MOD_EQ_IMP_MULT`, `star_move_lemma` and `memory_addresses` (with its local `IN_addresses` prerequisite; stack_removeProofScript.sml:2727-2803) and prints the stored `make_init_any_bitmaps`, `make_init_any_use_stack`, `make_init_any_use_store`, `make_init_any_use_alloc`, `make_init_any_code`, `make_init_any_stack_limit` and `make_init_any_compile_oracle` theorems (4100-4157). All statements are closed with zero hypotheses; `memory_addresses` keeps its `'a word_loc` memory codomain.
+
+`pan_structs_fupdate_neutral_probe` replays original local `fupdate_elim2`
+with its unchanged source proof, closed binder types, zero hypotheses and
+kernel proof. Native update neutrality keeps arbitrary key/value types and
+uses canonical finite-support maps with HOL equality and no comparison premise.
 
 `stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.

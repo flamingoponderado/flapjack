@@ -119,7 +119,8 @@ private theorem relatedBufferSuccessor {width : Nat} [NeZero width] {C F : Type}
 /-- Original CBW constructor, retaining invalid operands, failed writes, and the
 actual successful byte-buffer update. The only induction hypothesis is the
 original simulation of that guarded source successor; target execution and its
-successor relation are derived. -/
+successor relation are derived.
+The IH includes the original evaluator's nonzero source-clock path guard. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "filter_correct"
   (words_as_type_indexed_bitvec)]
 theorem filterCorrectBufferWrite {width : Nat} [NeZero width] {C F : Type}
@@ -129,7 +130,7 @@ theorem filterCorrectBufferWrite {width : Nat} [NeZero width] {C F : Type}
     (heval : evaluate s1 = (res, s2)) (hrel : stateRel s1 t1)
     (hfailed : t1.failed = false)
     (hfetch : asmFetch s1 = some (.asm (.cbw r1 r2) bytes len))
-    (ih : ∀ (address value : BitVec width) (buffer : WordSemBuffer width 8),
+    (ih : s1.clock ≠ 0 → ∀ (address value : BitVec width) (buffer : WordSemBuffer width 8),
       s1.regs r1 = .word address → s1.regs r2 = .word value →
       wordSemBufferWrite s1.codeBuffer address (value.setWidth 8) = some buffer →
       ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
@@ -209,7 +210,7 @@ theorem filterCorrectBufferWrite {width : Nat} [NeZero width] {C F : Type}
         have he := heval
         conv at he => lhs; rw [evaluate]
         simp only [hc, ↓reduceIte, hfetch, hr1, hr2, hw] at he
-        obtain ⟨extra, t2, hrun, hffi⟩ := ih address value buffer hr1 hr2 hw _ res s2 he hn hn.2
+        obtain ⟨extra, t2, hrun, hffi⟩ := ih hc address value buffer hr1 hr2 hw _ res s2 he hn hn.2
         have hskipRun := allSkipsEvaluate count {t1 with clock := t1.clock + extra} ⟨hskips, hfailed⟩ 0
         refine ⟨extra + count, t2, ?_, hffi⟩
         simp only [Nat.add_zero] at hskipRun

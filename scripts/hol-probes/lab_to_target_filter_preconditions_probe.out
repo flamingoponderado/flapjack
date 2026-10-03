@@ -1,0 +1,5 @@
+all_enc_ok_pre_filter_skip=∀(code :α sec list) (c :α asm_config).
+  all_enc_ok_pre c code ⇒ all_enc_ok_pre c (filter_skip code)
+all_enc_ok_pre_filter_skip_types=(code :α sec list)::α sec list;(c :α asm_config)::α asm_config;
+all_enc_ok_pre_filter_skip_hypotheses=0
+all_enc_ok_pre_filter_skip_proved=T
