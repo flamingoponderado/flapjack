@@ -435,6 +435,7 @@ import Flapjack.Test.RegAllocCarriers
 import Flapjack.Test.HeuMaxParity
 import Flapjack.Test.WordToStackBitmapMixedParity
 import Flapjack.Test.HeuInstParity
+import Flapjack.Test.ActualHeuInstParity
 import Flapjack.Test.SptMapParity
 import Flapjack.Test.WordToStackCutsetMaximumParity
 import Flapjack.Test.RetainedAllocatorColour
