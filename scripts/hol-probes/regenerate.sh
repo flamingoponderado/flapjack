@@ -7082,9 +7082,6 @@ run_probe lab_props_alignment_sdm_evaluate_probeScript.sml lab_props_alignment_s
   evaluate_align_sdm evaluate_align_sdm_types evaluate_align_sdm_hypotheses evaluate_align_sdm_proved implements_align_sdm implements_align_sdm_types implements_align_sdm_hypotheses implements_align_sdm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
-run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.out \
-  lem4_statement lem4_types lem4_hypotheses lem4_proved lem12b_statement lem12b_types lem12b_hypotheses lem12b_proved lem12b_intermediate_types \
-  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe stack_to_lab_state_rel_probeScript.sml stack_to_lab_state_rel_probe.out \
   state_rel_def_statement loc_check_IMP_loc_to_pc_statement state_rel_dec_clock_statement state_rel_with_pc_statement state_rel_with_clock_statement set_var_upd_reg_statement set_var_Word_upd_reg_statement set_fp_var_upd_fp_reg_statement mem_store_upd_mem_statement state_rel_read_reg_FLOOKUP_regs_statement state_rel_read_fp_reg_FLOOKUP_fp_regs_statement state_rel_get_var_imm_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7124,4 +7121,17 @@ run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcur
 
 run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.out \
   cut_state_full cut_state_hypotheses cut_state_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
+  flatten_leq_statement no_ret_correct_statement compile_jump_correct_statement result_view_nchotomy_statement result_view_def_statement halt_word_view_def_statement halt_view_def_statement stack_to_lab_lab_pres_statement stack_to_lab_lab_pres_T_statement flatten_T_F_statement prog_to_section_labels_ok_statement NOT_MEM_find_lab_IMP_statement is_some_loc_to_pc_prefix_statement every_is_some_loc_to_pc_prefix_statement NOT_bad_fun_return_IMP_SOME_statement next_lab_non_zero_1022_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.out \
+  lem4_statement lem4_types lem4_hypotheses lem4_proved lem12b_statement lem12b_types lem12b_hypotheses lem12b_proved lem12b_intermediate_types \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_semantics_compile_final_probe.out \
+  semantics_compile semantics_compile_types semantics_compile_hypotheses semantics_compile_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_loop_handler_probeScript.sml word_to_stack_loop_handler_probe.out \
+  loop_handler_full loop_handler_hypotheses loop_handler_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
