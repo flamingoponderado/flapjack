@@ -6843,7 +6843,6 @@ eight-command non-instrumented sequence, proved=T, and zero hypotheses are
 captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
 registers and order; this equation neither assumes nor proves target execution
 or full Raise correctness.
-
 ### Native skip-filter observations
 
 `lab_to_target_filter_skip_probeScript.sml` freshly captures nine complete
@@ -6855,6 +6854,35 @@ construct actual PCs, and preserve full fetched shared-memory exclusion.
 These supply observational prerequisites of semantics_compile; the whole
 machine/compiler simulation remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_filter_skip_probeScript.sml`.
+### Native supervisor transfer and fetch exceptions
+
+`l3_control_fetch_probeScript.sml` and `L3ControlFetchParity` compare 39
+whole-state equations against independent direct record-update expected states.
+Three current cores (0/7/255), arbitrary prior state, zero/sign/high/full address
+and PC boundaries cover full writeSCSR, ordered MRTS cause/address/PC transfer,
+Supervisor MPRV and Mrts NextFetch, and both fetch exception trap/address fields.
+`check-l3-control-fetch.py` requires all unique labels and every original row T.
+These finite regressions supplement source comparison, not a cross-language
+transition equivalence theorem. Full Run and Next remain open.
+
+`word_to_stack_comp_raise_full_probeScript.sml` captures the complete original evaluate_ind Raise obligation of comp_correct, including the entire clock/resource/result motive, by specialization of the original complete theorem. Closed statement/proved/hypothesis rows are statement evidence; this is not literal Raise proof replay or a HOL-to-Lean equivalence proof. Read-only original backend/proofs theory; proof-only Lean case.
+
+`stack_remove_init_mod_order_probeScript.sml` replays local original `MOD_LESS_EQ_MOD_IMP` (stack_removeProofScript.sml:2805-2809) with its unchanged complete natural-number conjunction implication and `rw []`/`fs []` proof. Full closed statement, proved=T and zero-hypothesis rows are captured against the read-only original backend proof theory; no extra positive-divisor premise.
+
+### Native FP memory instructions
+
+`l3_fp_memory_probeScript.sml` and `L3FPMemoryParity` compare 256 whole-state
+FLW/FLD/FSW/FSD equations with independently calculated addresses and payloads.
+Eight inputs cover signed offsets, wrapping/misaligned addresses, sourcezero,
+raw upper32 bits and zero/high/all-one byte memory; four FP registers include
+zero and aliases, on cores7/255. Both Mbare bypass and Mbb/User fault routes
+retain arbitrary prior exception/unrelated state. Expected success routes use
+reviewed raw memory/direct FPR writers, not arithmetic Dirty wrappers.
+The complete definitions additionally preserve arbitrary translation outcomes,
+TLB/pagewalk updates and invalid-mode ARB; these are outside this finite sample.
+`check-l3-fp-memory.py` requires every unique label and original value T.
+This regression evidence supplements source review, not full equivalence.
+`stack_rawcall_compile_code_info_probe` captures all three full original code-domain, lookup-collection and collected-frame theorems, zero hypotheses, 64/80 specializations, ten concrete original compiler-key/lookup observations and two actual closed original frame-theorem applications. Fifteen full arbitrary positive/1/8/64/80 consumers and independent executable guards cover duplicate compiler keys, absent/rest lookups, ignored bare allocations, zero frames and a70-bit frame size. Domain preservation is unconditional; lookup/frame laws retain the original distinct-key guard and arbitrary rest tree. This is native proof support for compile_semantics, not production replacement, full-pass completion or cross-language equivalence.
 
 ### Native skip-run alignment and execution
 
