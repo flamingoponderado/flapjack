@@ -72481,7 +72481,8 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 960-972: premises t.use_stack and t.stack_space <= LENGTH t.stack; conclusion evaluate (SeqStackFree f p, t) = evaluate (Seq (StackFree f) p, t) over the native StackSem evaluator and native seqStackFreeNative; arbitrary f/p/t. Imported canonical regs/fpRegs/store translation with same-module witness. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 960-972: premises t.use_stack and t.stack_space <= LENGTH t.stack; conclusion evaluate (SeqStackFree f p, t) = evaluate (Seq (StackFree f) p, t) over the native StackSem evaluator and native seqStackFreeNative; arbitrary f/p/t. Imported canonical regs/fpRegs/store translation with same-module witness. Names the evaluator, so it inherits reals_as_rational_cuts (SOUNDNESS item 8); no numerical FP assertion. HOL declares the same statement again at line 3286 (non-local, renamed variables); the tag cites the line-960 declaration.",
+    "hol_line": 960
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
@@ -72500,5 +72501,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 7546-7551: native compile_prog equation implies x - k <= fs; all free variables (ac, perf, word_prog, x, k, bs, stack_prog, fs, bs2) arbitrary."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallHelpers.lean",
+    "lean_name": "evaluateSeqStackFree'",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_SeqStackFree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.9.2): source 3286-3293, the script's second (non-local) declaration of evaluate_SeqStackFree with variables n/p/s: same premises s.use_stack and s.stack_space <= LENGTH s.stack and same conclusion over the native StackSem evaluator and seqStackFreeNative; proved by the line-960 port. Imported canonical regs/fpRegs/store translation with same-module witness. Inherits reals_as_rational_cuts (SOUNDNESS item 8) via the evaluator; no numerical FP assertion.",
+    "hol_line": 3286
   }
 ]
