@@ -90686,5 +90686,39 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison: original local4447-4469 all four guards/seven-conjunct conclusion. Actual compiled wReg1/even/source Add[Var r;Const c] word expression success/full stateRel derive actual native load run, unchanged clock, full relation/stack length/space, original physical-register-not-k+1 and actual target Add expression success. Source read and wordOpHOL calculation derived internally; arbitrary constant/result, physical or spill source, positive width, independent host/FFI. Native sptree locals/code preserved; canonical five map fields qualified and genuine same-module codec witnesses. No targetexpression/run/postrelation hypothesis or numerical FP claim. The evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8), without an independent agreement claim. Fresh literal original local proof replay with unchanged original Reg1 support and full typed statement regenerated and reviewed: T/hypotheses0, all four guards/seven result conjuncts, common word dimension/independent host-FFI; no cross-language equivalence claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelFp.lean",
+    "lean_name": "stateRelGetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_get_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4402-4407 full stateRel implies actual getFpVar equality at arbitrary register, including absent lookup. Relation fpRegs equality derived internally; no desired read premise. Positive machine width/common source-target words, independent source host Nat×C/target C and FFI F retained; FP payload remains fixed word64. Canonical source fpRegs/store and target regs/fpRegs/store qualified with genuine same-module codec witnesses, sptree locals/code unchanged. Structural relation has no numerical FP agreement claim; evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). Fresh literal unchanged original local proof blocks and full typed symbolic statements replayed and reviewed: both T/hypotheses0, source/target common machine dimension with independent host/FFI and fixed word64 update payload. Regression evidence, no HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelFp.lean",
+    "lean_name": "stateRelSetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4409-4415 full stateRel implies entire relation after actual simultaneous setFpVar update at arbitrary register/value/extra. All38 full relation conjuncts retained; only fpRegs conjunct changes by congruence of the same canonical map update, no desired postrelation premise. Positive machine width/common source-target words, independent source host Nat×C/target C and FFI F retained; FP payload remains fixed word64. Canonical source fpRegs/store and target regs/fpRegs/store qualified with genuine same-module codec witnesses, sptree locals/code unchanged. Structural relation has no numerical FP agreement claim; evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8). Fresh literal unchanged original local proof blocks and full typed symbolic statements replayed and reviewed: both T/hypotheses0, source/target common machine dimension with independent host/FFI and fixed word64 update payload. Regression evidence, no HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

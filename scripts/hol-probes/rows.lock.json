@@ -10202,6 +10202,12 @@
       "sha256": "7364122716d1243179325eaf6ce3c41d4b43dcdd94ebc9509a4e102173fce9db"
     },
     {
+      "out": "word_to_stack_fp_relations_probe.out",
+      "sha256": "a29763f87ec7191f55b6071bfe221d99a520fd846f21783d14bf1de33483aa7c",
+      "bytes": 651,
+      "rows": 6
+    },
+    {
       "bytes": 69584,
       "out": "word_to_stack_frame_offsets_probe.out",
       "rows": 321,

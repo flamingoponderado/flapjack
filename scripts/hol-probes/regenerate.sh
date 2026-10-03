@@ -7659,3 +7659,7 @@ run_probe word_to_stack_memory_relations_probeScript.sml word_to_stack_memory_re
 run_probe word_to_stack_load_register_offset_probeScript.sml word_to_stack_load_register_offset_probe.out \
   loadReg1Offset_typed loadReg1Offset_proved loadReg1Offset_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
+  fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
