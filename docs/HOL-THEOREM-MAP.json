@@ -76895,5 +76895,74 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "wlocWlabWlabWlocHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "wloc_wlab_wlab_wloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: wloc_wlab (wlab_wloc w) = w for w : word_lab, with wlab_wloc the accepted wlabWlocExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "loopStateSimpsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "loop_state_simps",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: all eleven conjuncts in order over the same binders s c crep_code ck mem. The Loop carrier's Bool word-set domains are compared by membership predicate (accepted crep_to_loop convention), and isEmpty is sptIsEmpty."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "panToWordFirstCompileProgAllDistinctHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: !prog. ALL_DISTINCT (MAP FST (functions prog)) ==> ALL_DISTINCT (MAP FST (compile_prog c prog)), with free c bound first."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "decShapesCompileProgHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "dec_shapes_compile_prog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: !pan_code. dec_shapes (pan_simp$compile_prog pan_code) = dec_shapes pan_code."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionNamesCompileProgHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "function_names_compile_prog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: !pan_code. MAP FST (functions (pan_simp$compile_prog pan_code)) = MAP FST (functions pan_code)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "noNamesCompileProgHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "no_names_compile_prog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: EVERY (is_function d \\/ is_decl d \\/ is_exn_decl d) preserved by pan_simp$compile_prog; EVERY rendered as membership quantification over the Bool classifiers; pan_code free and bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "semanticsDeclsHasMainPanToWordHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "semantics_decls_has_main'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: s.code = FEMPTY /\\ ALL_DISTINCT (MAP FST (functions code)) /\\ semantics_decls s start code <> Fail ==> ?body rshape. ALOOKUP (functions code) start = SOME ([],body,rshape); ALOOKUP is List.lookup, and the free s start code are bound explicitly."
   }
 ]

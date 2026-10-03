@@ -1583,6 +1583,9 @@ run_probe ret_to_tail_probeScript.sml ret_to_tail_probe.out \
   "$cake_dir/pancake/pan_simpScript.sml"
 run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
   skip seq_skip_tick tail_call "$cake_dir/pancake/pan_simpScript.sml"
+run_probe pan_to_word_structural_probeScript.sml pan_to_word_structural_probe.out \
+  wloc_wlab_wlab_wloc "semantics_decls_has_main'" \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_word_definitions_probeScript.sml pan_to_word_definitions_probe.out \
   compile_prog_def globals_allocatable_def \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

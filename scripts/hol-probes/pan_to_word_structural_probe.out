@@ -1,0 +1,48 @@
+wloc_wlab_wlab_wloc=wloc_wlab (wlab_wloc (w :α word_lab)) = w
+loop_state_simps=∀(s :(α, β) crepSem$state) (c :architecture)
+    (crep_code :(mlstring # num list # α crepLang$prog) list) (ck :num)
+    (mem :α word -> α word_loc).
+  (loop_state s c crep_code ck mem).memory = mem ∧
+  (loop_state s c crep_code ck mem).mdomain = s.memaddrs ∧
+  (loop_state s c crep_code ck mem).sh_mdomain = s.sh_memaddrs ∧
+  (loop_state s c crep_code ck mem).clock = ck ∧
+  ((loop_state s c crep_code ck mem).be ⇔ s.be) ∧
+  (loop_state s c crep_code ck mem).ffi = s.ffi ∧
+  (loop_state s c crep_code ck mem).base_addr = s.base_addr ∧
+  (loop_state s c crep_code ck mem).top_addr = s.top_addr ∧
+  (loop_state s c crep_code ck mem).globals = (FEMPTY :word5 |-> α word_loc) ∧
+  isEmpty (loop_state s c crep_code ck mem).locals ∧
+  (loop_state s c crep_code ck mem).code =
+  fromAList
+    (compile_prog c crep_code :(num # num list # α loopLang$prog) list)
+first_compile_prog_all_distinct=∀(prog :α decl list).
+  ALL_DISTINCT
+    (MAP
+       (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+             mlstring) (functions prog)) ⇒
+  ALL_DISTINCT
+    (MAP (FST :num # num # α prog -> num)
+       (compile_prog (c :architecture) prog :(num # num # α prog) list))
+dec_shapes_compile_prog=∀(pan_code :α decl list).
+  dec_shapes (compile_prog pan_code :α decl list) = dec_shapes pan_code
+function_names_compile_prog=∀(pan_code :α decl list).
+  MAP
+    (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+          mlstring) (functions (compile_prog pan_code :α decl list)) =
+  MAP
+    (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+          mlstring) (functions pan_code)
+no_names_compile_prog=EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
+  (pan_code :α decl list) ⇒
+EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
+  (compile_prog pan_code :α decl list)
+semantics_decls_has_main'=(s :(α, β) panSem$state).code =
+(FEMPTY :mlstring |-> (mlstring # shape) list # α panLang$prog # shape) ∧
+ALL_DISTINCT
+  (MAP
+     (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
+           mlstring) (functions (code :α decl list))) ∧
+semantics_decls s (start :mlstring) code ≠ Fail ⇒
+∃(body :α panLang$prog) (rshape :shape).
+  ALOOKUP (functions code) start =
+  SOME (([] :(mlstring # shape) list),body,rshape)
