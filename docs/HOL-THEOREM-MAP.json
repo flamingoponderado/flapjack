@@ -88875,5 +88875,38 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only initial three-pass proof assembly for pan_to_wordProofScript.sml:529-595; no independent HOL declaration and no claim to the full state_rel_imp_semantics theorem. Original source initial-state, size, allocation and memory premises derive the pass equalities."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical two-way state roundtrip witness for the explicitly named finite-map carrier; infrastructure with no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/StateRelImpSemantics.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_WordSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical two-way state roundtrip witness for the explicitly named finite-map carrier; infrastructure with no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/StateRelImpSemantics.lean",
+    "lean_name": "panToWordStateRelImpSemantics",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "state_rel_imp_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanSemStateFiniteExact.locals",
+      "PanSemStateFiniteExact.globals",
+      "PanSemStateFiniteExact.code",
+      "PanSemStateFiniteExact.eshapes",
+      "WordSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-03: original529-684 and fresh closed fully typed original statement/proof/types in pan_to_word_semantics_probe.out. All24 source conjuncts retained, including memory on original source domain, no_labels on target domain, start main, exact shape/context globals-size sum, distinct_params, domain union/shared domain, be/FFI, CurrHeap and native word HeapLength, top-address subtraction, distinct function names, alignment/allocation, four empty source maps, target compiled native Spt code, size_eids<dimword, entry local0 Loc1 0, gooddimindex, source nonFail. HeapLen:BitVec width retains original alpha word; independent target configuration C and FFI sigma:Type0 retained; width positive NeZero. Conclusion is actual WordSem semantics target firstLoopName = faithful PanSem declaration semantics source start code. Reviewed compiler chain PanSimp/Structs/Globals/Crep/Loop/Word used directly, all intermediate states/size/allocation/memory/code/parameter guards derived, no target-run/trace-equality/IH/simulation premise added. Canonical finite-map qualifier names only four traversed Pan maps and observed Word store; code/locals target stay native Spt, both owner witnesses are genuine two-way roundtrips. HOL set membership is the existing reviewed Bool-domain predicate boundary (b=true); no domain behavior change. Standard word qualifier translates only positive dimension/Type0 host. Original distinct_params premise retained even though stronger accepted downstream parameter theorem proves the needed target guard without it. Production route .19.3 and broader WordSem assurance remain separately OPEN; not executed whole-compiler completion. Inherits the existing WordSem/IEEE reals_as_rational_cuts assumption through actual observational semantics, as verified by the elaborated declaration closure; no direct additional real-carrier qualifier or independent real-equivalence claim. Broader IEEE assurance stays open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

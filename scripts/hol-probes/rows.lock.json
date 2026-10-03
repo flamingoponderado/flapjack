@@ -5396,6 +5396,12 @@
       "sha256": "6557188c43bb7a9c3afcdc04d107679f43e67c77b43844f134072457fdd724d0"
     },
     {
+      "bytes": 2177,
+      "out": "pan_to_word_semantics_probe.out",
+      "rows": 3,
+      "sha256": "258b57880f9c0d856727ef4a75c66f51eb8e82756bad2ba8325f0ffa7ba4c7ea"
+    },
+    {
       "bytes": 1078,
       "out": "pan_to_word_structs_names_probe.out",
       "rows": 4,

@@ -7935,3 +7935,9 @@ This helper iterates literal native `Run`, which does not advance PC. It is not
 a full native Next execution/assertion oracle or the full Const encoder theorem;
 those remain separate open work. Existing `riscv_const_run_probe` captures the
 scoped original Run observations; no new HOL declaration identity is claimed.
+
+`pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
+`pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
+independent word/configuration/FFI carrier. Regenerate with
+`HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
+composes all six reviewed pass paths; production routing remains separate.

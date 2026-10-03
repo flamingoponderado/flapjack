@@ -7559,3 +7559,7 @@ run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_
 run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_word_witness_probe.out \
   state_rel_type state_rel_def_typed state_rel_intro_typed state_rel_IMP_typed_replay state_rel_with_clock_typed \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_word_semantics_probeScript.sml pan_to_word_semantics_probe.out \
+  state_rel_imp_semantics_statement state_rel_imp_semantics_proved state_rel_imp_semantics_types \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
