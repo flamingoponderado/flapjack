@@ -9056,6 +9056,12 @@
       "sha256": "6836be66cff0b9632756ea921cf30d91c6099a5d0f2e4ca550b47d7521636343"
     },
     {
+      "bytes": 1947,
+      "out": "word_cse_knowledge_lemmas_probe.out",
+      "rows": 17,
+      "sha256": "fb6f31991fc611d6badb43eaa8856a44c73b2464f7b70ad3ce9254a2484f2b9e"
+    },
+    {
       "bytes": 24945,
       "out": "word_cse_list_order_probe.out",
       "rows": 212,
