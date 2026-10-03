@@ -7445,3 +7445,12 @@ records their proved equivalence to T. Transport retains arbitrary extra and
 all six conclusions. Clock transport retains the whole evaluation pair.
 This is source statement/proof evidence, not a cross-assistant equivalence
 theorem or completion of the full compiler proof.
+
+### Full load-prefix clock law
+
+`word_to_stack_load_clock_probe.out` freshly replays the unchanged original
+local proof4470–4476 with all load lists and target states, including invalid
+stack use and out-of-range failures. The whole evaluation pair is retained;
+the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
+This is original-source evidence, not cross-assistant equivalence or full
+compiler correctness.

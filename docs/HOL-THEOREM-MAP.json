@@ -81442,5 +81442,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterClock.lean",
+    "lean_name": "evaluateWStackLoadClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original4470-4476: entire unconditional evaluation pair equality for arbitrary load list/state/clock, literal wStackLoad loads Skip and I##postclock update. Native list induction covers every register/index, disabled stack, out-of-range emptyEnv failure and successful setVar followed by remaining loads; actual fixClock min-self reduced with no bounds/useStack/source or targetrun hypothesis. Every result and complete poststate retained. Only three actual imported StackSemStateFiniteExact canonical map fields translated, same-module genuine codec roundtrip, original List/Spt unchanged, positive NeZero/BitVec width and Type0 host. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
   }
 ]

@@ -6989,3 +6989,7 @@ run_probe word_to_stack_register_update_probeScript.sml word_to_stack_register_u
 run_probe word_to_stack_const_instruction_probeScript.sml word_to_stack_const_instruction_probe.out \
   const_full_transport const_full_clock const_transport_closed const_clock_closed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
+  load_clock_statement load_clock_proved load_clock_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
