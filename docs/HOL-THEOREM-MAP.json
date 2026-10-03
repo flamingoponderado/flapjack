@@ -81933,5 +81933,21 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 full original If6767-6903, complete motive5719-5751 and evaluate_ind literal two guarded branch IHs: all v3/v4/x/y/v source read pair/some operands/actual word_cmp SOME Boolean true versus not true guards preserved, with whole Seq.Simulation conclusions. Full original source run/nonerror/stateRel/conventions/flat/actual comp/bitmap bounds-prefix/labels/maxVar quantified premises and every target existential clock/run/result/full resource branch retained. Actual source nonerror derives selected operands/branch; source conventions derive even registers and branch conventions. Native conditionProgram mirrors actual comp order, both child compilers and Reg1+Reg2 appended loads, accepted immediate, rejected immediate Const(k+1) then Reg1 loads. Scratch preservation and same wordSemWordCmp establish actual target branch at arbitrary clock via full original load-clock and const-clock laws; no target run/postrelation/clock law/bounds assumption on full constructor. Branch compiler length/prefix and actual prefix evaluation monotonicity discharge loaded bitmap/drop offset and label subset, original max3 bound derives both branches. Selected guarded IH supplies entire result-resource conclusion unchanged. Five canonical actual imported source/target map fields with genuine same-module codec roundtrips, HOL List/Spt unchanged, positive BitVec/NeZero and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fresh original whole specialization and literal full If induction obligation closed provedT/hyp0, statement evidence via original full comp_correct rather than proof replay. Fleet acceptance tracked separately on open bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelStoreUpdate.lean",
+    "lean_name": "stateRelSetStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison5132-5147: entire state_rel arbitrary k/f/frame/lens/extra, arbitrary v/x and sole v!=Handler guard, simultaneous source/target set_store full relation conclusion. Canonical updateEq/eraseEq commute for nonHandler and preserve handler lookup; all original relation conjuncts retained. Same-module genuine source/target canonical codec witnesses and all five named finite-map fields; positive words qualified. No targetrun/postrelation/new bound assumptions. Structural closure has no evaluator reals_as_rational_cuts dependency; no numerical FP or cross-language equivalence claim. Fresh unchanged original statement and literal proof replay provides regression evidence."
   }
 ]

@@ -7537,6 +7537,7 @@ compiler correctness.
 and its ExtCall specialization, all quantified types and closed kernel truth.
 The Lean case retains all ten premises/seven conclusions without an IH or
 additional FFI agreement premise; full compiler correctness remains open.
+
 `word_to_stack_comp_get_probeScript.sml` captures the complete original Get
 evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
 both closed hyp0/T. These are original statement regression captures, not
@@ -7563,3 +7564,7 @@ original statement evidence through the proved original full theorem, not a
 replay of the local If proof or cross-assistant equivalence. The Lean proof
 executes register, accepted-immediate and constant-fallback routes, deriving
 all branch/clock/bitmap/label obligations without extra full-case premises.
+
+`word_to_stack_store_update_probeScript.sml` freshly replays the unchanged
+state_rel_set_store statement and literal proof5132–5147, closed hyp0/T.
+Regression evidence rather than cross-language equivalence.
