@@ -7022,3 +7022,6 @@ run_probe stack_remove_init_ffi_probeScript.sml stack_remove_init_ffi_probe.out 
 run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
   load_clock_statement load_clock_proved load_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_extcall_probeScript.sml pan_structs_program_extcall_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_extcall_statement compile_correct_extcall_proved compile_correct_full_types compile_correct_extcall_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

@@ -7505,3 +7505,7 @@ stack use and out-of-range failures. The whole evaluation pair is retained;
 the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
 This is original-source evidence, not cross-assistant equivalence or full
 compiler correctness.
+`pan_structs_program_extcall_probe` captures the original full `compile_correct`
+and its ExtCall specialization, all quantified types and closed kernel truth.
+The Lean case retains all ten premises/seven conclusions without an IH or
+additional FFI agreement premise; full compiler correctness remains open.
