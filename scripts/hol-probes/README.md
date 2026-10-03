@@ -6695,3 +6695,11 @@ hypotheses are captured; this is original HOL evidence, not a cross-assistant
 equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
 
 `word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
+
+`word_to_stack_abs_stack_prefix_drop_probe` replays the full original local
+suffix theorem and its unexported local prerequisites using unchanged source
+statements/proofs. The original context disables NORMEQ_CONV and diminishes
+ABBREV. Five rows record the entire theorem, proof=T, zero hypotheses, and both
+inferred stack carrier types. Native StackAbstractionSuffix retains all four
+premises and both conclusions; this does not establish full Raise correctness
+or HOL-to-Lean equivalence.

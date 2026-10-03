@@ -1,0 +1,5 @@
+abs_stack_prefix_drop_statement=∀bs wstack sstack lens stack h wrest k len. h ≤ LENGTH wstack ∧ LASTN h wstack = wrest ∧ abs_stack bs wstack sstack lens = SOME stack ∧ stack_rel_aux k len wstack stack ⇒ (let rest = LASTN h stack; lrest = LASTN h lens; srest = LASTN (handler_val rest) sstack in abs_stack bs wrest srest lrest = SOME rest ∧ stack_rel_aux k len wrest rest)
+abs_stack_prefix_drop_proved=T
+abs_stack_prefix_drop_hypotheses=0
+abs_stack_prefix_drop_wstack_type=:α stack_frame list
+abs_stack_prefix_drop_sstack_type=:α word_loc list

@@ -71282,5 +71282,14 @@
     "hol_name": "inter_union_left",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.6.2.2: original2678-2685 arbitrary s,t Spt payload, sole wf s hypothesis, conclusion inter(union s t)s=s. Native exact four-constructor Spt, sptWf Boolean truth retains original predicate, sptUnion left bias and sptInter mkBN/mkBS normalization compared clause-wise. No BEq/DecidableEq or extra target equality premise. Structural induction proves full equation including original empty-branch exclusion. Original literal proof replay captured in word_to_stack_inter_union_left_probe.out. Source comparison recorded by flapjack-sol-b; acceptance tracked on shared bead .6.2.2."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StackAbstractionSuffix.lean",
+    "lean_name": "absStackPrefixDrop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "abs_stack_prefix_drop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2.1: full original2488-2570 arbitrary bs/wstack/sstack/lens/stack/h/wrest/k/len, sole count bound/source LASTN equation/actual abstraction success/full auxiliary relation. Both suffix decoder success and full suffix auxiliary relation conclusions retained. Native structural induction covers normal/handler decoding, tail suffix and whole-stack boundaries; actual successful abstraction derives frame/lens lengths and handler offsets. Auxiliary suffix relation derives from original tail clauses, not supplied as a premise. Decoder/aux relation together unify source-frame/raw-stack word dimension; one positive BitVec width with NeZero. Native literal list/Option/frame/tree carriers preserved, no BEq/safety/range assumptions. Literal original proof and all unexported local prerequisites replayed unchanged with original simplifier context; capture statements/T/hyp0 and inferred carrier types. Source comparison recorded; acceptance tracked on shared bead."
   }
 ]

@@ -8084,6 +8084,12 @@
       "sha256": "894d263e2c46413b8a6c565a61ab480fb175b574473163ef7137722fbb718e59"
     },
     {
+      "out": "word_to_stack_abs_stack_prefix_drop_probe.out",
+      "bytes": 559,
+      "rows": 5,
+      "sha256": "8ee447817feb82ad83338cbe63af292d92cd3417d3473aa7d9c0c04147a46586"
+    },
+    {
       "bytes": 57,
       "out": "word_to_stack_abs_stack_prefix_probe.out",
       "rows": 5,
