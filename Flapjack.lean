@@ -735,6 +735,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
 import Flapjack.Compiler.Backend.WordAlloc.ProductionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlySets
+import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
