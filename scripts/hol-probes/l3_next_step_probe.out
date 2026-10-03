@@ -1,0 +1,19 @@
+NextRISCV_type=:riscv_state -> riscv_state option
+NextRISCV_hypotheses=0
+NextRISCV_equation=∀s. NextRISCV s =
+    (let
+       (f,s) = Fetch s;
+       s = Run (DecodeAny f) s
+     in
+       if s.exception ≠ NoException then NONE
+       else
+         (let
+            pc = PC s
+          in
+            case NextFetch s of
+              NONE => update_pc (pc + Skip s) s
+            | SOME (BranchTo a) => update_pc a (write'NextFetch NONE s)
+            | SOME Ereturn => NONE
+            | SOME Mrts => NONE
+            | SOME (Trap v5) => NONE))
+NextRISCV_proof=T

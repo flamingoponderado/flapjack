@@ -1583,6 +1583,9 @@ run_probe ret_to_tail_probeScript.sml ret_to_tail_probe.out \
   "$cake_dir/pancake/pan_simpScript.sml"
 run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
   skip seq_skip_tick tail_call "$cake_dir/pancake/pan_simpScript.sml"
+run_probe pan_simp_semantics_statement_probeScript.sml pan_simp_semantics_statement_probe.out \
+  compile_correct state_rel_imp_semantics_decls_types \
+  "$cake_dir/pancake/proofs/pan_simpProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe crep_exit_loop_probeScript.sml crep_exit_loop_probe.out \
   exit_loop_break exit_loop_error \
   "$cake_dir/pancake/semantics/crepSemScript.sml"
@@ -6629,14 +6632,44 @@ run_probe lab_filter_shared_terminal_probeScript.sml lab_filter_shared_terminal_
 run_probe pan_structs_shape_map_codec_probeScript.sml pan_structs_shape_map_codec_probe.out \
   shape_map_definition shape_map_lookup_statement shape_map_lookup_hypotheses shape_map_first_binding shape_map_other_binding shape_map_missing shape_map_empty \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
-
+run_probe lab_filter_shared_return_probeScript.sml lab_filter_shared_return_probe.out \
+  share_mem_op_FFI_return_filter_correct share_mem_op_FFI_return_filter_correct_types share_mem_op_FFI_return_filter_correct_hypotheses share_mem_op_FFI_return_filter_correct_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_simp_generic_carriers_probeScript.sml word_simp_generic_carriers_probe.out \
+  generic_carrier_1 generic_carrier_1_hypotheses generic_carrier_2 generic_carrier_2_hypotheses generic_carrier_3 generic_carrier_3_hypotheses generic_carrier_4 generic_carrier_4_hypotheses generic_carrier_5 generic_carrier_5_hypotheses generic_carrier_6 generic_carrier_6_hypotheses generic_carrier_7 generic_carrier_7_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe l3_write_pc_probeScript.sml l3_write_pc_probe.out \
+  writePC_type writePC_hypotheses writePC_fullRecord_equation writePC_fullRecord_proof writePC_allKeys_equation writePC_allKeys_proof writePC_current_equation writePC_current_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe l3_decode_any_probeScript.sml l3_decode_any_probe.out \
+  DecodeAny_type DecodeAny_hypotheses DecodeAny_half_equation DecodeAny_half_proof DecodeAny_word_equation DecodeAny_word_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe pan_structs_exp_atomic_faithful_probeScript.sml pan_structs_exp_atomic_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_const_statement compile_exp_correct_base_statement compile_exp_correct_top_statement compile_exp_correct_cases_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
-
+run_probe lab_filter_location_lookup_probeScript.sml lab_filter_location_lookup_probe.out \
+  loc_to_pc_eq_NONE loc_to_pc_eq_NONE_types loc_to_pc_eq_NONE_hypotheses loc_to_pc_eq_NONE_proved \
+  loc_to_pc_eq_SOME loc_to_pc_eq_SOME_types loc_to_pc_eq_SOME_hypotheses loc_to_pc_eq_SOME_proved \
+  loc_to_pc_adjust_pc_append loc_to_pc_adjust_pc_append_types loc_to_pc_adjust_pc_append_hypotheses loc_to_pc_adjust_pc_append_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
+  updatePC_type updatePC_hypotheses updatePC_some_equation updatePC_some_proof updatePC_fullRecord_equation updatePC_fullRecord_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe pan_structs_exp_var_faithful_probeScript.sml pan_structs_exp_var_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_var_statement compile_exp_correct_var_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe lab_filter_return_labels_probeScript.sml lab_filter_return_labels_probe.out \
+  next_label_filter_skip next_label_filter_skip_types next_label_filter_skip_hypotheses next_label_filter_skip_proved \
+  all_skips_get_lab_after all_skips_get_lab_after_types all_skips_get_lab_after_hypotheses all_skips_get_lab_after_proved \
+  get_lab_after_adjust get_lab_after_adjust_types get_lab_after_adjust_hypotheses get_lab_after_adjust_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_sem_independent_navigation_probeScript.sml lab_sem_independent_navigation_probe.out \
+  next_label_def next_label_def_types next_label_def_hypotheses next_label_def_proved \
+  get_lab_after_def get_lab_after_def_types get_lab_after_def_hypotheses get_lab_after_def_proved \
+  get_ret_Loc_def get_ret_Loc_def_types get_ret_Loc_def_hypotheses get_ret_Loc_def_proved \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe pan_structs_exp_rfield_faithful_probeScript.sml pan_structs_exp_rfield_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_rfield_statement compile_exp_correct_rfield_proved eval_ind_full_statement \
@@ -6650,6 +6683,12 @@ run_probe pan_structs_exp_nfield_faithful_probeScript.sml pan_structs_exp_nfield
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nfield_statement compile_exp_correct_nfield_proved eval_ind_full_statement \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe l3_next_step_probeScript.sml l3_next_step_probe.out \
+  NextRISCV_type NextRISCV_hypotheses NextRISCV_equation NextRISCV_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe lab_filter_full_simulation_probeScript.sml lab_filter_full_simulation_probe.out \
+  filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe pan_structs_reorder_faithful_probeScript.sml pan_structs_reorder_faithful_probe.out \
   fields_in_order_reorder_noop_statement fields_in_order_reorder_noop_types fields_in_order_reorder_noop_hypotheses fields_in_order_reorder_noop_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

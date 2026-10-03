@@ -224,8 +224,8 @@ theorem getVar_setVars_eq {width : Nat} [NeZero width] {C : Type} {F : Type}
 /-- Exact HOL `set_vars_move_NONE` (`word_simpProofScript.sml:232-242`). -/
 @[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "set_vars_move_NONE"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem set_vars_move_NONE {width : Nat} [NeZero width] {C : Type} {F : Type} :
-    ∀ (moves : List (Nat × Nat)) (x : List (WordLocW width)) (s s' : WordSemStateFiniteExact width C F)
+theorem set_vars_move_NONE {width : Nat} [NeZero width] {C : Type} {F : Type} {α : Type} :
+    ∀ (moves : List (Nat × α)) (x : List (WordLocW width)) (s s' : WordSemStateFiniteExact width C F)
       (v : Nat),
       setVars (moves.map Prod.fst) x s = s' ∧ sptAListLookup v moves = none →
         getVar v s' = getVar v s := by

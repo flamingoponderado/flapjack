@@ -1,0 +1,6 @@
+DecodeAny_type=:rawInstType -> instruction
+DecodeAny_hypotheses=0
+DecodeAny_half_equation=∀h. DecodeAny (Half h) = DecodeRVC h
+DecodeAny_half_proof=T
+DecodeAny_word_equation=∀w. DecodeAny (Word w) = Decode w
+DecodeAny_word_proof=T

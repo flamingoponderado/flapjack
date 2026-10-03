@@ -37,6 +37,9 @@ jobs:
           python3 scripts/check_hol_theorem_map.py
           python3 scripts/check_hol_ref_export.py
 
+      - name: Check complete native L3 rendering and captured oracle gates
+        run: python3 scripts/l3/check-native-model.py
+
       - name: Check exact Pancake RISC-V parity fixtures
         run: |
           lake build flapjack-compile

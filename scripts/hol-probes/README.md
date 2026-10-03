@@ -7069,14 +7069,42 @@ through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
 definition and unconditional lookup theorem used by PanStructs. Original duplicate
 keys keep the first binding; other, missing and empty lookups are recorded.
 
+### Full native shared-memory filter return clause
+
+`lab_filter_shared_return_probeScript.sml` captures the complete original return614 theorem, independent full carriers, zero hypotheses and kernel reproof (4 rows). The existential poststate and full state relation/nonfailed/forall-clock conjunction remain conclusions. Together with the terminal probe it covers the complete original shared-memory filter prerequisite group.
+
+`word_simp_generic_carriers_probeScript.sml` captures the original seven generic
+lookup/move/name declarations with `Globals.show_types := true`, plus zero HOL
+hypothesis counts (14 rows). It exposes arbitrary association keys/value types,
+the independently typed unused NONE binder, arbitrary second move components
+and arbitrary Spt payloads. Full Lean consumers cover generic and String/Bool
+instances. These source captures are regression evidence, not cross-language
+equivalence or a new representation exception.
+## Native PC writer and DecodeAny
+
+`l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.
 `pan_structs_exp_atomic_faithful_probe` captures the complete original expression
 correctness theorem and its genuine Const/BaseAddr/TopAddr specializations. Each
 retains all seven hypotheses and all three conclusions, with no extra assumptions.
 The parent whole expression/declaration/pass proofs remain open.
 
+## Complete native model drift coverage
+
+CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` capture checker, decoder fixtures, captured row locks, native checker tests, and `scripts/l3/check-renderings.py`. The rendering gate covers the full delivered Defs tree including MMU, exception, instruction reader and Step files. `scripts/l3/rendering-coverage.json` records six explicit handwritten/export-root exceptions and three computability-only overrides. The original export deliberately contains the NextRISCV/Fetch dependency closure; three unused CSR codecs are pinned separately with source notes and existing original probes. Adding or removing a delivered definition requires reviewing coverage. No gate establishes universal HOL-to-Lean equivalence or whole compiler correctness.
+### Native skip-filter location lookup
+
+`lab_filter_location_lookup_probeScript.sml` replays the unchanged original local proofs310/345/522 using the exact original temporary simplifier setup (script10/12). Twelve rows capture complete NONE, existential SOME/adjustment, and append theorems, all binder types, zero hypotheses and kernel reproofs. Every original guard and existential conclusion is retained.
+
+## Native step option PC update
+
+`l3_update_pc_probeScript.sml` proves the original `update_pc` whole option-result and full-record equations for arbitrary word64 targets and full states. `check-l3-update-pc.py` pins all six type/hypothesis/equation/proof rows. Lean uses the complete accepted PC writer; no core bound or successful-run premise is added. The native drift inventory includes this literal declaration and CI discovers its capture checker. Full Next assembly remains separate work.
 `pan_structs_exp_var_faithful_probe` captures the whole original expression theorem
 and its genuine generic Var specialization, including both Local and Global kinds.
 All seven hypotheses and three conclusions remain intact, with zero open assumptions.
+
+`lab_filter_return_labels_probeScript.sml` replays unchanged original local proofs416/425/468 with original simplifier setup. Twelve rows capture complete next-label and guarded skipped-run return-label equalities, full binder types, zero hypotheses and kernel reproofs.
+
+`lab_sem_independent_navigation_probeScript.sml` captures full original next-label, after-label and return-location definitions, including independent code/state and result word dimensions, zero hypotheses and kernel reproofs. Native navigation binds both positive widths independently.
 
 `pan_structs_exp_rfield_faithful_probe` captures the whole original expression
 theorem, its RField specialization, and the original evaluator induction theorem.
@@ -7093,6 +7121,10 @@ theorem, NField specialization, and eval_ind. Native NField preserves all seven
 hypotheses and three conclusions with only the original child IH. Validity and
 source lookup derive the shape-list and actual converted index correspondence.
 
+## Complete native step Next equation
+
+`l3_next_step_probeScript.sml` proves the universal original NextRISCV equation over arbitrary native state, with zero hypotheses. It retains the complete step Fetch and full Run/DecodeAny calls, exception result, PC+Skip continuation, BranchTo control clear/update, and every remaining TransferControl constructor returning NONE. `check-l3-next-step.py` pins the full multiline equation and type/proof rows. Drift coverage compares the literal generated body, explicitly resolving the combined export’s `riscv_step_Fetch` alias to the Step namespace owner. Full Run inherits the rational-cuts IEEE assumption (SOUNDNESS item 8). This ports the step theory definition; the model’s stronger Next trap/interrupt dispatcher and compiler correctness remain separate obligations.
+`lab_filter_full_simulation_probeScript.sml` captures the entire original filter_correct theorem, full types, zero hypotheses and kernel reproof. Native clock-zero and absent-fetch cases retain the full simulation conclusion and original branch guards; whole case assembly remains open.
 `pan_structs_reorder_faithful_probe` captures the original full theorem, kernel
 quantified types, zero hypotheses and kernel proof. Ignored info-field payload
 remains independently polymorphic; native theorem uses faithful MlS, ContextExact
