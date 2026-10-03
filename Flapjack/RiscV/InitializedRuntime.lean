@@ -106,7 +106,9 @@ def initializedRuntimeLabelIndex? [NeZero width]
   pure (labLabelIndexOf entries)
 
 /-- Actual RV64 initial encoding uses the complete reviewed source encoder and
-`filterSkip` followed by `encSecList`, retaining cached bytes and the resulting source lengths. Other
+`filterSkip` followed by `encSecList`, retaining offset-zero encodings and the
+resulting source lengths. Relocation can make those stored bytes stale; executed
+consumers ignore them and re-encode at the actual offset. Other
 word widths retain the existing non-RV64 infrastructure; no source RV64 encoder
 or cross-language equivalence is asserted for that path. This adapter has no
 standalone HOL original. -/
