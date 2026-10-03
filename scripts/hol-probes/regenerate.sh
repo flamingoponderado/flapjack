@@ -6700,3 +6700,7 @@ run_probe pan_structs_exp_cmp_shift_faithful_probeScript.sml pan_structs_exp_cmp
 run_probe pan_structs_exp_nstruct_faithful_probeScript.sml pan_structs_exp_nstruct_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nstruct_statement compile_exp_correct_nstruct_proved eval_ind_full_statement \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
+  compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

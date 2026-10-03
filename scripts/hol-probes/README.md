@@ -7138,3 +7138,8 @@ hypotheses and three conclusions, using only the two original child IHs.
 NStruct specialization and eval_ind. Native NStruct retains all seven hypotheses
 and three conclusions, with only the original guarded member-expression IH;
 source evaluation and structInfosOk supply shape checks and reordering premises.
+
+`pan_structs_mmap_faithful_probe` replays the original local list helper’s
+statement and unchanged induction proof, then captures its full closed statement,
+quantified types, zero hypotheses and kernel proof. Native theorem preserves
+both original hypotheses and the mapped converted-list result on faithful carriers.
