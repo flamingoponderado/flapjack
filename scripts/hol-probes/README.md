@@ -7772,6 +7772,13 @@ same-model wrapper choice equality are proved internally; no supplied chain,
 LUB or target-semantics premise is added. It uses the distinct PanProps result
 datatype. Faithful evaluator wrapper correspondence remains separate.
 
+`pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
+PanSem wrapper equality, quantified state/start types and closed kernel truth.
+Lean retains the faithful evaluator, every overwritten clock, TailCall as
+Call NONE, exact result classification and FFI event projection. It derives
+forbidden/termination predicate equivalence internally, with the original
+choice/LUB formulas and canonical finite-support/positive-word translations.
+Whole-pass semantics correspondence and production routing remain separate.
 `word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
 ### Native Const instruction decoder evidence
 
@@ -7816,3 +7823,9 @@ This is untagged infrastructure because HOL has no separately named identity.
 It does not establish full native fetch/Next/interference/assertion execution.
 `check-riscv-const-wide-value.py` and its mutation regressions protect the
 unrestricted signature, original evidence, and all driver labels.
+
+`pan_structs_semantics_eq_probeScript.sml` captures the closed original
+`semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
+and quantified types. The Lean counterpart retains all eight source hypotheses
+and faithful semantics equality; production routing remains independent.
+Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.

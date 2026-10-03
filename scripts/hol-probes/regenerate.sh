@@ -7457,6 +7457,10 @@ run_probe bvl_to_bvi_default_probeScript.sml bvl_to_bvi_default_probe.out \
 run_probe pan_props_semantics_wrapper_eq_probeScript.sml pan_props_semantics_wrapper_eq_probe.out \
   semantics_wrapper_eq_statement semantics_wrapper_eq_proved semantics_wrapper_eq_types \
   "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrapper_probe.out \
+  pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe wordsem_shmem_independent_result_probeScript.sml wordsem_shmem_independent_result_probe.out \
   sh_mem_set_var_with_const_typed sh_mem_set_var_with_const_hypotheses sh_mem_store_with_const_typed sh_mem_store_with_const_hypotheses sh_mem_store_byte_with_const_typed sh_mem_store_byte_with_const_hypotheses sh_mem_store16_with_const_typed sh_mem_store16_with_const_hypotheses sh_mem_store32_with_const_typed sh_mem_store32_with_const_hypotheses share_inst_with_const_typed share_inst_with_const_hypotheses sh_mem_set_var_const_typed sh_mem_set_var_const_hypotheses sh_mem_store_const_typed sh_mem_store_const_hypotheses sh_mem_store_byte_const_typed sh_mem_store_byte_const_hypotheses sh_mem_store16_const_typed sh_mem_store16_const_hypotheses sh_mem_store32_const_typed sh_mem_store32_const_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" \
@@ -7496,9 +7500,6 @@ run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bi
   config_component_equality_typed source_conf_type clos_conf_type bvl_conf_type data_conf_type word_to_word_conf_type word_conf_type stack_conf_type lab_conf_type symbols_type tap_conf_type exported_type attach_bitmaps_type attach_bitmaps_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 
-run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrapper_probe.out \
-  pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
-  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.out \
   const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
@@ -7506,3 +7507,6 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
   from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
+  semantics_eq_statement semantics_eq_proved semantics_eq_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

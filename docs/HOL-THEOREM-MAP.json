@@ -87856,5 +87856,28 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_word preserves the actual native word program list and word bitmap result, complete compileNative tuple including unused frame list, perfCalls flag, only wordConf update, and fromStack; from_word_0 and WordToWord/CSE are separate source declarations. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/SemanticsEq.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported state/broad two-way roundtrip, representation infrastructure with no independent HOL declaration.",
+    "hol_path": null,
+    "hol_name": null
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/SemanticsEq.lean",
+    "lean_name": "semanticsEq",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "semantics_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared original1473-1533, convert_s58-67 and faithful PanSem semantics785-809. All eight source conjuncts retained in original order: non-Fail, ctxt structs fields projection, source empty locals, globals fields/wellformed shape, ctxt empty locals, alist shape map=FMAP_MAP2 shape_of, struct_infos_ok. Conclusion is actual semantics(convertStateExact ctxt source) start=semantics source start with no targetrun/trace equality/IH/hooks premise. Same canonical imported owner four maps, full two-way state roundtrip; positive indexed BitVec and Type0 FFI host. Full compileCorrectExact supplies actual compiled TailCall target run at identical clock; empty locals discharge FEVERY/map premises, compile args empty preserves TailCall, convertRes classification preserves original outcome and state conversion preserves ffi.ioEvents. Original tagged clock stability and event monotonicity discharge full six-premise PanProps wrapper equality internally. Fresh closed original statement/types/kernel truth capture; no executed production route completion claim."
   }
 ]
