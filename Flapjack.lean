@@ -1,6 +1,9 @@
-import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
-import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
+import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
+import Flapjack.RiscV.L3.Defs.AMOSwap
 import Flapjack.RiscV.L3.Defs.IntegerStore
+import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
@@ -331,6 +334,7 @@ import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.StoreConsts
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Inst
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.If
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Loop
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
