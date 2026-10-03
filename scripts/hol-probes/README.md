@@ -7102,3 +7102,5 @@ CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` captur
 `lab_filter_return_labels_probeScript.sml` replays unchanged original local proofs416/425/468 with original simplifier setup. Twelve rows capture complete next-label and guarded skipped-run return-label equalities, full binder types, zero hypotheses and kernel reproofs.
 
 `lab_sem_independent_navigation_probeScript.sml` captures full original next-label, after-label and return-location definitions, including independent code/state and result word dimensions, zero hypotheses and kernel reproofs. Native navigation binds both positive widths independently.
+
+`lab_filter_full_simulation_probeScript.sml` captures the entire original filter_correct theorem, full types, zero hypotheses and kernel reproof. Native clock-zero and absent-fetch cases retain the full simulation conclusion and original branch guards; whole case assembly remains open.

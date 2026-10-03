@@ -76217,5 +76217,25 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.5.2): Full original416/425/468 native equalities retain all code/PC/count binders and entire allSkips guards. Independent code alpha and returned beta word_loc dimensions become width/resultWidth, each positive via NeZero. Fixed8 encoded bytes and all native clauses retained. No assumed label equality, supplied fetch count, target execution or desired state premise. Fresh unchanged original local proofs replayed with original simplifier setup, full types, zero hypotheses and kernel reproof12rows. Genuine return-label prerequisite, not full filter simulation or semantic lift."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/Simulation.lean",
+    "lean_name": "filterCorrectClockZero",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.1): Genuine original evaluate induction669 initial terminal branch s1.clock=0. Full s1/t1/res/s2 native source binders, evaluate equation/stateRel/nonfailed hypotheses and existential extra clock/t2 actual target evaluate/result/FFI equality retained, plus exactly branch guard. No desired target/simulation premise, no outcome restriction or successful-run assumption; absent fetch derives actual skipped count via asmFetchAuxEq2 and allSkipsEvaluate. Full source theorem capture/type/zero hypotheses/reproof used for comparison, not completion of whole original assembler. Positive-width words translation only; native evaluate inherits reals_as_rational_cuts via asmInst, SOUNDNESS item8 unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/Simulation.lean",
+    "lean_name": "filterCorrectAbsentFetch",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.1): Genuine original evaluate induction669 initial terminal branch asmFetch s1=NONE. Full s1/t1/res/s2 native source binders, evaluate equation/stateRel/nonfailed hypotheses and existential extra clock/t2 actual target evaluate/result/FFI equality retained, plus exactly branch guard. No desired target/simulation premise, no outcome restriction or successful-run assumption; absent fetch derives actual skipped count via asmFetchAuxEq2 and allSkipsEvaluate. Full source theorem capture/type/zero hypotheses/reproof used for comparison, not completion of whole original assembler. Positive-width words translation only; native evaluate inherits reals_as_rational_cuts via asmInst, SOUNDNESS item8 unchanged."
   }
 ]

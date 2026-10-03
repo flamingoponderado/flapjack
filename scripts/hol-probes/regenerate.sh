@@ -6664,3 +6664,7 @@ run_probe lab_sem_independent_navigation_probeScript.sml lab_sem_independent_nav
   get_lab_after_def get_lab_after_def_types get_lab_after_def_hypotheses get_lab_after_def_proved \
   get_ret_Loc_def get_ret_Loc_def_types get_ret_Loc_def_hypotheses get_ret_Loc_def_proved \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_full_simulation_probeScript.sml lab_filter_full_simulation_probe.out \
+  filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
