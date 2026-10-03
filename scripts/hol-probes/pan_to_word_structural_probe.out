@@ -32,10 +32,6 @@ function_names_compile_prog=∀(pan_code :α decl list).
   MAP
     (FST :mlstring # (mlstring # shape) list # α panLang$prog # shape ->
           mlstring) (functions pan_code)
-no_names_compile_prog=EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
-  (pan_code :α decl list) ⇒
-EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
-  (compile_prog pan_code :α decl list)
 semantics_decls_has_main'=(s :(α, β) panSem$state).code =
 (FEMPTY :mlstring |-> (mlstring # shape) list # α panLang$prog # shape) ∧
 ALL_DISTINCT
@@ -46,3 +42,7 @@ semantics_decls s (start :mlstring) code ≠ Fail ⇒
 ∃(body :α panLang$prog) (rshape :shape).
   ALOOKUP (functions code) start =
   SOME (([] :(mlstring # shape) list),body,rshape)
+no_names_compile_prog=EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
+  (pan_code :α decl list) ⇒
+EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
+  (compile_prog pan_code :α decl list)

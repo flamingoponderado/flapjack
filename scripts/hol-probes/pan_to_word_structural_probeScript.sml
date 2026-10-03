@@ -9,5 +9,5 @@ val _ = capture "loop_state_simps" (DB.fetch "pan_to_wordProof" "loop_state_simp
 val _ = capture "first_compile_prog_all_distinct" (DB.fetch "pan_to_wordProof" "first_compile_prog_all_distinct");
 val _ = capture "dec_shapes_compile_prog" (DB.fetch "pan_to_wordProof" "dec_shapes_compile_prog");
 val _ = capture "function_names_compile_prog" (DB.fetch "pan_to_wordProof" "function_names_compile_prog");
-val _ = capture "no_names_compile_prog" (DB.fetch "pan_to_wordProof" "no_names_compile_prog");
 val _ = capture "semantics_decls_has_main'" (DB.fetch "pan_to_wordProof" "semantics_decls_has_main'");
+val _ = capture "no_names_compile_prog" (DB.fetch "pan_to_wordProof" "no_names_compile_prog");
