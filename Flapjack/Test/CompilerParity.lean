@@ -1,3 +1,4 @@
+import Flapjack.Test.WordSimpGenericCarriersParity
 import Flapjack.Test.L3FPMemoryParity
 import Flapjack.Test.L3ControlFetchParity
 import Flapjack.Test.L3FPBitsParity

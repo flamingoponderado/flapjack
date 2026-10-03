@@ -6553,3 +6553,6 @@ run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine
 run_probe word_to_stack_stack_move_clock_probeScript.sml word_to_stack_stack_move_clock_probe.out \
   evaluate_stack_move_clock_statement evaluate_stack_move_clock_proved evaluate_stack_move_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_simp_generic_carriers_probeScript.sml word_simp_generic_carriers_probe.out \
+  generic_carrier_1 generic_carrier_1_hypotheses generic_carrier_2 generic_carrier_2_hypotheses generic_carrier_3 generic_carrier_3_hypotheses generic_carrier_4 generic_carrier_4_hypotheses generic_carrier_5 generic_carrier_5_hypotheses generic_carrier_6 generic_carrier_6_hypotheses generic_carrier_7 generic_carrier_7_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"

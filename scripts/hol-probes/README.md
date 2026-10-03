@@ -6922,3 +6922,11 @@ is supplied. Existing total EL/HD and inherited FP real-rendering assurance
 remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_machine_sem_eq_sem_probeScript.sml`.
 `word_to_stack_stack_move_clock_probeScript.sml` replays the unchanged local `evaluate_stack_move_clock` Q.prove statement/proof and SIMP_RULE (word_to_stackProofScript.sml:5349-5359), with original simplifier context. GEN_ALL explicitly closes original free replacement clock. Captures unconditional whole evaluator result/poststate equality, proved=T and zero hypotheses, including failures rather than a successful-stack-move specialization.
+
+`word_simp_generic_carriers_probeScript.sml` captures the original seven generic
+lookup/move/name declarations with `Globals.show_types := true`, plus zero HOL
+hypothesis counts (14 rows). It exposes arbitrary association keys/value types,
+the independently typed unused NONE binder, arbitrary second move components
+and arbitrary Spt payloads. Full Lean consumers cover generic and String/Bool
+instances. These source captures are regression evidence, not cross-language
+equivalence or a new representation exception.
