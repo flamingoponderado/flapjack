@@ -78736,5 +78736,90 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison2026-10-03: complete original generated panSemTheory.eval_ind from terminating eval_def, closed kernel capture with types and proved T. All17 constructor obligations, same-state recursive hypotheses, full NStruct UNZIP pairs, first-binding faithful MlS lookup, info-field UNZIP/name equality and expression membership guards, Load is_wf_shape guard, two-operand conjuncts, whole universally quantified state/expression conclusion. Curried premises express original conjunction/implication. Imported canonical PanSemStateFiniteExact owns four finite maps with complete local roundtrip; actual ExpHOL uses positive width and Type0 FFI. Only canonical-map and positive-word translations. Proof uses actual datatype nested recursor with list/pair motives, supplying guarded source IHs from structural child proofs; no target evaluation or compatibility condition."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "fakeSeq_noLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_no_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:987: original SSA no-label helper. Unconditional fake sequence/reconciliation label emptiness; actual loop_setup/fake_moves producer equality sole premise, both fake outputs retained. Arbitrary native list/Spt/counter/priority inputs, literal producers, no output-label assumption. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "fakeMoves_noLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_moves_no_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:975: original SSA no-label helper. Unconditional fake sequence/reconciliation label emptiness; actual loop_setup/fake_moves producer equality sole premise, both fake outputs retained. Arbitrary native list/Spt/counter/priority inputs, literal producers, no output-label assumption. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "ssaReconcile_noLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_reconcile_no_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1017: original SSA no-label helper. Unconditional fake sequence/reconciliation label emptiness; actual loop_setup/fake_moves producer equality sole premise, both fake outputs retained. Arbitrary native list/Spt/counter/priority inputs, literal producers, no output-label assumption. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelHelpers.lean",
+    "lean_name": "loopSetup_noLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_no_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1047: original SSA no-label helper. Unconditional fake sequence/reconciliation label emptiness; actual loop_setup/fake_moves producer equality sole premise, both fake outputs retained. Arbitrary native list/Spt/counter/priority inputs, literal producers, no output-label assumption. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelFull.lean",
+    "lean_name": "fullSsaCcTrans_labPres",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:1102-1126: original unconditional source-to-fullSSA extract_labels equality, arbitrary native program/count. Native mutual structural induction covers all constructors/nested return and exception handlers; exact original fake_moves/loop_setup/ssa_reconcile no-label helpers discharge native generated prefixes/reconciliation. Setup is literal Move; instruction helper covers all native instruction/FP/fallback cases. No target label/run assumption or narrowed program. words_as_type_indexed_bitvec records positive HOL word dimension only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelFull.lean",
+    "lean_name": "fixLabels",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelFull.lean",
+    "lean_name": "fixLabelsLeft",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelFull.lean",
+    "lean_name": "fixLabelsRight",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelFull.lean",
+    "lean_name": "instNoLabels",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSALabelFull.lean",
+    "lean_name": "ssaLabels",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
   }
 ]
