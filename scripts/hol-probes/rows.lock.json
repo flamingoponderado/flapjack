@@ -5618,6 +5618,12 @@
       "sha256": "15cbe3769187816460a6ec7478b0b2224efe576c3e43688c52d00e6f79e1dc14"
     },
     {
+      "out": "stack_code_bitmaps_calltail_probe.out",
+      "bytes": 662,
+      "rows": 3,
+      "sha256": "74fbc3d19ae0b577ad8360be34c77f1ecb79136a5e38eb06ff50c02042d2f4cf"
+    },
+    {
       "out": "stack_code_bitmaps_ffi_probe.out",
       "bytes": 669,
       "rows": 3,

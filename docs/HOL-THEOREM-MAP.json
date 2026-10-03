@@ -68425,5 +68425,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.11: original evaluate_code_bitmaps421-440 JumpLower induction case retains full literal CodeBitmaps existential oracle shift/code FOLDL left union/bitmap append FLAT. Native evaluate_jumpLower compared to original stackSem clause: two word reads, lower comparison, actual find_code lookup, nonzero clock, recursive callee at actual decClock source; bad_fun_return alters result only. Only guarded source-path callee IH, no arbitrary-state IH or target/prefix/count/poststate premise. Failed reads/false comparison/lookup/timeout emptyEnv preserve fields/count0; actual recursion retains full three conjuncts, decClock input field equality definitional. Canonical imported regs/fpRegs/store and local genuine codec witness, positive BitVec/NeZero,C/F Type0,Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP correspondence claim. Whole assembly remains open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/CallTail.lean",
+    "lean_name": "evaluateCodeBitmapsCallTail",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.10.1: original evaluate_code_bitmaps421-440 Call NONE induction branch and stackSem865-873 compared. Full literal CodeBitmaps existential shift/code FOLDL left union/bitmap append FLAT retained. Actual native evaluator sole execution premise, arbitrary destination and handler. Callee IH only after actual find_code success, handler NONE and nonzero source clock at actual decClock source. Failed lookup/present handler/timeout emptyEnv count0; fix_clock alters clock only and bad_fun_return alters result only, deriving field transport without poststate/count/prefix/target assumption or global IH. Canonical imported regs/fpRegs/store with local genuine codec witness; positive BitVec/NeZero,C/F Type0,Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP correspondence/runtime rewrite claim. Returning/exception Call branch and whole assembly open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
