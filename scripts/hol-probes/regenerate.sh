@@ -5890,3 +5890,9 @@ run_probe lab_to_target_mmio_shmem_probeScript.sml lab_to_target_mmio_shmem_prob
   empty_boundary external_boundary shared_boundary mixed_boundary suffix_guard prefix_guard extraction_boundary \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_probe.out \
+  find_index_ALL_DISTINCT_EL_eq find_index_ALL_DISTINCT_EL_eq_types find_index_ALL_DISTINCT_EL_eq_hypotheses \
+  first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
+  "$cake_dir/misc/miscScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

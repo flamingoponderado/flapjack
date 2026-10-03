@@ -621,6 +621,7 @@ import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
 import Flapjack.Misc.FindIndex
+import Flapjack.Misc.FindIndex.Distinct
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly
 import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
