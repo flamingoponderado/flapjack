@@ -6432,3 +6432,12 @@ ignored rs1 and returned states are preserved. Arbitrary architecture remains
 arbitrary. These regressions do not establish whole Run/Next/compiler correctness.
 `stack_remove_comp_storeconsts_probeScript.sml` replays the complete literal original `comp_correct` StoreConsts case (1504–1575) with its original four premises, together with the original local `state_rel_get_var` and `mem_load_lemma` proofs. Two rows record the closed specialized statement and kernel proof success. The full Lean constructor case derives the actual bitmap prefix, CopyLoop memory transition, final moves and full post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
 
+`stack_evaluate_clock_neutral_probeScript.sml` replays the literal original
+local `inst_clock_neutral` proof and then the full original
+`evaluate_clock_neutral` proof (stackPropsScript.sml:679–692). It captures the
+fully generalized theorem and proof success, plus seven independent neutral
+predicate observations including nested Seq/Inst/Halt and excluded Tick/Loop.
+The native theorem retains its sole source-evaluation/neutrality conjunction;
+clock commutation and unchanged post-clock are derived by structural recursion.
+Generic kernel consumers include widths 1/8/64/80 and zero replacement clocks.
+These fixtures do not prove cross-language equivalence or full initialization.

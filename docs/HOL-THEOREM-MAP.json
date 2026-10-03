@@ -69176,5 +69176,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-remove-storeconsts): full original comp_correct StoreConsts case1504–1575. Arbitrary temporary/bitmap registers, optional stub, original four premises and existential target clock/result dispatch/full postrelation retained. Original source semantics excludes allocation and error branches and derives distinct registers, three input words and successful copyWordsExact. Native bitmap-base load/add/shift uses original store/stack heap, original positive good dimension and state relation; accepted full copyLoopThm supplies the actual native run and framed memory update; final moves and every full state-relation conjunct are proved. No target execution, successful pass, desired postrelation, extra alias/width condition or simulation is assumed. Canonical actual imported StackSemStateFiniteExact regs/fpRegs/store finite maps and positive type-indexed BitVec words use the reviewed combined relation/word qualifiers with non-vacuous broad/exact roundtrip witness; code remains original Spt. Inherits the reviewed reals_as_rational_cuts FP carrier through evaluator closure (SOUNDNESS item8), although this constructor performs no FP instruction. Full original literal HOL case proof and local state_rel_get_var replay produce closed statement/proved rows. This is a full constructor slice, not whole-pass completion or executed compiler parity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateNeutral.lean",
+    "lean_name": "evaluateClockNeutral",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_clock_neutral",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 original679-692 and original fully generalized native type: all original program/source/result/post/replacementclock binders and sole source-evaluation AND clock_neutral premise, complete actual updated-clock evaluation and same result/post-state clock update. Arbitrary positive width and independent compile/FFI host types retained. Actual native HolProg/StackSemStateFiniteExact/evaluate and reviewed clockNeutralHOL used; original-neutral constructors Skip/Inst/LocValue/Halt and recursive Seq/If exactly retained, every other constructor excluded by source predicate. Structural size proof derives full clock-update commutation AND unchanged post-clock internally; Seq min clock clamp identity proved from first recursive result, conditional register/immediate and word comparison failures/successes retained. No desired evaluation/post-clock/free-context extra premise or callback law. Actual canonical regs/fpRegs/store owner and local genuine codec roundtrip; Spt code unchanged. Fresh literal original full inst_clock_neutral local proof then literal original full evaluate_clock_neutral proof, full generalized statement0hyp and7 independent original neutral/nonneutral observations. Full arbitrary kernel consumer and4 mixed Seq/Inst/Halt consumers at widths1/8/64/80 with replacement clocks0/17/0/123456789. Existing evaluator closure inherits reals_as_rational_cuts SOUNDNESS item8, no new real/FP agreement, production behavior/default/HOLD policy unchanged. Actual StackRemove initializer3887 prerequisite, not full initialization/compiler completion."
   }
 ]
