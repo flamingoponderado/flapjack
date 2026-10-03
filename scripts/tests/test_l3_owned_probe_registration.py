@@ -7,7 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 FAMILIES = (
     "immediate_shift", "word_arithmetic", "multiply", "divide", "fp_bits",
-    "control_fetch", "fp_memory", "decode_immediates", "boolify_provenance", "run_dispatch", "decode", "write_pc", "decode_any", "update_pc", "next_step",
+    "control_fetch", "fp_memory", "decode_immediates", "boolify_provenance", "run_dispatch", "decode", "write_pc", "decode_any", "update_pc", "next_step", "next_evaluation", "decode_transport", "step_bit_rewrites", "fetch_theorems",
 )
 
 
@@ -31,8 +31,8 @@ class NativeProbeRegistration(unittest.TestCase):
                 selected = [x for x in entries if x[1] == name]
                 self.assertEqual(len(selected), 1)
                 self.assertEqual(selected[0][2], f"l3_{family}_probe.out")
-                location = "step" if family in ("decode_any", "update_pc", "next_step") else "model"
-                source = "riscv_stepScript.sml" if family in ("decode_any", "update_pc", "next_step") else "riscvScript.sml"
+                location = "step" if family in ("decode_any", "update_pc", "next_step", "next_evaluation", "decode_transport", "step_bit_rewrites", "fetch_theorems") else "model"
+                source = "riscv_stepScript.sml" if family in ("decode_any", "update_pc", "next_step", "next_evaluation", "decode_transport", "step_bit_rewrites", "fetch_theorems") else "riscvScript.sml"
                 self.assertEqual(selected[0][-2:], [
                     f"$hol_dir/examples/l3-machine-code/riscv/{location}/{source}",
                     f"$hol_dir/examples/l3-machine-code/riscv/{location}",

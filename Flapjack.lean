@@ -1,3 +1,7 @@
+import Flapjack.RiscV.L3.Step.FetchTheorems
+import Flapjack.RiscV.L3.Step.BitRewrites
+import Flapjack.RiscV.L3.Step.DecoderTransport
+import Flapjack.RiscV.L3.Step.Evaluation
 import Flapjack.RiscV.L3.Step.Next
 import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.DecodeAny
@@ -1214,6 +1218,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
+import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
+import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
@@ -1555,6 +1561,7 @@ import Flapjack.PanHProgStoreMem
 import Flapjack.PanHProgAssign
 import Flapjack.PanHProgWhile
 import Flapjack.Pancake.PanSimp
+import Flapjack.Pancake.PanToWord
 import Flapjack.Pancake.PanLang.ProgHOLInduction
 import Flapjack.Pancake.Proofs.PanSimp.ProgOfHOL
 import Flapjack.PanLocalised
@@ -1621,6 +1628,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel.Load
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call
@@ -2129,6 +2137,11 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Calls
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Program
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Full
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.PrimitiveInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ShareInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.AllocationInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.CallInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
