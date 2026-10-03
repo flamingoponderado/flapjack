@@ -87487,5 +87487,1079 @@
     "hol_name": "alist_insert_REVERSE",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison2026-10-03 full original miscScript4086–4096. Arbitrary natural key list, independent generic payload list and arbitrary native Spt payload tree; only ALL_DISTINCT keys and equal key/value list lengths imply equality reversing both insertion lists. No WF/tree shape/read/lookup/postcondition hypothesis added. Both complete tree expressions use actual native alist_insert, including truncation behavior; proof derives paired append and pull-insert from existing literal unrestricted native insert_swap. Original finite native tree carrier is constructor-for-constructor, no finite-map qualifier appropriate. Fresh literal original proof replay and typed closed theorem capture regression evidence, no cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "canonicalArith_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalArith_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL canonicalArith_correct (word_cseProof:118). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_locals",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_locals (word_cseProof:160). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "wf_data_untracked",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_untracked",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL wf_data_untracked (word_cseProof:289). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_set_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_set_var (word_cseProof:314). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_unset_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_unset_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_unset_var (word_cseProof:402). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "not_seen_data_inv_alist_insert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "not_seen_data_inv_alist_insert",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL not_seen_data_inv_alist_insert (word_cseProof:423). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_memory",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_memory (word_cseProof:507). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvTransport.lean",
+    "lean_name": "data_inv_state_agree",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_state_agree",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_state_agree (word_cseProof:555). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "attachBitmaps",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "attach_bitmaps_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRawcallCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4732-4742: ∀i p. no_shmemop p ⇒ no_shmemop (stack_rawcall$comp i p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_top_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRawcallCompTopNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4744-4750: ∀p. no_shmemop p ⇒ no_shmemop (comp_top i p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRawcallCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4752-4769: whole stack_rawcall$compile preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4771-4780: ∀n m p. no_shmemop p ⇒ no_shmemop (FST (stack_alloc$comp n m p)). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_prog_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocProgCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4782-4791: MAP stack_alloc$prog_comp preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4793-4800: stack_alloc$compile data preserves EVERY no_shmemop (GC stub by an untagged EVAL-step lemma). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "upshift_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "upshiftNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4802-4808: ∀k n. no_shmemop (upshift k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "downshift_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "downshiftNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4810-4816: ∀k n. no_shmemop (downshift k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_free_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackFreeNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4818-4824: ∀k n. no_shmemop (stack_free k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackAllocNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4826-4833: ∀jump k n. no_shmemop (stack_remove$stack_alloc jump k n). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4835-4849: ∀jump off k p. no_shmemop p ⇒ no_shmemop (stack_remove$comp jump off k p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_prog_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveProgCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4851-4856: ∀p. no_shmemop p ⇒ no_shmemop (SND (prog_comp jump off k (n,p))). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4858-4872: stack_remove$compile jump offset gckind mh sp loc preserves EVERY no_shmemop (init_code stub by an untagged EVAL-step lemma). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackNamesCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4874-4883: ∀f p. no_shmemop p ⇒ no_shmemop (stack_names$comp f p). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_prog_comp_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackNamesProgCompNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4885-4894: MAP (stack_names$prog_comp f) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_compile_no_shmemop",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackNamesCompileNoShmemop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4896-4902: stack_names$compile names preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "flattenNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4904-4917: ∀t p n m cs bs. no_shmemop p ⇒ EVERY (λln. ∀op re a inst len. ln ≠ Asm (ShareMem op re a) inst len) (append (FST (flatten t p n m cs bs))); proof via an untagged Boolean List.all form. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "asm_fetch_aux_no_share_mem_inst_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "asmFetchAuxNoShareMemInstCons",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4919-4928: ∀xs. EVERY (no ShareMem) xs ∧ no_share_mem_inst ls ⇒ no_share_mem_inst (Section k xs::ls). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "prog_to_section_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "progToSectionNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4930-4945: ∀prog. EVERY no_shmemop ⇒ no_share_mem_inst (MAP prog_to_section prog). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "compile_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "compileNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4947-4959: ∀prog prog'. EVERY no_shmemop prog ∧ stack_to_lab$compile stack_conf data_conf max_heap sp offset prog = prog' ⇒ no_share_mem_inst prog', over the reviewed StackToLab.compile. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_prog_comp_no_shmemop_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "stackRemoveProgCompNoShmemopMap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4961-4971: MAP (stack_remove$prog_comp jump offset sp) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "compile_no_stubs_no_share_mem_inst",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoShmemop.lean",
+    "lean_name": "compileNoStubsNoShareMemInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4973-4985: EVERY no_shmemop prog ∧ compile_no_stubs f jump offset sp prog = prog' ⇒ no_share_mem_inst prog', over the reviewed StackToLab.compileNoStubs. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRawcallCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4987-4997. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_comp_top_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRawcallCompTopNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4999-5006. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_rawcall_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRawcallCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5008-5025. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5027-5036. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_prog_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocProgCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5038-5047. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5049-5056. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "upshift_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "upshiftNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5058-5064. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "downshift_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "downshiftNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5066-5072. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_free_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackFreeNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5074-5081. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_alloc_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackAllocNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5083-5092. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRemoveCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5094-5110. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_prog_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRemoveProgCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5112-5117. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_remove_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackRemoveCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5119-5133. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackNamesCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5135-5144. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_prog_comp_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackNamesProgCompNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5146-5155. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_names_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "stackNamesCompileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5157-5163. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "flattenNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5165-5179. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "asm_fetch_aux_no_install_CONS",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "asmFetchAuxNoInstallCons",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5181-5190. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "prog_to_section_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "progToSectionNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5192-5207. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_to_lab_compile_no_install",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/NoInstall.lean",
+    "lean_name": "compileNoInstall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5209-5221. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "all_distinct_map_fst_filter",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "ALL_DISTINCT_MAP_FST_FILTER",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL ALL_DISTINCT_MAP_FST_FILTER (word_cseProof:640). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "empty_data_loads_wipe",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "empty_data_loads_wipe",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL empty_data_loads_wipe (word_cseProof:1056). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "lookup_empty_data",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_empty_data",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL lookup_empty_data (word_cseProof:1062). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "lookup_invalidate_regs_mono",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_invalidate_regs_mono",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL lookup_invalidate_regs_mono (word_cseProof:1086). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "lookup_invalidate_regs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_invalidate_regs",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL lookup_invalidate_regs (word_cseProof:1096). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_merge_l",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_merge_l",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_merge_l (word_cseProof:649). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_merge_r",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_merge_r",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_merge_r (word_cseProof:708). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_insert_to_canonical",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_to_canonical",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_insert_to_canonical (word_cseProof:829). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_insert_to_latest",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_to_latest",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_insert_to_latest (word_cseProof:879). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_insert_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_gets",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_insert_gets (word_cseProof:922). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_filter_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_filter_gets",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_filter_gets (word_cseProof:980). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_cons_gets",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_cons_gets",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_cons_gets (word_cseProof:996). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_set_store",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_set_store (word_cseProof:1016). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_reinsert_canonical",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_reinsert_canonical",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_reinsert_canonical (word_cseProof:1039). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_register_read",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_register_read",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_register_read (word_cseProof:1068). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_register_reads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_register_reads",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_register_reads (word_cseProof:1077). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_invalidate_regs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_invalidate_regs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_invalidate_regs (word_cseProof:1107). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_set_fp_var",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_set_fp_var (word_cseProof:1117). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "with_locals_insert",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "with_locals_insert",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL with_locals_insert (word_cseProof:1127). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_alist_insert_locals",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_alist_insert_locals",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_alist_insert_locals (word_cseProof:1133). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "data_inv_set_vars",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_set_vars",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL data_inv_set_vars (word_cseProof:1145). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
+    "lean_name": "evaluate_Move1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "evaluate_Move1",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-q4ssh): HOL evaluate_Move1 (word_cseProof:1154). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed Knowledge, wfData/semInv/dataInv, mergeData, registerRead(s), invalidateRegs and the faithful WordSemStateFiniteExact. Renderings: set_var/set_store/set_fp_var/set_vars as setVar/setStore/setFpVar/setVars; alist_insert as the reviewed sptAlistInsert; ALOOKUP as List.lookup; FLOOKUP s.store as the canonical store lookup; ODD as % 2 = 1; EVERY as a forall-over-membership; x IN domain as sptDomain; lookup_any as lookupAny; FILTER over a paired lambda as List.filter with decide. The proof combines the WfDataPreservation lemmas with a semInv fact-transport lemma, the accepted evaluation frames and dataInvEmpty. Kernel-checked with standard axioms only. The word_cse_data_inv_updates probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/PanSemIsWrapper.lean",
+    "lean_name": "panPropsPanSemIsWrapper",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "pan_sem_is_wrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared original1931-1954 and PanSem semantics785-809. Exact no-premise equality over faithful PanSemStateFiniteExact.semantics and evaluateHOLFiniteState, original TailCall as Call NONE start [], every overwritten clock, TimeOut→Incomplete/FinalFFI→CompleteResult FFI_outcome/Return→CompleteResult Success/other→RunError and ffi.io_events projection. No evaluator hook, supplied chain/LUB/successful-run/target-observation premise. Forbidden/termination predicates shown equivalent by all result constructors, then identical holOptionSome predicate and divergence image; no cross-assistant choice equality claimed. Canonical imported owning state4maps with full same-module state/broad roundtrip and positive indexed words/Type0 FFI host; no shadow state carrier. Fresh closed original theorem/full quantified types/kernelT. Full PanStructs semantics correspondence and executed production inventory remain independent obligations."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/MoveFull.lean",
+    "lean_name": "compCorrectMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 full original comp_correct Move6132–6313 under original motive5719–5751. Arbitrary priority/move list/source, all original quantified source evaluation/nonerror/stateRel/conventions/flat/compilation/bitmap-prefix/labels/max-variable guards retained; entire existential actual native target evaluation and result-dependent relation/resources conclude. No recursive IH for this leaf. Internally derive original source successful reads/distinct destinations/even endpoints, scheduled scratch/read/frame guards, native wMove run and ENTIRE source-state equality from actual parmove_correct/fullDIV2/native alist_insert_REVERSE/alistInsertGetVars. Locals WF comes from original stateRel, no extra premise. Choose actual extra clock0 as HOL does. Original full guards kept even when unused on this leaf. Five canonical finite maps and positive words qualified with genuine same-module source/target codec witnesses; inherits reals_as_rational_cuts evaluator assurance. Original typed kernel specialization of full comp_correct provides statement/regression evidence only, not a local proof replay or HOL-to-Lean equivalence claim. No target-run/scheduler success/desired relation assumption or total HD/EL/default change. Whole compiler remains unfinished.",
+    "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromLab",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_lab_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_lab preserves independent arbitrary bitmap payload Type, full native LabProgHOL width and AsmConfigExact width, exact compile then attachBitmaps with all NONE/SOME behavior. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromStack",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_stack_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_stack preserves independent arbitrary bitmap payload Type, full native stack program list, exact 2 * maxHeapLimit width dataConf - 1 and regCount - (avoidRegs.length + 3) saturating natural subtraction, both addrOffset words and full StackToLab.compile then fromLab. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromWord",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_word_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: backendScript213-233; six original inferred-type and typed-definition rows regenerated in backend_lower_pipeline_probe.out. from_word preserves the actual native word program list and word bitmap result, complete compileNative tuple including unused frame list, perfCalls flag, only wordConf update, and fromStack; from_word_0 and WordToWord/CSE are separate source declarations. Standard words_as_type_indexed_bitvec translates only positive HOL word dimensions to BitVec width with NeZero width; fixed output bytes remain BitVec 8. Native MlString, List and Spt carriers are constructor-for-constructor. No extra success/output assumption or changed error behavior."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/SemanticsEq.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported state/broad two-way roundtrip, representation infrastructure with no independent HOL declaration.",
+    "hol_path": null,
+    "hol_name": null
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/SemanticsEq.lean",
+    "lean_name": "semanticsEq",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "semantics_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared original1473-1533, convert_s58-67 and faithful PanSem semantics785-809. All eight source conjuncts retained in original order: non-Fail, ctxt structs fields projection, source empty locals, globals fields/wellformed shape, ctxt empty locals, alist shape map=FMAP_MAP2 shape_of, struct_infos_ok. Conclusion is actual semantics(convertStateExact ctxt source) start=semantics source start with no targetrun/trace equality/IH/hooks premise. Same canonical imported owner four maps, full two-way state roundtrip; positive indexed BitVec and Type0 FFI host. Full compileCorrectExact supplies actual compiled TailCall target run at identical clock; empty locals discharge FEVERY/map premises, compile args empty preserves TailCall, convertRes classification preserves original outcome and state conversion preserves ffi.ioEvents. Original tagged clock stability and event monotonicity discharge full six-premise PanProps wrapper equality internally. Fresh closed original statement/types/kernel truth capture; no executed production route completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Constant.lean",
+    "lean_name": "evaluateWInstConst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source review of evaluate_wInst4688-5140, Const branch4705-4714. Full original five guards and existential native run/full state relation/stack length and stack-space conclusion retained on the Const constructor. Source inst on WordLangInst and target HolInst use the same positive alpha word width; gamma host and FFI types remain arbitrary. EveryVar/maxVar/argument convention retain reviewed literal clauses. Actual source post-state derived from inst, actual register/stack write derived from evaluateWRegWrite1Seq and evaluateWStackStoreWReg1, without target execution/postrelation assumptions. Fresh typed original kernel specialization of evaluate_wInst at asm Const proves entire case with zero hypotheses; not a local literal proof replay or cross-language equivalence proof. Five canonical relation map fields have genuine local source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item 8), no independent IEEE agreement. Other instruction cases and arbitrary-instruction assembly remain open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_Const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_Const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_Const (word_cseProof:1204). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_Arith",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_Arith",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_Arith (word_cseProof:1252). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_OpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_OpCurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_OpCurrHeap (word_cseProof:1316). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_instrs_LocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_instrs_LocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_instrs_LocValue (word_cseProof:1364). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_aux_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_aux_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_aux_correct (word_cseProof:1416). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "canonicalRegs_self_or_fresh",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_self_or_fresh",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL canonicalRegs_self_or_fresh (word_cseProof:1479). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "canonicalRegs'_self_or_fresh",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs'_self_or_fresh",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL canonicalRegs'_self_or_fresh (word_cseProof:1496). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_const_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_const_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_const_correct (word_cseProof:1523). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_LocValue_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_LocValue_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_LocValue_correct (word_cseProof:1591). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_OpCurrHeap_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_OpCurrHeap_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_OpCurrHeap_correct (word_cseProof:1626). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_data_Arith_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_data_Arith_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_data_Arith_correct (word_cseProof:1691). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "data_inv_insert_loads",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "data_inv_insert_loads",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL data_inv_insert_loads (word_cseProof:1785). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. HOL local: it is not exported, so there is no probe capture; it was compared against the source text. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_load_aux_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_load_aux_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_load_aux_correct (word_cseProof:1816). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/FactInsert.lean",
+    "lean_name": "add_to_load_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "add_to_load_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-t54gq): HOL add_to_load_correct (word_cseProof:1879). The full original statement is kept: binders in HOL order, the same conjunctive premise, and the same conclusion. It is stated over the reviewed dataInv/semInv, the tagged fact producers (addToDataAux/addToDataConst/addToData/addToLoadAux) and canonicalRegs/canonicalArith, with the faithful wordSem evaluate on WordSemStateFiniteExact. Renderings: EVEN r is r % 2 = 0; is_store as the Bool isStore; l IN domain s.code as sptMem; HOL's nested record update in the miss premise as nested Lean structure updates; the asm arith embedded by toWordLangArith as in semInv. The proof uses the data_inv update lemmas, the accepted evaluation frames, arithKeysEq, canonicalArith_correct and canonicalRegsAvoidCorrect. Kernel-checked with standard axioms only. The word_cse_fact_insert probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

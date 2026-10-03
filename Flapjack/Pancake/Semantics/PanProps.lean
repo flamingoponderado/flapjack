@@ -93,14 +93,16 @@ composition, and wrapper/LUB semantics ports (`flapjack-4ac.3.45`, `.3.53`,
 `evaluate (TailCall start [], s with clock := k)`, mapping `TimeOut` to
 `Incomplete`, `FinalFFI e` to `CompleteResult (FFI_outcome e)`, `Return _` to
 `CompleteResult Success`, and every other result to `RunError`; the event
-component is `s.ffi.io_events`. The closest Flapjack definition,
+component is `s.ffi.io_events`. The older hook definition,
 `PanObservationalSemantics.panSemantics`, instead takes arbitrary
 `PanSemanticsHooks`, uses `PanValueFfiClockResult`/`FfiState` carriers, and
 requires a caller-provided event-prefix chain/LUB. It does not state the HOL
-equality and receives no tag. The faithful theorem port is tracked by
-`flapjack-4ac.4.107.1`, depending on exact `semantics_wrapper_def` carrier work
-in `flapjack-4ac.4.105.1` and the exact PanSem semantics port
-`flapjack-4ac.3.52.2`. -/
+equality and receives no tag. The faithful theorem is provided by
+`PanProps/PanSemIsWrapper.lean`'s `panPropsPanSemIsWrapper` over the accepted exact
+semantics and generic wrapper definitions. Its canonical maps/positive words
+translation and complete no-premise result are recorded beside the theorem.
+The underlying exact PanSem semantics port is
+`flapjack-pxn.18.4.3.77.17.1`. -/
 
 /-! Source review for HOL `io_events_eq_imp_ffi_eq`
 (`panPropsScript.sml:974-1019`): its quantified variables are `p`, `s`, `res`,
