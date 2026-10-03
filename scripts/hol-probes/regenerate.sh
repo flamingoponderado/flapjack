@@ -6827,3 +6827,7 @@ run_probe lab_to_target_make_init_filter_probeScript.sml lab_to_target_make_init
 run_probe lab_filter_section_end_probeScript.sml lab_filter_section_end_probe.out \
   sec_ends_with_label_filter_skip sec_ends_with_label_filter_skip_types sec_ends_with_label_filter_skip_hypotheses sec_ends_with_label_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_filter_preconditions_probeScript.sml lab_to_target_filter_preconditions_probe.out \
+  all_enc_ok_pre_filter_skip all_enc_ok_pre_filter_skip_types all_enc_ok_pre_filter_skip_hypotheses all_enc_ok_pre_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
