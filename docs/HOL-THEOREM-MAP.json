@@ -84806,5 +84806,48 @@
     "hol_name": "invariant_bm_inter_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-intersection-invariant): word_cseProof611-619 quantifies arbitrary two balanced maps and assumes exactly their native listCmp invariants, concluding the invariant of bm_inter_eq. Lean retains the generic payload alpha (not Nat), both original input invariants, original numeral-list key comparator, cached-size/native tree carrier and full output invariant. DecidableEq alpha implements HOL payload equality for the reviewed literal intersection; no additional proposition or run, lookup, output-relation assumption is imposed. The private invariant-only structural induction traverses right then left and uses original insertThm; it is not tagged as bm_inter_eq_acc_thm, whose arbitrary semantic-key lookup conclusion remains open. Native invariants preserve all original cached-size, ordering, balance and recursive conjuncts."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_call_correct",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenCallCorrect.lean",
+    "lean_name": "flattenCallCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2741-2767. Free HOL variables start s1 s2 res t1 as implicit binders. All five premises retained in order: native StackSem evaluate (Call NONE (INL start) NONE, s1) = (res,s2), state_rel s1 t1, loc_to_pc start 0 t1.code = SOME t1.pc, res <> SOME Error, and res <> SOME TimeOut implies SOME (Halt (Word w)) or SOME (FinalFFI f) or SOME (Result (Loc n 0)) with the inner halting hypothesis for every same-typed StackSem state s (subspt s1.code s.code, s.clock <> 0 implies exists t, evaluate (Call NONE (INL n) NONE, s) = (SOME (Halt (Word 0w)), t), t.ffi = s.ffi, t.clock = s.clock - 1). Conclusion exists ck r2 t2 with native LabSem evaluate (t1 with clock := t1.clock - 1 + ck) = (r2,t2), the FinalFFI, Halt (case w of Word 0w => Halt Success | Word _ => Halt Resource_limit_hit | _ => Error, rendered as a match on the word_loc with if w = 0), Result (Loc n 0) => Halt Success clauses, t2.ffi = s2.ffi, r2 <> Error and res = SOME TimeOut => r2 = TimeOut. No supplied target run or success premise. Proof from the ported flatten_correct (twice for the Result case via the halting hypothesis at s2 with clock + 1), state_rel_dec_clock and evaluate_mono. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "halt_assum_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenCallCorrect.lean",
+    "lean_name": "haltAssum",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2827-2833. The HOL type argument (:('ffi#'c)) is the explicit C F; code is the sptree num_map of programs (Spt). Body verbatim: for every StackSem state s of those types, subspt code s.code and s.clock <> 0 imply exists t with native evaluate (Call NONE (INL 1) NONE, s) = (SOME (Halt (Word 0w)), t), t.ffi = s.ffi and t.clock = s.clock - 1. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenSemantics.lean",
+    "lean_name": "flattenSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2835-2840. Free start s1 s2 implicit. All four premises retained: halt_assum (:'ffi#'c) s1.code (reviewed haltAssum C F), state_rel s1 s2, loc_to_pc start 0 s2.code = SOME s2.pc, and stackSem semantics start s1 <> Fail; conclusion labSem semantics s2 = stackSem semantics start s1, both the tagged semantics_def ports. Proof: both semantics rewritten (untagged Flapjack lemmas, by unfolding) as the reviewed semantics_wrapper of their clock-indexed runs, the LabSem family shifted by the call tick, then the ported semantics_wrapper_eq with flatten_call_correct, stackProps/labProps evaluate_add_clock and evaluate_add_clock_io_events_mono. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   }
 ]

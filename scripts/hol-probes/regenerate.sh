@@ -7147,6 +7147,10 @@ run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_pr
   inst_correct_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_to_lab_flatten_correct_probeScript.sml stack_to_lab_flatten_correct_probe.out \
+  flatten_correct_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcurrheap_probe.out \
   comp_correct_opcurrheap_full_statement comp_correct_opcurrheap_full_proved comp_correct_opcurrheap_full_hypotheses \
   comp_correct_opcurrheap_whole_statement comp_correct_opcurrheap_whole_proved comp_correct_opcurrheap_whole_hypotheses \
@@ -7155,8 +7159,9 @@ run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcur
 run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.out \
   cut_state_full cut_state_hypotheses cut_state_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe stack_to_lab_flatten_correct_probeScript.sml stack_to_lab_flatten_correct_probe.out \
-  flatten_correct_statement \
+
+run_probe stack_to_lab_flatten_semantics_probeScript.sml stack_to_lab_flatten_semantics_probe.out \
+  flatten_call_correct_statement halt_assum_def_statement flatten_semantics_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
