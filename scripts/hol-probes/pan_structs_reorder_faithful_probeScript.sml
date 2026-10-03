@@ -1,0 +1,12 @@
+load "preamble";
+load "pan_structsProofTheory";
+open HolKernel Parse bossLib preamble pan_structsTheory pan_structsProofTheory;
+val _ = Globals.linewidth := 1000000;
+val original = GEN_ALL fields_in_order_reorder_noop;
+val _ = if null(hyp original) andalso null(free_vars(concl original)) then () else raise Fail "open theorem";
+val _ = print "fields_in_order_reorder_noop_statement=";
+val _ = print_term(concl original);
+val _ = print "\n";
+val _ = print("fields_in_order_reorder_noop_types=" ^ String.concatWith ";" (map (fn v => term_to_string v ^ ":" ^ type_to_string(type_of v)) (#1(strip_forall(concl original)))) ^ "\n");
+val _ = print("fields_in_order_reorder_noop_hypotheses=" ^ Int.toString(length(hyp original)) ^ "\n");
+val _ = print("fields_in_order_reorder_noop_proved=" ^ term_to_string(rhs(concl(EQT_INTRO original))) ^ "\n");
