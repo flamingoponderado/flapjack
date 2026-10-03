@@ -7565,6 +7565,9 @@ The Lean case preserves all ten premises/seven conclusions, derives the actual
 mapped-read FFI and returned-word assignment internally, and adds no IH or
 oracle agreement premise. Full compiler correctness remains open.
 
+### Native target validity
+
+`riscv_target_ok_probeScript.sml` replays the complete original local target validity theorem (477–498), retaining the full native target type, zero stored hypotheses and truth proof. `check-riscv-target-ok.py` checks the literal original proof, unrestricted Lean conclusion and complete regeneration registration. The proof covers all encoder offset and projection consistency obligations; it does not establish native execution simulation or whole compiler correctness.
 ### Full If constructor
 
 `word_to_stack_comp_if_full_probe.out` freshly captures the complete literal
@@ -7616,3 +7619,10 @@ types and closed kernel truth. The Lean case retains all ten premises/seven
 conclusions and exactly two original guarded IHs; lookup, return comparisons,
 continuation preconditions and final binding restoration are derived internally.
 Full Call/whole program/compiler correctness remain open.
+`stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.
+
+`stack_to_lab_flatten_helpers_probeScript.sml` prints the stored flatten helper lemmas and result views of `stack_to_labProofScript.sml:890-1206` and replays the local `NOT_bad_fun_return_IMP_SOME` and the line-1022 `next_lab_non_zero` (rebound at 3211) with their source proofs; all closed with zero hypotheses.
+
+### Signed native immediate reconstruction
+
+`riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
