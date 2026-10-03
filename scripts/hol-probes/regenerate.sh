@@ -7387,3 +7387,7 @@ run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
   riscv_encoder_correct_loc_hypotheses riscv_encoder_correct_loc_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_reverse_probe.out \
+  alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"

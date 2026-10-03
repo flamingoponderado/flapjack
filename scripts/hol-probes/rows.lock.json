@@ -3806,6 +3806,12 @@
       "sha256": "f9a102f5a220866a4776ae35fdff947b3146c4720ff9b722ea58748023b35536"
     },
     {
+      "out": "native_alist_insert_reverse_probe.out",
+      "sha256": "71d67c1b2811105c6adae83900a2522c56acab0bf683eaf9726591b62a1686de",
+      "bytes": 251,
+      "rows": 3
+    },
+    {
       "bytes": 319,
       "out": "num_set_audit_probe.out",
       "rows": 16,
