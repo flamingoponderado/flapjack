@@ -75986,5 +75986,36 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: Local re-export of the actual imported state canonical finite-map two-way roundtrip; no HOL original."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpRStruct.lean",
+    "lean_name": "compileExpCorrectRStruct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: full original686-791 RStruct case. Retains all seven source hypotheses and all three conclusions. Only recursive IH is original full statement for each member expression at this source/context, universally quantified over its result, exactly the RStruct eval_ind obligation. Actual faithful successful list evaluation decomposes each head/tail; list induction derives old shape list, all field validity, and actual converted evaluation. No target run, bound, range, memory adapter, or compatibility premise. Actual imported canonical state owner, local complete two-way roundtrip, four map fields and positive word/Type0 qualifiers. Original full theorem/RStruct specialization/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpRStruct.lean",
+    "lean_name": "evalList_length",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure with no independent HOL declaration. Successful actual source evaluator list execution preserves length, no resource premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpRStruct.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure with no independent HOL declaration. Local re-export of actual imported canonical state two-way roundtrip."
   }
 ]

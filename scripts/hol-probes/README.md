@@ -7082,3 +7082,8 @@ All seven hypotheses and three conclusions remain intact, with zero open assumpt
 theorem, its RField specialization, and the original evaluator induction theorem.
 The native case retains all seven hypotheses and three conclusions, with only
 the recursive child induction hypothesis; source success supplies the index lookup.
+
+`pan_structs_exp_rstruct_faithful_probe` captures the full original theorem,
+RStruct specialization, and evaluator induction theorem. Native list induction
+retains all seven hypotheses and all three conclusions, using only the original
+member-expression induction hypotheses.
