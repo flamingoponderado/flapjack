@@ -1,0 +1,8 @@
+no_ret_correct=∀(t :bool) (p :α prog) (y :num) (z :num) (cs :num list) (bs :num list). FST (SND (flatten t p y z cs bs)) ⇒ ∀(s :(α, β, γ) stackSem$state). IS_SOME (FST (evaluate (p,s) :α stackSem$result option # (α, β, γ) stackSem$state))
+no_ret_correct_types=(t :bool)::bool;(p :α prog)::α prog;(y :num)::num;(z :num)::num;(cs :num list)::num list;(bs :num list)::num list;
+no_ret_correct_hypotheses=0
+no_ret_correct_proved=T
+stack_regs_type=:(α, γ, 'ffi) stackSem$state -> (num |-> α word_loc)
+stack_fp_regs_type=:(α, γ, 'ffi) stackSem$state -> (num |-> word64)
+stack_store_type=:(α, γ, 'ffi) stackSem$state -> (store_name |-> α word_loc)
+stack_code_type=:(α, γ, 'ffi) stackSem$state -> α prog sptree$num_map

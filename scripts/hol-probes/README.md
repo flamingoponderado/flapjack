@@ -18,6 +18,10 @@ correspondence additionally covers arbitrary partner lists.
 
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
+`word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
+
+`word_remove_group_probe.out` captures, from the original built theories, the full statements (all with zero hypotheses) of wordProps `evaluate_dec_clock`, every exported word_removeProof declaration (`compile_state_def` and its type, the 28 exported commutation lemmas, `word_remove_correct` also with full types) and the sptree `domain_map`, `map_insert`, `map_fromAList` and `map_union` lemmas. The two `[local]` theorems `evaluate_add_clock_compile_state` and `pair_map_I` are not exported from the theory and cannot be captured this way; their statements are reviewed against the script source. These rows are statement evidence for source review, not a HOL-to-Lean equivalence proof.
+
 `target_search_mono_probe.out` captures the complete original find_next_interference_mono and find_next_interference_unique statements. Native kernel proofs retain arbitrary clock limits, all machine/FFI parameters and equality of the entire returned tuple, with no added bounds or validity premise.
 
 `target_register_oracles_probe.out` captures all four full native targetProps register-oracle types/equations and ten generic IO/cache presence, absence, callee filtering and allowed register/FP branches, replayed by TargetRegisterOraclesParity. Fixed word64 FP fallback and unused FFI name remain literal.
@@ -6352,8 +6356,11 @@ do not claim full Run/Next or compiler correctness.
 `stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
 
 `l3_amo_arithmetic_probe.out` captures all eight complete original AMOADD,
-AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 observations.
-Independent byte/register expectations cover every alignment residue, all order
+AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 captured observations.
+Lean kernel-replays 86 distinct observations, including each of the eight
+instructions at rd=rs2, rd=x0 and rd=rs1. Other genuinely shared-path duplicate
+rows remain captured but are not separately replayed; those retained cases
+cover the same dispatch paths. Independent byte/register expectations cover every alignment residue, all order
 bits, arithmetic overflow, overlapping and zero registers, architecture values,
 and returned-state write translations/faults. Lean replays retain arbitrary
 unrelated state. This is regression evidence, not whole Run/Next correctness.
@@ -6361,7 +6368,10 @@ unrelated state. This is regression evidence, not whole Run/Next correctness.
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
 
 `l3_amo_minmax_probe.out` captures eight original AMOMIN/MAX/MINU/MAXU W/D
-definitions/types and 224 state observations. Independent calculations cover
+definitions/types and 224 captured state observations. Lean kernel-replays
+134 distinct observations, including each of the eight instructions at rd=rs2,
+rd=x0 and rd=rs1. Other genuinely shared-path duplicate rows remain captured
+but are not separately replayed. Independent calculations cover
 signed extrema, unsigned ordering, equality, zero, upper source-register bits
 in W comparisons, overlapping registers, all misalignment residues/order bits,
 and returned translation states/faults. Matching Lean replays retain arbitrary
@@ -7627,6 +7637,12 @@ Full Call/whole program/compiler correctness remain open.
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
 
+`pan_structs_program_call_probe` captures full original `compile_correct`, its
+Call specialization and complete original `evaluate_ind`, quantified types and
+closed kernel truth. The Lean case keeps all ten premises/seven conclusions
+and exactly the original body/exception-handler guarded IHs. Actual target
+lookup, return comparisons/bindings and handler execution are derived internally.
+Whole program/compiler correctness remain open.
 ### Native encoder correctness Skip case
 
 `riscv_target_skip_probeScript.sml` specializes the complete original
@@ -7654,3 +7670,16 @@ actual native byte fetch/decode/JALR/branch Next, and full post-relation under
 every projection-preserving environment. `check-riscv-target-jumpReg.py` pins
 the unrestricted statement and complete original evidence; these checks do
 not themselves prove cross-language equivalence.
+# Polymorphic CSE definition signatures
+
+`word_cse_polymorphic_probeScript.sml` captures the original equations and
+inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
+is arbitrary, not restricted to register numbers. These signatures are review
+and regression evidence, not a HOL-to-Lean equivalence proof.
+
+`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
+its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
+types and closed kernel truth. Lean retains all eight original hypotheses and
+the full target evaluation/existential globals/context/fields/WF/structs/locals/
+shape-map conclusion; Name uses precisely the same-state tail IH. Whole
+declaration correctness and production compiler routing remain open.

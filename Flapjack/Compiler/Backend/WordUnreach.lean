@@ -9,8 +9,9 @@ import Flapjack.Misc.Sptree
 Counterpart of `cakeml/compiler/backend/word_unreachScript.sml`: right-associate `Seq`,
 drop the continuation after an unconditional transfer, and merge adjacent `Move`s. HOL
 `ALOOKUP` on the move list is the untagged library rendering `sptAListLookup`. This is a
-proof-side port; the executed compiler's `RiscV/WordUnreach.lean` is a separate untagged
-implementation whose routing through these definitions is tracked separately.
+native port used by the executed allocator pipeline through its checked codec.
+The separate legacy implementation in `RiscV/WordUnreach.lean` is not evidence
+for correctness of this native route.
 -/
 
 namespace Flapjack.Compiler.Backend.WordUnreach

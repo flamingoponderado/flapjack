@@ -1,0 +1,3 @@
+msb_full=⊢ ∀words. LENGTH words < dimindex (:α) ∧ good_dimindex (:α) ⇒ (word_msb (chunk_to_bits words) ⇔ LENGTH words = dimindex (:α) − 1)
+msb_hypotheses=0
+msb_proved=T
