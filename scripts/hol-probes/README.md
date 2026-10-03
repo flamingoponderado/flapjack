@@ -6358,3 +6358,5 @@ signed extrema, unsigned ordering, equality, zero, upper source-register bits
 in W comparisons, overlapping registers, all misalignment residues/order bits,
 and returned translation states/faults. Matching Lean replays retain arbitrary
 unrelated state; this does not establish whole Run/Next or compiler correctness.
+
+`stack_code_bitmaps_alloc_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Alloc specialization. Native rejected dispatch and actual allocation/GC results derive count zero from full alloc_const, retaining all three original existential conclusions. Whole evaluator assembly remains open.
