@@ -1130,6 +1130,7 @@ import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
 import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
@@ -1235,6 +1236,9 @@ import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
 import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
 import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
