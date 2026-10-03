@@ -6854,3 +6854,6 @@ run_probe lab_to_target_filter_preconditions_probeScript.sml lab_to_target_filte
 run_probe lab_to_target_find_ffi_every_probeScript.sml lab_to_target_find_ffi_every_probe.out \
   find_ffi_names_EVERY find_ffi_names_EVERY_types find_ffi_names_EVERY_hypotheses find_ffi_names_EVERY_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_store_words_probeScript.sml pan_structs_program_store_words_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_store32_statement compile_correct_store32_proved compile_correct_store_byte_statement compile_correct_store_byte_proved compile_correct_full_types compile_correct_store32_types compile_correct_store_byte_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
