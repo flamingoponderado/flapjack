@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.Length
 import Flapjack.RiscV.CorrectnessEncoding.BytesInMemory
 import Flapjack.RiscV.Encoding
 import Flapjack.RiscV.CorrectnessEncoding.Arithmetic

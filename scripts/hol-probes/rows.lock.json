@@ -2090,6 +2090,12 @@
       "sha256": "a85a7a5ee9801ead3d2462066ae32cc6f2a4e89ef509486616e5c4da511c814e"
     },
     {
+      "bytes": 2676,
+      "out": "lab_props_alignment_sdm_shared_probe.out",
+      "rows": 16,
+      "sha256": "fd1666b752741f7be49730883a2c17b085d39121bc1af857b2e4a5d19cd2be8a"
+    },
+    {
       "bytes": 762,
       "out": "lab_props_alignment_word_memory_probe.out",
       "rows": 8,
@@ -4940,6 +4946,12 @@
       "sha256": "32ee10f09e3eb0db6515a72a9d2d3e3d152bfde87a91728eb86188b0f43ef1f3"
     },
     {
+      "bytes": 1386,
+      "out": "pan_structs_lookup_code_fields_probe.out",
+      "rows": 3,
+      "sha256": "906487498b5e2bbbd0d0979c977d3b66adfef86a296bf82f361930bc1ed318f3"
+    },
+    {
       "bytes": 580,
       "out": "pan_structs_map_restoration_probe.out",
       "rows": 8,
@@ -5766,6 +5778,12 @@
       "out": "riscv_target_helper_links_probe.out",
       "rows": 9,
       "sha256": "571d37e96f2f6a61d4ed5b3bfdaf430d635696f9253dd00c915b87798a59d915"
+    },
+    {
+      "bytes": 556,
+      "out": "riscv_target_length_probe.out",
+      "rows": 12,
+      "sha256": "52c2f7648ec6bf1e8257a77011cc1c2c06304713b15801ecf44e90e83998e1d7"
     },
     {
       "bytes": 113,
@@ -9350,6 +9368,12 @@
       "sha256": "6e088b9870b3c6f5f6144b888b6bd86c812f696d980c3d0e4525bdb5d43f2fe0"
     },
     {
+      "bytes": 6979,
+      "out": "word_to_stack_comp_if_full_probe.out",
+      "rows": 6,
+      "sha256": "b79c737efbfbcb4e5c61756d45efa6d86d833dd9c657753b68936c2184afc4c4"
+    },
+    {
       "bytes": 485,
       "out": "word_to_stack_comp_length_probe.out",
       "rows": 18,
@@ -9414,6 +9438,12 @@
       "out": "word_to_stack_comp_seq_non_none_probe.out",
       "rows": 6,
       "sha256": "4bcaf539cae0dc4bb522e62c95c42beae0a1f00e40d3689973625694f73797be"
+    },
+    {
+      "bytes": 3511,
+      "out": "word_to_stack_comp_set_probe.out",
+      "rows": 6,
+      "sha256": "ea66dca1c01400b91cae2176b03bfc48b10c22e4ecacb0f8b68e09bb9759ece8"
     },
     {
       "bytes": 89,
@@ -10032,6 +10062,12 @@
       "out": "word_to_stack_state_rel_probe.out",
       "rows": 3,
       "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"
+    },
+    {
+      "bytes": 227,
+      "out": "word_to_stack_store_update_probe.out",
+      "rows": 3,
+      "sha256": "3d0de527e4e5489733ae02b0296054008c3dbb72606059bd56945a7bb086a15d"
     },
     {
       "bytes": 57,

@@ -7533,10 +7533,23 @@ stack use and out-of-range failures. The whole evaluation pair is retained;
 the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
 This is original-source evidence, not cross-assistant equivalence or full
 compiler correctness.
+
+## Universal native encoding contract
+
+`riscv_target_length_probeScript.sml` replays all three literal original
+proofs: native instruction length four, nonempty native instruction encoding,
+and nonempty multiple-of-four output for every ASM instruction. Twelve rows
+retain complete statements, instruction/ASM binders, zero hypotheses and
+kernel proof truth. The final source Q.prove and SIMP_RULE are unchanged.
+Lean proves full native AST nonemptiness structurally, including original
+fail encodings; no asm_ok or accepted-opcode premise is introduced.
+This is regression evidence, not whole target/encoder correctness.
+
 `pan_structs_program_extcall_probe` captures the original full `compile_correct`
 and its ExtCall specialization, all quantified types and closed kernel truth.
 The Lean case retains all ten premises/seven conclusions without an IH or
 additional FFI agreement premise; full compiler correctness remains open.
+
 `word_to_stack_comp_get_probeScript.sml` captures the complete original Get
 evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
 both closed hyp0/T. These are original statement regression captures, not
@@ -7552,6 +7565,31 @@ The Lean case preserves all ten premises/seven conclusions, derives the actual
 mapped-read FFI and returned-word assignment internally, and adds no IH or
 oracle agreement premise. Full compiler correctness remains open.
 
+### Full If constructor
+
+`word_to_stack_comp_if_full_probe.out` freshly captures the complete literal
+If evaluate_ind obligation specialized to the original full comp_correct
+motive5719–5751, including both source-guarded branch IHs, and the entire
+original theorem specialized to arbitrary If operands and continuations. Both
+are closed, have zero kernel hypotheses, and EQT_INTRO proves T. This is
+original statement evidence through the proved original full theorem, not a
+replay of the local If proof or cross-assistant equivalence. The Lean proof
+executes register, accepted-immediate and constant-fallback routes, deriving
+all branch/clock/bitmap/label obligations without extra full-case premises.
+
+`word_to_stack_store_update_probeScript.sml` freshly replays the unchanged
+state_rel_set_store statement and literal proof5132–5147, closed hyp0/T.
+Regression evidence rather than cross-language equivalence.
+
+`word_to_stack_comp_set_probeScript.sml` captures the complete original Set
+induction obligation and whole arbitrary specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+`pan_structs_lookup_code_fields_probe` replays original source-local
+`lookup_code_flds_ok` and its three local helper proofs unchanged, reuses the
+original reverse shape theorem alias, and captures full closed statement,
+quantified types and kernel truth. The Lean theorem retains ten source
+hypotheses and all five conclusions, including actual target lookup and
+existential original callee parameter context. Call/DecCall remain open.
 `stack_to_lab_code_installed_probeScript.sml` prints the stored originals of `stack_to_labProofScript.sml:32-600` (word shift, `assert_T`, `dest_to_loc`, `find_code_lookup`, comparison negation, and the `code_installed`/`loc_to_pc`/`labs_correct`/`labels_ok` group) and replays the five local theorems (`code_installed_get_labels_IMP`, `asm_fetch_aux_SOME_append`, `asm_fetch_aux_SOME_isPREFIX`, the line-228 `MAP_prog_to_section_FST`, `code_installed_prog_to_section_lemma`) with their source proofs; every statement is closed with zero hypotheses.
 
 `stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.
