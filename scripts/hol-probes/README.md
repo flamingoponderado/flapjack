@@ -7095,3 +7095,7 @@ CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` captur
 ## Native step option PC update
 
 `l3_update_pc_probeScript.sml` proves the original `update_pc` whole option-result and full-record equations for arbitrary word64 targets and full states. `check-l3-update-pc.py` pins all six type/hypothesis/equation/proof rows. Lean uses the complete accepted PC writer; no core bound or successful-run premise is added. The native drift inventory includes this literal declaration and CI discovers its capture checker. Full Next assembly remains separate work.
+
+## Complete native step Next equation
+
+`l3_next_step_probeScript.sml` proves the universal original NextRISCV equation over arbitrary native state, with zero hypotheses. It retains the complete step Fetch and full Run/DecodeAny calls, exception result, PC+Skip continuation, BranchTo control clear/update, and every remaining TransferControl constructor returning NONE. `check-l3-next-step.py` pins the full multiline equation and type/proof rows. Drift coverage compares the literal generated body, explicitly resolving the combined export’s `riscv_step_Fetch` alias to the Step namespace owner. Full Run inherits the rational-cuts IEEE assumption (SOUNDNESS item 8). This ports the step theory definition; the model’s stronger Next trap/interrupt dispatcher and compiler correctness remain separate obligations.

@@ -6648,3 +6648,7 @@ run_probe pan_structs_exp_atomic_faithful_probeScript.sml pan_structs_exp_atomic
 run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
   updatePC_type updatePC_hypotheses updatePC_some_equation updatePC_some_proof updatePC_fullRecord_equation updatePC_fullRecord_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_next_step_probeScript.sml l3_next_step_probe.out \
+  NextRISCV_type NextRISCV_hypotheses NextRISCV_equation NextRISCV_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
