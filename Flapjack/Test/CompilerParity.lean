@@ -1,3 +1,4 @@
+import Flapjack.Test.L3MultiplyParity
 import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.L3RegisterShiftParity

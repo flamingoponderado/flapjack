@@ -6744,3 +6744,13 @@ registered row to reduce to T. `L3WordArithmeticParity` checks the same
 inputs/states independently in Lean, including wrap/sign/zero/alias boundaries,
 RV32 Illegal_Instr routes through the reviewed helper and symbolic invalid-mode
 ARB branches seeded NoException. The full definitions retain arbitrary states.
+
+### Native multiplication
+
+`l3_multiply_probeScript.sml` captures 730 whole-state equations for
+MUL/MULH/MULHU/MULHSU/MULW. `check-l3-multiply.py` requires the complete
+label set and every result T; `L3MultiplyParity` kernel-checks matching inputs
+and states. Signed/unsigned/mixed high products, word widths, zero/aliases,
+RV32 Illegal_Instr and symbolic invalid-mode branches with both prior-exception
+seeds are covered. The complete definitions retain all three mode queries for
+high products and leave canonical ARB unspecified.

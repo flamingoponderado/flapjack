@@ -72113,5 +72113,45 @@
     "hol_name": "dfn'SUBW_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.28): complete literal ADDIW5726/ADDW6025/SUBW6067 fixed word5 registers, word12 immediate and arbitrary reviewed native state. A single in32BitMode call supplies the state for reads, writes and RV32 Illegal_Instr. ADDIW adds signextended12 to full64 before low32 extraction; ADDW/SUBW calculate with low32 operands; all successful results signextend64. Canonical ARB is unspecified and error-state retention remains literal. No mode/core/success/target-run premises. Fresh original and kernel fixtures: 360 numeric/illegal whole-state equations with wrap/sign/zero/alias boundaries and three symbolic invalid-mode equations seeded NoException, all363 PASS. Illegal routes compare reviewed signalException, not a fabricated trap default. Finite regressions do not establish full cross-language equivalence; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Multiply.lean",
+    "lean_name": "«dfn'MUL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MUL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.29): full literal MUL6410/MULH6425/MULHU6473/MULHSU6517/MULW6561 fixed word5 registers over arbitrary reviewed native state. MUL multiplies full64 with no mode query. High products retain three sequential state-threaded mode checks: first operand reads first returned state, second operand reads second returned state, destination writes third returned state. MULH signed extension through64 then128, MULHU zeroextension to128, MULHSU signed first/unsigned second are literal. RV32 selects bits63:32 with signed extension except MULHU zeroextension; other modes select bits127:64, with literal MULH signextension64 and MULHSU raw64. MULW rejects RV32 and retains low32 multiplication, nested signextension/extraction/signextension. Canonical ARB remains unspecified; no mode/core/success/target-run premise. Fresh original and kernel fixtures all730 whole-state equations PASS:720 numeric/illegal cases and ten symbolic invalid-mode equations with NoException/prior UNDEFINED seeds. Illegal routes compare reviewed signalException without selecting a trap default. Finite regressions are not a cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Multiply.lean",
+    "lean_name": "«dfn'MULH»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULH_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.29): full literal MUL6410/MULH6425/MULHU6473/MULHSU6517/MULW6561 fixed word5 registers over arbitrary reviewed native state. MUL multiplies full64 with no mode query. High products retain three sequential state-threaded mode checks: first operand reads first returned state, second operand reads second returned state, destination writes third returned state. MULH signed extension through64 then128, MULHU zeroextension to128, MULHSU signed first/unsigned second are literal. RV32 selects bits63:32 with signed extension except MULHU zeroextension; other modes select bits127:64, with literal MULH signextension64 and MULHSU raw64. MULW rejects RV32 and retains low32 multiplication, nested signextension/extraction/signextension. Canonical ARB remains unspecified; no mode/core/success/target-run premise. Fresh original and kernel fixtures all730 whole-state equations PASS:720 numeric/illegal cases and ten symbolic invalid-mode equations with NoException/prior UNDEFINED seeds. Illegal routes compare reviewed signalException without selecting a trap default. Finite regressions are not a cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Multiply.lean",
+    "lean_name": "«dfn'MULHU»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULHU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.29): full literal MUL6410/MULH6425/MULHU6473/MULHSU6517/MULW6561 fixed word5 registers over arbitrary reviewed native state. MUL multiplies full64 with no mode query. High products retain three sequential state-threaded mode checks: first operand reads first returned state, second operand reads second returned state, destination writes third returned state. MULH signed extension through64 then128, MULHU zeroextension to128, MULHSU signed first/unsigned second are literal. RV32 selects bits63:32 with signed extension except MULHU zeroextension; other modes select bits127:64, with literal MULH signextension64 and MULHSU raw64. MULW rejects RV32 and retains low32 multiplication, nested signextension/extraction/signextension. Canonical ARB remains unspecified; no mode/core/success/target-run premise. Fresh original and kernel fixtures all730 whole-state equations PASS:720 numeric/illegal cases and ten symbolic invalid-mode equations with NoException/prior UNDEFINED seeds. Illegal routes compare reviewed signalException without selecting a trap default. Finite regressions are not a cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Multiply.lean",
+    "lean_name": "«dfn'MULHSU»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULHSU_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.29): full literal MUL6410/MULH6425/MULHU6473/MULHSU6517/MULW6561 fixed word5 registers over arbitrary reviewed native state. MUL multiplies full64 with no mode query. High products retain three sequential state-threaded mode checks: first operand reads first returned state, second operand reads second returned state, destination writes third returned state. MULH signed extension through64 then128, MULHU zeroextension to128, MULHSU signed first/unsigned second are literal. RV32 selects bits63:32 with signed extension except MULHU zeroextension; other modes select bits127:64, with literal MULH signextension64 and MULHSU raw64. MULW rejects RV32 and retains low32 multiplication, nested signextension/extraction/signextension. Canonical ARB remains unspecified; no mode/core/success/target-run premise. Fresh original and kernel fixtures all730 whole-state equations PASS:720 numeric/illegal cases and ten symbolic invalid-mode equations with NoException/prior UNDEFINED seeds. Illegal routes compare reviewed signalException without selecting a trap default. Finite regressions are not a cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/Multiply.lean",
+    "lean_name": "«dfn'MULW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'MULW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.29): full literal MUL6410/MULH6425/MULHU6473/MULHSU6517/MULW6561 fixed word5 registers over arbitrary reviewed native state. MUL multiplies full64 with no mode query. High products retain three sequential state-threaded mode checks: first operand reads first returned state, second operand reads second returned state, destination writes third returned state. MULH signed extension through64 then128, MULHU zeroextension to128, MULHSU signed first/unsigned second are literal. RV32 selects bits63:32 with signed extension except MULHU zeroextension; other modes select bits127:64, with literal MULH signextension64 and MULHSU raw64. MULW rejects RV32 and retains low32 multiplication, nested signextension/extraction/signextension. Canonical ARB remains unspecified; no mode/core/success/target-run premise. Fresh original and kernel fixtures all730 whole-state equations PASS:720 numeric/illegal cases and ten symbolic invalid-mode equations with NoException/prior UNDEFINED seeds. Illegal routes compare reviewed signalException without selecting a trap default. Finite regressions are not a cross-language equivalence theorem; full Run/Next correctness remains open."
   }
 ]
