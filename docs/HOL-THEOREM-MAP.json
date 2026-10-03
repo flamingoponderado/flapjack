@@ -25140,7 +25140,7 @@
       "WordSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (2026-09-29, bead flapjack-pxn.18.5.9.13) against loop_to_wordProofScript.sml:41-52. HOL state_rel s t = EX (len) with t.memory=s.memory, t.mdomain=s.mdomain, t.sh_mdomain=s.sh_mdomain, t.clock=s.clock, t.be=s.be, t.ffi=s.ffi, ALOOKUP (fmap_to_alist t.store) CurrHeap = SOME (Word s.base_addr), ALOOKUP (fmap_to_alist t.store) HeapLength = SOME (Word len), s.top_addr = s.base_addr + 2w*len, globals_rel s.globals t.store, code_rel s.code t.code. Lean loopToWordStateRelHOLExact over LoopSemStateFiniteExact/WordSemStateFiniteExact keeps the same existential length and all eleven conjuncts; ALOOKUP (fmap_to_alist t.store) key is the canonical HolFiniteMapExact lookup, CurrHeap/HeapLength are WordStore .currHeap/.heapLength, Word len is WordLocW.word (BitVec.ofNat width len), and 2w*len is (2 : BitVec width)*BitVec.ofNat width len. The named finite-map carriers are the eligible fields LoopSemStateFiniteExact.globals and WordSemStateFiniteExact.store (both HolFiniteMapExact); code is an Spt tree map and is not named. Same-module witnesses holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact and _WordSemStateFiniteExact re-export the canonical roundtrips."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03 (flapjack-pxn.18.5.9.13.1): original loop_to_wordProofScript41-52 and fresh inferred state_rel type/full typed definition in loop_to_word_state_word_witness_probe.out. Source s:(alpha,beta) loopstate and target t:(alpha,gamma,beta) wordstate retain independent configuration gamma, shared FFI beta and positive machine dimension alpha. Original existential len:alpha word is exactly len:BitVec width, used directly as WordLocW.word len in HeapLength and (2:BitVec width)*len in the top-address equation; no Nat witness/cast or additional hypothesis. All eleven original conjuncts retained: memory/mdomain/sh_mdomain/clock/be/FFI equality, original CurrHeap and HeapLength store observations, top_addr=base_addr+2w*len, complete globals_rel and code_rel. The finite-support relation qualifier names only eligible canonical globals/store fields; source ALOOKUP(fmap_to_alist store) uses reviewed lookup, code remains native Spt. Existing same-module canonical roundtrip witnesses unchanged. Local state_rel_IMP is not a DB export; the capture includes its literal source proof replay at the full independently typed carriers, alongside exported original state_rel_intro/state_rel_with_clock. Standard words_as_type_indexed_bitvec only translates original positive word dimensions; no new representation exception or source-equivalence claim."
   },
   {
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -88823,6 +88823,42 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-word-cse-correct): HOL word_common_subexp_elim_correct (word_cseProof:3795-3804). Free variables p s res s1 are bound; the premise is the evaluate equation, flat_exp_conventions and res != SOME Error; the conclusion is the evaluate equation of wordCommonSubexpElim p. The proof is HOL's: comp_correct with empty_data (dataInvEmpty). The word_cse_comp_correct probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/LongArithmetic.lean",
+    "lean_name": "evaluateWInstLongMul",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of evaluate_wInst4688-5140 LongMul branch4790-4800. All five original source inst/every-var/max-var/argument-convention/full stateRel guards are retained, even when a guard becomes redundant after the original fixed register convention is derived. Full conclusion is existential actual native wInst run, entire source-post/target-post stateRel and stack length/space equations. Source success internally derives original word operands, complete source double-update and (for LongDiv) divisor nonzero/quotient bound. Actual native Reg1 load derives spill bounds and full operand relation; both result-register updates are derived using original stateRel register update laws with4<k from the original relation. No targetrun, desired final relation, narrowed register variable, extra successful operation or IH premise. WordLangInst source and HolInst target share positive alpha word width; generic host and FFI carriers remain independent. Fresh typed original kernel case specialization passed (proved=T, hypotheses=0), with shared alpha width and independent beta/gamma host/FFI types, not a literal local proof replay or cross-language equivalence claim. Five canonical relation map fields have local genuine source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item8), no new agreement assumption. Other original instruction cases/full constructor and compiler goal remain unfinished.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/LongArithmetic.lean",
+    "lean_name": "evaluateWInstLongDiv",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source comparison of evaluate_wInst4688-5140 LongDiv branch4776-4789. All five original source inst/every-var/max-var/argument-convention/full stateRel guards are retained, even when a guard becomes redundant after the original fixed register convention is derived. Full conclusion is existential actual native wInst run, entire source-post/target-post stateRel and stack length/space equations. Source success internally derives original word operands, complete source double-update and (for LongDiv) divisor nonzero/quotient bound. Actual native Reg1 load derives spill bounds and full operand relation; both result-register updates are derived using original stateRel register update laws with4<k from the original relation. No targetrun, desired final relation, narrowed register variable, extra successful operation or IH premise. WordLangInst source and HolInst target share positive alpha word width; generic host and FFI carriers remain independent. Fresh typed original kernel case specialization passed (proved=T, hypotheses=0), with shared alpha width and independent beta/gamma host/FFI types, not a literal local proof replay or cross-language equivalence claim. Five canonical relation map fields have local genuine source/target codec witnesses. Inherits reals_as_rational_cuts through evaluators (SOUNDNESS item8), no new agreement assumption. Other original instruction cases/full constructor and compiler goal remain unfinished.",
+    "hol_line": 4688
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/Conventions.lean",
