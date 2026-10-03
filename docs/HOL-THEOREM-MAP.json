@@ -85913,5 +85913,29 @@
     "hol_name": "parsem_parmove_DIV2_lemma",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison2026-10-03 Move prerequisite14.1: full local declaration at3451-3482 /3496-3546. Original windmill unique destinations and EVERY EVEN on both endpoint projections retained, DIV2 rendered Nat division2. Full original IS_SOME-filtered scheduled destination/value list equality, arbitrary environment value carrier; no scheduler result, global injection or final relation premise. THE rendered getD0 only on values filtered by IS_SOME, so none default is unobservable and no total HD/EL hold is invoked. Canonical List/Option/Nat/Prod carriers unchanged, no words or finite-map fields. Kernel derives endpoint-restricted injection and uses accepted full parmove_MAP_INJ /parsem_MAP_INJ and destination membership; source guards are not strengthened. Fresh literal original local proof replay recorded separately; kernel/probes do not claim cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Bvl/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/bvlScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: complete original bvl exp datatype, all 9 constructors in original order, literal Nat/Option Nat/List Exp and actual ClosLang.Op. BVL Handle retained; BVI Call optional handler and full multi-value LetCall/Return retained; Force has two Nat payloads. No arbitrary Op parameter, omitted case, changed recursive carrier or evaluator/wholecompiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Bvi/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/bviScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: complete original bvi exp datatype, all 10 constructors in original order, literal Nat/Option Nat/List Exp and actual ClosLang.Op. BVL Handle retained; BVI Call optional handler and full multi-value LetCall/Return retained; Force has two Nat payloads. No arbitrary Op parameter, omitted case, changed recursive carrier or evaluator/wholecompiler claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BvlToBvi/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/bvl_to_bviScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: bvl_to_bviScript523-535 retains all ten original fields in order: five Nat inline_size_limit/exp_cut/next_name1/2/3 and three Bool split_main_at_seq/do_tailrec/do_tmc, plus the two distinct inline Spt trees with Nat x actual BVL/BVI Exp payloads. Source spt is the native exact Spt carrier, not a HOL finite-map replacement. No generic expression or operation type, omitted field, added default or production-adoption claim. Full source field/component-equality type capture regenerated; default_config is a separate declaration requiring source stub counters."
   }
 ]
