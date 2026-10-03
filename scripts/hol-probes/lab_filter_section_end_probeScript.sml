@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "lab_filterProofTheory";
+open bossLib HolKernel Parse preamble lab_filterProofTheory;
+val th = DB.fetch "lab_filterProof" "sec_ends_with_label_filter_skip";
+val _ = show_types := true;
+val _ = print "sec_ends_with_label_filter_skip=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "sec_ends_with_label_filter_skip_types=";
+val _ = app (fn v => print (term_to_string v ^ ":" ^ type_to_string (type_of v) ^ ";")) (fst (strip_forall (concl th)) @ free_vars (concl th));
+val _ = print "\n";
+val _ = print ("sec_ends_with_label_filter_skip_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = show_types := false;
+val _ = print "sec_ends_with_label_filter_skip_proved=";
+val _ = print_term (rhs (concl (EQT_INTRO (prove (concl th, ACCEPT_TAC th)))));
+val _ = print "\n";

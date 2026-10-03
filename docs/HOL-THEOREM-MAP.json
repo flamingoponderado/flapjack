@@ -79572,5 +79572,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.11): Full original10540 semantics equality between literal make_init on filtered code with compile_lab mc.target.config and pair-filtered compile oracle, and make_init on original code with lambda configuration program compile_lab mc.target.config configuration (filter_skip program) and original oracle. Fresh full original free-variable types confirm independent HOL word dimension alpha, FFI beta, machine state gamma and projection delta; native width/S/Q/F retain all eleven original arguments mc/ffi/t/m/dm/sdm/ms/code/cbpos/cbspace/coracle, exact fixed Config, word memory, Bool-valued domain predicates, word-loc and fixed byte carriers. Literal compileLab retained, no arbitrary compiler replacement, guard or desired semantics premise added. Actual makeInit records discharge pc=0, BOTH nonfailed conjuncts and full existential compiler/oracle transformation of accepted filter_skip_semantics1154; entire native semantics equality follows, including fail/termination/divergence behavior. Positive-width words_as_type_indexed_bitvec is sole carrier translation; imported full native initializer/compiler/carriers unchanged. Fresh original full statement/types/hyp0/kernel T four-row capture. Native semantics/evaluator inherit reals_as_rational_cuts, SOUNDNESS item8 unchanged; no full compiler or end-to-end correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/SectionEnd.lean",
+    "lean_name": "secEndsWithLabelFilterSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "sec_ends_with_label_filter_skip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: original lab_filterProofScript1169-1182 full EVERY implication over alpha sec list; alpha is HOL word dimension in native line/asm carriers, translated to positive BitVec width with NeZero. Native SectionEnd retains the nonempty LAST label guard, all code sections and lines, with no extra successful execution premise or unsupported LAST nil choice. Actual filterSkip MAP and reverse/filter identity preserve the retained Label head. Fresh original full type, zero hypotheses and kernel replay captured in lab_filter_section_end_probe.out."
   }
 ]
