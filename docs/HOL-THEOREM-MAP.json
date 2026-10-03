@@ -72000,5 +72000,15 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.7): original lab_to_targetProofScript.sml:7528-7558 compile_correct, Asm (Asmi (JumpReg r)) case, source 7640-7716: IH read_reg r s1 = Loc n1 n2 /\\ loc_to_pc n1 n2 s1.code = SOME p ==> P (upd_pc p (dec_clock s1)); the target alignment assertion is discharged from state_rel's code-base mask and all_enc_ok_aligned_pos_val/has_odd_inst_alignment. Each piece concludes the original compile_correct statement through CompileCorrectFor (full hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel with free p; existential k ms2, unused t2 omitted). Guards are the evaluate_ind guards and the only extra hypothesis is that branch's evaluate_ind IH (lab_to_target_compile_correct_probe lab_evaluate_ind row); no target run or post-state relation assumed. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct and asm_inst/inst FP semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CompileCorrect/Cbw.lean",
+    "lean_name": "compileCorrect_cbw",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.8): original lab_to_targetProofScript.sml:7528-7558 compile_correct, Asm (Cbw r1 r2) case, source 7719-7827: IH read_reg r1 s1 = Word w1 /\\ read_reg r2 s1 = Word w2 /\\ buffer_write s1.code_buffer w1 (w2w w2) = SOME new_cb ==> P (inc_pc (dec_clock (s1 with code_buffer := new_cb))); the target store8 at the code-buffer address is simulated through asm_step_IMP_evaluate_step_nop and state_rel is re-established for the extended buffer (bytes_in_mem_UPDATE / bytes_in_mem_APPEND and the space-left shift, as in the source). Each piece concludes the original compile_correct statement through CompileCorrectFor (full hypotheses oracle_tie, evaluate s1 = (res,s2), res <> Error, encoder_correct, state_rel with free p; existential k ms2, unused t2 omitted). Guards are the evaluate_ind guards and the only extra hypothesis is that branch's evaluate_ind IH (lab_to_target_compile_correct_probe lab_evaluate_ind row); no target run or post-state relation assumed. Positive BitVec width only translation; inherits reals_as_rational_cuts and docs/SOUNDNESS.md item 8 through encoder_correct."
   }
 ]
