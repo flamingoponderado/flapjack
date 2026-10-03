@@ -75204,5 +75204,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:2385-2396: unconditional original arbitrary expression occurrence in domain(get_live_exp exp); native faithful positive-width expression carrier includes full operator list and both Shift operands. Domain membership is canonical sptDomain via decidable Boolean reflection; no tree well-formedness, target occurrence or support premise. Constructor recursion proves the whole domain predicate using original every_var_exp_mono and literal union. words_as_type_indexed_bitvec is the only carrier translation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/OracleConventions.lean",
+    "lean_name": "oracleColourOk_conventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "oracle_colour_ok_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11355-11372: entire original pre_alloc_conventions conjunction with actual oracle_colour_ok k colOpt (get_clash_tree prog lt) prog ls = SOME x implies full post_alloc_conventions k x. All prog/k/colOpt/lt/ls/x arbitrary; canonical Spt maps and original native validator retained. Output physical occurrence derived from every_var_is_phy_var_total_colour; stack bound from original guard; call_arg_convention from original occurrence-local preservation with physical fixation derived from actual every_even_colour lookup entries. No added support, canonical-tree, success or target-convention premises. words_as_type_indexed_bitvec is sole carrier translation."
   }
 ]
