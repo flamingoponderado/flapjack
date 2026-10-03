@@ -1197,6 +1197,7 @@ import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
+import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
