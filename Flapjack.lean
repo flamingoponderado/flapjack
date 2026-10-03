@@ -784,6 +784,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionDecodedSSAMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadFallbackMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
