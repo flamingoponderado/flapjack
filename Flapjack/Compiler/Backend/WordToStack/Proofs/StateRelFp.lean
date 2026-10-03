@@ -26,7 +26,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Full original FP read law4402–4407: the whole relation implies equality
 of actual FP reads at every index, including absent entries. Fixed word64 FP
 payloads and arbitrary positive machine width are retained. Structural equality
-establishes no numerical FP agreement; evaluators inherit reals_as_rational_cuts. -/
+establishes no numerical FP agreement and uses no real-arithmetic assumption. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_get_fp_var"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
@@ -45,7 +45,7 @@ theorem stateRelGetFpVar {width : Nat} [NeZero width] {C F : Type}
 /-- Full original FP update law4409–4415: simultaneous actual updates with
 an arbitrary word64 value preserve the entire original relation for arbitrary
 extra and index. No postrelation premise or numerical FP agreement is assumed;
-the evaluators inherit reals_as_rational_cuts. -/
+no real-arithmetic assumption is used. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "state_rel_set_fp_var"
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
