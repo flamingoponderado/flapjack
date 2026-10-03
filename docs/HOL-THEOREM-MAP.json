@@ -69276,5 +69276,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03 original562-581/full135-149 bitmapLoad: genuine paired compTop/comp simulation with original actual source evaluation/nonError/full stateRel premises, all original existential added-clock/target/poststackspace/guard conclusions. Actual native clause transport derives every target branch and postrelation, including stack exhaustion Halt Word2, invalid indices, shift/alignment checks, map reads and BitmapLoad aliases. Nine stack clauses preserve code independently of result. LocValue reads code: full locCheck equality derived from native Spt domain equality, existential per-entry compilation witnesses and original getLabelsComp; no arbitrary-code invariance asserted or target label success assumed. Constructor predicate discharged internally, never added to final case statement. Native List stack/bitmap, exact tree code, canonical owning regs/fpRegs/store with local genuine roundtrip; arbitrary positive word width and independent Type0 configuration/FFI. Fresh original full theorem/zero-hyp and ten constructor specializations, twenty full kernel consumers at arbitrary and 1/8/64/80 widths. Inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP or compiler equivalence claim, individual hold/default/production change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/JumpLower.lean",
+    "lean_name": "compCorrectJumpLower",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original356-380/full135-149: genuine JumpLower paired compTop/comp simulations, original actual source evaluation/nonError/stateRel premises only plus actual fixed-source selected-callee IH. Native two word operand reads, original unsigned Lower comparison, source code lookup and nonzero source clock guard that IH; uses compTop component since target code contains entire compTop entry, unused comp component omitted. Target operand reads/callee entry/per-entry frame info/decClock relation derived from literal stateRel, not assumed. Nonselected comparison derives identical source/result and target no-op. Zero clock derives emptyEnv timeout. Recursive callee nonError/badFunReturn false derived from source dispatch; added-clock decClock identity proves actual target run. Outer postframe stateOk derived from accepted full evaluateMono and original subsptLookup, no postrelation premise. Exact original existential clock/target/stackSpace/exceptional-result guard retained. Native Spt code and List stack unchanged; canonical actual regs/fpRegs/store owner with local genuine roundtrip, arbitrary positive type-indexed word width and Type0 configuration/FFI. Fresh original full statement/zero-hyp/JumpLower specialization/evaluate_ind obligation plus six independent unsigned comparisons, kernel/runtime replay and five full arbitrary/1/8/64/80 consumers. Inherits reals_as_rational_cuts SOUNDNESS8, no numerical FP agreement/HOL-Lean equivalence/individual HOLD/default/production change or full pass completion."
   }
 ]

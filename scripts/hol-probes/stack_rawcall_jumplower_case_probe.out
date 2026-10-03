@@ -1,0 +1,10 @@
+jumplower_full_statement=∀p s t i r s1. evaluate (p,s) = (r,s1) ∧ r ≠ SOME Error ∧ state_rel i s t ⇒ (∃ck t1 k1. state_rel i s1 t1 ∧ evaluate (comp_top i p,t with clock := t.clock + ck) = (r,t1 with stack_space := k1) ∧ (r ≠ SOME TimeOut ∧ r ≠ SOME (Halt (Word 2w)) ⇒ k1 = t1.stack_space)) ∧ ∃ck t1 k1. state_rel i s1 t1 ∧ evaluate (comp i p,t with clock := t.clock + ck) = (r,t1 with stack_space := k1) ∧ (r ≠ SOME TimeOut ∧ r ≠ SOME (Halt (Word 2w)) ⇒ k1 = t1.stack_space)
+jumplower_full_hypotheses=0
+jumplower_case_statement=∀s t i r s1. evaluate (JumpLower jumpR1 jumpR2 jumpDest,s) = (r,s1) ∧ r ≠ SOME Error ∧ state_rel i s t ⇒ (∃ck t1 k1. state_rel i s1 t1 ∧ evaluate (comp_top i (JumpLower jumpR1 jumpR2 jumpDest),t with clock := t.clock + ck) = (r,t1 with stack_space := k1) ∧ (r ≠ SOME TimeOut ∧ r ≠ SOME (Halt (Word 2w)) ⇒ k1 = t1.stack_space)) ∧ ∃ck t1 k1. state_rel i s1 t1 ∧ evaluate (comp i (JumpLower jumpR1 jumpR2 jumpDest),t with clock := t.clock + ck) = (r,t1 with stack_space := k1) ∧ (r ≠ SOME TimeOut ∧ r ≠ SOME (Halt (Word 2w)) ⇒ k1 = t1.stack_space)
+jumplower_evaluate_ind_obligation=∀r1 r2 dest s. (∀v2 v3 v5 x v13 y prog. (get_var r1 s,get_var r2 s) = (v2,v3) ∧ v2 = SOME v5 ∧ v5 = Word x ∧ v3 = SOME v13 ∧ v13 = Word y ∧ word_cmp Lower x y ∧ find_code (INL dest) s.regs s.code = SOME prog ∧ s.clock ≠ 0 ⇒ P (prog,dec_clock s)) ⇒ P (JumpLower r1 r2 dest,s)
+jumplower_unsigned_1=T
+jumplower_unsigned_2=F
+jumplower_unsigned_3=F
+jumplower_unsigned_4=T
+jumplower_unsigned_5=F
+jumplower_unsigned_6=T

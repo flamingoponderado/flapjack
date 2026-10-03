@@ -113,6 +113,9 @@ run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
 run_probe stack_rawcall_stack_access_probeScript.sml stack_rawcall_stack_access_probe.out \
   stack_access_full_statement stack_access_full_hypotheses stack_access_locValue stack_access_stackAlloc stack_access_stackFree stack_access_stackLoad stack_access_stackLoadAny stack_access_stackStore stack_access_stackStoreAny stack_access_stackGetSize stack_access_stackSetSize stack_access_bitmapLoad \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_jumplower_case_probeScript.sml stack_rawcall_jumplower_case_probe.out \
+  jumplower_full_statement jumplower_full_hypotheses jumplower_case_statement jumplower_evaluate_ind_obligation jumplower_unsigned_1 jumplower_unsigned_2 jumplower_unsigned_3 jumplower_unsigned_4 jumplower_unsigned_5 jumplower_unsigned_6 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_rawcall_case_probeScript.sml stack_rawcall_rawcall_case_probe.out \
   rawcall_full_statement rawcall_full_hypotheses rawcall_case_statement rawcall_evaluate_ind_obligation \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

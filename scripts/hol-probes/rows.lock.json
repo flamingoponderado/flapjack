@@ -5918,6 +5918,12 @@
       "sha256": "1de843be754abc298eab95b0737fd072d90f67c4a36fcb455e35b97bcffcbfbd"
     },
     {
+      "bytes": 1624,
+      "out": "stack_rawcall_jumplower_case_probe.out",
+      "rows": 10,
+      "sha256": "235811a8c4bcda1c09d41a763993d176e8dc08abb1da475b05c13cc58fd0a600"
+    },
+    {
       "bytes": 287,
       "out": "stack_rawcall_labels_probe.out",
       "rows": 7,
