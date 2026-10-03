@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety

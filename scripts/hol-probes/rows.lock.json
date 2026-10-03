@@ -1976,6 +1976,12 @@
       "sha256": "d3df4bf7537c9ae6e027859d4d9be10bb2cc7195cbe115b3084f38c62903492f"
     },
     {
+      "bytes": 8203,
+      "out": "lab_to_target_initializer_memory_separation_probe.out",
+      "rows": 10,
+      "sha256": "97be4f38ca69c8bd19d4457e5ed41d8adefbfa1f0ad53850a965f2bd0c3e1622"
+    },
+    {
       "bytes": 1110,
       "out": "lab_to_target_label_existence_domain_probe.out",
       "rows": 16,

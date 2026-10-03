@@ -6594,3 +6594,17 @@ post-state facts, with all bounds obtained from original boundary/length
 guards. The native consumer observes the actual target cache-return PC.
 No arbitrary EL/default policy or full initializer completion is claimed.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_interference_probeScript.sml`.
+
+### Full initializer memory separation cases
+
+`lab_to_target_initializer_memory_separation_probeScript.sml` freshly captures
+the original complete local initializer theorem, all free-variable types and
+zero hypotheses. Both original ISR1/12 projections retain all fourteen guards
+and establish complete state relation clauses15/37 with zero hypotheses and
+kernel proof T. Their case mapping comes from replaying the literal original
+pre-Suspend proof prefix, captured in the basic-cases probe. Native proofs
+derive the entire MMIO lookup domain and exclusion of every FFI entry from the
+actual remaining buffer; the native full-guard consumer observes that exclusion.
+No extra successful lookup, overflow bound, exclusion premise or arbitrary
+EL/default policy is used. ISR16 and the full initializer remain open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
