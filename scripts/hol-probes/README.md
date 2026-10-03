@@ -7710,3 +7710,10 @@ including register zero and register31. These finite oracle rows are regression
 evidence, not exhaustive equivalence; the universal Lean proof and literal
 source comparison are separate obligations. The guard pins the unrestricted
 signature and all four original sentinels.
+`pan_structs_decls_decl_probe` captures the full original declaration theorem,
+its Decl initializer specialization and complete source declaration induction,
+with closed kernel truth and quantified types. The Lean minor retains all eight
+hypotheses and every target/existential conclusion, with exactly the successful
+empty-locals initializer and declared-shape guarded tail IH. Final-context code
+transport and global update conversion are derived internally. Whole declaration
+correctness and executed compiler routing remain separately open.

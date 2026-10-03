@@ -86044,5 +86044,100 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-semantic-invariant): faithful imported WordSemStateFiniteExact retains exact Spt locals/code, original full WordLocW, native lists/sets and canonical HolFiniteMapExact fpRegs/store. Same-module canonical roundtrip re-exports the owning broad/exact state witness without duplicate state carriers. The field-based fmap qualifier records the full state map representation only; positive BitVec width/NeZero and C:Type/F:Type preserve original word/configuration/FFI carriers. word_cseProof493-496 universally quantifies an arbitrary faithful state and concludes full data_inv empty_data. Lean proves both complete predicates by literal empty sparse trees, native balanced trees and store list, with no run/invariant/output premise. This supplies an unconditional non-vacuous empty-knowledge instance, not whole CSE correctness. The elaborated declaration closure inherits the existing reals_as_rational_cuts IEEE rendering assumption through the full imported WordSem evaluate/inst, recorded under docs/SOUNDNESS.md item 8; it introduces no new hypothesis or narrowed evaluator.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "converterGlobalsCode",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "evalConverterGlobals",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "mapExt",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "everyUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "shapeUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "initEmptyFields",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "initializerFacts",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "convertedEmpty",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "convertedGlobal",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack Decl-case infrastructure; no independent HOL declaration. Supports the original guarded initializer minor without adding public hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsCorrectDecl.lean",
+    "lean_name": "compileDeclsCorrectDecl",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decls_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol compared original compile_decls_correct1357-1380/Decl1390-1406, evaluate_decls813-841, compile_decs213-238 and original evaluate_decls_ind. Full8 hypotheses, actual target declaration run and all existential globals/context/fields/WF/structs/locals/shape-map conjuncts. Exactly source successful empty-locals initializer/shape guarded tail IH using fixed full property. Initializer fields/WF/compiled value derived from faithful expression theorem; final context changes converted code only, original eval_upd_code_eq transports actual initializer; convertV shape and canonical update derive target guards/run. No target-run/postmap/compatibility premise. Canonical imported state four finite maps and full same-module broad/state roundtrip; positive indexed words and Type0 host. Whole theorem/production routing remain separately open.",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true
   }
 ]

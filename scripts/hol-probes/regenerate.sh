@@ -7334,3 +7334,6 @@ run_probe bvi_syntax_probeScript.sml bvi_syntax_probe.out \
 run_probe bvl_to_bvi_config_probeScript.sml bvl_to_bvi_config_probe.out \
   config_component_equality inline_size_limit_type exp_cut_type split_main_at_seq_type next_name1_type next_name2_type next_name3_type do_tailrec_type do_tmc_type inlines_type bvi_inlines_type \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.out \
+  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_decl_statement compile_decls_correct_decl_proved compile_decls_correct_decl_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
