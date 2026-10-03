@@ -83978,5 +83978,21 @@
       "eshapes"
     ],
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompiledShapesWf.lean",
+    "lean_name": "compiledWf",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private mutual-induction infrastructure; single-shape projection supports full original theorem, no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompiledShapesWf.lean",
+    "lean_name": "isWfShapeCompileShape",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "is_wf_shape_compile_shape",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol compared full original298-308 and compiler213-independent shape definition/induction. Both unconditional conjuncts retained: arbitrary MlS x alpha target context, original MlS x List(MlS x shape) compilation context, single compiled shape and EVERY over compiled shape list. Generic target payload alpha retained after accepted in-place PanLang predicate repair; no source-WF or target-result premise, no String/cache carrier. HOL EVERY encoded by forall list member, BOOL truth by equality true. Mutual compile_shape induction handles scalar/comb/named dropWhile hit/miss and list nil/cons; named expansion strictly removes names. Full source nested bound types/closed theorem capture accompany port. Production routing remains separately open."
   }
 ]

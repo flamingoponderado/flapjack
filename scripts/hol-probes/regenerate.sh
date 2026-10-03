@@ -7153,3 +7153,7 @@ run_probe pan_lang_generic_wf_shape_probeScript.sml pan_lang_generic_wf_shape_pr
 run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.out \
   compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_decl_statement compile_decls_correct_decl_proved compile_decls_correct_decl_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_shapes_wf_probe.out \
+  is_wf_shape_compile_shape_statement is_wf_shape_compile_shape_proved is_wf_shape_compile_shape_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
