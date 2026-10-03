@@ -4688,6 +4688,12 @@
       "sha256": "ac6e91eab736ae83d2f0d3aec684fa79304117e359c27009c5f8da781a162a23"
     },
     {
+      "bytes": 2361,
+      "out": "pan_structs_exp_load32_faithful_probe.out",
+      "rows": 5,
+      "sha256": "4f9085538b3f7e0870cee18ca127330d053f2a90d027ddb61427f3c0524c538f"
+    },
+    {
       "bytes": 2373,
       "out": "pan_structs_exp_load_byte_faithful_probe.out",
       "rows": 5,
