@@ -32,6 +32,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_data_inv_updates_probe.out` captures the full zero-hypothesis statements of the 12 exported word_cseProof `data_inv` knowledge-update theorems ported in `WordCse/Proofs/DataInvUpdates.lean` (`data_inv_merge_l` through `evaluate_Move1`, with `data_inv_set_store` also typed); the 10 local ones are not exported. Statement evidence for source review only.
 `word_cse_fact_insert_probe.out` captures the full zero-hypothesis statements of the 7 exported word_cseProof fact-producer correctness theorems in `WordCse/Proofs/FactInsert.lean` (`add_to_data_aux_correct` through `add_to_load_correct`, with `add_to_data_Arith_correct` also typed); the 7 local ones are not exported. Statement evidence for source review only.
 `word_cse_moves_probe.out` captures the full zero-hypothesis statements of the 5 exported word_cseProof move/clock theorems in `WordCse/Proofs/MoveLemmas.lean` (`lookup_map_insert0`, `get_set_vars_lemma`, `MEM_FST_reduc`, `canonicalMoveRegs_lemma` (also typed), `data_inv_clock`); the 13 local ones are not exported. Statement evidence for source review only.
+`word_cse_comp_correct_probe.out` captures the full zero-hypothesis statements of word_cseProof `comp_correct` (also typed) and `word_common_subexp_elim_correct`. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
 `word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
@@ -7879,3 +7880,20 @@ wrappers and fourteen original encoding boundary EVALs establishing the full
 word-instruction low bits. These width oracles are not Next execution replays.
 The already captured whole native Const Run observations and unrestricted
 Lean fetch/decode/Next proofs supply separate evidence for their own scopes.
+
+### Native Const interference transport
+
+`CorrectnessEncoding/ConstInterference.lean` is untagged composition infrastructure
+for the seven literal Const register instruction families. Source comparison uses
+`riscv_targetScript.sml:306-315` (the full current-core GPR function, including
+scratch31, plus VM/ArchBase/NextFetch/exception/domain memory/PC) and
+`asmPropsScript.sml:77-79` (every environment index and native state). It proves
+validity preservation, full projection congruence, and arbitrary-list register
+effects under that original interference premise. It adds no target execution or
+scratch-preservation premise. `check-riscv-const-interference.py` pins the family,
+public statements and environment iteration, with mutation regressions.
+
+This helper iterates literal native `Run`, which does not advance PC. It is not
+a full native Next execution/assertion oracle or the full Const encoder theorem;
+those remain separate open work. Existing `riscv_const_run_probe` captures the
+scoped original Run observations; no new HOL declaration identity is claimed.

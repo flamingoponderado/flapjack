@@ -4613,6 +4613,9 @@ run_probe word_cse_moves_probeScript.sml word_cse_moves_probe.out \
   MEM_FST_reduc_hypotheses canonicalMoveRegs_lemma_statement canonicalMoveRegs_lemma_hypotheses data_inv_clock_statement data_inv_clock_hypotheses \
   canonicalMoveRegs_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_comp_correct_probeScript.sml word_cse_comp_correct_probe.out \
+  comp_correct_statement comp_correct_hypotheses word_common_subexp_elim_correct_statement word_common_subexp_elim_correct_hypotheses comp_correct_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7552,7 +7555,13 @@ run_probe binary_ieee_two_dimensions_probeScript.sml binary_ieee_two_dimensions_
 run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_long_arithmetic_probe.out \
   longMul_typed longMul_proved longMul_hypotheses longDiv_typed longDiv_proved longDiv_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+<<<<<<< HEAD
 
 run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_division_probe.out \
   division_typed division_proved division_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+=======
+run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_word_witness_probe.out \
+  state_rel_type state_rel_def_typed state_rel_intro_typed state_rel_IMP_typed_replay state_rel_with_clock_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+>>>>>>> origin/fleet-integration-post-1212-stack
