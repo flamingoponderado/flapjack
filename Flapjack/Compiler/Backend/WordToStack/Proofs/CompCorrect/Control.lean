@@ -68,7 +68,7 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 entire conclusion are retained; native target execution is derived with zero
 extra clock. Evaluator closure inherits reals_as_rational_cuts; this structural
 case asserts no numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct"
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
     StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
@@ -112,7 +112,7 @@ theorem compCorrectSkip {width : Nat} [NeZero width] {C F : Type}
 entire conclusion are retained; native target execution is derived with zero
 extra clock. Evaluator closure inherits reals_as_rational_cuts; this structural
 case asserts no numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct"
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
     StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
@@ -156,7 +156,7 @@ theorem compCorrectBreak {width : Nat} [NeZero width] {C F : Type}
 entire conclusion are retained; native target execution is derived with zero
 extra clock. Evaluator closure inherits reals_as_rational_cuts; this structural
 case asserts no numerical FP correspondence. -/
-@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct"
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
     StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
