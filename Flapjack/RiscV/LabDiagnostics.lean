@@ -374,7 +374,8 @@ def compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
     match stackProgramsWithLongDivRuntime removeConfig programs with
     | none => .error { sectionId := 0, position := 0, feature := .loweringFailure }
     | some programs =>
-        let programs := stackRawCallPrograms programs
+        -- Raw calls are compiled by the tagged native `stack_rawcall$compile`
+        -- inside `initializedRuntimeLab?`, before native allocation.
         let bounds := (BitVec.ofInt width (-2048), BitVec.ofNat width 2047)
         match initializedRuntimeLab? removeConfig.jump bounds
             removeConfig.stackPointer stackFunctionFirstLabel registerCount programs with
