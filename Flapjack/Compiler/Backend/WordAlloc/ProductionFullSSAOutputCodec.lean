@@ -48,7 +48,7 @@ theorem wordRemoveDeadProgramViaHOL_outputCodec {width : Nat} [NeZero width]
 
 /-- Codec closure in the actual native allocator cleanup order, with both
 reviewed native dead-code routers. Flapjack production infrastructure. -/
-private theorem nativeAllocatorStagesCodec {width : Nat} [NeZero width]
+theorem nativeAllocatorStagesCodec {width : Nat} [NeZero width]
     (program : WordProg (BitVec width))
     (accepted : (wordLangProgToHOL program).isSome = true) :
     (wordLangProgToHOL (wordRemoveDeadProgramViaHOL
