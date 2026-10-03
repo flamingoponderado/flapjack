@@ -6563,3 +6563,6 @@ run_probe l3_decode_immediates_probeScript.sml l3_decode_immediates_probe.out \
 run_probe l3_boolify_provenance_probeScript.sml l3_boolify_provenance_probe.out \
   boolify8_definition boolify8_type boolify8_hypotheses boolify8_full_equation boolify16_definition boolify16_type boolify16_hypotheses boolify16_full_equation boolify32_definition boolify32_type boolify32_hypotheses boolify32_full_equation \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe word_convs_max_var_exp_intro_probeScript.sml word_convs_max_var_exp_intro_probe.out \
+  max_var_exp_intro_statement max_var_exp_intro_proved max_var_exp_intro_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordConvsScript.sml" "$cake_dir/compiler/backend/semantics"

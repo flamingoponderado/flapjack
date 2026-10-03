@@ -6952,3 +6952,7 @@ bytes of the model and both factory files. It rejects other widths/names,
 wrong lines and altered sources. This establishes declaration identity only;
 Lean statement/body review, kernel checking and justified tags are separate.
 The three Lean ports and full Decode/Run/Next remain open.
+
+### Full generic WordConvs expression maximum introduction
+
+`word_convs_max_var_exp_intro_probeScript.sml` replays wordConvsScript.sml460-471 local `max_var_exp_IMP` with its unchanged proof and GEN_ALL closing the original free predicate. Captures the full arbitrary-predicate/P0 statement, proved=T and zero hypotheses. Lean mutual induction retains constants, lookup, variables, load, shift and empty/nested Op argument lists. This is original theorem evidence plus source comparison, not cross-language equivalence.

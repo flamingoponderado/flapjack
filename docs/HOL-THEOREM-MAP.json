@@ -75355,5 +75355,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11182-11197: original arbitrary prog and f, occurrence-local physical-register implication conjoined with source call_arg_convention, and full coloured-program conclusion. Boolean implication !isPhyVar x || f x == x preserves the HOL premise. Native positive-width program/instruction carriers and everyVarHOL include all source fields; instArgConvention has exactly the original arithmetic clauses at positive width. Canonical GENLIST arguments use List.range.map, retaining list length; returning Call checks both bodies and tail Call ignores handlers exactly as source. No global fixation, target convention, injectivity or allocation success assumption. words_as_type_indexed_bitvec records the positive HOL word dimension only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/MaxVarIntro.lean",
+    "lean_name": "maxVarExpImp",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "max_var_exp_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03: wordConvsScript.sml460-471 arbitrary predicate P, P0 and every_var_exp P exp imply P(max_var_exp exp), retained exactly as Bool=true conjunction. All six expression constructors and mutual argument-list traversal match exact WordLang carrier and max_var_exp_def, including empty Op lists and zero-valued Const/Lookup maxima. Only positive type-indexed word dimension translates to BitVec width with NeZero; no numeric-bound premise, extra predicate restriction, or target execution assumption. Original local statement and unchanged induction proof replay captured with GEN_ALL closing P, proved=T and hypotheses=0; cross-language source comparison, not an equivalence proof."
   }
 ]
