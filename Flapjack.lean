@@ -617,6 +617,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
+import Flapjack.Misc.BinaryIeeeSqrtExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
@@ -1121,6 +1122,10 @@ import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatHelpers
 import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
+import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
+import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
@@ -1224,6 +1229,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
 import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
@@ -1419,6 +1426,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanSem.EvalInd
 import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
