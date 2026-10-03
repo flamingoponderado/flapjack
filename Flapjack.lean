@@ -311,6 +311,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackSize

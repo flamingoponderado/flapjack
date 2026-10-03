@@ -8384,6 +8384,12 @@
       "sha256": "5d98aaf9cf54bd2f91a2a3c4acda0754b54cfc7a15ebdfede7942b15ccfc422f"
     },
     {
+      "out": "word_to_stack_location_labels_probe.out",
+      "bytes": 483,
+      "rows": 9,
+      "sha256": "341a8717102da29521c97872549df8b1ace5bf732c64aee5cf9a4693ce9fa859"
+    },
+    {
       "bytes": 11249,
       "out": "word_to_stack_make_init_probe.out",
       "rows": 125,

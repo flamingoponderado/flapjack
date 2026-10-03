@@ -1,0 +1,9 @@
+state_rel_code_domain_statement=∀t s lens k f' f extra ac. state_rel ac k f f' s t lens extra ⇒ domain s.code ⊆ domain t.code
+state_rel_code_domain_proved=T
+state_rel_code_domain_hypotheses=0
+get_labels_wStackLoad_statement=∀xs p. get_labels (wStackLoad xs p) = get_labels p
+get_labels_wStackLoad_proved=T
+get_labels_wStackLoad_hypotheses=0
+loc_check_SUBSET_statement=∀t s. subspt s t ⇒ loc_check s ⊆ loc_check t
+loc_check_SUBSET_proved=T
+loc_check_SUBSET_hypotheses=0
