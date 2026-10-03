@@ -80174,5 +80174,20 @@
     "hol_name": "star_move_lemma",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2733-2737 (local): p0 * p1 * p1' * p2 * p3 * p4 = p2 * (p1 * p1' * STAR p3 (p4 * p0)) for arbitrary assertions over an arbitrary heap-element type, HOL * as left-associated accepted SetSep.star; proof by AC from accepted STAR_ASSOC/STAR_COMM ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StoreListCodeThm.lean",
+    "lean_name": "storeListCodeThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "store_list_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2636-2725: free registers a t (captured free vars) then forall xs s w frame ys m dm; all eight original conjuncts in order: (word_list w ys * frame) (fun2set (m,dm)), m = s.memory, dm = s.mdomain (Bool domain as its membership predicate), LENGTH ys = LENGTH xs, a <> t, get_var a s = SOME (Word w), t IN FDOM s.regs (lookup <> none on the canonical map), EVERY INR guard as list membership; conclusion exists r1 m1 with (word_list w (MAP (mem_val s.regs) xs) * frame) (fun2set (m1, s.mdomain)) and native stackSem evaluate (store_list_code a t xs, s) = (NONE, s with memory := m1; regs := s.regs |++ [(a, Word (w + bytes_in_word * n2w (LENGTH xs))); (t, r1)]) via updateListEq. Uses accepted storeListCode/mem_val/word_list/write_fun2set ports; no added premise, no supplied run. Inherited assumption: statement mentions the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored theorem captured with zero hypotheses in scripts/hol-probes/stack_remove_store_list_code_probe.out. Proof-only initializer prerequisite of init_code_thm; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]
