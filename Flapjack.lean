@@ -1001,6 +1001,7 @@ import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcConsts
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFp
+import Flapjack.Compiler.Backend.WordSimp.Proofs.CompileExp
 import Flapjack.Misc.FiniteMapApply
 import Flapjack.Pancake.Proofs.WordConvs.RemoveMustTerminate
 import Flapjack.Pancake.WordLang.OccurrenceCorrespondence
