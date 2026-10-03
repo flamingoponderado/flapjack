@@ -52299,6 +52299,15 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.2.3) against the pinned HOL source and the definition captured with types by binary_ieee_real_probe: sign 0w: NaN gives (check_for_signalling [x], float_some_qnan (FP_Sqrt mode x)), Infinity gives (clear_flags, float_plus_infinity), Float r gives float_round_with_flags mode F (sqrt r); else x = NEG0 gives (clear_flags, NEG0); else (invalidop_flags, float_some_qnan (FP_Sqrt mode x)). HOL sqrt is Real.sqrt; it is applied only to the nonnegative value of a sign-0w float, where both are the nonnegative root. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; HOL real is Mathlib ℝ (arbitrary real argument, no Rat restriction); HOL @ is Classical.epsilon and propositions are decided classically. reals_as_rational_cuts is carried because the declaration names the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
   },
   {
+    "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
+    "lean_name": "HolFloatValueR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_value",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the one-line Datatype at binary_ieeeScript.sml:41: float_value = Float real | Infinity | NaN, constructors in HOL order with the Float payload HOL real as Mathlib ℝ (the Rat-payload HolFloatValue stays untagged). reals_as_rational_cuts is carried because check-hol-refs requires it for the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "ssa_reconcile_moves_eq",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAReconcileListProps.lean",
@@ -79087,6 +79096,15 @@
     "words_as_type_indexed_bitvec": true,
     "reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the pinned HOL source and the definition captured with types by binary_ieee_arith_probe: float_compare x y = EQ. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. Finite values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeee.lean",
+    "lean_name": "HolFloatCompare",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_compare",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.10) against the one-line Datatype at binary_ieeeScript.sml:755: float_compare = LT | EQ | GT | UN, four nullary constructors in HOL order. reals_as_rational_cuts is carried because check-hol-refs requires it for the reviewed BinaryIeee rendering family (SOUNDNESS item 8). No other difference."
   },
   {
     "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",

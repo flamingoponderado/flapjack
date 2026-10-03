@@ -46,6 +46,8 @@ open Classical
 
 /-- HOL `float_value = Float real | Infinity | NaN` (`binary_ieeeScript.sml:41-42`)
 with HOL `real` as Mathlib `ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_value"
+  (reals_as_rational_cuts)]
 inductive HolFloatValueR where
   | float (r : ℝ)
   | infinity
