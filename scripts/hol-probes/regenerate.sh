@@ -5921,3 +5921,9 @@ run_probe lab_to_target_shmem_offset_probeScript.sml lab_to_target_shmem_offset_
   independent_names independent_records none empty_offset actual_names actual_records valid_guard negative_length \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_shmem_entry_max_probeScript.sml lab_to_target_shmem_entry_max_probe.out \
+  genlist_line_to_info_entry_pc_max genlist_line_to_info_entry_pc_max_types genlist_line_to_info_entry_pc_max_hypotheses \
+  actual_max actual_entries actual_end empty valid_guard strict_failure \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"

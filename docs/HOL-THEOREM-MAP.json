@@ -68210,5 +68210,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source9864-9903 and fulltypes0hyp comparison: both line projection equations preserve independent alpha code/beta fetched positive word dimensions with separate NeZero, arbitrary Nat offset/accumulator and entire name/record maps. Record updates change only entryPc and exitPc by original Nat offset. Extraction full conjunction preserves all source binders and sole allEncOk guard with independent validity/query starts, original zero/query orientation and empty accumulators. Exact Section/Line/HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString/BitVec carriers, fixed word8 bytes/nbytes, Nat info fields. words_as_type_indexed_bitvec permits only standard positive word translation. Structural constructor proofs, original position offset law and full extraction characterization/map/flatten/unzip supply genuine proof, no target/result callback or total HD/EL/default policy change. Fresh full original types0hyp and eight original observations cover independent8/80 dimensions, actual extracted names/records, absent fetch, empty code, actual validity and invalid length guard; full generic and arbitrary-query actual consumers. Regression evidence does not prove cross-language equivalence or full initializer/compiler closure."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemEntryMax.lean",
+    "lean_name": "genlistLineToInfo_entryPcMax",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "genlist_line_to_info_entry_pc_max",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full source10101 and original fulltype0hyp comparison: retains all configuration/labels/FFI/independent validity-position/code binders, both allEncOk and encOk guards, exact EVERY strict Nat entryPc bound across full FLAT GENLIST original lineToInfo enumeration at zero query position. Standard words_as_type_indexed_bitvec carrier translation only, exact native constructor carriers/fixed word8 bytes and positive dimension with NeZero. Actual enumerated member inversion and original strict position-order theorem prove bound; no desired maximum, extra successful fetch/size premise or totalHD/EL/default change. Fresh original observations and generic/actual native consumers supplement source review, not cross-language equivalence or full initializer/compiler correctness."
   }
 ]

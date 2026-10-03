@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ShmemEntryMax
 import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
 import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame

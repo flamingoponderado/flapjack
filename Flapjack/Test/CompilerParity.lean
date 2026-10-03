@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity
 import Flapjack.Test.LabToTargetShmemCorrectnessParity
 import Flapjack.Test.L3SCDParity

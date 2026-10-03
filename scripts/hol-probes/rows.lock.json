@@ -2216,6 +2216,12 @@
       "sha256": "885db3703a12330d54d8485e594a5c4915e00e6568d911b4fa4cd00d78201197"
     },
     {
+      "bytes": 774,
+      "out": "lab_to_target_shmem_entry_max_probe.out",
+      "rows": 9,
+      "sha256": "e8af3beb5085b4cd63e21da9d1899d0fae087640ed41be7ad0725e301a193f4f"
+    },
+    {
       "bytes": 1155,
       "out": "lab_to_target_shmem_extraction_probe.out",
       "rows": 10,
