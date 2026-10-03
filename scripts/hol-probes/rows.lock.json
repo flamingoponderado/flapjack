@@ -2942,6 +2942,12 @@
       "sha256": "7d52f82bcd1d6224d7c237c70ff3904239ff20500d83a6c22595d6729966f8e7"
     },
     {
+      "bytes": 477,
+      "out": "misc_bytes_in_mem_imp_probe.out",
+      "rows": 10,
+      "sha256": "314d02d1421fd1301d7957fd2a612c805a424c4a6eee1df1d6d46edfc6784d84"
+    },
+    {
       "bytes": 401,
       "out": "misc_find_index_distinct_probe.out",
       "rows": 11,

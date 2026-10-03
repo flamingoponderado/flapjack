@@ -1,3 +1,4 @@
+import Flapjack.Misc.BytesInMem.Imp
 import Flapjack.Compiler.Backend.LabToTarget.WordSearch
 import Flapjack.Misc.FindIndex.Shift
 import Flapjack.Compiler.Backend.LabToTarget.ShmemEntryMax

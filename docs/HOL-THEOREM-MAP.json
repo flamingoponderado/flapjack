@@ -68329,5 +68329,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original local source10127 and literal statement/proof replay fulltypes0hyp: local HOL declaration not exported in theory DB (DB.fetch fails), so registered original probe replays exactly its source statement AND proof in pinned HOL before capturing full type. Complete forall same-dimension word list/target/arbitrary Nat offset, unconditional exact Option equality between natural-projection search and original word search. Positive BitVec width with own NeZero is sole words_as_type_indexed_bitvec carrier translation; no success/Nodup/length bound or totalHD/EL/default premise. Native structural induction with BitVec.toNat injectivity mirrors original w2n injectivity. Fresh original seven closed observations/native cases cover first/mapped/duplicate/missing/empty/wrapped8/wide80 searches; full generic consumer and arbitrary base/listDROP/offset initializer-facing consumer. Regression/source comparison evidence, not HOL-to-Lean equivalence or full initializer/compiler closure."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BytesInMem/Imp.lean",
+    "lean_name": "bytesInMem_impliesMemory",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_mem_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 full original source4256 and fresh fulltype0hyp comparison: fixed word8 values/memory retained even though bytes_in_mem definition has generic Value; arbitrary positive address-word dimension with own NeZero, memory/domain/excluded/list/address binders and sole original bytes_in_mem guard imply full bytes_in_memory at same inputs and domain. words_as_type_indexed_bitvec permits standard positive address-word translation only. Recursive native proof preserves wrapped address+1, drops excluded conjunct without strengthening domain/value relation. Fresh original seven observations cover empty/vacuous excluded domains, singleton, wrap255->0, excluded/missing-domain/wrong-value guards and dimension1. Generic native full consumer and actual wrapped/one-bit consumers discharge source memory premises, no desired target/success/default or hold change. Regression evidence is not cross-language equivalence or FFI/initializer/full compiler correctness."
   }
 ]
