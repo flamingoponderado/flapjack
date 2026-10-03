@@ -18,6 +18,8 @@ import Flapjack.Pancake.Semantics.PanProps.HasMain
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
 import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 
@@ -656,5 +658,222 @@ theorem lookupFirstNameCompileProgMainHOL {width : Nat} [NeZero width] (c : AsmA
     simp only [compileProgHOLExact, List.length_cons, List.range_succ_eq_map, List.map_cons,
       List.zipWith_cons_cons, sptFromAList]
     exact ⟨_, sptLookup_sptInsert_same _ _ _⟩
+
+
+/-- `make_funcs` maps the name of the first program entry to the first label
+and that entry's arity (first binding wins). Flapjack infrastructure; no HOL
+original. -/
+theorem crepToLoopMakeFuncsExactHOL_head {α β γ : Type} (k : α) (params : List β) (b : γ)
+    (rest : List (α × List β × γ)) :
+    (crepToLoopMakeFuncsExactHOL ((k, params, b) :: rest)).lookup k =
+      some (firstLoopName, params.length) := by
+  classical
+  rw [holFmapAsFiniteSupportResultWitness_crepToLoopMakeFuncsExactHOL]
+  simp only [List.length_cons, List.range_succ_eq_map, List.zip_cons_cons, List.map_cons,
+    List.reverse_cons, FUPDATE_LIST_HOL, List.foldl_append, List.foldl_cons, List.foldl_nil]
+  simp [FUPDATE_HOL]
+
+/-- Exact HOL `FLOOKUP_make_funcs_main` (`pan_to_wordProofScript.sml:419-443`):
+`make_funcs` (crep_to_loop) of `pan_to_crep$compile_prog (compile_top pan_code
+main)` maps `main` to `(first_name, 0)`. `ALOOKUP` is `List.lookup`; the free
+variables are bound explicitly. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "FLOOKUP_make_funcs_main"
+  (fmap_as_finite_support_result_observations := [crepToLoopMakeFuncsExactHOL])]
+theorem flookupMakeFuncsMainHOL {width : Nat} [NeZero width] (pan_code : List (DeclHOL width))
+    (main : MlS) (body : ProgHOL width) (rshape : ShapeHOL) :
+    List.lookup main (functionsHOL pan_code) = some ([], body, rshape) →
+    (crepToLoopMakeFuncsExactHOL (compileProgDeclsHOLW (compileTopExactHOL pan_code main))).lookup
+      main = some (firstLoopName, 0) := by
+  intro hl
+  have hfun : ∃ b' rest, functionsHOL (compileTopExactHOL pan_code main) =
+      (main, [], b', rshape) :: rest := by
+    unfold compileTopExactHOL
+    rw [compileTopFunctionLookup_eq_lookup, hl]
+    simp only
+    rw [PanGlobalsCompileDecsStructural.compile_decs_exns_are_exnsHOL _ _ _ _ _ _ rfl,
+      functionsHOL_append, functionsFilterNilHOL]
+    exact ⟨_, _, rfl⟩
+  obtain ⟨b', rest, hf⟩ := hfun
+  simp only [compileProgDeclsHOLW, compileToCrepExactHOLW, hf, List.map_cons,
+    CrepInlineCanonical.compileInlTopHOLExact, CrepInlineCanonical.compileInlProgHOLExactWithSupport]
+  rw [crepToLoopMakeFuncsExactHOL_head]
+  simp [crepVarsHOL, sizeOfShapeHOL]
+
+/-- Exact HOL `compile_shape_no_name` (`pan_to_wordProofScript.sml:445-458`),
+over pan_structsProof's `compile_shape_n` (`compileShapeNHOL`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "compile_shape_no_name"]
+theorem compileShapeNoNamePanToWordHOL {α : Type} :
+    ∀ (ctxt : List (MlS × List (α × ShapeHOL))) (n : Nat) (sh : ShapeHOL),
+      isWfShapeExactHOL [] (Pancake.PanStructs.CompileShapeExact.compileShapeNHOL ctxt n sh) =
+        true :=
+  Pancake.PanStructs.CompileShapeExact.compileShapeNNoName
+
+
+/-- `size_decs_stcnames_compile_decs_structs`, generic in the memory-domain
+decider of `evaluate_decls`. Flapjack infrastructure for the tagged theorem
+below; no separate HOL original. -/
+theorem sizeDecsStcnamesCompileDecsStructsCore {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (pan_code : List (DeclHOL width)) (s : PanSemStateFiniteExact width σ)
+      (h : DecidablePred s.memaddrs) (ctxt : Pancake.PanStructs.CompileShapeExact.ContextExact)
+      (s' : PanSemStateFiniteExact width σ) (code' : List (DeclHOL width))
+      (ctxt' : Pancake.PanStructs.CompileShapeExact.ContextExact),
+      @PanSemStateFiniteExact.evaluateDeclsHOLFinite width σ _ s h pan_code = some s' →
+      Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt pan_code = (code', ctxt') →
+      Pancake.Proofs.PanStructs.StructInfosOkExact.structInfosOkHOLExact s.structs →
+      (∀ nm v, s.globals.lookup nm = some v → isWfShapeValueHOLExact s.structs v = true) →
+      ctxt.structs = s.structs.map (fun entry => (entry.1, entry.2.fields)) →
+      (decShapesHOL code').map sizeOfShapeHOL =
+        (decShapesHOL pan_code).map (sizeOfShapeWithContextHOL s.structs)
+  | [], s, h, ctxt, s', code', ctxt', _, hcomp, _, _, _ => by
+      simp only [Pancake.PanStructs.CompileShapeExact.compileDeclsExact, Prod.mk.injEq] at hcomp
+      obtain ⟨rfl, -⟩ := hcomp
+      rfl
+  | .name nm fields :: ds, s, h, ctxt, s', code', ctxt', hev, hcomp, hok, hglob, hctxt => by
+      simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hev
+      simp only [Pancake.PanStructs.CompileShapeExact.compileDeclsExact] at hcomp
+      simp only [decShapesHOL]
+      exact sizeDecsStcnamesCompileDecsStructsCore ds s h ctxt s' code' ctxt' hev hcomp hok hglob hctxt
+  | .function f :: ds, s, h, ctxt, s', code', ctxt', hev, hcomp, hok, hglob, hctxt => by
+      simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hev
+      split at hev
+      · rcases hc : Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt ds with ⟨c2, x2⟩
+        simp only [Pancake.PanStructs.CompileShapeExact.compileDeclsExact, hc, Prod.mk.injEq] at hcomp
+        obtain ⟨rfl, -⟩ := hcomp
+        simp only [decShapesHOL]
+        exact sizeDecsStcnamesCompileDecsStructsCore ds { s with code := s.code.update (f.name, (f.params, f.body, f.returnShape)) } h ctxt s' c2 x2 hev hc hok hglob hctxt
+      · exact absurd hev (by simp)
+  | .exnDecl en sh :: ds, s, h, ctxt, s', code', ctxt', hev, hcomp, hok, hglob, hctxt => by
+      simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hev
+      split at hev
+      · rcases hc : Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt ds with ⟨c2, x2⟩
+        simp only [Pancake.PanStructs.CompileShapeExact.compileDeclsExact, hc, Prod.mk.injEq] at hcomp
+        obtain ⟨rfl, -⟩ := hcomp
+        simp only [decShapesHOL]
+        exact sizeDecsStcnamesCompileDecsStructsCore ds { s with eshapes := s.eshapes.update (en, sh) } h ctxt s' c2 x2 hev hc hok hglob hctxt
+      · exact absurd hev (by simp)
+  | .decl sh v e :: ds, s, h, ctxt, s', code', ctxt', hev, hcomp, hok, hglob, hctxt => by
+      simp only [PanSemStateFiniteExact.evaluateDeclsHOLFinite] at hev
+      cases he : @PanSemStateFiniteExact.evalHOLFinite width σ _ (PanSemStateFiniteExact.emptyLocalsHOLFinite s) h e with
+      | none => rw [he] at hev; exact absurd hev (by simp)
+      | some value =>
+        rw [he] at hev
+        simp only at hev
+        split at hev
+        · rename_i hs
+          have hvwf : isWfShapeValueHOLExact s.structs value = true :=
+            @evalHOLExact_isWfShapeValueHOLExact _ _ _ (PanSemStateFiniteExact.emptyLocalsHOLFinite s).toExact h
+              (fun _ _ hl => by simp [PanSemStateFiniteExact.emptyLocalsHOLFinite] at hl) hglob e value he
+          have hsh : sh = shapeOfHOLExact value := (shapeEqHOL_eq_true _ _).mp hs
+          have hshwf : isWfShapeExactHOL s.structs sh = true := by
+            rw [hsh]; exact isWfShapeValueHOLExact_shapeOfHOLExact _ value hvwf
+          rcases hc : Pancake.PanStructs.CompileShapeExact.compileDeclsExact
+              { ctxt with globals := (v, sh) :: ctxt.globals } ds with ⟨c2, x2⟩
+          simp only [Pancake.PanStructs.CompileShapeExact.compileDeclsExact, hc,
+            Prod.mk.injEq] at hcomp
+          obtain ⟨rfl, -⟩ := hcomp
+          simp only [decShapesHOL, List.map_cons]
+          congr 1
+          · exact Pancake.PanStructs.CompileShapeExact.sizeOfShapeCompilePassEq s sh ctxt.structs
+              ⟨hok, hshwf, hctxt⟩
+          · refine sizeDecsStcnamesCompileDecsStructsCore ds (PanSemStateFiniteExact.setGlobalHOLFinite v value s) h _ s'
+              c2 x2 hev hc hok ?_ hctxt
+            intro nm w hw
+            simp only [PanSemStateFiniteExact.setGlobalHOLFinite, HolFiniteMapExact.lookup_update, FUPDATE] at hw
+            split at hw
+            · cases hw; exact hvwf
+            · exact hglob nm w hw
+        · exact absurd hev (by simp)
+
+/-- Exact HOL `size_decs_stcnames_compile_decs_structs`
+(`pan_to_wordProofScript.sml:460-486`). `FEVERY` over `s.globals` is the
+pointwise statement on the canonical lookups; `evaluate_decls`' memory-domain
+decider is chosen classically, as in the tagged `semantics_decls`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "size_decs_stcnames_compile_decs_structs"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem sizeDecsStcnamesCompileDecsStructsHOL {width : Nat} {σ : Type} [NeZero width] :
+    ∀ (s : PanSemStateFiniteExact width σ) (pan_code : List (DeclHOL width))
+      (ctxt : Pancake.PanStructs.CompileShapeExact.ContextExact)
+      (s' : PanSemStateFiniteExact width σ) (code' : List (DeclHOL width))
+      (ctxt' : Pancake.PanStructs.CompileShapeExact.ContextExact),
+      (open Classical in PanSemStateFiniteExact.evaluateDeclsHOLFinite s pan_code) = some s' ∧
+        Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt pan_code = (code', ctxt') ∧
+        Pancake.Proofs.PanStructs.StructInfosOkExact.structInfosOkHOLExact s.structs ∧
+        (∀ nm v, s.globals.lookup nm = some v → isWfShapeValueHOLExact s.structs v = true) ∧
+        ctxt.structs = s.structs.map (fun entry => (entry.1, entry.2.fields)) →
+      (decShapesHOL code').map sizeOfShapeHOL =
+        (decShapesHOL pan_code).map (sizeOfShapeWithContextHOL s.structs) := by
+  rintro s pan_code ctxt s' code' ctxt' ⟨hev, hcomp, hok, hglob, hctxt⟩
+  exact sizeDecsStcnamesCompileDecsStructsCore pan_code s _ ctxt s' code' ctxt' hev hcomp hok
+    hglob hctxt
+
+/-- Exact HOL `semantics_size_decs_stcnames_compile_structs`
+(`pan_to_wordProofScript.sml:488-504`). `THE` is the reviewed `holThe`; the
+free `s`, `nm` and `pan_code` are bound explicitly. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "semantics_size_decs_stcnames_compile_structs"
+  (fmap_as_finite_support := [locals, globals, code, eshapes])
+  (words_as_type_indexed_bitvec)]
+theorem semanticsSizeDecsStcnamesCompileStructsHOL {width : Nat} {σ : Type} [NeZero width]
+    (s : PanSemStateFiniteExact width σ) (nm : MlS) (pan_code : List (DeclHOL width)) :
+    PanSemStateFiniteExact.semanticsDecls s nm pan_code ≠ .fail ∧
+      s.globals = HolFiniteMapExact.empty →
+    (decShapesHOL (Pancake.PanStructs.CompileShapeExact.compileTopExact pan_code)).map
+        sizeOfShapeHOL =
+      (decShapesHOL pan_code).map
+        (sizeOfShapeWithContextHOL (holThe (decsStcnamesHOLExact (width := width) [] pan_code))) := by
+  classical
+  rintro ⟨hsem, hglob⟩
+  unfold PanSemStateFiniteExact.semanticsDecls at hsem
+  cases hst : decsStcnamesHOLExact (width := width) [] pan_code with
+  | none => simp [hst] at hsem
+  | some st =>
+    simp only [hst] at hsem
+    cases hev : PanSemStateFiniteExact.evaluateDeclsHOLFinite { s with structs := st } pan_code with
+    | none => simp [hev] at hsem
+    | some s' =>
+      have hok0 : Pancake.Proofs.PanStructs.StructInfosOkExact.structInfosOkHOLExact
+          ([] : StructContextExact) := by
+        refine ⟨?_, ?_, ?_, ?_⟩ <;> simp
+      have hok := Pancake.PanStructs.CompileShapeExact.decsStcnamesInfosOk [] pan_code st ()
+        ⟨hst, hok0⟩
+      have hnames := Pancake.PanStructs.CompileShapeExact.decsStcnamesToGetNames [] pan_code st
+        { structs := [], locals := [], globals := [] } ⟨hst, rfl⟩
+      simp only [holThe]
+      unfold Pancake.PanStructs.CompileShapeExact.compileTopExact
+      dsimp only
+      rw [hnames]
+      rcases hc : Pancake.PanStructs.CompileShapeExact.compileDeclsExact
+          { structs := st.map (fun entry => (entry.1, entry.2.fields)), locals := [],
+            globals := [] } pan_code with ⟨c2, x2⟩
+      exact sizeDecsStcnamesCompileDecsStructsCore pan_code { s with structs := st } _ _ s' c2 x2
+        hev hc hok (fun n v hv => by simp [hglob] at hv) rfl
+
+
+/-- Exact HOL `ALL_DISTINCT_MAP_INJ_o` (`pan_to_wordProofScript.sml:514-517`,
+local in HOL): `ALL_DISTINCT_MAP_INJ` specialised to `MAP FST xs` and
+simplified by `MAP_MAP_o`/`o_DEF`. The elaborated statement (free `xs`, bound
+`f`) is reproduced by `pan_to_word_derived_probe`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "ALL_DISTINCT_MAP_INJ_o"]
+theorem allDistinctMapInjOHOL {α β ε : Type} (xs : List (α × ε)) :
+    ∀ (f : α → β),
+      (∀ x y, x ∈ xs.map Prod.fst ∧ y ∈ xs.map Prod.fst ∧ f x = f y → x = y) ∧
+        (xs.map Prod.fst).Nodup →
+      (xs.map (fun x => f x.1)).Nodup := by
+  rintro f ⟨hinj, hnd⟩
+  have key : ∀ l : List α, (∀ x ∈ l, ∀ y ∈ l, f x = f y → x = y) → l.Nodup →
+      (l.map f).Nodup := by
+    intro l
+    induction l with
+    | nil => intro _ _; exact List.nodup_nil
+    | cons a l ih =>
+      intro hi hn
+      rw [List.nodup_cons] at hn
+      rw [List.map_cons, List.nodup_cons]
+      refine ⟨?_, ih (fun x hx y hy => hi x (by simp [hx]) y (by simp [hy])) hn.2⟩
+      intro hm
+      obtain ⟨b, hb, hfb⟩ := List.mem_map.mp hm
+      exact hn.1 (hi a (by simp) b (by simp [hb]) hfb.symm ▸ hb)
+  have h := key (xs.map Prod.fst) (fun x hx y hy hxy => hinj x y ⟨hx, hy, hxy⟩) hnd
+  simpa [List.map_map, Function.comp_def] using h
 
 end Flapjack
