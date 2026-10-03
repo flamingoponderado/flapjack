@@ -91,6 +91,31 @@ example : let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then
 example : let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then .loc 4 5 else if r = 3 then .word 4 else .word 99, failed := false }
     t.regs 0 = .word 99 ∧ t.failed = true := ⟨rfl, rfl⟩
 
+-- lab_arith_div_neg_dividend (signed word_quot)
+example : let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then .word 239 else if r = 3 then .word 4 else .word 99, failed := false }
+    t.regs 0 = .word 252 ∧ t.failed = false := by
+  simp +decide [arithUpd, updReg, assertState]
+
+-- lab_arith_div_neg_divisor
+example : let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then .word 17 else if r = 3 then .word 252 else .word 99, failed := false }
+    t.regs 0 = .word 252 ∧ t.failed = false := by
+  simp +decide [arithUpd, updReg, assertState]
+
+-- lab_arith_div_both_neg
+example : let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then .word 239 else if r = 3 then .word 252 else .word 99, failed := false }
+    t.regs 0 = .word 4 ∧ t.failed = false := by
+  simp +decide [arithUpd, updReg, assertState]
+
+-- lab_arith_div_min_by_minus_one
+example : let t := arithUpd (.div 0 2 3) { s with regs := fun r => if r = 2 then .word 128 else if r = 3 then .word 255 else .word 99, failed := false }
+    t.regs 0 = .word 128 ∧ t.failed = false := by
+  simp +decide [arithUpd, updReg, assertState]
+
+-- lab_arith_div_neg_dest_alias
+example : let t := arithUpd (.div 2 2 3) { s with regs := fun r => if r = 2 then .word 239 else if r = 3 then .word 4 else .word 99, failed := false }
+    t.regs 2 = .word 252 ∧ t.regs 3 = .word 4 ∧ t.failed = false := by
+  simp +decide [arithUpd, updReg, assertState]
+
 -- lab_arith_carry_nonzero
 example : let t := arithUpd (.addCarry 0 2 3 1) { s with regs := fun r => if r = 2 then .word 255 else if r = 3 then .word 0 else if r = 1 then .word 5 else .word 99, failed := false }
     t.regs 0 = .word 0 ∧ t.failed = false ∧ t.regs 1 = .word 1 := ⟨rfl, rfl, rfl⟩
