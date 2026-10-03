@@ -1,5 +1,6 @@
 import Flapjack.HolRef
 import Flapjack.Misc.BinaryIeeeSqrt.RoundAgreement
+import Flapjack.Misc.BinaryIeeeConvert
 
 /-!
 # HOL `binary_ieee` rounding and `float_sqrt` over Mathlib reals
@@ -21,13 +22,22 @@ executed rational-cut `holFloatSqrt`/`holFp64Sqrt` equal the literal real
 `holFloatSqrtR`/`holFp64SqrtR` for every rounding mode and input, with no
 supplied agreement, radicand, success or target premise.
 
-These are Flapjack-specific infrastructure: everything is proved inside Lean,
-no HOL-to-Lean equivalence is assumed or established (Mathlib `ℝ` as HOL `real`
-is the standard carrier reading), and only the fixed-width binary64 wrapper below is source-tagged. Generic
-`HolFloat t w` infrastructure remains untagged: its broad carrier permits zero
-widths beyond HOL's positive type dimensions. The executed compiler continues
-using the cut rendering, with the unconditional equality below connecting it
-to the reviewed binary64 real specification.
+Everything is proved inside Lean; no HOL-to-Lean equivalence is assumed or
+established (Mathlib `ℝ` as HOL `real` is the standard carrier reading). Since
+the `HolFloat t w` carrier binds HOL's positive type dimensions as
+`[NeZero t] [NeZero w]` (bead `flapjack-h29l.6.2.12`), the generic arbitrary-real
+`is_closest`, `closest_such`, `closest`, `round`, `float_round`,
+`float_round_with_flags`, `real_to_float`, `real_to_float_with_flags` and
+`float_sqrt` renderings are source-tagged (beads `flapjack-h29l.6.2.9`,
+`flapjack-h29l.6.3.1.1`, `flapjack-h29l.6.3.2.3`); their `Rat`/cut counterparts
+stay untagged. `largest`/`threshold` stay untagged (two word-free type
+dimensions, no reviewed qualifier), and `holFloatToRealR`/`holFloatValueR`
+duplicate the tagged `Rat` renderings of the always-rational float values. In
+`float_sqrt` HOL `sqrt` is `Real.sqrt`; it is applied only to the value of a
+float with sign `0w`, which is nonnegative, where both are the nonnegative
+square root. The executed compiler continues using the cut rendering, with the
+unconditional equality below connecting it to the reviewed binary64 real
+specification.
 -/
 
 namespace Flapjack
@@ -36,6 +46,8 @@ open Classical
 
 /-- HOL `float_value = Float real | Infinity | NaN` (`binary_ieeeScript.sml:41-42`)
 with HOL `real` as Mathlib `ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_value"
+  (reals_as_rational_cuts)]
 inductive HolFloatValueR where
   | float (r : ℝ)
   | infinity
@@ -56,15 +68,21 @@ noncomputable def holFloatValueR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : 
   else .float (holFloatToRealR x)
 
 /-- HOL `is_closest_def` (`binary_ieeeScript.sml:253-257`) over `ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "is_closest_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holIsClosestR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (x : ℝ) (a : HolFloat t w) : Prop :=
   s a ∧ ∀ b, s b → |holFloatToRealR a - x| ≤ |holFloatToRealR b - x|
 
 /-- HOL `closest_such_def` (`binary_ieeeScript.sml:347-350`) over `ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "closest_such_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holClosestSuchR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (p : HolFloat t w → Prop)
     (s : HolFloat t w → Prop) (x : ℝ) : HolFloat t w :=
   Classical.epsilon (fun a => holIsClosestR s x a ∧ ∀ b, holIsClosestR s x b ∧ p b → p a)
 
 /-- HOL `closest_def` (`binary_ieeeScript.sml:352-353`) over `ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "closest_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holClosestR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (x : ℝ) : HolFloat t w :=
   holClosestSuchR (fun _ => True) s x
 
@@ -77,6 +95,8 @@ noncomputable def holFloatThresholdR (t : Nat) (w : Nat) [NeZero t] [NeZero w] :
   (2 ^ (holUintMax w - 1) / 2 ^ holFloatBias w) * (2 - (2 ^ (t + 1) : ℝ)⁻¹)
 
 /-- HOL `round_def` (`binary_ieeeScript.sml:411-443`) over `ℝ`, all four modes. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "round_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holRoundR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : ℝ) : HolFloat t w :=
   match mode with
   | .roundTiesToEven =>
@@ -102,6 +122,8 @@ noncomputable def holRoundR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : Ho
       else holClosestR (fun a => holFloatIsFinite a = true ∧ holFloatToRealR a ≤ x) x
 
 /-- HOL `float_round_def` (`binary_ieeeScript.sml:507-515`) over `ℝ`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_round_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holFloatRoundR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool) (r : ℝ) :
     HolFloat t w :=
   let x : HolFloat t w := holRoundR mode r
@@ -111,6 +133,8 @@ noncomputable def holFloatRoundR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode
 
 /-- HOL `float_round_with_flags_def` (`binary_ieeeScript.sml:517-532`) over `ℝ`;
 `a = abs r` and `inexact = (float_value x ≠ Float r)` as in HOL. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_round_with_flags_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holFloatRoundWithFlagsR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool)
     (r : ℝ) : HolFloatFlags × HolFloat t w :=
   let x : HolFloat t w := holFloatRoundR mode toNeg r
@@ -124,8 +148,28 @@ noncomputable def holFloatRoundWithFlagsR {t : Nat} {w : Nat} [NeZero t] [NeZero
           BitVec.ofNat (w + 1) (holIntMin w))
       precision := inexact }, x)
 
+/-- HOL `real_to_float_def` (`binary_ieeeScript.sml:539-541`) over `ℝ`:
+`real_to_float m = float_round m (m = roundTowardNegative)`, for an arbitrary
+real argument (HOL's point-free equation applied to `r`). The `Rat`
+`holRealToFloat` is its restriction to rational inputs. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "real_to_float_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holRealToFloatR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : ℝ) :
+    HolFloat t w :=
+  holFloatRoundR mode (decide (mode = .roundTowardNegative)) r
+
+/-- HOL `real_to_float_with_flags_def` (`binary_ieeeScript.sml:543-546`) over
+`ℝ`: `float_round_with_flags m (m = roundTowardNegative)`, applied to `r`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "real_to_float_with_flags_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
+noncomputable def holRealToFloatWithFlagsR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (r : ℝ) : HolFloatFlags × HolFloat t w :=
+  holFloatRoundWithFlagsR mode (decide (mode = .roundTowardNegative)) r
+
 /-- HOL `float_sqrt_def` (`binary_ieeeScript.sml:574-585`) over `ℝ`, with HOL `sqrt`
 as `Real.sqrt`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_sqrt_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holFloatSqrtR {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   if x.sign = 0 then
@@ -275,5 +319,73 @@ theorem holFp64Sqrt_eq_holFp64SqrtR (mode : HolRounding) (a : BitVec 64) :
     holFp64Sqrt mode a = holFp64SqrtR mode a := by
   unfold holFp64Sqrt holFp64SqrtR
   rw [holFloatSqrt_eq_holFloatSqrtR]
+
+/-! ## At rational arguments the real carrier is the `Rat` rendering
+
+The executed `Rat` renderings of `round`, `float_round`,
+`float_round_with_flags` and `real_to_float` are the restrictions of the
+tagged arbitrary-real ports to rational arguments, for every mode, with no
+range, success or agreement premise. -/
+
+theorem holIsClosestR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (q : Rat)
+    (a : HolFloat t w) :
+    holIsClosestR s (q : ℝ) a ↔ holIsClosest s q a := by
+  have key : ∀ u v : Rat, (|(u : ℝ) - q| ≤ |(v : ℝ) - q|) ↔ holRatAbs (u - q) ≤ holRatAbs (v - q) := by
+    intro u v
+    rw [← Rat.cast_sub, ← Rat.cast_sub, ← holRatAbs_cast, ← holRatAbs_cast, Rat.cast_le]
+  unfold holIsClosestR holIsClosest
+  simp only [holFloatToRealR_eq_cast, key]
+
+theorem holClosestSuchR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (p s : HolFloat t w → Prop) (q : Rat) :
+    holClosestSuchR p s (q : ℝ) = holClosestSuch p s q := by
+  unfold holClosestSuchR holClosestSuch
+  simp only [holIsClosestR_ratCast]
+
+theorem holClosestR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (q : Rat) :
+    holClosestR s (q : ℝ) = holClosest s q :=
+  holClosestSuchR_ratCast (fun _ => True) s q
+
+theorem holRoundR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (q : Rat) :
+    (holRoundR mode (q : ℝ) : HolFloat t w) = holRound mode q := by
+  cases mode <;>
+    simp only [holRoundR, holRound, holFloatThresholdR_eq_cast, holFloatLargestR_eq_cast,
+      holFloatToRealR_eq_cast, ← holRatAbs_cast, ← Rat.cast_neg, Rat.cast_le, Rat.cast_lt,
+      holClosestR_ratCast, holClosestSuchR_ratCast]
+
+theorem holFloatRoundR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool)
+    (q : Rat) :
+    (holFloatRoundR mode toneg (q : ℝ) : HolFloat t w) = holFloatRound mode toneg q := by
+  unfold holFloatRoundR holFloatRound
+  rw [holRoundR_ratCast]
+
+theorem holFloatRoundWithFlagsR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (toNeg : Bool) (q : Rat) :
+    (holFloatRoundWithFlagsR mode toNeg (q : ℝ) : HolFloatFlags × HolFloat t w) =
+      holFloatRoundWithFlags mode toNeg q := by
+  have ha : |(q : ℝ)| = ((holRatAbs q : Rat) : ℝ) := (holRatAbs_cast q).symm
+  have h1 : ((2 : ℝ) ^ holIntMin w ≤ ((holRatAbs q : Rat) : ℝ)) ↔
+      ((2 : Rat) ^ holIntMin w ≤ holRatAbs q) := by
+    constructor <;> intro h <;> exact_mod_cast h
+  have h2 : (((holRatAbs q : Rat) : ℝ) < (2 : ℝ) / (2 : ℝ) ^ holFloatBias w) ↔
+      (holRatAbs q < (2 : Rat) / (2 : Rat) ^ holFloatBias w) := by
+    have hc : (2 : ℝ) / (2 : ℝ) ^ holFloatBias w =
+        (((2 : Rat) / (2 : Rat) ^ holFloatBias w : Rat) : ℝ) := by
+      push_cast; rfl
+    rw [hc, Rat.cast_lt]
+  unfold holFloatRoundWithFlagsR holFloatRoundWithFlags
+  simp only [holFloatRoundR_ratCast, holFloatValueR_eq, ha, h1, h2]
+  cases holFloatValue (holFloatRound mode toNeg q : HolFloat t w) <;> simp
+
+/-- The general-real `real_to_float` at a rational is the executed `Rat`
+`holRealToFloat` (used by `int_to_fp64`), for every mode. -/
+theorem holRealToFloatR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (q : Rat) :
+    (holRealToFloatR mode (q : ℝ) : HolFloat t w) = holRealToFloat mode q :=
+  holFloatRoundR_ratCast mode _ q
+
+theorem holRealToFloatWithFlagsR_ratCast {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
+    (q : Rat) :
+    (holRealToFloatWithFlagsR mode (q : ℝ) : HolFloatFlags × HolFloat t w) =
+      holFloatRoundWithFlags mode (decide (mode = .roundTowardNegative)) q :=
+  holFloatRoundWithFlagsR_ratCast mode _ q
 
 end Flapjack

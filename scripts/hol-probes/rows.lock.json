@@ -350,6 +350,12 @@
       "sha256": "7145b829f4bed66ced675507b779c15d232b44bee6fb67e74e0a3102688c76ab"
     },
     {
+      "bytes": 815,
+      "out": "binary_ieee_real_probe.out",
+      "rows": 3,
+      "sha256": "ee1bcb9a7f40d75e314077d881ac33e945ea38e414e91f455f55e59c3f06ad2a"
+    },
+    {
       "bytes": 665,
       "out": "binary_ieee_round_constants_probe.out",
       "rows": 3,
