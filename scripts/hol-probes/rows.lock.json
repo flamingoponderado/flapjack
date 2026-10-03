@@ -1476,6 +1476,7 @@
     {"bytes": 1133, "out": "word_simp_compile_exp_probe.out", "rows": 8, "sha256": "2372b66b7e4b7e497781717e13604d69f8eebfc372a0f062cd45165699b072de"},
     {"bytes": 1073, "out": "word_simp_constant_domain_probe.out", "rows": 13, "sha256": "85b5c2011df7e872ae4754a58b0920f51d2cbb62d2a51bf01b45539324652188"},
     {"bytes": 1671, "out": "word_simp_duplicate_if_source_probe.out", "rows": 14, "sha256": "43e2a16f3007bf87e29712574d126fa5f2ff167b24d7ba12fe5f038d54bec45d"},
+    {"bytes": 703, "out": "word_simp_gc_fun_sf_gc_consts_probe.out", "rows": 2, "sha256": "c4fdf47a8ad258417dac678e00febb799c84cbf665af6ddc585eae5051edd618"},
     {"bytes": 1793, "out": "word_simp_generic_carriers_probe.out", "rows": 14, "sha256": "b3d87363f5e552fae3e205386e0abaea710c480ecedd87b735f75010aea8bd71"},
     {"bytes": 2167, "out": "word_simp_proof_compile_exp_thm_probe.out", "rows": 11, "sha256": "8ed4435d7dc073ea5ebe018a20172278af0b4d8afb912a119fa1b00b1d0ece33"},
     {"bytes": 792, "out": "word_simp_seq_assoc_source_probe.out", "rows": 16, "sha256": "2fd6b047d0c69842afe024cf07c1d1cf42e962b656da8f68bcd44bac95a662b4"},

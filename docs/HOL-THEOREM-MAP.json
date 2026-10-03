@@ -73789,6 +73789,19 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
+    "lean_name": "gc_fun_sf_gc_consts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
+    "hol_name": "gc_fun_sf_gc_consts",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store",
+      "store'"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-wordsimp-gc-transition-tag) against word_simpProofScript.sml:563-572: !s s'l s' gc_fun memory memory' mdomain store store'. gc_fun_const_ok gc_fun /\\ gc_fun (enc_stack s, memory, mdomain, store) = SOME (s'l, memory', store') /\\ dec_stack s'l s = SOME s' ==> LIST_REL sf_gc_consts s s'. All nine binders retained in HOL order with the same conjunctive premise and LIST_REL (List.Forall2) conclusion. store/store' are standalone HOL |-> finite maps on the canonical HolFiniteMapExact carrier (bare fmap_as_finite_support_relation entries, no owning-carrier witness needed). gc_fun has the separately tagged, source-reviewed gc_fun_type alias WordSemGcFun; its nested argument_4/result_3 maps carry that alias's reviewed slot translation (as for gc_sf_gc_consts's s.gc_fun); gc_fun_const_ok is the tagged gcFunConstOk. memory/mdomain are total functions as in HOL ('a word -> 'a word_loc, 'a word -> bool). Positive-width words under NeZero. Proof via enc_stack_dec_stack_is_gc_word_const as in HOL. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/Proofs/GcConsts.lean",
     "lean_name": "gc_sf_gc_consts",
     "hol_path": "cakeml/compiler/backend/proofs/word_simpProofScript.sml",
     "hol_name": "gc_sf_gc_consts",

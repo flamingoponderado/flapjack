@@ -6506,6 +6506,9 @@ run_probe labprops_evaluate_add_clock_io_events_mono_probeScript.sml labprops_ev
 run_probe stack_rawcall_call_tail_probeScript.sml stack_rawcall_call_tail_probe.out \
   call_tail_full_statement call_tail_full_hypotheses call_tail_case64 call_tail_case80 call_tail_evaluate_ind_obligation call_tail_direct64 call_tail_handler64 call_tail_direct80 call_tail_handler80 \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_simp_gc_fun_sf_gc_consts_probeScript.sml word_simp_gc_fun_sf_gc_consts_probe.out \
+  gc_fun_sf_gc_consts_statement gc_fun_sf_gc_consts_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_simp_proof_compile_exp_thm_probeScript.sml word_simp_proof_compile_exp_thm_probe.out \
   compile_exp_thm_statement compile_exp_thm_hypotheses evaluate_Seq_assoc_statement evaluate_simp_push_out_if_statement evaluate_simp_duplicate_if_statement evaluate_const_fp_statement evaluate_const_fp_loop_statement evaluate_sf_gc_consts_statement evaluate_gc_fun_const_ok_statement evaluate_drop_consts_statement evaluate_Loop_body_cong_gc_statement \
   "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
