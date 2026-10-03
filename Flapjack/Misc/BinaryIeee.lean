@@ -9,7 +9,9 @@ Declarations matching the pinned HOL source are tagged with references to
 `HOL/src/floating-point/binary_ieeeScript.sml` (bead `flapjack-h29l.6.2.8`);
 the wordSem `inst_def` port uses them through `Flapjack.Misc.MachineIeee`.
 `HolFloatValue` carries `Rat` where HOL `float_value` carries `real` and its
-own source names no rendering declaration, so it stays untagged.
+own source names no rendering declaration, so it stays untagged; the tagged
+`float_value` datatype over Mathlib `ℝ` is `HolFloatValueR`
+(`Flapjack.Misc.BinaryIeeeSqrt.RealCarrier`).
 
 Rendering choices:
 * HOL `('t, 'w) float` is `HolFloat t w`.  `'t word` and `'w word` are
@@ -151,10 +153,9 @@ def holFloatNegate {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) 
 def holFloatAbs {t : Nat} {w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := 0 }
 
-/-- HOL `float_compare = LT | EQ | GT | UN` (`binary_ieeeScript.sml:755`).
-    Constructor-for-constructor equal to HOL, but untagged: HOL declares it
-    in the single-line `Datatype:  float_compare = ...` form, which
-    `scripts/check-hol-refs.py` does not index yet. -/
+/-- HOL `float_compare = LT | EQ | GT | UN` (`binary_ieeeScript.sml:755`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_compare"
+  (reals_as_rational_cuts)]
 inductive HolFloatCompare where
   | lt
   | eq
