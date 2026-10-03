@@ -29433,7 +29433,7 @@
     "hol_name": "prog_comp_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
+    "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open. Section-name carrier: HOL prog_comp/compile/MAP_FST_compile are polymorphic in the section name 'a; the Lean definitions and theorem take a generic {Name : Type}, and the executed stack_to_lab callers instantiate Nat. Typed evidence: stack_names_carrier probe (prog_comp_def n : 'a, compile_def prog : ('a # 'b prog) list, plus an EVAL with string names mirrored by a kernel-checked example in Flapjack/Test/StackNamesProgramParity.lean) and stack_names_map_fst_compile probe (c : ('a # 'b prog) list)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackNames/ProgramNames.lean",
@@ -29442,7 +29442,7 @@
     "hol_name": "compile_def",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
+    "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open. Section-name carrier: HOL prog_comp/compile/MAP_FST_compile are polymorphic in the section name 'a; the Lean definitions and theorem take a generic {Name : Type}, and the executed stack_to_lab callers instantiate Nat. Typed evidence: stack_names_carrier probe (prog_comp_def n : 'a, compile_def prog : ('a # 'b prog) list, plus an EVAL with string names mirrored by a kernel-checked example in Flapjack/Test/StackNamesProgramParity.lean) and stack_names_map_fst_compile probe (c : ('a # 'b prog) list)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackNames/ProgramNames.lean",
@@ -29451,7 +29451,7 @@
     "hol_name": "MAP_FST_compile",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open."
+    "reviewer": "flapjack-luna-b source comparison stack_names56-107 and proof268-272: literal comp recursion uses exact Spt Nat tlookup with identity fallback, exact positive-width HolProg and MlString FFI carrier, exact operand/instruction renamers. Call optional tuples preserve labels while recursing bodies and renaming link/indirect destination; other labels/immediates unchanged. List entry/map equations and unconditional MAP_FST conclusion match HOL. Kernel functional induction proves raw-helper correspondence with no extra premise;15originalHOL program rows replayed. Parent production naming boundary migration remains open. Section-name carrier: HOL prog_comp/compile/MAP_FST_compile are polymorphic in the section name 'a; the Lean definitions and theorem take a generic {Name : Type}, and the executed stack_to_lab callers instantiate Nat. Typed evidence: stack_names_carrier probe (prog_comp_def n : 'a, compile_def prog : ('a # 'b prog) list, plus an EVAL with string names mirrored by a kernel-checked example in Flapjack/Test/StackNamesProgramParity.lean) and stack_names_map_fst_compile probe (c : ('a # 'b prog) list)."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Names.lean",
@@ -87248,7 +87248,7 @@
     "lean_name": "stackRemoveProgCompNoShmemop",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4851-4856: ∀p. no_shmemop p ⇒ no_shmemop (SND (prog_comp jump off k (n,p))). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4851-4856: ∀p. no_shmemop p ⇒ no_shmemop (SND (prog_comp jump off k (n,p))). HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise. Section-name carrier: HOL's type variable (n : 'b, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -87275,7 +87275,7 @@
     "lean_name": "stackNamesProgCompNoShmemop",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4885-4894: MAP (stack_names$prog_comp f) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4885-4894: MAP (stack_names$prog_comp f) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise. Section-name carrier: HOL's type variable (prog : ('a # 'b prog) list, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -87284,7 +87284,7 @@
     "lean_name": "stackNamesCompileNoShmemop",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4896-4902: stack_names$compile names preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4896-4902: stack_names$compile names preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise. Section-name carrier: HOL's type variable (prog : ('a # 'b prog) list, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -87329,7 +87329,7 @@
     "lean_name": "stackRemoveProgCompNoShmemopMap",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4961-4971: MAP (stack_remove$prog_comp jump offset sp) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:4961-4971: MAP (stack_remove$prog_comp jump offset sp) preserves EVERY no_shmemop. HOL no_shmemop/no_share_mem_inst over the reviewed StackProps.noShmemop (Bool, so p ⇒ q is p = true → q = true) and LabProps.noShareMemInst; EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2; free variables implicit. No added premise. Section-name carrier: HOL's type variable (prog : ('a # 'b prog) list, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -87446,7 +87446,7 @@
     "lean_name": "stackRemoveProgCompNoInstall",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5112-5117. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5112-5117. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain. Section-name carrier: HOL's type variable (n : 'b, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -87473,7 +87473,7 @@
     "lean_name": "stackNamesProgCompNoInstall",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5146-5155. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5146-5155. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain. Section-name carrier: HOL's type variable (prog : ('a # 'b prog) list, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
@@ -87482,7 +87482,7 @@
     "lean_name": "stackNamesCompileNoInstall",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5157-5163. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain."
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:5157-5163. Statement as captured by the probe, over the reviewed StackProps.noInstall (Bool, so p ⇒ q is p = true → q = true) and labProps no_install (LabProps.noInstall, a fetched-Install exclusion); EVERY (λ(a,p). P p) l is ∀ ap ∈ l, P ap.2 and EVERY (λln. ∀w bytes l. ln ≠ LabAsm Install w bytes l) is a membership quantifier; free variables implicit; pass definitions are the reviewed StackRawCall/StackAlloc/StackRemove/StackNames/StackToLab ones. No added premise. Mirrors the no_shmemop chain. Section-name carrier: HOL's type variable (prog : ('a # 'b prog) list, per the typed probe rows) is the generic Lean {Name : Type} binder, not Nat; executed callers instantiate Nat."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",

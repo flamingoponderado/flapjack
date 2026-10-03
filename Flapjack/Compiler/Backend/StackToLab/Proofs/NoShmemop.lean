@@ -254,8 +254,8 @@ theorem stackRemoveCompNoShmemop {width : Nat} [NeZero width] :
 /-- HOL `stack_remove_prog_comp_no_shmemop`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_remove_prog_comp_no_shmemop" (words_as_type_indexed_bitvec)]
-theorem stackRemoveProgCompNoShmemop {width : Nat} [NeZero width] {jump : Bool}
-    {off : BitVec width × BitVec width} {k n : Nat} :
+theorem stackRemoveProgCompNoShmemop {width : Nat} [NeZero width] {Name : Type} {jump : Bool}
+    {off : BitVec width × BitVec width} {k : Nat} {n : Name} :
     ∀ p : HolProg width, noShmemop p = true →
       noShmemop (StackRemove.progComp jump off k (n, p)).2 = true :=
   fun p h => stackRemoveCompNoShmemop jump off k p h
@@ -295,8 +295,8 @@ theorem stackRemoveCompileNoShmemop {width : Nat} [NeZero width] {jump : Bool}
 /-- HOL `stack_remove_prog_comp_no_shmemop_MAP`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_remove_prog_comp_no_shmemop_MAP" (words_as_type_indexed_bitvec)]
-theorem stackRemoveProgCompNoShmemopMap {width : Nat} [NeZero width] {jump : Bool}
-    {offset : BitVec width × BitVec width} {sp : Nat} {prog : List (Nat × HolProg width)} :
+theorem stackRemoveProgCompNoShmemopMap {width : Nat} [NeZero width] {Name : Type} {jump : Bool}
+    {offset : BitVec width × BitVec width} {sp : Nat} {prog : List (Name × HolProg width)} :
     (∀ ap ∈ prog, noShmemop ap.2 = true) →
       ∀ ap ∈ prog.map (StackRemove.progComp jump offset sp), noShmemop ap.2 = true := by
   intro h ap hap
@@ -319,8 +319,8 @@ theorem stackNamesCompNoShmemop {width : Nat} [NeZero width] :
 /-- HOL `stack_names_prog_comp_no_shmemop`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_names_prog_comp_no_shmemop" (words_as_type_indexed_bitvec)]
-theorem stackNamesProgCompNoShmemop {width : Nat} [NeZero width] {f : Spt Nat} :
-    ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noShmemop ap.2 = true) →
+theorem stackNamesProgCompNoShmemop {width : Nat} [NeZero width] {Name : Type} {f : Spt Nat} :
+    ∀ prog : List (Name × HolProg width), (∀ ap ∈ prog, noShmemop ap.2 = true) →
       ∀ ap ∈ prog.map (StackNames.progCompEntryHOL f), noShmemop ap.2 = true := by
   intro prog h ap hap
   obtain ⟨⟨a, p⟩, hm, rfl⟩ := List.mem_map.mp hap
@@ -329,8 +329,8 @@ theorem stackNamesProgCompNoShmemop {width : Nat} [NeZero width] {f : Spt Nat} :
 /-- HOL `stack_names_compile_no_shmemop`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_names_compile_no_shmemop" (words_as_type_indexed_bitvec)]
-theorem stackNamesCompileNoShmemop {width : Nat} [NeZero width] {names : Spt Nat}
-    {prog : List (Nat × HolProg width)} :
+theorem stackNamesCompileNoShmemop {width : Nat} [NeZero width] {Name : Type} {names : Spt Nat}
+    {prog : List (Name × HolProg width)} :
     (∀ ap ∈ prog, noShmemop ap.2 = true) →
       ∀ ap ∈ StackNames.compileHOL names prog, noShmemop ap.2 = true :=
   stackNamesProgCompNoShmemop prog

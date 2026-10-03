@@ -2913,6 +2913,13 @@ run_probe stack_names_instruction_probeScript.sml stack_names_instruction_probe.
 run_probe stack_names_program_probeScript.sml stack_names_program_probe.out \
   seq if loop call_none call_ret call_exc call_both install shared buffer jump loc continue default compile "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
 
+run_probe stack_names_carrier_probeScript.sml stack_names_carrier_probe.out \
+  prog_comp_def_statement prog_comp_def_statement_typed prog_comp_def_statement_types compile_def_statement compile_def_statement_typed compile_def_statement_types compile_string_names "$cake_dir/compiler/backend/stack_namesScript.sml" "$cake_dir/compiler/backend"
+
+run_probe stack_names_map_fst_compile_probeScript.sml stack_names_map_fst_compile_probe.out \
+  MAP_FST_compile_statement MAP_FST_compile_statement_typed MAP_FST_compile_statement_types \
+  "$cake_dir/compiler/backend/proofs/stack_namesProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe riscv_names_tlookup_probeScript.sml riscv_names_tlookup_probe.out \
   names "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" "$cake_dir/compiler/backend/riscv"
 
