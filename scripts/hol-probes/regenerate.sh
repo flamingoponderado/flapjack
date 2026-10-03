@@ -6553,3 +6553,6 @@ run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine
 run_probe word_to_stack_stack_move_clock_probeScript.sml word_to_stack_stack_move_clock_probe.out \
   evaluate_stack_move_clock_statement evaluate_stack_move_clock_proved evaluate_stack_move_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_comp_correct_probeScript.sml stack_rawcall_comp_correct_probe.out \
+  comp_correct_full_statement comp_correct_full_hypotheses comp_correct_arbitrary_program1 comp_correct_arbitrary_program8 comp_correct_arbitrary_program64 comp_correct_arbitrary_program80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
