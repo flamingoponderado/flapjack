@@ -90695,5 +90695,28 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison: original local4447-4469 all four guards/seven-conjunct conclusion. Actual compiled wReg1/even/source Add[Var r;Const c] word expression success/full stateRel derive actual native load run, unchanged clock, full relation/stack length/space, original physical-register-not-k+1 and actual target Add expression success. Source read and wordOpHOL calculation derived internally; arbitrary constant/result, physical or spill source, positive width, independent host/FFI. Native sptree locals/code preserved; canonical five map fields qualified and genuine same-module codec witnesses. No targetexpression/run/postrelation hypothesis or numerical FP claim. The evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8), without an independent agreement claim. Fresh literal original local proof replay with unchanged original Reg1 support and full typed statement regenerated and reviewed: T/hypotheses0, all four guards/seven result conjuncts, common word dimension/independent host-FFI; no cross-language equivalence claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "FST_compile_single",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingle.lean",
+    "lean_name": "FST_compile_single",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.47): HOL FST_compile_single (word_to_wordProofScript.sml:25-29): FST (compile_single a b c d e) = FST (FST e), free a b c d e as explicit binders of the typed carriers (bool, num, num, 'a asm_config as AsmConfigExact width, (num # num # 'a prog) # num num_map option); FST as .1, over the tagged compileSingle; proof by pattern on e and rfl. Positive HOL word dimension is the sole carrier translation. Typed capture in word_to_word_compile_single."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_lem",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingle.lean",
+    "lean_name": "compile_single_lem",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.47): HOL compile_single_lem (word_to_wordProofScript.sml:32-157). Full statement kept: free t k a c name col as leading binders, ∀prog n st, premises domain st.locals = set (even_list n) (sptDomain as the predicate of membership in the tagged evenList, as in the accepted full_ssa_cc_trans_correct) ∧ gc_fun_const_ok st.gc_fun (tagged gcFunConstOk); conclusion ∃perm' with HOL's let-pairs, the cprog of the tagged compileSingle, if res = SOME Error then T (decided classically, as in the accepted word_alloc_correct) else res = res' ∧ word_state_eq_rel (tagged wordStateEqRel) ∧ the HOL case on res (Break/Continue → T, other SOME → locals equal), over the faithful wordSem evaluate on WordSemStateFiniteExact width C F (HOL (α,β,γ) state). Proof follows HOL: word_alloc_correct then full_ssa_cc_trans_correct (witness), compile_exp_thm, inst_select_thm (locals_rel reflexive), evaluate_remove_dead_prog, word_common_subexp_elim_correct, evaluate_copy_prop, evaluate_three_to_two_reg_prog, evaluate_remove_unreach, evaluate_remove_dead_prog, with the syntactic premises from the tagged convention theorems (inst_select/full_ssa/remove_dead/word_cse/copy_prop/three_to_two/remove_unreach flat_exp_conventions, wf_cutsets and every_inst distinct_tar_reg); the reviewed distinct_tar_reg through HolInst.ofWordLangInst is shown pointwise equal to the executed distinctTarReg used by evaluate_three_to_two_reg_prog. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Typed capture in word_to_word_compile_single. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
