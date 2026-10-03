@@ -84849,5 +84849,23 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2835-2840. Free start s1 s2 implicit. All four premises retained: halt_assum (:'ffi#'c) s1.code (reviewed haltAssum C F), state_rel s1 s2, loc_to_pc start 0 s2.code = SOME s2.pc, and stackSem semantics start s1 <> Fail; conclusion labSem semantics s2 = stackSem semantics start s1, both the tagged semantics_def ports. Proof: both semantics rewritten (untagged Flapjack lemmas, by unfolding) as the reviewed semantics_wrapper of their clock-indexed runs, the LabSem family shifted by the call tick, then the ported semantics_wrapper_eq with flatten_call_correct, stackProps/labProps evaluate_add_clock and evaluate_add_clock_io_events_mono. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/StoreConsts.lean",
+    "lean_name": "compCorrectStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison6053-6130 original comp_correct5756/motive5719-5751: entire Seq.Simulation over arbitrary original four registers/constants/source/config/width. Every original premise and full existential targetrun/result/resource conclusion retained. Original convention derives0/2/4/6; source nonerror derives actual word reads/addressguard/fullpoststate. Original insertion/prefix/index guards derive actual bitmap slice/index. Full copy_words_correct gives actual native memory-copy result; relation provides stub/flags/goodDimindex/word-index bound. Actual inst/storeConsts execution with zero additional clock and entire post-state relation proved, including full source local updates/deletions, scratch registers, frame, stack, compiler metadata, domains and memory. No added read/run/postrelation/memory/address/bounds assumptions. Five canonical finite-map owners/positive words and local genuine codecs; inherited reals_as_rational_cuts retained. Original full case obligation and arbitrary theorem specialization captured; no cross-language equivalence claim. Literal original Resume StoreConsts proof6054-6125 replayed on full evaluate_ind obligation with original theory-open order and simplifier setup; hyp0/T, separately closed arbitrary specialization hyp0/T.",
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 5756
   }
 ]

@@ -9650,6 +9650,12 @@
       "sha256": "ea66dca1c01400b91cae2176b03bfc48b10c22e4ecacb0f8b68e09bb9759ece8"
     },
     {
+      "out": "word_to_stack_comp_storeconsts_probe.out",
+      "sha256": "a43cd02802e1605be36e8fcd385e681534bb9616bf712316279ecebb851be9f1",
+      "bytes": 3759,
+      "rows": 6
+    },
+    {
       "bytes": 89,
       "out": "word_to_stack_compile_keys_probe.out",
       "rows": 7,
