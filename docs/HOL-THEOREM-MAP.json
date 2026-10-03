@@ -54114,6 +54114,210 @@
     "reviewer": "flapjack-opus source comparison 2026-10-02 (bead flapjack-pxn.18.5.15.5.3), word_gcFunctionsScript.sml:591-596: word_gc_fun c (xs,m,dm,s) = SOME (zs,m1,s1) ==> LENGTH xs = LENGTH zs; store binders s and s1 are the canonical HolFiniteMapExact carrier (bare relation entries). HOL 'a word as positive-width BitVec width with [NeZero width], 'a word_loc as WordLocW width; no hypothesis, side condition or conclusion change. The statement mentions word_gc_fun, whose HOL HD is the reviewed total holHd (unspecified HD [] value), so this is an EL/HD-dependent row reviewed against holHd."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_fun_assum_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGcFunAssum_hasFpOps",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "s"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:599-604. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. HOL bool equation (⇔) is Lean Prop equality; the free store s : store_name |-> 'a word_loc is the canonical HolFiniteMapExact binder (bare relation entry s). No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGcMove_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:606-613. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcMove_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:615-622. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcPartialMove_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:624-631. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_list_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGcMoveList_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:633-641. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_list_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcMoveList_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:643-651. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_list_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcPartialMoveList_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:653-661. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_roots_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGcMoveRoots_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:663-671. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_roots_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcMoveRoots_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:673-681. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_roots_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcPartialMoveRoots_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:683-691. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_move_loop_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGcMoveLoop_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:693-701. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_data_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcPartialMoveData_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:703-711. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_data_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcMoveData_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:713-721. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_refs_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcMoveRefs_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:723-731. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_move_ref_list_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcPartialMoveRefList_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:733-741. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_move_loop_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcMoveLoop_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:743-751. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_full_gc_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordFullGc_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:753-759. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_partial_full_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGcPartialFull_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:761-768. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gen_gc_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGenGc_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:770-777. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "glob_real_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "globReal_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:779-784. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "word_gc_fun_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions/HasFpOps.lean",
+    "lean_name": "wordGcFun_hasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:786-791. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. An equation between functions as in HOL; the type ascription on wordGcFun only fixes the word width. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "init_store_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/InitStoreOk.lean",
+    "lean_name": "initStoreOk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_word_gcProofScript.sml:4569-4598, captured by the data_to_word_gc_init_store_ok probe. All eighteen conjuncts under ∃limit curr in HOL order: FLOOKUP store n is store.lookup n on the canonical HolFiniteMapExact binder store (bare relation entry), Word w is WordLocW.word, bytes_in_word is wordSemBytesInWord, n2w is BitVec.ofNat width, the gc_kind case keeps Generational ⇒ curr and the other two kinds ⇒ curr + bytes_in_word * n2w limit, buffer fields are the reviewed WordSemBuffer position/buffer/spaceLeft, word_list_exists/fun2set/byte_aligned are Misc.wordListExists/SetSep.fun2Set/holByteAligned. HOL's types are kept generic (probe types): memory values m : 'a word -> 'b as β, and the buffers' element widths 'c/'d as cw/dw with their own NeZero; dm : 'a word set is a Bool predicate, so fun2set (m,dm) is fun2Set (m, fun a => dm a = true), as in the reviewed init_prop. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
     "hol_name": "While",
     "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
@@ -86671,6 +86875,24 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_removeProofScript.sml:4320-4349: compile jump off gen_gc n k pos p = p' ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p) ⇒ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p'), free variables implicit in order, over StackRemove.compileHOL (argument order jump off gen_gc max_heap pointer start). Proof: init stubs (init_code, halt_inst) and comp-preservation via untagged helper lemmas mirroring the source EVAL/completeInduct steps."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_comp_stack_asm_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/AsmName.lean",
+    "lean_name": "stackRemoveCompStackAsmName",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_removeProofScript.sml:4209-4278. Statement as captured by the stack_remove_asm_name probe: ∀jump off k p. the eleven premises in HOL order (stack_asm_name c p, stack_asm_remove c p, addr_offset_ok c 0w, good_dimindex, the max_stack_alloc valid_imm family, ∀s. addr_offset_ok c (store_offset s), reg_name (k+2)/(k+1)/k, k ≠ 0, off = c.addr_offset) ⇒ stack_asm_name c (comp jump off k p). addr_offset_ok c w is asmAddrOffsetOkExact c w = true, good_dimindex (:'a) is goodDimindex width, n2w (n * (dimindex (:'a) DIV 8)) is BitVec.ofNat width (n * (width / 8)), INL Add/Sub are Sum.inl .add/.sub, valid_imm/addr_offset are the AsmConfigExact fields; c : 'a asm_config shares the program width (probe types); free variables implicit; definitions are the reviewed StackProps.stackAsmName/stackAsmRemove/regName and StackRemove.comp/compileHOL/storeOffset. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_stack_asm_name",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/AsmName.lean",
+    "lean_name": "stackRemoveStackAsmName",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_removeProofScript.sml:4280-4300. Statement as captured by the probe: the thirteen premises in HOL order (EVERY stack_asm_name / stack_asm_remove over prog as membership quantifiers, addr_offset_ok c 0w, good_dimindex, the valid_imm family, valid_imm (INL Add) 4w and 8w, store offsets, reg_name 7, reg_name (k+2)/(k+1)/k, k ≠ 0) ⇒ EVERY (λ(n,p). stack_asm_name c p) (compile jump c.addr_offset gen_gc max_heap k start prog). addr_offset_ok c w is asmAddrOffsetOkExact c w = true, good_dimindex (:'a) is goodDimindex width, n2w (n * (dimindex (:'a) DIV 8)) is BitVec.ofNat width (n * (width / 8)), INL Add/Sub are Sum.inl .add/.sub, valid_imm/addr_offset are the AsmConfigExact fields; c : 'a asm_config shares the program width (probe types); free variables implicit; definitions are the reviewed StackProps.stackAsmName/stackAsmRemove/regName and StackRemove.comp/compileHOL/storeOffset. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
     "hol_name": "full_make_init_semantics",
     "hol_line": 3365,
@@ -87935,6 +88157,47 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:4578-4582. Statement as captured by the probe: x ∈ restrict_nonzero s ⇔ x ∈ s ∧ SND x ≠ 0, SND x is x.2. No word carrier; free variables implicit. No added premise."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "EVERY_sec_ends_with_label_MAP_prog_to_section",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "everySecEndsWithLabelMapProgToSection",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3620-3625. Statement as captured by the probe: ∀prog. EVERY sec_ends_with_label (MAP prog_to_section prog); EVERY is a membership quantifier over the reviewed LabProps.secEndsWithLabelNative and progToSectionHOL; 'a prog is HolProg width with [NeZero width]. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_has_fp_ops",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "fullMakeInitHasFpOps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3789-3798. Statement as captured by the probe: full_make_init stack_conf (dconf with <|has_fp_ops := b1; has_fp_tern := b2|>) mheap sp offset bitmaps code s save_regs dsp cor = full_make_init stack_conf dconf …, over the reviewed FullMakeInit.fullMakeInit; HOL's oracle and lab-state type variables 'b 'c are the host types C F : Type; 'a word is BitVec width with [NeZero width]; all eleven arguments explicit in HOL's order, free variables implicit. The proof uses the ported word_gc_fun_has_fp_ops, as HOL does through its simpset. No added premise. Inherits reals_as_rational_cuts: the fullMakeInit closure reaches the reviewed binary64 rendering through the state's semantics (docs/SOUNDNESS.md item 8); the marker propagates that assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_to_lab_compile_all_enc_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "stackToLabCompileAllEncOk",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3679-3702. Statement as captured by the stack_to_lab_encoding_init_state probe: the twenty premises in HOL order (EVERY stack_asm_name/stack_asm_remove over prog as membership quantifiers; names_ok c1.reg_names c.reg_count c.avoid_regs as namesOkSptHOL; fixed_names; addr_offset_ok c 0w; good_dimindex; byte_offset_ok c 0w; the max_stack_alloc valid_imm family with n2w (n * (dimindex (:'a) DIV 8)) as BitVec.ofNat width (n * (width / 8)); valid_imm (INL Add) 1w/(INL Sub) 1w/(INL Add) 4w/8w; store offsets; reg_name 10, sp+2, sp+1, sp; conf_ok (:'a) c2 as DataToWord.confOk width c2; sp ≠ 0) ⇒ all_enc_ok_pre c (compile c1 c2 c3 sp c.addr_offset prog), the HOL overload all_enc_ok_pre rendered by the untagged allEncOkPreHOL (EVERY sec_ok_pre) over the reviewed StackToLab.compile; c : 'a asm_config shares the program width (probe types); free variables implicit. The proof composes the ported compile_all_enc_ok_pre, stack_names_stack_asm_ok, stack_remove_stack_asm_name, stack_allocProof stack_alloc_stack_asm_convs and stack_rawcallProof stack_alloc_stack_asm_convs, as HOL does. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "IMP_init_store_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "impInitStoreOk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3704-3736, captured by the stack_to_lab_encoding_init_state probe: max_heap = 2 * max_heap_limit (:'a) c1 − 1 ∧ (fmis,xxx) = full_make_init stack_conf c1 max_heap sp offset bitmaps code s save_regs data_sp coracle ⇒ init_store_ok c1 (fmis.store \\\\ Handler) fmis.memory fmis.mdomain fmis.code_buffer fmis.data_buffer. Natural subtraction kept; DOMSUB is the reviewed HolFiniteMapExact.eraseEq; the store field of the imported StackSemStateFiniteExact owner is the canonical finite-support carrier, with the same-module relation witness; oracle and lab-state type variables are C F : Type. Inherits reals_as_rational_cuts through the fullMakeInit closure (SOUNDNESS item 8); the marker propagates that assumption only. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
     "hol_name": "stack_get_handler_labels_comp",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/HandlerLabels.lean",
@@ -87942,6 +88205,24 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_rawcallProofScript.sml:956-975. Statement as captured by the stack_to_lab_good_code_labels probe: ∀i p k. stack_get_handler_labels k (comp i p) = stack_get_handler_labels k p ∧ stack_get_handler_labels k (comp_top i p) = stack_get_handler_labels k p, over the reviewed StackRawCall.comp/compTop and StackProps.stackGetHandlerLabels; 'a prog is HolProg width with [NeZero width]. No premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_asm_name_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/AsmNames.lean",
+    "lean_name": "stackAsmNameComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_rawcallProofScript.sml:838-860. Statement as captured by the stack_rawcall_asm_names probe: ∀i p. ((stack_asm_name c (comp i p) ⇔ stack_asm_name c p) ∧ (… comp_top …)) ∧ (stack_asm_remove c (comp i p) ⇔ …) ∧ (… comp_top …); HOL bool equations are Lean Prop equalities over the reviewed StackProps.stackAsmName/stackAsmRemove and StackRawCall.comp/compTop; c : 'a asm_config shares the program width (probe types), so AsmConfigExact width; free c implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_alloc_stack_asm_convs",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/AsmNames.lean",
+    "lean_name": "stackAllocStackAsmConvs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_rawcallProofScript.sml:862-869 (the stack_rawcall theorem of this name, not stack_allocProof's). Statement as captured by the probe: (EVERY (λ(n,p). stack_asm_name c p) (compile prog) ⇔ EVERY (λ(n,p). stack_asm_name c p) prog) ∧ (the same for stack_asm_remove); EVERY (λ(n,p). P p) l is ∀ np ∈ l, P np.2 and ⇔ is Prop equality; compile is the reviewed StackRawCall.compile; c : AsmConfigExact width as in the probe types; free c prog implicit. No added premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",

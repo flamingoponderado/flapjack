@@ -776,9 +776,12 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
 import Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
+import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
+import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.Conventions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs
@@ -1321,6 +1324,8 @@ import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
