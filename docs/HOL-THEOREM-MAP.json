@@ -74338,13 +74338,5 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison2026-10-03 source11417-11434/11461-11484: full original program-colouring validity plus forced-edge separation implication, and full allocator source-validity-only implication. Exact AsmConfigExact/fullInstOkLessExact uses reviewed HolInst.ofWordLangInst constructor conversion, original getForced, applyColour and wordAlloc. BitVec width with NeZero is the sole carrier translation. No output validity, successful allocator or target evaluation premise. All ISA cases, unchanged word immediates/offsets and float registers, 32-bit FP integer-register separation, and ShareInst address recognition/offset partition retained. Tail Call NONE ignores handlers exactly as source. Uses full original selectRegAllocCorrect, getForcedInGetClashTree, getForcedPairwiseDistinct to derive separation; oracle success guard supplies its forced separation. Source hypotheses/conclusions unchanged."
-  },
-  {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/InstructionConventions.lean",
-    "lean_name": "instructionColour_preserves",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only instruction-case factoring of the Inst case in original word_alloc_full_inst_ok_less_lem, not separately declared in HOL. Both original instruction validity and original getForced edge separation premises retained; exhaustive native instruction/ISA/memory/FP cases."
   }
 ]
