@@ -76096,5 +76096,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:10547-10623, original FFI case. Same is_alloc_var next and ssa_map_ok next ssa premises; complete pre_alloc_conventions actual native compiler-output conclusion. Entire translated cutset stack class derived from actual list_next_var_rename_move equality, unconditional native Spt key distinctness, original renaming arithmetic/lookup and original union/every_name lemmas. No target cutset/convention, map validity or execution premise added. Native WordLang/Spt/List carriers retained, including original FFI mlstring via native Basis.Pure.MlString.MlString rather than String or Nat. words_as_type_indexed_bitvec is the sole positive-word-dimension translation. Full recursive theorem assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Calls.lean",
+    "lean_name": "ssaCcTrans_preAllocTailCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10624-10713 and native ssaCcTrans Call clauses: full original tail/returning Call case, arbitrary optional exception handler, same is_alloc_var next and ssa_map_ok next ssa premises and full pre_alloc_conventions of actual compiler output. Returning Call binds only genuine generalized structural induction hypotheses for actual return and optional exception subprograms. Stack cutset classes, fresh handler map bounds, canonical argument/return registers and both reconciliation conventions derived from original producers and native SSA properties. No target-run or target-convention premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Calls.lean",
+    "lean_name": "ssaCcTrans_preAllocReturningCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10624-10713 and native ssaCcTrans Call clauses: full original tail/returning Call case, arbitrary optional exception handler, same is_alloc_var next and ssa_map_ok next ssa premises and full pre_alloc_conventions of actual compiler output. Returning Call binds only genuine generalized structural induction hypotheses for actual return and optional exception subprograms. Stack cutset classes, fresh handler map bounds, canonical argument/return registers and both reconciliation conventions derived from original producers and native SSA properties. No target-run or target-convention premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
   }
 ]
