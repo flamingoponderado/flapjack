@@ -6847,3 +6847,7 @@ run_probe pan_structs_flatten_conversion_probeScript.sml pan_structs_flatten_con
 run_probe lab_to_target_filter_preconditions_probeScript.sml lab_to_target_filter_preconditions_probe.out \
   all_enc_ok_pre_filter_skip all_enc_ok_pre_filter_skip_types all_enc_ok_pre_filter_skip_hypotheses all_enc_ok_pre_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_find_ffi_every_probeScript.sml lab_to_target_find_ffi_every_probe.out \
+  find_ffi_names_EVERY find_ffi_names_EVERY_types find_ffi_names_EVERY_hypotheses find_ffi_names_EVERY_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

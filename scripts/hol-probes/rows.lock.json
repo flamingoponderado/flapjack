@@ -2246,6 +2246,12 @@
       "sha256": "b19f629e740308a4cd407d297fad1feafe116d7e9861093257d47df8fbfa24ea"
     },
     {
+      "bytes": 314,
+      "out": "lab_to_target_find_ffi_every_probe.out",
+      "rows": 4,
+      "sha256": "70db9eaa62888238898dad7f631946c64c6d32c8f021628ab568d828930f058d"
+    },
+    {
       "bytes": 1175,
       "out": "lab_to_target_good_code_probe.out",
       "rows": 17,
