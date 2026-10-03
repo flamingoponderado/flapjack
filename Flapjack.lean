@@ -1,4 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
+import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
@@ -7,7 +9,6 @@ import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.RiscV.L3.Defs.CSRAccess
 import Flapjack.RiscV.L3.Defs.MachineCSRCodec
-import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreConsts
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
