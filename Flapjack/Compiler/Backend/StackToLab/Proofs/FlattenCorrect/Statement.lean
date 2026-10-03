@@ -73,6 +73,13 @@ def FlattenIH {width : Nat} [NeZero width] {C F : Type}
   ∀ (p' : HolProg width) (s' : StackSemStateFiniteExact width C F),
     MeasureLt p' s' p s → FlattenProp p' s'
 
+theorem appListAppendList {α : Type} (l : List α) : appListAppend (.list l) = l :=
+  (appListAppend_thm .nil .nil l).2.1
+
+theorem appListAppendAppend {α : Type} (a b : AppList α) :
+    appListAppend (.append a b) = appListAppend a ++ appListAppend b :=
+  (appListAppend_thm a b []).1
+
 theorem withSameClock {width : Nat} [NeZero width] {C F : Type}
     (t : Flapjack.Compiler.Backend.LabSem.State width C F) : { t with clock := t.clock } = t := rfl
 
