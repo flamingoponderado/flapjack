@@ -1898,6 +1898,12 @@
       "sha256": "e31c9294f0730336f1427bea37142eddc3d953a75c2beaca41d9749b2bfc71d0"
     },
     {
+      "bytes": 1078,
+      "out": "lab_filter_location_lookup_probe.out",
+      "rows": 12,
+      "sha256": "ba2d1d85473478a70ac9f4dbbc42bba570ac0e62dc08d109d77306814c35b0bd"
+    },
+    {
       "bytes": 567,
       "out": "lab_filter_pc_adjustment_probe.out",
       "rows": 8,
