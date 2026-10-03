@@ -8936,6 +8936,12 @@
       "sha256": "bf1d9991a783c4b5c14b719db78df835174fe15469bcece33ef5717230aa52c0"
     },
     {
+      "bytes": 2197,
+      "out": "wordsem_evaluate_stack_max_probe.out",
+      "rows": 21,
+      "sha256": "efdd71ae05e34b8d74c876081a09f8c239506987e5713f1bfa65f02f57edac3e"
+    },
+    {
       "out": "wordsem_gc_const_probe.out",
       "bytes": 451,
       "rows": 3,

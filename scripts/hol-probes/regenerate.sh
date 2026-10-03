@@ -6216,3 +6216,17 @@ run_probe wordsem_alloc_const_probeScript.sml wordsem_alloc_const_probe.out \
 run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq_non_none_probe.out \
   comp_correct_seq_obligation_statement comp_correct_seq_obligation_proved comp_correct_seq_obligation_hypotheses comp_correct_seq_first_non_none_statement comp_correct_seq_first_non_none_proved comp_correct_seq_first_non_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe wordsem_evaluate_stack_max_probeScript.sml wordsem_evaluate_stack_max_probe.out \
+  evaluate_stack_max_le_statement evaluate_stack_max_le_hypotheses \
+  evaluate_stack_limit_statement evaluate_stack_limit_hypotheses \
+  evaluate_stack_max_statement evaluate_stack_max_hypotheses \
+  evaluate_stack_max_IS_SOME_statement evaluate_stack_max_IS_SOME_hypotheses \
+  evaluate_stack_limit_stack_max_eq_statement evaluate_stack_limit_stack_max_eq_hypotheses \
+  evaluate_stack_limit_stack_max_statement evaluate_stack_limit_stack_max_hypotheses \
+  share_inst_const_statement share_inst_const_hypotheses \
+  cut_state_const_statement cut_state_const_hypotheses \
+  option_le_trans_statement option_le_trans_hypotheses \
+  option_le_max_right_statement option_le_max_right_hypotheses \
+  option_le_def \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
