@@ -6951,3 +6951,14 @@ run_probe riscv_target_wide_arithmetic_probeScript.sml riscv_target_wide_arithme
   wide_mul_long_statement wide_mul_long_types wide_mul_long_hypotheses wide_mul_long_proved wide_product_type wide_slice_type \
   wide_ror_statement wide_ror_types wide_ror_hypotheses wide_ror_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe stack_remove_word_list_exists_add_probeScript.sml stack_remove_word_list_exists_add_probe.out \
+  word_list_exists_ADD_statement word_list_exists_ADD_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_thm_probeScript.sml stack_remove_init_code_thm_probe.out \
+  init_code_thm_statement init_code_thm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_dec_probeScript.sml pan_structs_program_dec_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_dec_statement compile_correct_dec_proved compile_correct_full_types compile_correct_dec_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

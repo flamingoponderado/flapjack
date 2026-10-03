@@ -80975,6 +80975,93 @@
     "hol_line": 5756
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListExistsAdd",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_ADD",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original38-47: forall m n a, word_list_exists a (m + n) = word_list_exists a m * word_list_exists (a + bytes_in_word * n2w m) n as whole predicate equality over accepted word_list_exists_def/STAR ports, arbitrary payload Type and modular addresses; no no-wrap premise. Stored theorem captured with zero hypotheses in scripts/hol-probes/stack_remove_word_list_exists_add_probe.out. Proof-only prerequisite of init_code_thm; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitCodeCorrect.lean",
+    "lean_name": "initCodeThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3225-3837 (captured stored statement): arbitrary gen_gc max_heap k bitmaps data_sp s jump off code coracle; the six original premises in order (accepted init_code_pre, code_rel, compile_oracle = (I ## MAP prog_comp ## I) o coracle as the pointwise triple used by accepted state_rel, oracle reg_bound/stack_num_stubs bound, lookup stack_err_lab = SOME (halt_inst 2w), max_stack_alloc <= max_heap); conclusion is the original case split on the native stackSem evaluate of the actual initCode: SOME branch False, NONE branch the full conjunction: exists w2 w3 w4 with s/t register lookups, byte_aligned, unsigned w2 <+ w4, t.regs k = w4 - bytes_in_word, the conditional (k+1) heap-end equation with literal (w3 + -1w*w2) >>> (shift+1) << (shift+1) + w2 + bytes_in_word * n2w (LENGTH store_list), s.regs 3; state_rel jump off k (init_reduce ... t) t; t.ffi = s.ffi; init_prop gen_gc max_heap data_sp (get_stack_heap_limit max_heap (read_pointers s)) (init_reduce ... t); mdomain and sh_mdomain equalities; fun2set equality on t0.mdomain (Bool domain as membership predicate). Kernel proof uses only propext/Classical.choice/Quot.sound; no target run, post-relation, heap representation or bound assumption. Inherited assumption: the statement mentions the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "compileCorrectDec",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/Dec1089-1113 and panSem evaluate_ind: full ten premises/seven conclusions plus exactly original IH for each source initializer SOME value with declared shape=shape_of value, at body/source locals FUPDATE. No unguarded or strengthened IH or supplied body target/poststate/shape/update facts. Source initializer failure/mismatching shape excluded only by original no-Error; all body incoming FEVERY/WF/context shape maps derived internally from full expression correctness and source invariants. Original body evaluation produces actual result and locals res_var restoration; full guarded IH gives target run and seven postconditions. Source structs/code invariant derives unchanged source structures; original map-restoration equality commutes converted locals with restoration and full FEVERY iff proves restored value validity, retaining both absent/deletion and present/shadowed binding cases. Continuing local shape-map proof uses body map plus original caller map pointwise, restoring original key shape and retaining all other entries. Context locals do not affect converted code because original parameters overwrite them; same key equality decisions shown unique internally, no BEq/DecidableEq compatibility premise. Four imported canonical maps/full two-way witness and positive indexed word/Type0 host translation only. Fresh original full/case and original induction statements/types/closed kernelT reviewed. Full program/production correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "mapExt",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "mapUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "everyUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "convertStateLocalContext",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectDec.lean",
+    "lean_name": "resVarCanonical",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state/map proof plumbing, no independent HOL declaration. Full owning-carrier roundtrip, lookup extensionality/map-update/pointwise validity, overwritten-local-context neutrality, or uniqueness of HOL key equality decisions; none introduces a public simulation/compatibility premise."
+  },
+  {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "lem5",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",

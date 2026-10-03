@@ -297,6 +297,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
@@ -1276,6 +1278,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
