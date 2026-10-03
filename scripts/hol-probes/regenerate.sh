@@ -7544,3 +7544,8 @@ run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_co
 run_probe word_to_stack_inst_carry_overflow_probeScript.sml word_to_stack_inst_carry_overflow_probe.out \
   carry_typed carry_proved carry_hypotheses addOverflow_typed addOverflow_proved addOverflow_hypotheses subOverflow_typed subOverflow_proved subOverflow_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_const_next_probeScript.sml riscv_const_next_probe.out \
+  const_next_wrapper_type const_next_fetch_type const_next_lui_zero const_next_lui_all_ones const_next_addi_zero const_next_addi_all_ones const_next_ori_zero const_next_ori_all_ones const_next_xori_zero const_next_xori_all_ones const_next_slli_zero const_next_slli_all_ones const_next_or_zero const_next_or_all_ones const_next_xor_zero const_next_xor_all_ones \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
