@@ -966,6 +966,7 @@
     {"bytes": 723, "out": "riscv_target_arithmetic_probe.out", "rows": 13, "sha256": "c45afa36b2efab2cb3d75da61ab12f321162178cd70df3396a8f3e292c16bc90"},
     {"bytes": 2186, "out": "riscv_target_bytes_probe.out", "rows": 12, "sha256": "05506bbe778a3c53964a19e96738a99a5cdbe2048594ee84eae2a0b4e03a7821"},
     {"bytes": 960, "out": "riscv_target_helper_links_probe.out", "rows": 9, "sha256": "571d37e96f2f6a61d4ed5b3bfdaf430d635696f9253dd00c915b87798a59d915"},
+    {"bytes": 817, "out": "riscv_target_immediate_probe.out", "rows": 9, "sha256": "f4e7721d55979f49f2f44dca9f95a24ae9489b586734ee624bda1ebaf070f859"},
     {"bytes": 556, "out": "riscv_target_length_probe.out", "rows": 12, "sha256": "52c2f7648ec6bf1e8257a77011cc1c2c06304713b15801ecf44e90e83998e1d7"},
     {"bytes": 113, "out": "riscv_target_memop_probe.out", "rows": 8, "sha256": "fa4948d83a553a010d1ba431acdbe7e635200ee73c321edcf3e47cb94b233118"},
     {"bytes": 259, "out": "riscv_target_ok_probe.out", "rows": 4, "sha256": "d1d02e735b1110cf33d2f1ba3a0780939a80894ef2d33c0350c573c7fb615599"},

@@ -7607,3 +7607,7 @@ Statement regression evidence, not literal local proof replay or equivalence.
 `word_to_stack_comp_databufferwrite_probeScript.sml` captures the full original
 DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
+
+### Signed native immediate reconstruction
+
+`riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.

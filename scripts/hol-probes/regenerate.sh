@@ -7081,3 +7081,7 @@ run_probe word_to_stack_comp_databufferwrite_probeScript.sml word_to_stack_comp_
 run_probe lab_props_alignment_sdm_evaluate_probeScript.sml lab_props_alignment_sdm_evaluate_probe.out \
   evaluate_align_sdm evaluate_align_sdm_types evaluate_align_sdm_hypotheses evaluate_align_sdm_proved implements_align_sdm implements_align_sdm_types implements_align_sdm_hypotheses implements_align_sdm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe riscv_target_immediate_probeScript.sml riscv_target_immediate_probe.out \
+  lem4_statement lem4_types lem4_hypotheses lem4_proved lem12b_statement lem12b_types lem12b_hypotheses lem12b_proved lem12b_intermediate_types \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

@@ -82607,5 +82607,21 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c author source comparison 2026-10-03 original477-498: full target_ok riscv_target, no added hypotheses. Full six enc_ok obligations retain skip length4, alignment4 and nonempty arbitrary ASM, both signed offset implications for Jump/JumpCmp every cmp and reg-or-imm/Call/Loc. Native fixed64 carrier and exact full target record/projection; all four projection consistency conjuncts retain memory-domain restriction, complete register function and five stateOk fields. Original fp_reg_count0 makes fp relation antecedents false without choosing omitted whole-ARB record field. No opcode/asmOK weakening, successful execution premise or target-run assumption. Inherits reals_as_rational_cuts via riscvTarget.next/NextRISCV/Run; SOUNDNESS item8 external rendering assumption, unchanged. Original literal full proof replay and Lean kernel proof provide regression evidence, not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem4",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Immediate.lean",
+    "lean_name": "signed_twelve_bit_reconstruction",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 original60-64/112-118: full fixed64 signed immediate reconstruction. lem4 retains both signed -2048..2047 limits and full original twelve-bit MSB-first Boolean list at word12 sign-extended64. Kernel extensional bit-list equality then universal bit-vector decision proof. lem12b retains signed -2147483648..2147481599 limits AND original (1><0)c resultword64=0 (low2 extract zero-extended64). Full original c + (-1)*signExtend low12, high20 slice offset12, concatenate zero12=>word32 then signExtend64, plus signExtended low12 masked complement2. No added target-run/evaluation/decoder premise, no accepted-opcode or range narrowing. Native source stepping tactics consume these exact arithmetic obligations at286/378. Fresh literal original BBLAST proofs full generic c:word64/type/hyp0/T; capture regression is not HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem12b",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Immediate.lean",
+    "lean_name": "split_immediate_reconstruction",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 original60-64/112-118: full fixed64 signed immediate reconstruction. lem4 retains both signed -2048..2047 limits and full original twelve-bit MSB-first Boolean list at word12 sign-extended64. Kernel extensional bit-list equality then universal bit-vector decision proof. lem12b retains signed -2147483648..2147481599 limits AND original (1><0)c resultword64=0 (low2 extract zero-extended64). Full original c + (-1)*signExtend low12, high20 slice offset12, concatenate zero12=>word32 then signExtend64, plus signExtended low12 masked complement2. No added target-run/evaluation/decoder premise, no accepted-opcode or range narrowing. Native source stepping tactics consume these exact arithmetic obligations at286/378. Fresh literal original BBLAST proofs full generic c:word64/type/hyp0/T; capture regression is not HOL-to-Lean equivalence."
   }
 ]

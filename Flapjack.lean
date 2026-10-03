@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.Immediate
 import Flapjack.RiscV.CorrectnessEncoding.TargetOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
