@@ -8024,6 +8024,12 @@
       "sha256": "9d0a065df6dc3d311c4543318e4907ad57fe4ac2d16a850ced470e8213b3845f"
     },
     {
+      "bytes": 8805,
+      "out": "stack_to_lab_no_install_probe.out",
+      "rows": 60,
+      "sha256": "7248db201b8f9fd3b1f68590c792585d59f150ad5aea9bfab719abee570c5e16"
+    },
+    {
       "bytes": 738,
       "out": "stack_to_lab_no_ret_review_probe.out",
       "rows": 8,
