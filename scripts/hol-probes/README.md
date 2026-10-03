@@ -7193,3 +7193,21 @@ original HOL model route. Finite fixtures and literal rendering drift checks
 are regression/transcription evidence, not a universal HOL-to-Lean proof.
 The native executed encoder configuration and final encoder correctness are
 separate downstream beads; this batch does not replace the compiler route.
+
+## Native target assembler lowering and bytes
+
+`l3_target_encoder_probeScript.sml` regenerates from the pinned original
+CakeML `compiler/encoders/riscv` directory. It records all ten encoder-section
+types and zero-assumption definition theorems; the partial helper conjunctions
+are retained exactly, and missing Sub/Ror cases intentionally remain unreduced.
+The executable full AST lowering never executes these unspecified cases.
+
+300 inputs cover the source constructors and branching/range boundaries,
+including register truncation, all comparison polarities in register/immediate
+and short/far modes, constant sign-extension/build choices, rotations above64,
+memory widths and unsupported FP/LongDiv. Every observation includes the complete
+native instruction list and original encoded byte list; all600 results are
+replayed by the Lean kernel in `RiscVNativeTargetParity.lean`. The checker rejects
+nonconcrete AST payloads, wrong carriers, unreduced bytes and capture drift.
+These finite checks do not establish universal cross-language equivalence.
+The executed compiler configuration replacement remains a separate dependency.
