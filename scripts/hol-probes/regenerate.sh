@@ -6150,3 +6150,6 @@ run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code
   changed_bytes_length_safe instruction_change_rejected \
   install_external_branch skip_shared_name_branch install_shared_name_rejected \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_location_labels_probeScript.sml word_to_stack_location_labels_probe.out \
+  state_rel_code_domain_statement state_rel_code_domain_proved state_rel_code_domain_hypotheses get_labels_wStackLoad_statement get_labels_wStackLoad_proved get_labels_wStackLoad_hypotheses loc_check_SUBSET_statement loc_check_SUBSET_proved loc_check_SUBSET_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

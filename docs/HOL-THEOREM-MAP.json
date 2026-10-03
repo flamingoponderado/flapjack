@@ -69998,5 +69998,30 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison 2026-10-03 original356-380/full135-149: genuine JumpLower paired compTop/comp simulations, original actual source evaluation/nonError/stateRel premises only plus actual fixed-source selected-callee IH. Native two word operand reads, original unsigned Lower comparison, source code lookup and nonzero source clock guard that IH; uses compTop component since target code contains entire compTop entry, unused comp component omitted. Target operand reads/callee entry/per-entry frame info/decClock relation derived from literal stateRel, not assumed. Nonselected comparison derives identical source/result and target no-op. Zero clock derives emptyEnv timeout. Recursive callee nonError/badFunReturn false derived from source dispatch; added-clock decClock identity proves actual target run. Outer postframe stateOk derived from accepted full evaluateMono and original subsptLookup, no postrelation premise. Exact original existential clock/target/stackSpace/exceptional-result guard retained. Native Spt code and List stack unchanged; canonical actual regs/fpRegs/store owner with local genuine roundtrip, arbitrary positive type-indexed word width and Type0 configuration/FFI. Fresh original full statement/zero-hyp/JumpLower specialization/evaluate_ind obligation plus six independent unsigned comparisons, kernel/runtime replay and five full arbitrary/1/8/64/80 consumers. Inherits reals_as_rational_cuts SOUNDNESS8, no numerical FP agreement/HOL-Lean equivalence/individual HOLD/default/production change or full pass completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LocationLabels.lean",
+    "lean_name": "stateRelCodeDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_code_domain",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.4.1: fresh complete original statements/literal unchanged proofs T/hyp0/closed9rows. Original5586-5591 full arbitrary state/frame/lens/extra relation implies entire source.code domain subset target.code domain. Extracts actual complete relation code-domain union with both original stubs and source domain. Source configuration Nat#C/target C, shared F:Type retained. No extra code-domain inclusion or target execution supplied. Actual imported owners for all5 canonical fmap fields, genuine same-module broad/finite witnesses, while both code trees remain exact Spt. Positive type-indexed alpha words use width/NeZero. No executable compiler/evaluator changes, simulation assumption or numerical FP assertion; no full pass completion claim.",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LocationLabels.lean",
+    "lean_name": "locCheckSubset",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "loc_check_SUBSET",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.4.1: fresh complete original statements/literal unchanged proofs T/hyp0/closed9rows. Original5601-5607 arbitrary actual source/target code trees and full location-set inclusion. Sole original subspt premise; native lookup/domain characterization preserves both domain/zero-offset and successful lookup/get_labels existential branches. No wf/success/membership/targetrun extra premise; no raw-map/TreeMap substitute. Entire imported HolProg/getLabelsExact/locCheckExact carrier compared, exact Spt and propositional sets retained. Positive type-indexed alpha words use width/NeZero. No executable compiler/evaluator changes, simulation assumption or numerical FP assertion; no full pass completion claim."
   }
 ]
