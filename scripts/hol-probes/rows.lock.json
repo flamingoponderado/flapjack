@@ -8954,10 +8954,22 @@
       "sha256": "5a1b0fcd6b4c96ff2e36ad807142f65ea2a0250ae0848eb9e42297a95883f96b"
     },
     {
+      "out": "wordsem_gc_const_probe.out",
+      "bytes": 451,
+      "rows": 3,
+      "sha256": "9e540c1f4db2b6e07b2ca28c89f4309a6abef9f833e641c16a6ec7cd55dfa817"
+    },
+    {
       "out": "wordsem_inst_const_full_probe.out",
       "bytes": 495,
       "rows": 3,
       "sha256": "3d4721236481b492b99e09d76dda11d2c4fb432ffa73611c9e5d83bf4e192800"
+    },
+    {
+      "out": "wordsem_mem_store_const_probe.out",
+      "bytes": 615,
+      "rows": 3,
+      "sha256": "487ce3607c0663f5f9892d76fd0bfb7a13e23930d69021ccf115ef091e9f1121"
     },
     {
       "out": "wordsem_pop_env_const_probe.out",

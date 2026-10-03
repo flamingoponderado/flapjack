@@ -70309,5 +70309,31 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; bead .15.10.180): genuine original full initializer ISR2/3/8/15 source10223/10238/10266/10339. All original binders/fourteen guards retained; conclusion packages precisely state_rel conjuncts16/17/24/50 for actual makeInit state: whole ordinary-FFI post-state, cache post-state, name/search layout and full share_mem_state_rel including halt/cache exclusions. Native full FFI/cache contracts derive returning bytes length/empty-name identity and actual target register/FP/memory/PC fields; original successful boundary supplies prefix/suffix classification and original name bound discharges every EL. Source original length equality bounds imported entry-PC accesses. Native first-match Nat-key association list codec equates existing two reviewed lookup definitions including duplicate keys; no changed finite-map carrier or new representation exception. Words_as_type_indexed_bitvec translates only HOL alpha word/dimindex to positive-width BitVec width; fixed bytes8/FP64 and all source host/state/projection/config domains retained. No target simulation callback, post-state premise, new bounds, default/HD/EL or hold changes. Inherits reals_as_rational_cuts SOUNDNESS item8 through original mcConfOk/encoderCorrect guard, no own rendering. Fresh original full local theorem/types0hyp plus all four full-guard source projections0hyp/kernelT; meaningful native full-guard consumer observes actual target cache return PC. Full151 and ISR1/12/16 remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/GcConst.lean",
+    "lean_name": "gcConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "gc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.3 wordProps612-630: complete original arbitrary native input/output states and callback, sole gc=SOME premise, all13 conclusions in original order clock/ffi/code/be/codeBuffer/dataBuffer/compile/handler/compileOracle/localsSize/stackLimit/stackMax/stackSize. Actual gc648-661 invokes gcFun on original encStack/memory/domain/store and only installs decoded stack/new store/new memory; every success retains fields, callback/decoder failure contradicts original premise. No callback law/stack shape/safety/target-run assumption. Actual imported positive-width WordSemStateFiniteExact with C/F:Type, exact Spt fields, canonical fpRegs/store owner and genuine same-module codec witness; Bool equivalence as Bool equality. No evaluator or numeric FP assertion. Original max induction4321 and WordSem alloc_const649-666 genuinely need this invariant. Fresh unchanged literal original complete proof replay; full resource/Seq/pass remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/MemStoreConst.lean",
+    "lean_name": "memStoreConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "mem_store_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.5 wordProps794-815: complete original arbitrary address/value/native input/output, sole mem_store=SOME premise and all18 conjuncts in original order locals/clock/be/gcFun/mdomain/shMdomain/ffi/handler/code/codeBuffer/dataBuffer/compile/compileOracle/stack/localsSize/stackLimit/stackMax/stackSize. Actual native memStore283-288 tests original domain and updates memory only; domain false contradicts original success premise, true branch preserves every named field. No extra alignment/domain/safety/callback/target-run premise. Imported actual positive-width state with C/F:Type, exact Spt fields, canonical fpRegs/store and genuine same-module codec witness; Bool equivalence rendered as Bool equality. No evaluator/numeric FP assertion. Original resource max4331 and limit4415 use this contract. Fresh unchanged complete proof replay before GEN_ALL/full generalized statement check; resource evaluator/Seq/full pass remain open."
   }
 ]

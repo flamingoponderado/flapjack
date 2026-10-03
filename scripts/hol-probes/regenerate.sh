@@ -6226,3 +6226,11 @@ run_probe lab_to_target_initializer_interference_probeScript.sml lab_to_target_i
   ISR8_statement ISR8_hypotheses ISR8_proved \
   ISR15_statement ISR15_hypotheses ISR15_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe wordsem_gc_const_probeScript.sml wordsem_gc_const_probe.out \
+  gc_const_statement gc_const_proved gc_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_mem_store_const_probeScript.sml wordsem_mem_store_const_probe.out \
+  mem_store_const_statement mem_store_const_proved mem_store_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
