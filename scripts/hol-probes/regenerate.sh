@@ -7109,3 +7109,16 @@ run_probe lab_props_alignment_dm_memory_probeScript.sml lab_props_alignment_dm_m
 run_probe lab_props_alignment_dm_evaluate_probeScript.sml lab_props_alignment_dm_evaluate_probe.out \
   evaluate_align_dm evaluate_align_dm_types evaluate_align_dm_hypotheses evaluate_align_dm_proved implements_align_dm implements_align_dm_types implements_align_dm_hypotheses implements_align_dm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_probe.out \
+  inst_correct_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcurrheap_probe.out \
+  comp_correct_opcurrheap_full_statement comp_correct_opcurrheap_full_proved comp_correct_opcurrheap_full_hypotheses \
+  comp_correct_opcurrheap_whole_statement comp_correct_opcurrheap_whole_proved comp_correct_opcurrheap_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.out \
+  cut_state_full cut_state_hypotheses cut_state_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

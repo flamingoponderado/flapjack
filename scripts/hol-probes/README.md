@@ -7619,3 +7619,4 @@ types and closed kernel truth. The Lean case retains all ten premises/seven
 conclusions and exactly two original guarded IHs; lookup, return comparisons,
 continuation preconditions and final binding restoration are derived internally.
 Full Call/whole program/compiler correctness remain open.
+`stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.
