@@ -6497,3 +6497,15 @@ codec/lift/lower definitions and 862 independently calculated observations:
 interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
+
+The target initial-state contract probe captures the complete original
+`good_init_state_def` at434, all eight typed inputs and zero hypotheses.
+Four original kernel observations extract word-valued aligned memory, the
+source FFI entry-PC bound, code-buffer size, and overflow rejection. Native
+consumers exclude labels in actual aligned memory and recover bounded ordinary
+entry-PC lookup. Boolean data/shared domains retain their source types; checked
+pointwise truth codecs connect them to reviewed proposition-backed ASM/machine
+sets without restricting sets or membership. Every original clause remains;
+small-width LOG2(0) and the individual total-HD/EL hold are unchanged. This
+predicate does not prove initializer simulation or machine/compiler correctness.
+Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.

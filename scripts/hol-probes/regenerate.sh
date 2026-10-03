@@ -6104,3 +6104,8 @@ run_probe target_start_pc_ok_probeScript.sml target_start_pc_ok_probe.out \
   start_pc_ok_def start_pc_ok_def_types start_pc_ok_def_hypotheses \
   lengths entry_bound halt_cache \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe target_good_init_state_probeScript.sml target_good_init_state_probe.out \
+  good_init_state_def good_init_state_def_types good_init_state_def_hypotheses \
+  word_memory entry_bound space_bound space_overflow_rejected \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
