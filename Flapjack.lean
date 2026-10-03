@@ -1344,6 +1344,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectNilName
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectDecl
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion

@@ -7649,3 +7649,11 @@ payloads still give true name presence; nested missing names fail. The executed 
 the same generalized definition used by existing StructInfoHOLExact states,
 with explicit prior payload types at empty-context calls. The separate
 full generic compiled-shape theorem and production inventory remain open.
+
+`pan_structs_decls_decl_probe` captures the full original declaration theorem,
+its Decl initializer specialization and complete source declaration induction,
+with closed kernel truth and quantified types. The Lean minor retains all eight
+hypotheses and every target/existential conclusion, with exactly the successful
+empty-locals initializer and declared-shape guarded tail IH. Final-context code
+transport and global update conversion are derived internally. Whole declaration
+correctness and executed compiler routing remain separately open.
