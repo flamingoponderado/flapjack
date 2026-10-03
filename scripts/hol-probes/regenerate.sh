@@ -7555,3 +7555,6 @@ run_probe binary_ieee_two_dimensions_probeScript.sml binary_ieee_two_dimensions_
 run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_long_arithmetic_probe.out \
   longMul_typed longMul_proved longMul_hypotheses longDiv_typed longDiv_proved longDiv_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_word_witness_probe.out \
+  state_rel_type state_rel_def_typed state_rel_intro_typed state_rel_IMP_typed_replay state_rel_with_clock_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

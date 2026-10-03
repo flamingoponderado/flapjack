@@ -3602,6 +3602,12 @@
       "sha256": "c9bbe6c1daf1e53f97d7c5bbef81e60d58f07738bba27269c217b1d2da2472db"
     },
     {
+      "bytes": 1197,
+      "out": "loop_to_word_state_word_witness_probe.out",
+      "rows": 5,
+      "sha256": "f0b80a85e85ce9fc32aa64bbb93db8891736cf547e65917e9259c7e3138d998e"
+    },
+    {
       "bytes": 249,
       "out": "loop_to_word_take_word_to_bytes_probe.out",
       "rows": 13,
