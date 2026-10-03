@@ -90637,5 +90637,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "HeapAddress",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_address",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_address (gc_sharedScript.sml:12-13) is exactly Pointer num 'a | Data 'a. Lean HeapAddress (α : Type) has the same two constructors with one-for-one payloads: pointer carries (index : Nat) (addr : α) (HOL num is Nat) and data carries (addr : α). No constructor was added or dropped, no payload type or arity changed, and the datatype has the single type parameter 'a. The carrier is polymorphic, so no word-dimension translation applies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "HeapElement",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_element",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_element (gc_sharedScript.sml:15-18) is exactly Unused num | ForwardPointer num 'a num | DataElement (('a heap_address) list) num 'b. Lean HeapElement (α β : Type) has the same three constructors with one-for-one payloads: unused (Nat) (HOL num), forwardPointer (Nat) (α) (Nat), dataElement (List (HeapAddress α)) (Nat) (β); HOL list is Lean List and 'a heap_address is the tagged Lean HeapAddress α. No constructor or payload change; the two type parameters 'a and 'b are retained. Polymorphic carrier, no word-dimension translation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "refs_to_addresses",
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "refs_to_addresses_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL refs_to_addresses_def (word_gcFunctionsScript.sml:244-251) is the three equations refs_to_addresses [] = []; refs_to_addresses (DataElement ptrs _ _ :: refs) = ptrs ++ refs_to_addresses refs; refs_to_addresses (_ :: refs) = refs_to_addresses refs, returning ('a heap_address) list from ('a,'b) heap_element list. Lean refs_to_addresses {α β : Type} has the same three clauses one for one over the tagged HeapElement α β and HeapAddress α carriers, HOL list as Lean List, HOL ++ as List.append, and the same wildcard clause for every non-DataElement head. No branch was restricted and no success or well-formedness premise was added. Original value oracle rows gc_refs_to_addresses_empty/basic/skip are captured in scripts/hol-probes/word_gc_functions_probeScript.sml and locked in scripts/hol-probes/rows.lock.json."
   }
 ]

@@ -9434,10 +9434,10 @@
       "sha256": "e220eb6ced34b0339d264b959455db5c2eafda675e0be2533f216bd2481af2a0"
     },
     {
-      "bytes": 1029,
+      "bytes": 1155,
       "out": "word_gc_functions_probe.out",
-      "rows": 28,
-      "sha256": "64def3712489e37f43d55a0370f63b527cfff6d049b4f2360c94536a0174fa0b"
+      "rows": 31,
+      "sha256": "a2a7bf6ae6f8f3ac065c0ce723c5040601e673fc795ff44f003f48bbd8b85422"
     },
     {
       "bytes": 11121,
