@@ -6340,3 +6340,7 @@ run_probe lab_to_target_initializer_memory_separation_probeScript.sml lab_to_tar
   IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
   ISR1_statement ISR1_hypotheses ISR1_proved ISR12_statement ISR12_hypotheses ISR12_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_simp_compile_exp_probeScript.sml word_simp_compile_exp_probe.out \
+  fold_chain call_drop_consts static_if push_out_if hoist_if shift_move_loop ffi_install_share inst_alloc_ret_call \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"

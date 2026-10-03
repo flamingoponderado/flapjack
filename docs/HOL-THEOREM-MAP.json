@@ -71361,5 +71361,218 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 5170-5195 forall prog st perm stack (stack unused in HOL, kept as binder), premise with EVERY distinct-key frames rendered as forall fr in st.stack, conclusion evaluate (prog, st with permute := perm) = (res, rst with permute := perm'; stack := stack') /\\ LIST_REL PERM_STACK stack' rst.stack; derived from permute_swap_lemma2 as HOL does. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemPermuteSwapStackSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "seqAssoc",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "Seq_assoc_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all seven clauses including catch-all SmartSeq p1 other; option cases on ret/handler literal. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destSeq",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_Seq_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destIf",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_If_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destIfEqImm",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_If_Eq_Imm_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: SOME (Equal,n,Imm w,p1,p2) pattern else NONE. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destSeqAssignConst",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_Seq_Assign_Const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: let-split dest_Seq then Assign m (Const w) with m = n test. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "stripConst",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "strip_const_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: three clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpExp",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Var/Op/Shift clauses and identity for Const/Lookup/Load (HOL does not recurse into Load); MAP rendered by attached map (same list) for termination; word_op/word_sh are tagged wordOpHOL/wordShiftHOL with w2n as toNat. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpMoveCs",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_move_cs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses with insert/delete on lookup of SND m in old cs. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpInstCs",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_inst_cs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: every clause positionally (AddCarry/AddOverflow/SubOverflow delete args 1 and 4; LongMul/LongDiv delete 1 and 2; Mem Load/Load32/Load8 only, so Load16 falls to identity as in HOL); dimindex(:'a)=64 as width = 64. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "getVarImmCs",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "get_var_imm_cs_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "allNames",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "all_names_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all_names (n,m) = union n m over num_set pair. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "dropConsts",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "drop_consts_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: both clauses, SmartSeq (drop_consts cs ns) (Assign n (Const w)) reversed order as HOL. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFpLoop",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_loop_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: every clause in source order: Move, Inst, Assign, Get, OpCurrHeap, MustTerminate, Seq, If (static word_cmp selection or inter_eq), Call (NONE ret / returning without handler with delete_all and filter_v is_gc_const of inter / with handler LN), FFI, LocValue, Alloc, StoreConsts, Install, Store, all eight ShareInst ops, Loop (body from LN, result LN), catch-all. HOL local overload delete_all is untagged deleteAll = FOLDR delete; inter is sptInter, filter_v tagged sptFilterV, inter_eq tagged sptInterEq, word_cmp tagged asm wordCmpHOL. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "constFp",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "const_fp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: FST (const_fp_loop p LN). 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "rewriteDuplicateIfMaxReassoc",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "rewrite_duplicate_if_max_reassoc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: = 8. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "destRaiseNum",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "dest_Raise_num_pmatch_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Raise n => n | _ => 0. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "isSimple",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "is_simple_pmatch_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Tick/Skip/Move/Assign true, else false. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "tryIfHoist2",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "try_if_hoist2_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: if N = 0 then NONE rendered as match on N with successor recursing on predecessor (= N - 1); If and Seq/dest_If/is_simple branches literal, res1 = 0 and res1 + res2 <> 3 guards literal. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "tryIfHoist1",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "try_if_hoist1_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: dummy If with Raise 1/Raise 2 and rewrite_duplicate_if_max_reassoc. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "simpDuplicateIf",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "simp_duplicate_if_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all clauses; Seq uses try_if_hoist1 then Seq_assoc Skip. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "pushOutIfAux",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "push_out_if_aux_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: all clauses including four If flag combinations, Seq short-circuit, Loop flag F, Call NONE true. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "pushOutIf",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "push_out_if_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: FST of aux. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp.lean",
+    "lean_name": "compileExp",
+    "hol_path": "cakeml/compiler/backend/word_simpScript.sml",
+    "hol_name": "compile_exp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38 word_simp: Seq_assoc Skip, const_fp, simp_duplicate_if, push_out_if in order. 'a word is positive-width BitVec width; wordLang$prog is the reviewed WordLangProgHOL carrier. Fresh original EVAL of word_simp$compile_exp on eight 64-bit programs (word_simp_compile_exp probe: constant folding, drop_consts before Call/FFI/Alloc/Install, static If, push_out_if, simp_duplicate_if hoist, shift folding, Move propagation, Loop reset, ShareInst, returning Call) replayed exactly by kernel reduction in Flapjack/Test/WordSimpCompileExpParity.lean; regression evidence, not an equivalence proof. Proof-side port; the executed compiler's RiscV/WordSimp.lean remains a separate untagged implementation (routing tracked separately)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/FilterV.lean",
+    "lean_name": "sptFilterV",
+    "hol_path": "hol4/src/finite_maps/sptreeScript.sml",
+    "hol_name": "filter_v_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.38: all four filter_v clauses literal with mk_BN/mk_BS collapsing; HOL bool predicate as Bool function. Used by word_simp const_fp_loop; covered by the word_simp_compile_exp probe replay (Call/Alloc/Install rows)."
   }
 ]

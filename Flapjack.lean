@@ -668,6 +668,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Carriers
 import Flapjack.Compiler.Backend.WordAlloc.HeuInst
 import Flapjack.Misc.Sptree.Map
 import Flapjack.Misc.Sptree.InterEq
+import Flapjack.Misc.Sptree.FilterV
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
 import Flapjack.Misc.Sptree.MapiLookup
