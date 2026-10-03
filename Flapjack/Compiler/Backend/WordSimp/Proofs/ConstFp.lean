@@ -499,7 +499,282 @@ theorem cf_alloc (n : Nat) (names : WordLangCutsetsHOL) (cs : Spt (BitVec width)
             · simp
   · simp
 
+set_option linter.unusedSimpArgs false in
+theorem cf_other (p : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width))
+    (s : WordSemStateFiniteExact width C F) (hcs : CsOk cs s)
+    (hp : p = .skip ∨ (∃ a b, p = .set a b) ∨ p = .tick ∨ (∃ n, p = .raise n) ∨
+      (∃ a b, p = .return a b) ∨ (∃ k, p = .break k) ∨ (∃ k, p = .continue k) ∨
+      (∃ a b, p = .codeBufferWrite a b) ∨ (∃ a b, p = .dataBufferWrite a b)) :
+    CfGoal p (constFpLoop p cs).1 (constFpLoop p cs).2 s := by
+  rcases hp with rfl | ⟨a, b, rfl⟩ | rfl | ⟨n, rfl⟩ | ⟨a, b, rfl⟩ | ⟨k, rfl⟩ | ⟨k, rfl⟩ |
+      ⟨a, b, rfl⟩ | ⟨a, b, rfl⟩ <;>
+    simp only [constFpLoop] <;>
+    refine ⟨rfl, ?_⟩ <;>
+    rw [evaluate] <;>
+    (repeat' split) <;>
+    first
+      | (simp; done)
+      | (intro _; exact csOk_same_locals hcs rfl)
+
+theorem evaluate_call_none_ne_none (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (s : WordSemStateFiniteExact width C F) :
+    (evaluate (.call none dest args handler) s).1 ≠ none := by
+  have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+  rw [ht]
+  rcases getVars args s with _ | xs
+  · simp
+  simp only
+  by_cases hbad : wordSemBadDestArgs dest args = true
+  · simp [hbad]
+  simp only [hbad, Bool.false_eq_true, if_false]
+  rcases wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize with
+    _ | ⟨args1, prog, ss⟩
+  · simp
+  simp only
+  cases handler with
+  | some _ => simp
+  | none =>
+    simp only
+    by_cases hz : s.clock = 0
+    · rw [if_pos hz]; simp
+    rw [if_neg hz]
+    rcases evaluate prog (callEnv args1 ss (decClock s)) with ⟨r, s1⟩
+    simp only
+    split
+    · simp
+    · rename_i hb
+      cases r with
+      | none => simp [wordSemBadFunReturn] at hb
+      | some _ => simp
+
+set_option linter.unusedSimpArgs false in
+/-- Recursive core of HOL `evaluate_const_fp_loop`, by structural recursion on
+    the program as HOL's `const_fp_loop_ind`. -/
+theorem cf_aux :
+    ∀ (p : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width))
+      (s : WordSemStateFiniteExact width C F),
+      gcFunConstOk s.gcFun → CsOk cs s → CfGoal p (constFpLoop p cs).1 (constFpLoop p cs).2 s
+  | .mustTerminate q, cs, s, hok, hcs => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.1
+      simp only [constFpLoop]
+      rcases hq : constFpLoop q cs with ⟨q', cs1⟩
+      simp only
+      have ih := cf_aux q cs { s with
+          clock := wordSemMustTerminateLimit width
+          termdep := s.termdep - 1 } hok (csOk_same_locals hcs rfl)
+      rw [hq] at ih
+      refine ⟨?_, ?_⟩
+      · rw [ht, ht, ih.1]
+      · rw [ht]
+        by_cases hz : s.termdep = 0
+        · simp [hz]
+        · simp only [hz, dite_false, if_false]
+          have ih2 := ih.2
+          rcases hev : evaluate q { s with
+              clock := wordSemMustTerminateLimit width
+              termdep := s.termdep - 1 } with ⟨r, s1⟩
+          rw [hev] at ih2
+          cases r with
+          | none => intro _; exact csOk_same_locals (ih2 rfl) rfl
+          | some x => cases x <;> simp
+  | .seq p1 p2, cs, s, hok, hcs => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.1
+      simp only [constFpLoop]
+      rcases h1 : constFpLoop p1 cs with ⟨p1', cs1⟩
+      have ih1 := cf_aux p1 cs s hok hcs
+      rw [h1] at ih1
+      simp only [CfGoal] at ih1 ⊢
+      rcases h2 : constFpLoop p2 cs1 with ⟨p2', cs2⟩
+      simp only
+      rcases he1 : evaluate p1 s with ⟨r1, s1⟩
+      rw [he1] at ih1
+      cases r1 with
+      | none =>
+        have hok1 : gcFunConstOk s1.gcFun := evaluate_gc_fun_const_ok p1 s none s1 ⟨he1, hok⟩
+        have ih2 := cf_aux p2 cs1 s1 hok1 (ih1.2 rfl)
+        rw [h2] at ih2
+        simp only [CfGoal] at ih2
+        refine ⟨?_, ?_⟩
+        · rw [ht, ht, ih1.1, he1]; exact ih2.1
+        · rw [ht, he1]; exact ih2.2
+      | some x =>
+        refine ⟨?_, ?_⟩
+        · rw [ht, ht, ih1.1, he1]
+        · rw [ht, he1]; simp
+  | .ite cmp lhs rhs p1 p2, cs, s, hok, hcs => by
+      have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
+      have ih1 := cf_aux p1 cs s hok hcs
+      have ih2 := cf_aux p2 cs s hok hcs
+      simp only [constFpLoop]
+      rcases hl : sptLookup lhs cs with _ | clhs <;> rcases hr : getVarImmCs rhs cs with _ | crhs
+      all_goals simp only
+      rotate_left 3
+      · -- both known: the If is decided statically
+        have hgv : getVar lhs s = some (.word clhs) := hcs lhs clhs hl
+        have hgi := get_var_imm_cs_imp_get_var_imm rhs crhs s cs ⟨hcs, hr⟩
+        have hev : evaluate (.ite cmp lhs rhs p1 p2) s =
+            if Compiler.Encoders.Asm.wordCmpHOL cmp clhs crhs then evaluate p1 s
+            else evaluate p2 s := by
+          rw [ht, hgv, hgi]
+          simp only [wordSemWordCmp]
+          split <;> simp_all
+        split
+        · exact ⟨by rw [hev, if_pos ‹_›]; exact ih1.1, by rw [hev, if_pos ‹_›]; exact ih1.2⟩
+        · exact ⟨by rw [hev, if_neg ‹_›]; exact ih2.1, by rw [hev, if_neg ‹_›]; exact ih2.2⟩
+      all_goals
+        rcases h1 : constFpLoop p1 cs with ⟨p1', cs1⟩
+        rcases h2 : constFpLoop p2 cs with ⟨p2', cs2⟩
+        rw [h1] at ih1; rw [h2] at ih2
+        simp only
+        refine ⟨by rw [ht, ht, ih1.1, ih2.1], ?_⟩
+        rw [ht]
+        rcases getVar lhs s with _ | x <;> rcases getVarImm rhs s with _ | y <;> simp only <;>
+          try simp
+        rcases wordSemWordCmp cmp x y with _ | _ | _ <;> simp only
+        · simp
+        · intro hn v w hv
+          exact ih2.2 hn v w (lookup_inter_eq_some cs1 cs2 v w hv).2
+        · intro hn v w hv
+          exact ih1.2 hn v w (lookup_inter_eq_some cs1 cs2 v w hv).1
+  | .loop names body exitNames, cs, s, hok, hcs => by
+      simp only [constFpLoop]
+      refine ⟨?_, fun _ => csOk_ln _⟩
+      exact evaluate_Loop_body_cong_gc gcFunConstOk s names body _ exitNames
+        (fun v hv => (cf_aux body .ln v hv (csOk_ln v)).1) hok
+  | .call ret dest args handler, cs, s, hok, hcs => by
+      cases ret with
+      | none =>
+        simp only [constFpLoop]
+        exact ⟨evaluate_drop_consts cs s _ _ hcs,
+          fun hn => absurd hn (evaluate_call_none_ne_none dest args handler s)⟩
+      | some rv =>
+        obtain ⟨n, names, retHandler, l1, l2⟩ := rv
+        cases handler with
+        | some hv =>
+          simp only [constFpLoop]
+          exact ⟨evaluate_drop_consts cs s _ _ hcs, fun _ => csOk_ln _⟩
+        | none =>
+          have ht := (evaluate_def_rebound (width := width) (C := C) (F := F)).2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2
+          simp only [constFpLoop]
+          rcases hr : constFpLoop retHandler
+              (deleteAll n (sptFilterV isGcConst (sptInter cs (allNames names)))) with ⟨rh', cs''⟩
+          simp only [CfGoal]
+          rw [evaluate_drop_consts cs s _ _ hcs, ht, ht]
+          simp only [wordSemAddRetLoc]
+          rcases hg : getVars args s with _ | xs
+          · simp
+          simp only
+          by_cases hbad : wordSemBadDestArgs dest args = true
+          · simp [hbad]
+          simp only [hbad, Bool.false_eq_true, if_false]
+          rcases hf : wordSemFindCode dest (.loc l1 l2 :: xs) s.code s.stackSize with
+            _ | ⟨args1, prog, ss⟩
+          · simp
+          simp only
+          by_cases hdc : sptDomainEmpty names.fst ∨ ¬ n.Nodup
+          · simp [hdc]
+          simp only [hdc, if_false]
+          rcases hce : wordSemCutEnvs names s.locals with _ | envs
+          · simp
+          simp only
+          by_cases hz : s.clock = 0
+          · rw [if_pos hz, if_pos hz]; simp
+          rw [if_neg hz, if_neg hz]
+          rcases hcv : evaluate prog (callEnv args1 ss (pushEnv envs none (decClock s))) with
+            ⟨rc, s2⟩
+          rcases rc with _ | ⟨x, ys⟩ | ⟨x, y⟩ | kk | kk | _ | _ | _ | _
+          · simp
+          · by_cases hx : x ≠ WordLocW.loc l1 l2 ∨ ys.length ≠ n.length
+            · simp [hx]
+            simp only [hx, if_false]
+            rcases hp : popEnv s2 with _ | s1
+            · simp
+            simp only
+            split
+            · have hgf : (callEnv args1 ss (pushEnv envs none (decClock s))).gcFun = s.gcFun := rfl
+              have hok2 : gcFunConstOk s2.gcFun := by
+                rw [← (evaluate_consts prog _ _ s2 hcv).1, hgf]; exact hok
+              have hok1 : gcFunConstOk (setVars n ys s1).gcFun :=
+                pop_env_gc_fun_const_ok s2 s1 ⟨hp, hok2⟩
+              have hsf := evaluate_sf_gc_consts prog _ s2 _ ⟨hcv, by rw [hgf]; exact hok⟩
+              simp only [sfMotive] at hsf
+              have hcs' : CsOk (deleteAll n (sptFilterV isGcConst (sptInter cs (allNames names))))
+                  (setVars n ys s1) := by
+                intro v w hv
+                obtain ⟨hv1, hvn⟩ := lookup_FOLDR_delete n _ v w hv
+                have hgc := lookup_filter_v_SOME _ v w _ hv1
+                have hv2 := lookup_filter_v_SOME_imp _ v w _ hv1
+                rw [sptLookup_sptInterCases] at hv2
+                rcases h1 : sptLookup v cs with _ | c <;>
+                  rcases h2 : sptLookup v (allNames names) with _ | u <;>
+                  simp only [h1, h2, reduceCtorEq] at hv2
+                simp only [Option.some.injEq] at hv2; subst hv2
+                rw [get_var_set_vars_ignore v n ys s1 hvn]
+                exact push_env_pop_env_locals_thm (decClock s) _ s2 s1 envs names none
+                  ⟨hce, rfl, hsf.1, hp⟩ v (.word c) ⟨hcs v c h1, hgc, by rw [h2]; simp⟩
+              have ih := cf_aux retHandler _ (setVars n ys s1) hok1 hcs'
+              rw [hr] at ih
+              exact ih
+            · simp
+          · simp
+          all_goals simp
+  | .move pri moves, cs, s, _, hcs => cf_move pri moves cs s hcs
+  | .inst i, cs, s, _, hcs => cf_inst i cs s hcs
+  | .assign v e, cs, s, _, hcs => cf_assign v e cs s hcs
+  | .get v name, cs, s, _, hcs => cf_get v name cs s hcs
+  | .opCurrHeap b v w, cs, s, _, hcs => cf_opCurrHeap b v w cs s hcs
+  | .locValue v l, cs, s, _, hcs => cf_locValue v l cs s hcs
+  | .storeConsts a b c d ws, cs, s, _, hcs => cf_storeConsts a b c d ws cs s hcs
+  | .store e v, cs, s, _, hcs => cf_store e v cs s hcs
+  | .shareInst op v e, cs, s, _, hcs => cf_shareInst op v e cs s hcs
+  | .ffi x0 x1 x2 x3 x4 names, cs, s, _, hcs => cf_ffi x0 x1 x2 x3 x4 names cs s hcs
+  | .install r1 r2 r3 r4 names, cs, s, _, hcs => cf_install r1 r2 r3 r4 names cs s hcs
+  | .alloc n names, cs, s, hok, hcs => cf_alloc n names cs s hok hcs
+  | .skip, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | .set a b, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | .tick, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | .raise n, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | WordLangProgHOL.return a b, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | WordLangProgHOL.break k, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | WordLangProgHOL.continue k, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | .codeBufferWrite a b, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+  | .dataBufferWrite a b, cs, s, _, hcs => cf_other _ cs s hcs (by simp)
+
 end ConstFpCases
+
+/-- Exact HOL `evaluate_const_fp_loop` (`word_simpProofScript.sml:929-1158`):
+    for arbitrary program, constant set, transformed program/set, state and
+    result, the four-conjunct premise gives the same evaluation and, on normal
+    termination, a sound returned constant set.  Proved by structural
+    recursion on the program as HOL's `const_fp_loop_ind`.  Inherits
+    `reals_as_rational_cuts` through `evaluate`. -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_const_fp_loop"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_const_fp_loop {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (p : WordLangProgHOL (BitVec width)) (cs : Spt (BitVec width))
+      (p' : WordLangProgHOL (BitVec width)) (cs' : Spt (BitVec width))
+      (s : WordSemStateFiniteExact width C F) (res : Option (WordSemResult width))
+      (s' : WordSemStateFiniteExact width C F),
+      evaluate p s = (res, s') ∧ constFpLoop p cs = (p', cs') ∧ gcFunConstOk s.gcFun ∧
+        (∀ v w, sptLookup v cs = some w → getVar v s = some (.word w)) →
+        evaluate p' s = (res, s') ∧
+          (res = none → ∀ v w, sptLookup v cs' = some w → getVar v s' = some (.word w)) := by
+  intro p cs p' cs' s res s' ⟨he, hc, hok, hcs⟩
+  have := cf_aux p cs s hok hcs
+  rw [hc] at this
+  simp only [CfGoal, he] at this
+  exact ⟨this.1, fun hn => this.2 hn⟩
+
+/-- Exact HOL `evaluate_const_fp` (`word_simpProofScript.sml:1160-1167`).  Inherits
+    `reals_as_rational_cuts` through `evaluate`. -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "evaluate_const_fp"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluate_const_fp {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (p : WordLangProgHOL (BitVec width)) (s : WordSemStateFiniteExact width C F),
+      gcFunConstOk s.gcFun → evaluate (constFp p) s = evaluate p s := by
+  intro p s hok
+  exact (cf_aux p .ln s hok (csOk_ln s)).1
 
 end WordSemStateFiniteExact
 
