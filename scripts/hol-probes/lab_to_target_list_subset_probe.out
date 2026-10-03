@@ -1,0 +1,13 @@
+list_subset_TAKE=∀(i :num) (xs :α list). list_subset (TAKE i xs) xs
+list_subset_TAKE_types=(i :num)::num;(xs :α list)::α list;
+list_subset_TAKE_hypotheses=0
+list_subset_TAKE_proved=T
+list_subset_trans=list_subset (a :α list) (b :α list) ∧ list_subset b (c :α list) ⇒
+list_subset a c
+list_subset_trans_types=(c :α list)::α list;(b :α list)::α list;(a :α list)::α list;
+list_subset_trans_hypotheses=0
+list_subset_trans_proved=T
+list_subset_refl=∀(xs :α list). list_subset xs xs
+list_subset_refl_types=(xs :α list)::α list;
+list_subset_refl_hypotheses=0
+list_subset_refl_proved=T

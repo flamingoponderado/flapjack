@@ -7249,6 +7249,7 @@ induction and exactly simplified reversed shape-conversion theorems, binder
 types and closed kernel proofs. Local statements and original unchanged proof
 text are replayed. The whole unused binder is polymorphic; induction n is num.
 Native proofs retain original guards and derive named lookup/field shapes.
+
 `lab_filter_semantics_probe.out` mechanically replays the literal original local `state_rel_IMP_sem_EQ_sem` proof from source1039-1152, with native quantified state types, zero hypotheses and kernel reproof. It does not assume local theorems are exported by HOL. The native Lean lift derives failure and terminating-choice predicate equivalences and whole divergence LUB equality from full evaluator simulation and original clock/prefix laws; no target run or semantic equality is supplied as a premise. This is source-review evidence, not HOL-to-Lean equivalence.
 ## Full native RISC-V configuration
 
@@ -7263,3 +7264,34 @@ emitted-byte routing remains a separate blocking bead. These finite regressions
 and source-reviewed record equations are not universal HOL-to-Lean equivalence.
 
 `lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.
+
+`pan_structs_program_return_raise_probe` captures the original whole program
+correctness theorem and Return/Raise specializations as closed kernel theorems.
+Native cases retain all ten hypotheses and seven conclusions. Original source
+size guards, Raise exception-shape lookup/equality and error branches are
+preserved; target guards follow from full faithful expression correctness,
+value well-formedness, shape conversion and compiled-shape size preservation.
+
+`pan_structs_structs_code_invariant_probe` replays the original local
+`evaluate_structs_code_inv` statement and unchanged source proof. It records
+closed binder types, zero hypotheses and kernel proof. The native theorem
+preserves both structs and code for arbitrary evaluation results, using the
+full faithful invariant theorem through the field-for-field PanProps codec.
+
+`pan_structs_program_seq_if_probe` captures the original whole theorem and
+Seq/If specializations, closed binder types and kernel proofs, together with
+the original evaluator induction principle. Native cases preserve all ten
+premises/seven conclusions and the genuine source-guarded recursive IHs.
+Seq derives intermediate invariants; If uses the source-word-selected branch.
+`lab_to_target_make_init_filter_probe.out` captures full original10540 initializer skip-filter semantics equality, every independent free-variable type, zero hypotheses and kernel reproof. The native port keeps literal compileLab, all eleven original machine/FFI/memory/domain/program/buffer/oracle arguments and whole semantics equality, deriving both filtered-state compiler/oracle relation and both nonfailed guards from the actual initializer.
+
+`pan_structs_flatten_conversion_probe` captures unconditional full
+`flatten_convert_v`, its binder type, zero hypotheses and closed kernel proof.
+The native theorem preserves flattened words for arbitrary nested records and
+named structs; erasing names retains field order and requires no validity guard.
+
+`pan_structs_program_store_words_probe` captures the full original program
+correctness theorem and Store32/StoreByte specializations, closed binder types
+and kernel proofs. Native cases keep all ten premises/seven conclusions, actual
+source memory-domain/error/endian/cast behavior and arbitrary positive width.
+The target memory operation is the same source operation, derived internally.
