@@ -1,0 +1,23 @@
+MOD_EQ_IMP_MULT_statement=∀n d. n MOD d = 0 ∧ d ≠ 0 ⇒ ∃k. n = d * k
+MOD_EQ_IMP_MULT_proved=T
+MOD_EQ_IMP_MULT_hypotheses=0
+star_move_lemma_statement=∀p4 p3 p2 p1' p1 p0. p0 * p1 * p1' * p2 * p3 * p4 = p2 * (p1 * p1' * (p3 * (p4 * p0)))
+star_move_lemma_proved=T
+star_move_lemma_hypotheses=0
+memory_addresses_statement=∀n a m. n * (dimindex (:α) DIV 8) < dimword (:α) ∧ good_dimindex (:α) ⇒ memory m (addresses a n) = word_list a (read_mem a m n)
+memory_addresses_proved=T
+memory_addresses_hypotheses=0
+make_init_any_bitmaps_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).bitmaps = if IS_SOME (make_init_opt gen_gc max_heap bitmaps data_sp coracle jump off k code s) then bitmaps else [4w]
+make_init_any_bitmaps_hypotheses=0
+make_init_any_use_stack_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).use_stack
+make_init_any_use_stack_hypotheses=0
+make_init_any_use_store_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).use_store
+make_init_any_use_store_hypotheses=0
+make_init_any_use_alloc_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. ¬(make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).use_alloc
+make_init_any_use_alloc_hypotheses=0
+make_init_any_code_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).code = code
+make_init_any_code_hypotheses=0
+make_init_any_stack_limit_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. LENGTH (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).stack * (dimindex (:α) DIV 8) < dimword (:α)
+make_init_any_stack_limit_hypotheses=0
+make_init_any_compile_oracle_statement=∀s off max_heap k jump ggc data_sp coracle code bitmaps. (make_init_any ggc max_heap bitmaps data_sp coracle jump off k code s).compile_oracle = coracle
+make_init_any_compile_oracle_hypotheses=0

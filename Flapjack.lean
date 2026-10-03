@@ -286,6 +286,12 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.Memory
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListRev
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListReverse
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListInjective
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+import Flapjack.Compiler.Backend.StackRemove.Proofs.MemVal
+import Flapjack.Compiler.Backend.StackRemove.Proofs.FmapSimp
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
@@ -1142,6 +1148,7 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
+import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
@@ -1255,6 +1262,7 @@ import Flapjack.Pancake.Proofs.PanStructs.EvaluateStructsCodeInvariant
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
