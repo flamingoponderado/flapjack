@@ -530,6 +530,7 @@ IRC and retained colouring are the actual production operations.
 Flapjack infrastructure, not a HOL theorem port. -/
 def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash α]
     (dead : WordProg α → WordProg α)
+    (unreach : WordProg α → Option (WordProg α))
     (ssaProducer : Nat → WordProg α → Option (WordSsaState × List Nat × WordProg α))
     (currentFunction : Nat)
     (parameters : List Nat) (program : WordProg α) [BEq α] :
@@ -541,7 +542,9 @@ def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash
   let ssaProgram := wordCseProp ssaProgram
   let ssaProgram := wordCopyProp ssaProgram
   let ssaProgram := wordThreeToTwoReg ssaProgram
-  let ssaProgram := wordRemoveUnreachableAfterCopy ssaProgram
+  match unreach ssaProgram with
+  | none => none
+  | some ssaProgram =>
   if !allocatorMemorySupported ssaProgram then none else
   let ssaProgram := dead ssaProgram
   if !allocatorMemorySupported ssaProgram then none else
@@ -570,6 +573,7 @@ def cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith [OfNat α 0] [WordC
     (parameters : List Nat) (program : WordProg α) [BEq α] :
     Option (CakeAllocationWithColour α) :=
   cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead
+    (fun body => some (wordRemoveUnreachableAfterCopy body))
     (fun count body => some (wordFullSsaCcTransFromLimit limit count body))
     currentFunction parameters program
 
