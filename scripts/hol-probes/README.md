@@ -7505,3 +7505,9 @@ regression evidence rather than HOL-to-Lean equivalence.
 wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
 continuation premise and full run/relation/resources. Closed hyp0/T captures
 provide regression evidence rather than cross-language equivalence.
+
+The native byte probe additionally retains the complete original
+`bytes_in_memory_IMP_all_pcs_MEM8` induction proof, with arbitrary native
+environment, byte list and domain. Its four new rows preserve all old eight
+rows and labels. Domain coverage is derived through the full generic
+`bytes_in_memory_all_pcs`, rather than assumed at instruction PCs.

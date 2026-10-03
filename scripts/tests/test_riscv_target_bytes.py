@@ -19,6 +19,10 @@ class BytesTests(unittest.TestCase):
           (3,"{α : Type} (_w : α)","(_w : BitVec 64)"),
           (3,"state.c_PC state.procID + 3","state.c_PC state.procID + 4"),
           (3,"s.memDomain (state.c_PC state.procID) := by","True := by"),
+          (3,"(env : Nat → riscv_state → riscv_state)","(env : riscv_state → riscv_state)"),
+          (3,"xs.length a 0","xs.length a 2"),
+          (2,"Induct_on `xs`","ALL_TAC"),
+          (4,"bytes_in_memory_IMP_all_pcs_MEM8_types bytes_in_memory_IMP_all_pcs_MEM8_hypotheses","bytes_in_memory_IMP_all_pcs_MEM8_hypotheses"),
           (4,"bytes_in_memory_thm_types bytes_in_memory_thm_hypotheses","bytes_in_memory_thm_hypotheses")]:
             changed=args.copy();changed[i]=changed[i].replace(old,new)
             with self.subTest(old=old),self.assertRaises(ValueError):M.check(*changed)

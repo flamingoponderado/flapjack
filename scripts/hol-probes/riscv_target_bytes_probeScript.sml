@@ -45,4 +45,15 @@ val _ = (print "bytes_in_memory_thm2_statement="; print_term (concl (GEN_ALL byt
 val _ = print ("bytes_in_memory_thm2_types=" ^ String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string (type_of v)) (#1 (strip_forall (concl (GEN_ALL bytes_in_memory_thm2))))) ^ "\n");
 val _ = print ("bytes_in_memory_thm2_hypotheses=" ^ Int.toString (length (hyp bytes_in_memory_thm2)) ^ "\n");
 val _ = (print "bytes_in_memory_thm2_proved="; print_term (rhs (concl (EQT_INTRO (GEN_ALL bytes_in_memory_thm2)))); print "\n");
+val bytes_in_memory_IMP_all_pcs_MEM8 = prove (``!env a xs m dm.
+   bytes_in_memory a xs m dm /\
+   (!(i:num) ms'. (∀a. a ∈ dm ⇒ (env i ms').MEM8 a = ms'.MEM8 a)) ==>
+   (!i ms'. (∀pc. pc ∈ all_pcs (LENGTH xs) a 0 ==> (env i ms').MEM8 pc = ms'.MEM8 pc))``,
+Induct_on `xs`
+ \\ rw [asmPropsTheory.all_pcs_def, miscTheory.bytes_in_memory_def]
+ \\ metis_tac []);
+val _ = (print "bytes_in_memory_IMP_all_pcs_MEM8_statement="; print_term (concl (GEN_ALL bytes_in_memory_IMP_all_pcs_MEM8)); print "\n");
+val _ = print ("bytes_in_memory_IMP_all_pcs_MEM8_types=" ^ String.concatWith ", " (map (fn v => term_to_string v ^ " : " ^ type_to_string (type_of v)) (#1 (strip_forall (concl (GEN_ALL bytes_in_memory_IMP_all_pcs_MEM8))))) ^ "\n");
+val _ = print ("bytes_in_memory_IMP_all_pcs_MEM8_hypotheses=" ^ Int.toString (length (hyp bytes_in_memory_IMP_all_pcs_MEM8)) ^ "\n");
+val _ = (print "bytes_in_memory_IMP_all_pcs_MEM8_proved="; print_term (rhs (concl (EQT_INTRO (GEN_ALL bytes_in_memory_IMP_all_pcs_MEM8)))); print "\n");
 val _ = OS.Process.exit OS.Process.success;

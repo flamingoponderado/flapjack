@@ -41,6 +41,17 @@ example (w : BitVec 64) (s : AsmState 64) (state : riscv_state)
     s.memDomain (state.c_PC state.procID + w) :=
   RiscV.TargetProof.bytes_in_memory_thm2 w s state a b c d h
 
+example
+    (env : Nat → riscv_state → riscv_state) (a : BitVec 64)
+    (xs : List (BitVec 8)) (m : BitVec 64 → BitVec 8) (dm : BitVec 64 → Prop)
+    (h : bytesInMemoryHOL a xs m dm ∧
+      ∀ (i : Nat) (ms' : riscv_state), ∀ address, dm address →
+        (env i ms').MEM8 address = ms'.MEM8 address) :
+    ∀ (i : Nat) (ms' : riscv_state), ∀ pc,
+      pc ∈ Compiler.Encoders.AsmProps.allPcs xs.length a 0 →
+        (env i ms').MEM8 pc = ms'.MEM8 pc :=
+  RiscV.TargetProof.bytes_in_memory_IMP_all_pcs_MEM8 env a xs m dm h
+
 end Flapjack.Test.NativeBytesConsumers
 
 namespace Flapjack.Test.RiscVWordExtract6Parity

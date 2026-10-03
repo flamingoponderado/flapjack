@@ -5732,10 +5732,10 @@
       "sha256": "c45afa36b2efab2cb3d75da61ab12f321162178cd70df3396a8f3e292c16bc90"
     },
     {
-      "bytes": 1707,
+      "bytes": 2186,
       "out": "riscv_target_bytes_probe.out",
-      "rows": 8,
-      "sha256": "20da98bd2555087f8cf97c9b650fa1e4a56e0e988a9c0beee4e07a911548b7e5"
+      "rows": 12,
+      "sha256": "05506bbe778a3c53964a19e96738a99a5cdbe2048594ee84eae2a0b4e03a7821"
     },
     {
       "bytes": 960,

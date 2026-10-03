@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Misc.BytesInMemory
+import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
 
 /-! Full literal native target-state byte lemmas. The first original theorem
 has an unused polymorphic `w : α`; it is retained explicitly. The second uses
@@ -77,5 +78,21 @@ theorem bytes_in_memory_thm2 (w : BitVec 64) (s : AsmState 64) (state : riscv_st
   · rw [hp]; simpa only [BitVec.add_assoc, two] using dc
   · rw [hp]; exact db
   · rw [hp]; exact da
+
+/-- Full original domain-to-all-instruction-byte environment agreement. -/
+@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml"
+  "bytes_in_memory_IMP_all_pcs_MEM8"]
+theorem bytes_in_memory_IMP_all_pcs_MEM8
+    (env : Nat → riscv_state → riscv_state) (a : BitVec 64)
+    (xs : List (BitVec 8)) (m : BitVec 64 → BitVec 8) (dm : BitVec 64 → Prop)
+    (h : bytesInMemoryHOL a xs m dm ∧
+      ∀ (i : Nat) (ms' : riscv_state), ∀ address, dm address →
+        (env i ms').MEM8 address = ms'.MEM8 address) :
+    ∀ (i : Nat) (ms' : riscv_state), ∀ pc,
+      pc ∈ Compiler.Encoders.AsmProps.allPcs xs.length a 0 →
+        (env i ms').MEM8 pc = ms'.MEM8 pc := by
+  intro i ms' pc hpc
+  exact h.2 i ms' pc
+    (Compiler.Encoders.AsmProps.bytesInMemory_allPcs xs a m dm 0 h.1 hpc)
 
 end Flapjack.RiscV.TargetProof

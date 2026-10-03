@@ -6,3 +6,7 @@ bytes_in_memory_thm2_statement=∀w s state a b c d. target_state_rel riscv_targ
 bytes_in_memory_thm2_types=w : :word64, s : :64 asm_state, state : :riscv_state, a : :word8, b : :word8, c : :word8, d : :word8
 bytes_in_memory_thm2_hypotheses=0
 bytes_in_memory_thm2_proved=T
+bytes_in_memory_IMP_all_pcs_MEM8_statement=∀env a xs m dm. bytes_in_memory a xs m dm ∧ (∀i ms' a. a ∈ dm ⇒ (env i ms').MEM8 a = ms'.MEM8 a) ⇒ ∀i ms' pc. pc ∈ all_pcs (LENGTH xs) a 0 ⇒ (env i ms').MEM8 pc = ms'.MEM8 pc
+bytes_in_memory_IMP_all_pcs_MEM8_types=env : :num -> riscv_state -> riscv_state, a : :word64, xs : :word8 list, m : :word64 -> word8, dm : :word64 -> bool
+bytes_in_memory_IMP_all_pcs_MEM8_hypotheses=0
+bytes_in_memory_IMP_all_pcs_MEM8_proved=T
