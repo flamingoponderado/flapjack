@@ -1,0 +1,3 @@
+init_code_relation_statement=∀start off max_heap k jump gen_gc code2 code1. EVERY (λ(n,p). reg_bound p k ∧ num_stubs ≤ n + 1) code1 ∧ code2 = fromAList (compile jump off gen_gc max_heap k start code1) ⇒ code_rel jump off k (fromAList code1) code2
+init_code_relation_hypotheses=0
+init_code_relation_proved=T

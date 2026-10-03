@@ -1,0 +1,4 @@
+stack_rel_aux_stack_size_statement=∀len k frame bits. stack_rel_aux len k frame bits ⇒ the (handler_val bits) (stack_size frame) = handler_val bits
+stack_rel_aux_stack_size_proved=T
+stack_rel_aux_stack_size_hypotheses=0
+stack_rel_aux_type=:num -> num -> α stack_frame list -> ((β word_loc # γ word_loc) option # bool list # α word_loc list) list -> bool

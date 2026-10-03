@@ -1,0 +1,3 @@
+mem_store_const_statement=∀z y x a. mem_store x y z = SOME a ⇒ a.locals = z.locals ∧ a.clock = z.clock ∧ (a.be ⇔ z.be) ∧ a.gc_fun = z.gc_fun ∧ a.mdomain = z.mdomain ∧ a.sh_mdomain = z.sh_mdomain ∧ a.ffi = z.ffi ∧ a.handler = z.handler ∧ a.code = z.code ∧ a.code_buffer = z.code_buffer ∧ a.data_buffer = z.data_buffer ∧ a.compile = z.compile ∧ a.compile_oracle = z.compile_oracle ∧ a.stack = z.stack ∧ a.locals_size = z.locals_size ∧ a.stack_limit = z.stack_limit ∧ a.stack_max = z.stack_max ∧ a.stack_size = z.stack_size
+mem_store_const_proved=T
+mem_store_const_hypotheses=0

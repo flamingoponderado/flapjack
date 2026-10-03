@@ -70,4 +70,35 @@ theorem restrictNonzeroBigUnion (ss : Set (Set (Nat × Nat))) :
     obtain ⟨s, hs, rfl⟩ := ht
     exact ⟨Set.mem_sUnion.mpr ⟨s, hs, hlabel.1⟩, hlabel.2⟩
 
+/-- HOL `option_le_def`: `NONE` is the top of the order on `num option`,
+    `NONE ≤ SOME _` fails, and `SOME` compares its payloads.  HOL's `bool`
+    result is rendered as a decidable `Prop`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_le_def"]
+def optionLe : Option Nat → Option Nat → Prop
+  | _, none => True
+  | none, some _ => False
+  | some n1, some n2 => n1 ≤ n2
+
+instance optionLeDecidable (x y : Option Nat) : Decidable (optionLe x y) := by
+  rcases x with _ | _ <;> rcases y with _ | _ <;> unfold optionLe <;> infer_instance
+
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_le_refl"]
+theorem optionLe_refl : ∀ x, optionLe x x := by
+  intro x
+  rcases x with _ | _ <;> simp [optionLe]
+
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_le_trans"]
+theorem optionLe_trans : ∀ x y z, optionLe x y ∧ optionLe y z → optionLe x z := by
+  intro x y z h
+  rcases x with _ | _ <;> rcases y with _ | _ <;> rcases z with _ | _ <;>
+    simp_all [optionLe]; omega
+
+/-- HOL `option_le_max_right`.  HOL `OPTION_MAP2 MAX n m` is `Option.map₂ max n m`
+    (`SOME (MAX a b)` exactly when both are `SOME`). -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_le_max_right"]
+theorem optionLe_max_right (x n m : Option Nat) :
+    optionLe x (Option.map₂ max n m) ↔ optionLe x n ∨ optionLe x m := by
+  rcases x with _ | _ <;> rcases n with _ | _ <;> rcases m with _ | _ <;>
+    simp [optionLe]
+
 end Flapjack.Compiler.Backend.BackendProps
