@@ -77204,5 +77204,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Continue control case. Same original every_var source bound/is_alloc_var/ssa_map_ok/source full_inst_ok_less premises and full same-config actual SSA output conclusion. Only genuine generalized source-body induction hypotheses added. Source bound monotonicity and native ssa_cc_trans_props/setup properties derive later input bounds/class/map; original fake_moves_conventions2 and loop_setup_full_inst_ok_less prove actual reconciliation/setup validity. Arbitrary loop contexts and absent entries retained, no target-run or desired output assumption. Native AsmConfigExact/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records positive HOL word dimension only. Inst/Call and full assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/CallInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstTailCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original TailCall case with both exception-handler options. Same source every_var bound/is_alloc_var/ssa_map_ok/source full_inst_ok_less hypotheses and full same-config actual SSA output conclusion. Only genuine generalized return/exception source-subprogram IH added. Original source occurrence predicate supplies handler bounds, native renaming/SSA counter properties and bound monotonicity derive actual later input hypotheses; actual fake_moves_conventions2 proves reconciliation validity. Arbitrary source metadata/optional handlers retained; no target-run, target validity or narrowed evaluator premise. Native config/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Native Inst and full recursive assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/CallInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstReturningCall",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original ReturningCall case with both exception-handler options. Same source every_var bound/is_alloc_var/ssa_map_ok/source full_inst_ok_less hypotheses and full same-config actual SSA output conclusion. Only genuine generalized return/exception source-subprogram IH added. Original source occurrence predicate supplies handler bounds, native renaming/SSA counter properties and bound monotonicity derive actual later input hypotheses; actual fake_moves_conventions2 proves reconciliation validity. Arbitrary source metadata/optional handlers retained; no target-run, target validity or narrowed evaluator premise. Native config/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Native Inst and full recursive assembly remain open."
   }
 ]
