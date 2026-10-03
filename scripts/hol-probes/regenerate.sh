@@ -6632,3 +6632,9 @@ run_probe pan_structs_shape_map_codec_probeScript.sml pan_structs_shape_map_code
 run_probe lab_filter_shared_return_probeScript.sml lab_filter_shared_return_probe.out \
   share_mem_op_FFI_return_filter_correct share_mem_op_FFI_return_filter_correct_types share_mem_op_FFI_return_filter_correct_hypotheses share_mem_op_FFI_return_filter_correct_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_location_lookup_probeScript.sml lab_filter_location_lookup_probe.out \
+  loc_to_pc_eq_NONE loc_to_pc_eq_NONE_types loc_to_pc_eq_NONE_hypotheses loc_to_pc_eq_NONE_proved \
+  loc_to_pc_eq_SOME loc_to_pc_eq_SOME_types loc_to_pc_eq_SOME_hypotheses loc_to_pc_eq_SOME_proved \
+  loc_to_pc_adjust_pc_append loc_to_pc_adjust_pc_append_types loc_to_pc_adjust_pc_append_hypotheses loc_to_pc_adjust_pc_append_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"

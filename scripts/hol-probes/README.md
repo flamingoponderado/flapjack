@@ -7072,3 +7072,7 @@ keys keep the first binding; other, missing and empty lookups are recorded.
 ### Full native shared-memory filter return clause
 
 `lab_filter_shared_return_probeScript.sml` captures the complete original return614 theorem, independent full carriers, zero hypotheses and kernel reproof (4 rows). The existential poststate and full state relation/nonfailed/forall-clock conjunction remain conclusions. Together with the terminal probe it covers the complete original shared-memory filter prerequisite group.
+
+### Native skip-filter location lookup
+
+`lab_filter_location_lookup_probeScript.sml` replays the unchanged original local proofs310/345/522 using the exact original temporary simplifier setup (script10/12). Twelve rows capture complete NONE, existential SOME/adjustment, and append theorems, all binder types, zero hypotheses and kernel reproofs. Every original guard and existential conclusion is retained.
