@@ -99,13 +99,9 @@ theorem arithUpd_lemma {width : Nat} [NeZero width] {C F : Type} (p : BitVec wid
       cases hr2 : s1.regs r2 with
       | loc _ _ => exfalso; apply hf; simp [LabSem.arithUpd, hr3, hr2, LabSem.assertState]
       | word w2 =>
-        have hdiv : w2 / w3 = BitVec.ofNat width (w2.toNat / w3.toNat) := by
-          apply BitVec.eq_of_toNat_eq
-          rw [BitVec.toNat_udiv, BitVec.toNat_ofNat, Nat.mod_eq_of_lt]
-          exact Nat.lt_of_le_of_lt (Nat.div_le_self _ _) w2.isLt
         simp only [LabSem.arithUpd, hr3, hr2, LabSem.assertState, LabSem.updReg,
           AsmSem.arithUpd, AsmSem.assertState, AsmSem.updReg, AsmSem.readReg,
-          hw r3 w3 hr3, hw r2 w2 hr2, hdiv]
+          hw r3 w3 hr3, hw r2 w2 hr2]
         split_ifs <;> first | exact h r | simp [wordLocVal]
   | longMul r1 r2 r3 r4 =>
     cases hr3 : s1.regs r3 with
