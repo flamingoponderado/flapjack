@@ -9278,6 +9278,12 @@
       "sha256": "bc76fdc56daf1d62f4fb2e7b0f6cb513a45e2ab4d32d29f27ada4e6fa48aad5e"
     },
     {
+      "bytes": 1193,
+      "out": "word_cse_moves_probe.out",
+      "rows": 11,
+      "sha256": "7a8a43bf3584b31a8bcd4cb738c43bb8338808b3e6c3583a0c0b5ee4c44cb640"
+    },
+    {
       "bytes": 366,
       "out": "word_cse_polymorphic_probe.out",
       "rows": 4,
