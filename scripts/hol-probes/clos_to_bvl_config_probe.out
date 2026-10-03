@@ -1,0 +1,18 @@
+config_component_equality=∀(c1 :config) (c2 :config).
+  c1 = c2 ⇔
+  c1.next_loc = c2.next_loc ∧ c1.start = c2.start ∧ (c1.do_mti ⇔ c2.do_mti) ∧
+  c1.known_conf = c2.known_conf ∧ (c1.do_call ⇔ c2.do_call) ∧
+  c1.call_state = c2.call_state ∧ c1.max_app = c2.max_app
+default_config_def=default_config =
+<|next_loc := (0 :num); start := (1 :num); do_mti := T;
+  known_conf := SOME (default_config (10 :num) :clos_known$config);
+  do_call := T;
+  call_state := ((LN :sptree$num_set),([] :(num # num # closLang$exp) list));
+  max_app := (10 :num)|>
+next_loc_type=:config -> num
+start_type=:config -> num
+do_mti_type=:config -> bool
+known_conf_type=:config -> clos_known$config option
+do_call_type=:config -> bool
+call_state_type=:config -> sptree$num_set # (num # num # closLang$exp) list
+max_app_type=:config -> num

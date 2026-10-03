@@ -18,6 +18,7 @@ correspondence additionally covers arbitrary partner lists.
 
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
+`wordsem_state_const_group_probe.out` captures the full zero-hypothesis statements of the 56 exported wordProps `CONST LEMMAS` theorems ported in `WordSem/Props/StateConst.lean` and `InstConst.lean` (`*_with_const`, the remaining `*_const`, `state_const`, `PAIR_MAP_EQ_PAIR`, `OPTION_CASE_*`, `get_*_set_*`), plus fully typed `get_var_with_const` and `sh_mem_set_var_const` showing that the updated `ffi` has an independent type `δ`. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
 `word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
@@ -7685,3 +7686,25 @@ actual native byte fetch/decode/JALR/branch Next, and full post-relation under
 every projection-preserving environment. `check-riscv-target-jumpReg.py` pins
 the unrestricted statement and complete original evidence; these checks do
 not themselves prove cross-language equivalence.
+
+`pan_lang_generic_wf_shape_probe` captures original payload-polymorphic
+`is_wf_shape_def`, complete quantified types, closed kernel truth and four
+Nat/Bool payload observations plus original independently polymorphic
+`is_wf_flds_def` and two generic Nat/Bool field-key observations. Zero/false
+payloads still give true name presence; nested missing names fail. The executed faithful source predicate is
+the same generalized definition used by existing StructInfoHOLExact states,
+with explicit prior payload types at empty-context calls. The separate
+full generic compiled-shape theorem and production inventory remain open.
+
+### Universal native ADDI decoder roundtrip
+
+`CorrectnessEncoding/DecodeAddi.lean` proves the original Decode/Encode
+composition for every five-bit register field and twelve-bit immediate with
+no input premises, through symbolic bit reconstruction. It is untagged
+infrastructure because there is no separate named original HOL declaration
+for this composition. The original `riscv_addi_decode_probeScript.sml` checks
+four ground boundaries: all zero, all ones, sign-bit-only and positive maximum,
+including register zero and register31. These finite oracle rows are regression
+evidence, not exhaustive equivalence; the universal Lean proof and literal
+source comparison are separate obligations. The guard pins the unrestricted
+signature and all four original sentinels.
