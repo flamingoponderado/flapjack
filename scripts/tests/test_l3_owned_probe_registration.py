@@ -7,7 +7,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 FAMILIES = (
     "immediate_shift", "word_arithmetic", "multiply", "divide", "fp_bits",
-    "control_fetch", "fp_memory", "decode_immediates", "boolify_provenance", "run_dispatch", "decode", "write_pc", "decode_any", "update_pc", "next_step", "next_evaluation", "decode_transport", "step_bit_rewrites", "fetch_theorems",
+    "control_fetch", "fp_memory", "decode_immediates", "boolify_provenance", "run_dispatch", "decode", "write_pc", "decode_any", "update_pc", "next_step", "next_evaluation", "decode_transport", "step_bit_rewrites", "fetch_theorems", "encode",
 )
 
 

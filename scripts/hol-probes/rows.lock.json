@@ -1610,6 +1610,12 @@
       "sha256": "53dacbfbeee92365cfa388aeec326bc753af31718b30455cfff8b3705ede6244"
     },
     {
+      "bytes": 16820,
+      "out": "l3_encode_probe.out",
+      "rows": 654,
+      "sha256": "65f8c30374d7c62cf44b3aa3162654a47c1a62f860cf617fd536acf27cb946f0"
+    },
+    {
       "bytes": 179,
       "out": "l3_ext_status_probe.out",
       "rows": 6,
@@ -4698,6 +4704,12 @@
       "out": "pan_structs_exp_atomic_faithful_probe.out",
       "rows": 6,
       "sha256": "291ca0773724dcec4dfab40e6295f2b555384ee4097abda2d1ba89134b60991a"
+    },
+    {
+      "bytes": 2340,
+      "out": "pan_structs_exp_bytes_in_word_faithful_probe.out",
+      "rows": 5,
+      "sha256": "37bf8dd3ccbb52467fd1bc3f2323c3c109f61ca3ded56686e82c708e0abba4a7"
     },
     {
       "bytes": 3022,

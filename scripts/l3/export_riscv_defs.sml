@@ -32,6 +32,8 @@ fun visit c =
 val _ = visit (prim_mk_const {Thy = "riscv_step", Name = "NextRISCV"});
 (* Keep the full model Fetch distinct from the simplified step Fetch. *)
 val _ = visit (prim_mk_const {Thy = "riscv", Name = "Fetch"});
+(* Full encoder prerequisite uses the same accepted instruction AST. *)
+val _ = visit (prim_mk_const {Thy = "riscv", Name = "Encode"});
 fun q s = "\"" ^ String.toString s ^ "\"";
 fun ty t =
   if is_vartype t then "(tv " ^ q (dest_vartype t) ^ ")"
