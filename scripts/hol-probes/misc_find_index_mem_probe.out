@@ -1,0 +1,14 @@
+find_index_MEM=∀(ls :α list) (x :α) (n :num).
+  MEM x ls ⇒
+  ∃(i :num). find_index x ls n = SOME (n + i) ∧ i < LENGTH ls ∧ ls❲i❳ = x
+find_index_MEM_types=(ls :α list)::α list;(x :α)::α;(n :num)::num;
+find_index_MEM_hypotheses=0
+first=T
+last=T
+offset=T
+duplicate=T
+large=T
+strings=T
+words=T
+missing_guard=T
+empty_guard=T
