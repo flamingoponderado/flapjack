@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.AMOMinMax
 import Flapjack.RiscV.L3.Defs.AMOArithmetic
 import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
 import Flapjack.RiscV.L3.Defs.AMOSwap

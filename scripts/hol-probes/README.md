@@ -6351,3 +6351,10 @@ and returned-state write translations/faults. Lean replays retain arbitrary
 unrelated state. This is regression evidence, not whole Run/Next correctness.
 
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
+
+`l3_amo_minmax_probe.out` captures eight original AMOMIN/MAX/MINU/MAXU W/D
+definitions/types and 224 state observations. Independent calculations cover
+signed extrema, unsigned ordering, equality, zero, upper source-register bits
+in W comparisons, overlapping registers, all misalignment residues/order bits,
+and returned translation states/faults. Matching Lean replays retain arbitrary
+unrelated state; this does not establish whole Run/Next or compiler correctness.
