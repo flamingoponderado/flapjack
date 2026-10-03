@@ -57,13 +57,27 @@ theorem asmFetchAuxNoLabel {width : Nat} [NeZero width] {l1 l2 : Nat} {x : Nat} 
   induction pc, code using asmFetchAux.induct <;> intro h <;> rw [asmFetchAux] at h <;>
     simp_all [isLabelHOL]
 
-/-- Canonical standalone-map witness for the `dest_to_loc_def` register map. -/
+/-- Broad register map: a lookup function paired with its finite support. -/
+private abbrev RegisterMapBroad (β : Type) (width : Nat) [NeZero width] :=
+  { lookup : β → Option (WordLocW width) //
+    ∃ keys : List β, ∀ key, lookup key ≠ none → key ∈ keys }
+
+private def RegisterMapBroad.toBroad {β : Type} {width : Nat} [NeZero width]
+    (regs : HolFiniteMapExact β (WordLocW width)) : RegisterMapBroad β width :=
+  ⟨regs.lookup, regs.finiteSupport⟩
+
+private def RegisterMapBroad.ofBroad {β : Type} {width : Nat} [NeZero width]
+    (broad : RegisterMapBroad β width) : HolFiniteMapExact β (WordLocW width) :=
+  ⟨broad.1, broad.2⟩
+
+/-- Canonical standalone-map witness for the `dest_to_loc_def` register map:
+the finite-support map roundtrips through its lookup and support proof. -/
 theorem holFmapAsFiniteSupportParamWitness_destToLoc_regs {width : Nat} [NeZero width]
     {β : Type} (regs : HolFiniteMapExact β (WordLocW width)) (key : β) :
-    (HolFiniteMapExact.mk regs.lookup regs.finiteSupport).lookup key = regs.lookup key ∧
-      (HolFiniteMapExact.mk regs.lookup regs.finiteSupport).finiteSupport =
+    (RegisterMapBroad.ofBroad (RegisterMapBroad.toBroad regs)).lookup key = regs.lookup key ∧
+      (RegisterMapBroad.ofBroad (RegisterMapBroad.toBroad regs)).finiteSupport =
         regs.finiteSupport ∧
-      HolFiniteMapExact.mk regs.lookup regs.finiteSupport = regs :=
+      RegisterMapBroad.ofBroad (RegisterMapBroad.toBroad regs) = regs :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Complete original destination selector over a finite register map: a
@@ -122,7 +136,9 @@ theorem findCodeLookup {width : Nat} [NeZero width] {β α : Type}
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "not_is_Label_compile_jump"
   (words_as_type_indexed_bitvec)]
 theorem notIsLabelCompileJump {width : Nat} [NeZero width] (dest : Nat ⊕ Nat) :
-    isLabelHOL (compileJumpHOL (width := width) dest) = false := by
+    isLabelHOL (compileJumpHOL dest : Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
+      (BitVec width)) = false := by
   cases dest <;> rfl
 
 /-- WordSem comparison of two words is always defined. -/

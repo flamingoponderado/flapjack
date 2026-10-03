@@ -6,6 +6,7 @@ import Mathlib.Tactic.SplitIfs
 import Mathlib.Tactic.Tauto
 import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
+import Flapjack.Compiler.Backend.StackAlloc.Compile
 
 /-! Code-installation lemmas of `stack_to_labProofScript.sml` (lines 102-600):
 `code_installed`, `code_installed'`, `labs_correct` and the `asm_fetch_aux` /
@@ -15,13 +16,15 @@ import Flapjack.Compiler.Backend.Semantics.StackSem.Labels
 namespace Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
+open Flapjack.Basis.Pure.MlString
 
 /-- Complete original installation predicate: labels resolve to the current
 position, other lines are fetched there. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_def"
   (words_as_type_indexed_bitvec)]
 def codeInstalled {width : Nat} [NeZero width] (n : Nat) :
-    List (LabLineHOL width) → LabProgHOL width → Prop
+    List (LabLineHOL width) → List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
+      (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
   | [], _ => True
   | x :: xs, code =>
     if isLabelHOL x then
@@ -44,7 +47,9 @@ theorem codeInstalled_cons {width : Nat} [NeZero width] (n : Nat) (x : LabLineHO
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_append"
   (words_as_type_indexed_bitvec)]
 theorem asmFetchAuxSomeAppend {width : Nat} [NeZero width] :
-    ∀ (pc : Nat) (code : LabProgHOL width) (l : LabLineHOL width) (code2 : LabProgHOL width),
+    ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+      (l : LabLineHOL width) (code2 : LabProgHOL width),
       asmFetchAux pc code = some l → asmFetchAux pc (code ++ code2) = some l := by
   intro pc code
   induction pc, code using asmFetchAux.induct <;> intro l code2 h <;>
@@ -54,7 +59,9 @@ theorem asmFetchAuxSomeAppend {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_isPREFIX"
   (words_as_type_indexed_bitvec)]
 theorem asmFetchAuxSomeIsPrefix {width : Nat} [NeZero width] :
-    ∀ (pc : Nat) (code : LabProgHOL width) (l : LabLineHOL width) (code2 : LabProgHOL width),
+    ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+      (l : LabLineHOL width) (code2 : LabProgHOL width),
       asmFetchAux pc code = some l ∧ code <+: code2 → asmFetchAux pc code2 = some l := by
   rintro pc code l code2 ⟨h, ⟨t, rfl⟩⟩
   exact asmFetchAuxSomeAppend pc code l t h
@@ -63,7 +70,9 @@ theorem asmFetchAuxSomeIsPrefix {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_APPEND"
   (words_as_type_indexed_bitvec)]
 theorem locToPcAppend {width : Nat} [NeZero width] :
-    ∀ (n m : Nat) (code : LabProgHOL width) (pc : Nat) (code2 : LabProgHOL width),
+    ∀ (n m : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+      (pc : Nat) (code2 : LabProgHOL width),
       locToPc n m code = some pc → locToPc n m (code ++ code2) = some pc := by
   intro n m code
   induction code with
@@ -107,7 +116,9 @@ theorem locToPcAppend {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_APPEND"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalledAppend {width : Nat} [NeZero width] :
-    ∀ (ls : List (LabLineHOL width)) (pc : Nat) (code code2 : LabProgHOL width),
+    ∀ (ls : List (LabLineHOL width)) (pc : Nat)
+      (code code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))),
       codeInstalled pc ls code → codeInstalled pc ls (code ++ code2) := by
   intro ls
   induction ls with
@@ -130,7 +141,9 @@ theorem codeInstalledAppend {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_isPREFIX"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalledIsPrefix {width : Nat} [NeZero width] :
-    ∀ (ls : List (LabLineHOL width)) (pc : Nat) (code code2 : LabProgHOL width),
+    ∀ (ls : List (LabLineHOL width)) (pc : Nat)
+      (code code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))),
       codeInstalled pc ls code ∧ code <+: code2 → codeInstalled pc ls code2 := by
   rintro ls pc code code2 ⟨h, ⟨t, rfl⟩⟩
   exact codeInstalledAppend ls pc code t h
@@ -139,7 +152,9 @@ theorem codeInstalledIsPrefix {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_isPREFIX"
   (words_as_type_indexed_bitvec)]
 theorem locToPcIsPrefix {width : Nat} [NeZero width] :
-    ∀ (n m : Nat) (code : LabProgHOL width) (pc : Nat) (code2 : LabProgHOL width),
+    ∀ (n m : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+      (pc : Nat) (code2 : LabProgHOL width),
       locToPc n m code = some pc ∧ code <+: code2 → locToPc n m code2 = some pc := by
   rintro n m code pc code2 ⟨h, ⟨t, rfl⟩⟩
   exact locToPcAppend n m code pc t h
@@ -149,7 +164,8 @@ theorem locToPcIsPrefix {width : Nat} [NeZero width] :
   (words_as_type_indexed_bitvec)]
 theorem codeInstalledAppendImp {width : Nat} [NeZero width] :
     ∀ (l1 : List (LabLineHOL width)) (pc : Nat) (l2 : List (LabLineHOL width))
-      (code : LabProgHOL width),
+      (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))),
       codeInstalled pc (l1 ++ l2) code →
       codeInstalled pc l1 code ∧
         codeInstalled (pc + (l1.filter (fun x => !isLabelHOL x)).length) l2 code := by
@@ -199,7 +215,9 @@ theorem asmFetchAuxSkipLines {width : Nat} [NeZero width] (sid : Nat) :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_append2"
   (words_as_type_indexed_bitvec)]
 theorem asmFetchAuxSomeAppend2 {width : Nat} [NeZero width] :
-    ∀ (pc : Nat) (code : LabProgHOL width) (l : LabLineHOL width) (code2 : LabProgHOL width),
+    ∀ (pc : Nat) (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+      (l : LabLineHOL width) (code2 : LabProgHOL width),
       asmFetchAux pc code2 = some l →
       asmFetchAux (codeLength code + pc) (code ++ code2) = some l := by
   intro pc code l code2 h
@@ -234,7 +252,8 @@ theorem alookupPartition {α β : Type} [DecidableEq α] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_def"
   (words_as_type_indexed_bitvec)]
 def codeInstalled' {width : Nat} [NeZero width] (n : Nat) :
-    List (LabLineHOL width) → LabProgHOL width → Prop
+    List (LabLineHOL width) → List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
+      (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
   | [], _ => True
   | x :: xs, code =>
     if isLabelHOL x then codeInstalled' n xs code
@@ -244,7 +263,8 @@ def codeInstalled' {width : Nat} [NeZero width] (n : Nat) :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_def"
   (words_as_type_indexed_bitvec)]
 def labsCorrect {width : Nat} [NeZero width] (n : Nat) :
-    List (LabLineHOL width) → LabProgHOL width → Prop
+    List (LabLineHOL width) → List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
+      (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))) → Prop
   | [], _ => True
   | x :: xs, code =>
     if isLabelHOL x then labsCorrect n xs code ∧
@@ -257,7 +277,9 @@ def labsCorrect {width : Nat} [NeZero width] (n : Nat) :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_eq"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalledEq {width : Nat} [NeZero width] :
-    ∀ (pc : Nat) (xs : List (LabLineHOL width)) (code : LabProgHOL width),
+    ∀ (pc : Nat) (xs : List (LabLineHOL width))
+      (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))),
       codeInstalled pc xs code ↔ codeInstalled' pc xs code ∧ labsCorrect pc xs code := by
   intro pc xs
   induction xs generalizing pc with
@@ -273,7 +295,9 @@ theorem codeInstalledEq {width : Nat} [NeZero width] :
 /-- Complete original `code_installed'` cons law for a leading section. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_cons"
   (words_as_type_indexed_bitvec)]
-theorem codeInstalledCons {width : Nat} [NeZero width] (rest : LabProgHOL width) :
+theorem codeInstalledCons {width : Nat} [NeZero width]
+    (rest : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     ∀ (xs ys : List (LabLineHOL width)) (pos pc : Nat),
       codeInstalled' pc xs rest →
       codeInstalled' (pc + (ys.filter fun x => !isLabelHOL x).length) xs (⟨pos, ys⟩ :: rest) := by
@@ -296,7 +320,9 @@ theorem codeInstalledCons {width : Nat} [NeZero width] (rest : LabProgHOL width)
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_add"
   (words_as_type_indexed_bitvec)]
 theorem asmFetchAuxAdd {width : Nat} [NeZero width] :
-    ∀ (ys : List (LabLineHOL width)) (pc pos : Nat) (rest : LabProgHOL width),
+    ∀ (ys : List (LabLineHOL width)) (pc pos : Nat)
+      (rest : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))),
       asmFetchAux (pc + (ys.filter fun x => !isLabelHOL x).length) (⟨pos, ys⟩ :: rest) =
         asmFetchAux pc rest := by
   intro ys pc pos rest
@@ -343,7 +369,9 @@ theorem locToPcSkip {width : Nat} [NeZero width] (k ll sid : Nat) (hsid : sid �
 /-- Complete original section-entry search past another section. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_skip_section"
   (words_as_type_indexed_bitvec)]
-theorem locToPcSkipSection {width : Nat} [NeZero width] (n p : Nat) (xs : LabProgHOL width) :
+theorem locToPcSkipSection {width : Nat} [NeZero width] (n p : Nat)
+    (xs : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     ∀ lines : List (LabLineHOL width), n ≠ p →
       locToPc n 0 (⟨p, lines⟩ :: xs) =
         match locToPc n 0 xs with
@@ -357,7 +385,9 @@ theorem locToPcSkipSection {width : Nat} [NeZero width] (n p : Nat) (xs : LabPro
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "loc_to_pc_append2"
   (words_as_type_indexed_bitvec)]
 theorem locToPcAppend2 {width : Nat} [NeZero width] :
-    ∀ (k ll : Nat) (code code2 : LabProgHOL width) (pc : Nat),
+    ∀ (k ll : Nat) (code code2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop
+        (HolAddr width)) (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
+      (pc : Nat),
       k ∉ code.map (·.sectionId) ∧ (∀ s ∈ code, LabProps.secLabelsOk s) ∧
         locToPc k ll code2 = some pc →
       locToPc k ll (code ++ code2) = some (pc + codeLength code) := by
@@ -381,7 +411,9 @@ theorem locToPcAppend2 {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_append2"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalledAppend2 {width : Nat} [NeZero width] :
-    ∀ (lines : List (LabLineHOL width)) (pc : Nat) (c1 c2 : LabProgHOL width) (k : Nat),
+    ∀ (lines : List (LabLineHOL width)) (pc : Nat)
+      (c1 c2 : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+        (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) (k : Nat),
       k ∉ c1.map (·.sectionId) ∧ (∀ s ∈ c1, LabProps.secLabelsOk s) ∧
         (∀ line ∈ lines, LabProps.secLabelOk k line) ∧ codeInstalled pc lines c2 →
       codeInstalled (codeLength c1 + pc) lines (c1 ++ c2) := by
@@ -414,7 +446,9 @@ theorem codeInstalledAppend2 {width : Nat} [NeZero width] :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_cons_label"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalled'ConsLabel {width : Nat} [NeZero width] (h : LabLineHOL width)
-    (n : Nat) (xs : List (LabLineHOL width)) (other : LabProgHOL width) :
+    (n : Nat) (xs : List (LabLineHOL width))
+    (other : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     ∀ (lines : List (LabLineHOL width)) (pos : Nat), isLabelHOL h = true →
       (codeInstalled' pos lines (⟨n, h :: xs⟩ :: other) ↔
         codeInstalled' pos lines (⟨n, xs⟩ :: other)) := by
@@ -434,7 +468,9 @@ specialised as in the source to position zero. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_cons_non_label"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalled'ConsNonLabel {width : Nat} [NeZero width] (h : LabLineHOL width)
-    (n : Nat) (xs : List (LabLineHOL width)) (other : LabProgHOL width)
+    (n : Nat) (xs : List (LabLineHOL width))
+    (other : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))))
     (lines : List (LabLineHOL width)) (nonLabel : ¬isLabelHOL h = true) :
     codeInstalled' 1 lines (⟨n, h :: xs⟩ :: other) ↔ codeInstalled' 0 lines (⟨n, xs⟩ :: other) := by
   suffices general : ∀ (lines : List (LabLineHOL width)) (pos : Nat),
@@ -455,7 +491,8 @@ theorem codeInstalled'ConsNonLabel {width : Nat} [NeZero width] (h : LabLineHOL 
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_simp"
   (words_as_type_indexed_bitvec)]
 theorem codeInstalled'Simp {width : Nat} [NeZero width] (n : Nat) (rest : List (LabLineHOL width))
-    (other : LabProgHOL width) :
+    (other : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     ∀ lines : List (LabLineHOL width), codeInstalled' 0 lines (⟨n, lines ++ rest⟩ :: other) := by
   intro lines
   induction lines with
@@ -472,7 +509,8 @@ theorem codeInstalled'Simp {width : Nat} [NeZero width] (n : Nat) (rest : List (
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_append"
   (words_as_type_indexed_bitvec)]
 theorem labsCorrectAppend {width : Nat} [NeZero width] (rest : List (LabLineHOL width))
-    (code : LabProgHOL width) :
+    (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     ∀ (ls : List (LabLineHOL width)) (pc : Nat),
       labsCorrect pc (ls ++ rest) code → labsCorrect pc ls code := by
   intro ls
@@ -529,7 +567,9 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets in
 /-- Complete original label correctness of a section's own labels. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_hd"
   (words_as_type_indexed_bitvec)]
-theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat) (code : LabProgHOL width) :
+theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat)
+    (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) :
     ∀ (extra l : List (LabLineHOL width)),
       (extractLabels (extra ++ l)).Nodup ∧
         (∀ p ∈ extractLabels (extra ++ l), p.1 = n ∧ p.2 ≠ 0) →
@@ -568,7 +608,9 @@ open Flapjack.Compiler.Backend.LabProps.LabelSets
 section names, and per section distinct positive labels of that section. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_def"
   (words_as_type_indexed_bitvec)]
-def labelsOk {width : Nat} [NeZero width] (code : LabProgHOL width) : Prop :=
+def labelsOk {width : Nat} [NeZero width]
+    (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width)))) : Prop :=
   (code.map (·.sectionId)).Nodup ∧
     ∀ s ∈ code, (∀ p ∈ extractLabels s.lines, p.1 = s.sectionId ∧ p.2 ≠ 0) ∧
       (extractLabels s.lines).Nodup
@@ -588,7 +630,8 @@ theorem label_mem_extractLabels {width : Nat} [NeZero width] (a b c : Nat) :
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_imp"
   (words_as_type_indexed_bitvec)]
 theorem labelsOkImp {width : Nat} [NeZero width] :
-    ∀ code : LabProgHOL width, labelsOk code →
+    ∀ code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))), labelsOk code →
       (∀ s ∈ code, LabProps.secLabelsOk s) ∧ (code.map (·.sectionId)).Nodup ∧
         ∀ s ∈ code, (extractLabels s.lines).Nodup := by
   intro code ⟨nodup, every⟩
@@ -652,7 +695,8 @@ theorem locToPcSelf {width : Nat} [NeZero width] (n : Nat) (lines : List (LabLin
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labels_ok_labs_correct"
   (words_as_type_indexed_bitvec)]
 theorem labelsOkLabsCorrect {width : Nat} [NeZero width] :
-    ∀ code : LabProgHOL width, labelsOk code →
+    ∀ code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
+      (AsmWithLab HolCmp (HolRegImm width) MlString) (BitVec width))), labelsOk code →
       ∀ s ∈ code, match locToPc s.sectionId 0 code with
         | some pc => labsCorrect pc s.lines code
         | none => True := by
@@ -719,7 +763,7 @@ theorem codeInstalledProgToSectionLemma {width : Nat} [NeZero width] :
     ∀ (prog4 : List (Nat × HolProg width)) (n : Nat) (prog3 : HolProg width),
       holAlookup prog4 n = some prog3 →
       ∃ pc, codeInstalled' pc
-          (appListAppend (flattenHOL true prog3 n (Compiler.Backend.StackAlloc.nextLab prog3 2)
+          (appListAppend (flattenHOL true prog3 n (Compiler.Backend.StackAlloc.nextLabHOL prog3 2)
             [] []).1) (prog4.map progToSectionHOL) ∧
         locToPc n 0 (prog4.map progToSectionHOL) = some pc := by
   intro prog4
@@ -755,7 +799,7 @@ theorem codeInstalledProgToSection {width : Nat} [NeZero width] :
     ∀ (prog4 : List (Nat × HolProg width)) (n : Nat) (prog3 : HolProg width),
       labelsOk (prog4.map progToSectionHOL) ∧ holAlookup prog4 n = some prog3 →
       ∃ pc, codeInstalled pc
-          (appListAppend (flattenHOL true prog3 n (Compiler.Backend.StackAlloc.nextLab prog3 2)
+          (appListAppend (flattenHOL true prog3 n (Compiler.Backend.StackAlloc.nextLabHOL prog3 2)
             [] []).1) (prog4.map progToSectionHOL) ∧
         locToPc n 0 (prog4.map progToSectionHOL) = some pc := by
   rintro prog4 n prog3 ⟨ok, found⟩

@@ -7,45 +7,45 @@ val _ = temp_delsimps ["NORMEQ_CONV"]
 val _ = temp_delsimps ["lift_disj_eq", "lift_imp_disj"]
 fun checked label th =
   (if null (hyp th) then () else raise Fail "open HOL hypotheses";
-   print (label ^ "_statement="); print_term (concl th); print "\n");
+   print (label ^ "="); print_term (concl th); print "\n");
 
 (* Exported originals of stack_to_labProofScript.sml:32-600. *)
-val _ = checked "word_sh_word_shift" (GEN_ALL word_sh_word_shift);
-val _ = checked "assert_T" (GEN_ALL assert_T);
-val _ = checked "asm_fetch_aux_no_label" (GEN_ALL asm_fetch_aux_no_label);
-val _ = checked "dest_to_loc_def" dest_to_loc_def;
-val _ = checked "dest_to_loc'_def" dest_to_loc'_def;
-val _ = checked "find_code_lookup" (GEN_ALL find_code_lookup);
-val _ = checked "not_is_Label_compile_jump" (GEN_ALL not_is_Label_compile_jump);
-val _ = checked "word_cmp_not_NONE" (GEN_ALL word_cmp_not_NONE);
-val _ = checked "word_cmp_negate_alt" (GEN_ALL word_cmp_negate_alt);
-val _ = checked "word_cmp_negate" (GEN_ALL word_cmp_negate);
-val _ = checked "code_installed_def" code_installed_def;
-val _ = checked "code_installed_append_imp" code_installed_append_imp;
-val _ = checked "loc_to_pc_APPEND" loc_to_pc_APPEND;
-val _ = checked "code_installed_APPEND" code_installed_APPEND;
-val _ = checked "code_installed_isPREFIX" code_installed_isPREFIX;
-val _ = checked "loc_to_pc_isPREFIX" loc_to_pc_isPREFIX;
-val _ = checked "MAP_prog_to_section_Section_num" (GEN_ALL MAP_prog_to_section_Section_num);
-val _ = checked "asm_fetch_aux_SOME_append2" asm_fetch_aux_SOME_append2;
-val _ = checked "loc_to_pc_append2" loc_to_pc_append2;
-val _ = checked "code_installed_append2" code_installed_append2;
-val _ = checked "ALOOKUP_PARTITION" ALOOKUP_PARTITION;
-val _ = checked "code_installed'_def" code_installed'_def;
-val _ = checked "code_installed'_cons_label" (GEN_ALL code_installed'_cons_label);
-val _ = checked "code_installed'_cons_non_label" (GEN_ALL code_installed'_cons_non_label);
-val _ = checked "code_installed'_simp" (GEN_ALL code_installed'_simp);
-val _ = checked "loc_to_pc_skip_section" (GEN_ALL loc_to_pc_skip_section);
-val _ = checked "asm_fetch_aux_add" (GEN_ALL asm_fetch_aux_add);
-val _ = checked "labs_correct_def" labs_correct_def;
-val _ = checked "code_installed_eq" code_installed_eq;
-val _ = checked "code_installed_cons" (GEN_ALL code_installed_cons);
-val _ = checked "labs_correct_hd" (GEN_ALL labs_correct_hd);
-val _ = checked "labels_ok_def" labels_ok_def;
-val _ = checked "labels_ok_imp" labels_ok_imp;
-val _ = checked "labels_ok_labs_correct" labels_ok_labs_correct;
-val _ = checked "labs_correct_append" (GEN_ALL labs_correct_append);
-val _ = checked "code_installed_prog_to_section" code_installed_prog_to_section;
+val _ = checked "word_sh_word_shift_statement" (GEN_ALL word_sh_word_shift);
+val _ = checked "assert_T_statement" (GEN_ALL assert_T);
+val _ = checked "asm_fetch_aux_no_label_statement" (GEN_ALL asm_fetch_aux_no_label);
+val _ = checked "dest_to_loc_def_statement" dest_to_loc_def;
+val _ = checked "dest_to_loc_prime_def_statement" dest_to_loc'_def;
+val _ = checked "find_code_lookup_statement" (GEN_ALL find_code_lookup);
+val _ = checked "not_is_Label_compile_jump_statement" (GEN_ALL not_is_Label_compile_jump);
+val _ = checked "word_cmp_not_NONE_statement" (GEN_ALL word_cmp_not_NONE);
+val _ = checked "word_cmp_negate_alt_statement" (GEN_ALL word_cmp_negate_alt);
+val _ = checked "word_cmp_negate_statement" (GEN_ALL word_cmp_negate);
+val _ = checked "code_installed_def_statement" code_installed_def;
+val _ = checked "code_installed_append_imp_statement" code_installed_append_imp;
+val _ = checked "loc_to_pc_APPEND_statement" loc_to_pc_APPEND;
+val _ = checked "code_installed_APPEND_statement" code_installed_APPEND;
+val _ = checked "code_installed_isPREFIX_statement" code_installed_isPREFIX;
+val _ = checked "loc_to_pc_isPREFIX_statement" loc_to_pc_isPREFIX;
+val _ = checked "MAP_prog_to_section_Section_num_statement" (GEN_ALL MAP_prog_to_section_Section_num);
+val _ = checked "asm_fetch_aux_SOME_append2_statement" asm_fetch_aux_SOME_append2;
+val _ = checked "loc_to_pc_append2_statement" loc_to_pc_append2;
+val _ = checked "code_installed_append2_statement" code_installed_append2;
+val _ = checked "ALOOKUP_PARTITION_statement" ALOOKUP_PARTITION;
+val _ = checked "code_installed_prime_def_statement" code_installed'_def;
+val _ = checked "code_installed_prime_cons_label_statement" (GEN_ALL code_installed'_cons_label);
+val _ = checked "code_installed_prime_cons_non_label_statement" (GEN_ALL code_installed'_cons_non_label);
+val _ = checked "code_installed_prime_simp_statement" (GEN_ALL code_installed'_simp);
+val _ = checked "loc_to_pc_skip_section_statement" (GEN_ALL loc_to_pc_skip_section);
+val _ = checked "asm_fetch_aux_add_statement" (GEN_ALL asm_fetch_aux_add);
+val _ = checked "labs_correct_def_statement" labs_correct_def;
+val _ = checked "code_installed_eq_statement" code_installed_eq;
+val _ = checked "code_installed_cons_statement" (GEN_ALL code_installed_cons);
+val _ = checked "labs_correct_hd_statement" (GEN_ALL labs_correct_hd);
+val _ = checked "labels_ok_def_statement" labels_ok_def;
+val _ = checked "labels_ok_imp_statement" labels_ok_imp;
+val _ = checked "labels_ok_labs_correct_statement" labels_ok_labs_correct;
+val _ = checked "labs_correct_append_statement" (GEN_ALL labs_correct_append);
+val _ = checked "code_installed_prog_to_section_statement" code_installed_prog_to_section;
 
 (* Local originals (not exported), replayed with their source proofs. *)
 val code_installed_get_labels_IMP = Q.prove(
@@ -75,14 +75,14 @@ val code_installed_get_labels_IMP = Q.prove(
   \\ imp_res_tac code_installed_append_imp \\ res_tac \\ fs []
   \\ imp_res_tac code_installed_append_imp \\ res_tac \\ fs []
   \\ imp_res_tac code_installed_append_imp \\ res_tac \\ fs []);
-val _ = checked "code_installed_get_labels_IMP" (GEN_ALL code_installed_get_labels_IMP);
+val _ = checked "code_installed_get_labels_IMP_statement" (GEN_ALL code_installed_get_labels_IMP);
 
 val asm_fetch_aux_SOME_append = Q.prove(
   `∀pc code l code2.
   asm_fetch_aux pc code = SOME l ⇒
   asm_fetch_aux pc (code++code2) = SOME l`,
   ho_match_mp_tac asm_fetch_aux_ind>>simp[asm_fetch_aux_def]>>rw[]);
-val _ = checked "asm_fetch_aux_SOME_append" asm_fetch_aux_SOME_append;
+val _ = checked "asm_fetch_aux_SOME_append_statement" asm_fetch_aux_SOME_append;
 
 val asm_fetch_aux_SOME_isPREFIX = Q.prove(
   `∀pc code l code2.
@@ -91,7 +91,7 @@ val asm_fetch_aux_SOME_isPREFIX = Q.prove(
   asm_fetch_aux pc code2 = SOME l`,
   rw[]>>fs[IS_PREFIX_APPEND]>>
   metis_tac[asm_fetch_aux_SOME_append]);
-val _ = checked "asm_fetch_aux_SOME_isPREFIX" asm_fetch_aux_SOME_isPREFIX;
+val _ = checked "asm_fetch_aux_SOME_isPREFIX_statement" asm_fetch_aux_SOME_isPREFIX;
 
 (* First (line 228) declaration of the duplicated local name. *)
 val MAP_prog_to_section_FST = Q.prove(
@@ -99,7 +99,7 @@ val MAP_prog_to_section_FST = Q.prove(
   MAP FST prog`,
   match_mp_tac LIST_EQ>>rw[EL_MAP]>>Cases_on`EL x prog`>>fs[prog_to_section_def]>>
   pairarg_tac>>fs[]);
-val _ = checked "MAP_prog_to_section_FST" (GEN_ALL MAP_prog_to_section_FST);
+val _ = checked "MAP_prog_to_section_FST_statement" (GEN_ALL MAP_prog_to_section_FST);
 
 val code_installed_prog_to_section_lemma = Q.prove(
   `!prog4 n prog3.
@@ -115,4 +115,4 @@ val code_installed_prog_to_section_lemma = Q.prove(
     \\ fs [code_installed'_simp])
   \\ res_tac \\ fs [stack_to_labTheory.prog_to_section_def] \\ pairarg_tac
   \\ fs [loc_to_pc_skip_section,code_installed_cons]);
-val _ = checked "code_installed_prog_to_section_lemma" code_installed_prog_to_section_lemma;
+val _ = checked "code_installed_prog_to_section_lemma_statement" code_installed_prog_to_section_lemma;
