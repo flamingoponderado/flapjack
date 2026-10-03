@@ -87125,5 +87125,21 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-ltaki): HOL data_inv_state_agree (word_cseProof:555). The full original statement is kept: binders in HOL order, the same premises, and the same conclusion (HOL bool equality as iff). It is stated over the reviewed semInv/dataInv/wfData and the faithful WordSemStateFiniteExact (set_var/unset_var/lookup/insert as setVar/unsetVar/sptLookup/sptInsert, record updates as structure updates, ALOOKUP as List.lookup, and inst over the codec-embedded arith instruction as in semInv). The proof uses the accepted evaluation frames (evaluateArithSetVar/UnsetVar/Memory/Agree, evaluateLoadSetVar/UnsetVar/Agree) and canonicalRegsCorrect/AvoidCorrect through a common semInv transport lemma. Kernel-checked with standard axioms only. The word_cse_data_inv_transport probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through semInv/evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "attachBitmaps",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "attach_bitmaps_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison 2026-10-03: original backendScript15-43, full inferred field/signature and definition captures in backend_config_attach_bitmaps_probe.out. Full eleven-field config retains reviewed source_to_flat/clos_to_bvl/bvl_to_bvi/data_to_word/word_to_word/word_to_stack/stack_to_lab/lab_to_target/tap_config carriers, List(MlString*Nat*Nat) symbols and List MlString exported names; no omitted field or arbitrary placeholder. Original attach_bitmaps independently quantifies byte and bitmap payloads; Lean Bytes/Bitmaps are independent Type parameters with literal SOME/NONE, original lab_conf update, ordered MAP over all sec_pos_len triples, reviewed lookupAny over exact Spt MlString and fixed ASCII NOTFOUND. Native mlstrings/lists/sptrees require no representation qualifier; no type-indexed word or array field occurs. No added premise or runtime-policy change."
   }
 ]

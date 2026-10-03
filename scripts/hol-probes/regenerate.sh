@@ -7473,3 +7473,7 @@ run_probe riscv_const32_value_probeScript.sml riscv_const32_value_probe.out \
   const32_value_negative_low_positive const32_value_negative_low_sign const32_value_all_ones \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bitmaps_probe.out \
+  config_component_equality_typed source_conf_type clos_conf_type bvl_conf_type data_conf_type word_to_word_conf_type word_conf_type stack_conf_type lab_conf_type symbols_type tap_conf_type exported_type attach_bitmaps_type attach_bitmaps_def_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"

@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.Const32
+import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
