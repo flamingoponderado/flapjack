@@ -68056,12 +68056,54 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WriteBytearray.lean",
+    "lean_name": "writeBytearrayIgnoreNonAligned",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "write_bytearray_IGNORE_non_aligned",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 after explicit user LOG2 correction and accepted byte-align assessment: original stack_removeProofScript324-370 operates symbolically on a common byte_align key; original proofs use no LOG2 numeric, alignment idempotence or width>=8 fact. These are portable original-shaped numerical Lean instances at every positive width with unchanged executed WordSem byte operators; no equality with unspecified HOL LOG2 0 or cross-prover equivalence is claimed. All carriers and original source hypotheses/results retained, WordLocW has word/location constructors, domain set is the reviewed Bool predicate and memory is total. Original read_bytearray uses source read success, write_bytearray is tail-first with failed-store fallback to original memory. Fresh original literal three proofs/full quantified types and fifty numeric read/paired-write observations replayed, including both endiannesses and widths8/64/80, width1 empty case only; no invented low-width symbolic observation. Original324-330 all byte lists/address/memory/domain/endian/key; only key outside image of common alignment guard. Derives update exclusion from successful store; no additional source premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WriteBytearray.lean",
+    "lean_name": "writeBytearrayIgnore",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "write_bytearray_IGNORE",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 after explicit user LOG2 correction and accepted byte-align assessment: original stack_removeProofScript324-370 operates symbolically on a common byte_align key; original proofs use no LOG2 numeric, alignment idempotence or width>=8 fact. These are portable original-shaped numerical Lean instances at every positive width with unchanged executed WordSem byte operators; no equality with unspecified HOL LOG2 0 or cross-prover equivalence is claimed. All carriers and original source hypotheses/results retained, WordLocW has word/location constructors, domain set is the reviewed Bool predicate and memory is total. Original read_bytearray uses source read success, write_bytearray is tail-first with failed-store fallback to original memory. Fresh original literal three proofs/full quantified types and fifty numeric read/paired-write observations replayed, including both endiannesses and widths8/64/80, width1 empty case only; no invented low-width symbolic observation. Original332-344 retains independent readable source and updated target memories/domains, subset, original source read and outside source domain guard. Successful read supplies aligned-key membership; queried key cannot equal it. No target read/store success premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WriteBytearray.lean",
+    "lean_name": "writeBytearrayEq",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "write_bytearray_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 after explicit user LOG2 correction and accepted byte-align assessment: original stack_removeProofScript324-370 operates symbolically on a common byte_align key; original proofs use no LOG2 numeric, alignment idempotence or width>=8 fact. These are portable original-shaped numerical Lean instances at every positive width with unchanged executed WordSem byte operators; no equality with unspecified HOL LOG2 0 or cross-prover equivalence is claimed. All carriers and original source hypotheses/results retained, WordLocW has word/location constructors, domain set is the reviewed Bool predicate and memory is total. Original read_bytearray uses source read success, write_bytearray is tail-first with failed-store fallback to original memory. Fresh original literal three proofs/full quantified types and fifty numeric read/paired-write observations replayed, including both endiannesses and widths8/64/80, width1 empty case only; no invented low-width symbolic observation. Original346-370 retains independent source/target memory and domain, subset plus source-domain memory correspondence/domain membership, actual source read and initial point equality. Induction compares tail writes at the common alignment key, then same updates; invalid word/location/domain cases included. No stronger word-only, aligned-key, target-success or width premise."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
     "lean_name": "«dfn'SC_W»",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
     "hol_name": "dfn'SC_W_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7555-7607: full fixed word1 aq/rl and word5 rd/rs1/rs2 tuple with arbitrary native riscv_state. Source ordered low2 virtual AMO_Misaligned before reservation; failed match writes GPR1 without translation/clearing reservation; THE NONE stays canonical opaque and IsSome masks it. Literal Data/Read translation is retained, not changed to modern Write. Fault Store_AMO_Fault forwards translation-returned state and original virtual address; success reads rs2 from returned state, rawWriteData four bytes then GPR0 then clears current reservation. No alignment/reservation/success/core premise. Complete38-declaration render closure0failed, definition and unconditional whole-state normal form kernel checked. Fresh pinned original definition/type+19 observations independently matched via byte-wise updates, all order bits, early misalignment, fault reservation retention, missing/mismatch reservation with invalidVM31 showing no translation, read-onlyPTE2 success, zero rd/rs2/core255,totalCore1/RV32/RV128/Sv39 returned-state PTE update and partial upper-half write4. No whole atomic/Run/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/DataBufferWrite.lean",
+    "lean_name": "compCorrectDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03; bead flapjack-sol-remove-databuffer: original comp_correct DataBufferWrite case2035-2080, original four premises evaluate/nonError/full state_rel/reg_bound and native existential target clock/poststate with full result branch retained. Operand words and buffer-write success follow from native source evaluation and nonError; target register lookups from original bounds/state relation, target domain from next existential word-list cell. Clock0 native compiled store uses second register as value and first as address with zero offset. Complete postrelation retains all 25 unchanged conjuncts; full separated memory/bitmap-buffer/remaining/store/stack heap updated via singleton functional-graph store, consuming one remaining cell and appending value, all modular addresses derived from native success and state relation. No target execution/domain/postheap premises. Imported canonical regs/fpRegs/store use genuine same-module codec roundtrip witness; tree-map code excluded. Positive width BitVec/NeZero and C/F Type0 retained. Entire evaluator closure inherits reals_as_rational_cuts explicitly; no independent floating-point correspondence claim. Other cases and parent assembly remain open."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
