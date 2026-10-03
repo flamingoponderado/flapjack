@@ -6571,3 +6571,6 @@ regressions; fullRun/Next/pass correctness remains open.
 
 
 `wordsem_pop_env_const_probe.out` freshly replays the unchanged original full wordProps pop_env_const proof. The closed statement preserves the sole successful pop premise and all nineteen original field equalities, including both handler branches; replay=T and hypotheses=0. This prerequisite does not establish the full evaluator resource family.
+
+
+`wordsem_gc_const_probe.out` freshly replays the unchanged original full wordProps gc_const proof. The closed theorem keeps the sole successful-collection premise, arbitrary callbacks and all thirteen preserved field equalities; replay=T and hypotheses=0. No callback law or resource-safety assumption is supplied. Full evaluator resource induction remains open.

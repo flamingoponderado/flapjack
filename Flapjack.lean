@@ -1016,6 +1016,7 @@ import Flapjack.Compiler.Backend.StackProps.FixedNames
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConst
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.InstConstFull
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PopEnvConst
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.GcConst
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnv
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutEnvs
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.EnvFrame

@@ -70166,5 +70166,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.2 wordProps475-497: complete original arbitrary native input/output states, sole pop_env=SOME premise, all19 original conclusions in order clock/ffi/be/compile/compileOracle/memory/mdomain/shMdomain/store/fpRegs/gcFun/termdep/permute/dataBuffer/codeBuffer/code/stackLimit/stackMax/stackSize. Actual popEnv538-547 changes only locals/localsSize/stack and optional handler, both frame branches covered; empty stack contradicts successful premise. No stack-shape/safe-for-space/target-run assumptions. Actual imported positive-width WordSemStateFiniteExact with C/F:Type and exact Spt fields; canonical fpRegs/store owner and genuine same-module codec witness, function/set equalities and Bool equivalence rendered as equality. No numerical FP evaluator used or numerical correspondence assertion. Original Alloc4322/Call4357 max induction needs this invariant. Fresh unchanged literal full proof replay; resource evaluator/Seq/full pass remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/GcConst.lean",
+    "lean_name": "gcConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "gc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.3 wordProps612-630: complete original arbitrary native input/output states and callback, sole gc=SOME premise, all13 conclusions in original order clock/ffi/code/be/codeBuffer/dataBuffer/compile/handler/compileOracle/localsSize/stackLimit/stackMax/stackSize. Actual gc648-661 invokes gcFun on original encStack/memory/domain/store and only installs decoded stack/new store/new memory; every success retains fields, callback/decoder failure contradicts original premise. No callback law/stack shape/safety/target-run assumption. Actual imported positive-width WordSemStateFiniteExact with C/F:Type, exact Spt fields, canonical fpRegs/store owner and genuine same-module codec witness; Bool equivalence as Bool equality. No evaluator or numeric FP assertion. Original max induction4321 and WordSem alloc_const649-666 genuinely need this invariant. Fresh unchanged literal original complete proof replay; full resource/Seq/pass remains open."
   }
 ]
