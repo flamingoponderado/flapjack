@@ -6428,3 +6428,5 @@ actual helper execution and original `sh_mem_op_const`; no preserved field is
 assumed. The native consumer module kernel-checks all 23 generic statements.
 These captures provide source regression evidence, not cross-language equivalence
 or full evaluator/pass/compiler correctness.
+
+`stack_remove_comp_correct_full_probeScript.sml` replays the entire unchanged original StackRemove `comp_correct` proof (1481–2426), including its original evaluator induction and every constructor case. Its 28 original local helper proofs are replayed in source order; their free-variable form is preserved because the original RawCall branch specializes `find_code_lemma` before generalizing it. The original `write_fun2set2` proof transformation and local stub overload are retained. Two rows record the full closed statement and kernel proof success. Lean assembles the complete native pass theorem using the same clock-first evaluator measure, with exactly the original four premises and no supplied target execution or simulation. Downstream semantics/initialization and whole compiler correctness remain separate goals.

@@ -6054,3 +6054,7 @@ run_probe l3_tlb_flush_probeScript.sml l3_tlb_flush_probe.out \
 run_probe stack_rel_aux_definition_probeScript.sml stack_rel_aux_definition_probe.out \
   stack_rel_aux_definition stack_rel_aux_hypotheses stack_rel_aux_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_comp_correct_full_probeScript.sml stack_remove_comp_correct_full_probe.out \
+  cc_full_statement cc_full_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

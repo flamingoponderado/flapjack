@@ -69066,5 +69066,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-remove-storeconsts): full original comp_correct StoreConsts case1504–1575. Arbitrary temporary/bitmap registers, optional stub, original four premises and existential target clock/result dispatch/full postrelation retained. Original source semantics excludes allocation and error branches and derives distinct registers, three input words and successful copyWordsExact. Native bitmap-base load/add/shift uses original store/stack heap, original positive good dimension and state relation; accepted full copyLoopThm supplies the actual native run and framed memory update; final moves and every full state-relation conjunct are proved. No target execution, successful pass, desired postrelation, extra alias/width condition or simulation is assumed. Canonical actual imported StackSemStateFiniteExact regs/fpRegs/store finite maps and positive type-indexed BitVec words use the reviewed combined relation/word qualifiers with non-vacuous broad/exact roundtrip witness; code remains original Spt. Inherits the reviewed reals_as_rational_cuts FP carrier through evaluator closure (SOUNDNESS item8), although this constructor performs no FP instruction. Full original literal HOL case proof and local state_rel_get_var replay produce closed statement/proved rows. This is a full constructor slice, not whole-pass completion or executed compiler parity."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect.lean",
+    "lean_name": "compCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-pxn.18.5.15.6.8): complete original StackRemove comp_correct1481–1493, not an assumed simulation or constructor slice. Arbitrary original program/source/result/postsource/target/register bound/word offset pair/jump parameters, exactly source evaluate equality/non-Error/full stateRelHOL/regBound premises; existential extra clock and actual compiled evaluate same result with full Halt/TimeOut/FinalFFI FFI equality versus full postrelation otherwise. Original evaluate_ind is realized through the exact evaluator clock-first lexicographic measure; all 34 constructors use reviewed native case proofs. Seq second, Loop reentry and Call continuations obtain actual source clock bounds through unconditional fixClockEvaluate; structural subterms and guarded callee decrements discharge every induction measure. No supplied target run, desired postrelation, simulation, compiler success, alias restriction, width restriction or recursion premise survives in the theorem. Canonical imported state regs/fpRegs/store relation-map translation has non-vacuous broad/exact codec; code remains Spt; positive type-indexed BitVec and Type FFI carriers match original word/universe translation. Inherits reviewed reals_as_rational_cuts through native evaluator FP closure (SOUNDNESS item8), explicitly retained. Full unchanged original comp_correct proof and original local helper proofs replayed for the entire theorem; kernel native proof uses standard Lean axioms only. This pass theorem does not claim downstream compile_semantics, executable-path replacement or whole compiler completion."
   }
 ]
