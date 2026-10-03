@@ -293,6 +293,217 @@ theorem sf_gc_consts_get_above_handler {width : Nat} [NeZero width] {C : Type} {
   obtain ⟨-, -, rfl⟩ := hrel
   rcases h1 with _ | ⟨_, _, _⟩ <;> rfl
 
+theorem pushEnv_stack_cons {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (env : Spt (WordLocW width) × Spt (WordLocW width))
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (s : WordSemStateFiniteExact width C F) :
+    (pushEnv env handler s).stack =
+      .stackFrame s.localsSize (sptToAList env.1) (wordSemEnvToList env.2 s.permute).1
+        (handler.map (fun h => (s.handler, h.2.2.1, h.2.2.2))) :: s.stack := by
+  rcases handler with _ | ⟨_, _, _, _⟩ <;> rfl
+
+/-- Exact HOL `LIST_REL_call_Result` (`word_simpProofScript.sml:598-608`); HOL's
+    unused binder `s'` is kept. -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LIST_REL_call_Result"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem LIST_REL_call_Result {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (s _s' s'' s''' : WordSemStateFiniteExact width C F)
+      (env : Spt (WordLocW width) × Spt (WordLocW width))
+      (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)),
+      List.Forall₂ sfGcConsts (pushEnv env handler s).stack s''.stack ∧ popEnv s'' = some s''' ∧
+        s''.handler = (pushEnv env handler s).handler →
+        List.Forall₂ sfGcConsts s.stack s'''.stack ∧ s'''.handler = s.handler := by
+  intro s _ s'' s''' env handler ⟨hrel, hpop, hh⟩
+  rw [pushEnv_stack_cons] at hrel
+  unfold popEnv at hpop
+  generalize hst : s''.stack = st at hrel hpop
+  rcases hrel with _ | ⟨hf, hrest⟩
+  rename_i f'' rest
+  rcases f'' with ⟨m, e0, e, hf''⟩
+  obtain ⟨-, -, hfh⟩ := hf
+  rcases handler with _ | ⟨n, p, l1, l2⟩
+  · simp only [Option.map_none] at hfh
+    subst hfh
+    simp only [Option.some.injEq] at hpop
+    subst hpop
+    refine ⟨hrest, ?_⟩
+    simp only at hh ⊢
+    rw [hh]; rfl
+  · simp only [Option.map_some] at hfh
+    subst hfh
+    simp only [Option.some.injEq] at hpop
+    subst hpop
+    exact ⟨hrest, rfl⟩
+
+/-- Exact HOL `get_above_handler_call_env_push_env_dec_clock`
+    (`word_simpProofScript.sml:610-618`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "get_above_handler_call_env_push_env_dec_clock"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem get_above_handler_call_env_push_env_dec_clock {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (s s' s'' : WordSemStateFiniteExact width C F) (args : List (WordLocW width))
+      (lsz : Option Nat) (env : Spt (WordLocW width) × Spt (WordLocW width)) (x0 : Nat)
+      (x1 : WordLangProgHOL (BitVec width)) (x2 x3 : Nat),
+      s' = callEnv args lsz (pushEnv env (some (x0, x1, x2, x3)) (decClock s)) ∧
+        s''.handler = getAboveHandler s' →
+        s''.handler = s.handler := by
+  intro s s' s'' args lsz env x0 x1 x2 x3 ⟨hs, hh⟩
+  subst hs
+  rw [hh]
+  unfold getAboveHandler
+  simp only [callEnv, pushEnv, decClock, List.length_cons, Nat.sub_self]
+  rfl
+
+/-- Exact HOL `call_env_push_env_dec_clock_handler_length`
+    (`word_simpProofScript.sml:620-625`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "call_env_push_env_dec_clock_handler_length"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem call_env_push_env_dec_clock_handler_length {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (s s' : WordSemStateFiniteExact width C F) (args : List (WordLocW width))
+      (lsz : Option Nat) (env : Spt (WordLocW width) × Spt (WordLocW width)) (x0 : Nat)
+      (x1 : WordLangProgHOL (BitVec width)) (x2 x3 : Nat),
+      s' = callEnv args lsz (pushEnv env (some (x0, x1, x2, x3)) (decClock s)) →
+        s'.handler < s'.stack.length := by
+  intro s s' args lsz env x0 x1 x2 x3 hs
+  subst hs
+  simp [callEnv, pushEnv, decClock]
+
+/-- Exact HOL `EVERY2_trans_LASTN_sf_gc_consts` (`word_simpProofScript.sml:627-633`);
+    HOL's unused binder `R` is kept. -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "EVERY2_trans_LASTN_sf_gc_consts"
+  (words_as_type_indexed_bitvec)]
+theorem EVERY2_trans_LASTN_sf_gc_consts {width : Nat} [NeZero width] :
+    ∀ (l l' l'' : List (WordSemStackFrame width)) (n : Nat) (_R : Prop),
+      n ≤ l.length ∧ List.Forall₂ sfGcConsts l l' ∧ List.Forall₂ sfGcConsts (wordSemLastN n l') l'' →
+        List.Forall₂ sfGcConsts (wordSemLastN n l) l'' := by
+  intro l l' l'' n _ ⟨hn, h1, h2⟩
+  exact forall₂_trans' (fun a b c hab hbc => sfGcConstsTrans a b c ⟨hab, hbc⟩)
+    (listRelLastN sfGcConsts l l' n ⟨hn, h1⟩) h2
+
+/-- Exact HOL `LIST_REL_push_env` (`word_simpProofScript.sml:635-640`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LIST_REL_push_env"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem LIST_REL_push_env {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (R : WordSemStackFrame width → WordSemStackFrame width → Prop)
+      (s s' : WordSemStateFiniteExact width C F) (env : Spt (WordLocW width) × Spt (WordLocW width))
+      (h : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)),
+      List.Forall₂ R (pushEnv env h s).stack s'.stack → List.Forall₂ R s.stack s'.stack.tail := by
+  intro R s s' env h hrel
+  rw [pushEnv_stack_cons] at hrel
+  generalize s'.stack = st at hrel ⊢
+  rcases hrel with _ | ⟨_, hrest⟩
+  exact hrest
+
+/-- Exact HOL `LASTN_LENGTH_CONS` (`word_simpProofScript.sml:642-646`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LASTN_LENGTH_CONS"]
+theorem LASTN_LENGTH_CONS {α : Type} : ∀ (l : List α) (h : α), wordSemLastN l.length (h :: l) = l := by
+  intro l h
+  rw [wordSemLastN_eq_drop]
+  simp
+
+/-- Exact HOL `LASTN_TL_res` (`word_simpProofScript.sml:648-652`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "LASTN_TL_res"]
+theorem LASTN_TL_res {α : Type} :
+    ∀ (l : List α) (n : Nat) (h : α) (t : List α),
+      n < l.length ∧ wordSemLastN (n + 1) l = h :: t → t = wordSemLastN n l := by
+  intro l n h t ⟨hn, hl⟩
+  rw [wordSemLastN_eq_drop] at hl ⊢
+  have hk : l.length - n = (l.length - (n + 1)) + 1 := by omega
+  rw [hk, ← List.drop_drop, List.drop_one]
+  rw [hl]; rfl
+
+/-- Exact HOL `HD_LASTN` (`word_simpProofScript.sml:654-658`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "HD_LASTN"]
+theorem HD_LASTN {α : Type} [Nonempty α] :
+    ∀ (l : List α) (n : Nat), 0 < n ∧ n ≤ l.length → holHd (wordSemLastN n l) = holEl (l.length - n) l := by
+  intro l n ⟨h0, hn⟩
+  rw [wordSemLastN_eq_drop, holEl_eq_getElem _ _ (by omega)]
+  have : l.drop (l.length - n) = l[l.length - n]'(by omega) :: l.drop (l.length - n + 1) :=
+    List.drop_eq_getElem_cons (by omega)
+  rw [this]; rfl
+
+theorem sptAListLookup_toAList {β : Type} (t : Spt β) (k : Nat) :
+    sptAListLookup k (sptToAList t) = sptLookup k t := by
+  rcases h : sptLookup k t with _ | v
+  · apply sptAListLookup_none_of_not_mem
+    intro hm
+    obtain ⟨⟨k', v'⟩, hmem, rfl⟩ := List.mem_map.mp hm
+    rw [(sptMemToAList t k' v').mp hmem] at h
+    cases h
+  · exact sptAListLookup_of_mem _ k v (sptAllDistinctMapFstToAList t) ((sptMemToAList t k v).mpr h)
+
+theorem envToList_alookup {width : Nat} [NeZero width] (e : Spt (WordLocW width))
+    (perm : Nat → Nat → Nat) (k : Nat) :
+    sptAListLookup k (wordSemEnvToList e perm).1 = sptLookup k e := by
+  have hs := (holPerm_iff _ _).mp
+    (Basis.Pure.MlList.sortPerm wordSemKeyValCompare (sptToAList e))
+  have hnd0 := sptAllDistinctMapFstToAList e
+  have hnd1 : (Basis.Pure.MlList.sort wordSemKeyValCompare (sptToAList e)).Nodup :=
+    List.Nodup.of_map _ ((hs.map Prod.fst).nodup_iff.mp hnd0)
+  have hr := (holPerm_iff _ _).mp (permListRearrange (perm 0) _ hnd1)
+  have hp : (sptToAList e).Perm (wordSemEnvToList e perm).1 := hs.trans hr
+  rw [← sptAListLookup_perm _ _ hp hnd0, sptAListLookup_toAList]
+
+/-- Exact HOL `push_env_pop_env_locals_thm` (`word_simpProofScript.sml:660-690`). -/
+@[hol "cakeml/compiler/backend/proofs/word_simpProofScript.sml" "push_env_pop_env_locals_thm"
+  (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem push_env_pop_env_locals_thm {width : Nat} [NeZero width] {C : Type} {F : Type} :
+    ∀ (s s' s'' s''' : WordSemStateFiniteExact width C F)
+      (env : Spt (WordLocW width) × Spt (WordLocW width)) (names : WordLangCutsetsHOL)
+      (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat)),
+      wordSemCutEnvs names s.locals = some env ∧ pushEnv env handler s = s' ∧
+        List.Forall₂ sfGcConsts s'.stack s''.stack ∧ popEnv s'' = some s''' →
+        ∀ v w, getVar v s = some w ∧ isGcWordConst w = true ∧ sptLookup v (allNames names) ≠ none →
+          getVar v s''' = some w := by
+  intro s s' s'' s''' env names handler ⟨hcut, hpush, hrel, hpop⟩ v w ⟨hv, hgc, hn⟩
+  subst hpush
+  rw [pushEnv_stack_cons] at hrel
+  unfold popEnv at hpop
+  generalize hst : s''.stack = st at hrel hpop
+  rcases hrel with _ | ⟨hf, hrest⟩
+  rename_i f'' rest
+  rcases f'' with ⟨m, e0, e, hf''⟩
+  obtain ⟨hlist, he0, -⟩ := hf
+  subst he0
+  have hloc : s'''.locals = sptUnion (sptFromAList e) (sptFromAList (sptToAList env.1)) := by
+    rcases hf'' with _ | ⟨_, _, _⟩ <;> simp only [Option.some.injEq] at hpop <;> subst hpop <;> rfl
+  -- unpack the cut
+  simp only [wordSemCutEnvs, wordSemCutNames] at hcut
+  split at hcut
+  · rename_i e1 e2 h1 h2
+    simp only [Option.some.injEq] at hcut
+    subst hcut
+    split at h1
+    · simp only [Option.some.injEq] at h1
+      subst h1
+      split at h2
+      · simp only [Option.some.injEq] at h2
+        subst h2
+        show sptLookup v s'''.locals = some w
+        rw [hloc, sptLookup_sptUnion, sptLookup_sptFromAList, sptLookup_sptFromAList_sptToAList]
+        have hv' : sptLookup v s.locals = some w := hv
+        rcases hn2 : sptLookup v names.2 with _ | u2
+        · -- not in the GC-ed cut: fall back to the kept cut
+          have hnone : sptAListLookup v (wordSemEnvToList (sptInter s.locals names.2) s.permute).1 = none := by
+            rw [envToList_alookup, sptLookup_sptInterCases, hn2]; split <;> simp_all
+          rw [ALOOKUP_LIST_REL_sf_gc_consts_NONE w _ _ v ⟨hlist, hnone⟩]
+          simp only
+          rw [sptLookup_sptInterCases, hv']
+          have hn1 : sptLookup v names.1 ≠ none := by
+            intro hn1
+            apply hn
+            simp only [Compiler.Backend.WordSimp.allNames]
+            rw [sptLookup_sptUnion, hn1, hn2]
+          rcases h1' : sptLookup v names.1 with _ | u1
+          · exact absurd h1' hn1
+          · rfl
+        · have hsome : sptAListLookup v (wordSemEnvToList (sptInter s.locals names.2) s.permute).1 =
+              some w := by
+            rw [envToList_alookup, sptLookup_sptInterCases, hv', hn2]
+          rw [ALOOKUP_LIST_REL_sf_gc_consts _ _ v w ⟨hlist, hgc, hsome⟩]
+      · cases h2
+    · cases h1
+  · cases hcut
+
 end WordSemStateFiniteExact
 
 end Flapjack
