@@ -78466,5 +78466,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source comparison wordConvsProofScript.sml:1417-1430, original complete Inst constructor case. Retains original source flat_exp_conventions premise and literal SSA output conclusion for all native instruction constructors, FP width branches and fallback. No target premise or restricted instruction subset. Native WordLang/Spt/List and positive word carrier; words_as_type_indexed_bitvec records only HOL dimension translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/lab_filterScript.sml",
+    "hol_name": "filter_skip_MAP",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Map.lean",
+    "lean_name": "filterSkipMap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.8): Full original lab_filterScript21 forall ls filter_skip ls = MAP (lambda Section n xs => Section n (FILTER not_skip xs)) ls. Fresh original fulltype captures for theorem/not_skip_def/filter_skip_def show alpha sec list and alpha line: actual fixed native syntax indexed by HOL word dimension, no arbitrary other Line carriers to specialize. Lean retains full program binder and constructor-for-constructor Section/List/Line/ASM/register-immediate/MlString fields; map lambda written with structure projections is original single constructor case. Positive-width words_as_type_indexed_bitvec is sole translation; fixed bytes unchanged, no extra hypotheses. Kernel list induction follows unchanged source proof. Same-module untagged filterSkipAppend is derived map/append infrastructure for actual Install code/oracle successor, not a new HOL declaration. Original three declarations freshly replayed with full type/hyp0/kernel captures12rows. This is a missing original995/999/1005/1024/1028/1031 Install dependency; full Install/filter assembler remain open."
   }
 ]

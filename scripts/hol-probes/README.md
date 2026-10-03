@@ -7176,3 +7176,8 @@ preservation of memory/domain/byte order, using only the original child IH.
 Load32 specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions with only the original child IH, deriving the32-bit load
 through actual memory/domain/byte-order preservation.
+`lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
+and both direct definitions, full native word-indexed line/section binder types,
+zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
+proof's map prerequisite without specializing arbitrary generic Line carriers.
+The derived Lean append law is Flapjack infrastructure, not another HOL claim.
