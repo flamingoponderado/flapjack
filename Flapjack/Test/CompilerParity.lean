@@ -1,3 +1,10 @@
+import Flapjack.Test.L3FPMemoryParity
+import Flapjack.Test.L3ControlFetchParity
+import Flapjack.Test.L3FPBitsParity
+import Flapjack.Test.L3DivideParity
+import Flapjack.Test.L3MultiplyParity
+import Flapjack.Test.L3WordArithmeticParity
+import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3RegisterShiftParity
