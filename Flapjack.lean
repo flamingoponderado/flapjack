@@ -617,6 +617,7 @@ import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
 import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+import Flapjack.Pancake.WordConvs.StackOccurrences
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.MapInj
 import Flapjack.Compiler.Backend.Parmove.PathLemmas
