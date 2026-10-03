@@ -7826,6 +7826,12 @@
       "sha256": "54a79a9880ec84098f8719f8bff7c2e57ec163f7cda13f55a2118269c2d81382"
     },
     {
+      "bytes": 1360,
+      "out": "stack_to_lab_flatten_semantics_probe.out",
+      "rows": 3,
+      "sha256": "81b4941a82f19709ead7f0b26883e36be236bee97a28e8545db71aed534ec77f"
+    },
+    {
       "bytes": 938,
       "out": "stack_to_lab_full_encoding_probe.out",
       "rows": 4,
