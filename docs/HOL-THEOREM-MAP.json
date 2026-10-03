@@ -78602,5 +78602,32 @@
     "lean_name": "ssaLabels",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only private factoring of native structural induction and literal reconciliation projections inside original full_ssa_cc_trans_lab_pres proof. HOL has no separately named declaration for this step; no hypothesis added to final unconditional original theorem."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExp.lean",
+    "lean_name": "instSelectExp_noLabels",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_no_lab",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:845: entire native inst_select_exp over arbitrary expressions/configuration/registers; all load/op/shift/fallback branches. Original unconditional no-label and flat conclusions; instruction validity retains only original addr_offset_ok config zero premise. Positive BitVec width/AsmConfigExact matches reviewed native word_inst carriers. Structural size induction avoids imported functional-induction kernel issue. No target assumptions or narrowed operands/widths; proof-only convention result, no executable route change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExp.lean",
+    "lean_name": "instSelectExp_flatExpConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_flat_exp_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:865: entire native inst_select_exp over arbitrary expressions/configuration/registers; all load/op/shift/fallback branches. Original unconditional no-label and flat conclusions; instruction validity retains only original addr_offset_ok config zero premise. Positive BitVec width/AsmConfigExact matches reviewed native word_inst carriers. Structural size induction avoids imported functional-induction kernel issue. No target assumptions or narrowed operands/widths; proof-only convention result, no executable route change."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/InstSelectExp.lean",
+    "lean_name": "instSelectExp_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:910: entire native inst_select_exp over arbitrary expressions/configuration/registers; all load/op/shift/fallback branches. Original unconditional no-label and flat conclusions; instruction validity retains only original addr_offset_ok config zero premise. Positive BitVec width/AsmConfigExact matches reviewed native word_inst carriers. Structural size induction avoids imported functional-induction kernel issue. No target assumptions or narrowed operands/widths; proof-only convention result, no executable route change."
   }
 ]
