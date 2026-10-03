@@ -7419,3 +7419,15 @@ rows retain the universally closed three-conjunct statement, arbitrary
 word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
 BitVec64/32 carriers and proves all three equations without premises.
 This is regression evidence; it does not prove HOL-to-Lean equivalence.
+
+## Full native target state definition group
+
+`riscv_target_state_probeScript.sml` captures all four original definition
+theorems (`riscv_next`, `riscv_ok`, `riscv_proj`, `riscv_target`) with complete
+statements, inferred types, zero hypotheses and kernel truth. It also reduces
+the omitted floating-register field: the result is `ARB.get_fp_reg`, not an
+arbitrary function chosen independently and not zero. Lean preserves the
+projection from the arbitrary whole target record. The local nonempty witness
+is only a carrier inhabitation proof and does not define that arbitrary record.
+The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
+These captures/regressions do not establish HOL-to-Lean equivalence.

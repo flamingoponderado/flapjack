@@ -6966,3 +6966,7 @@ run_probe pan_structs_program_dec_probeScript.sml pan_structs_program_dec_probe.
 run_probe riscv_target_slice_probeScript.sml riscv_target_slice_probe.out \
   slice_statement slice_types slice_hypotheses slice_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_state_probeScript.sml riscv_target_state_probe.out \
+  riscv_next_statement riscv_next_hypotheses riscv_next_proved riscv_next_type riscv_ok_statement riscv_ok_hypotheses riscv_ok_proved riscv_ok_type riscv_proj_statement riscv_proj_hypotheses riscv_proj_proved riscv_proj_type riscv_target_statement riscv_target_hypotheses riscv_target_proved riscv_target_type riscv_target_fp_field riscv_target_fp_type \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"

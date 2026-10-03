@@ -13,6 +13,7 @@ import Flapjack.Test.L3EncodeParity
 import Flapjack.Compiler.Encoders.RiscV.Target
 import Flapjack.Test.RiscVNativeTargetParity
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Compiler.Encoders.RiscV.Target.HelperLinks
 import Flapjack.Test.RiscVNativeConfigParity
 import Flapjack.RiscV.L3.Step.BitRewrites

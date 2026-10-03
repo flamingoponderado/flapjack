@@ -81108,5 +81108,39 @@
     "lean_name": "slice_bit_eleven",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c author source comparison2026-10-03: literal val lem6 all THREE conjuncts in original order, arbitrary fixedword64 c, extracts31..0 and63..32 at word32, bit11 maps to11/43, word complement bit maps to Boolean complement. No premise, narrowed port, target evaluation or omitted conjunct. Kernel simp proves generic64/32 statement. Original literal BBLAST_PROVE replay captured universally closed term/types/hyp0/T; probe evidence is not cross-language equivalence."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_next_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvNext",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise. Inherits reals_as_rational_cuts SOUNDNESS item8 via Step.NextRISCV -> Run; this marker records original native model rendering dependency, not a new correctness assumption.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_proj_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvProj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_target_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvTarget",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise. Inherits reals_as_rational_cuts SOUNDNESS item8 via Step.NextRISCV -> Run; this marker records original native model rendering dependency, not a new correctness assumption.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
