@@ -18,6 +18,8 @@ correspondence additionally covers arbitrary partner lists.
 
 `target_next_interference_probe.out` captures full next_interference_intro and next_interference_shift statements. Native generic proofs derive option-choice correctness from literal successful search and search monotonicity/uniqueness, preserving full result tuples.
 
+`word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
+
 `word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
 
 `word_remove_group_probe.out` captures, from the original built theories, the full statements (all with zero hypotheses) of wordProps `evaluate_dec_clock`, every exported word_removeProof declaration (`compile_state_def` and its type, the 28 exported commutation lemmas, `word_remove_correct` also with full types) and the sptree `domain_map`, `map_insert`, `map_fromAList` and `map_union` lemmas. The two `[local]` theorems `evaluate_add_clock_compile_state` and `pair_map_I` are not exported from the theory and cannot be captured this way; their statements are reviewed against the script source. These rows are statement evidence for source review, not a HOL-to-Lean equivalence proof.
@@ -7652,6 +7654,19 @@ assertion predicates, native types, zero stored hypotheses, and proved `T`.
 Lean derives actual native Fetch/DecodeAny/Run/Next and post-relation before
 using the original zero assertion witness. The fixture is original evidence,
 not a cross-language equivalence proof.
+# Polymorphic CSE definition signatures
+
+`word_cse_polymorphic_probeScript.sml` captures the original equations and
+inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
+is arbitrary, not restricted to register numbers. These signatures are review
+and regression evidence, not a HOL-to-Lean equivalence proof.
+
+`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
+its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
+types and closed kernel truth. Lean retains all eight original hypotheses and
+the full target evaluation/existential globals/context/fields/WF/structs/locals/
+shape-map conclusion; Name uses precisely the same-state tail IH. Whole
+declaration correctness and production compiler routing remain open.
 `pan_structs_program_call_probe` captures full original `compile_correct`, its
 Call specialization and complete original `evaluate_ind`, quantified types and
 closed kernel truth. The Lean case keeps all ten premises/seven conclusions
@@ -7670,19 +7685,15 @@ actual native byte fetch/decode/JALR/branch Next, and full post-relation under
 every projection-preserving environment. `check-riscv-target-jumpReg.py` pins
 the unrestricted statement and complete original evidence; these checks do
 not themselves prove cross-language equivalence.
-# Polymorphic CSE definition signatures
 
-`word_cse_polymorphic_probeScript.sml` captures the original equations and
-inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
-is arbitrary, not restricted to register numbers. These signatures are review
-and regression evidence, not a HOL-to-Lean equivalence proof.
-
-`pan_structs_decls_nil_name_probe` captures full original `compile_decls_correct`,
-its Nil/Name specializations and complete `evaluate_decls_ind`, with quantified
-types and closed kernel truth. Lean retains all eight original hypotheses and
-the full target evaluation/existential globals/context/fields/WF/structs/locals/
-shape-map conclusion; Name uses precisely the same-state tail IH. Whole
-declaration correctness and production compiler routing remain open.
+`pan_lang_generic_wf_shape_probe` captures original payload-polymorphic
+`is_wf_shape_def`, complete quantified types, closed kernel truth and four
+Nat/Bool payload observations plus original independently polymorphic
+`is_wf_flds_def` and two generic Nat/Bool field-key observations. Zero/false
+payloads still give true name presence; nested missing names fail. The executed faithful source predicate is
+the same generalized definition used by existing StructInfoHOLExact states,
+with explicit prior payload types at empty-context calls. The separate
+full generic compiled-shape theorem and production inventory remain open.
 
 ### Universal native ADDI decoder roundtrip
 
