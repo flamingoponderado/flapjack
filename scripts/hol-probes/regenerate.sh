@@ -7398,3 +7398,7 @@ run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_s
 run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrapper_probe.out \
   semantics_wrapper_def_statement semantics_wrapper_def_proved semantics_wrapper_def_types \
   "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe bvl_to_bvi_default_probeScript.sml bvl_to_bvi_default_probe.out \
+  bvl_num_stubs_def bvl_to_bvi_namespaces_def bvl_num_stub_MOD bvl_num_stub_MOD_hypotheses default_config_def default_config_type bvl_stub_count_value bvl_namespace_count_value default_next_name1 default_next_name2 default_next_name3 \
+  "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
