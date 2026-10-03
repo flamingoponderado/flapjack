@@ -5905,3 +5905,6 @@ run_probe stack_remove_comp_call_full_probeScript.sml stack_remove_comp_call_ful
   cc_call_tail_statement cc_call_tail_proved cc_call_return_none_statement cc_call_return_none_proved \
   cc_call_return_handler_statement cc_call_return_handler_proved cc_call_full_statement cc_call_full_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_code_bitmaps_seq_probeScript.sml stack_code_bitmaps_seq_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_seq_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"

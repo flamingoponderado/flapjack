@@ -68150,5 +68150,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-call), full original Call constructor1784-1931 of comp_correct1481-1493. Arbitrary return/handler AST options and all destination/state/result/compiler parameters retained. The original source evaluation/nonError/full stateRel/regBound premises and full target existential/extra clock/evaluation/all-result postcondition remain. Match-indexed calleeIH/returnIH/handlerIH are exactly the three reviewed source-branch IHs: actual successful source callee lookup (ordinary regs for tail or link-erased for returning), tail handlerNONE/nonzero clock; returning nonzero clock/callee entry; successful matching returnLoc continuation or matching exceptionLoc handler. These are conditional on ret/handler AST options, not universally across unrelated source states, programs or current Call runs. Full option assembly applies the already reviewed three original-case proofs, eliminates dependent result matches without statement weakening, and derives every target execution and complete26field postrelation/abnormal FFI result. No current-run simulation, target success or output relation assumption. Actual imported canonical StackSemStateFiniteExact regs/fpRegs/store owner and genuine local broad/exact codec checked; Spt code/list carriers unchanged. Word/FFI positive BitVec/Type translation only. Native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, including arbitrary callees. Full Call constructor only, not full comp_correct/pass/whole compiler theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Seq.lean",
+    "lean_name": "evaluateCodeBitmapsSeq",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.2: full original evaluate_code_bitmaps421-440 Seq case. CodeBitmaps is definitionally literal original existential shifted oracle/code union left-fold/bitmap append flatten. Actual native Seq evaluation sole execution premise; first IH only at source, second IH only after actual first NONE at native fixClock-clamped middle; no universal arbitrary-state recursive assumption. Early result retains clamped first prefix. Success composes count a+b, source oracle shifts, GENLIST/range split, original left-fold order and flattened append; no prefix/count/postcondition assumptions. Imported canonical regs/fpRegs/store witness, positive BitVec/NeZero,C/F Type0, inherited reals_as_rational_cuts assumption retained. Alignment field-preservation assessment does not claim numeric LOG2zero or FP equivalence; no runtime rewrite. Whole theorem assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
