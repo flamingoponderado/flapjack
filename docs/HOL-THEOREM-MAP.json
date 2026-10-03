@@ -83939,5 +83939,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: original in_names_set_def14-17 EVERY over arithReads, requiring spt lookup r canonical = SOME r for every read. Lean forall register membership is the standard EVERY predicate interpretation with identical list and equality; full HolArith8 constructors/field arities and imported exact arithReads reviewed, including carry fourth input and overflow flag exclusion. Original Spt Nat register map retained, arbitrary operation and canonical tree with no invariant/flat/run/success hypothesis. Positive HOL word dimension is the sole BitVec width/NeZero translation. Whole wf_data/semantic invariant/CSE correctness remains separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/ListOrder.lean",
+    "lean_name": "totOrdListCmp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "TotOrd_listCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source474-478 sole conclusion TotOrd listCmp, no premises. Imported exact toto TotOrd retains equality iff literal List Nat equality, Greater iff reversed Less and conjunction-premised strict transitivity, assembled from existing full original three laws. Original arbitrary numeral-list carrier and direct three-constructor Ordering translation retained; no finite-map carrier, word dimension, range, invariant, sortedness, evaluation or output assumption added. Existing Sol2 equality/reversal/transitivity ports reused unchanged."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/ListOrder.lean",
+    "lean_name": "goodCmpListCmp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "good_cmp_listCmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source480-484 sole conclusion good_cmp listCmp, no premises. Full original seven comparator conjuncts retained via exact general TotOrder_imp_good_cmp and original TotOrd_listCmp result. Original arbitrary numeral-list carrier and direct three-constructor Ordering translation retained; no finite-map carrier, word dimension, range, invariant, sortedness, evaluation or output assumption added. Existing Sol2 equality/reversal/transitivity ports reused unchanged."
   }
 ]
