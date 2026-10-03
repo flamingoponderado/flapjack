@@ -6635,3 +6635,9 @@ run_probe lab_filter_shared_return_probeScript.sml lab_filter_shared_return_prob
 run_probe word_simp_generic_carriers_probeScript.sml word_simp_generic_carriers_probe.out \
   generic_carrier_1 generic_carrier_1_hypotheses generic_carrier_2 generic_carrier_2_hypotheses generic_carrier_3 generic_carrier_3_hypotheses generic_carrier_4 generic_carrier_4_hypotheses generic_carrier_5 generic_carrier_5_hypotheses generic_carrier_6 generic_carrier_6_hypotheses generic_carrier_7 generic_carrier_7_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe l3_write_pc_probeScript.sml l3_write_pc_probe.out \
+  writePC_type writePC_hypotheses writePC_fullRecord_equation writePC_fullRecord_proof writePC_allKeys_equation writePC_allKeys_proof writePC_current_equation writePC_current_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+run_probe l3_decode_any_probeScript.sml l3_decode_any_probe.out \
+  DecodeAny_type DecodeAny_hypotheses DecodeAny_half_equation DecodeAny_half_proof DecodeAny_word_equation DecodeAny_word_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"

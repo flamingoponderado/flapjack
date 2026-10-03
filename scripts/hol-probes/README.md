@@ -7080,3 +7080,6 @@ the independently typed unused NONE binder, arbitrary second move components
 and arbitrary Spt payloads. Full Lean consumers cover generic and String/Bool
 instances. These source captures are regression evidence, not cross-language
 equivalence or a new representation exception.
+## Native PC writer and DecodeAny
+
+`l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.
