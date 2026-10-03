@@ -7523,3 +7523,7 @@ Regression evidence rather than cross-language equivalence.
 `word_to_stack_comp_set_probeScript.sml` captures the complete original Set
 induction obligation and whole arbitrary specialization, closed hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
+
+`word_to_stack_comp_codebufferwrite_probeScript.sml` freshly captures the full
+original CodeBufferWrite obligation and arbitrary whole specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
