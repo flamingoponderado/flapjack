@@ -4,6 +4,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.RiscV.CorrectnessEncoding.Skip
+import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl

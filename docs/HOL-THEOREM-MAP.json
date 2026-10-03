@@ -84600,5 +84600,14 @@
     "hol_name": "good_cmp_listCmp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source480-484 sole conclusion good_cmp listCmp, no premises. Full original seven comparator conjuncts retained via exact general TotOrder_imp_good_cmp and original TotOrd_listCmp result. Original arbitrary numeral-list carrier and direct three-constructor Ordering translation retained; no finite-map carrier, word dimension, range, invariant, sortedness, evaluation or output assumption added. Existing Sol2 equality/reversal/transitivity ports reused unchanged."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/JumpReg.lean",
+    "lean_name": "riscv_encoder_correct_jumpReg",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 original730-736/encoder_correct_def117-133: genuine complete JumpReg constructor case, unrestricted natural r and full original :64 asm_state/riscv_state carriers. Original asmStep+targetStateRel premise only; source asmOk derives register<32 and avoid-register/zero exclusion, source nonfailure derives align2 register value. Finite native register decoder proof covers all32 five-bit values (intrinsic datatype domain, not a public bound); exact four-byte fetch and full JALR Run derive branch control from original mask sw2sw(2:word2), then original NextRISCV_branch clears only current control and updates PC while all unrelated state fields remain. Full target validity/alignment, memory/register/FP relation retained; canonical omitted FP getter unchanged with original fpRegCount0. Original existential n/every env/interference/full asserts validity-code-byte-PC/final relation/asserts2 outside-domain-byte conclusion preserved, original witness0 derived by real native execution. No target-run/evaluation premise or narrowed domain. Inherited reals_as_rational_cuts assumption from full reviewed native state/Run closure retained (SOUNDNESS item8), no new real assumption or trust allowance. Fresh original complete theorem specialization only JumpReg arbitrary r:num, native types, storedhyp0/provedT; original capture is not cross-language equivalence."
   }
 ]
