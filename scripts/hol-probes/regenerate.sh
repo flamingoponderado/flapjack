@@ -7150,3 +7150,7 @@ run_probe pres_lang_config_probeScript.sml pres_lang_config_probe.out \
 run_probe namespace_carrier_probeScript.sml namespace_carrier_probe.out \
   namespace_case namespace_case_types namespace_case_hypotheses namespace_case_proved namespace_Bind_type \
   "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
+
+run_probe stack_to_lab_no_ret_review_probeScript.sml stack_to_lab_no_ret_review_probe.out \
+  no_ret_correct no_ret_correct_types no_ret_correct_hypotheses no_ret_correct_proved stack_regs_type stack_fp_regs_type stack_store_type stack_code_type \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -3822,5 +3822,44 @@ class PanSemGeneratedEvalIndTest(unittest.TestCase):
         self.assertIsNone(recognize(path, source + "\n" + block))
 
 
+class NoRetCorrectFmapRegressionTest(unittest.TestCase):
+    """Protect the reviewed theorem even if tag and manifest are both weakened."""
+
+    MODULE = "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean"
+
+    def test_native_state_maps_have_explicit_relation_qualifier_and_witness(self):
+        root = CHECKER["ROOT"]
+        lines = (root / self.MODULE).read_text().splitlines()
+        sites = [site for site in SITES(lines) if site[2] == "no_ret_correct"]
+        self.assertEqual(len(sites), 1)
+        site = sites[0]
+        state_lines = (root / "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean").read_text().splitlines()
+        fields = CHECKER["structure_field_types"](state_lines)["StackSemStateFiniteExact"]
+        required = tuple(("StackSemStateFiniteExact", field)
+                         for field, typ in fields.items() if "HolFiniteMapExact" in typ)
+        self.assertEqual(len(required), 3)
+        self.assertEqual(site[9], required)
+        signature = CHECKER["tagged_declaration_text"](lines, site[0])
+        self.assertIn("∀ s : StackSemStateFiniteExact", signature)
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, required, self.MODULE, signature), [])
+
+    def test_manifest_retains_combined_qualifier_and_inherited_assumption(self):
+        import json
+        root = CHECKER["ROOT"]
+        records = json.loads((root / "docs/HOL-THEOREM-MAP.json").read_text())
+        rows = [row for row in records if row.get("lean_path") == self.MODULE
+                and row.get("lean_name") == "noRetCorrect"]
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["statement_status"],
+                         "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec")
+        self.assertEqual(row["fmap_as_finite_support_relation"],
+                         ["StackSemStateFiniteExact.regs", "StackSemStateFiniteExact.fpRegs",
+                          "StackSemStateFiniteExact.store"])
+        self.assertTrue(row["words_as_type_indexed_bitvec"])
+        self.assertTrue(row["inherits_reals_as_rational_cuts"])
+
+
 if __name__ == "__main__":
     unittest.main()

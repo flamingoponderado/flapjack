@@ -7844,6 +7844,12 @@
       "sha256": "9d0a065df6dc3d311c4543318e4907ad57fe4ac2d16a850ced470e8213b3845f"
     },
     {
+      "bytes": 738,
+      "out": "stack_to_lab_no_ret_review_probe.out",
+      "rows": 8,
+      "sha256": "3374eb8913a91eafd5d0bd9437c46ee955da07791a12994768b5799c2d8b60be"
+    },
+    {
       "bytes": 241,
       "out": "stack_to_lab_nonrecursive_validity_probe.out",
       "rows": 3,
