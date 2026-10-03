@@ -70199,5 +70199,150 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.1): original lab_to_targetProofScript.sml:249-264 forall c s1 ms1 io i s2 bytes with nine hypotheses encoder_correct c.target, prog_addresses = s1.mem_domain, ffi_entry_pcs_disjoint c s1 (LENGTH bytes), interference_ok, bytes_in_memory s1.pc bytes s2.mem s1.mem_domain, asm_step_nop bytes c.target.config s1 i s2, s2 = asm i (s1.pc + n2w (LENGTH bytes)) s1, target_state_rel c.target s1 ms1, !x. i <> Call x; conclusion exists l ms2 forall k: shifted evaluate equality, shifted find_next_interference equality, target_state_rel c.target s2 ms2, l <> 0. Lean keeps the binders in order, all nine hypotheses and all four conclusion conjuncts; no target run or post-relation assumed. Proof follows HOL: jump/taken-jumpcmp/jumpreg cases reuse the asm step, other cases append evaluateNopSteps. Positive BitVec width, sigma Type only translations; inherits reals_as_rational_cuts / SOUNDNESS item 8. Original theorem and types captured in lab_to_target_nop_steps_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "progToBytes_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "prog_to_bytes_lemma",
+    "hol_line": 1155,
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1155-1166: forall code2 code1 pc i pos with free mc_conf/labs/ffi_names; hypotheses code_similar code1 code2, all_enc_ok mc_conf.target.config labs ffi_names pos code2, asm_fetch_aux pc code1 = SOME i; conclusion exists bs j bs2 with prog_to_bytes code2 = bs ++ line_bytes j ++ bs2, LENGTH bs + pos = pos_val pc pos code2, LENGTH bs + pos + LENGTH (line_bytes j) = pos_val (pc+1) pos code2, line_similar i j, line_ok at pos_val pc pos code2. All kept in order; proof by induction on code2 sections and lines as the source asm_code_length_ind. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1242-1258: code_similar code1 code2, all_enc_ok ... 0 code2, asm_fetch_aux pc code1 = SOME i, bytes_in_mem p (prog_to_bytes code2) m dm dm1 implies exists j with bytes_in_mem at p + n2w (pos_val pc 0 code2) of line_bytes j, line_ok at that position, pos_val (pc+1) 0 code2 = pos_val pc 0 code2 + LENGTH (line_bytes j), line_similar i j. All four hypotheses and four conclusions kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_jumpReg",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_JumpReg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1260-1284: code_similar s1.code code2, all_enc_ok, bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain, asm_fetch s1 = SOME (Asm (Asmi (JumpReg r1)) l n) implies bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) (encode (JumpReg r1)) t1.mem t1.mem_domain and asm_ok (JumpReg r1). Generic s1 config as in source. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_jump",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_Jump",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1286-1312: same four hypotheses with LabAsm (Jump jtarget) l bytes n; exists tt enc with tt = n2w (find_pos jtarget labs) - n2w (pos_val s1.pc 0 code2), enc = encode (Jump tt), bytes_in_memory of enc, asm_ok (Jump tt). All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_jumpCmp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_JumpCmp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1314-1340: as Jump with LabAsm (JumpCmp cmp rr ri jtarget); conclusion tt equation, enc = encode (JumpCmp cmp rr ri tt), bytes_in_memory, asm_ok. All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_jumpCmp_1",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_JumpCmp_1",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1342-1369: as JumpCmp; exists tt bytes with tt equation, enc_with_nop encode (JumpCmp cmp rr ri tt) bytes, bytes_in_memory of bytes, pos_val (s1.pc+1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes, asm_ok. All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_call",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_Call",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1371-1385: same hypotheses with LabAsm (Call ww) l bytes n imply F (line_ok rejects Call). s1 has lab_to_target config type as the probe shows. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_locValue",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_LocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1387-1414: LabAsm (LocValue reg (Lab l1 l2)); exists tt bytes with tt = n2w (find_pos (Lab l1 l2) labs) - n2w pos, enc_with_nop (Loc reg tt) bytes, bytes_in_memory, successor position, asm_ok (Loc reg tt). All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_inst",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_Inst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1416-1443: Asm (Asmi (Inst i)) bytes len; exists bytes with enc_with_nop (Inst i), bytes_in_memory, bytes_in_mem ... s1.mem_domain, successor position, asm_ok (Inst i). All five kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_cbw",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_Cbw",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1445-1472: Asm (Cbw r1 r2) bytes len; exists bytes with enc_with_nop (Inst (Mem Store8 r2 (Addr r1 0w))), bytes_in_memory, bytes_in_mem, successor position, asm_ok. All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_callFFI",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_CallFFI",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1474-1497: LabAsm (CallFFI name) l bytes n; exists tt enc with tt = 0w - n2w (pos_val s1.pc 0 code2 + (3 + get_ffi_index ffi_names (ExtCall name)) * ffi_offset), enc = encode (Jump tt), bytes_in_memory, asm_ok. All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_halt",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_Halt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1499-1522: LabAsm Halt; tt = 0w - n2w (pos_val s1.pc 0 code2 + ffi_offset), enc, bytes_in_memory, asm_ok. All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_install",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_Install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1524-1547: LabAsm Install c l n; tt = 0w - n2w (pos_val s1.pc 0 code2 + 2 * ffi_offset), enc, bytes_in_memory, asm_ok. All kept. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "asmFetchAux_posVal_lengthEq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_pos_val_LENGTH_EQ",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1586-1604: forall pc n code2 line (free conf labs ffi_names bytes'): asm_fetch_aux pc code2 = SOME line, all_enc_ok conf labs ffi_names n code2, pos_val (pc+1) n code2 = LENGTH bytes' + pos_val pc n code2 imply LENGTH (line_bytes line) = LENGTH bytes'. Kept exactly; proof via reviewed asm_fetch_aux_pos_val_SUC. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "imp_bytesInMemory_shareMem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_bytes_in_memory_ShareMem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1606-1653: asm_fetch_aux s1.pc s1.code = SOME (Asm (ShareMem mop r ad) l n), code_similar, all_enc_ok, bytes_in_mem; exists bytes with asm_fetch_aux s1.pc code2 = SOME (Asm (ShareMem mop r ad) bytes (LENGTH bytes)), enc_with_nop (Inst (Mem mop r ad)) bytes, bytes_in_memory, bytes_in_mem, successor position, asm_ok. All six conclusions kept; proof follows source via code_similar_IMP_asm_fetch_aux_line_similar, all_enc_ok_asm_fetch_aux_IMP_line_ok and LENGTH_EQ, including the empty-Skip-encoding branch. Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/BytesInMemoryFetch.lean",
+    "lean_name": "bytesInMem_impliesMemory_change",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "bytes_in_mem_IMP_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1655-1662: forall xs a with free dm1 m m1 dm: (forall a. a notin dm1 ==> m a = m1 a) ==> bytes_in_mem a xs m dm dm1 ==> bytes_in_memory a xs m1 dm. Kept exactly (word8 values). Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
   }
 ]

@@ -5,13 +5,18 @@ val _ = Globals.max_print_depth := 1000;
 fun emit label th = if null(hyp th) then
  (print(label ^ "="); print_term(concl th); print "\n")
  else raise Fail(label ^ " has hypotheses");
-fun emit_typed label th =
- (emit label th; show_types := true; emit (label ^ "_types") th; show_types := false);
-val _ = emit_typed "asm_consts" asm_consts;
-val _ = emit_typed "asm_failed_ignore_new_pc" asm_failed_ignore_new_pc;
-val _ = emit_typed "asm_mem_ignore_new_pc" asm_mem_ignore_new_pc;
-val _ = emit_typed "asm_step_nop_def" asm_step_nop_def;
-val _ = emit_typed "asm_step_IMP_evaluate_step_nop" asm_step_IMP_evaluate_step_nop;
+fun emit_types label th =
+ (show_types := true; emit label th; show_types := false);
+val _ = emit "asm_consts" asm_consts;
+val _ = emit_types "asm_consts_types" asm_consts;
+val _ = emit "asm_failed_ignore_new_pc" asm_failed_ignore_new_pc;
+val _ = emit_types "asm_failed_ignore_new_pc_types" asm_failed_ignore_new_pc;
+val _ = emit "asm_mem_ignore_new_pc" asm_mem_ignore_new_pc;
+val _ = emit_types "asm_mem_ignore_new_pc_types" asm_mem_ignore_new_pc;
+val _ = emit "asm_step_nop_def" asm_step_nop_def;
+val _ = emit_types "asm_step_nop_def_types" asm_step_nop_def;
+val _ = emit "asm_step_IMP_evaluate_step_nop" asm_step_IMP_evaluate_step_nop;
+val _ = emit_types "asm_step_IMP_evaluate_step_nop_types" asm_step_IMP_evaluate_step_nop;
 (* evaluate_nop_steps is [local] in lab_to_targetProofScript.sml:152-228 and is
    not exported; re-elaborate its exact unchanged statement text and record the
    inferred types.  This is a statement capture, not a theorem replay. *)
