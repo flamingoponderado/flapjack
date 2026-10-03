@@ -98,6 +98,10 @@ For the checked-in source-to-RISC-V artifact corpus, run
 runtime/entry/user sections without hiding byte differences, and succeeds only
 when every residual difference has an owning bead. This artifact audit
 complements the machine-execution fixture above; it does not replace it.
+`scripts/parity-cli-modes.py` checks the other two CLI modes over the same
+corpus: `--hex` must equal the original `.byte` stream and `--sections` the
+original `makesym` (base, bytes) sections, and original rejections must be
+rejected by both modes.
 
 The RV64 CLI runtime image now constructs its complete initializer through
 native `StackRemove.compileHOL` and `StackNames.compileHOL`, using Pancake's
