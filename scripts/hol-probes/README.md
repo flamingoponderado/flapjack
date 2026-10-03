@@ -6849,3 +6849,5 @@ or full Raise correctness.
 `stack_remove_init_mod_order_probeScript.sml` replays local original `MOD_LESS_EQ_MOD_IMP` (stack_removeProofScript.sml:2805-2809) with its unchanged complete natural-number conjunction implication and `rw []`/`fs []` proof. Full closed statement, proved=T and zero-hypothesis rows are captured against the read-only original backend proof theory; no extra positive-divisor premise.
 
 `stack_remove_word_list_reverse_probeScript.sml` replays the unchanged full original `word_list_EQ_rev` statement and SNOC induction proof (stack_removeProofScript.sml:2817-2825), with the original simplifier context. Captures complete predicate equality, proved=T and zero hypotheses; preserves arbitrary payloads and modular addresses without no-wrap assumptions.
+
+`stack_remove_word_list_inj_probeScript.sml` replays the unchanged full original `word_list_inj` statement and induction/DIFF partition proof (stack_removeProofScript.sml:3089-3098) using the original simplifier context. Captures arbitrary-heap uniqueness, proved=T and zero hypotheses; no numeric, finiteness or no-wrap premise.

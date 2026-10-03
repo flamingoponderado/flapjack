@@ -74259,5 +74259,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original2817-2825: complete unconditional predicate equality for arbitrary payload list xs and address a, forward word_list a xs equals word_list_rev at a+n2w LENGTH xs*bytes_in_word applied to REVERSE xs. Native Misc.wordList and wordListRev retain exact singleton/tail separation and modular address addition/subtraction, independent arbitrary payload Type; forward append uses opposite multiplication order justified by BitVec.mul_comm. Original HOL positive type dimension becomes width Nat with NeZero and BitVec width; no fixed width, word-only payload, successful heap, address injectivity, no-wrap or length bound added. Reverse induction/append/separation commutativity and modular add-sub cancellation prove entire original equality even when predicates are unsatisfiable from wrapped address collisions. Original unchanged SNOC_INDUCT proof replay with original simplifier context captures full statement/T/hyp0; no supplied target relation. Proof-only initializer prerequisite; coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListInjective.lean",
+    "lean_name": "wordListInj",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_inj",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original3089-3098: complete forall xs,a,u,uPrime and sole conjunction word_list a xs u and word_list a xs uPrime implies u=uPrime. Actual native forward wordList recurrence retains current singleton, modular bytesInWord tail and full STAR partition over arbitrary predicate heaps; independent payload Type and address BitVec width with NeZero translate original positive word dimension. No finite heap, word-valued payload, no-wrap, address distinctness or numeric bound added. Nil uses original empty heap equalities; cons extracts actual two partitions, singleton equalities and tail assertions, genuine tail IH derives equal rest heaps, actual union equations yield whole heap equality. Original literal unchanged induction/DIFF/SPLIT_EQ proof replay with original simplifier context captured full statement/T/hyp0; source review compares full statements and actual carriers, not inferred from test or name. Proof-only initializer prerequisite, no executed compiler behavior change; coordinator acceptance tracked on bead."
   }
 ]
