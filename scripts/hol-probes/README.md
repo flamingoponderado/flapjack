@@ -7094,3 +7094,7 @@ CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` captur
 ### Native skip-filter location lookup
 
 `lab_filter_location_lookup_probeScript.sml` replays the unchanged original local proofs310/345/522 using the exact original temporary simplifier setup (script10/12). Twelve rows capture complete NONE, existential SOME/adjustment, and append theorems, all binder types, zero hypotheses and kernel reproofs. Every original guard and existential conclusion is retained.
+
+## Native step option PC update
+
+`l3_update_pc_probeScript.sml` proves the original `update_pc` whole option-result and full-record equations for arbitrary word64 targets and full states. `check-l3-update-pc.py` pins all six type/hypothesis/equation/proof rows. Lean uses the complete accepted PC writer; no core bound or successful-run premise is added. The native drift inventory includes this literal declaration and CI discovers its capture checker. Full Next assembly remains separate work.

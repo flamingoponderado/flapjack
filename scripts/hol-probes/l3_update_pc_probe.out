@@ -1,0 +1,6 @@
+updatePC_type=:word64 -> riscv_state -> riscv_state option
+updatePC_hypotheses=0
+updatePC_some_equation=∀v s. update_pc v s = SOME (write'PC v s)
+updatePC_some_proof=T
+updatePC_fullRecord_equation=∀v s. update_pc v s = SOME (s with c_PC := s.c_PC⦇s.procID ↦ v⦈)
+updatePC_fullRecord_proof=T
