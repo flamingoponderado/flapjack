@@ -78210,6 +78210,72 @@
     "reviewer": "Flapjack canonical state two-way roundtrip infrastructure, no independent HOL original."
   },
   {
+    "lean_path": "Flapjack/RiscV/L3/Step/FetchTheorems.lean",
+    "lean_name": "fetch16",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch16",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all16 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all2 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word16 v2w result and complete same-state c_Skip function update to word64 2 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/FetchTheorems.lean",
+    "lean_name": "fetch32",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Fetch32",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 original step670-702: arbitrary full native riscv_state s, bool list xs and all32 arbitrary source Boolean binders; literal list equality, current-core MCSR VM=0 at word5, all4 exact little-endian byte memory equalities at original wrapping word64 addresses, and original low-bit selection premise. Exact raw constructor/word32 v2w result and complete same-state c_Skip function update to word64 4 at unrestricted word8 procID. No added alignment, core bound, successful translation/fetch or target-run premise. Original bare VM premise derives full translateAddr(some PC,s) and THE elimination; original word_bit_1_0 derives selector, generic all-bit extensionality assembles bytes without restricted payloads. Canonical holV2w follows original testbit/FCP index ordering. Fresh complete universal original proof/type/binder capture and Lean kernel statement/proof checked."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpLoad32.lean",
+    "lean_name": "compileExpCorrectLoad32",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 Load32 case: all seven original source hypotheses and three conclusions; only original full child IH. Actual source success derives word address and original panMemLoad32HOL result. Child IH derives converted address evaluation; actual convertStateExact preserves memory/domain/be, Option.map congruence derives identical 32-bit-to-word result and target evaluation. No adapter, bounds, compatibility, target-run, or resource premise added. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/Load32 specialization/eval_ind kernel captured. Full expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpLoad32.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack imported canonical state two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11012-11032: complete original Inst case, all native instruction constructors, immediate/register operands, FP width branches and fallback. Retains original every_var source bounds, is_alloc_var, ssa_map_ok and source full_inst_ok_less hypotheses and actual SSA output validity conclusion. Map lookup bounds and positive fresh allocation counter prove destination constraints; original native conversions preserve immediates, memory offsets, ISA and FP register requirements. No target-run or target-validity assumption. Native AsmConfigExact/WordLang/Spt carriers; words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive and fullSSA assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/ProgramInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11012-11152: full original arbitrary-program recursive theorem, assembled by native mutual WordLangProgHOL recursor including nested return and exception handlers. Retains every_var source bounds, is_alloc_var, ssa_map_ok, source full_inst_ok_less and exact actual SSA output conclusion. All constructor families proven, no remaining induction hypothesis, target run or restricted subset. Native AsmConfigExact/WordLang/Spt/List carriers; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/FullInstructionValidity.lean",
+    "lean_name": "fullSsaCcTrans_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11154-11174: full original arbitrary-program/count/config wrapper, sole source full_inst_ok_less premise and literal fullSSA output conclusion. Original limit_var_props and setup_ssa_props_2 derive source bounds/allocation class/map; setup Move validity derived from literal native producer. Full recursive theorem supplies body validity; no target premise or subset. Native AsmConfigExact/WordLang/Spt/List carriers; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesNames.lean",
     "lean_name": "compileDecsNoNames",
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -78345,6 +78411,16 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Imported-owner canonical pan_globals context roundtrip re-exported for this module's relation qualifiers; no HOL original."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/CallFfiCases.lean",
+    "lean_name": "filterCorrectCallFfi",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.6): Full genuine original filter_correct669 external CallFFI branch962-981, native labSem Evaluate callFFI constructor. Retains full source s1/t1/res/s2 evaluate/stateRel/nonfailed and literal native fetch guard, existential target execution/result/extra clock/FFI conclusion, all generic native word/configuration/FFI and exact MlString carriers. Covers all five actual register matches, both native bytearray read NONE/SOME cases, locator NONE/SOME, and FFI final/ret without success narrowing. IH only for literal actual returned source successor: its path guard packages original five register, two memory-read, source locator and FFI-return choices existentially; no target evaluation, desired result/postrelation, or universally vacuous context supplied. Local private callFfiReturnState merely names exact inline native record update, no independent HOL declaration: returned memory/FFI, IO/register/FP/PC/clock clauses unchanged. Full target successor relation and source/target return locator derive from original stateRel plus accepted loc_to_pc_eq_NONE/SOME; actual skipped-run and target evaluation derived. Positive-width words translation only; exact fixed bytes preserved. Original full669 capture/type/hyp0/kernel reproof freshly replayed. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Install/full evaluator assembly/semantic lift remain open."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanStructs/MemLoadConversion.lean",
