@@ -6062,6 +6062,12 @@
       "sha256": "f8939d8591dc48892f4c35fbbf4c905409c5b6eef55671f170c48f7de09f40d9"
     },
     {
+      "bytes": 2901,
+      "out": "stack_rawcall_memory_ffi_probe.out",
+      "rows": 6,
+      "sha256": "9b265ca8a755b1a59011bab9e8e145691c1fd6e7cd3dff5b4c3a54d8ee7031d0"
+    },
+    {
       "bytes": 453,
       "out": "stack_rawcall_native_probe.out",
       "rows": 7,

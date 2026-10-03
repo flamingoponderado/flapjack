@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "memory_ffi_full_statement="; print_term(concl comp_correct));
+val _ = print("memory_ffi_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "memory_ffi_shMemOp" (ISPEC ``stackLang$ShMemOp op r (Addr a w):64 stackLang$prog`` comp_correct);
+val _ = row "memory_ffi_codeBufferWrite" (ISPEC ``stackLang$CodeBufferWrite r1 r2:64 stackLang$prog`` comp_correct);
+val _ = row "memory_ffi_dataBufferWrite" (ISPEC ``stackLang$DataBufferWrite r1 r2:64 stackLang$prog`` comp_correct);
+val _ = row "memory_ffi_ffi" (ISPEC ``stackLang$FFI rawFfiName ptr len ptr2 len2 ret:64 stackLang$prog`` comp_correct);

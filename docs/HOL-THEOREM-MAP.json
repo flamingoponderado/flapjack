@@ -70229,5 +70229,65 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-pxn.18.5.15.6): complete original stack_removeProofScript.sml2418-2615 state_rel jump off k source target AND semantics start source != Fail implies semantics start target = semantics start source. Original arbitrary jump/bounds/pointer/start/source/target variables universally bound with exactly both premises and same equality direction. Uses native faithful StackSem semantics/evaluate and full stateRelHOL, not a clock-free or compile-execute evaluator. Actual entry comp/regBound obligations discharged for Call NONE (INL start) NONE; complete accepted compCorrect derives actual target clock/run and FFI equality for every source clock, including timeout. Source non-Fail discharges non-Error from the actual fail guard. Accepted native evaluateAddClock proves same-clock non-timeout source/target agreement, which excludes every target fail witness and establishes exact equivalence of the original termination-choice predicates. Complete native extra-clock IO prefix theorem derives each clock-family chain; both cofinal prefix directions are proved from genuine source entry simulations and actual target boosted run traces, then accepted lazy-list prefix-lub equality yields divergence equality. Neither target run, output result, desired trace/prefix, simulation, clock law, source successful-pass, target non-Fail, termination nor divergence is assumed. Choice predicates/fail guard/families are definitionally the native semantics branches. Canonical imported StackSemStateFiniteExact owns regs/fpRegs/store finite-support maps with genuine same-module broad/exact roundtrip witness; code remains Spt, not qualified as finite map. Positive type-indexed words and FFI Type carriers use combined relation/words qualifiers. Inherits reviewed reals_as_rational_cuts through native evaluator FP closure (SOUNDNESS item8); no numerical FP parity assertion. Full original HOL proof replay records universally closed statement and kernel proof success. Full StackRemove observational pass theorem, not remaining initializer/full compiler end-to-end theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/MemoryFfi.lean",
+    "lean_name": "compCorrectShMemOp",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original541-560/full135-149 ShMemOp: original actual source evaluation/nonError/stateRel three premises and full paired compTop/comp existential added-clock/target/poststackspace guard. Actual unconditional native code-update transport derives target run and postrelation. Eight native memory operations retain word expression/address arithmetic, zero-clock emptyEnv timeout, decremented clock, mapped FFI final/return events, byte/16/32/full-width operations, invalid access and operand errors. Buffer clauses retain original read order, byte truncation, useStack and miss errors. FFI uses native MlString, exact byte reads/writeback, final unchanged state, return register restriction/fp clearing/new FFI. No target run/postrelation/extra successful-pass premise. Canonical owning finite maps with local real roundtrip, exact Spt/List carriers, arbitrary positive words and Type0 hosts. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/MemoryFfi.lean",
+    "lean_name": "compCorrectCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original541-560/full135-149 CodeBufferWrite: original actual source evaluation/nonError/stateRel three premises and full paired compTop/comp existential added-clock/target/poststackspace guard. Actual unconditional native code-update transport derives target run and postrelation. Eight native memory operations retain word expression/address arithmetic, zero-clock emptyEnv timeout, decremented clock, mapped FFI final/return events, byte/16/32/full-width operations, invalid access and operand errors. Buffer clauses retain original read order, byte truncation, useStack and miss errors. FFI uses native MlString, exact byte reads/writeback, final unchanged state, return register restriction/fp clearing/new FFI. No target run/postrelation/extra successful-pass premise. Canonical owning finite maps with local real roundtrip, exact Spt/List carriers, arbitrary positive words and Type0 hosts. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/MemoryFfi.lean",
+    "lean_name": "compCorrectDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original541-560/full135-149 DataBufferWrite: original actual source evaluation/nonError/stateRel three premises and full paired compTop/comp existential added-clock/target/poststackspace guard. Actual unconditional native code-update transport derives target run and postrelation. Eight native memory operations retain word expression/address arithmetic, zero-clock emptyEnv timeout, decremented clock, mapped FFI final/return events, byte/16/32/full-width operations, invalid access and operand errors. Buffer clauses retain original read order, byte truncation, useStack and miss errors. FFI uses native MlString, exact byte reads/writeback, final unchanged state, return register restriction/fp clearing/new FFI. No target run/postrelation/extra successful-pass premise. Canonical owning finite maps with local real roundtrip, exact Spt/List carriers, arbitrary positive words and Type0 hosts. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/MemoryFfi.lean",
+    "lean_name": "compCorrectFfi",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original541-560/full135-149 Ffi: original actual source evaluation/nonError/stateRel three premises and full paired compTop/comp existential added-clock/target/poststackspace guard. Actual unconditional native code-update transport derives target run and postrelation. Eight native memory operations retain word expression/address arithmetic, zero-clock emptyEnv timeout, decremented clock, mapped FFI final/return events, byte/16/32/full-width operations, invalid access and operand errors. Buffer clauses retain original read order, byte truncation, useStack and miss errors. FFI uses native MlString, exact byte reads/writeback, final unchanged state, return register restriction/fp clearing/new FFI. No target run/postrelation/extra successful-pass premise. Canonical owning finite maps with local real roundtrip, exact Spt/List carriers, arbitrary positive words and Type0 hosts. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation or cross-language equivalence claim."
   }
 ]
