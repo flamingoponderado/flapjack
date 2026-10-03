@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.RiscV.L3.Defs.CSRAccess
+import Flapjack.RiscV.L3.Defs.MachineCSRCodec
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
