@@ -5732,6 +5732,10 @@ run_probe stack_remove_comp_shmem_probeScript.sml stack_remove_comp_shmem_probe.
   cc_shmem_statement cc_shmem_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_remove_comp_ffi_probeScript.sml stack_remove_comp_ffi_probe.out \
+  cc_ffi_statement cc_ffi_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_top_label_safety_probeScript.sml word_to_stack_top_label_safety_probe.out \
   top_full_word_to_stack_good_code_labels top_full_word_to_stack_good_handler_labels top_empty top_self top_missing top_external top_duplicates top_owned top_wrong_owner top_tail_missing top_threaded top_width_one top_raise_owned top_store_owned \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -5953,3 +5957,18 @@ run_probe misc_find_index_shift_probeScript.sml misc_find_index_shift_probe.out 
   find_index_shift find_index_shift_types find_index_shift_hypotheses \
   first nonzero shift duplicate empty missing large strings \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_copy_loop_full_probeScript.sml stack_remove_copy_loop_full_probe.out \
+  copy_loop_statement copy_loop_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_code_bitmaps_install_probeScript.sml stack_code_bitmaps_install_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_install_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_ffi_probeScript.sml stack_code_bitmaps_ffi_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_ffi_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_rawcall_probeScript.sml stack_code_bitmaps_rawcall_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_rawcall_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
