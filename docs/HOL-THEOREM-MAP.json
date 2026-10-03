@@ -68565,5 +68565,350 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 full source/type comparison2026-10-03 miscScript4238-4248 and original exported type0hyp: same arbitrary address, fixed word8 list/memory, arbitrary predicate domain and Nat index. Exactly original bytes_in_memory AND index<len premises imply domain(address+n2w index). Existing reviewed bytesInMemoryHOL used, positive arbitrary BitVec width/NeZero translation only. No no-wrap, bounded byte-region length, alignment, memory correctness or target premise. Induction retains wrapped word addition including regions longer than address space; fixed word8 data remains8. Fresh literal original proof plus16 original wrap/invalid-domain/byte/index observations at widths1/8/64/80; native kernel/runtime observations and12 whole theorem consumers. Independent prerequisite of fetched-byte FFI exclusion/initializer, not initializer/fullcompiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsSkip",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsSkip constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsHalt",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsHalt constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsRet",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsRet constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsRaise",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsRaise constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsBreak",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsBreak constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsContinue",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsContinue constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsGet",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsGet constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsSet",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsSet constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsOpCurrHeap constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsTick",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsTick constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsLocValue",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsLocValue constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackAlloc",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackAlloc constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackFree",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackFree constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackLoad",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackLoad constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackLoadAny",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackLoadAny constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackStore",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackStore constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackStoreAny",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackStoreAny constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackGetSize",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackGetSize constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsStackSetSize",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsStackSetSize constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsBitmapLoad",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsBitmapLoad constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsCodeBufferWrite constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsDataBufferWrite constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Nonrecursive.lean",
+    "lean_name": "evaluateCodeBitmapsShMemOp",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full source comparison2026-10-03 stackPropsScript421-440, actual native evaluator corresponding clause and exact imported width-indexed HolProg/StackSemStateFiniteExact carriers. Genuine evaluateCodeBitmapsShMemOp constructor induction case, all original constructor/source/post/result binders retained. Sole actual source evaluation premise; derives full existential compile-oracle shift, folded Spt code union and appended flat bitmap list. Zero count proved from native branch equations; shared-memory case derives all three fields from original sh_mem_op_const with actual helper execution, including errors/timeouts/final/return results. No non-Error/success/postfield/alignment/default premise, no supplied desired run. regs/fpRegs/store actual owning canonical finite-support maps with local genuine codec roundtrip; code remains reviewed Spt. Arbitrary positive width and independent compile/FFI host types. Original bound-checked stack/bitmap accesses only; no held past-end/default policy change. Fresh literal full original proof and all23 original constructor statements,23 full generic kernel consumers. Native evaluator closure inherits existing reals_as_rational_cuts external assumption SOUNDNESS item8; no FP transition or cross-language equivalence assertion. Parent full evaluator assembly remains open."
   }
 ]

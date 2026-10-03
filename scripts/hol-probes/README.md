@@ -6386,3 +6386,14 @@ premises. Two rows record the complete statement and successful original proof;
 list, a domain hole, a wrong byte and a past-end index. The Lean parity module
 checks all observations and twelve applications of the full theorem. These
 fixtures provide regression evidence, not a cross-language equivalence proof.
+
+`stack_code_bitmaps_nonrecursive_probeScript.sml` replays the literal complete
+original `evaluate_code_bitmaps` proof (stackPropsScript.sml:421–440), checks
+that its full statement has no hypotheses or free variables, and captures
+all 23 remaining nonrecursive constructor statements. Each Lean case retains
+the sole source evaluation premise and all three existential conclusions over
+compile oracle, code and bitmaps. Shared-memory preservation comes from the
+actual helper execution and original `sh_mem_op_const`; no preserved field is
+assumed. The native consumer module kernel-checks all 23 generic statements.
+These captures provide source regression evidence, not cross-language equivalence
+or full evaluator/pass/compiler correctness.
