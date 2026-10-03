@@ -68348,5 +68348,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.8: original evaluate_code_bitmaps421-440 FFI induction case retains full existential oracle shift/code FOLDL left union of GENLIST fromALists/bitmap append FLAT. Sole actual full native evaluate equality premise. Original stackSem FFI clause943-960 compared: same four word reads/order, both bytearray reads, call_FFI final and return outcomes; all errors/final unchanged and return changes only memory, DRESTRICT regs, empty fpRegs, ffi. Derive count0 in every branch without target/count/prefix/postfield/name or alignment assumptions. Native MlString ffiIndex retained, no String translation. Imported canonical regs/fpRegs/store, local genuine codec witness, positive BitVec/NeZero,C/F Type0; Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence or runtime rewrite claim. Whole theorem assembly remains open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/RawCall.lean",
+    "lean_name": "evaluateCodeBitmapsRawCall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.9: original evaluate_code_bitmaps421-440 recursive RawCall case retains literal CodeBitmaps full existential shift/code FOLDL left union/bitmap FLAT. Original stackSem850-861 compared to native evaluate_rawCall: actual code lookup/destSeq/nonzero clock guard, body evaluated at actual decClock source, bad_fun_return changes result only; failed lookup/nonSeq/timeout emptyEnv preserve fields/count0. Only source-path guarded body IH, no arbitrary-state IH or supplied target/count/prefix/poststate fact. decClock preserves all three inputs definitionally. Canonical imported regs/fpRegs/store with local genuine codec witness, positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence claim. Parent assembly open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

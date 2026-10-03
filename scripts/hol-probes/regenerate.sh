@@ -5950,3 +5950,7 @@ run_probe stack_code_bitmaps_install_probeScript.sml stack_code_bitmaps_install_
 run_probe stack_code_bitmaps_ffi_probeScript.sml stack_code_bitmaps_ffi_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_ffi_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_rawcall_probeScript.sml stack_code_bitmaps_rawcall_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_rawcall_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
