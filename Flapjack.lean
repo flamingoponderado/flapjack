@@ -1,8 +1,13 @@
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.FFI
+import Flapjack.Compiler.Backend.LabToTarget.ShmemOffset
+import Flapjack.RiscV.L3.Defs.AMOSwap
+import Flapjack.RiscV.L3.Defs.IntegerStore
+import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.ShMemOp
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WriteBytearrayFrame
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Call
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListExists
 import Flapjack.Compiler.Backend.StackRemove.Proofs.MemorySubset
@@ -214,6 +219,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Loop
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Instructions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.HeapOperation
+import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
@@ -326,6 +332,10 @@ import Flapjack.Compiler.Encoders.AsmProps.Interference
 import Flapjack.Compiler.Backend.Semantics.TargetProps.InterferenceApp
 import Flapjack.Compiler.Backend.StackProps.AllocationConstants
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.StoreConsts
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Inst
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Seq
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.If
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Loop
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
@@ -628,6 +638,7 @@ import Flapjack.Compiler.Backend.WordAlloc.MergeStackSets
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.FirstIndex
 import Flapjack.Misc.FindIndex
+import Flapjack.Misc.FindIndex.Distinct
 import Flapjack.Compiler.Backend.Parmove.DStepsSteps
 import Flapjack.Compiler.Backend.WordAlloc.StackOnly
 import Flapjack.Compiler.Backend.WordToStack.NativeTopCompile
@@ -694,9 +705,15 @@ import Flapjack.Compiler.Backend.RegAlloc.ProductionInitDomain
 import Flapjack.Compiler.Backend.RegAlloc.ProductionInitializer
 import Flapjack.Compiler.Backend.RegAlloc.ProductionMoveAdmission
 import Flapjack.Compiler.Backend.RegAlloc.ProductionMovePreparation
+import Flapjack.Compiler.Backend.RegAlloc.ProductionWrapper
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorSetWF
 import Flapjack.Compiler.Backend.WordAlloc.ProductionBufferClashTree
+import Flapjack.Compiler.Backend.WordAlloc.ProductionExpressionClashTree
+import Flapjack.Compiler.Backend.WordAlloc.ProductionInstructionClashTree
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
+import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec

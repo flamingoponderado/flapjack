@@ -1490,6 +1490,12 @@
       "sha256": "60065d52ffc3d80b6b077569838c06367950adcf053f6243470d45cf2eea3691"
     },
     {
+      "bytes": 5739,
+      "out": "l3_amoswap_probe.out",
+      "rows": 30,
+      "sha256": "9c6277d4596ccd4107db7c9c19b84f4ad480407bff2fa6b29133689cf6cb36df"
+    },
+    {
       "bytes": 10113,
       "out": "l3_fetch_primitives_probe.out",
       "rows": 282,
@@ -1506,6 +1512,12 @@
       "out": "l3_integer_load_probe.out",
       "rows": 84,
       "sha256": "792489b120d9de648eca301411a986c7c9cfd61f8480532698c161f7d16c45ea"
+    },
+    {
+      "bytes": 12227,
+      "out": "l3_integer_store_probe.out",
+      "rows": 68,
+      "sha256": "d5223a0563fddd8ee6b7e98360401b4cda7593ef55324248c5d54ef3dc386749"
     },
     {
       "bytes": 2665,
@@ -1644,6 +1656,18 @@
       "out": "l3_riscv_sqrt_probe.out",
       "rows": 56,
       "sha256": "9e1a2dedb8adcaab219017b8c99f6f027cc89c6b4b81953b7e7d0eb1d274e5dd"
+    },
+    {
+      "bytes": 3013,
+      "out": "l3_scd_probe.out",
+      "rows": 26,
+      "sha256": "ad02d6f088cc76ea7ad1bd879aa39fcd60ad9d423a8853099fd98157449317a1"
+    },
+    {
+      "bytes": 2534,
+      "out": "l3_scw_probe.out",
+      "rows": 21,
+      "sha256": "e203ae296995a60a7037a6d9c2185412b38958be0f72693edc82cbd9692ebd7f"
     },
     {
       "bytes": 304,
@@ -2192,6 +2216,12 @@
       "sha256": "3edeedf49fed826bda2c2ec9fdf0f91ad356ac43d1e59459f0bc98cb50b4b2b6"
     },
     {
+      "bytes": 2138,
+      "out": "lab_to_target_shmem_correctness_probe.out",
+      "rows": 11,
+      "sha256": "9f94b752a094d66faebf7a73c7299c8470880f83b9fd81f6a0d6ddc3a62a233c"
+    },
+    {
       "bytes": 791,
       "out": "lab_to_target_shmem_distinct_probe.out",
       "rows": 11,
@@ -2214,6 +2244,12 @@
       "out": "lab_to_target_shmem_names_probe.out",
       "rows": 10,
       "sha256": "c2a6ec189c27ace02b78e1a36e17c7bf48d527f7cb7fab8f317efe47b2cfeecc"
+    },
+    {
+      "bytes": 1940,
+      "out": "lab_to_target_shmem_offset_probe.out",
+      "rows": 17,
+      "sha256": "3233d45a8fae304ae0e54f6049a543a35fef32e8fd2f1b55c5613930c413e98e"
     },
     {
       "bytes": 1919,
@@ -2892,6 +2928,12 @@
       "out": "misc_asm_write_bytearray_probe.out",
       "rows": 4,
       "sha256": "7d52f82bcd1d6224d7c237c70ff3904239ff20500d83a6c22595d6729966f8e7"
+    },
+    {
+      "bytes": 401,
+      "out": "misc_find_index_distinct_probe.out",
+      "rows": 11,
+      "sha256": "027136120f48a95073b598d0ccfcd72f2c83b060c217769b867afdf4ab775b44"
     },
     {
       "bytes": 137,
@@ -5558,6 +5600,30 @@
       "sha256": "abc613099374333f77c99bb8010f4873ffb18996db38d5b6a6b99658d79cdee8"
     },
     {
+      "bytes": 652,
+      "out": "stack_code_bitmaps_if_probe.out",
+      "rows": 3,
+      "sha256": "9ac18844a4688225454fe950d95fafcbe6ee1353a5ce95d7cbc87923324b16b1"
+    },
+    {
+      "bytes": 642,
+      "out": "stack_code_bitmaps_inst_probe.out",
+      "rows": 3,
+      "sha256": "7b635a3ae5b2c83c6c0b4838b14d504e7797952463c8924c1c1862e54a7ef372"
+    },
+    {
+      "bytes": 643,
+      "out": "stack_code_bitmaps_loop_probe.out",
+      "rows": 3,
+      "sha256": "f7f8c409fa48894fbc500c5ad401ddb7a8b54b7926297a21f8a7043db70dcd24"
+    },
+    {
+      "bytes": 644,
+      "out": "stack_code_bitmaps_seq_probe.out",
+      "rows": 3,
+      "sha256": "7b0663572e4bfba0aab95f69eb1bbf98d029ee72701d15a61c12cf8e48d5cae4"
+    },
+    {
       "bytes": 2330,
       "out": "stack_initialized_boundary_probe.out",
       "rows": 40,
@@ -5790,6 +5856,12 @@
       "out": "stack_remove_comp_bitmap_probe.out",
       "rows": 2,
       "sha256": "f2a84be3ce19c11c512dc87fea3734c963d8f718a6bf86fa2b68b7dd6b583eef"
+    },
+    {
+      "bytes": 11717,
+      "out": "stack_remove_comp_call_full_probe.out",
+      "rows": 8,
+      "sha256": "d9960bcd7ad62a71288e1a7f853d6539a9135fa71c64f9b0879a814c565c6398"
     },
     {
       "bytes": 3441,
@@ -7002,6 +7074,12 @@
       "out": "word_alloc_heuristic_probe.out",
       "rows": 3,
       "sha256": "0ac8fe0bb58030b5d9e8a7e5e4c647968e2d728be7a062c1d8a75dc090f21102"
+    },
+    {
+      "bytes": 78,
+      "out": "word_alloc_instruction_producer_probe.out",
+      "rows": 4,
+      "sha256": "9bbec9ba0043b50481cd0fc788366f66f1ee0da724aabb3c08fd2878807dbe3d"
     },
     {
       "bytes": 77,

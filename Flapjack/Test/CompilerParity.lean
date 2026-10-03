@@ -1,3 +1,12 @@
+import Flapjack.Test.L3AMOSwapParity
+import Flapjack.Test.L3IntegerStoreParity
+import Flapjack.Test.L3SCDParity
+import Flapjack.Test.L3SCWParity
+import Flapjack.Test.LabToTargetShmemCorrectnessParity
+import Flapjack.Test.LabToTargetShmemOffsetParity
+import Flapjack.Test.LabToTargetShmemCorrectnessParity
+import Flapjack.Test.L3SCDParity
+import Flapjack.Test.L3SCWParity
 import Flapjack.Test.L3LRDParity
 import Flapjack.Test.L3LRWParity
 import Flapjack.Test.L3IntegerLoadParity
@@ -13,6 +22,7 @@ import Flapjack.Test.LabToTargetShmemPrefixParity
 import Flapjack.Test.LabToTargetShmemMembershipParity
 import Flapjack.Test.LabToTargetShmemNamesParity
 import Flapjack.Test.LabToTargetMmioShmemParity
+import Flapjack.Test.MiscFindIndexDistinctParity
 import Flapjack.Test.LabToTargetEncodingValidityClosureParity
 import Flapjack.Test.LabToTargetProgramByteLengthsParity
 import Flapjack.Test.LabToTargetPositionExtensionParity
@@ -188,6 +198,7 @@ import Flapjack.Test.StackSemJumpLowerParity
 import Flapjack.Test.PanGlobalsFpermCodeParity
 import Flapjack.Test.CrepToLoopCompFuncParity
 import Flapjack.Test.WordAllocGetDeltaInstParity
+import Flapjack.Test.WordAllocInstructionProducerParity
 import Flapjack.Test.WordAllocGetClashTreeParity
 import Flapjack.Test.LabToTargetLineLenParity
 import Flapjack.Test.LabToTargetSectionLengthParity

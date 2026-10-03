@@ -6275,6 +6275,8 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 
 
 `word_to_stack_bitmap_frame_updates_probe.out` replays the three complete original bitmap/frame-list proofs and captures the independently polymorphic Spt/word-location binder types. Its 63 original overwrite observations cover empty, truncated and location-valued stacks across widths 8/64/80 and terminal/continuation boundaries. The Lean generic proofs retain every original guard; the parity module checks the same concrete native operations. No evaluator simulation, source pipeline unreachability or provenance hold release is claimed.
+
+`stack_remove_copy_each_probeScript.sml` replays the complete literal original `copy_each_thm` proof (1250–1332), with every original premise and full clock/register/separated-memory conclusion. Two rows capture the complete statement and kernel proof success. Native full source induction derives target execution; no full pass theorem or executed compiler parity is claimed by this proof-only slice.
 `stack_remove_comp_call_tail_probeScript.sml` replays the literal original ret=NONE Call case with arbitrary handlers and actual source lookup/handler-NONE/nonzero-clock guarded callee IH. Original local lookup/dec-clock proofs are recreated; no full `comp_correct` assumed. Two rows capture the scoped statement and proof success.
 
 `stack_remove_comp_call_return_none_probeScript.sml` replays the original returning Call prefix and handler-NONE exception branch, with actual source guarded callee and successful-return continuation IHs. Specializing the AST option omits the handler-SOME branch and its selector combinator; branch proof tactics remain unchanged. Original local erased lookup/clock relation helpers are recreated, full `comp_correct` is not assumed. Two rows capture the scoped statement and proof success.
@@ -6306,6 +6308,48 @@ are replayed. Reservation/current-core/other-core and entire frame outside the
 six potentially changed fields are observed. This is the LR_D clause only,
 not full atomic/Run/Next or compiler correctness.
 
+
 `word_props_gc_fun_ok_probe` captures the complete original higher-order GC contract, zero definition hypotheses, the guarded FLOOKUP/FAPPLY correspondence and the always-failing callback theorem. The Lean predicate keeps all original quantifiers and guards; generic kernel tests reject returned Handler and cover location values. This is definition/guard evidence, not whole initialization or compiler correctness.
 
 `stack_remove_copy_each_probeScript.sml` replays the complete literal original `copy_each_thm` proof (1250–1332), with every original premise and full clock/register/separated-memory conclusion. Two rows capture the complete statement and kernel proof success. Native full source induction derives target execution; no full pass theorem or executed compiler parity is claimed by this proof-only slice.
+`l3_scw_probe.out` captures the complete original SC_W definition/type and
+19 whole-state observations. Missing/mismatched reservations with VM31 leave
+the native exception unchanged, demonstrating that translation is skipped.
+The read-only PTE2 observation intentionally succeeds under original Data/Read;
+this preserves the pinned source instead of substituting modern ISA behavior.
+Four-byte stores preserve the other memory bytes; successful stores clear only
+the current reservation, while faults/misalignment retain it. All order bits,
+rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
+are covered. Independent byte-wise expectations and arbitrary-base Lean state
+frames provide regressions only, not whole atomic/runtime correctness.
+
+`l3_scd_probe.out` captures the complete original SC_D definition/type and
+24 whole-state observations: RV32 rejects before address/reservation/VM checks,
+all seven virtual misalignment residues, all order bits, reservation failures
+skipping translation, literal Data/Read on read-only pages, eight-byte stores,
+zero registers, core255/totalCore1, RV128, Sv32 faults and returned Sv39 state.
+Complete unaffected frames and other-core reservations are retained. This is
+source-clause regression evidence, not whole atomic/runtime/compiler correctness.
+`word_alloc_instruction_producer_probe.out` captures four original
+`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
+offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
+and executed deltas; the complete accepted-instruction producer relation uses
+the real instruction encoder, retaining every ordered operand. No whole
+allocator or source-program producer correctness is claimed.
+
+`l3_amoswap_probe.out` captures the literal AMOSWAP_W/D definitions and types
+and 26 original state observations, including rs2=rd operand ordering, rd=rs1,
+zero registers, signed word loads, RV32/RV128 without added mode guards,
+virtual misalignment and returned Sv39 write translations/faults. Matching Lean
+replays use independent wrapping byte/register expectations. These regressions
+do not claim full Run/Next or compiler correctness.
+`stack_code_bitmaps_inst_probe.out` freshly captures the complete original evaluate_code_bitmaps theorem, zero open hypotheses, and its native Inst specialization. The Lean case retains all three existential conjuncts and derives count zero on primitive success and failure; inherited rational-cut limits remain, with no numeric byte-alignment equivalence claim.
+
+`stack_remove_comp_call_full_probeScript.sml` replays all three original scoped Call proofs and assembles the complete Call constructor across arbitrary return/handler options, using exactly their guarded source IHs. Eight rows capture the three complete branch statements/proof successes and the full assembled statement/proof success; no full `comp_correct` is assumed. The branch source proof tactics remain the reviewed originals; assembly uses direct matching and top-level implication currying rather than proof search.
+
+
+`stack_code_bitmaps_seq_probe.out` captures complete original evaluate_code_bitmaps, zero hypotheses and native Seq specialization. The native case keeps only actual source-path recursive hypotheses, derives fixClock clamping and concatenates oracle prefixes in original left-fold/bitmap order. Whole evaluator assembly remains open.
+`stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
+
+
+`stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
