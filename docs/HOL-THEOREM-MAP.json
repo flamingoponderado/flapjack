@@ -77142,5 +77142,28 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpLoadByte.lean",
+    "lean_name": "compileExpCorrectLoadByte",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 LoadByte case: all seven original source hypotheses and three conclusions; only original full child IH. Actual source success derives word address and original panMemLoadByteHOL result. Child IH derives converted address evaluation; actual convertStateExact preserves memory/domain/be, Option.map congruence derives identical byte-to-word result and target evaluation. No adapter, bounds, compatibility, target-run, or resource premise added. Actual imported canonical owner/full local roundtrip, four-map/positive-width Type0 qualifiers. Original full theorem/LoadByte specialization/eval_ind kernel captured. Full expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpLoadByte.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical state two-way roundtrip infrastructure, no independent HOL original."
   }
 ]

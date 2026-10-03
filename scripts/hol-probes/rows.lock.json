@@ -778,6 +778,7 @@
     {"bytes": 53, "out": "pan_structs_dropwhile_afindi_probe.out", "rows": 3, "sha256": "cf1d75b64ad7cfabe2c58731fbcfcc575f62fae488e9a441a787a5adc036812c"},
     {"bytes": 2324, "out": "pan_structs_exp_atomic_faithful_probe.out", "rows": 6, "sha256": "291ca0773724dcec4dfab40e6295f2b555384ee4097abda2d1ba89134b60991a"},
     {"bytes": 3022, "out": "pan_structs_exp_cmp_shift_faithful_probe.out", "rows": 7, "sha256": "ac6e91eab736ae83d2f0d3aec684fa79304117e359c27009c5f8da781a162a23"},
+    {"bytes": 2373, "out": "pan_structs_exp_load_byte_faithful_probe.out", "rows": 5, "sha256": "b21d6a5ad34d90706560439cfecfb5b236d25ce7a37b0b835d4e92da452aaf74"},
     {"bytes": 2377, "out": "pan_structs_exp_nfield_faithful_probe.out", "rows": 5, "sha256": "9be41249cab573214b7202f4b01dca77e4fdbb79d8595c8926aa86d468ef5da3"},
     {"bytes": 2358, "out": "pan_structs_exp_nstruct_faithful_probe.out", "rows": 5, "sha256": "5d121fe711b1bf817af03e700fb8d9fabd4116c6bcafed03879a3c7cfffd2cb3"},
     {"bytes": 2989, "out": "pan_structs_exp_operators_faithful_probe.out", "rows": 7, "sha256": "117e0cbdab581042964d0afc4cb4c624008259e3cd8ee884f4f2b585bd72ad87"},
