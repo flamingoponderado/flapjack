@@ -76988,5 +76988,131 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: JumpReg word-valued operand failure. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstSkip",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Skip constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Move constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original StoreConsts constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstAssign",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Assign constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstGet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Get constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Store constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstRaise",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Raise constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstOpCurrHeap",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original OpCurrHeap constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstReturn",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Return constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstTick",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Tick constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original Set constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstLocValue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original LocValue constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstCodeBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original CodeBufferWrite constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/PrimitiveInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstDataBufferWrite",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, original DataBufferWrite constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
   }
 ]
