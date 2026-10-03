@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
 import Flapjack.Compiler.Backend.WordToStack.NativeStackStore

@@ -9518,6 +9518,12 @@
       "sha256": "26b5b30b79b24ccf1c8d6e6d02b4eda9f3a307ae3c2da7cef374195900c45552"
     },
     {
+      "out": "word_to_stack_cut_state_probe.out",
+      "sha256": "1775cd6951d81d7a9f045d7c840f7c65e54357de838a81d3205cd0557c3e6df4",
+      "bytes": 197,
+      "rows": 3
+    },
+    {
       "bytes": 155,
       "out": "word_to_stack_cutset_maximum_probe.out",
       "rows": 12,

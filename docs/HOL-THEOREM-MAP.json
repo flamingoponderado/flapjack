@@ -82657,5 +82657,21 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison original6376-6406 and complete comp_correct5756 motive5719-5751. All original premises and full existential/result/resource conclusion retained; source nonerror derives Word operands and operator success, actual Reg1 loads preserve full relation, erased Handler store relation supplies CurrHeap, actual native callback and full register write establish target run/full postrelation. No target evaluation premise. Canonical fmap_as_finite_support_relation and positive-width word translation only; evaluator inherits reals_as_rational_cuts. Fresh original whole obligation capture is statement evidence, not literal case proof replay.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelCutState.lean",
+    "lean_name": "stateRelCutState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_cut_state",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison7750-7765: arbitrary original names native unit Spt; full original state_rel and actual cut_state(names,LN)=SOME post imply entire same-target relation. Cut preserves all other fields, native inter/union wf and lookup laws preserve every local placement. Original two premises only, no added wf/lookup/target-run assumptions. Canonical fmap_as_finite_support_relation codecs and positive-width word translation reviewed; structural theorem introduces no real evaluator assumption. Fresh literal original proof replay."
   }
 ]
