@@ -1,3 +1,4 @@
+import Flapjack.Test.LabToTargetCodeSafetyTransportParity
 import Flapjack.Test.TargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationParity

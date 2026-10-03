@@ -6109,3 +6109,8 @@ run_probe target_good_init_state_probeScript.sml target_good_init_state_probe.ou
   good_init_state_def good_init_state_def_types good_init_state_def_hypotheses \
   word_memory entry_bound space_bound space_overflow_rejected \
   "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code_safety_transport_probe.out \
+  code_similar_IMP_both_no_share_mem code_similar_IMP_both_no_share_mem_types code_similar_IMP_both_no_share_mem_hypotheses \
+  changed_bytes_length_safe instruction_change_rejected \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
