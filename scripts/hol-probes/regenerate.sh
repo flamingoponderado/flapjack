@@ -110,6 +110,12 @@ run_probe() {
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_seq_probeScript.sml stack_rawcall_seq_probe.out \
+  seq_full_statement seq_full_hypotheses seq_case64 seq_case80 seq_evaluate_ind_obligation seq_equal64 seq_equal80 seq_less64 seq_less80 seq_greater64 seq_greater80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_seq_standard_probeScript.sml stack_rawcall_seq_standard_probe.out \
+  seq_standard_full_statement seq_standard_full_hypotheses seq_standard_case64 seq_standard_case80 seq_standard_comp64 seq_standard_comp80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_install_probeScript.sml stack_rawcall_install_probe.out \
   install_full_statement install_full_hypotheses install_case64 install_case80 install_union_old install_union_new \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6448,4 +6454,43 @@ run_probe labprops_evaluate_add_clock_io_events_mono_probeScript.sml labprops_ev
 
 run_probe stack_remove_init_prop_probeScript.sml stack_remove_init_prop_probe.out \
   init_prop_definition init_prop_type init_prop_hypotheses init_prop_witness_count init_prop_conjunct_count \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_call_tail_probeScript.sml stack_rawcall_call_tail_probe.out \
+  call_tail_full_statement call_tail_full_hypotheses call_tail_case64 call_tail_case80 call_tail_evaluate_ind_obligation call_tail_direct64 call_tail_handler64 call_tail_direct80 call_tail_handler80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_simp_proof_compile_exp_thm_probeScript.sml word_simp_proof_compile_exp_thm_probe.out \
+  compile_exp_thm_statement compile_exp_thm_hypotheses evaluate_Seq_assoc_statement evaluate_simp_push_out_if_statement evaluate_simp_duplicate_if_statement evaluate_const_fp_statement evaluate_const_fp_loop_statement evaluate_sf_gc_consts_statement evaluate_gc_fun_const_ok_statement evaluate_drop_consts_statement evaluate_Loop_body_cong_gc_statement \
+  "$cake_dir/compiler/backend/proofs/word_simpProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_simp_compile_exp_probeScript.sml word_simp_compile_exp_probe.out \
+  fold_chain call_drop_consts static_if push_out_if hoist_if shift_move_loop ffi_install_share inst_alloc_ret_call \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
+  add3 sub_const big_imm store_off load_off shifts curr_heap share_load8 set_and const_fold two_reg \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+run_probe stack_remove_init_limits_double_probeScript.sml stack_remove_init_limits_double_probe.out \
+  init_limits_double_definition init_limits_double_type init_limits_double_hypotheses init_limits_double_store_count \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_call_return_probeScript.sml stack_rawcall_call_return_probe.out \
+  call_return_full_statement call_return_full_hypotheses call_return_case64 call_return_case80 call_return_evaluate_ind_obligation call_return_whole_case64 call_return_direct64 call_return_handler64 call_return_link_erased64 call_return_other_link64 call_return_whole_case80 call_return_direct80 call_return_handler80 call_return_link_erased80 call_return_other_link80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_abs_stack_prefix_drop_probeScript.sml word_to_stack_abs_stack_prefix_drop_probe.out \
+  abs_stack_prefix_drop_statement abs_stack_prefix_drop_proved abs_stack_prefix_drop_hypotheses abs_stack_prefix_drop_wstack_type abs_stack_prefix_drop_sstack_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_env_identity_probeScript.sml word_to_stack_env_identity_probe.out \
+  env_to_list_identity_statement env_to_list_identity_proved env_to_list_identity_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_handler_transition_probeScript.sml word_to_stack_handler_transition_probe.out \
+  stack_rel_raise_statement stack_rel_raise_proved stack_rel_raise_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_raise_stub_false_probeScript.sml word_to_stack_raise_stub_false_probe.out \
+  raise_stub_false_statement raise_stub_false_proved raise_stub_false_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_read_memory_probeScript.sml stack_remove_init_read_memory_probe.out \
+  init_read_memory_statement init_read_memory_hypotheses init_read_memory_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

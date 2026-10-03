@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "seq_standard_full_statement="; print_term(concl comp_correct));
+val _ = print("seq_standard_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "seq_standard_case64" (ISPEC ``stackLang$Seq seqLeftProg seqRightProg:64 stackLang$prog`` comp_correct);
+val _ = row "seq_standard_case80" (ISPEC ``stackLang$Seq seqLeftProg seqRightProg:80 stackLang$prog`` comp_correct);
+val _ = row "seq_standard_comp64" (EVAL ``stack_rawcall$comp LN (Seq Skip Skip:64 stackLang$prog) = Seq Skip Skip``);
+val _ = row "seq_standard_comp80" (EVAL ``stack_rawcall$comp LN (Seq Skip Skip:80 stackLang$prog) = Seq Skip Skip``);
