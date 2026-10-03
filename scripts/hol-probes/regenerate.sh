@@ -6779,3 +6779,7 @@ run_probe l3_encode_probeScript.sml l3_encode_probe.out \
 run_probe pansem_eval_ind_probeScript.sml pansem_eval_ind_probe.out \
   eval_ind_statement eval_ind_types eval_ind_hypotheses eval_ind_proved \
   "$cake_dir/pancake/semantics/panSemScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe pan_structs_exp_correct_full_probeScript.sml pan_structs_exp_correct_full_probe.out \
+  compile_exp_correct_statement compile_exp_correct_types compile_exp_correct_hypotheses compile_exp_correct_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
