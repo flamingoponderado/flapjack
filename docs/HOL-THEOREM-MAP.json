@@ -76006,5 +76006,68 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:10509-10743, original ShareInst constructor case: same is_alloc_var next and ssa_map_ok next ssa premises, arbitrary original loop context and full pre_alloc_conventions actual ssa_cc_trans output conclusion. Literal native compiler output, no target execution, target convention or support premise. Positive HOL word width is the only qualified translation; native WordLangExpHOL/WordStoreHOL/Spt/List carriers match. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Instructions.lean",
+    "lean_name": "ssaCcTrans_preAllocInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Inst case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Seq case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocMustTerminate",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original MustTerminate case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocIf",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original If case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Loop case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocBreak",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Break case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/Control.lean",
+    "lean_name": "ssaCcTrans_preAllocContinue",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_pre_alloc_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:10509-10743, full original Continue case with original is_alloc_var and ssa_map_ok premises and complete pre_alloc_conventions actual compiler-output conclusion. Seq/MustTerminate/If/Loop bind only genuine structural induction hypotheses for the source subprograms, generalized over the same SSA maps/counters/loop contexts; native ssa_cc_trans_props and original setup/reconciliation properties discharge target map/counter facts. Inst covers all native instructions and both word-width FP branches, including source fallback clauses; Break/Continue cover arbitrary loop contexts and absent entries. No target evaluation, post-state or support premise. Native Spt/List/WordLang carriers retained; words_as_type_indexed_bitvec records positive HOL word width only. Full recursive assembly remains open."
   }
 ]
