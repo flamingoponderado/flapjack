@@ -1,0 +1,3 @@
+inter_union_left_statement=∀t s. wf s ⇒ inter (union s t) s = s
+inter_union_left_proved=T
+inter_union_left_hypotheses=0
