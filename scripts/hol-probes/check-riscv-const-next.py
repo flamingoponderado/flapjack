@@ -12,7 +12,7 @@ def check(root=ROOT):
         if name.endswith('ConstNext.lean'):
             text = text.split('def encodedInstructionBytes', 1)[1].split('/-- Native', 1)[0] + '\n'.join(text.split('theorem ' + d, 1)[1].split(' := by', 1)[0] for d in ('next_encoded_lui', 'next_encoded_addi', 'next_encoded_ori', 'next_encoded_xori', 'next_encoded_slli', 'next_encoded_or', 'next_encoded_xor'))
         elif name.endswith('InstructionStep.lean'):
-            text = text.split('def writePost', 1)[1].split('private theorem aligned_add_four', 1)[0]
+            text = text.split('def writePost', 1)[1].split('theorem aligned_add_four', 1)[0]
         if hashlib.sha256(text.encode()).hexdigest() != expected:
             raise ValueError('full native Const Next original statement/evidence drift: ' + name)
     driver = (root / 'scripts/hol-probes/regenerate.sh').read_text()

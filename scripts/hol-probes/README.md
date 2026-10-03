@@ -7937,3 +7937,22 @@ This helper iterates literal native `Run`, which does not advance PC. It is not
 a full native Next execution/assertion oracle or the full Const encoder theorem;
 those remain separate open work. Existing `riscv_const_run_probe` captures the
 scoped original Run observations; no new HOL declaration identity is claimed.
+
+### Complete native Const step transport
+
+`CorrectnessEncoding/ConstStep.lean` connects all seven byte-derived original
+Next equations to the complete native register effect with Skip=4 and PC+4.
+It proves original validity, complete projection congruence, arbitrary-list
+original interference transport, and the pure-list memory/processor/PC frame.
+The original seven Run clauses and original Fetch/Next update_pc clauses are the
+source comparison; the existing typed Next/Fetch captures and ConstNext width
+observations retain their previously documented scope. No new original oracle
+or separately named HOL declaration is claimed. The shared accepted PC alignment
+lemma is exposed for reuse without changing its statement or proof.
+
+`check-riscv-const-step.py` pins the actual effect, full family destination,
+public statements, and environment indices; mutation tests reject Skip/PC,
+index, family, total-PC, and target-run premise drift. This infrastructure is
+untagged. Emitted-list byte availability and full original Const assertions
+remain separate open work; this complete pure-step list result does not assume
+or claim their assembly.
