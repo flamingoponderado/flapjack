@@ -7064,10 +7064,22 @@
       "sha256": "11ee5123cc30db9c96d7673e483a484f0a3a8745c467731fa73e8c4661e1fa4d"
     },
     {
+      "bytes": 689,
+      "out": "stack_names_carrier_probe.out",
+      "rows": 7,
+      "sha256": "29c71ccf78f21d1866f76e2c80d794a59bf2832fc882c26aed6ccca396d50a85"
+    },
+    {
       "bytes": 505,
       "out": "stack_names_instruction_probe.out",
       "rows": 17,
       "sha256": "db136f6624111cfb873997b324266d3ab28386649d0a9a0904dc1c29c2d41e34"
+    },
+    {
+      "bytes": 388,
+      "out": "stack_names_map_fst_compile_probe.out",
+      "rows": 3,
+      "sha256": "164911e95696468e1b0dd6a59f5b664dba9aa645c62885ddcaabb00d9cb62b2f"
     },
     {
       "bytes": 104,

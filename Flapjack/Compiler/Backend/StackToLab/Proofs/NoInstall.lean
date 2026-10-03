@@ -254,8 +254,8 @@ theorem stackRemoveCompNoInstall {width : Nat} [NeZero width] :
 /-- HOL `stack_remove_prog_comp_no_install`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_remove_prog_comp_no_install" (words_as_type_indexed_bitvec)]
-theorem stackRemoveProgCompNoInstall {width : Nat} [NeZero width] {jump : Bool}
-    {off : BitVec width × BitVec width} {k n : Nat} :
+theorem stackRemoveProgCompNoInstall {width : Nat} [NeZero width] {Name : Type} {jump : Bool}
+    {off : BitVec width × BitVec width} {k : Nat} {n : Name} :
     ∀ p : HolProg width, noInstall p = true →
       noInstall (StackRemove.progComp jump off k (n, p)).2 = true :=
   fun p h => stackRemoveCompNoInstall jump off k p h
@@ -308,8 +308,8 @@ theorem stackNamesCompNoInstall {width : Nat} [NeZero width] :
 /-- HOL `stack_names_prog_comp_no_install`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_names_prog_comp_no_install" (words_as_type_indexed_bitvec)]
-theorem stackNamesProgCompNoInstall {width : Nat} [NeZero width] {f : Spt Nat} :
-    ∀ prog : List (Nat × HolProg width), (∀ ap ∈ prog, noInstall ap.2 = true) →
+theorem stackNamesProgCompNoInstall {width : Nat} [NeZero width] {Name : Type} {f : Spt Nat} :
+    ∀ prog : List (Name × HolProg width), (∀ ap ∈ prog, noInstall ap.2 = true) →
       ∀ ap ∈ prog.map (StackNames.progCompEntryHOL f), noInstall ap.2 = true := by
   intro prog h ap hap
   obtain ⟨⟨a, p⟩, hm, rfl⟩ := List.mem_map.mp hap
@@ -318,8 +318,8 @@ theorem stackNamesProgCompNoInstall {width : Nat} [NeZero width] {f : Spt Nat} :
 /-- HOL `stack_names_compile_no_install`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
   "stack_names_compile_no_install" (words_as_type_indexed_bitvec)]
-theorem stackNamesCompileNoInstall {width : Nat} [NeZero width] {names : Spt Nat}
-    {prog : List (Nat × HolProg width)} :
+theorem stackNamesCompileNoInstall {width : Nat} [NeZero width] {Name : Type} {names : Spt Nat}
+    {prog : List (Name × HolProg width)} :
     (∀ ap ∈ prog, noInstall ap.2 = true) →
       ∀ ap ∈ StackNames.compileHOL names prog, noInstall ap.2 = true :=
   stackNamesProgCompNoInstall prog
