@@ -6468,3 +6468,5 @@ codec/lift/lower definitions and 862 independently calculated observations:
 interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
+
+`stack_props_evaluate_add_clock_io_events_mono_probeScript.sml` replays the complete unchanged original StackProps extra-clock prefix proof (542–638). The original non-exported `[local,simp]` `sh_mem_op_with_const` helper is replayed and restored to the simplifier before the unchanged full proof. HOL's free `extra` is universally closed; two rows capture the closed unconditional statement and kernel proof success. Lean retains the native evaluator, all constructors and every timeout/error/return/handler outcome, deriving recursive obligations by the original clock-first measure. The inherited rational-cut FP carrier is explicit; this event theorem does not assert numerical FP parity or whole compiler correctness.

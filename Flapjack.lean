@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
 import Flapjack.RiscV.L3.Defs.SupervisorCSR
