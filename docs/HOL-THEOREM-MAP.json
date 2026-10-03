@@ -74250,5 +74250,14 @@
     "hol_name": "MOD_LESS_EQ_MOD_IMP",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original2805-2809: full universally quantified natural m,k,n, sole original conjunction m MOD k <= n and m < k, conclusion m <= n unchanged. Nat modulo and order have original total natural semantics; m<k derives modulus identity without extra divisor positivity. Zero divisor remains quantified (original premise is impossible there), no word/FFI/map or representation qualifier. Original literal rw[] then fs[] proof replay captured closed full statement/T/hyp0. Kernel proof uses Nat.mod_eq_of_lt only; proof-only prerequisite, no executed compiler behavior change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListReverse.lean",
+    "lean_name": "wordListEqRev",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_EQ_rev",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original2817-2825: complete unconditional predicate equality for arbitrary payload list xs and address a, forward word_list a xs equals word_list_rev at a+n2w LENGTH xs*bytes_in_word applied to REVERSE xs. Native Misc.wordList and wordListRev retain exact singleton/tail separation and modular address addition/subtraction, independent arbitrary payload Type; forward append uses opposite multiplication order justified by BitVec.mul_comm. Original HOL positive type dimension becomes width Nat with NeZero and BitVec width; no fixed width, word-only payload, successful heap, address injectivity, no-wrap or length bound added. Reverse induction/append/separation commutativity and modular add-sub cancellation prove entire original equality even when predicates are unsatisfiable from wrapped address collisions. Original unchanged SNOC_INDUCT proof replay with original simplifier context captures full statement/T/hyp0; no supplied target relation. Proof-only initializer prerequisite; coordinator acceptance tracked on bead."
   }
 ]

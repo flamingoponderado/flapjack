@@ -6485,3 +6485,7 @@ run_probe word_to_stack_raise_stub_false_probeScript.sml word_to_stack_raise_stu
 run_probe stack_remove_init_mod_order_probeScript.sml stack_remove_init_mod_order_probe.out \
   init_mod_order_statement init_mod_order_proved init_mod_order_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_reverse_probeScript.sml stack_remove_word_list_reverse_probe.out \
+  word_list_reverse_statement word_list_reverse_proved word_list_reverse_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
