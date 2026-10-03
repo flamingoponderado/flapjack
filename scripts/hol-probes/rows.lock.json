@@ -1760,6 +1760,12 @@
       "sha256": "90624f1131519978c0c920713d37932eca2e8f50ae33ac8efb3646df8d7f50b2"
     },
     {
+      "bytes": 2772,
+      "out": "l3_native_config_probe.out",
+      "rows": 103,
+      "sha256": "7f2f60b7fa75d3500b68b1c42d47969724b6bde19ee4d53ec05ddcedaeffc53f"
+    },
+    {
       "bytes": 1380,
       "out": "l3_next_evaluation_probe.out",
       "rows": 12,

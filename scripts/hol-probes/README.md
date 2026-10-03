@@ -7227,3 +7227,15 @@ replayed by the Lean kernel in `RiscVNativeTargetParity.lean`. The checker rejec
 nonconcrete AST payloads, wrong carriers, unreduced bytes and capture drift.
 These finite checks do not establish universal cross-language equivalence.
 The executed compiler configuration replacement remains a separate dependency.
+
+## Full native RISC-V configuration
+
+`l3_native_config_probeScript.sml` captures the complete original record,
+all scalar fields, its fixed64 ASM/word8 encode type, and a generic zero-assumption
+proof that its encode field is the complete `riscv_enc` function. It also captures
+78 immediate-policy observations: every binop/comparison class at both signed
+bounds and surrounding values. The Lean default build checks native record
+projections, full encoder-field equality and all policy observations.
+The legacy production/check configuration stays explicitly untagged; actual
+emitted-byte routing remains a separate blocking bead. These finite regressions
+and source-reviewed record equations are not universal HOL-to-Lean equivalence.
