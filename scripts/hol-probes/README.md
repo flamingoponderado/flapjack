@@ -6281,3 +6281,13 @@ the current reservation, while faults/misalignment retain it. All order bits,
 rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
 are covered. Independent byte-wise expectations and arbitrary-base Lean state
 frames provide regressions only, not whole atomic/runtime correctness.
+
+`l3_scd_probe.out` captures the complete original SC_D definition/type and
+24 whole-state observations. RV32 rejects before address, reservation and VM
+handling; one fixture combines virtual1, all-core reservationNONE and VM31 to
+check that ordering. Every low3 misalignment residue is captured, along with
+all order bits, reservation failure skipping translation, read-onlyPTE2 under
+literal Data/Read, eight-byte writes, zero rd/rs2, core255,totalCore1, RV128,
+Sv32 faults and returned Sv39 walk state. Current/other reservations and the
+entire frame outside six potentially changed fields are replayed. This is
+source-clause regression evidence, not full atomic/Run/Next/compiler correctness.
