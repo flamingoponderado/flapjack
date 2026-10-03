@@ -6986,3 +6986,7 @@ run_probe lab_props_alignment_operations_probeScript.sml lab_props_alignment_ope
 run_probe word_to_stack_register_update_probeScript.sml word_to_stack_register_update_probe.out \
   register_update_full register_update_hypotheses register_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_register_spill_update_probeScript.sml word_to_stack_register_spill_update_probe.out \
+  register_spill_update_full register_spill_update_hypotheses register_spill_update_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
