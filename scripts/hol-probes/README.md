@@ -7092,3 +7092,8 @@ member-expression induction hypotheses.
 theorem, NField specialization, and eval_ind. Native NField preserves all seven
 hypotheses and three conclusions with only the original child IH. Validity and
 source lookup derive the shape-list and actual converted index correspondence.
+
+`pan_structs_reorder_faithful_probe` captures the original full theorem, kernel
+quantified types, zero hypotheses and kernel proof. Ignored info-field payload
+remains independently polymorphic; native theorem uses faithful MlS, ContextExact
+and actual compileFieldsExact, preserving both original premises.

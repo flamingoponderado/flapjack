@@ -6649,3 +6649,7 @@ run_probe pan_structs_exp_rstruct_faithful_probeScript.sml pan_structs_exp_rstru
 run_probe pan_structs_exp_nfield_faithful_probeScript.sml pan_structs_exp_nfield_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nfield_statement compile_exp_correct_nfield_proved eval_ind_full_statement \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_reorder_faithful_probeScript.sml pan_structs_reorder_faithful_probe.out \
+  fields_in_order_reorder_noop_statement fields_in_order_reorder_noop_types fields_in_order_reorder_noop_hypotheses fields_in_order_reorder_noop_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

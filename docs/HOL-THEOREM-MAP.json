@@ -76088,5 +76088,22 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FieldsInOrderReorderNoop.lean",
+    "lean_name": "fieldsInOrderReorderNoopExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "fields_in_order_reorder_noop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original218-239: full theorem on ContextExact/MlS/ExpHOL and actual compileFieldsExact/compileExpExact. Both original premises name-list equality and ALL_DISTINCT retained; full first-match flatMap selection equals map compiled payload. Original kernel type confirms ignored info_fields payload is independently polymorphic beta; Lean preserves alpha:Type instead of fixing ShapeHOL. Only positive-width word translation for original polymorphic exp, no String or production context substitution. List induction removes absent prefix keys using original distinctness; proved internal bridge discharges matcher elaboration without adding a premise. Original full theorem/type/hyp0/kernel proved capture checked. Faithful prerequisite for genuine NStruct, broader assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FieldsInOrderReorderNoop.lean",
+    "lean_name": "selectFields_skip",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack first-match field selection representation infrastructure; no independent HOL original. Local factoring and absent-prefix law preserve exact MlS equality and arbitrary payload."
   }
 ]
