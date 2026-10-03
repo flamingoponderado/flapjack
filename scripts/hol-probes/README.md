@@ -7956,3 +7956,9 @@ index, family, total-PC, and target-run premise drift. This infrastructure is
 untagged. Emitted-list byte availability and full original Const assertions
 remain separate open work; this complete pure-step list result does not assume
 or claim their assembly.
+
+`pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
+`pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
+independent word/configuration/FFI carrier. Regenerate with
+`HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
+composes all six reviewed pass paths; production routing remains separate.
