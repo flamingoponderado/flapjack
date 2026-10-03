@@ -7311,3 +7311,9 @@ unconditional flatten conversion derive the identical target memory operation.
 with its unchanged source proof, closed binder types, zero hypotheses and
 kernel proof. Native update neutrality keeps arbitrary key/value types and
 uses canonical finite-support maps with HOL equality and no comparison premise.
+
+`pan_structs_program_assign_probe` captures the full original `compile_correct`
+and its `Assign vk v e` specialization, with all quantified binder types and
+closed kernel proofs. The Lean case retains all ten original premises and seven
+conclusions for both local and global assignment, deriving target validity and
+shape-map neutrality internally from source validity and full value conversion.

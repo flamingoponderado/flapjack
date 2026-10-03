@@ -80473,5 +80473,60 @@
       "fm"
     ],
     "reviewer": "flapjack-sol source comparison2026-10-03 original local fupdate_elim2: arbitrary polymorphic finite map/key/value, sole FLOOKUP fm x=SOME y premise, exact FUPDATE fm(x,y)=fm conclusion. Canonical finite-support fm is the only representation translation, named standalone relation parameter; no state carrier/witness needed for a bare map entry. Actual updateEq uses Classical HOL equality internally with no public BEq/LawfulBEq/DecidableEq compatibility premise. Native map constructor proof irrelevance and pointwise key equality case split establish whole canonical map equality, not merely selected-key equality. No width/state/shape/wf restriction. Fresh original local statement and unchanged FUPDATE_ELIM/TO_FLOOKUP proof replay, closed types/hyp0/kernelT reviewed. Assign and whole compiler correctness remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
+    "lean_name": "compileCorrectAssign",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and Assign1114-1132: full ten premises/seven conclusions, local/global constructors and no recursive IH. Actual source eval failure, missing binding and unequal shape branches excluded only by original no-Error premise. Full expression correctness supplies actual converted child evaluation and value field validity, original eval-is-wf theorem derives incoming wellformedness from source map premises. Existing binding validity/wellformedness derived by FEVERY lookup. Source shape equality and full shapeOfConvertVRev derive converted shape equality and actual target isValidValue, without target/update/shape/size premise. Executed canonical update commutes with map2 conversion; generic equality-update neutrality fupdateElim2 is transferred internally through lawful fixed MlS equality, preserving local/global shape maps. Updated field validity proved pointwise; NONE result predicates unchanged. Imported four-map canonical owner/full two-way witness and positive indexed word/Type0 host translation only. Original whole/case statements, binder types and closed kernel proof captured. Broader full program/production correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
+    "lean_name": "mapExt",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
+    "lean_name": "mapUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
+    "lean_name": "updateNeutral",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectAssign.lean",
+    "lean_name": "everyUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
   }
 ]
