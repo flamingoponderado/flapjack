@@ -84609,5 +84609,125 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c author source comparison2026-10-03 original730-736/encoder_correct_def117-133: genuine complete JumpReg constructor case, unrestricted natural r and full original :64 asm_state/riscv_state carriers. Original asmStep+targetStateRel premise only; source asmOk derives register<32 and avoid-register/zero exclusion, source nonfailure derives align2 register value. Finite native register decoder proof covers all32 five-bit values (intrinsic datatype domain, not a public bound); exact four-byte fetch and full JALR Run derive branch control from original mask sw2sw(2:word2), then original NextRISCV_branch clears only current control and updates PC while all unrelated state fields remain. Full target validity/alignment, memory/register/FP relation retained; canonical omitted FP getter unchanged with original fpRegCount0. Original existential n/every env/interference/full asserts validity-code-byte-PC/final relation/asserts2 outside-domain-byte conclusion preserved, original witness0 derived by real native execution. No target-run/evaluation premise or narrowed domain. Inherited reals_as_rational_cuts assumption from full reviewed native state/Run closure retained (SOUNDNESS item8), no new real assumption or trust allowance. Fresh original complete theorem specialization only JumpReg arbitrary r:num, native types, storedhyp0/provedT; original capture is not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Config.lean",
+    "lean_name": "TapConfig",
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "tap_config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Config.lean",
+    "lean_name": "defaultTapConfig",
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "default_tap_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Alist",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "alist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Namespace",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "namespace",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "Tra",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "tra",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "orphanTrace",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "orphan_trace_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "mkCons",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "mk_cons_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Config.lean",
+    "lean_name": "initConfig",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "init_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "VarName",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "var_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml23, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "Environment",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml27, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "EnvironmentGenerationStore",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment_generation_store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml33, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "EnvironmentStore",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment_store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml40, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "NextIndices",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "next_indices",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml303, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml413, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
   }
 ]

@@ -2,6 +2,11 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
+import Flapjack.Compiler.Backend.SourceToFlat.Config
+import Flapjack.Compiler.Backend.FlatPattern.Config
+import Flapjack.Compiler.Backend.BackendCommon.Trace
+import Flapjack.NamespaceHOL
+import Flapjack.Compiler.Backend.PresLang.Config
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.RiscV.CorrectnessEncoding.JumpReg

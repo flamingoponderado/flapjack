@@ -1,0 +1,8 @@
+default_tap_config=default_tap_config = <|explore_flag := F|>
+default_tap_config_types=
+default_tap_config_hypotheses=0
+default_tap_config_proved=T
+default_tap_config_type=:tap_config
+tap_config_explore_flag_type=:tap_config -> bool
+tap_config_component_equality=∀(t1 :tap_config) (t2 :tap_config).
+  t1 = t2 ⇔ (t1.explore_flag ⇔ t2.explore_flag)

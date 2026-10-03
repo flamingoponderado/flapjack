@@ -7215,3 +7215,22 @@ run_probe riscv_target_jumpReg_probeScript.sml riscv_target_jumpReg_probe.out \
   riscv_encoder_correct_jumpReg_hypotheses riscv_encoder_correct_jumpReg_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe pres_lang_config_probeScript.sml pres_lang_config_probe.out \
+  default_tap_config default_tap_config_types default_tap_config_hypotheses default_tap_config_proved default_tap_config_type tap_config_explore_flag_type tap_config_component_equality \
+  "$cake_dir/compiler/backend/presLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe namespace_carrier_probeScript.sml namespace_carrier_probe.out \
+  namespace_case namespace_case_types namespace_case_hypotheses namespace_case_proved namespace_Bind_type \
+  "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
+
+run_probe backend_common_trace_probeScript.sml backend_common_trace_probe.out \
+  tra_case tra_case_types tra_case_hypotheses tra_case_proved orphan_trace orphan_trace_types orphan_trace_hypotheses orphan_trace_proved mk_cons mk_cons_types mk_cons_hypotheses mk_cons_proved tra_SourceLoc_type tra_Cons_type tra_Union_type tra_None_type \
+  "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
+
+run_probe flat_pattern_config_probeScript.sml flat_pattern_config_probe.out \
+  init_config init_config_types init_config_hypotheses init_config_proved init_config_type config_pat_heuristic_type config_component_equality \
+  "$cake_dir/compiler/backend/flat_patternScript.sml" "$cake_dir/compiler/backend"
+
+run_probe source_to_flat_config_probeScript.sml source_to_flat_config_probe.out \
+  var_name_shape environment_shape environment_generation_store_shape environment_store_shape next_indices_shape config_shape Glob_type Local_type environment_c_type environment_v_type environment_generation_store_next_type environment_generation_store_generation_type environment_generation_store_envs_type environment_store_next_type environment_store_env_gens_type next_indices_vidx_type next_indices_tidx_type next_indices_eidx_type config_next_type config_mod_env_type config_pattern_cfg_type config_envs_type \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
