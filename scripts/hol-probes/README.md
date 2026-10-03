@@ -7073,3 +7073,7 @@ keys keep the first binding; other, missing and empty lookups are recorded.
 correctness theorem and its genuine Const/BaseAddr/TopAddr specializations. Each
 retains all seven hypotheses and all three conclusions, with no extra assumptions.
 The parent whole expression/declaration/pass proofs remain open.
+
+`pan_structs_exp_var_faithful_probe` captures the whole original expression theorem
+and its genuine generic Var specialization, including both Local and Global kinds.
+All seven hypotheses and three conclusions remain intact, with zero open assumptions.

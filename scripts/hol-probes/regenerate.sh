@@ -6633,3 +6633,7 @@ run_probe pan_structs_shape_map_codec_probeScript.sml pan_structs_shape_map_code
 run_probe pan_structs_exp_atomic_faithful_probeScript.sml pan_structs_exp_atomic_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_const_statement compile_exp_correct_base_statement compile_exp_correct_top_statement compile_exp_correct_cases_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_exp_var_faithful_probeScript.sml pan_structs_exp_var_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_var_statement compile_exp_correct_var_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
