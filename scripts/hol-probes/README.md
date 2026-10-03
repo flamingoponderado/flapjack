@@ -7154,3 +7154,8 @@ original operation is evaluated on the converted list.
 LoadByte specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions, deriving the byte load from source success and actual
 preservation of memory/domain/byte order, using only the original child IH.
+
+`pan_structs_exp_load32_faithful_probe` captures the full original theorem,
+Load32 specialization and eval_ind. Native case retains all seven hypotheses
+and three conclusions with only the original child IH, deriving the32-bit load
+through actual memory/domain/byte-order preservation.
