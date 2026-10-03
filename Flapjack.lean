@@ -615,6 +615,12 @@ import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
 import Flapjack.Compiler.Backend.LabToTarget.InstFrame
 import Flapjack.Compiler.Backend.LabToTarget.InstMem
 import Flapjack.Compiler.Backend.LabToTarget.InstLemma
+import Flapjack.Compiler.Backend.LabToTarget.OracleResidues
+import Flapjack.Compiler.Backend.LabToTarget.CodeSafetyFacts
+import Flapjack.Compiler.Backend.LabToTarget.FfiEntryDisjoint
+import Flapjack.Compiler.Backend.LabToTarget.WordCmp
+import Flapjack.Compiler.Backend.LabToTarget.CodeAppend
+import Flapjack.Compiler.Backend.LabToTarget.AlignedPosVal
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
