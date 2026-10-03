@@ -6238,3 +6238,11 @@ run_probe wordsem_gc_const_probeScript.sml wordsem_gc_const_probe.out \
 run_probe wordsem_mem_store_const_probeScript.sml wordsem_mem_store_const_probe.out \
   mem_store_const_statement mem_store_const_proved mem_store_const_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_jump_exc_const_probeScript.sml wordsem_jump_exc_const_probe.out \
+  jump_exc_const_statement jump_exc_const_proved jump_exc_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_alloc_const_probeScript.sml wordsem_alloc_const_probe.out \
+  alloc_const_statement alloc_const_proved alloc_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"

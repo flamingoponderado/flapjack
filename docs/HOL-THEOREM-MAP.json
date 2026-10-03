@@ -70383,5 +70383,31 @@
     "hol_name": "dfn'JALR_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/JumpExcConst.lean",
+    "lean_name": "jumpExcConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "jump_exc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.6 wordProps943-963: complete original arbitrary native source/post and returned Nat#Nat label, sole jump_exc=SOME premise, all14 conclusions in original order be/gcFun/mdomain/shMdomain/code/codeBuffer/dataBuffer/compile/compileOracle/clock/ffi/stackLimit/stackMax/stackSize. Actual jumpExc565-576 retains original handler<stacklength/LASTN(handler+1)/stackframe-with-handler dispatch and only restores handler/locals/localsSize/stack; all success fields preserved, failure contradicts sole premise. No extra handler validity/frame shape/safety/target-run premise. Imported actual positive-width state C/F:Type, exact Spt fields and canonical fpRegs/store owner/genuine same-module codec; Bool equivalence as Bool equality. No evaluator or numericFP assertion. Original Raise max4335 and limit4415 use this invariant. Fresh unchanged full original proof replay before GEN_ALL and generalized conclusion check; fullresource/Seq/pass unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/AllocConst.lean",
+    "lean_name": "allocConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "alloc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.4 wordProps649-666: complete original arbitrary allocation word/cutsets/native source/result/post, sole allocation=(result,post) premise, all10 conjuncts in order clock/ffi/code/be/codeBuffer/dataBuffer/compile/compileOracle/stackLimit/stackSize. Native alloc671-698 preserves original cutEnv/pushEnv/setStore/gc/popEnv/getStore/hasSpace dispatch and every failure/Error/NotEnoughSpace/flush/success outcome. Complete gcConst/popEnvConst contracts supply fields; explicit equality chains show original field preservation, no callback law/targetrun/successful-allocation/resource-safety premise. Imported actual positivewidth state C/F:Type, exact Spt fields, canonical fpRegs/store and genuine same-module witness; Bool equivalence as Bool equality. No evaluator or numericFP assertion. Original limit4415 requires alloc_const, full resource/Seq/pass remains open. Fresh unchanged literal full original proof before GEN_ALL/generalized statement check."
   }
 ]
