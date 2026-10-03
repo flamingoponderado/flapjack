@@ -1,3 +1,7 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
+import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBits
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate

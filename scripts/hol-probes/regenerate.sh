@@ -7193,3 +7193,19 @@ run_probe stack_to_lab_no_ret_review_probeScript.sml stack_to_lab_no_ret_review_
 run_probe pan_structs_decls_nil_name_probeScript.sml pan_structs_decls_nil_name_probe.out \
   compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_nil_statement compile_decls_correct_nil_proved compile_decls_correct_nil_types compile_decls_correct_name_statement compile_decls_correct_name_proved compile_decls_correct_name_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_to_stack_chunk_bits_laws_probeScript.sml word_to_stack_chunk_bits_laws_probe.out \
+  chunk_to_bits_bound_full chunk_to_bits_bound_hypotheses chunk_to_bits_bound_proved chunk_to_bits_0_full chunk_to_bits_0_hypotheses chunk_to_bits_0_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_copy_pattern_full_probeScript.sml word_to_stack_copy_pattern_full_probe.out \
+  pattern_full pattern_hypotheses pattern_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_chunk_msb_full_probeScript.sml word_to_stack_chunk_msb_full_probe.out \
+  msb_full msb_hypotheses msb_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_copy_short_full_probeScript.sml word_to_stack_copy_short_full_probe.out \
+  short_full short_hypotheses short_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

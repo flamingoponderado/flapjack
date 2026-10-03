@@ -84506,5 +84506,50 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.12.10: original stack_to_labProofScript.sml:1207-1243. Binders prog s1 t r s2 n l cs bs t1 in source order. All six premises retained verbatim: native StackSem evaluate (prog,s1) = (r,s2), r <> SOME Error, state_rel s1 t1 (reviewed stateRel), call_args prog over t1's ptr/len/ptr2/len2/link registers, code_installed t1.pc (append (FST (flatten t prog n l cs bs))) t1.code over the reviewed flattenHOL, and EVERY IS_SOME (loc_to_pc n k t1.code) over cs ++ bs ++ [0]. Conclusion exists ck t2 with case halt_view r: SOME res gives the native LabSem evaluate (t1 with clock + ck) = (res,t2) and t2.ffi = s2.ffi; NONE gives the clock-shifted evaluate equality for all ck1, the five register-name equalities, t1.code prefix of t2.code (IS_PREFIX rendered <+:), and the case on OPTION_MAP result_view r: NONE pc advance by LENGTH (FILTER ($~ o is_Label) ...) plus state_rel s2 t2; Vloc the installed-code IS_SOME clause and the loc_to_pc w = t2.pc /\\ state_rel clause; Vcont state_rel plus code_installed of the Jump line (0w rendered 0); Vtimeout ffi and clock = 0; the wildcard (only Verr remains) False. No supplied target run, simulation or success premise. Proof by well-founded induction on the evaluator's own (clock, size) measure (HOL recInduct evaluate_ind) with untagged per-constructor case lemmas under FlattenCorrect/, using the ported inst_correct, state_rel lemmas, code_installed and flatten helpers; Install via the oracle/compile/code-buffer conjuncts of state_rel. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ChunkBits.lean",
+    "lean_name": "chunkToBitsBound",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "chunk_to_bits_bound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5855-5879; native chunkToBitsW unchanged, arbitrary Bool/word payload lists. Bound retains exactly LENGTH ws < dimindex, sentinel true and every higher in-range bit false; lowbit law unconditional including overflowing chunks. HOL word indexing rendered getLsbD with original in-range guards. Positive-width BitVec is sole words_as_type_indexed_bitvec translation; Bool equality renders HOL boolean iff. Literal original proof replay and Lean kernel check."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ChunkBits.lean",
+    "lean_name": "chunkToBitsZero",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "chunk_to_bits_0",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5855-5879; native chunkToBitsW unchanged, arbitrary Bool/word payload lists. Bound retains exactly LENGTH ws < dimindex, sentinel true and every higher in-range bit false; lowbit law unconditional including overflowing chunks. HOL word indexing rendered getLsbD with original in-range guards. Positive-width BitVec is sole words_as_type_indexed_bitvec translation; Bool equality renders HOL boolean iff. Literal original proof replay and Lean kernel check."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CopyWordsPattern.lean",
+    "lean_name": "copyWordsForPatternTheorem",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_words_for_pattern_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5881-5937 complete native evaluator equality. Arbitrary words/xs/address/offset/ys/domain/memory; original LENGTH words < dimindex and const_addresses guards only. Result retains SOME of prefix length+word length, address+bytes_in_word*n2w length and full const_writes memory. Domain set represented by Prop with DecidablePred, mapped through decide for the existing Bool-set const_addresses; neither representation imposes an address restriction. Memory remains total word_loc lookup, lists remain List. Original arbitrary positive HOL word dimension translated by words_as_type_indexed_bitvec. No good_dimindex, target-run or final-state hypotheses. Native writes preserve lowbit relocation word+offset and native byte stride. Inline shift-recovery follows original bit-bound proof. Kernel checked and original literal HOL proof replayed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/ChunkBitsMsb.lean",
+    "lean_name": "wordMsbChunkToBits",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "word_msb_chunk_to_bits",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5938-5946. Complete word_msb equality with LENGTH words = dimindex-1; preserves both LENGTH words < dimindex and good_dimindex guards. Arbitrary payload word list and native chunkToBitsW retained. Bool decide renders HOL boolean equality. Only words_as_type_indexed_bitvec carrier translation, using standard goodDimindex32-or64. Kernel checked; literal original HOL proof replay."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CopyWordsShort.lean",
+    "lean_name": "copyWordsShort",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_words",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5948-5971 entire native outer-copy equality. Retains original const_addresses, good_dimindex and LENGTH words < dimindex guards, arbitrary prefix/suffix/address/offset/domain/memory. Full dimension-1 boundary uses actual recursive copyWordsExact at prefixlength+(wordlength+1) and updated address/const_writes memory; otherwise full SOME address/memory pair. No assumed target run or weakened continuation. Native chunkToBitmapW and copyWordsExact definitions unchanged; Prop-domain set mapped by decide for native Bool const_addresses. Only words_as_type_indexed_bitvec positive-width word translation. Original proof replay and Lean kernel proof."
   }
 ]
