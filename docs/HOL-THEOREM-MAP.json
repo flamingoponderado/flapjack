@@ -83930,5 +83930,14 @@
     "hol_name": "merge_data_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source509-518: original five Knowledge fields, spt inter_eq of canonical maps, latest LN reset, FILTER ordered first store list by exact second ALOOKUP/value equality; both native fact maps use literal bmInterEq. Concrete Nat register payloads original knowledge, not narrowed standalone helpers. Literal BalancedMap Tip/Bin cachedSize/key/value/subtree fields, original Spt and ordered association-list store carrier retained, all quantifiers/branches unchanged. Actual Std.TreeMap merge/invariant transport and full CSE correctness remain linked open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/InNamesSet.lean",
+    "lean_name": "inNamesSet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "in_names_set_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: original in_names_set_def14-17 EVERY over arithReads, requiring spt lookup r canonical = SOME r for every read. Lean forall register membership is the standard EVERY predicate interpretation with identical list and equality; full HolArith8 constructors/field arities and imported exact arithReads reviewed, including carry fourth input and overflow flag exclusion. Original Spt Nat register map retained, arbitrary operation and canonical tree with no invariant/flat/run/success hypothesis. Positive HOL word dimension is the sole BitVec width/NeZero translation. Whole wf_data/semantic invariant/CSE correctness remains separate open work."
   }
 ]
