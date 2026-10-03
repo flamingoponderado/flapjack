@@ -6863,3 +6863,6 @@ run_probe lab_to_target_list_subset_probeScript.sml lab_to_target_list_subset_pr
   list_subset_trans list_subset_trans_types list_subset_trans_hypotheses list_subset_trans_proved \
   list_subset_refl list_subset_refl_types list_subset_refl_hypotheses list_subset_refl_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_store_probeScript.sml pan_structs_program_store_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_store_statement compile_correct_store_proved compile_correct_full_types compile_correct_store_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

@@ -7295,3 +7295,9 @@ correctness theorem and Store32/StoreByte specializations, closed binder types
 and kernel proofs. Native cases keep all ten premises/seven conclusions, actual
 source memory-domain/error/endian/cast behavior and arbitrary positive width.
 The target memory operation is the same source operation, derived internally.
+
+`pan_structs_program_store_probe` captures the full original program theorem
+and general Store specialization, closed binder types and kernel proofs.
+Native general Store retains arbitrary nested values, all ten premises/seven
+conclusions and original memory/domain/error behavior. Full expression and
+unconditional flatten conversion derive the identical target memory operation.

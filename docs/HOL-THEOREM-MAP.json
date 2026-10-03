@@ -80103,5 +80103,28 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStore.lean",
+    "lean_name": "compileCorrectStore",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and final constructor proof1338-1342 general Store: all ten premises/seven conclusions, no recursive IH or added domain/target/update/width/validity premise. Original actual finite source evaluator requires destination Val Word, any source expression value including nested structs, and panMemStoresHOL returning SOME memory; all error branches contradict original no-Error premise. Full faithful expression correctness establishes both target child runs, unconditional full flattenConvertV preserves flattened words for arbitrary value. Converter preserves original memory/domain, so target panMemStoresHOL has the same address/word list/domain/memory arguments and its actual success follows internally from source operation. Canonical state conversion commutes with memory update, other state fields unchanged; original FEVERY/shape maps and both empty NONE result-value predicates retained. Imported canonical four-map owner/full state roundtrip, positive indexed words and Type0 host only. Fresh original whole/case statements/binder types/closed kernelT reviewed. Full program/production compiler correctness remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStore.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]
