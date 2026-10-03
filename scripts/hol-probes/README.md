@@ -8081,3 +8081,10 @@ prebuilt original theory cache. This is original theorem regression evidence,
 not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
+
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
