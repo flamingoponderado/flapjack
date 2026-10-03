@@ -68353,5 +68353,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 full original source4256 and fresh fulltype0hyp comparison: fixed word8 values/memory retained even though bytes_in_mem definition has generic Value; arbitrary positive address-word dimension with own NeZero, memory/domain/excluded/list/address binders and sole original bytes_in_mem guard imply full bytes_in_memory at same inputs and domain. words_as_type_indexed_bitvec permits standard positive address-word translation only. Recursive native proof preserves wrapped address+1, drops excluded conjunct without strengthening domain/value relation. Fresh original seven observations cover empty/vacuous excluded domains, singleton, wrap255->0, excluded/missing-domain/wrong-value guards and dimension1. Generic native full consumer and actual wrapped/one-bit consumers discharge source memory premises, no desired target/success/default or hold change. Regression evidence is not cross-language equivalence or FFI/initializer/full compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/Membership.lean",
+    "lean_name": "findIndex_mem",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full original source1088 and fresh fulltype0hyp comparison: generic alpha list/target/arbitrary Nat offset, sole membership premise and complete existential find_index success at offset+i, original i<length bound and EL i list=target. DecidableEq supplies same propositional equality; Nonempty exposes intrinsic HOL inhabited carrier for existing bounded EL. No Nodup, extra outer bound, assumed search/target/default or hold change; structural first-match recursion retains duplicates. Fresh original seven complete theorem instances with original membership guards kernel discharged and two missing/empty guard observations allT; generic native full consumer and actual arbitrary machineConfig FFI-entry-PC/word/offset consumer. Every EL remains under original existential bound. Evidence is source comparison/regression, not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness."
   }
 ]

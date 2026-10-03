@@ -5964,3 +5964,8 @@ run_probe misc_bytes_in_mem_imp_probeScript.sml misc_bytes_in_mem_imp_probe.out 
   bytes_in_mem_IMP bytes_in_mem_IMP_types bytes_in_mem_IMP_hypotheses \
   empty singleton wrap excluded missing_domain wrong_value one_bit \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe misc_find_index_mem_probeScript.sml misc_find_index_mem_probe.out \
+  find_index_MEM find_index_MEM_types find_index_MEM_hypotheses \
+  first last offset duplicate large strings words missing_guard empty_guard \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
