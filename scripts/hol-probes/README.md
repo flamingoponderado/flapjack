@@ -7276,3 +7276,9 @@ value well-formedness, shape conversion and compiled-shape size preservation.
 closed binder types, zero hypotheses and kernel proof. The native theorem
 preserves both structs and code for arbitrary evaluation results, using the
 full faithful invariant theorem through the field-for-field PanProps codec.
+
+`pan_structs_program_seq_if_probe` captures the original whole theorem and
+Seq/If specializations, closed binder types and kernel proofs, together with
+the original evaluator induction principle. Native cases preserve all ten
+premises/seven conclusions and the genuine source-guarded recursive IHs.
+Seq derives intermediate invariants; If uses the source-word-selected branch.
