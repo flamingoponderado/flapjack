@@ -10214,6 +10214,12 @@
       "sha256": "0ebf5c30e8a3dac6ce997125ad7d48583a4ab6948806c965f2deb22870eb98bb"
     },
     {
+      "out": "word_to_stack_inst_binary_probe.out",
+      "sha256": "60e15decde68d167d9cd3fc72bf11cb478635f5af18aa6739c8c4e9e5ffeabca",
+      "bytes": 2502,
+      "rows": 6
+    },
+    {
       "bytes": 3624,
       "out": "word_to_stack_inst_carry_overflow_probe.out",
       "rows": 9,

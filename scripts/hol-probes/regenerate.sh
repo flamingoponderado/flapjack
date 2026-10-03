@@ -7595,3 +7595,7 @@ run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_divisio
 run_probe word_to_stack_inst_shift_probeScript.sml word_to_stack_inst_shift_probe.out \
   shiftReg_typed shiftReg_proved shiftReg_hypotheses shiftImm_typed shiftImm_proved shiftImm_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_binary_probeScript.sml word_to_stack_inst_binary_probe.out \
+  binaryReg_typed binaryReg_proved binaryReg_hypotheses binaryImm_typed binaryImm_proved binaryImm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
