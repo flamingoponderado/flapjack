@@ -29,7 +29,7 @@ theorem ssaCcTrans_preAllocTailCall {width : Nat} [NeZero width]
   simp [ssaCcTrans, preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
 /-- Original returning Call case, including both exception-handler options.
-Only genuine source subprogram induction hypotheses are added; actual handler
+Structurally generalized source subprogram induction hypotheses are added; actual handler
 map bounds and stack classes are derived from the original producers. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]

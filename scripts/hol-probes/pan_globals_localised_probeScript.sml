@@ -1,0 +1,13 @@
+load "bossLib";
+load "preamble";
+load "pan_globalsProofTheory";
+open bossLib HolKernel Parse preamble pan_globalsProofTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "compile_exp_localised" (DB.fetch "pan_globalsProof" "compile_exp_localised");
+val _ = capture "compile_localised" (DB.fetch "pan_globalsProof" "compile_localised");
+val _ = capture "compile_decs_localised" (DB.fetch "pan_globalsProof" "compile_decs_localised");
+val _ = capture "compile_decs_localised'" (DB.fetch "pan_globalsProof" "compile_decs_localised'");
+val _ = capture "compile_decs_localised_main" (DB.fetch "pan_globalsProof" "compile_decs_localised_main");
+val _ = capture "nested_seqs_localised" (DB.fetch "pan_globalsProof" "nested_seqs_localised");
+val _ = capture "compile_top_localised" (DB.fetch "pan_globalsProof" "compile_top_localised");

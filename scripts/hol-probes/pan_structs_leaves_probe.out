@@ -26,6 +26,8 @@ size_of_sh_with_ctxt ([] :(mlstring # struct_info) list)
   (compile_shape
      (MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) ctxt) sh) =
 size_of_sh_with_ctxt ctxt sh
+compile_top_no_names=EVERY (λ(d :α decl). is_function d ∨ is_decl d ∨ is_exn_decl d)
+  (compile_top (pan_code :α decl list))
 decs_stcnames_to_get_names=∀(acc :(mlstring # struct_info) list) (code :α decl list)
     (res :(mlstring # struct_info) list) (ctxt :context).
   decs_stcnames acc code = SOME res ∧
