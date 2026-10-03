@@ -6882,3 +6882,7 @@ run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
   evaluate_ind evaluate_ind_types evaluate_ind_hypotheses evaluate_ind_proved \
   filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_helper_links_probeScript.sml riscv_target_helper_links_probe.out \
+  helper_binop_statement helper_binop_hypotheses helper_binop_proved helper_shift_imm_statement helper_shift_imm_hypotheses helper_shift_imm_proved helper_shift_reg_statement helper_shift_reg_hypotheses helper_shift_reg_proved \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
