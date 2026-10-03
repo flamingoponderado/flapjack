@@ -6705,8 +6705,32 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml
 
 `word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
 
+### Complete original initializer state relation
+
+`lab_to_target_initializer_full_relation_probeScript.sml` captures the whole
+original local `IMP_state_rel_make_init` after Finalise, every variable type,
+zero hypotheses and kernel proof T. It also captures the complete original
+`state_rel_def`, its variable types, zero hypotheses and all53conjunct count.
+Native `makeInit_stateRel` retains all14 original guards/all binders and proves
+the complete actual initialized relation by internally applying all17 checked
+source cases plus original direct configuration/initial-state/removal facts.
+No case proof, target relation or new success/bound/output premise is passed
+by the caller. A native fullguard consumer derives actual compile equality
+and aligned target-memory bytes through the complete relation.
+Machine/compile semantics and end-to-end correctness remain open; inherited
+real-rendering assurance and totalHD/EL holds are unchanged.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
 `stack_rawcall_install_probe` freshly captures the full original comp_correct with zero hypotheses and full Install specializations at64/80, plus old-entry collision and new-entry union observations. Five full paired final-theorem consumers cover arbitrary positive and1/8/64/80 widths. Independent kernel/runtime union fixtures replay both observations. The native proof derives oracle/compiler/buffer success and full postrelation from the original three premises; old code wins the union and new entries use empty information. Captures are regression/statement evidence, not HOL-to-Lean equivalence.
+### Native register-shift equations
+
+`l3_register_shift_probeScript.sml` checks735 full-state original SLL/SLLW/SRL/SRLW/SRA/SRAW equations with matching kernel fixtures. Sixinstructions, selectors0/2/3, ten source/count groups and destinations0/1/2/7 cover countmask0/31/32/63/64/65/127/129, signs/high32/wrap/sourcezero/sourcealiases/rdzero. RV32Willegal routes compare the original exact signalException helper. Twelve ordinary invalidselector1 equations preserve exact error/priorretention; three W equations retain a symbolic architecture-dependent illegal branch, without selecting canonical ARB. The strict checker requires every unique label to be T. RV32SLL full64 source, SRLlow32zeroextend, SRAlow32signextend and Wsignextension remain literal. FullRun/Next is open.
+`word_to_stack_inter_union_left_probeScript.sml` replays the literal original
+`inter_union_left` proof (word_to_stackProof2678–2685), preserving its essential
+`wf s` premise and arbitrary Spt payload carrier. Statement, proved=T, and zero
+hypotheses are captured; this is original HOL evidence, not a cross-assistant
+equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
 
 `stack_rawcall_seq_standard_probe` captures the original full comp_correct, zero hypotheses, and full Seq specializations at64/80 plus standard Skip/Skip compiler observations. Five native standard-composition consumers cover arbitrary positive and1/8/64/80 widths; a generic kernel compiler observation and two executable guards replay the concrete rows. The source-local helper retains the actual fixed-source first and NONE-run guarded second induction hypotheses, derives intermediate stackspace equality, and composes added clocks. It has no separate HOL declaration/tag: optimized equal/less/greater frame branches and full Seq assembly remain open. Captures are regression/statement evidence, not cross-language equivalence.
 
 `stack_rawcall_seq_probe` freshly captures the complete original comp_correct, zero hypotheses, full Seq64/80 specializations and the exact closed Seq evaluate_ind obligation, plus all three optimized compiler forms at64/80. Five full paired theorem consumers cover arbitrary positive and1/8/64/80 widths. Three generic kernel compiler fixtures and six axiom-free executable guards independently replay the optimized forms. The full theorem retains only actual first and NONE-run guarded second IH, derives target Call execution, and covers equal/less/greater sizes, zero clock, allocation failure and every body outcome. EmptyEnv retains stackspace; original timeout/HaltWord2 exceptions remain. Greater failure uses no extra clock, successful body execution one extra Tick. Captures are regression evidence, not cross-language equivalence.
+
