@@ -729,6 +729,13 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCorrect
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenCallCorrect
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenSemantics
 import Flapjack.Compiler.Backend.StackToLab.Proofs.MakeInit
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCode
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
+import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
+import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
+import Flapjack.Compiler.Backend.StackToLab.Compile
+import Flapjack.Compiler.Backend.BvlToBvi
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
