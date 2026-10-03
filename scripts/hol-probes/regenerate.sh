@@ -1586,6 +1586,9 @@ run_probe ret_to_tail_probeScript.sml ret_to_tail_probe.out \
   "$cake_dir/pancake/pan_simpScript.sml"
 run_probe pan_simp_compile_probeScript.sml pan_simp_compile_probe.out \
   skip seq_skip_tick tail_call "$cake_dir/pancake/pan_simpScript.sml"
+run_probe pan_structs_mem_load_probeScript.sml pan_structs_mem_load_probe.out \
+  mem_load_flds_eq mem_load_conversion_inst \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_structs_leaves_probeScript.sml pan_structs_leaves_probe.out \
   compile_shape_n_def size_of_shape_compile_pass_eq_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

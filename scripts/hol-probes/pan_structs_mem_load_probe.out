@@ -1,0 +1,37 @@
+mem_load_flds_eq=∀(fld_shs :(mlstring # shape) list) (vflds :(mlstring # α v) list)
+    (x :α word).
+  mem_load_flds fld_shs x (madd :α word -> bool)
+    (memry :α word -> α word_lab) (stcs :(mlstring # struct_info) list) =
+  SOME vflds ⇒
+  ∃(vs :α v list).
+    mem_loads (MAP (SND :mlstring # shape -> shape) fld_shs) x madd memry
+      stcs = SOME vs ∧ LENGTH vs = LENGTH fld_shs ∧
+    vflds = ZIP (MAP (FST :mlstring # shape -> mlstring) fld_shs,vs)
+mem_loads_EL=∀(shs :shape list) (vs :α v list) (x :α word) (i :num).
+  mem_loads shs x (madd :α word -> bool) (memry :α word -> α word_lab)
+    (stcs :(mlstring # struct_info) list) = SOME vs ∧ i < LENGTH shs ⇒
+  ∃(y :α word). mem_load shs❲i❳ y madd memry stcs = SOME vs❲i❳
+mem_loads_mem=∀(shs :shape list) (vs :α v list) (x :α word).
+  mem_loads shs x (madd :α word -> bool) (memry :α word -> α word_lab)
+    (stcs :(mlstring # struct_info) list) = SOME vs ∧ MEM (v :α v) vs ⇒
+  ∃(sh :shape) (y :α word).
+    MEM sh shs ∧ mem_load sh y madd memry stcs = SOME v
+mem_load_conversion=∀(str2 :(mlstring # (mlstring # shape) list) list) (n :num) (shape :shape)
+    (x :α word) (v :α v).
+  mem_load shape x (madd :α word -> bool) (memry :α word -> α word_lab)
+    (DROP n (str_ctxt :(mlstring # struct_info) list)) = SOME v ∧
+  str2 =
+  MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) str_ctxt ∧
+  is_wf_shape (DROP n str_ctxt) shape ∧ struct_infos_ok str_ctxt ⇒
+  mem_load (compile_shape_n str2 n shape) x madd memry
+    ([] :(mlstring # struct_info) list) = SOME (convert_v v) ∧
+  v_flds_ok str_ctxt v
+mem_load_conversion_inst=∀(shape :shape) (x :α word) (v :α v).
+  mem_load shape x (madd :α word -> bool) (memry :α word -> α word_lab)
+    (str_ctxt :(mlstring # struct_info) list) = SOME v ∧
+  is_wf_shape str_ctxt shape ∧ struct_infos_ok str_ctxt ⇒
+  mem_load
+    (compile_shape
+       (MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields))
+          str_ctxt) shape) x madd memry ([] :(mlstring # struct_info) list) =
+  SOME (convert_v v) ∧ v_flds_ok str_ctxt v
