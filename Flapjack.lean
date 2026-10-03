@@ -679,6 +679,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
 import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
+import Flapjack.Compiler.Backend.StackToLab.Proofs.FlattenHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers

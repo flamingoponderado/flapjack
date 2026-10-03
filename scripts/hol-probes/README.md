@@ -7620,3 +7620,5 @@ conclusions and exactly two original guarded IHs; lookup, return comparisons,
 continuation preconditions and final binding restoration are derived internally.
 Full Call/whole program/compiler correctness remain open.
 `stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.
+
+`stack_to_lab_flatten_helpers_probeScript.sml` prints the stored flatten helper lemmas and result views of `stack_to_labProofScript.sml:890-1206` and replays the local `NOT_bad_fun_return_IMP_SOME` and the line-1022 `next_lab_non_zero` (rebound at 3211) with their source proofs; all closed with zero hypotheses.
