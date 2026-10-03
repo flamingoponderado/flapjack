@@ -1,3 +1,5 @@
+import Flapjack.Test.PanToTargetSourceParity
+import Flapjack.Pancake.PanToTarget
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division

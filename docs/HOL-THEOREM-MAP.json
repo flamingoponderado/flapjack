@@ -90356,5 +90356,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.46): word_allocProof SSA distinct_tar_reg group (10442-10982). Statements keep HOL's binders and premises (ssa_cc_trans_distinct_tar_reg: is_alloc_var na ∧ every_var (λx. x < na) prog ∧ ssa_map_ok na ssa, in HOL order; no source distinct_tar_reg premise; FST as .1), producer equations as sole premises for loop_setup/fake_moves (vacuous fake_moves conf binder omitted, documented locally), over the literal native ssaCcTrans/ssaCcTransInst/fakeMoves/loopSetup/fullSsaCcTrans. HOL every_inst distinct_tar_reg over 'a inst reads instructions via the reviewed HolInst.ofWordLangInst mirror. Case pieces (Inst, OpCurrHeap, If, Loop, returning Call) carry the theorem's exact premises plus structurally generalized induction hypotheses for sub-programs only; the assembling theorem states HOL's result. Positive HOL word dimension is the sole carrier translation. Kernel-checked; exported statements captured by the word_alloc_distinct_tar_reg probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/PanToTarget.lean",
+    "lean_name": "exportsHOL",
+    "hol_path": "cakeml/pancake/pan_to_targetScript.sml",
+    "hol_name": "exports_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_to_targetScript10-50 and fresh complete typed original definitions/types in pan_to_target_source_probe.out, no local replay. Positive native DeclHOL width retains the reviewed exact syntax family and native byte-backed MlString names; no String or unrestricted-map substitute. Standard word dimension/positive NeZero translation only. All four declaration cases plus empty list retained; only original Function exported flag contributes the native name, source order and duplicates preserved. Full source empty/mixed-flag/duplicate-name observations kernel replayed."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/PanToTarget.lean",
+    "lean_name": "compileProgHOL",
+    "hol_path": "cakeml/pancake/pan_to_targetScript.sml",
+    "hol_name": "compile_prog_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_to_targetScript10-50 and fresh complete typed original definitions/types in pan_to_target_source_probe.out, no local replay. Positive native DeclHOL width retains the reviewed exact syntax family and native byte-backed MlString names; no String or unrestricted-map substitute. Standard word dimension/positive NeZero translation only. Full original main SPLITP three branches, including empty input staying empty and default main only for nonempty missing-main programs, Return(Const0), One, no params/inline/export. Native complement List.span mirrors actual rich_listTheory.SPLITP clauses; extracted actual original first LET captured and six kernel main observations replayed. Actual panToWordCompileProgHOL ISA and WordToWord.compile, returned col_oracle update only within wordToWordConf; native mllist sort strict Nat comparison, original prog2 labels zipped with generated_main::original prog1 function names, left-biased native Spt union of three stub lists; exports from original program, full backend fromWord with original Option/list-byte/native-word/config result and no supplied pass result/stack-bound premise. Actual listTheory.ZIP_def fresh capture has both arbitrary-list empty clauses, so native List.zip is faithful even for unequal lengths; no unsupported equal-length guard. Production main/exports and full wrapper path are separate source-audited routing work, not claimed executed here."
   }
 ]
