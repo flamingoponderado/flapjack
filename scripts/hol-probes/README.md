@@ -7072,3 +7072,7 @@ keys keep the first binding; other, missing and empty lookups are recorded.
 ## Native PC writer and DecodeAny
 
 `l3_write_pc_probeScript.sml` proves the whole PC record update, all-key lookup and current-PC equations for arbitrary original states. `l3_decode_any_probeScript.sml` proves both universal raw instruction clauses in the original step theory. Strict capture checkers retain exact types, zero hypotheses and full statements; routing tests preserve every sentinel and the step working directory. These equations support individual ports, not overall compiler correctness.
+
+## Complete native model drift coverage
+
+CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` capture checker, decoder fixtures, captured row locks, native checker tests, and `scripts/l3/check-renderings.py`. The rendering gate covers the full delivered Defs tree including MMU, exception, instruction reader and Step files. `scripts/l3/rendering-coverage.json` records six explicit handwritten/export-root exceptions and three computability-only overrides. The original export deliberately contains the NextRISCV/Fetch dependency closure; three unused CSR codecs are pinned separately with source notes and existing original probes. Adding or removing a delivered definition requires reviewing coverage. No gate establishes universal HOL-to-Lean equivalence or whole compiler correctness.
