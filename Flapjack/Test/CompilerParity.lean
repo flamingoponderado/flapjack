@@ -6,6 +6,8 @@ import Flapjack.Test.L3DivideParity
 import Flapjack.Test.L3MultiplyParity
 import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
+import Flapjack.Test.StackRawCallCompileSemanticsParity
+import Flapjack.Test.WordToStackCallReturnHandlerParity
 import Flapjack.Test.StackRawCallCompCorrectParity
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity

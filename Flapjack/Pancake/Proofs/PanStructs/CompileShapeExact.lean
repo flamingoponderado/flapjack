@@ -13,8 +13,8 @@ open Flapjack.Pancake.PanStructs.CompileShapeExact
     faithful structure-list and shape carriers. Its statement has no added
     hypotheses or fuel argument. -/
 @[hol "cakeml/pancake/proofs/pan_structsProofScript.sml" "compile_shapes_eq_map" 310]
-theorem compileShapesExact_eq_map
-    (sctxt : List (MlS × List (MlS × ShapeHOL))) (shapes : List ShapeHOL) :
+theorem compileShapesExact_eq_map {α : Type}
+    (sctxt : List (MlS × List (α × ShapeHOL))) (shapes : List ShapeHOL) :
     compileShapesExact sctxt shapes = shapes.map (compileShapeExact sctxt) := by
   induction shapes with
   | nil => simp [compileShapesExact]

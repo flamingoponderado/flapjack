@@ -1,0 +1,15 @@
+load "preamble";
+load "pan_structsProofTheory";
+open HolKernel Parse bossLib preamble pan_structsTheory pan_structsProofTheory panLangTheory alistTheory;
+val _ = Globals.linewidth := 1000000;
+val original = alist_to_fmap_def;
+val lookup = GEN_ALL(CONJUNCT1 ALOOKUP_EQ_FLOOKUP);
+val _ = (print "shape_map_definition="; print_term(concl original); print "\n");
+val _ = (print "shape_map_lookup_statement="; print_term(concl lookup); print "\n");
+val _ = print("shape_map_lookup_hypotheses=" ^ Int.toString(length(hyp lookup)) ^ "\n");
+fun row label term = (print(label ^ "="); print_term(rhs(concl(EVAL term))); print "\n");
+val entries = ``[(«x»,Comb [One;One]);(«y»,One);(«x»,One)]``;
+val _ = row "shape_map_first_binding" ``FLOOKUP(alist_to_fmap ^entries) «x»``;
+val _ = row "shape_map_other_binding" ``FLOOKUP(alist_to_fmap ^entries) «y»``;
+val _ = row "shape_map_missing" ``FLOOKUP(alist_to_fmap ^entries) «missing»``;
+val _ = row "shape_map_empty" ``FLOOKUP(alist_to_fmap([]:(mlstring # shape) list)) «x»``;

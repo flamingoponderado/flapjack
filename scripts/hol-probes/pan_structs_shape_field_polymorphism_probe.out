@@ -1,0 +1,6 @@
+compile_shape_definition=(∀sctxt. compile_shape sctxt One = One) ∧ (∀shapes sctxt. compile_shape sctxt (Comb shapes) = Comb (compile_shapes sctxt shapes)) ∧ (∀sctxt nm. compile_shape sctxt (Named nm) = case dropWhile (λ(n,fs). n ≠ nm) sctxt of [] => One | (nm',flds)::sctxt' => Comb (compile_shapes sctxt' (MAP SND flds))) ∧ (∀sctxt. compile_shapes sctxt [] = []) ∧ ∀shs sh sctxt. compile_shapes sctxt (sh::shs) = compile_shape sctxt sh::compile_shapes sctxt shs
+compile_shape_type=:(mlstring # (α # shape) list) list -> shape -> shape
+compile_shapes_type=:(mlstring # (α # shape) list) list -> shape list -> shape list
+compile_shape_hypotheses=0
+compile_shapes_eq_map_statement=∀sctxt shs. compile_shapes sctxt shs = MAP (compile_shape sctxt) shs
+compile_shapes_eq_map_proved=T
