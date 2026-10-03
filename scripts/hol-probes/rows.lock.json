@@ -10046,6 +10046,12 @@
       "sha256": "a023f4f74dafc6b5917a985757122efb8eba553c99b762772aa7913fb540d53d"
     },
     {
+      "out": "word_to_stack_move_single_probe.out",
+      "sha256": "c666c50cccc64f78c1748b9565ea0c78be962e503884aa76888297115c10fa66",
+      "bytes": 623,
+      "rows": 3
+    },
+    {
       "bytes": 244184,
       "out": "word_to_stack_native_accessors_probe.out",
       "rows": 431,
