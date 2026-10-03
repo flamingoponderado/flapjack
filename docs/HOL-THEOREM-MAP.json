@@ -81442,5 +81442,36 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
+    "lean_name": "compileCorrectShMemStore",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/final constructor proof1338-1346 and panSem sh_mem_store529-547: all ten premises/seven conclusions, actual ShMemStore opsz/address/value syntax, no recursive IH. Child failure or nonword struct branches excluded only by original no-Error; full expression theorem supplies actual compiled word evaluations. Original nb_op zero/nonzero guards, shared-domain address/byte_align address guards, whole-word versus TAKE nb word bytes plus address bytes and actual sharedMem MappedWrite callFFI arguments preserved for all positive widths. Target shared-domain/FFI are the same source fields, so target final/ret follows internally from actual same source call; no oracle agreement/target outcome/success/run/byte-width-bound hypothesis. Original final returns FinalFFI and unchanged source state; ret returns NONE and updates only ffi. Finite codec repacking derived from operation result equality with the broad counterpart, no assumed carrier relation; ffi-only update commutes with full state conversion. Original local/global FEVERY/maps and empty result-value predicates retained. Imported canonical four-map owner/full roundtrip and positive indexed word/Type0 host translation only. Fresh original whole/case statement/types closed/kernelT reviewed. Full program and executed compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Full canonical imported-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
+    "lean_name": "repack",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Proof-irrelevance repack after proved broad-state equality; no additional public simulation or compatibility premise."
   }
 ]

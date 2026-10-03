@@ -6989,3 +6989,7 @@ run_probe word_to_stack_register_update_probeScript.sml word_to_stack_register_u
 run_probe word_to_stack_const_instruction_probeScript.sml word_to_stack_const_instruction_probe.out \
   const_full_transport const_full_clock const_transport_closed const_clock_closed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_shmem_store_probeScript.sml pan_structs_program_shmem_store_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_shmem_store_statement compile_correct_shmem_store_proved compile_correct_full_types compile_correct_shmem_store_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

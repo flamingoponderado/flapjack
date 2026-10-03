@@ -7445,3 +7445,9 @@ records their proved equivalence to T. Transport retains arbitrary extra and
 all six conclusions. Clock transport retains the whole evaluation pair.
 This is source statement/proof evidence, not a cross-assistant equivalence
 theorem or completion of the full compiler proof.
+
+`pan_structs_program_shmem_store_probe` captures the full original program
+theorem and its `ShMemStore opsz e1 e2` specialization, binder types and closed
+kernel proofs. The Lean case keeps all ten premises/seven conclusions without
+an IH, covers original byte-count/domain and MappedWrite FFI final/ret branches,
+and derives target arguments/outcomes and finite state repacking internally.
