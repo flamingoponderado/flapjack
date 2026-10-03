@@ -77956,5 +77956,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack source-word-guard list conversion or imported canonical state roundtrip infrastructure; no separate HOL declaration. Premises discharged by actual source success within the genuine cases."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11012-11032: complete original Inst case, all native instruction constructors, immediate/register operands, FP width branches and fallback. Retains original every_var source bounds, is_alloc_var, ssa_map_ok and source full_inst_ok_less hypotheses and actual SSA output validity conclusion. Map lookup bounds and positive fresh allocation counter prove destination constraints; original native conversions preserve immediates, memory offsets, ISA and FP register requirements. No target-run or target-validity assumption. Native AsmConfigExact/WordLang/Spt carriers; words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive and fullSSA assembly remain open."
   }
 ]
