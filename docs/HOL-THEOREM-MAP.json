@@ -79094,6 +79094,16 @@
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/FilterCorrect.lean",
+    "lean_name": "filterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6): Full original filter_correct669, forall s1 t1 res s2, original conjunction evaluate s1=(res,s2), state_rel s1 t1, not t1.failed implies exists extra t2, evaluate target with source.clock+extra=(res,t2) and s2.ffi=t2.ffi. All four independent state/result binders, arbitrary native configuration and FFI carriers, positive-width HOL word dimension and fixed bytes retained. All native evaluator outcomes included: zero clock, absent fetch, label, ordinary Inst including failure, JumpReg Loc/Word, four plain-ASM default errors, buffer write, shared memory NONE/final/ret, every labAsm Jump/JumpCmp/Call/LocValue/Halt/Install/CallFFI branch. Case IHs are entirely discharged internally by strong induction on native source clock, using exact asmInstConsts and shareMemOp_ret_clock; this is a proof organization change from original evaluate induction, not an external simulation or successful-pass premise. Reviewed ordinary Inst IH source.failed=false guard retained; compiler/oracle/flush/locator/register/nonempty/consistency choices remain actual helper path guards. Target execution/result/extra clock and final FFI equality are derived for every branch, with no desired target result or postrelation hypothesis. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay byte-identical. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. This completes original evaluator simulation only; state_rel_IMP_sem_EQ_sem, filter_skip_semantics and end-to-end correctness remain open."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/Configuration.lean",
     "lean_name": "riscvConfig",
     "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
