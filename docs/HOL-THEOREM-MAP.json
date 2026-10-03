@@ -88111,5 +88111,28 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source comparison of full local evaluate_wStackStore_wReg1_0 at4629-4654. Same six original compiled/even/range/full stateRel/length/space guards and complete existential native store run/full double source update relation/resource conclusion; arbitrary alpha word_loc values, shared alpha word width, independent c host and ffi type retained. The r=0 alias shadows the first write; nonzero source and physical register writes commute, and original stateRel internally provides4<k to relate physical/source register0 updates. No additional positivity, execution or postrelation premise. Fresh typed literal original local proof replay, with original supporting store-Reg1 proof replay, passedT/hyp0. Five canonical relation map fields have local genuine roundtrip witnesses. Inherits reals_as_rational_cuts (SOUNDNESS item8) through evaluators, no independent IEEE agreement. Needed by actual evaluate_wInst carry/overflow source4736/4753/4774; full primitive/constructor remain unfinished.",
     "hol_line": 4629
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileTopSemanticsDeclsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported two-way broad/state roundtrip, Flapjack representation infrastructure with no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileTopSemanticsDeclsExact.lean",
+    "lean_name": "compileTopSemanticsDeclsExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_top_semantics_decls",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared full original1535-1564, sourcecompile_top243-247/get_names236-242, exact semantics_decls861-869 and convert_s58-67. All four hypotheses in source order retained: semantics_decls non-Fail, empty locals, empty code, empty globals. Full original equality to actual semanticsDecls of the original state updated only at eshapes by FMAP_MAP2 compile_shape(get_names initial code).structs and compileTopExact code. HOL partial struct-only initial record is observed only through get_names structs projection; get_names changes only structs, so empty locals/globals from the standard compile_top initial context are immaterial there. Full source declaration simulation supplies actual target evaluateDeclsHOLFinite and final context/globals/invariants internally, original decs_stcnames lemmas supply names/info facts, then full eight-hypothesis semanticsEq applies; no targetrun/observation/traceeq/caller relation premise. State equality transported through the canonical evaluator with classically supplied memory-domain evidence; no new domain hypothesis. Canonical imported owner4maps with full same-module broad/state two-way roundtrip and positive indexedwords/Type0 FFI. Fresh closed whole original statement/types/kerneltruth capture. This is source semantics correctness, not an executed production-routing completion claim."
   }
 ]
