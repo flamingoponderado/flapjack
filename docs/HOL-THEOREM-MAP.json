@@ -66800,6 +66800,44 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.12: original stack_allocProofScript.sml:5909-6066. Free HOL s c compile_rest start anything implicit. All nine premises retained in order: code keys <> gc_stub_location with alloc_arg, compile_oracle entries likewise (bound vars renamed i k q), s.gc_fun = word_gc_fun c, data-buffer/bitmaps bound, stack byte bound, s.use_stack, s.use_alloc, s.compile = (λcfg. compile_rest cfg o MAP prog_comp), semantics start s <> Fail. Conclusion: semantics start of s with code := fromAList (compile c (toAList s.code)), gc_fun := anything, compile := compile_rest, compile_oracle := (I ## MAP prog_comp ## I) o s.compile_oracle (Prod.map rendering), use_store/use_stack T, use_alloc F equals semantics start s, over the tagged native StackSem semantics. Proof as HOL: comp_correct at every clock of Call NONE (INL start) NONE with regs := s.regs (comp_correct_thm), evaluate_add_clock, evaluate_add_clock_io_events_mono, and IMP_build_lprefix_lub_EQ for the divergence chains (via an untagged clock-shift lemma semanticsAux_shift). No extra premise. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits reals_as_rational_cuts through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "make_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/MakeInit.lean",
+    "lean_name": "makeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.13: original stack_allocProofScript.sml:6068-6073. make_init c code oracle s = s with code := code, use_alloc := T, use_stack := T, gc_fun := word_gc_fun c, compile := (λc. s.compile c o MAP prog_comp) (lambda variable renamed cfg), compile_oracle := oracle; exactly these six field updates, no other change (the commented TODO about data_buffer is not part of the definition). Noncomputable only because word_gc_fun is. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "prog_comp_lambda",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/MakeInit.lean",
+    "lean_name": "prog_comp_lambda",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.13: original stack_allocProofScript.sml:6075-6079. prog_comp = λ(n,p). (n, FST (comp n (next_lab p 2) p)), the right-hand side of prog_comp_def, paired lambda rendered by projections; same statement shape as prog_comp_lemma."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "make_init_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/MakeInit.lean",
+    "lean_name": "make_init_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.13: original stack_allocProofScript.sml:6081-6109. Free HOL code oracle s c start implicit. All ten premises in order: ALOOKUP code keys <> gc_stub_location with alloc_arg (sptAListLookup), oracle entries likewise (bound vars i k q), s.use_stack, s.use_store, ~s.use_alloc, s.code = fromAList (compile c code), s.compile_oracle = (I ## MAP prog_comp ## I) o oracle, data-buffer/bitmaps bound, stack bound, ALL_DISTINCT (MAP FST code) as List.Nodup (unused by the proof, as in HOL), semantics start (make_init c (fromAList code) oracle s) <> Fail. Conclusion semantics start s = semantics start (make_init c (fromAList code) oracle s). Proof as HOL: compile_semantics at make_init with compile_rest := s.compile, anything := s.gc_fun, and spt_eq_thm for the code. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero. Inherits reals_as_rational_cuts through semantics/evaluate (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
     "hol_name": "dest_case_def",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
