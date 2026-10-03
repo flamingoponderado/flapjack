@@ -83833,5 +83833,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: add_to_data_const_def lines396-407, original balanced_map lookup/insert using reviewed listCmp and literal Knowledge fields; spt inserts and lookup_any default retained. Full WordLangProgHOL(BitVec width) has original program constructor arities, Spt cutsets and MlString names; no constructor restriction or representation change. Only positive HOL word dimension becomes BitVec width with NeZero. Both lookup branches emit original Inst(Const destination word), arbitrary destination parity retained with no caller ODD assumption; key uses exact instToNumList Const. Native definition only; actual Std.TreeMap insertion transport requires original balanced invariant and remains linked production work."
+  },
+  {
+    "lean_path": "Flapjack/FiniteMap/Toto.lean",
+    "lean_name": "totOrd",
+    "hol_path": "HOL/src/finite_maps/totoScript.sml",
+    "hol_name": "TotOrd",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: totoScript60-64 original arbitrary key/comparison types, three conjuncts equality iff key equality, Greater iff reversed Less, and transitivity from conjunction of two Less comparisons. Lean Ordering is literal payload-free three-constructor translation; all quantifiers/hypotheses/conclusions and conjunct order retained, no representation qualifier or ordered-input assumption."
+  },
+  {
+    "lean_path": "Flapjack/FiniteMap/Comparison.lean",
+    "lean_name": "totOrderImpGoodCmp",
+    "hol_path": "HOL/src/finite_maps/comparisonScript.sml",
+    "hol_name": "TotOrder_imp_good_cmp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: comparisonScript79-83 arbitrary cmp, sole TotOrd premise, original full good_cmp conclusion. Imported exact Toto.totOrd retains all3 original clauses; existing exact goodCmp retains all7 original comparison clauses. Key types and comparison constructors are identity translations; proof derives reflexivity, symmetry, reversal, equality substitutions and both transitivity cases with no extra assumptions."
   }
 ]
