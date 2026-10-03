@@ -7249,7 +7249,7 @@ induction and exactly simplified reversed shape-conversion theorems, binder
 types and closed kernel proofs. Local statements and original unchanged proof
 text are replayed. The whole unused binder is polymorphic; induction n is num.
 Native proofs retain original guards and derive named lookup/field shapes.
-
+`lab_filter_semantics_probe.out` mechanically replays the literal original local `state_rel_IMP_sem_EQ_sem` proof from source1039-1152, with native quantified state types, zero hypotheses and kernel reproof. It does not assume local theorems are exported by HOL. The native Lean lift derives failure and terminating-choice predicate equivalences and whole divergence LUB equality from full evaluator simulation and original clock/prefix laws; no target run or semantic equality is supplied as a premise. This is source-review evidence, not HOL-to-Lean equivalence.
 ## Full native RISC-V configuration
 
 `l3_native_config_probeScript.sml` captures the complete original record,
@@ -7261,3 +7261,5 @@ projections, full encoder-field equality and all policy observations.
 The legacy production/check configuration stays explicitly untagged; actual
 emitted-byte routing remains a separate blocking bead. These finite regressions
 and source-reviewed record equations are not universal HOL-to-Lean equivalence.
+
+`lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.
