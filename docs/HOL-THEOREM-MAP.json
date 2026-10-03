@@ -78247,5 +78247,32 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack imported canonical state two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11012-11032: complete original Inst case, all native instruction constructors, immediate/register operands, FP width branches and fallback. Retains original every_var source bounds, is_alloc_var, ssa_map_ok and source full_inst_ok_less hypotheses and actual SSA output validity conclusion. Map lookup bounds and positive fresh allocation counter prove destination constraints; original native conversions preserve immediates, memory offsets, ISA and FP register requirements. No target-run or target-validity assumption. Native AsmConfigExact/WordLang/Spt carriers; words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive and fullSSA assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/ProgramInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11012-11152: full original arbitrary-program recursive theorem, assembled by native mutual WordLangProgHOL recursor including nested return and exception handlers. Retains every_var source bounds, is_alloc_var, ssa_map_ok, source full_inst_ok_less and exact actual SSA output conclusion. All constructor families proven, no remaining induction hypothesis, target run or restricted subset. Native AsmConfigExact/WordLang/Spt/List carriers; words_as_type_indexed_bitvec records only positive HOL word dimension."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/FullInstructionValidity.lean",
+    "lean_name": "fullSsaCcTrans_fullInstOkLess",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison word_allocProofScript.sml:11154-11174: full original arbitrary-program/count/config wrapper, sole source full_inst_ok_less premise and literal fullSSA output conclusion. Original limit_var_props and setup_ssa_props_2 derive source bounds/allocation class/map; setup Move validity derived from literal native producer. Full recursive theorem supplies body validity; no target premise or subset. Native AsmConfigExact/WordLang/Spt/List carriers; words_as_type_indexed_bitvec records only positive HOL word dimension."
   }
 ]
