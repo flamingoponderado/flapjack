@@ -82530,5 +82530,25 @@
     "reviewer": "flapjack-sol2 source comparison7098-7126 original comp_correct5756/motive5719-5751: full Seq.Simulation all original quantifiers/premises and entire existential actual targetrun/resource/result conclusion. Source nonerror derives actual ordered Word reads and successful data buffer write/exact poststate. Original conventions derive even registers; full native Reg1/Reg2 actual loads compose and preserve first value. Full stateRel derives target useStack and dataBuffer equality, target writes same full-width word. Literal buffer_write success guard gives length+spaceLeft conservation, preserving original bitmap/buffer capacity h30; all other relation conjuncts preserved after identical actual updates. No added success/read/targetrun/size/postrelation premise. Five canonical finite maps/positive words and same-module actual codecs qualified; inherited reals_as_rational_cuts unchanged. Fresh original full DataBufferWrite obligation/whole specialization closed captures; statement regression evidence, not literal local-case replay or cross-language equivalence.",
     "inherits_reals_as_rational_cuts": true,
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmEvaluate.lean",
+    "lean_name": "evaluateAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "evaluate_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison labProps1174-1245: original good_dimindex guard and forall generic native width/C/FFI state preserved. Full evaluate_align_sdm equality retains let result/poststate shape; actual evaluator induction handles all original instruction/navigation/shared-memory/Install/FFI/error/clock cases using genuine recursive hypotheses. Full implements_align_sdm retains precise true flag and original source-state singleton first/aligned singleton second, not reversed. Faithful behaviors retain existential clocks, optional terminating choice and lazy-list trace LUB. Private full behavior equality derives refinement with no assumed execution/result/simulation/postcondition premise. Shared-domain projection changes neither source error guards nor FFI bytes/results/clock updates. No LOG2zero/runtime changes or total HD/EL policy adoption. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through actual native evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_sdm_evaluate_probe.out; final DM/SDM compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentSdmEvaluate.lean",
+    "lean_name": "implementsAlignSDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "implements_align_sdm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 full source comparison labProps1174-1245: original good_dimindex guard and forall generic native width/C/FFI state preserved. Full evaluate_align_sdm equality retains let result/poststate shape; actual evaluator induction handles all original instruction/navigation/shared-memory/Install/FFI/error/clock cases using genuine recursive hypotheses. Full implements_align_sdm retains precise true flag and original source-state singleton first/aligned singleton second, not reversed. Faithful behaviors retain existential clocks, optional terminating choice and lazy-list trace LUB. Private full behavior equality derives refinement with no assumed execution/result/simulation/postcondition premise. Shared-domain projection changes neither source error guards nor FFI bytes/results/clock updates. No LOG2zero/runtime changes or total HD/EL policy adoption. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through actual native evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_sdm_evaluate_probe.out; final DM/SDM compiler composition remains open."
   }
 ]
