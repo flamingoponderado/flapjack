@@ -59709,6 +59709,15 @@
     "reviewer": "flapjack-sol source comparison2026-10-02; bead .6.6.6.2: original116-120 MIN(dimword(:a) DIV2^shift_length c)(dimword(:a) DIV2^(shift(:a)+1)), full imported Config25-36 retained. wordLang329 overload explicitly identifies shift as reviewed backend_common.word_shift,2 at dimension32 and3 otherwise. Lean preserves both denominator exponent groupings and MIN/Nat DIV, no extra config validity/shift bounds or word carriers. Only numeric dimension translated to explicit positive width/[NeZero width] and dimword to2^width, hence word_dimension_as_width qualifier. Fresh original full definition/type and64 independent numeric/kernel expectations at dimensions1/7/8/31/32/33/64/80, varying allconfig fields/gcKind and shifts below/above dimension, including exact RV64data config4/4/2/lenSize32. Actual backend73/165/222 supplies2*maxHeapLimit-1 to full initializer; its production caller remains on linked .6.6.6 parent, not completed by this definition."
   },
   {
+    "hol_path": "cakeml/compiler/backend/data_to_wordScript.sml",
+    "hol_name": "conf_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/ConfOk.lean",
+    "lean_name": "confOk",
+    "statement_status": "reviewed_word_dimension_as_width",
+    "word_dimension_as_width": "width",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original data_to_wordScript.sml:109-114. conf_ok (:'a) c <=> shift_length c < dimindex (:'a) ∧ shift (:'a) ≤ shift_length c ∧ c.len_size ≠ 0 ∧ c.len_size + 7 < dimindex (:'a); the dimension (:'a) has no word-valued carrier and is used only numerically (dimindex as width, wordLang shift overload = backend_common word_shift as wordShiftAmount width); conjunct order and operators unchanged; shift_length is the tagged shiftLength."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "list_next_var_rename_move_distinct",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSARenameMoveDistinct.lean",
@@ -66907,6 +66916,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6304-6331. EVERY (λp. call_args p 1 2 3 4 0) (MAP SND prog1) ==> same for compile dc prog1; prog1 dc implicit. Stub by unfolding word_gc_code (HOL EVAL_TAC), comp part by recursion."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "stack_alloc_stack_asm_convs",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/Conventions.lean",
+    "lean_name": "stack_alloc_stack_asm_convs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.14: original stack_allocProofScript.sml:6239-6268. All ten premises in order: EVERY (λ(n,p). stack_asm_name c p) prog, EVERY (λ(n,p). stack_asm_remove c p) prog, conf_ok (:'a) conf (tagged confOk width), addr_offset_ok c 0w (asmAddrOffsetOkExact, the HOL overload offset_ok 0 c.addr_offset), reg_name 10 c, good_dimindex (:'a), c.valid_imm (INL Add) 8w/4w/1w and (INL Sub) 1w; conclusion both EVERYs over compile conf prog. EVERY over pairs rendered as bounded quantification using the second projection; c prog conf implicit; c : 'a asm_config shares the program dimension as in the source. Stub part (HOL EVAL_TAC) by unfolding word_gc_code for each gc_kind/gen-size shape with the shift-immediate bounds derived from conf_ok and good_dimindex; program part from stack_alloc_comp_stack_asm_name."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",

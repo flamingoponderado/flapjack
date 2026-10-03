@@ -272,6 +272,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.StoreTransfers
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.DataToWord.MaxHeapLimit
+import Flapjack.Compiler.Backend.DataToWord.ConfOk
 import Flapjack.Compiler.Backend.StackToLab.InitializedProduction
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Compiler.Backend.StackRemove.InitStubs
