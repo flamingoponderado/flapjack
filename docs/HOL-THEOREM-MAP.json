@@ -70020,5 +70020,19 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.5 full original goal5719-5751/Store6405-6408: fresh complete constructor-specialized original statement and literal unchanged source proof T/hyp0/closed. All original arbitrary payload/state/result/bitmap/compiler/frame parameters, native execution/errorfree/stateRel/postalloc/flat convention/perf=false compile equation/both bitmap bounds/prefix/full labelsubset/maxvar bound retained. Full target clock/poststate/result existential and complete compCorrectResult resource/Return/Exception/NONE/Break/Continue/other-result conclusion unchanged. Original flat_exp_conventions_def rejects this native constructor for every payload, so the original flat premise proves contradiction exactly as HOL; no new impossible guard, narrowed evaluator, supplied targetrun/postrelation or successful-run-only result. No actual target-run example is asserted for the unreachable branch. Original source config Nat#C/target C and F:Type, positive word width/NeZero and faithful WordLangExpHOL(BitVec width) payload retained. All5 original fmap fields use actual imported canonical owners/genuine same-module roundtrip witnesses; Spt code/locals unchanged. Evaluator closure inherits reals_as_rational_cuts; no numeric FP assertion. Proof-only, no executable compiler changes or full assembly completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/InstConstFull.lean",
+    "lean_name": "instConstFull",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "inst_const_full",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 resource4.2.1 wordProps900-920: complete original arbitrary instruction/native source/post state, sole inst=SOME premise and all13 conjuncts in original order (code, codeBuffer, dataBuffer, compile, compileOracle, clock, ffi, handler, stack, localsSize, stackLimit, stackMax, stackSize). Native successful constructor updates affect only locals/fpRegs/memory, while failures contradict the original premise; all integer/memory/FP constructors covered without numerical result assumptions. Actual imported WordSemStateFiniteExact owner uses canonical fpRegs/store and exact Spt locals/code/stackSize, positive width/NeZero and C/F:Type preserved. Genuine same-module canonical roundtrip witness. inst closure inherits reals_as_rational_cuts; this field invariant makes no numeric FP correspondence claim. Original resource induction4327/4415 genuinely invokes inst_const_full; full evaluator induction and related resource family remain open. Fresh original unchanged full proof replay retained."
   }
 ]

@@ -6538,3 +6538,6 @@ default/HD/EL use. The full initializer remains open. Selector:
 
 
 `word_to_stack_comp_flat_probe.out` freshly replays the unchanged original `comp_correct` Assign/Store proofs against the complete constructor-specialized goal (5719–5751). Both closed statements retain all source/convention/compiler/bitmap/label premises and the complete clock/run/result/resource existential. Proof=T and hypotheses=0. The original flat convention rejects both arbitrary-payload constructors; no additional impossible premise or narrowed result is introduced. These cases do not assemble the full pass theorem.
+
+
+`wordsem_inst_const_full_probe.out` replays the unchanged original wordProps inst_const_full proof against its complete generic statement. All thirteen preserved fields and the sole successful native instruction premise are retained; replay=T, hypotheses=0, no free variables. The structural invariant is not numerical floating-point correspondence or full evaluator resource-family completion.
