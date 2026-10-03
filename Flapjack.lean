@@ -1236,6 +1236,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -1594,6 +1596,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopNames
+import Flapjack.Pancake.Proofs.PanGlobals.CompileLocalised
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
@@ -2140,7 +2144,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.PrimitiveInstru
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ShareInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.AllocationInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.CallInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ProgramInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions

@@ -7164,9 +7164,18 @@ hypotheses and three conclusions, using only original per-member IHs. Source
 success supplies the word guard, discharging conversion identity before the
 original operation is evaluated on the converted list.
 
+`pan_structs_exp_load_byte_faithful_probe` captures the full original theorem,
+LoadByte specialization and eval_ind. Native case retains all seven hypotheses
+and three conclusions, deriving the byte load from source success and actual
+preservation of memory/domain/byte order, using only the original child IH.
 ## Original complete native Fetch16 and Fetch32 theorems
 
 `l3_fetch_theorems_probeScript.sml` proves universally quantified copies of both complete original theorems, preserving the full native state, bool list, all16/32 Boolean binders, bare-VM and each memory-byte premise, low-bit selector and entire Skip-update result. Typed captures record all binders, word8/16/32 list carriers, statements, zero proof assumptions and proof markers. Lean derives translation and raw-read outcomes from these exact original premises, with generic bit extensionality assembling the little-endian bytes; no additional successful fetch/translation, alignment or core bound is assumed. The original symbolic step fetch route consumes these results; full encoder/compiler correctness remains further work.
+
+`pan_structs_exp_load32_faithful_probe` captures the full original theorem,
+Load32 specialization and eval_ind. Native case retains all seven hypotheses
+and three conclusions with only the original child IH, deriving the32-bit load
+through actual memory/domain/byte-order preservation.
 
 ## Complete native Encode
 
