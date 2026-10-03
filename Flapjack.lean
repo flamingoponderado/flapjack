@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
+import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
@@ -729,6 +730,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvUpdates
 import Flapjack.Compiler.Backend.WordCse.Proofs.FactInsert
 import Flapjack.Compiler.Backend.WordCse.Proofs.MoveLemmas
 import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
+import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
@@ -761,6 +763,10 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit
 import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
 import Flapjack.Compiler.Backend.StackToLab.Proofs.NoShmemop
 import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
+import Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
