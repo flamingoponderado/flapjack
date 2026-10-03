@@ -75863,5 +75863,21 @@
     "lean_name": "shapeMap_lookup",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "flapjack-sol2026-10-03: Flapjack canonical finite-map codec correspondence to external HOL alistTheory right-fold FUPDATE/FEMPTY, not a CakeML declaration. Arbitrary exact MlS/ShapeHOL entries/key including duplicates; unconditional independent raw alistToFmap lookup equality. Source alistScript21/ALOOKUP_EQ_FLOOKUP67 checked; no distinctness, extra support or desired map relation premise. Enables canonical original shape-map equality hypotheses of faithful PanStructs compile_exp_correct."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "everyName_def2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "every_name_def2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source review word_allocProofScript.sml:10413-10418: arbitrary Boolean predicate and native cutset pair; exact equality every_name with EVERY P over MAP FST toAList of union. Literal unrestricted Spt domains, native List and Boolean reflection, no extra hypothesis or representation change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions.lean",
+    "lean_name": "union_applyNummapsKey",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "union_apply_nummaps_key",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source review word_allocProofScript.sml:10420-10432: arbitrary renaming and pair of unrestricted same-payload native Spt maps; exact domain equality between union of both renamed components and renaming of their union. Full arbitrary key collisions retained, no injectivity or tree validity premise; derived from original apply_nummap_key_domain and domain_union."
   }
 ]
