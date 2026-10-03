@@ -10388,6 +10388,12 @@
       "sha256": "e53cb678e1fdbd30b25d31353606b3625bace978dcb211004bf07d2db5dabf93"
     },
     {
+      "out": "word_to_stack_memory_relations_probe.out",
+      "sha256": "c72c66ef4b441b736b28c2de10491db6f2cf9b38b41d7135d85ef097d575e3be",
+      "bytes": 829,
+      "rows": 6
+    },
+    {
       "bytes": 204,
       "out": "word_to_stack_move_aux_probe.out",
       "rows": 3,

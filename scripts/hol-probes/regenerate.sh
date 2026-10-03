@@ -7631,3 +7631,7 @@ run_probe pan_to_target_compile_prog_max_source_replay_probeScript.sml pan_to_ta
 run_probe word_to_stack_inst_binary_probeScript.sml word_to_stack_inst_binary_probe.out \
   binaryReg_typed binaryReg_proved binaryReg_hypotheses binaryImm_typed binaryImm_proved binaryImm_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_memory_relations_probeScript.sml word_to_stack_memory_relations_probe.out \
+  stateRelMemStore_typed stateRelMemStore_proved stateRelMemStore_hypotheses stateRelWithMemory_typed stateRelWithMemory_proved stateRelWithMemory_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
