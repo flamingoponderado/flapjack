@@ -48,7 +48,9 @@ def arithUpd {width : Nat} [NeZero width] {C F : Type} (operation : HolArith wid
   | .div r1 r2 r3 =>
       match state.regs r3, state.regs r2 with
       | .word divisor, .word dividend =>
-          assertState (decide (divisor ≠ 0)) (updReg r1 (.word (dividend / divisor)) state)
+          -- HOL `/` on words is the signed `word_quot` (wordsScript.sml:355-366,
+          -- overloaded at 397-398); `BitVec.sdiv` has exactly its four sign cases.
+          assertState (decide (divisor ≠ 0)) (updReg r1 (.word (dividend.sdiv divisor)) state)
       | _, _ => assertState false state
   | .addCarry r1 r2 r3 r4 =>
       match state.regs r2, state.regs r3, state.regs r4 with

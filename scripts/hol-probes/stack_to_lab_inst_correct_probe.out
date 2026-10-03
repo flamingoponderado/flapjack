@@ -1,0 +1,1 @@
+inst_correct_statement=∀t1 s2 s1 i. inst i s1 = SOME s2 ∧ state_rel s1 t1 ⇒ state_rel s2 (asm_inst i t1)

@@ -7611,3 +7611,16 @@ Statement regression evidence, not literal local proof replay or equivalence.
 ### Signed native immediate reconstruction
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+`stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.
+
+`word_to_stack_native_stackstore_probeScript.sml` captures the original full
+wStackStore definition and empty/reverse/repeated-slot continuation cases.
+Original production script uses it only at its definition; compiler direct
+store clauses are retained. Regression evidence, not equivalence.
+`pan_structs_program_deccall_probe` captures full original `compile_correct`,
+its DecCall specialization and complete original `evaluate_ind`, quantified
+types and closed kernel truth. The Lean case retains all ten premises/seven
+conclusions and exactly two original guarded IHs; lookup, return comparisons,
+continuation preconditions and final binding restoration are derived internally.
+Full Call/whole program/compiler correctness remain open.
+`stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.

@@ -1,6 +1,13 @@
 import Flapjack.RiscV.CorrectnessEncoding.Immediate
 import Flapjack.RiscV.CorrectnessEncoding.TargetOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmEvaluate
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelCutState
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.OpCurrHeap
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegister
+import Flapjack.Compiler.Backend.WordToStack.NativeStackStore
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
@@ -648,6 +655,9 @@ import Flapjack.Compiler.Backend.WordCse.Knowledge
 import Flapjack.Compiler.Backend.WordCse.RegisterData
 import Flapjack.Compiler.Backend.WordCse.ProductionKnowledge
 import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
+import Flapjack.Compiler.Backend.WordCse.CanonicalMove
+import Flapjack.Compiler.Backend.WordCse.CanonicalArith
+import Flapjack.Compiler.Backend.WordCse.CanonicalFp
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
@@ -667,6 +677,8 @@ import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
+import Flapjack.Compiler.Backend.StackToLab.Proofs.StateRel
+import Flapjack.Compiler.Backend.StackToLab.Proofs.InstCorrect
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
@@ -1318,6 +1330,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
 import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
@@ -1438,6 +1451,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateIoEventsMono
 import Flapjack.Compiler.Backend.Semantics.WordSem.Semantics
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateAddClockIoEventsMono
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateDecClock
 import Flapjack.Misc.ShiftSeq
 import Flapjack.Misc.BinaryIeee
 import Flapjack.Misc.MachineIeee
