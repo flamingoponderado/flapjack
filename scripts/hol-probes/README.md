@@ -7068,3 +7068,7 @@ through `regenerate.sh`, then run `python3 scripts/l3/check-decode-fixtures.py`.
 `pan_structs_shape_map_codec_probe` captures the external HOL alistTheory right-fold
 definition and unconditional lookup theorem used by PanStructs. Original duplicate
 keys keep the first binding; other, missing and empty lookups are recorded.
+
+### Full native shared-memory filter return clause
+
+`lab_filter_shared_return_probeScript.sml` captures the complete original return614 theorem, independent full carriers, zero hypotheses and kernel reproof (4 rows). The existential poststate and full state relation/nonfailed/forall-clock conjunction remain conclusions. Together with the terminal probe it covers the complete original shared-memory filter prerequisite group.
