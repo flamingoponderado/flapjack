@@ -6201,6 +6201,24 @@ run_probe lab_to_target_initializer_basic_cases_probeScript.sml lab_to_target_in
   ISR13_statement ISR13_hypotheses ISR13_proved \
   ISR14_statement ISR14_hypotheses ISR14_proved \
   ISR17_statement ISR17_hypotheses ISR17_proved \
+  original_residual_cases \
+  ISR1_actual_goal \
+  ISR2_actual_goal \
+  ISR3_actual_goal \
+  ISR4_actual_goal \
+  ISR5_actual_goal \
+  ISR6_actual_goal \
+  ISR7_actual_goal \
+  ISR8_actual_goal \
+  ISR9_actual_goal \
+  ISR10_actual_goal \
+  ISR11_actual_goal \
+  ISR12_actual_goal \
+  ISR13_actual_goal \
+  ISR14_actual_goal \
+  ISR15_actual_goal \
+  ISR16_actual_goal \
+  ISR17_actual_goal \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe lab_to_target_initializer_interference_probeScript.sml lab_to_target_initializer_interference_probe.out \

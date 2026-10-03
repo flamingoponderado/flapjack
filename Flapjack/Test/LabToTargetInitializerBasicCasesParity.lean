@@ -4,7 +4,7 @@ open Flapjack Flapjack.Compiler.Backend.LabToTarget Flapjack.Compiler.Backend.La
 open Flapjack.Compiler.Backend.LabProps Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Encoders.Asm Flapjack.Misc
 
--- Generic native consumer observes actual target memory bytes and initial PC;
+-- Generic native consumer observes actual target memory bytes, initial PC and remaining code-buffer space;
 -- the complete source guard supplies every invariant rather than these outputs.
 example {width : Nat} [NeZero width] {S Q F : Type}
     (mc : MachineConfig width S Q) (ms : S) (ffi : HolFfiState F)
@@ -35,17 +35,22 @@ example {width : Nat} [NeZero width] {S Q F : Type}
       mc.target.getPc ms ∉ mc.ffiEntryPcs.take i) →
     ∀ a, dm (holByteAlign a) = true →
       wordLocValByte (mc.target.getPc ms) labs m a mc.target.config.bigEndian = some (t.mem a) ∧
-      t.pc = mc.target.getPc ms := by
+      t.pc = mc.target.getPc ms ∧
+      (∀ n, n < cbspace →
+        let address := mc.target.getPc ms + BitVec.ofNat width (progToBytes code2).length + BitVec.ofNat width n
+        t.memDomain address ∧ dm address ≠ true) := by
   intro h a ha
   have hc := makeInit_stateRel_basicCases mc ms ffi code code2 labs clock i cbspace t m dm sdm
     coracle newFfiNames shmemInfo newShmemInfo h
   dsimp only [makeInit] at hc
-  obtain ⟨_,_,_,_,hmemory,_,_,hpc,_,_⟩ := hc
+  obtain ⟨_,_,_,_,hmemory,hbufferSpace,_,hpc,_,_⟩ := hc
   have he := removeLabels_correct clock mc.target.config 0 .ln (mc.ffiNames.take i) code code2 labs
   obtain ⟨hends,hlabels,hids,hdistinct,hdis,hsub,hpre⟩ := h.1
   have hr := he ⟨h.2.2.2.2.1,h.2.1.2.2.2.2.2.2.2,hends,hlabels,hids,hdistinct,hdis,hsub,hpre,
     by decide,by simp [labLookup,sptLookup]⟩
   have hz := posVal_zero code2 mc.target.config labs (mc.ffiNames.take i) 0 hr.1
-  exact ⟨(hmemory a ha).2.2,by simpa [hz] using hpc⟩
+  refine ⟨(hmemory a ha).2.2,by simpa [hz] using hpc,?_⟩
+  intro n hn
+  simpa only [List.length_nil,Nat.zero_add] using hbufferSpace n hn
 
 end Flapjack.Test.LabToTargetInitializerBasicCasesParity

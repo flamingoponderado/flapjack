@@ -358,11 +358,34 @@ no_install_or_no_share_mem code mc_conf.ffi_names ∧
    ¬MEM
      ((n2w bn :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
       mc_conf.target.get_pc ms) (TAKE i mc_conf.ffi_entry_pcs)) ⇒
-(make_init mc_conf (ffi :'ffi ffi_state) t m dm sdm ms code
-   (compile_lab mc_conf.target.config)
-   (mc_conf.target.get_pc ms + (n2w (LENGTH (prog_to_bytes code2)) :α word))
-   cbspace coracle).code_buffer.position =
-mc_conf.target.get_pc ms + (n2w (LENGTH (prog_to_bytes code2)) :α word)
+∀(n :num).
+  n <
+  (make_init mc_conf (ffi :'ffi ffi_state) t m dm sdm ms code
+     (compile_lab mc_conf.target.config)
+     (mc_conf.target.get_pc ms + (n2w (LENGTH (prog_to_bytes code2)) :α word))
+     cbspace coracle).code_buffer.space_left ⇒
+  (let
+     (addr :α word) =
+       (make_init mc_conf ffi t m dm sdm ms code
+          (compile_lab mc_conf.target.config)
+          (mc_conf.target.get_pc ms +
+           (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace coracle).
+       code_buffer.position +
+       (n2w
+          (LENGTH
+             (make_init mc_conf ffi t m dm sdm ms code
+                (compile_lab mc_conf.target.config)
+                (mc_conf.target.get_pc ms +
+                 (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace
+                coracle).code_buffer.buffer + n) :α word)
+   in
+     addr ∈ t.mem_domain ∧
+     addr ∉
+     (make_init mc_conf ffi t m dm sdm ms code
+        (compile_lab mc_conf.target.config)
+        (mc_conf.target.get_pc ms +
+         (n2w (LENGTH (prog_to_bytes code2)) :α word)) cbspace coracle).
+     mem_domain)
 ISR10_hypotheses=0
 ISR10_proved=T
 ISR11_statement=good_code (mc_conf :(α, 'state, β) machine_config).target.config
@@ -565,3 +588,196 @@ no_install_or_no_share_mem code mc_conf.ffi_names ∧
 no_install_or_no_share_mem code2 mc_conf.ffi_names
 ISR17_hypotheses=0
 ISR17_proved=T
+original_residual_cases=17
+ISR1_actual_goal=∀(index :num).
+  if
+    (i :num) ≤ index ∧
+    index < LENGTH (mc_conf :(α, 'state, β) machine_config).ffi_entry_pcs
+  then
+    ∃(info :word8 # α addr # num # α word).
+      ALOOKUP
+        (ZIP
+           (GENLIST (λ(index :num). i + index)
+              (LENGTH (shmem_info :shmem_info_num list)),
+            MAP
+              (λ(rec :shmem_info_num).
+                   (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),
+                    rec.reg,(n2w rec.exit_pc :α word)))
+              (new_shmem_info :shmem_info_num list))) index = SOME info
+  else
+    ALOOKUP
+      (ZIP
+         (GENLIST (λ(index :num). i + index) (LENGTH shmem_info),
+          MAP
+            (λ(rec :shmem_info_num).
+                 (rec.nbytes,Addr rec.addr_reg (n2w rec.addr_off :α word),
+                  rec.reg,(n2w rec.exit_pc :α word))) new_shmem_info)) index =
+    (NONE :(word8 # α addr # num # α word) option)
+ISR2_actual_goal=∀(ms2 :'state) (k :num) (index :num) (new_bytes :word8 list)
+    (t1 :α asm_state) (bytes :word8 list) (bytes2 :word8 list)
+    (st :'ffi ffi_state) (new_st :'ffi ffi_state).
+  index < (i :num) ∧
+  read_ffi_bytearrays (mc_conf :(α, 'state, β) machine_config) ms2 =
+  (SOME bytes,SOME bytes2) ∧
+  (call_FFI_rel :'ffi ffi_state -> 'ffi ffi_state -> bool)꙳
+    (ffi :'ffi ffi_state) st ∧
+  call_FFI st mc_conf.ffi_names❲index❳ bytes bytes2 =
+  FFI_return new_st new_bytes ∧ mc_conf.prog_addresses = t1.mem_domain ∧
+  target_state_rel mc_conf.target
+    (t1 with
+     pc :=
+       -(n2w (ffi_offset * (index + (3 :num))) :α word) +
+       mc_conf.target.get_pc (ms :'state)) ms2 ∧
+  aligned mc_conf.target.config.code_alignment
+    (t1.regs
+       (case mc_conf.target.config.link_reg of
+          (NONE :num option) => (0 :num)
+        | SOME n => n) :α word) ⇒
+  target_state_rel mc_conf.target
+    (t1 with
+     <|regs :=
+         (λ(a :num).
+              if
+                MEM a mc_conf.callee_saved_regs ∨
+                ¬(a < mc_conf.target.config.reg_count) ∨
+                MEM a mc_conf.target.config.avoid_regs
+              then
+                (t1.regs a :α word)
+              else
+                mc_conf.target.get_reg
+                  (mc_conf.ffi_interfer k (index,new_bytes,ms2)) a);
+       fp_regs :=
+         (λ(n :num).
+              mc_conf.target.get_fp_reg
+                (mc_conf.ffi_interfer k (index,new_bytes,ms2)) n);
+       mem :=
+         asm_write_bytearray (t1.regs mc_conf.ptr2_reg :α word) new_bytes
+           t1.mem;
+       pc :=
+         (t1.regs
+            (case mc_conf.target.config.link_reg of
+               (NONE :num option) => (0 :num)
+             | SOME n => n) :α word)|>)
+    (mc_conf.ffi_interfer k (index,new_bytes,ms2))
+ISR3_actual_goal=∀(ms2 :'state) (t1 :α asm_state) (k :num) (a1 :α word) (a2 :α word).
+  target_state_rel (mc_conf :(α, 'state, β) machine_config).target
+    (t1 with pc := mc_conf.ccache_pc) ms2 ∧
+  aligned mc_conf.target.config.code_alignment
+    (t1.regs
+       (case mc_conf.target.config.link_reg of
+          (NONE :num option) => (0 :num)
+        | SOME n => n) :α word) ⇒
+  target_state_rel mc_conf.target
+    (t1 with
+     <|regs :=
+         (λ(a :num).
+              if
+                MEM a mc_conf.callee_saved_regs ∨ a = mc_conf.ptr_reg ∨
+                ¬(a < mc_conf.target.config.reg_count) ∨
+                MEM a mc_conf.target.config.avoid_regs
+              then
+                (t1.regs a :α word)
+              else
+                mc_conf.target.get_reg
+                  (mc_conf.ccache_interfer k (a1,a2,ms2)) a);
+       fp_regs :=
+         (λ(n :num).
+              mc_conf.target.get_fp_reg
+                (mc_conf.ccache_interfer k (a1,a2,ms2)) n);
+       pc :=
+         (t1.regs
+            (case mc_conf.target.config.link_reg of
+               (NONE :num option) => (0 :num)
+             | SOME n => n) :α word)|>)
+    (mc_conf.ccache_interfer k (a1,a2,ms2))
+ISR4_actual_goal=no_share_mem_inst (code2 :α sec list) ⇒
+∀(k :num).
+  (λ((cfg :config),(code' :α sec list)).
+       (EVERY (sec_ends_with_label :α sec -> bool) code' ∧
+        EVERY (sec_labels_ok :α sec -> bool) code' ∧
+        ALL_DISTINCT (MAP (Section_num :α sec -> num) code') ∧
+        EVERY
+          ((ALL_DISTINCT :(num # num) list -> bool) ∘
+           (extract_labels :α line list -> (num # num) list) ∘
+           (Section_lines :α sec -> α line list)) code' ∧
+        DISJOINT (domain cfg.labels :num -> bool)
+          (set (MAP (Section_num :α sec -> num) code')) ∧
+        restrict_nonzero (get_labels code') ⊆
+        get_code_labels code' ∪ labs_domain cfg.labels ∧
+        all_enc_ok_pre (mc_conf :(α, 'state, β) machine_config).target.config
+          code') ∧ no_share_mem_inst code' ∧
+       (k = (0 :num) ⇒
+        cfg.labels = (labs :num sptree$num_map sptree$num_map) ∧
+        cfg.pos = LENGTH (prog_to_bytes code2) ∧
+        cfg.ffi_names = SOME mc_conf.ffi_names))
+    ((coracle :num -> config # α sec list) k)
+ISR5_actual_goal=∀(l1 :num) (l2 :num) (x :num).
+  lab_lookup l1 l2 (labs :num sptree$num_map sptree$num_map) = SOME x ⇒
+  EVEN x
+ISR6_actual_goal=list_subset
+  (FILTER (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)
+     (find_ffi_names (code :α sec list)))
+  (mc_conf :(α, 'state, β) machine_config).ffi_names
+ISR7_actual_goal=EVEN (LENGTH (prog_to_bytes (code2 :α sec list)))
+ISR8_actual_goal=∀(name :ffiname).
+  MEM name (mc_conf :(α, 'state, β) machine_config).ffi_names ∧
+  get_ffi_index mc_conf.ffi_names name < (i :num) ⇒
+  ∃(s :mlstring). name = ExtCall s
+ISR9_actual_goal=∀(a :α word).
+  byte_align a ∈ (dm :α word -> bool) ⇒
+  a ∈ (mc_conf :(α, 'state, β) machine_config).prog_addresses ∧
+  word_loc_val_byte (mc_conf.target.get_pc (ms :'state))
+    (labs :num sptree$num_map sptree$num_map) (m :α word -> α word_loc) a
+    mc_conf.target.config.big_endian = SOME ((t :α asm_state).mem a :word8)
+ISR10_actual_goal=∀(n :num).
+  n < (cbspace :num) ⇒
+  (n2w n :α word) +
+  (n2w (LENGTH (prog_to_bytes (code2 :α sec list))) :α word) +
+  (mc_conf :(α, 'state, β) machine_config).target.get_pc (ms :'state) ∈
+  mc_conf.prog_addresses ∧
+  (n2w n :α word) + (n2w (LENGTH (prog_to_bytes code2)) :α word) +
+  mc_conf.target.get_pc ms ∉ (dm :α word -> bool)
+ISR11_actual_goal=bytes_in_mem
+  ((n2w (LENGTH (prog_to_bytes (code2 :α sec list))) :α word) +
+   (mc_conf :(α, 'state, β) machine_config).target.get_pc (ms :'state))
+  ([] :word8 list) (t :α asm_state).mem mc_conf.prog_addresses
+  (dm :α word -> bool)
+ISR12_actual_goal=∀(bn :num).
+  bn < (cbspace :num) ⇒
+  ¬MEM
+    ((n2w bn :α word) +
+     (n2w (LENGTH (prog_to_bytes (code2 :α sec list))) :α word) +
+     (mc_conf :(α, 'state, β) machine_config).target.get_pc (ms :'state))
+    mc_conf.ffi_entry_pcs
+ISR13_actual_goal=(mc_conf :(α, 'state, β) machine_config).target.get_pc (ms :'state) =
+(n2w (pos_val (0 :num) (0 :num) (code2 :α sec list)) :α word) +
+mc_conf.target.get_pc ms
+ISR14_actual_goal=EVERY (sec_labels_ok :α sec -> bool) (code2 :α sec list)
+ISR15_actual_goal=share_mem_state_rel (mc_conf :(α, 'state, β) machine_config)
+  <|regs := (λ(k :num). Word ((t :α asm_state).regs k :α word));
+    fp_regs := t.fp_regs; mem := (m :α word -> α word_loc);
+    mem_domain := (dm :α word -> bool);
+    shared_mem_domain := mc_conf.shared_addresses; pc := (0 :num);
+    be := mc_conf.target.config.big_endian; ffi := (ffi :'ffi ffi_state);
+    io_regs := target_io_regs mc_conf ffi (ms :'state);
+    cc_regs := target_cc_regs mc_conf ffi ms;
+    io_fp_regs := target_io_fp_regs mc_conf ffi ms;
+    cc_fp_regs := target_cc_fp_regs mc_conf ffi ms;
+    code := (code :α sec list); compile := compile_lab mc_conf.target.config;
+    compile_oracle := (coracle :num -> config # α sec list);
+    code_buffer :=
+      <|position :=
+          (n2w (LENGTH (prog_to_bytes (code2 :α sec list))) :α word) +
+          mc_conf.target.get_pc ms; buffer := ([] :word8 list);
+        space_left := (cbspace :num)|>; clock := (0 :num); failed := F;
+    ptr_reg := mc_conf.ptr_reg; len_reg := mc_conf.len_reg;
+    ptr2_reg := mc_conf.ptr2_reg; len2_reg := mc_conf.len2_reg;
+    link_reg :=
+      case mc_conf.target.config.link_reg of
+        (NONE :num option) => (0 :num)
+      | SOME n => n|> t ms
+ISR16_actual_goal=share_mem_domain_code_rel (mc_conf :(α, 'state, β) machine_config)
+  (mc_conf.target.get_pc (ms :'state)) (code2 :α sec list)
+  mc_conf.shared_addresses
+ISR17_actual_goal=no_install_or_no_share_mem (code2 :α sec list)
+  (mc_conf :(α, 'state, β) machine_config).ffi_names
