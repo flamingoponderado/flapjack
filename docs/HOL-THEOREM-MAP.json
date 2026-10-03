@@ -69096,5 +69096,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 full source comparison2026-10-03 original679-692 and original fully generalized native type: all original program/source/result/post/replacementclock binders and sole source-evaluation AND clock_neutral premise, complete actual updated-clock evaluation and same result/post-state clock update. Arbitrary positive width and independent compile/FFI host types retained. Actual native HolProg/StackSemStateFiniteExact/evaluate and reviewed clockNeutralHOL used; original-neutral constructors Skip/Inst/LocValue/Halt and recursive Seq/If exactly retained, every other constructor excluded by source predicate. Structural size proof derives full clock-update commutation AND unchanged post-clock internally; Seq min clock clamp identity proved from first recursive result, conditional register/immediate and word comparison failures/successes retained. No desired evaluation/post-clock/free-context extra premise or callback law. Actual canonical regs/fpRegs/store owner and local genuine codec roundtrip; Spt code unchanged. Fresh literal original full inst_clock_neutral local proof then literal original full evaluate_clock_neutral proof, full generalized statement0hyp and7 independent original neutral/nonneutral observations. Full arbitrary kernel consumer and4 mixed Seq/Inst/Halt consumers at widths1/8/64/80 with replacement clocks0/17/0/123456789. Existing evaluator closure inherits reals_as_rational_cuts SOUNDNESS item8, no new real/FP agreement, production behavior/default/HOLD policy unchanged. Actual StackRemove initializer3887 prerequisite, not full initialization/compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateMono.lean",
+    "lean_name": "evaluateMono",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 full original source/type comparison2026-10-03 stackProps442-452: all arbitrary program/source/post/result binders retained, sole actual source evaluation premise implies BOTH original bitmap isPREFIX and code subspt. No nonError/success/preservedlookup/postcode/desired target run premise. Source uses evaluate_code_bitmaps and subspt_FOLDL_union; actual full native whole theorem ordinary-consumed from checked peer48bb07622 via verified merge400a55396, all3count/oracle/code/bitmap conclusions preserved, count not assumed. List.IsPrefix is ordinary HOL list prefix translation, code actual Spt with native sptSubspt and left-biased sptUnion fold, every preexisting lookup retained regardless result. Actual canonical state regs/fpRegs/store with local genuine imported codec roundtrip, arbitrary positive word width/independent compile and FFI Type0 carriers. Fresh literal full original evaluate_mono proof/0hyp/fullstatement plus4 independent union collision/fresh key/prefix append/truncate observations, kernel/runtime replay and five generic consumers including Error/TimeOut/NONE and successful code lookup consequence. Native evaluator closure inherits existing reals_as_rational_cuts SOUNDNESS8; no numerical FP agreement, default/HOLD/production change or full RawCall/compiler completion. Actual rawcall original404 prerequisite; acceptance metadata edges preserved."
   }
 ]

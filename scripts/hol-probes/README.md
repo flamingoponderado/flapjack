@@ -6434,3 +6434,13 @@ The native theorem retains its sole source-evaluation/neutrality conjunction;
 clock commutation and unchanged post-clock are derived by structural recursion.
 Generic kernel consumers include widths 1/8/64/80 and zero replacement clocks.
 These fixtures do not prove cross-language equivalence or full initialization.
+
+`stack_evaluate_mono_probeScript.sml` replays the literal full original
+`evaluate_mono` proof (stackPropsScript.sml:442–452), checking its fully
+generalized statement and original proof success. Four independent original
+observations cover left-biased union at an overlapping and a fresh key, a bitmap
+prefix extension and a rejected truncation. Native kernel/runtime replays and
+five generic theorem consumers include Error, TimeOut and successful results,
+and preservation of a source code lookup. The theorem retains its sole source
+execution premise and both original conclusions. These captures are regression
+evidence, not cross-language equivalence or whole compiler correctness.

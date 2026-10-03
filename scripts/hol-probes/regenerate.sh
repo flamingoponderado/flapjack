@@ -5971,6 +5971,10 @@ run_probe stack_code_bitmaps_install_probeScript.sml stack_code_bitmaps_install_
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_install_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe stack_evaluate_mono_probeScript.sml stack_evaluate_mono_probe.out \
+  mono_full_statement mono_full_proved mono_union_overlap mono_union_fresh mono_prefix_append mono_prefix_truncate \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe stack_evaluate_clock_neutral_probeScript.sml stack_evaluate_clock_neutral_probe.out \
   neutral_clock_full_statement neutral_clock_full_proved neutral_clock_skip neutral_clock_halt neutral_clock_inst neutral_clock_seq neutral_clock_nested neutral_clock_tick neutral_clock_loop \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/semantics"
