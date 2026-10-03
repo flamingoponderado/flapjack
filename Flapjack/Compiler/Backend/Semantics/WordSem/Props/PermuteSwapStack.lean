@@ -19,7 +19,8 @@ Counterpart of `cakeml/compiler/backend/semantics/wordPropsScript.sml:4790-5195`
 and HOL's `rich_list$list_rel_lastn`.
 
 HOL `PERM` is the tagged `holPerm`, `ALL_DISTINCT` is `List.Nodup`,
-`LIST_REL` is `List.Forall₂`, `ALOOKUP` is `sptAListLookup` and `LASTN` is
+`LIST_REL` is `List.Forall₂`, generic `ALOOKUP` is `List.lookup` (with
+decidable key equality), its Nat-keyed uses are `sptAListLookup`, and `LASTN` is
 `wordSemLastN`.  HOL's `PERM_STACK` is an `Overload`, not a declaration; it is
 rendered by the untagged `permStack` below, clause for clause.
 -/
@@ -95,9 +96,23 @@ theorem sptAListLookup_of_mem {α : Type} :
 
 /-- Exact HOL `ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME` (`wordPropsScript.sml:72-81`). -/
 @[hol "cakeml/compiler/backend/semantics/wordPropsScript.sml" "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME"]
-theorem allDistinctMemImpALookupSome {α : Type} (xs : List (Nat × α)) (x : Nat) (y : α) :
-    (xs.map Prod.fst).Nodup ∧ (x, y) ∈ xs → sptAListLookup x xs = some y :=
-  fun ⟨hnd, h⟩ => sptAListLookup_of_mem xs x y hnd h
+theorem allDistinctMemImpALookupSome {κ α : Type} [DecidableEq κ]
+    (xs : List (κ × α)) (x : κ) (y : α) :
+    (xs.map Prod.fst).Nodup ∧ (x, y) ∈ xs → xs.lookup x = some y := by
+  intro ⟨distinct, member⟩
+  induction xs with
+  | nil => cases member
+  | cons entry xs ih =>
+    rcases entry with ⟨k, v⟩
+    simp only [List.map_cons, List.nodup_cons] at distinct
+    rcases List.mem_cons.mp member with equal | member
+    · cases equal
+      simp
+    · have different : x ≠ k := by
+        intro equal
+        exact distinct.1 (List.mem_map.mpr ⟨(x, y), member, equal⟩)
+      simpa only [List.lookup_cons, beq_eq_false_iff_ne.mpr different]
+        using ih distinct.2 member
 
 theorem sptAListLookup_none_of_not_mem {α : Type} :
     ∀ (xs : List (Nat × α)) (x : Nat), x ∉ xs.map Prod.fst → sptAListLookup x xs = none
