@@ -70549,5 +70549,46 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.4 wordProps: original 4003-4014 !n stack stack' x with conjunctive premise LASTN n stack = stack' /\\ stack_size stack = SOME x /\\ n <= LENGTH stack and existential conclusion ?y. stack_size stack' = SOME y /\\ y <= x; LASTN is tagged-equivalent wordSemLastN (REVERSE (TAKE n (REVERSE l))). Positive width only (words_as_type_indexed_bitvec). Fresh literal original proof replay (wordsem_state_laws probe), statement aconv, closed, 0 hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/NoInstallEvaluate.lean",
+    "lean_name": "noAllocCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "no_alloc_code_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.6 wordProps: original 4690-4693 !code. no_alloc_code code <=> !k n p. lookup k code = SOME (n,p) ==> no_alloc p over the reviewed Spt code map (same shape as accepted noInstallCode). HOL no_alloc/no_install are the tagged Boolean noAllocSubprogsHOL/noInstallSubprogsHOL = true; find_code is the tagged wordSemFindCode; positive width only. Fresh literal original proof replay (wordsem_no_install_code probe), aconv, closed, 0 hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/NoInstallEvaluate.lean",
+    "lean_name": "noAllocFindCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "no_alloc_find_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.6 wordProps: original 4695-4705 all7 binders, conjunctive premise find_code = SOME (args1,expr,ps) /\\ no_alloc_code code in source order, conclusion no_alloc expr; both find_code branches. HOL no_alloc/no_install are the tagged Boolean noAllocSubprogsHOL/noInstallSubprogsHOL = true; find_code is the tagged wordSemFindCode; positive width only. Fresh literal original proof replay (wordsem_no_install_code probe), aconv, closed, 0 hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/NoInstallEvaluate.lean",
+    "lean_name": "noInstallFindCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "no_install_find_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.6 wordProps: original 4712-4720 all7 binders, premise order no_install_code code /\\ find_code = SOME (...), conclusion no_install expr. HOL no_alloc/no_install are the tagged Boolean noAllocSubprogsHOL/noInstallSubprogsHOL = true; find_code is the tagged wordSemFindCode; positive width only. Fresh literal original proof replay (wordsem_no_install_code probe), aconv, closed, 0 hypotheses."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/NoInstallEvaluate.lean",
+    "lean_name": "noInstallEvaluateConstCode",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "no_install_evaluate_const_code",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.6 wordProps: original 4722-4757 arbitrary prog/state/result/post, conjunctive premise evaluate (prog,s) = (result,s1) /\\ no_install prog /\\ no_install_code s.code, conclusion s.code = s1.code. Proof: untagged code_evaluate recursion on HOL's measure; recursive calls get exactly HOL's IH premises (no_install of the sub-program from no_install_def or no_install_find_code, no_install_code of the intermediate code from earlier calls); no target/success premise. HOL no_alloc/no_install are the tagged Boolean noAllocSubprogsHOL/noInstallSubprogsHOL = true; find_code is the tagged wordSemFindCode; positive width only. Fresh literal original proof replay (wordsem_no_install_code probe), aconv, closed, 0 hypotheses. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemNoInstallEvaluateSupport.holFmapAsFiniteSupportWitness. Inherited assumption: statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
