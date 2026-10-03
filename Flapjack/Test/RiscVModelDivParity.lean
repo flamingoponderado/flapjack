@@ -10,10 +10,10 @@ use a truncating signed quotient (`Int.tdiv` / `BitVec.sdiv`), not a Euclidean
 one (`Int.ediv`).
 
 The expected result words below are the captured outputs of the original HOL
-`dfn'DIV` equation in `scripts/hol-probes/l3_divide_probe.out`, whose rows
-`../scripts/hol-probes/l3_divide_probe.out` and checker
-`scripts/hol-probes/check-l3-divide.py` are regenerated from
-`HOL/examples/l3-machine-code/riscv/model/riscvScript.sml`:
+`dfn'DIV` equation in `scripts/hol-probes/l3_divide_probe.out`, checked by
+`scripts/hol-probes/check-l3-divide.py`. Regenerate the original observations
+from `HOL/examples/l3-machine-code/riscv/model/riscvScript.sml` with
+`HOL_PROBE_ONLY=l3_divide_probeScript.sml scripts/hol-probes/regenerate.sh`:
 
 * `divide_value_DIV_neg7_pos2=0xFFFFFFFFFFFFFFFDw`  (`-7 / 2 = -3`)
 * `divide_value_DIV_pos7_neg2=0xFFFFFFFFFFFFFFFDw`  (`7 / -2 = -3`)
