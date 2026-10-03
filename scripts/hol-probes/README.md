@@ -6701,3 +6701,4 @@ no-wrap facts follow from original guards; no default/EL policy is changed.
 Native fullguard consumers observe valid FFI index/descriptor and all fetched
 nonshared byte exclusions. Full initializer assembly remains open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml`.
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.

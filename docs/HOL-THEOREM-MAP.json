@@ -71275,5 +71275,33 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; bead .15.10.182): complete original ISR16 source10352-10504 and literal pre-Suspend goal mapping, precisely entire state_rel conjunct51 share_mem_domain_code_rel of actual makeInit. All original binders/fourteen guards retained. Original allEncOk/removeLabels/goodInitState and accepted getShmemInfo_ok/offset/PREPEND derive initialized extraction, all external-prefix names, suffix natural search and its bound. MAP w2n injectivity plus original entry-offset equality derive no-wrap/shared word search; source fetched encoding positivity and prefix exclusion establish first full-list search at index+i. ZIP/range unique numeric keys supply whole actual MMIO descriptor including fixedword8 size, exact word address offset/register and exit PC. Nonshared full byte interval excludes TAKE by accepted source prefix law, DROP by original natural disjointness: source entry-offset lower bound plus original code-size/successor position bounds prove no modular wrap, with no extra hypothesis. Original alignment/address clauses included. Positive BitVec width/NeZero, separate universe0 FFI host and native states/config/AST/labels retained; all imported EL accesses are under bounds derived from original successful search, no default/HD/EL policy changes. Untagged private extraction/numeric-list lookup/no-wrap helpers are proof infrastructure without separately named HOL declarations. Fresh original complete local theorem/types0hyp and fullguard clause51 projection0hyp/kernelT; native fullguard consumers derive valid full FFI index, descriptor and every nonshared-byte exclusion. Inherits reals_as_rational_cuts through original mcConfOk/encoderCorrect SOUNDNESS item8, no own real rendering. Full151 assembly and larger correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitReduce.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initReduce",
+    "hol_name": "init_reduce_def",
+    "reviewer": "flapjack-sol full original body/type comparison2026-10-03 source2873-2897: arbitrary original gen_gc/jump/off/k/code/bitmaps/data_sp/coracle/source, all four FAPPLY/theWord pointer selections with bitmap word_shift, exact unsigned word-difference before natural dimension-DIV and saturating store-list subtraction. All twelve original updates retained: flags T/T/F, exact addresses characteristic function, lists/code/compiler callback MAP(prog_comp) and plain coracle, complete data buffer including empty bytes/bitmap-scaled position/data_sp, stackSpace and read_mem(stackSpace+1), FEMPTY |++ MAP(CurrHeap::store_list) in original order. Original outside-domain FAPPLY value is shared opaque holFapplyOutside independent of map/key; wordSemTheWord shared holArb handles Loc without zero/default or added successful-input premise. Native List/Spt/WordLoc and callback/config/FFI types retained. Existing StoreName-to-WordStoreHOL constructor codec is bijective with two checked roundtrips including fixed5bit Temp; canonical updateListEq uses actual HOL equality and last-update fold, no BEq side condition. Actual canonical owning StackSemStateFiniteExact, local genuine imported broad/exact roundtrip, positive-width word translation. No extra good_dimindex/register/alias/heap/output/relation premise. Original full kernel definition/type/zero stored hypotheses freshly captured; proof-side source-state construction only, full initialization/executed correctness open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitReduce.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "initReduceStackSpace",
+    "hol_name": "init_reduce_stack_space",
+    "reviewer": "flapjack-sol source comparison2026-10-03 local2899-2904: full arbitrary original initializer parameters/source and unconditional actual init_reduce stack_space <= LENGTH stack. Actual native complete initializer/read_mem used, accepted LENGTH_read_mem yields exact stackSpace+1 length; no pointer presence/dimension/word-valuedness/callback/success/bound hypothesis. No simplified evaluator, supplied resource bound or output state. Canonical state/word qualifiers justified as for initReduce and same-module genuine witness; native code remains Spt. Complete unchanged original statement/proof replay with GEN_ALL, original0hyp andT. Original init_code_thm3628 consumes this actual resource invariant, not whole initializer theorem completion."
   }
 ]

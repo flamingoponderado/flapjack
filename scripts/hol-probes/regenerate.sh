@@ -6340,3 +6340,6 @@ run_probe lab_to_target_initializer_domain_probeScript.sml lab_to_target_initial
   IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
   ISR16_statement ISR16_hypotheses ISR16_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_init_reduce_probeScript.sml stack_remove_init_reduce_probe.out \
+  init_reduce_definition init_reduce_type init_reduce_hypotheses init_reduce_stack_space_statement init_reduce_stack_space_hypotheses init_reduce_stack_space_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
