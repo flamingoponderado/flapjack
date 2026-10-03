@@ -4633,6 +4633,10 @@ run_probe word_convs_cse_copy_probeScript.sml word_convs_cse_copy_probe.out \
   full_ssa_cc_trans_wf_cutsets_statement full_ssa_cc_trans_wf_cutsets_hypotheses pre_alloc_conventions_copy_prop_typed \
   full_ssa_cc_trans_wf_cutsets_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_alloc_distinct_tar_reg_probeScript.sml word_alloc_distinct_tar_reg_probe.out \
+  ssa_cc_trans_distinct_tar_reg_statement ssa_cc_trans_distinct_tar_reg_hypotheses ssa_cc_trans_distinct_tar_reg_typed \
+  full_ssa_cc_trans_distinct_tar_reg_statement full_ssa_cc_trans_distinct_tar_reg_hypotheses full_ssa_cc_trans_distinct_tar_reg_typed \
+  "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
   compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
   compile compile_typed compile_hypotheses \
