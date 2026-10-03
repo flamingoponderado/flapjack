@@ -399,6 +399,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.FFI
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallTail
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1211,6 +1212,7 @@ import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
 import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -2102,6 +2104,8 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.AllocationConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Primitives
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Instructions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Control
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
