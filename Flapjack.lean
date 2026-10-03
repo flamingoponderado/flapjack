@@ -1841,6 +1841,8 @@ import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational.Full
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocGenerational
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocNone
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.AllocCorrect
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.ProgComp
+import Flapjack.Compiler.Backend.StackAlloc.Proofs.InstCorrect
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Unroll
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenPartialMove
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.CodeThm.GenGcMove

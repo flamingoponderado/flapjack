@@ -66638,6 +66638,138 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.8: original stack_allocProofScript.sml:5146-5157. HOL c (the requested word) and conf (GC config) implicit; premises alloc c s = (r,t), s.gc_fun = word_gc_fun conf and !w. r <> SOME (Halt w) all retained (the gc_fun premise is unused by the proof, as source review confirms, but kept literally); conclusion LENGTH t.stack = LENGTH s.stack. Proof through gc_def/alloc_def and dec_stack_length (take/drop of stack_space). Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and re-exported roundtrip witness; positive BitVec width with NeZero."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "prog_comp_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "prog_comp_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:75-79. Function equality prog_comp = λ(n,p). (n, FST (comp n (next_lab p 2) p)), the paired lambda rendered by projections; prog_comp/comp/next_lab are the tagged progComp/comp/nextLabHOL over HolProg width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "FST_prog_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "FST_prog_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:81-85. FST (prog_comp pp) = FST pp for every pair pp over HolProg width."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "get_var_imm_case",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "get_var_imm_case",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:66-73. get_var_imm ri s = case ri of Reg n => get_var n s | Imm w => SOME (Word w), over the reviewed StackSem getVarImm/getVar (reg_imm payload as the accepted WordRegImm (BitVec width) carrier of that getVarImm). Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "lookup_IMP_lookup_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "lookup_IMP_lookup_compile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:87-98. Premises lookup dest s.code = SOME x and dest <> gc_stub_location; conclusion exists m1 n1 with lookup dest (fromAList (compile c (toAList s.code))) = SOME (FST (comp m1 n1 x)); fromAList/toAList/lookup are the external-library sptFromAList/sptToAList/sptLookup renderings. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "find_code_IMP_lookup",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "find_code_IMP_lookup",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5137-5144. find_code dest regs s = SOME x implies exists k with lookup k s = SOME x and find_code dest regs = lookup k (function equality); code payload and register key types polymorphic as in the reviewed findCode; regs is the standalone canonical HolFiniteMapExact binder."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "find_code_regs_SUBMAP",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "find_code_regs_SUBMAP",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "r1",
+      "r2"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5159-5168. r1 SUBMAP r2 and find_code dest r1 c = SOME x imply find_code dest r2 c = SOME x; SUBMAP is HolFiniteMapExact.submap; r1/r2 standalone canonical binders."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "get_labels_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "get_labels_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5170-5180. For all n p e, get_labels e SUBSET get_labels (FST (comp n p e)), with sets as predicates (membership implication) over the tagged getLabelsExact; proof by well-founded recursion on the program as HOL's comp_ind."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "loc_check_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "loc_check_compile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5182-5204. Premises loc_check s.code (l1,l2) and every code key differs from gc_stub_location; conclusion loc_check (fromAList (compile c (toAList s.code))) (l1,l2) over the tagged locCheckExact. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "ALOOKUP_prog_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "ALOOKUP_prog_comp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5278-5285. For all xs a y, ALOOKUP xs a = SOME y implies ALOOKUP (MAP prog_comp xs) a = SOME (FST (comp a (next_lab y 2) y)); ALOOKUP on numeric keys is the external-library sptAListLookup rendering."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "lookup_fromAList_prog_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/ProgComp.lean",
+    "lean_name": "lookup_fromAList_prog_comp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5287-5295. lookup x s.code = SOME p implies lookup x (fromAList (MAP prog_comp (toAList s.code))) = SOME (FST (comp x (next_lab p 2) p)). Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "hol_name": "inst_correct",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/InstCorrect.lean",
+    "lean_name": "inst_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.9.1: original stack_allocProofScript.sml:5223-5276. Premises inst i s = SOME t, stack byte bound, data-buffer/bitmaps bound and s.regs SUBMAP regs all retained; conclusion exists regs1 with inst i applied to s with the full source override (regs, compile := compile_rest, compile_oracle := (I ## MAP prog_comp ## I) o s.compile_oracle rendered Prod.map id (Prod.map (List.map progComp) id) ∘ oracle, gc_fun anything, use_stack/use_store T, use_alloc F, code fromAList (compile c (toAList s.code))) equal to SOME of t with the same override (t's oracle and code), t.regs SUBMAP regs1, and both bounds for t. inst is the tagged total instHOL (integer + FP fragments); no extra premise. Proof by instruction case split: register reads transported through SUBMAP, writes via SUBMAP_FUPDATE_both, memory/FP fields unchanged by the override. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero. Inherits the reals_as_rational_cuts assumption through instHOL's FP clauses (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
     "hol_name": "dest_case_def",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
