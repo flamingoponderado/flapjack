@@ -7781,9 +7781,6 @@ forbidden/termination predicate equivalence internally, with the original
 choice/LUB formulas and canonical finite-support/positive-word translations.
 Whole-pass semantics correspondence and production routing remain separate.
 `word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
-### Native Const instruction decoder evidence
-
-`riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
 ## Native Const instruction decoder evidence
 
 `riscv_const_decode_probeScript.sml` regenerates twenty original HOL boundary EVALs for ORI/XORI/SLLI/OR/XOR. Every register5 and immediate12/shamt6/rs2 field is unrestricted in the five symbolic Lean composition proofs; the finite original probes supplement their kernel checking and literal source comparison. All twenty original rows are `T`, with all sentinel names checked by `check-riscv-const-decode.py`. The full original Const constructor remains a separate open dependency bead.
@@ -7804,24 +7801,19 @@ full Const encoder theorem's fetch, Next, interference, or assertions.
 `check-riscv-const32-value.py` pins the unrestricted signatures and original
 evidence; mutation tests reject an added run premise or a lost oracle row.
 
+## PanStructs declaration semantics evidence
+
 `pan_structs_semantics_eq_probeScript.sml` captures the closed original
 `semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
 and quantified types. The Lean counterpart retains all eight source hypotheses
 and faithful semantics equality; production routing remains independent.
 Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
-`pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
-PanSem wrapper equality, quantified state/start types and closed kernel truth.
-Lean retains the faithful evaluator, every overwritten clock, TailCall as
-Call NONE, exact result classification and FFI event projection. It derives
-forbidden/termination predicate equivalence internally, with the original
-choice/LUB formulas and canonical finite-support/positive-word translations.
-Whole-pass semantics correspondence and production routing remain separate.
 
 
 ## Native wide Const value reconstruction
 
 `riscv_const_wide_value_probeScript.sml` evaluates the literal wide branches of
-`riscv_ast_def` at riscv_targetScript.sml:111-122. Twelve original word64
+`riscv_ast_def` at riscv_targetScript.sml:105-114. Twelve original word64
 boundaries cover low and high sign bits, zero, and all ones. Every row is `T`.
 `CorrectnessEncoding/ConstWide.lean` proves the same OR/XOR reconstruction for
 every word64 without range or target-run premises. The high sign extension is
@@ -7831,11 +7823,6 @@ It does not establish full native fetch/Next/interference/assertion execution.
 `check-riscv-const-wide-value.py` and its mutation regressions protect the
 unrestricted signature, original evidence, and all driver labels.
 
-`pan_structs_semantics_eq_probeScript.sml` captures the closed original
-`semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
-and quantified types. The Lean counterpart retains all eight source hypotheses
-and faithful semantics equality; production routing remains independent.
-Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
 ## Whole native Const Run composition
 
 `riscv_const_run_probeScript.sml` executes original `riscv_ast_def` Const
