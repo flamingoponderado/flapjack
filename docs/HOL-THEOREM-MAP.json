@@ -72376,5 +72376,91 @@
     "lean_name": "prefixChain_filter",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha, arbitrary Boolean P and arbitrary list set; sole prefix_chain antecedent. IMAGE FILTER is exactly the existential preimage membership predicate. List.IsPrefix.filter proves each original prefix alternative for the same P; no decidability premise or membership restriction is added."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_inj_on_state",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "steps_inj_on_state",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1115-1119. ∀s1 s2. inj_on_state f s1 ∧ s1 ▷* s2 ⇒ inj_on_state f s2; f implicit with independent Option α → Option β carriers as in the tagged inj_on_state; ▷* is Steps = ReflTransGen Step. Proof by RTC induction with step_inj_on_state (HOL RTC_lifts_invariants)."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "steps_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "steps_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1179-1189 ([local]). ∀s1 s2. s1 ▷* s2 ⇒ inj_on_state f s1 ⇒ map_state f s1 ▷* map_state f s2; f implicit; RTC induction with step_MAP_INJ and step_inj_on_state as HOL."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "pmov_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "pmov_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1257-1292. ∀p. ⊢ p ∧ inj_on_state f p ⇒ pmov (map_state f p) = map_state f (pmov p); ⊢ is the tagged wf; f implicit; DecidableEq on both register carriers is the executable pmov's requirement (HOL equality). Proof by pmov's own functional induction (HOL pmov_ind) with fstep_dstep, dsteps_steps, wf_steps, steps_inj_on_state, fstep_MAP_INJ."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "parmove_MAP_INJ",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/MapInj.lean",
+    "lean_name": "parmove_MAP_INJ",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:1294-1333. (let ls1 = MAP FST ls ++ MAP SND ls in ∀x y. MEM x ls1 ∧ MEM y ls1 ∧ f x = f y ⇒ x = y) ∧ windmill ls ⇒ parmove (MAP (f ## f) ls) = MAP (OPTION_MAP f ## OPTION_MAP f) (parmove ls); let kept literally; ## as Prod.map, OPTION_MAP as Option.map; f ls implicit. Proof as HOL via wf_init, pmov_MAP_INJ, pmov_final."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "path_imp_mem",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "path_imp_mem",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:81-87 ([local]). path (x::y) ⇒ ¬NULL y ⇒ MEM (SND x) (MAP FST y); NULL y as y = []; x y implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "path_imp_mem2",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "path_imp_mem2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:89-100 ([local]). path x ⇒ ∀y. MEM y (MAP SND x) ∧ y ≠ SND (LAST x) ⇒ MEM y (MAP FST x); LAST is the tagged holLast port of HOL LAST_DEF; x implicit."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/reg_alloc/parmoveScript.sml",
+    "hol_name": "NoRead_path",
+    "lean_path": "Flapjack/Compiler/Backend/Parmove/PathLemmas.lean",
+    "lean_name": "NoRead_path",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, beads flapjack-w1a4.14/.16/.18/.19: original parmoveScript.sml:102-117 ([local]). ∀σ. path σ ∧ windmill σ ∧ LENGTH σ ≥ 2 ∧ FST (HD σ) ≠ SND (LAST σ) ⇒ NoRead (TL σ) (FST (HD σ)); the local overload NoRead μ dn = ¬MEM dn (MAP SND μ) unfolded; HD/TL/LAST as holHd/List.tail/holLast."
+  },
+  {
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "LAST_DEF",
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holLast",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/StackHeapLimitOk.lean",
+    "lean_name": "stackHeapLimitOk",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_heap_limit_ok_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol full source/body/type comparison2026-10-03 original2906-2911: actual native state then PAIR(stack_lim,heap_lim), all original parameters retained, exactly three original conjunctions. FLOOKUP store HeapLength=SOME(Word(n2w heap_lim*bytes_in_word)) retains modular word construction/multiplication in original order; independent natural heap_lim*(dimindex/8)<dimword becomes heapLimit*(width/8)<2^width without word-modular capacity comparison; stack_lim=LENGTH actual native List stack. No extra good_dimindex, register, separation, evaluation, bound or relation hypothesis. Owning imported StackSemStateFiniteExact canonical regs/fpRegs/store (code still Spt and untouched), same-module genuine imported broad/exact roundtrip and positive-word qualifier. No state duplicate, raw map or BEq assumption. Fresh complete original kernel definition/generic type/zero stored hypotheses3rows; proof-side predicate used by missing full init_prop/init_code_thm, not whole initializer/compiler correctness or executed change."
+  },
+  {
+    "lean_path": "Flapjack/Misc/ListEl.lean",
+    "lean_name": "holLastCons",
+    "hol_path": "HOL/src/list/src/listScript.sml",
+    "hol_name": "LAST_CONS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol source comparison2026-10-03 bead flapjack-hol-list-last, exact inherited source203515b2b9a17c5db8a653cd843b27f6615d0c8a repaired in its ONE existing Misc/ListEl counterpart: listScript2052-2054 LAST_DEF constrains cons lists by LAST(h::t)=if t=[] then h else LAST t. Native singleton/longer-cons pattern matching and structural recursion preserve that equation on generic inhabited HOL element types as List α with α:Type/[Nonempty α], with no decidable element equality assumption. Original Defn.non_wfrec_defn calls Prim_rec.new_recursive_definition, whose new_recursive_definition0259-268 proves existence then calls Rsyntax.new_specification on this cons equation alone; it does not establish LAST[]=HD[]=ARB. Dedicated opaque holLastNil preserves the independently unspecified original LAST[] value and per-type identity, removing the inherited shared holHdNil assignment without inventing a concrete default or nil equality. LAST_CONS2063-2068 retains both universally quantified singleton/longer-cons conjuncts without extra hypotheses. Original kernel definition/type/zero-hypothesis capture, complete unchanged REWRITE_TAC LAST_CONS proof, and total case equation retaining symbolic original LAST[] are captured in list_last_probe.out. No word/fmap/array/name translation, target evaluation, postrelation or desired-bound premise; no production-path change or guest/FP parity claim."
   }
 ]

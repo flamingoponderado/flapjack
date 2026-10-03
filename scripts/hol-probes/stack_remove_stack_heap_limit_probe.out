@@ -1,0 +1,3 @@
+stack_heap_limit_definition=∀t stack_lim heap_lim. stack_heap_limit_ok t (stack_lim,heap_lim) ⇔ FLOOKUP t.store HeapLength = SOME (Word (n2w heap_lim * bytes_in_word)) ∧ heap_lim * (dimindex (:α) DIV 8) < dimword (:α) ∧ stack_lim = LENGTH t.stack
+stack_heap_limit_type=:(α, β, γ) stackSem$state -> num # num -> bool
+stack_heap_limit_hypotheses=0

@@ -17,6 +17,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -599,6 +600,8 @@ import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
 import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
+import Flapjack.Compiler.Backend.Parmove.MapInj
+import Flapjack.Compiler.Backend.Parmove.PathLemmas
 import Flapjack.Compiler.Backend.Parmove.TempBeforeAssign.Parmove
 import Flapjack.Pancake.WordConvs.NameMonotonicity
 import Flapjack.Compiler.Encoders.AsmProps.PcCoverage
