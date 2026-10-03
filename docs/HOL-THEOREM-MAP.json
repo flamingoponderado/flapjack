@@ -70154,5 +70154,29 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-pxn.18.5.15.6): complete original stack_removeProofScript.sml2418-2615 state_rel jump off k source target AND semantics start source != Fail implies semantics start target = semantics start source. Original arbitrary jump/bounds/pointer/start/source/target variables universally bound with exactly both premises and same equality direction. Uses native faithful StackSem semantics/evaluate and full stateRelHOL, not a clock-free or compile-execute evaluator. Actual entry comp/regBound obligations discharged for Call NONE (INL start) NONE; complete accepted compCorrect derives actual target clock/run and FFI equality for every source clock, including timeout. Source non-Fail discharges non-Error from the actual fail guard. Accepted native evaluateAddClock proves same-clock non-timeout source/target agreement, which excludes every target fail witness and establishes exact equivalence of the original termination-choice predicates. Complete native extra-clock IO prefix theorem derives each clock-family chain; both cofinal prefix directions are proved from genuine source entry simulations and actual target boosted run traces, then accepted lazy-list prefix-lub equality yields divergence equality. Neither target run, output result, desired trace/prefix, simulation, clock law, source successful-pass, target non-Fail, termination nor divergence is assumed. Choice predicates/fail guard/families are definitionally the native semantics branches. Canonical imported StackSemStateFiniteExact owns regs/fpRegs/store finite-support maps with genuine same-module broad/exact roundtrip witness; code remains Spt, not qualified as finite map. Positive type-indexed words and FFI Type carriers use combined relation/words qualifiers. Inherits reviewed reals_as_rational_cuts through native evaluator FP closure (SOUNDNESS item8); no numerical FP parity assertion. Full original HOL proof replay records universally closed statement and kernel proof success. Full StackRemove observational pass theorem, not remaining initializer/full compiler end-to-end theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitClock.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "clockNeutralStoreListCode",
+    "hol_name": "clock_neutral_store_list_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "reviewer": "flapjack-sol source comparison2026-10-03 original3874-3880: arbitrary HOL word-or-register list xs and arbitrary natural n/k, unconditional original clock_neutral(store_list_code n k xs). Literal native sum/list recursion and Inst/Seq/Skip constructors; original predicate and list_Seq retained. Positive-width HolProg/BitVec translation only, no bounds/register-alias/heap premise. Proof induction covers both word/register variants and terminal Skip. Full unchanged original proof replay records generalized statement and zero hypotheses. Initializer-specific prerequisite, not full initializer semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitClock.lean",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "words_as_type_indexed_bitvec": true,
+    "lean_name": "evaluateInitCodeClock",
+    "hol_name": "evaluate_init_code_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original3882-3891 local theorem: all gen_gc/max_heap/k/source/result/post/replacement-clock parameters, sole actual evaluate(init_code,s)=(res,t) premise and original same result/post with replaced clock conclusion. Uses source-reviewed actual native initializer and evaluator, arbitrary positive word width and independent compile/FFI host types. Initializer structural neutrality proved from literal full instruction list, both conditional branches, init_memory and full store-list neutrality; accepted original generic evaluate_clock_neutral supplies commutation, not an assumed target run. regs/fpRegs/store canonical owner StackSemStateFiniteExact is imported and same-module real broad/exact roundtrip checked; code remains Spt. Inherits reals_as_rational_cuts SOUNDNESS item8 through actual evaluator; no new FP correspondence. Complete unchanged original local proof replay, generalized statement0hyp. Full initialization and compiler theorem remain on dependency-linked beads."
   }
 ]

@@ -6356,6 +6356,12 @@
       "sha256": "43d14b6bdd51f0dc6ac5cda03d88eecca0ecf4502f7d7242f5b634e969dae2e2"
     },
     {
+      "bytes": 374,
+      "out": "stack_remove_init_clock_probe.out",
+      "rows": 6,
+      "sha256": "4d37e878994fbfb13154b624aae3ecb2a3c9099a67628ee1d17aa6b89dcacaae"
+    },
+    {
       "bytes": 124,
       "out": "stack_remove_init_probe.out",
       "rows": 8,

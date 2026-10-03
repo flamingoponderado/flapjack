@@ -6191,3 +6191,7 @@ run_probe l3_csr_unknown_probeScript.sml l3_csr_unknown_probe.out \
 run_probe word_to_stack_comp_flat_probeScript.sml word_to_stack_comp_flat_probe.out \
   comp_correct_assign_statement comp_correct_assign_proved comp_correct_assign_hypotheses comp_correct_store_statement comp_correct_store_proved comp_correct_store_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_clock_probeScript.sml stack_remove_init_clock_probe.out \
+  store_list_neutral_statement store_list_neutral_hypotheses store_list_neutral_proved init_clock_statement init_clock_hypotheses init_clock_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
