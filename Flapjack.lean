@@ -1,6 +1,11 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
@@ -636,6 +641,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapSentinelLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapBitStructure
 import Flapjack.Compiler.Backend.WordToStack.Proofs.BitmapWordLemmas
 import Flapjack.Compiler.Backend.StackProps.RegisterBounds
+import Flapjack.Compiler.Backend.WordCse.Knowledge
+import Flapjack.Compiler.Backend.WordCse.ProductionKnowledge
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
@@ -653,6 +660,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
+import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
+import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
@@ -952,6 +961,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoIdentity
 import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorCleanupMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeAllocatorCaller
@@ -1301,6 +1311,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
+import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
+import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
@@ -2310,6 +2322,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorFlat
 import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
 
 -- Tagged modules required by the HOL reference coverage gate.
 
