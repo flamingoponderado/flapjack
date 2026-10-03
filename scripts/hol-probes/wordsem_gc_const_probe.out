@@ -1,0 +1,3 @@
+gc_const_statement=∀y x. gc x = SOME y ⇒ y.clock = x.clock ∧ y.ffi = x.ffi ∧ y.code = x.code ∧ (y.be ⇔ x.be) ∧ y.code_buffer = x.code_buffer ∧ y.data_buffer = x.data_buffer ∧ y.compile = x.compile ∧ y.handler = x.handler ∧ y.compile_oracle = x.compile_oracle ∧ y.locals_size = x.locals_size ∧ y.stack_limit = x.stack_limit ∧ y.stack_max = x.stack_max ∧ y.stack_size = x.stack_size
+gc_const_proved=T
+gc_const_hypotheses=0
