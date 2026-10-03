@@ -6871,3 +6871,7 @@ run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
   evaluate_ind evaluate_ind_types evaluate_ind_hypotheses evaluate_ind_proved \
   filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
+  no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
