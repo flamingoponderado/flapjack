@@ -1,4 +1,7 @@
 import Flapjack.Test.L3CSRInstructionsParity
+import Flapjack.Test.LabToTargetInitializerInterferenceParity
+import Flapjack.Test.LabToTargetInitializerBasicCasesParity
+import Flapjack.Test.LabToTargetCodeSafetyTransportParity
 import Flapjack.Test.L3CSRDispatchParity
 import Flapjack.Test.L3CSRCounterParity
 import Flapjack.Test.L3FPCSRParity
@@ -16,7 +19,6 @@ import Flapjack.Test.L3TLBFlushParity
 import Flapjack.Test.L3SystemSignalsParity
 import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.BytesInMemoryDomainParity
-import Flapjack.Test.LabToTargetCodeSafetyTransportParity
 import Flapjack.Test.TargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationParity

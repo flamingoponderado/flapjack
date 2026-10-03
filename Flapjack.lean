@@ -1,3 +1,5 @@
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.InterferenceCases
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.BasicCases
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain

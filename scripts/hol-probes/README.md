@@ -6545,6 +6545,19 @@ both branches, arbitrary annotation payloads and unchanged exact HolFfiName
 lists. Neither alternative is strengthened or discarded, and no target safety
 premise/default/HD/EL dependency is introduced. The single original capture is
 regenerated in full; prior shared-memory transport rows remain unchanged.
+`word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
+
+### Full initializer basic case group
+
+`lab_to_target_initializer_basic_cases_probeScript.sml` captures the complete
+original local `IMP_state_rel_make_init`, every free-variable type and zero
+hypotheses, then projects genuine state relation conjuncts19/20/22/23/31/34/35/41/48/53
+under its unchanged full guard. These are original ISR4/5/6/7/9/10/11/13/14/17.
+Every projected implication is kernel checked and has zero hypotheses; no
+separate guard or successful target state is assumed. Remaining cases and the
+full initializer are open. The native consumer derives actual target memory
+bytes and initial PC from these cases and full source guards.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_basic_cases_probeScript.sml`.
 `stack_rawcall_jumplower_case_probe` freshly captures original paired comp_correct/zero hypotheses, the complete JumpLower case statement and exact evaluate_ind callee guards. Six independent original unsigned comparisons at widths1/8/64/80 are replayed in the kernel and runtime; five full theorem consumers retain both existential simulations. Captures do not prove cross-language equivalence or the full pass theorem.
 
 
@@ -6587,3 +6600,15 @@ checks supplement source review; full Run/Next correctness remains open.
 
 
 `stack_rawcall_memory_ffi_probe` freshly captures the original full comp_correct/zero hypotheses and four ShMemOp/buffer-write/FFI specializations (original541-560). Four full paired native simulations retain only the original three premises; twenty final-theorem consumers check arbitrary positive and1/8/64/80 widths. Actual code transport includes all eight memory operations, timeout, errors and FFI final/return behavior. Captured statements are regression evidence, not cross-language equivalence.
+### Full initializer interference cases
+
+`lab_to_target_initializer_interference_probeScript.sml` freshly captures the
+complete original local initializer theorem/types/zero hypotheses and genuine
+state relation conjuncts16/17/24/50: original ISR2 normal FFI, ISR3 cache clear,
+ISR8 name/search layout and ISR15 shared-memory interference. Every projection
+retains the full fourteen source guards, has zero hypotheses and is kernel
+checked. Native proofs derive return-byte length, empty-name identity and full
+post-state facts, with all bounds obtained from original boundary/length
+guards. The native consumer observes the actual target cache-return PC.
+No arbitrary EL/default policy or full initializer completion is claimed.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_interference_probeScript.sml`.

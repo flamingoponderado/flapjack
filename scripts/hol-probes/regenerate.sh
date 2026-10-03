@@ -6205,3 +6205,24 @@ run_probe l3_csr_instruction_probeScript.sml l3_csr_instruction_probe.out \
 run_probe stack_remove_compile_semantics_full_probeScript.sml stack_remove_compile_semantics_full_probe.out \
   compile_semantics_full_statement compile_semantics_full_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_initializer_basic_cases_probeScript.sml lab_to_target_initializer_basic_cases_probe.out \
+  IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
+  ISR4_statement ISR4_hypotheses ISR4_proved \
+  ISR5_statement ISR5_hypotheses ISR5_proved \
+  ISR6_statement ISR6_hypotheses ISR6_proved \
+  ISR7_statement ISR7_hypotheses ISR7_proved \
+  ISR9_statement ISR9_hypotheses ISR9_proved \
+  ISR10_statement ISR10_hypotheses ISR10_proved \
+  ISR11_statement ISR11_hypotheses ISR11_proved \
+  ISR13_statement ISR13_hypotheses ISR13_proved \
+  ISR14_statement ISR14_hypotheses ISR14_proved \
+  ISR17_statement ISR17_hypotheses ISR17_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_initializer_interference_probeScript.sml lab_to_target_initializer_interference_probe.out \
+  IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
+  ISR2_statement ISR2_hypotheses ISR2_proved \
+  ISR3_statement ISR3_hypotheses ISR3_proved \
+  ISR8_statement ISR8_hypotheses ISR8_proved \
+  ISR15_statement ISR15_hypotheses ISR15_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
