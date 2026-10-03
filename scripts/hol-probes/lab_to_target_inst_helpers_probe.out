@@ -1,0 +1,201 @@
+get_byte_set_byte=8 ≤ dimindex (:α) ⇒ get_byte a (set_byte a b w be) be = b
+get_byte_set_byte_types=(8 :num) ≤ dimindex (:α) ⇒
+get_byte (a :α word) (set_byte a (b :word8) (w :α word) (be :bool)) be = b
+good_dimindex_get_byte_set_byte=good_dimindex (:α) ⇒ get_byte a (set_byte a b w be) be = b
+good_dimindex_get_byte_set_byte_types=good_dimindex (:α) ⇒
+get_byte (a :α word) (set_byte a (b :word8) (w :α word) (be :bool)) be = b
+get_byte_set_byte_diff=good_dimindex (:α) ∧ a ≠ a' ∧ byte_align a = byte_align a' ⇒
+get_byte a (set_byte a' b w be) be = get_byte a w be
+get_byte_set_byte_diff_types=good_dimindex (:α) ∧ (a :α word) ≠ (a' :α word) ∧
+byte_align a = byte_align a' ⇒
+get_byte a (set_byte a' (b :word8) (w :α word) (be :bool)) be =
+get_byte a w be
+MULT_ADD_LESS_MULT=∀m n k l j. m < l ∧ n < k ∧ j ≤ k ⇒ m * j + n < l * k
+MULT_ADD_LESS_MULT_types=∀(m :num) (n :num) (k :num) (l :num) (j :num).
+  m < l ∧ n < k ∧ j ≤ k ⇒ m * j + n < l * k
+aligned_IMP_ADD_LESS_dimword=aligned k x ∧ k ≤ dimindex (:α) ⇒ w2n x + (2 ** k − 1) < dimword (:α)
+aligned_IMP_ADD_LESS_dimword_types=aligned (k :num) (x :α word) ∧ k ≤ dimindex (:α) ⇒
+w2n x + ((2 :num) ** k − (1 :num)) < dimword (:α)
+aligned_2_imp=aligned 2 x ∧ dimindex (:α) = 32 ⇒
+byte_align x = x ∧ byte_align (x + 1w) = x ∧ byte_align (x + 2w) = x ∧
+byte_align (x + 3w) = x
+aligned_2_imp_types=aligned (2 :num) (x :α word) ∧ dimindex (:α) = (32 :num) ⇒
+byte_align x = x ∧ byte_align (x + (1w :α word)) = x ∧
+byte_align (x + (2w :α word)) = x ∧ byte_align (x + (3w :α word)) = x
+aligned_2_not_eq=aligned 2 x ∧ dimindex (:α) = 32 ∧ x ≠ byte_align a ⇒
+x ≠ a ∧ x + 1w ≠ a ∧ x + 2w ≠ a ∧ x + 3w ≠ a
+aligned_2_not_eq_types=aligned (2 :num) (x :α word) ∧ dimindex (:α) = (32 :num) ∧
+x ≠ byte_align (a :α word) ⇒
+x ≠ a ∧ x + (1w :α word) ≠ a ∧ x + (2w :α word) ≠ a ∧ x + (3w :α word) ≠ a
+aligned_3_imp=aligned 3 x ∧ dimindex (:α) = 64 ⇒
+byte_align x = x ∧ byte_align (x + 1w) = x ∧ byte_align (x + 2w) = x ∧
+byte_align (x + 3w) = x ∧ byte_align (x + 4w) = x ∧ byte_align (x + 5w) = x ∧
+byte_align (x + 6w) = x ∧ byte_align (x + 7w) = x
+aligned_3_imp_types=aligned (3 :num) (x :α word) ∧ dimindex (:α) = (64 :num) ⇒
+byte_align x = x ∧ byte_align (x + (1w :α word)) = x ∧
+byte_align (x + (2w :α word)) = x ∧ byte_align (x + (3w :α word)) = x ∧
+byte_align (x + (4w :α word)) = x ∧ byte_align (x + (5w :α word)) = x ∧
+byte_align (x + (6w :α word)) = x ∧ byte_align (x + (7w :α word)) = x
+aligned_3_not_eq=aligned 3 x ∧ dimindex (:α) = 64 ∧ x ≠ byte_align a ⇒
+x ≠ a ∧ x + 1w ≠ a ∧ x + 2w ≠ a ∧ x + 3w ≠ a ∧ x + 4w ≠ a ∧ x + 5w ≠ a ∧
+x + 6w ≠ a ∧ x + 7w ≠ a
+aligned_3_not_eq_types=aligned (3 :num) (x :α word) ∧ dimindex (:α) = (64 :num) ∧
+x ≠ byte_align (a :α word) ⇒
+x ≠ a ∧ x + (1w :α word) ≠ a ∧ x + (2w :α word) ≠ a ∧ x + (3w :α word) ≠ a ∧
+x + (4w :α word) ≠ a ∧ x + (5w :α word) ≠ a ∧ x + (6w :α word) ≠ a ∧
+x + (7w :α word) ≠ a
+dimword_eq_32_imp_or_bytes=dimindex (:α) = 32 ⇒
+w2w (w2w x) ‖ w2w (w2w (x ⋙ 8)) ≪ 8 ‖ w2w (w2w (x ⋙ 16)) ≪ 16 ‖
+w2w (w2w (x ⋙ 24)) ≪ 24 = x
+dimword_eq_32_imp_or_bytes_types=dimindex (:α) = (32 :num) ⇒
+(w2w (w2w (x :α word) :word8) :α word) ‖
+(w2w (w2w (x ⋙ (8 :num)) :word8) :α word) ≪ (8 :num) ‖
+(w2w (w2w (x ⋙ (16 :num)) :word8) :α word) ≪ (16 :num) ‖
+(w2w (w2w (x ⋙ (24 :num)) :word8) :α word) ≪ (24 :num) = x
+dimword_eq_64_imp_or_bytes=dimindex (:α) = 64 ⇒
+w2w (w2w x) ‖ w2w (w2w (x ⋙ 8)) ≪ 8 ‖ w2w (w2w (x ⋙ 16)) ≪ 16 ‖
+w2w (w2w (x ⋙ 24)) ≪ 24 ‖ w2w (w2w (x ⋙ 32)) ≪ 32 ‖ w2w (w2w (x ⋙ 40)) ≪ 40 ‖
+w2w (w2w (x ⋙ 48)) ≪ 48 ‖ w2w (w2w (x ⋙ 56)) ≪ 56 = x
+dimword_eq_64_imp_or_bytes_types=dimindex (:α) = (64 :num) ⇒
+(w2w (w2w (x :α word) :word8) :α word) ‖
+(w2w (w2w (x ⋙ (8 :num)) :word8) :α word) ≪ (8 :num) ‖
+(w2w (w2w (x ⋙ (16 :num)) :word8) :α word) ≪ (16 :num) ‖
+(w2w (w2w (x ⋙ (24 :num)) :word8) :α word) ≪ (24 :num) ‖
+(w2w (w2w (x ⋙ (32 :num)) :word8) :α word) ≪ (32 :num) ‖
+(w2w (w2w (x ⋙ (40 :num)) :word8) :α word) ≪ (40 :num) ‖
+(w2w (w2w (x ⋙ (48 :num)) :word8) :α word) ≪ (48 :num) ‖
+(w2w (w2w (x ⋙ (56 :num)) :word8) :α word) ≪ (56 :num) = x
+byte_align_32_eq=dimindex (:α) = 32 ⇒ byte_align a + n2w (w2n a MOD 4) = a
+byte_align_32_eq_types=dimindex (:α) = (32 :num) ⇒
+byte_align (a :α word) + (n2w (w2n a MOD (4 :num)) :α word) = a
+byte_align_64_eq=dimindex (:α) = 64 ⇒ byte_align a + n2w (w2n a MOD 8) = a
+byte_align_64_eq_types=dimindex (:α) = (64 :num) ⇒
+byte_align (a :α word) + (n2w (w2n a MOD (8 :num)) :α word) = a
+byte_align_32_IMP=dimindex (:α) = 32 ⇒
+(byte_align a = a ⇒ w2n a MOD 4 = 0) ∧
+(byte_align a + 1w = a ⇒ w2n a MOD 4 = 1) ∧
+(byte_align a + 2w = a ⇒ w2n a MOD 4 = 2) ∧
+(byte_align a + 3w = a ⇒ w2n a MOD 4 = 3)
+byte_align_32_IMP_types=dimindex (:α) = (32 :num) ⇒
+(byte_align (a :α word) = a ⇒ w2n a MOD (4 :num) = (0 :num)) ∧
+(byte_align a + (1w :α word) = a ⇒ w2n a MOD (4 :num) = (1 :num)) ∧
+(byte_align a + (2w :α word) = a ⇒ w2n a MOD (4 :num) = (2 :num)) ∧
+(byte_align a + (3w :α word) = a ⇒ w2n a MOD (4 :num) = (3 :num))
+MOD4_CASES=∀n. n MOD 4 = 0 ∨ n MOD 4 = 1 ∨ n MOD 4 = 2 ∨ n MOD 4 = 3
+MOD4_CASES_types=∀(n :num).
+  n MOD (4 :num) = (0 :num) ∨ n MOD (4 :num) = (1 :num) ∨
+  n MOD (4 :num) = (2 :num) ∨ n MOD (4 :num) = (3 :num)
+byte_align_32_CASES=dimindex (:α) = 32 ⇒
+byte_align a + 3w = a ∨ byte_align a + 2w = a ∨ byte_align a + 1w = a ∨
+byte_align a = a
+byte_align_32_CASES_types=dimindex (:α) = (32 :num) ⇒
+byte_align (a :α word) + (3w :α word) = a ∨ byte_align a + (2w :α word) = a ∨
+byte_align a + (1w :α word) = a ∨ byte_align a = a
+MOD8_CASES=∀n. n MOD 8 = 0 ∨ n MOD 8 = 1 ∨ n MOD 8 = 2 ∨ n MOD 8 = 3 ∨ n MOD 8 = 4 ∨
+    n MOD 8 = 5 ∨ n MOD 8 = 6 ∨ n MOD 8 = 7
+MOD8_CASES_types=∀(n :num).
+  n MOD (8 :num) = (0 :num) ∨ n MOD (8 :num) = (1 :num) ∨
+  n MOD (8 :num) = (2 :num) ∨ n MOD (8 :num) = (3 :num) ∨
+  n MOD (8 :num) = (4 :num) ∨ n MOD (8 :num) = (5 :num) ∨
+  n MOD (8 :num) = (6 :num) ∨ n MOD (8 :num) = (7 :num)
+byte_align_64_CASES=dimindex (:α) = 64 ⇒
+byte_align a + 7w = a ∨ byte_align a + 6w = a ∨ byte_align a + 5w = a ∨
+byte_align a + 4w = a ∨ byte_align a + 3w = a ∨ byte_align a + 2w = a ∨
+byte_align a + 1w = a ∨ byte_align a = a
+byte_align_64_CASES_types=dimindex (:α) = (64 :num) ⇒
+byte_align (a :α word) + (7w :α word) = a ∨ byte_align a + (6w :α word) = a ∨
+byte_align a + (5w :α word) = a ∨ byte_align a + (4w :α word) = a ∨
+byte_align a + (3w :α word) = a ∨ byte_align a + (2w :α word) = a ∨
+byte_align a + (1w :α word) = a ∨ byte_align a = a
+byte_align_64_IMP=dimindex (:α) = 64 ⇒
+(byte_align a + 7w = a ⇒ w2n a MOD 8 = 7) ∧
+(byte_align a + 6w = a ⇒ w2n a MOD 8 = 6) ∧
+(byte_align a + 5w = a ⇒ w2n a MOD 8 = 5) ∧
+(byte_align a + 4w = a ⇒ w2n a MOD 8 = 4) ∧
+(byte_align a + 3w = a ⇒ w2n a MOD 8 = 3) ∧
+(byte_align a + 2w = a ⇒ w2n a MOD 8 = 2) ∧
+(byte_align a + 1w = a ⇒ w2n a MOD 8 = 1) ∧
+(byte_align a = a ⇒ w2n a MOD 8 = 0)
+byte_align_64_IMP_types=dimindex (:α) = (64 :num) ⇒
+(byte_align (a :α word) + (7w :α word) = a ⇒ w2n a MOD (8 :num) = (7 :num)) ∧
+(byte_align a + (6w :α word) = a ⇒ w2n a MOD (8 :num) = (6 :num)) ∧
+(byte_align a + (5w :α word) = a ⇒ w2n a MOD (8 :num) = (5 :num)) ∧
+(byte_align a + (4w :α word) = a ⇒ w2n a MOD (8 :num) = (4 :num)) ∧
+(byte_align a + (3w :α word) = a ⇒ w2n a MOD (8 :num) = (3 :num)) ∧
+(byte_align a + (2w :α word) = a ⇒ w2n a MOD (8 :num) = (2 :num)) ∧
+(byte_align a + (1w :α word) = a ⇒ w2n a MOD (8 :num) = (1 :num)) ∧
+(byte_align a = a ⇒ w2n a MOD (8 :num) = (0 :num))
+align2_not_align3_4w=¬aligned 3 x ∧ aligned 2 x ∧ dimindex (:α) = 64 ⇒
+x = byte_align x + 4w ∧ x + 1w = byte_align x + 5w ∧
+x + 2w = byte_align x + 6w ∧ x + 3w = byte_align x + 7w
+align2_not_align3_4w_types=¬aligned (3 :num) (x :α word) ∧ aligned (2 :num) x ∧
+dimindex (:α) = (64 :num) ⇒
+x = byte_align x + (4w :α word) ∧
+x + (1w :α word) = byte_align x + (5w :α word) ∧
+x + (2w :α word) = byte_align x + (6w :α word) ∧
+x + (3w :α word) = byte_align x + (7w :α word)
+arith_upd_lemma=(∀r. word_loc_val p labs (read_reg r s1) = SOME (t1.regs r)) ∧
+¬(arith_upd a s1).failed ⇒
+∀r. word_loc_val p labs (read_reg r (arith_upd a s1)) =
+    SOME ((arith_upd a t1).regs r)
+arith_upd_lemma_types=(∀(r :num).
+   word_loc_val (p :α word) (labs :num sptree$num_map sptree$num_map)
+     (read_reg r (s1 :(α, β, γ) labSem$state) :α word_loc) =
+   SOME ((t1 :α asm_state).regs r :α word)) ∧
+¬(arith_upd (a :α arith) s1).failed ⇒
+∀(r :num).
+  word_loc_val p labs (read_reg r (arith_upd a s1) :α word_loc) =
+  SOME ((arith_upd a t1).regs r :α word)
+arith_upd_fp_regs=(arith_upd a s).fp_regs = s.fp_regs ∧ (arith_upd a t).fp_regs = t.fp_regs
+arith_upd_fp_regs_types=(arith_upd (a :α arith) (s :(α, β, γ) labSem$state)).fp_regs = s.fp_regs ∧
+(arith_upd a (t :α asm_state)).fp_regs = t.fp_regs
+fp_upd_lemma=(∀r. word_loc_val p labs (read_reg r s1) = SOME (t1.regs r)) ∧
+(∀r. s1.fp_regs r = t1.fp_regs r) ∧ ¬(fp_upd f s1).failed ⇒
+(∀r. (fp_upd f s1).fp_regs r = (fp_upd f t1).fp_regs r) ∧
+∀r. word_loc_val p labs (read_reg r (fp_upd f s1)) =
+    SOME ((fp_upd f t1).regs r)
+fp_upd_lemma_types=(∀(r :num).
+   word_loc_val (p :α word) (labs :num sptree$num_map sptree$num_map)
+     (read_reg r (s1 :(α, β, γ) labSem$state) :α word_loc) =
+   SOME ((t1 :α asm_state).regs r :α word)) ∧
+(∀(r :num). (s1.fp_regs r :word64) = (t1.fp_regs r :word64)) ∧
+¬(fp_upd (f :fp) s1).failed ⇒
+(∀(r :num).
+   ((fp_upd f s1).fp_regs r :word64) = ((fp_upd f t1).fp_regs r :word64)) ∧
+∀(r :num).
+  word_loc_val p labs (read_reg r (fp_upd f s1) :α word_loc) =
+  SOME ((fp_upd f t1).regs r :α word)
+Inst_share_mem_pc_update_helper=share_mem_state_rel mc_conf s1 t1 ms1 ∧
+target_state_rel mc_conf.target (t1 with pc := pc') ms2 ⇒
+share_mem_state_rel mc_conf
+  (s1 with <|pc := s1.pc + 1; clock := s1.clock − 1|>) (t1 with pc := pc')
+  ms2
+Inst_share_mem_pc_update_helper_types=share_mem_state_rel (mc_conf :(α, β, γ) machine_config)
+  (s1 :(δ, config, ε) labSem$state) (t1 :α asm_state) (ms1 :ζ) ∧
+target_state_rel mc_conf.target (t1 with pc := (pc' :α word)) (ms2 :β) ⇒
+share_mem_state_rel mc_conf
+  (s1 with <|pc := s1.pc + (1 :num); clock := s1.clock − (1 :num)|>)
+  (t1 with pc := pc') ms2
+Inst_share_mem_reg_update_helper=share_mem_state_rel mc_conf s1 t1 ms1 ∧
+target_state_rel mc_conf.target
+  (t1 with <|regs := t1.regs⦇n ↦ c⦈; pc := pc'|>) ms2 ⇒
+share_mem_state_rel mc_conf
+  (s1 with
+   <|regs := s1.regs⦇n ↦ Word c⦈; pc := s1.pc + 1; clock := s1.clock − 1|>)
+  (t1 with <|regs := t1.regs⦇n ↦ c⦈; pc := pc'|>) ms2
+Inst_share_mem_reg_update_helper_types=share_mem_state_rel (mc_conf :(α, β, γ) machine_config)
+  (s1 :(α, config, δ) labSem$state) (t1 :α asm_state) (ms1 :ε) ∧
+target_state_rel mc_conf.target
+  (t1 with <|regs := t1.regs⦇(n :num) ↦ (c :α word)⦈; pc := (pc' :α word)|>)
+  (ms2 :β) ⇒
+share_mem_state_rel mc_conf
+  (s1 with
+   <|regs := s1.regs⦇n ↦ Word c⦈; pc := s1.pc + (1 :num);
+     clock := s1.clock − (1 :num)|>)
+  (t1 with <|regs := t1.regs⦇n ↦ c⦈; pc := pc'|>) ms2
+arith_upd_share_mem_domain_unchange=(arith_upd a s1).shared_mem_domain = s1.shared_mem_domain
+arith_upd_share_mem_domain_unchange_types=(arith_upd (a :α arith) (s1 :(α, β, γ) labSem$state)).shared_mem_domain =
+s1.shared_mem_domain
+fp_upd_share_mem_domain_unchange=(fp_upd f s1).shared_mem_domain = s1.shared_mem_domain
+fp_upd_share_mem_domain_unchange_types=(fp_upd (f :fp) (s1 :(α, β, γ) labSem$state)).shared_mem_domain =
+s1.shared_mem_domain
