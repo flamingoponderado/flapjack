@@ -5961,3 +5961,14 @@ run_probe misc_find_index_shift_probeScript.sml misc_find_index_shift_probe.out 
 run_probe stack_remove_copy_loop_full_probeScript.sml stack_remove_copy_loop_full_probe.out \
   copy_loop_statement copy_loop_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_code_bitmaps_install_probeScript.sml stack_code_bitmaps_install_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_install_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_ffi_probeScript.sml stack_code_bitmaps_ffi_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_ffi_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_rawcall_probeScript.sml stack_code_bitmaps_rawcall_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_rawcall_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
