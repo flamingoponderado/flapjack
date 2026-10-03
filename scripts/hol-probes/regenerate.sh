@@ -1537,6 +1537,12 @@ run_probe binary_ieee_arith_probeScript.sml binary_ieee_arith_probe.out \
 run_probe binary_ieee_real_probeScript.sml binary_ieee_real_probe.out \
   real_to_float_def float_sqrt_def \
   "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_convert_probeScript.sml binary_ieee_convert_probe.out \
+  float_to_int_def real_to_float_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe machine_ieee_fp64_defs_probeScript.sml machine_ieee_fp64_defs_probe.out \
+  fp64_to_float_def fp64_isSignallingNan_def \
+  "$repo_dir/HOL/src/floating-point/machine_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
   distinct_names duplicate_names \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"
@@ -6886,3 +6892,12 @@ run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
 run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutral_probe.out \
   fupdate_elim2_statement fupdate_elim2_types fupdate_elim2_hypotheses fupdate_elim2_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_target_helper_links_probeScript.sml riscv_target_helper_links_probe.out \
+  helper_binop_statement helper_binop_hypotheses helper_binop_proved helper_shift_imm_statement helper_shift_imm_hypotheses helper_shift_imm_proved helper_shift_reg_statement helper_shift_reg_hypotheses helper_shift_reg_proved \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_code_probe.out \
+  store_list_code_thm_statement store_list_code_thm_hypotheses store_list_code_thm_free_vars \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
+  no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

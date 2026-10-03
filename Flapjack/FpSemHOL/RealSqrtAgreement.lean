@@ -1,5 +1,5 @@
 import Flapjack.FpSemHOL
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+import Flapjack.Misc.MachineIeee.SqrtReal
 
 namespace Flapjack
 
