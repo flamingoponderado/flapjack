@@ -7657,3 +7657,11 @@ run_probe riscv_target_const_probeScript.sml riscv_target_const_probe.out \
   riscv_encoder_correct_const_hypotheses riscv_encoder_correct_const_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe word_to_stack_memory_relations_probeScript.sml word_to_stack_memory_relations_probe.out \
+  stateRelMemStore_typed stateRelMemStore_proved stateRelMemStore_hypotheses stateRelWithMemory_typed stateRelWithMemory_proved stateRelWithMemory_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_load_register_offset_probeScript.sml word_to_stack_load_register_offset_probe.out \
+  loadReg1Offset_typed loadReg1Offset_proved loadReg1Offset_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

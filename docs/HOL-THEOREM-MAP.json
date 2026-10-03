@@ -90646,5 +90646,54 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c author source comparison2026-10-03: original theorem512 and Const proof533-545 with encoder_correct_def117-133. Genuine full Inst(Const r c) constructor retains unrestricted natural destination/word64 constant, fixed original64-bit source state and complete native riscv_state, original asmStep+targetStateRel sole premises, existential n/every env/original interference, full asserts validity/all-code-byte equality/PC coverage/final targetStateRel and asserts2 outside-domain frame. Internal original asm_ok gives destination bounds/nonzero; all signed12/32/wide lowering branches kept, wide scratch31 updated literally and preserved by full GPR projection, excluded from source observations only by original avoidRegs. Every actual native Next fetch is derived from whole emitted bytes and universal Encode/Decode proofs; no target-run, range, output, final relation or stronger environment premise. Prefix execution supplies every intermediate property and exact modular PC4*j coverage; final complete native state relation follows original source update and projection transport. Witness n=instruction-list length-1, all emitted lists nonempty. Inherited reals_as_rational_cuts from reviewed complete native state/Run closure (SOUNDNESS8) retained unchanged. Fresh original unrestricted Const specialization retains original binder types, zero stored hypotheses/provedT; capture is regression evidence, not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelMemory.lean",
+    "lean_name": "stateRelWithMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_with_memory",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4387-4394: one full original stateRel implication, arbitrary total word_loc memory replacement on both states, all k/frame/lens/extra values. Full38-conjunct relation retained; memory equality reflexive after replacement, every compiler/oracle/code/stack/resource/local/FFI obligation preserved without extra premise. Canonical source fpRegs/store and target regs/fpRegs/store qualified; native sptree locals/code unchanged. Common source/target/payload word dimension, source host Nat×C vs target C and independent FFI type retained. Same-module canonical codec witnesses reexported. Structural relation establishes no new numerical FP or HOL-to-Lean equivalence. Fresh original full typed kernel captures regenerated and reviewed: both T/hypotheses0, complete guards/conclusions and common word dimension with independent host/FFI; not local literal proof replay or cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelMemory.lean",
+    "lean_name": "stateRelMemStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_mem_store",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original3836-3845: conjunction of original full stateRel and successful source mem_store implies existential actual target mem_store and full post-state relation. Actual domain equality/membership and memory equality are derived from the original guards, arbitrary positive width/address/Word-or-Loc payload/extra; internally constructed memory update, no targetpost assumption. Canonical source fpRegs/store and target regs/fpRegs/store qualified; native sptree locals/code unchanged. Common source/target/payload word dimension, source host Nat×C vs target C and independent FFI type retained. Same-module canonical codec witnesses reexported. Structural relation establishes no new numerical FP or HOL-to-Lean equivalence. Fresh original full typed kernel captures regenerated and reviewed: both T/hypotheses0, complete guards/conclusions and common word dimension with independent host/FFI; not local literal proof replay or cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterOffset.lean",
+    "lean_name": "evaluateWStackLoadWReg1WithConst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_wReg1_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: original local4447-4469 all four guards/seven-conjunct conclusion. Actual compiled wReg1/even/source Add[Var r;Const c] word expression success/full stateRel derive actual native load run, unchanged clock, full relation/stack length/space, original physical-register-not-k+1 and actual target Add expression success. Source read and wordOpHOL calculation derived internally; arbitrary constant/result, physical or spill source, positive width, independent host/FFI. Native sptree locals/code preserved; canonical five map fields qualified and genuine same-module codec witnesses. No targetexpression/run/postrelation hypothesis or numerical FP claim. The evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8), without an independent agreement claim. Fresh literal original local proof replay with unchanged original Reg1 support and full typed statement regenerated and reviewed: T/hypotheses0, all four guards/seven result conjuncts, common word dimension/independent host-FFI; no cross-language equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
