@@ -6839,3 +6839,7 @@ run_probe lab_to_target_make_init_filter_probeScript.sml lab_to_target_make_init
 run_probe lab_filter_section_end_probeScript.sml lab_filter_section_end_probe.out \
   sec_ends_with_label_filter_skip sec_ends_with_label_filter_skip_types sec_ends_with_label_filter_skip_hypotheses sec_ends_with_label_filter_skip_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_flatten_conversion_probeScript.sml pan_structs_flatten_conversion_probe.out \
+  flatten_convert_v_statement flatten_convert_v_types flatten_convert_v_hypotheses flatten_convert_v_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
