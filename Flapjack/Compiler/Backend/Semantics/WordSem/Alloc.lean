@@ -5,7 +5,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Env
 
 Counterpart of `cakeml/compiler/backend/semantics/wordSemScript.sml:614-705`
 (bead `flapjack-h29l.5`): `find_code`, `enc_stack`, `dec_stack`, `gc`,
-`has_space`, `alloc`, and `assign`.  These are over the tagged
+`has_space`, `alloc`, and `assign`.  The state operations are over the tagged
 `WordSemStateFiniteExact`, with the carrier translations of its `state`
 port (qualifier `fmap_as_finite_support := [fpRegs, store]` and the
 same-module witness below).
@@ -33,6 +33,9 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C : Type} {F
 end WordSemAllocSupport
 
 /-- Exact HOL `find_code_def` (`wordSemScript.sml:614-630`).
+    HOL independently quantifies the code payload and stack-size payload;
+    neither is inspected. Evaluator callers instantiate these at the source
+    program carrier and Nat, while this definition retains the full type.
     * `find_code (SOME p) args code ssize`: look `p` up in `code`, check the
       arity, and return `(args, exp, lookup p ssize)`.
     * `find_code NONE args code ssize`: fail on `[]`.  Otherwise the last
@@ -40,9 +43,9 @@ end WordSemAllocSupport
       1`, and the result is `(FRONT args, exp, lookup loc ssize)`. -/
 @[hol "cakeml/compiler/backend/semantics/wordSemScript.sml" "find_code_def"
   (words_as_type_indexed_bitvec)]
-def wordSemFindCode {width : Nat} [NeZero width] :
-    Option Nat → List (WordLocW width) → Spt (Nat × WordLangProgHOL (BitVec width)) →
-      Spt Nat → Option (List (WordLocW width) × WordLangProgHOL (BitVec width) × Option Nat)
+def wordSemFindCode {width : Nat} [NeZero width] {Code StackSize : Type} :
+    Option Nat → List (WordLocW width) → Spt (Nat × Code) →
+      Spt StackSize → Option (List (WordLocW width) × Code × Option StackSize)
   | some p, args, code, ssize =>
       match sptLookup p code with
       | none => none

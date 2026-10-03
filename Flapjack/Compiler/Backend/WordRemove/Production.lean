@@ -245,10 +245,10 @@ theorem wordLangProgFromHOL_isSome_removeMustTerminate {width : Nat} [NeZero wid
   | .shareInst a b c, h => h
 termination_by n => sizeOf n
 
-/-- The executed native `remove_must_terminate` route cannot fail on any program
-    in the encoder's image: success is derived, not assumed (bead flapjack-z6lof).
-    Only programs outside the codec image, such as the executable-only
-    five-register AddCarry, are rejected. -/
+/-- Conditional codec-image totality for the native `remove_must_terminate` route.
+    The premise establishes that the input is in the encoder's image. This does
+    not establish that allocator output satisfies that premise at the production
+    call site, including its legacy fallback. -/
 theorem wordRemoveMustTerminateViaHOL?_isSome {width : Nat} [NeZero width]
     (program : WordProg (BitVec width)) (h : (wordLangProgToHOL program).isSome = true) :
     (wordRemoveMustTerminateViaHOL? program).isSome = true := by
