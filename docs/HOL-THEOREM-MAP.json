@@ -75554,5 +75554,23 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original263 full native state/count/clock/target binders, conjunction of allSkips, nonfailed, clock=clk+count and target exact pc/clock update; conclusion entire native evaluator result-pair equality. Retains Error/TimeOut outcomes; no target evaluator premise. Native allSkipsEvaluate derives clock accounting. Inherits reals_as_rational_cuts via actual evaluator FP closure, SOUNDNESS item 8 unchanged. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "adjust_pc_all_skips",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PcAdjustment.lean",
+    "lean_name": "adjustPcAllSkips",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.3): Original211 all count/pc/code binders and entire allSkips guard preserved; conclusion adjustPc pc code+1=adjustPc(pc+count+1)code. Literal PC/fetch induction establishes the single-position Skip/nonSkip derivative; finite skipped-prefix induction and actual stop-position exclusion derive the full result. Source shared-return proof uses this exact law through share_mem_load/store_filter_correct_tac. No extra supplied alignment or fetch premise. Full original type-indexed word line/section carriers retained with positive-width BitVec qualifier; byte payloads fixed8 and all labels/constructors unchanged. Fresh complete original statement/types/zero hypotheses/kernel reproof captured; unchanged local original proofs replayed."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "all_skips_initial_adjust",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/PcAdjustment.lean",
+    "lean_name": "allSkipsInitialAdjust",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.3): Original281 arbitrary code yields actual existential count, allSkips 0 code count and adjustPc count code=0. Accepted full asmFetchAuxEq derives the witness; literal skipped-prefix PC invariant proves zero. No assumed count or initial alignment. This independent nearby source lemma has no downstream source use found, and is not claimed as a required final-assembler prerequisite. Full original type-indexed word line/section carriers retained with positive-width BitVec qualifier; byte payloads fixed8 and all labels/constructors unchanged. Fresh complete original statement/types/zero hypotheses/kernel reproof captured; unchanged local original proofs replayed."
   }
 ]

@@ -6988,3 +6988,7 @@ The same probe now also fetches the exported original `max_var_intro` kernel the
 ### Native filter state relation and skipped-run consequences
 
 `lab_filter_state_relation_probeScript.sml` captures four complete original declarations125/199/252/263 with full types, zero hypotheses and kernel reproofs (16 rows). The unchanged local proofs and their unchanged local state/skip-run prerequisites are replayed from the original source. The unused fetch lemma inst binder is captured explicitly.
+
+### Native skipped-run PC adjustment
+
+`lab_filter_pc_adjustment_probeScript.sml` replays the unchanged original local proofs211/281 and captures both full statements, all types, zero hypotheses and kernel reproofs (8 rows). The full successor adjustment law is an actual shared-memory filter simulation prerequisite; the initial-alignment lemma is independent nearby source support.
