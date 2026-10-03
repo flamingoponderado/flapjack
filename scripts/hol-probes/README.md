@@ -6738,6 +6738,13 @@ inferred stack carrier types. Native StackAbstractionSuffix retains all four
 premises and both conclusions; this does not establish full Raise correctness
 or HOL-to-Lean equivalence.
 
+`word_to_stack_env_identity_probe` replays the full original local
+`env_to_list_K_I_IMP`, reconstructing the unchanged local comparator SORTS and
+identity rearrangement proofs. It captures the complete statement, proved=T,
+and zero hypotheses. Native EnvironmentIdentity derives all three conclusions
+from the actual output equation; it supplies neither desired sorting nor
+permutation as a premise. Full handler/Raise correctness remains separate.
+
 `word_to_stack_handler_transition_probe` replays the full original local
 `stack_rel_raise` proof with unchanged statements and source-local prerequisite
 proofs. It captures all six premises and the complete existential handler

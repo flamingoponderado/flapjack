@@ -6380,6 +6380,15 @@ run_probe l3_register_shift_probeScript.sml l3_register_shift_probe.out \
 run_probe word_to_stack_inter_union_left_probeScript.sml word_to_stack_inter_union_left_probe.out \
   inter_union_left_statement inter_union_left_proved inter_union_left_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_abs_stack_prefix_drop_probeScript.sml word_to_stack_abs_stack_prefix_drop_probe.out \
+  abs_stack_prefix_drop_statement abs_stack_prefix_drop_proved abs_stack_prefix_drop_hypotheses abs_stack_prefix_drop_wstack_type abs_stack_prefix_drop_sstack_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_env_identity_probeScript.sml word_to_stack_env_identity_probe.out \
+  env_to_list_identity_statement env_to_list_identity_proved env_to_list_identity_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_handler_transition_probeScript.sml word_to_stack_handler_transition_probe.out \
+  stack_rel_raise_statement stack_rel_raise_proved stack_rel_raise_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
