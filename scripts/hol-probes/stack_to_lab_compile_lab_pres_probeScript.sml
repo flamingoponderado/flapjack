@@ -3,6 +3,8 @@ open HolKernel Parse bossLib preamble stack_to_labProofTheory stack_namesProofTh
  stack_allocProofTheory stack_removeProofTheory stack_to_labTheory stackSemTheory
  stackPropsTheory stack_allocTheory labSemTheory labPropsTheory semanticsPropsTheory;
 val _ = Globals.linewidth := 1000000;
+(* Full original inferred carriers remain visible in every captured statement. *)
+val _ = show_types := true;
 (* The script-local simpset changes of stack_to_labProofScript.sml:14-22. *)
 val _ = temp_delsimps ["NORMEQ_CONV"]
 val _ = temp_delsimps ["lift_disj_eq", "lift_imp_disj"]
