@@ -1,4 +1,8 @@
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.StoreConsts
+import Flapjack.Compiler.Backend.ClosKnown.Config
+import Flapjack.Compiler.Backend.ClosLang.Syntax
+import Flapjack.AstHOL.BackendOperators
+import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
