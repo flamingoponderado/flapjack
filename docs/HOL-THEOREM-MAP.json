@@ -76727,6 +76727,60 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:818-832: ∀i p. extract_labels (comp i p) = extract_labels p ∧ extract_labels (comp_top i p) = extract_labels p over the reviewed StackRawCall.comp/compTop; no premise. Proof follows the source (comp_seq_neq_IMP case split). Axioms propext, Classical.choice, Quot.sound."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "reg_bound_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "regBoundComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:872-890: ∀i p. (reg_bound (comp i p) s ⇔ reg_bound p s) ∧ (reg_bound (comp_top i p) s ⇔ reg_bound p s), free s implicit, bool equality as ↔, over the reviewed StackRawCall.comp/compTop and stackProps regBound; proof follows the source comp_seq_neq_IMP split."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_rawcall_reg_bound",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "stackRawcallRegBound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:892-898: EVERY (λp. reg_bound p sp) (MAP SND (compile prog1)) ⇔ EVERY (λp. reg_bound p sp) (MAP SND prog1), free sp prog1 implicit, EVERY as membership."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "call_args_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "callArgsComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:900-918: ∀i p. both call_args equivalences for comp and comp_top with free r1..r5 implicit; bool equality as ↔."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_alloc_call_args",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "stackRawcallCallArgs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:920-926 (stack_rawcallProof's own stack_alloc_call_args): EVERY (λp. call_args p 1 2 3 4 0) (MAP SND (compile prog1)) ⇔ the same for prog1, over stack_rawcall compile."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "MAP_FST_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "mapFstCompile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:928-934: MAP FST (compile code) = MAP FST code over stack_rawcall compile."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "call_arg_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "callArgComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:936-952: ∀i p. (alloc_arg (comp i p) ⇔ alloc_arg p) ∧ (alloc_arg (comp_top i p) ⇔ alloc_arg p) over stackProps allocArg."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashOccurrences.lean",
     "lean_name": "everyVarExp_getReadsExp",
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -82794,6 +82848,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_removeProofScript.sml:4176-4200: ∀jump off k p. extract_labels p = extract_labels (comp jump off k p) over the reviewed StackRemove.comp and stackProps extractLabels; no premise. Proof by comp's functional induction with untagged no-label lemmas for stack_alloc/stack_free/upshift/downshift (HOL's completeInduct steps). Axioms propext, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_call_args",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CallArgs.lean",
+    "lean_name": "stackRemoveCallArgs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_removeProofScript.sml:4320-4349: compile jump off gen_gc n k pos p = p' ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p) ⇒ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p'), free variables implicit in order, over StackRemove.compileHOL (argument order jump off gen_gc max_heap pointer start). Proof: init stubs (init_code, halt_inst) and comp-preservation via untagged helper lemmas mirroring the source EVAL/completeInduct steps."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterClock.lean",

@@ -7052,6 +7052,12 @@
       "sha256": "2f9ae68b26a5e4dbcf6b6cf6220401eeae0e3639372e579f0ccccce0bc82d631"
     },
     {
+      "bytes": 772,
+      "out": "stack_rawcall_conventions_probe.out",
+      "rows": 6,
+      "sha256": "94b35d8d0ca9769167cc03c1f52333f94b79a674929bd873900b5d4cc439a79e"
+    },
+    {
       "bytes": 136,
       "out": "stack_rawcall_extract_labels_comp_probe.out",
       "rows": 1,
@@ -7176,6 +7182,12 @@
       "out": "stack_remove_bytearray_read_probe.out",
       "rows": 2,
       "sha256": "d90de51eaaf13cbb76e0257207a7e0dbd27fd70d8699dcb1d689cebb193b10db"
+    },
+    {
+      "bytes": 175,
+      "out": "stack_remove_call_args_probe.out",
+      "rows": 1,
+      "sha256": "a7ace784fc342e09abd10a7aa70fe8cb3d25b5ce5542cfbe1be4fd911ab6d9d9"
     },
     {
       "bytes": 549,
