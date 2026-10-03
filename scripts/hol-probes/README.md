@@ -6459,7 +6459,15 @@ five generic theorem consumers include Error, TimeOut and successful results,
 and preservation of a source code lookup. The theorem retains its sole source
 execution premise and both original conclusions. These captures are regression
 evidence, not cross-language equivalence or whole compiler correctness.
-
 `word_to_stack_initial_state_rel_probe.out` captures full init_state_ok equation/type and freshly replays the literal complete original init_state_ok_IMP_state_rel proof. Full statements have zero hypotheses/free variables. The Lean family preserves the two stub/code-entry/domain/full-contract premises and derives the complete native initial state relation at frame0/lens[]/extra0. Frame-map and stack arithmetic are proved internally; no post-relation or extra success premise is supplied. This is initialization relation correctness, not whole pass/semantics correctness.
 
+`l3_supervisor_csr_probe.out` captures all 15 complete original supervisor CSR
+codec/lift/lower definitions and 862 independently calculated observations:
+210 codec basis/mixed patterns, 512 VM/status/privilege combinations and 140
+interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
+reserved-bit framing and supervisor-only interrupt replacement are preserved.
+These regressions do not establish whole CSR transitions or Run/Next correctness.
+
+
 `word_to_stack_semantics_helpers_probe.out` freshly replays the complete original synchronized-clock and WordSem/StackSem tail-call result exclusion proofs (10116–10151). All three full universally closed statements have zero hypotheses and prove T. Lean retains arbitrary native states, destinations, arguments and handlers, with only the original relation or execution premise. These helpers do not establish the full pass simulation.
+
