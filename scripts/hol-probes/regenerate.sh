@@ -6393,3 +6393,7 @@ run_probe lprefix_lub_finite_prefix_chain_probeScript.sml lprefix_lub_finite_pre
   prefix_chain_lprefix_chain prefix_chain_lprefix_chain_types prefix_chain_lprefix_chain_hypotheses prefix_chain_lprefix_chain_proved \
   prefix_chain_FILTER prefix_chain_FILTER_types prefix_chain_FILTER_hypotheses prefix_chain_FILTER_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe labprops_evaluate_io_events_mono_probeScript.sml labprops_evaluate_io_events_mono_probe.out \
+  evaluate_io_events_mono evaluate_io_events_mono_types evaluate_io_events_mono_hypotheses evaluate_io_events_mono_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"

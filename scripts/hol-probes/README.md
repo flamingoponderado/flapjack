@@ -6756,3 +6756,16 @@ their existential witnesses. This independently supplies the lazy-list image
 chain used by original machine_sem_EQ_sem; full compiler simulation and machine
 semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
+
+### Full native Lab evaluator event monotonicity
+
+`labprops_evaluate_io_events_mono_probeScript.sml` freshly captures the complete
+original `evaluate_io_events_mono` statement, full variable types, zero
+hypotheses and kernel proof T. The native proof follows all36 evaluator
+branches, including all eight shared-memory operators, Install validity/failure,
+and final/returning external FFI paths, with arbitrary compiler configuration
+and FFI host. Existing full `labsem_evaluate_probeScript.sml` execution fixtures
+are independently replayed against original HOL. FP dependencies retain the
+inherited real-rendering assumption (SOUNDNESS item8); full clock extension,
+compiler simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_io_events_mono_probeScript.sml`.

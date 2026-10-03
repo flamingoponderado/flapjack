@@ -72165,5 +72165,15 @@
     "lean_name": "prefixChain_filter",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.4): Original full HOL statements/types freshly captured with zero hypotheses and kernel proof T. Full arbitrary alpha, arbitrary Boolean P and arbitrary list set; sole prefix_chain antecedent. IMAGE FILTER is exactly the existential preimage membership predicate. List.IsPrefix.filter proves each original prefix alternative for the same P; no decidability premise or membership restriction is added."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "evaluate_io_events_mono",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/EvaluateIoEventsMono.lean",
+    "lean_name": "evaluateIoEventsMono",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31.6): Original labPropsScript279 full type freshly queried: forall s1 r s2 over arbitrary (alpha,beta,gamma) labSem state and machine_result, evaluate s1=(r,s2) implies initial ffi.io_events prefix final ffi.io_events. Native positive BitVec width with NeZero, separate arbitrary C Type and F Type, fixed byte8/FP64, all three explicit binders and sole original evaluation equality preserved. Full native evaluator functional induction covers all36 source branches, all8 shared operators and both Install validity branches; asmInstConsts and actual callFFIHOL prefix consequence discharge local steps with no extra hypotheses. Inherits reals_as_rational_cuts through evaluate/asmInst/fpUpd (SOUNDNESS item8); no stronger real-carrier assurance. Full original theorem/types/zero hypotheses/kernelT captured."
   }
 ]
