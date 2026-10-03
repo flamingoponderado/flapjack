@@ -1,0 +1,12 @@
+load "preamble";
+load "panSemTheory";
+open HolKernel Parse bossLib preamble panSemTheory;
+val _ = Globals.linewidth := 1000000;
+val original = GEN_ALL eval_ind;
+val _ = if null(hyp original) andalso null(free_vars(concl original)) then () else raise Fail "open induction theorem";
+val _ = print "eval_ind_statement=";
+val _ = print_term(concl original);
+val _ = print "\n";
+val _ = print("eval_ind_types=" ^ String.concatWith ";" (map (fn t => term_to_string t ^ ":" ^ type_to_string(type_of t)) (fst(strip_forall(concl original)))) ^ "\n");
+val _ = print("eval_ind_hypotheses=" ^ Int.toString(length(hyp original)) ^ "\n");
+val _ = print("eval_ind_proved=" ^ term_to_string(rhs(concl(EQT_INTRO original))) ^ "\n");

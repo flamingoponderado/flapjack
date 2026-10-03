@@ -7181,3 +7181,10 @@ through actual memory/domain/byte-order preservation.
 BytesInWord specialization and eval_ind. The faithful native case retains all
 seven hypotheses and three conclusions, including the actual converted target
 evaluation, at every positive word width without an extra byte-size condition.
+
+`pansem_eval_ind_probe` captures the original generated faithful expression
+induction theorem with its predicate type, closed hypotheses and kernel proof.
+The reference checker recognizes only this exact source path and the reviewed
+complete terminating `eval_def` block; its hash pin prevents unrelated source
+changes from silently authorizing the generated name. This is provenance
+checking, while the native theorem still requires independent statement review.

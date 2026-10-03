@@ -6757,3 +6757,7 @@ run_probe pan_structs_exp_load32_faithful_probeScript.sml pan_structs_exp_load32
 run_probe pan_structs_exp_bytes_in_word_faithful_probeScript.sml pan_structs_exp_bytes_in_word_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_bytes_in_word_statement compile_exp_correct_bytes_in_word_proved eval_ind_full_statement \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pansem_eval_ind_probeScript.sml pansem_eval_ind_probe.out \
+  eval_ind_statement eval_ind_types eval_ind_hypotheses eval_ind_proved \
+  "$cake_dir/pancake/semantics/panSemScript.sml" "$cake_dir/pancake/semantics"
