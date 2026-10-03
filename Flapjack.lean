@@ -658,6 +658,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrograms
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop
 import Flapjack.Compiler.Backend.LabProps.Native
 import Flapjack.Compiler.Backend.StackToLab.Native
+import Flapjack.Compiler.Backend.StackToLab.Proofs.Prelude
+import Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopPrimitives
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemopCalls
 import Flapjack.Compiler.Backend.WordToStack.Proofs.NoShmemop.Handlers
