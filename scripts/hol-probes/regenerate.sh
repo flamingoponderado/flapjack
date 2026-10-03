@@ -6795,3 +6795,7 @@ run_probe pan_structs_program_atomic_probeScript.sml pan_structs_program_atomic_
 run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tick_annot_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_tick_statement compile_correct_tick_proved compile_correct_annot_statement compile_correct_annot_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe lab_filter_semantics_probeScript.sml lab_filter_semantics_probe.out \
+  state_rel_IMP_sem_EQ_sem state_rel_IMP_sem_EQ_sem_types state_rel_IMP_sem_EQ_sem_hypotheses state_rel_IMP_sem_EQ_sem_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"

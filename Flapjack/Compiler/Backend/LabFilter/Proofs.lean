@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabFilter.Proofs.Semantics
 import Flapjack.Compiler.Backend.LabFilter.Proofs.FilterCorrect
 import Flapjack.Compiler.Backend.LabFilter.Proofs.InstallCases
 import Flapjack.Compiler.Backend.LabFilter.Map
