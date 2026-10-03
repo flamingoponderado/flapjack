@@ -72397,5 +72397,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7): source 2334-2380: HOL free c/names/k/lens explicit; premises alloc, state_rel 0 0, both cutset domains empty, res <> SOME Error; full existential conclusion with both result branches as HOL. Full literal stateRel over the imported WordSemStateFiniteExact (source config Nat x C) and StackSemStateFiniteExact carriers with their canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target run, simulation or post-state premise added; all HOL hypotheses and conclusions retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/EvaluateWLive.lean",
+    "lean_name": "evaluateWLive",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wLive",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.3.27.1.1.7.6): source 1339-1598: HOL free names/bs/n/k/f/f'/ac/lens/envs explicit; all nine premises retained (native wLiveNative compile equation, both cutset domain guards with EVEN as % 2 = 0, state_rel f f', 1 <= f, cut_envs success, the three bitmap-counter/isPREFIX guards as List.IsPrefix). Conclusion: exists t5 with native StackSem evaluate = (NONE, t5), state_rel 0 0 of push_env envs NONE s with <|locals := LN; locals_size := SOME 0|> at f'::lens, state_rel f f' s t5, equal stack length and stack_space, and get_var i preserved for i <> k. The conclusion's existential bs5 occurs nowhere in its body and is omitted (vacuous). Full literal stateRel over the imported carriers with canonical finite-map fields and same-module relation witnesses; positive BitVec width with NeZero, universe-0 FFI host. No target-run or simulation premise added."
   }
 ]

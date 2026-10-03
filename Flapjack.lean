@@ -333,6 +333,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
+import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InterUnionLeft
