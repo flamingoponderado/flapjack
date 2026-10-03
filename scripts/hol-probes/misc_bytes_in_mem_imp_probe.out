@@ -1,0 +1,13 @@
+bytes_in_mem_IMP=∀(xs :word8 list) (p :α word).
+  bytes_in_mem p xs (m :α word -> word8) (dm :α word -> bool)
+    (dm1 :α word -> bool) ⇒
+  bytes_in_memory p xs m dm
+bytes_in_mem_IMP_types=(xs :word8 list)::word8 list;(p :α word)::α word;(dm1 :α word -> bool)::α word -> bool;(dm :α word -> bool)::α word -> bool;(m :α word -> word8)::α word -> word8;
+bytes_in_mem_IMP_hypotheses=0
+empty=T
+singleton=T
+wrap=T
+excluded=T
+missing_domain=T
+wrong_value=T
+one_bit=T
