@@ -1,5 +1,6 @@
 import Flapjack.RiscV.L3.Defs.MachineCSRCodec
 import Flapjack.RiscV.L3.Defs.CSRAccess
+import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
@@ -360,6 +361,7 @@ import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.JumpLower
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallTail
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallReturn
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Call
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
