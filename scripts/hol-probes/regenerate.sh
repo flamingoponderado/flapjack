@@ -6161,3 +6161,7 @@ run_probe word_to_stack_comp_flat_probeScript.sml word_to_stack_comp_flat_probe.
 run_probe wordsem_inst_const_full_probeScript.sml wordsem_inst_const_full_probe.out \
   inst_const_full_statement inst_const_full_proved inst_const_full_hypotheses \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe wordsem_pop_env_const_probeScript.sml wordsem_pop_env_const_probe.out \
+  pop_env_const_statement pop_env_const_proved pop_env_const_hypotheses \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"

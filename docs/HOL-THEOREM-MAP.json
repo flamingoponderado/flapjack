@@ -70073,5 +70073,18 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 resource4.2.1 wordProps900-920: complete original arbitrary instruction/native source/post state, sole inst=SOME premise and all13 conjuncts in original order (code, codeBuffer, dataBuffer, compile, compileOracle, clock, ffi, handler, stack, localsSize, stackLimit, stackMax, stackSize). Native successful constructor updates affect only locals/fpRegs/memory, while failures contradict the original premise; all integer/memory/FP constructors covered without numerical result assumptions. Actual imported WordSemStateFiniteExact owner uses canonical fpRegs/store and exact Spt locals/code/stackSize, positive width/NeZero and C/F:Type preserved. Genuine same-module canonical roundtrip witness. inst closure inherits reals_as_rational_cuts; this field invariant makes no numeric FP correspondence claim. Original resource induction4327/4415 genuinely invokes inst_const_full; full evaluator induction and related resource family remain open. Fresh original unchanged full proof replay retained."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PopEnvConst.lean",
+    "lean_name": "popEnvConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "pop_env_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.2 wordProps475-497: complete original arbitrary native input/output states, sole pop_env=SOME premise, all19 original conclusions in order clock/ffi/be/compile/compileOracle/memory/mdomain/shMdomain/store/fpRegs/gcFun/termdep/permute/dataBuffer/codeBuffer/code/stackLimit/stackMax/stackSize. Actual popEnv538-547 changes only locals/localsSize/stack and optional handler, both frame branches covered; empty stack contradicts successful premise. No stack-shape/safe-for-space/target-run assumptions. Actual imported positive-width WordSemStateFiniteExact with C/F:Type and exact Spt fields; canonical fpRegs/store owner and genuine same-module codec witness, function/set equalities and Bool equivalence rendered as equality. No numerical FP evaluator used or numerical correspondence assertion. Original Alloc4322/Call4357 max induction needs this invariant. Fresh unchanged literal full proof replay; resource evaluator/Seq/full pass remain open."
   }
 ]
