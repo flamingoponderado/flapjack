@@ -1,4 +1,5 @@
 `bvl_to_bvi_default_probe.out` captures the complete original ten-field default initializer, both BVL stub/namespace definitions, the zero-hypothesis namespace-alignment theorem, full default type and original evaluated counts/counters. The native default uses the checked shared data-stub chain and distinct literal BVL/BVI inline trees. This support group does not establish whole compiler correctness or production routing of the backend configuration.
+`wordsem_find_code_generic_probe.out` captures the complete original inferred find_code type, typed definition and full typed zero-hypothesis find_code_map_I. The code source/target payloads and stack-size payload remain independent; evaluator callers retain their Prog/Nat specialization. This carrier repair changes no source guards or conclusion.
 
 `stack_rawcall_if_case_probe.out` captures complete generic comp_correct, zero open assumptions and its genuine If specialization. The capture also extracts the original evaluate_ind If obligation. Native recursive case uses the two subprogram comp-component induction hypotheses at the fixed source, guarded by successful operand reads and selected comparison; actual guard transport derives branch selection/target evaluation and full paired existential conclusions. Full theorem assembly and runtime correctness remain open.
 
@@ -7763,3 +7764,5 @@ both clock-stability and Incomplete event-prefix hypotheses. Prefix chains and
 same-model wrapper choice equality are proved internally; no supplied chain,
 LUB or target-semantics premise is added. It uses the distinct PanProps result
 datatype. Faithful evaluator wrapper correspondence remains separate.
+
+`word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.

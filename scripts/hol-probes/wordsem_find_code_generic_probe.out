@@ -1,0 +1,38 @@
+find_code_type=:num option ->
+α word_loc list ->
+(num # β) sptree$num_map ->
+γ sptree$num_map -> (α word_loc list # β # γ option) option
+find_code_def_typed=(∀(p :num) (args :α word_loc list) (code :(num # β) sptree$num_map)
+     (ssize :γ sptree$num_map).
+   find_code (SOME p) args code ssize =
+   case lookup p code of
+     (NONE :(num # β) option) =>
+       (NONE :(α word_loc list # β # γ option) option)
+   | SOME (arity,exp) =>
+     if LENGTH args = arity then SOME (args,exp,lookup p ssize)
+     else (NONE :(α word_loc list # β # γ option) option)) ∧
+∀(args :α word_loc list) (code :(num # β) sptree$num_map)
+    (ssize :γ sptree$num_map).
+  find_code (NONE :num option) args code ssize =
+  if args = ([] :α word_loc list) then
+    (NONE :(α word_loc list # β # γ option) option)
+  else
+    case LAST args of
+      Word v4 => (NONE :(α word_loc list # β # γ option) option)
+    | (Loc loc (0 :num) :α word_loc) =>
+      (case lookup loc code of
+         (NONE :(num # β) option) =>
+           (NONE :(α word_loc list # β # γ option) option)
+       | SOME (arity,exp) =>
+         if LENGTH args = arity + (1 :num) then
+           SOME (FRONT args,exp,lookup loc ssize)
+         else (NONE :(α word_loc list # β # γ option) option))
+    | (Loc loc (SUC v8) :α word_loc) =>
+      (NONE :(α word_loc list # β # γ option) option)
+find_code_map_I_typed=find_code (d :num option) (l :α word_loc list)
+  (map ((I :num -> num) ## (f :δ -> β)) (t :(num # δ) sptree$num_map))
+  (lsz :γ sptree$num_map) =
+OPTION_MAP
+  ((I :α word_loc list -> α word_loc list) ## f ## (I :γ option -> γ option))
+  (find_code d l t lsz)
+find_code_map_I_hypotheses=0

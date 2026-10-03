@@ -54,14 +54,19 @@ def addToLoadAux {width : Nat} [NeZero width] (data : Knowledge)
             toLatest := sptInsert destination destination data.toLatest }, original)
 
 /-- Original wrapper keeps the adjusted instruction's complete key and the
-original instruction's complete native payload distinct. The reviewed
-constructor-for-constructor instruction codec supplies the WordLang carrier;
-no constructor, eligibility or destination-parity restriction is imposed.
-Executed producer correspondence remains separate production-path work. -/
+original instruction's complete native payload distinct. HOL's inferred type
+is `knowledge -> num -> 'a inst -> 'b inst -> knowledge # 'b prog`: the adjusted
+instruction is only hashed by `instToNumList`, so its word width `adjWidth` is
+independent of the original instruction's and output program's `width`. The
+reviewed constructor-for-constructor instruction codec supplies the WordLang
+carrier; no constructor, eligibility or destination-parity restriction is
+imposed. Executed producer correspondence remains separate production-path
+work. -/
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "add_to_data_def"
   (words_as_type_indexed_bitvec)]
-def addToData {width : Nat} [NeZero width] (data : Knowledge)
-    (destination : Nat) (adjusted original : Compiler.Encoders.Asm.HolInst width) :
+def addToData {adjWidth : Nat} [NeZero adjWidth] {width : Nat} [NeZero width] (data : Knowledge)
+    (destination : Nat) (adjusted : Compiler.Encoders.Asm.HolInst adjWidth)
+    (original : Compiler.Encoders.Asm.HolInst width) :
     Knowledge × WordLangProgHOL (BitVec width) :=
   addToDataAux data destination (instToNumList adjusted) (.inst original.toWordLangInst)
 

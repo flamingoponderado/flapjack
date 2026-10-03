@@ -1,0 +1,12 @@
+load "bossLib"; load "preamble"; load "word_removeProofTheory";
+open bossLib HolKernel Parse preamble word_removeProofTheory;
+val _ = show_types := true;
+fun emit label th = (print (label ^ "="); print_term (concl th); print "\n");
+val _ = print "find_code_type=";
+val _ = print (type_to_string (type_of ``wordSem$find_code``));
+val _ = print "\n";
+val _ = emit "find_code_def_typed" (DB.fetch "wordSem" "find_code_def");
+val _ = emit "find_code_map_I_typed" (DB.fetch "word_removeProof" "find_code_map_I");
+val _ = print "find_code_map_I_hypotheses=";
+val _ = print (Int.toString (length (hyp (DB.fetch "word_removeProof" "find_code_map_I"))));
+val _ = print "\n";
