@@ -79859,6 +79859,26 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: float_to_fp64 o float_negate o fp64_to_float (point-free; Lean applies it to a). HOL word64/word1/word11/52 word and (52,11) float are the fixed-width BitVec 64/1/11/52 and HolFloat 52 11 (positive literal widths). No other difference."
   },
   {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64IsNan",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_isNan_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: fp64_isNan = float_is_nan o fp64_to_float at (52,11). Point-free in HOL; Lean applies it to a. Fixed widths as in HOL; float_is_nan/float_is_signalling go through float_value, whose finite values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee.lean",
+    "lean_name": "holFp64IsSignalling",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_isSignallingNan_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the machine_ieeeLib definition generated at the reviewed machine_ieeeScript.sml:16 (fp64, 52, 11) call, captured with types by machine_ieee_fp64_defs_probe: fp64_isSignallingNan = float_is_signalling o fp64_to_float at (52,11). Point-free in HOL; Lean applies it to a. Fixed widths as in HOL; float_is_nan/float_is_signalling go through float_value, whose finite values are rationals rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8). No other difference."
+  },
+  {
     "lean_path": "Flapjack/Misc/MachineIeee/Arith.lean",
     "lean_name": "holFp64Add",
     "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
