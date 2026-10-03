@@ -9626,6 +9626,12 @@
       "rows": 3
     },
     {
+      "out": "word_to_stack_copy_words_correct_full_probe.out",
+      "sha256": "2eab41aca339dda5e50d1ab5cf7a73eb87b6301260123340fd80c03935de0e0b",
+      "bytes": 294,
+      "rows": 3
+    },
+    {
       "bytes": 183,
       "out": "word_to_stack_cse_codec_probe.out",
       "rows": 16,

@@ -7176,3 +7176,7 @@ run_probe word_to_stack_chunk_msb_full_probeScript.sml word_to_stack_chunk_msb_f
 run_probe word_to_stack_copy_short_full_probeScript.sml word_to_stack_copy_short_full_probe.out \
   short_full short_hypotheses short_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_copy_words_correct_full_probeScript.sml word_to_stack_copy_words_correct_full_probe.out \
+  copy_full copy_hypotheses copy_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
