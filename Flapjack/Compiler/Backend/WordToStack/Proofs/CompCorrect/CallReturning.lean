@@ -3058,4 +3058,123 @@ theorem continuationCompilationFacts {width : Nat} [NeZero width] {C F : Type}
     rw [getLabelsCopyRet]
     exact member
 
+/-- The actual NONE return-copy/free wrapper is clock-independent for every
+outcome, including disabled-stack and stack-bound errors. This composes the
+original copy-aux clock theorem with literal StackFree; no successful run or
+resource bound is required. Case-local infrastructure without a separate HOL
+declaration for the complete wrapper. -/
+theorem returnCopyClockFree {width : Nat} [NeZero width] {C F : Type}
+    (k f frame : Nat) (values : List Nat) :
+    CallReturnEval.ClockFree (C := C) (F := F)
+      (copyRetNative false false (k, f, frame) values .skip : HolProg width) := by
+  have free : ∀ count : Nat, CallReturnEval.ClockFree (C := C) (F := F)
+      (.stackFree count : HolProg width) := by
+    intro count target clock
+    rw [StackSemEvaluate.evaluate_stackFree, StackSemEvaluate.evaluate_stackFree]
+    by_cases enabled : target.useStack = true
+    · by_cases outside : target.stack.length < target.stackSpace + count
+      · simp [enabled, outside, StackSemStateOps.emptyEnv]
+      · simp [enabled, outside]
+    · simp [enabled]
+  by_cases zero : Compiler.Backend.WordToStack.numStackRet k values = 0
+  · simpa only [copyRetNative, zero, if_true] using
+      (CallReturnEval.clockFree_skip (width := width) (C := C) (F := F))
+  · simp only [copyRetNative, if_false, seqStackFreeNative, zero]
+    exact CallReturnEval.clockFree_seq _ _
+      (by intro state clock
+          exact CallReturnEval.evaluateCopyRetAuxClock k f
+            (Compiler.Backend.WordToStack.numStackRet k values) clock state)
+      (CallReturnEval.clockFree_seq _ _ (free _) CallReturnEval.clockFree_skip)
+
+/-- Apply the original guarded continuation IH and execute it through the
+actual return-copy/free wrapper, carrying the IH's existential extra clock.
+All continuation outcomes and the full original result/resource predicate are
+retained. Inputs are previously derived source/metadata/restoration facts and
+the actual copy run; no continuation target run is assumed. Untagged component
+assembly, with whole-Call history/clock/outcome composition still required. -/
+theorem executeReturningContinuation {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat) (values : List Nat)
+    (retCode : WordLangProgHOL (BitVec width))
+    (source sourcePost : WordSemStateFiniteExact width (Nat × C) F)
+    (target restored : StackSemStateFiniteExact width C F)
+    (result : Option (WordSemResult width))
+    (bs bsPost : AppList (BitVec width)) (n nPost : Nat)
+    (compiled : HolProg width) (lens : List Nat)
+    (ih : Seq.Simulation ac retCode source)
+    (sourceRun : WordSemStateFiniteExact.evaluate retCode source = (result, sourcePost))
+    (notError : result ≠ some .error)
+    (related : stateRel ac k f frame source restored lens 0)
+    (conventions : postAllocConventionsHOL k retCode = true)
+    (flat : flatExpConventions retCode = true)
+    (compilation : compNative ac false retCode (bs, n) (k, f, frame) = (compiled, (bsPost, nPost)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ restored.bitmaps.length)
+    (bitmapPrefix : (appListAppend bsPost).IsPrefix
+      (restored.bitmaps.drop (n - (appListAppend bs).length)))
+    (labels : ∀ loc, StackSem.getLabelsExact compiled loc → StackSem.locCheckExact restored.code loc)
+    (maximum : maxVarHOL retCode < 2 * frame + 2 * k)
+    (copyRun : StackSemEvaluate.evaluate
+      (copyRetNative false false (k, f, frame) values .skip, target) = (none, restored)) :
+    ∃ (extraClock : Nat) (targetPost : StackSemStateFiniteExact width C F)
+      (targetResult : Option (StackSemResult width)),
+      StackSemEvaluate.evaluate
+        (copyRetNative false false (k, f, frame) values compiled,
+          {target with clock := target.clock + extraClock}) = (targetResult, targetPost) ∧
+      compCorrectResult ac k f frame source sourcePost targetPost result targetResult lens := by
+  obtain ⟨extraClock, targetPost, targetResult, continuationRun, conclusion⟩ :=
+    ih k f frame sourcePost restored result bs bsPost n nPost compiled lens
+      ⟨sourceRun, notError, related, conventions, flat, compilation, lengthBound,
+        bitmapBound, bitmapPrefix, labels, maximum⟩
+  have clockFree := returnCopyClockFree (width := width) (C := C) (F := F) k f frame values
+  have sameClock := clockFree target target.clock
+  rw [show {target with clock := target.clock} = target from rfl, copyRun] at sameClock
+  simp only [Prod.map, id_eq, Prod.mk.injEq] at sameClock
+  have clockEq : restored.clock = target.clock := by
+    have projected := congrArg
+      (fun state : StackSemStateFiniteExact width C F => state.clock) sameClock.2
+    exact projected
+  have clockedCopy := clockFree target (target.clock + extraClock)
+  rw [copyRun] at clockedCopy
+  simp only [Prod.map, id_eq] at clockedCopy
+  have outputClock : {restored with clock := target.clock + extraClock} =
+      {restored with clock := restored.clock + extraClock} := by rw [clockEq]
+  rw [outputClock] at clockedCopy
+  refine ⟨extraClock, targetPost, targetResult, ?_, conclusion⟩
+  rw [CallReturnEval.evaluateCopyRetSeq, StackSemEvaluate.evaluate_seq,
+    StackSemEvaluateClock.fixClockEvaluate, clockedCopy]
+  simp only
+  exact continuationRun
+
+/-- Derive code/bitmap growth along the actual returning-call target history.
+All runs are observations produced by prelude/callee/restoration assembly;
+errors are not erased from the underlying evaluateMono theorem. Register-zero,
+decClock and IH extra-clock updates preserve the relevant carrier fields.
+Case-local history factoring, not a tagged full Call correctness theorem. -/
+theorem returningHistoryGrowth {width : Nat} [NeZero width] {C F : Type}
+    (initial saved moved target restored : StackSemStateFiniteExact width C F)
+    (prelude arguments callee : HolProg width) (k f frame l1 l2 extraClock : Nat)
+    (values : List Nat) (bodyResult : Option (StackSemResult width))
+    (preludeRun : StackSemEvaluate.evaluate (prelude, initial) = (none, saved))
+    (argumentsRun : StackSemEvaluate.evaluate (arguments, saved) = (none, moved))
+    (calleeRun : StackSemEvaluate.evaluate
+      (callee, {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+        clock := (StackSemStateOps.decClock moved).clock + extraClock}) = (bodyResult, target))
+    (copyRun : StackSemEvaluate.evaluate
+      (copyRetNative false false (k, f, frame) values .skip, target) = (none, restored)) :
+    initial.bitmaps.IsPrefix restored.bitmaps ∧ sptSubspt initial.code restored.code := by
+  have preludeGrowth := Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    prelude initial saved none preludeRun
+  have argumentsGrowth := Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    arguments saved moved none argumentsRun
+  have calleeGrowth := Compiler.Backend.StackProps.EvaluateMono.evaluateMono callee
+    {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+      clock := (StackSemStateOps.decClock moved).clock + extraClock} target bodyResult calleeRun
+  change moved.bitmaps.IsPrefix target.bitmaps ∧ sptSubspt moved.code target.code at calleeGrowth
+  have copyGrowth := Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    (copyRetNative false false (k, f, frame) values .skip) target restored none copyRun
+  refine ⟨preludeGrowth.1.trans (argumentsGrowth.1.trans (calleeGrowth.1.trans copyGrowth.1)), ?_⟩
+  exact sptSubsptTrans _ _ _ ⟨preludeGrowth.2,
+    sptSubsptTrans _ _ _ ⟨argumentsGrowth.2,
+      sptSubsptTrans _ _ _ ⟨calleeGrowth.2, copyGrowth.2⟩⟩⟩
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
