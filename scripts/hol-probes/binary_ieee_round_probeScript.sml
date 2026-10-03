@@ -1,0 +1,17 @@
+load "binary_ieeeTheory";
+open HolKernel Parse boolLib binary_ieeeTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "clear_flags_def" clear_flags_def;
+val _ = capture "invalidop_flags_def" invalidop_flags_def;
+val _ = capture "dividezero_flags_def" dividezero_flags_def;
+val _ = capture "is_closest_def" is_closest_def;
+val _ = capture "closest_such_def" closest_such_def;
+val _ = capture "closest_def" closest_def;
+val _ = capture "largest_def" largest_def;
+val _ = capture "threshold_def" threshold_def;
+val _ = capture "round_def" round_def;
+val _ = capture "float_some_qnan_def" float_some_qnan_def;
+val _ = capture "float_round_def" float_round_def;
+val _ = capture "float_round_with_flags_def" float_round_with_flags_def;
+val _ = capture "check_for_signalling_def" check_for_signalling_def;
