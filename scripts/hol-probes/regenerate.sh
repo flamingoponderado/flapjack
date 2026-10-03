@@ -7496,3 +7496,7 @@ run_probe riscv_const32_value_probeScript.sml riscv_const32_value_probe.out \
 run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bitmaps_probe.out \
   config_component_equality_typed source_conf_type clos_conf_type bvl_conf_type data_conf_type word_to_word_conf_type word_conf_type stack_conf_type lab_conf_type symbols_type tap_conf_type exported_type attach_bitmaps_type attach_bitmaps_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
+  semantics_eq_statement semantics_eq_proved semantics_eq_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
