@@ -4088,6 +4088,12 @@
       "sha256": "02f0dfd6668fff3ca71be56b1e91c6a597d8058b93b79dd1b99d98f4c6fa3a08"
     },
     {
+      "bytes": 290,
+      "out": "pan_globals_shape_localised_probe.out",
+      "rows": 3,
+      "sha256": "5fc5279aa2ba02ee8f0ccb8fd00fcc9cb092f0bc6e0bb432618bfe6df1c8c545"
+    },
+    {
       "bytes": 102,
       "out": "pan_is_valid_value_probe.out",
       "rows": 4,

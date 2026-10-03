@@ -7615,3 +7615,7 @@ run_probe pan_to_word_semantics_probeScript.sml pan_to_word_semantics_probe.out 
 run_probe word_to_stack_inst_shift_probeScript.sml word_to_stack_inst_shift_probe.out \
   shiftReg_typed shiftReg_proved shiftReg_hypotheses shiftImm_typed shiftImm_proved shiftImm_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_globals_shape_localised_probeScript.sml pan_globals_shape_localised_probe.out \
+  localised_exp_shape_val_statement localised_exp_shape_val_proved localised_exp_shape_val_types \
+  "$cake_dir/pancake/proofs/pan_globalsProofScript.sml" "$cake_dir/pancake/proofs"
