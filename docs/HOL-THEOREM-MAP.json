@@ -70439,5 +70439,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original153-163/full135-149 StoreConsts: full paired compTop/comp simulations, original actual source evaluation/nonError/stateRel three premises, original existential added clock/target/poststackspace guard. Actual gc/alloc code transport preserves input stack bounds, encoding, original four GC inputs, decoding failure, post-GC lookup/space errors, Halt Word1 and emptyEnv. Native storeConstSem transport retains register uniqueness/reads/copy failure, memory update and unset register0. StoreConsts nonError source execution derives useStore/useAlloc/optional stub guards; actual target stub lookup follows stateRel per-entry compTop compilation of Seq(StoreConsts NONE)(Return0). No arbitrary-code guard invariance, supplied target execution/postrelation or extra success hypothesis. Canonical owning regs/fpRegs/store with local real roundtrip; exact List/Spt carriers; arbitrary positive words and Type0 configuration/FFI. Inherits reals_as_rational_cuts SOUNDNESS8; no local numerical real operation, new assumption, default/individual HOLD change or equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/Install.lean",
+    "lean_name": "compCorrectInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original520-539/full135-149: full paired compTop/comp Install simulations retain precisely actual source evaluation/nonError/stateRel three premises and existential added clock/target/stackspace guard. Native Install reads four word registers, samples actual oracle, flushes both buffers with original useStack branch, tests compile result and nonempty programs, compares bytes/data/next configuration, then preserves all original register/fpRegs/bitmap/buffer/oracle updates. No DecidableEq configuration premise: classical equality remains internal. Original left-biased union preserves OLD code entries, without a disjointness guard. Derived stateOk_union retains old frame witnesses; domain equality ensures old source lookup NONE iff old target NONE, so newly visible entries use LN/compLn. No desired target execution/postrelation or extra success premise. Actual imported canonical regs/fpRegs/store owner and local nonvacuous roundtrip; literal List/Spt carriers; arbitrary positive words and C/F:Type. Inherits reals_as_rational_cuts SOUNDNESS8. Fresh original statement specializations and independent union observations are regression evidence only; no cross-language equivalence, production/default/individual HOLD change."
   }
 ]
