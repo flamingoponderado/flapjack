@@ -2338,6 +2338,7 @@ import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordInst
 import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
+import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Invariant
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Models
 import Flapjack.Compiler.Backend.WordCopy.Proofs.Move
