@@ -1,5 +1,5 @@
-import Flapjack.RiscV.Encoding
-import Flapjack.Compiler.Encoders.RiscV.Target
+import Flapjack.RiscV.Model
+import Flapjack.RiscV.L3.Types
 
 /-! Complete conversion of the executed RV64 instruction carrier into the native
 L3 carrier. This is Flapjack infrastructure, not a HOL datatype port: the
@@ -20,7 +20,7 @@ widths. Branch/JAL fields omit bit0 because both encoders encode halfword offset
 The production divU encoding intentionally selects native DIV, matching the
 existing CakeML convention; this does not claim equality of execution semantics.
 No constructor fails or falls back to a fabricated native opcode. -/
-def nativeInstruction : Instruction 64 → L3.instruction
+def nativeInstructionAtWidth {width : Nat} : Instruction width → L3.instruction
   | .add d a b => .ArithR (.ADD (nativeRegister d, nativeRegister a, nativeRegister b))
   | .sub d a b => .ArithR (.SUB (nativeRegister d, nativeRegister a, nativeRegister b))
   | .addW d a b => .ArithR (.ADDW (nativeRegister d, nativeRegister a, nativeRegister b))
@@ -84,18 +84,9 @@ def nativeInstruction : Instruction 64 → L3.instruction
   | .load32Offset d a i => .Load (.LWU (nativeRegister d, nativeRegister a, i.setWidth 12))
   | .store32Offset d a i => .Store (.SW (nativeRegister a, nativeRegister d, i.setWidth 12))
 
-/-- Universal byte-order agreement for the full native instruction carrier.
-This follows the existing Flapjack byte-slice theorem; it makes no claim about
-production word encoding or cross-language equivalence. No HOL original names
-this relation between the two Lean byte emitters, so it stays untagged. -/
-theorem nativeEncodeBytes (i : L3.instruction) :
-    encodeWordBytes (L3.Encode i) =
-      Compiler.Encoders.RiscV.Target.riscvEncode i := by
-  rw [encodeWordBytes_eq_extracts]
-  simp only [Compiler.Encoders.RiscV.Target.riscvEncode, List.cons.injEq, and_true]
-  repeat' apply And.intro
-  all_goals
-    apply BitVec.eq_of_toNat_eq
-    simp [L3.holWordExtract, BitVec.extractLsb']
+
+/-- The executed RV64 specialization retains the whole original production
+carrier. Generic diagnostic conversion does not claim a wider HOL port. -/
+def nativeInstruction : Instruction 64 → L3.instruction := nativeInstructionAtWidth
 
 end Flapjack.RiscV
