@@ -7445,3 +7445,8 @@ regression evidence rather than HOL-to-Lean equivalence.
 wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
 continuation premise and full run/relation/resources. Closed hyp0/T captures
 provide regression evidence rather than cross-language equivalence.
+
+`word_to_stack_comp_get_probeScript.sml` captures the complete original Get
+evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
+both closed hyp0/T. These are original statement regression captures, not
+literal local-case proof replay or cross-language equivalence.

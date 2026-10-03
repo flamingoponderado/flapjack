@@ -6994,3 +6994,7 @@ run_probe word_to_stack_register_spill_update_probeScript.sml word_to_stack_regi
 run_probe word_to_stack_register_write_probeScript.sml word_to_stack_register_write_probe.out \
   register_write_full register_write_hypotheses register_write_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_get_probeScript.sml word_to_stack_comp_get_probe.out \
+  comp_correct_get_full_statement comp_correct_get_full_proved comp_correct_get_full_hypotheses comp_correct_get_whole_statement comp_correct_get_whole_proved comp_correct_get_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

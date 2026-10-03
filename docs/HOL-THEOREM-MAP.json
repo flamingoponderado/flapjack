@@ -81443,5 +81443,23 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison3722-3743: full original stateRel extra0, m<frame+k and arbitrary kont evaluation premise for every n<=k retained. Actual wRegWrite1Native target run existential/full postrelation/source setVar(2*m)/stack length/space conclusions. Literal helper lowers physical kont m or spilled Seq(kont k,StackStore k slot); original callback used exactly. Verified physical/spill state update laws derive all relation/resource facts; no new run/bound/postrelation assumption. Qualified five canonical fields and positive word dimensions, same-module genuine codec witnesses. Fresh unchanged original statement and proof replay; evaluator closure inherits reals_as_rational_cuts without numerical FP claim.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Get.lean",
+    "lean_name": "compCorrectGet",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison Get6333-6354, comp_correct5756 motive5719-5751: full Seq.Simulation arbitrary source/store name/destination, all original evaluator nonerror/stateRel/conventions/flat/compilation/bitmap/labels/maxVar premises and entire existential targetrun plus resource/fullresult conclusion. Successful source getStore rules out removed handler and derives target canonical lookup by literal store constructor translation; useStore/full relation retained. Even physical variable from original conventions and frame capacity from original maxVar. Full reviewed wRegWrite1 theorem used with actual Get callback, native execution derived at zero added clock. No targetrun/read/postrelation assumption added. Named canonical finite-map fields/positive words with same-module codecs; inherited reals_as_rational_cuts unchanged. Fresh closed original Get evaluate_ind obligation and complete specialization capture; regression evidence, not cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 5756
   }
 ]
