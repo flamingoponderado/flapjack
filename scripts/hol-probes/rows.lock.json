@@ -1598,6 +1598,12 @@
       "sha256": "849f18688ab3694e86d51da4a734ba133050e8c8e67be857f15b0f2c388d5d65"
     },
     {
+      "bytes": 5632,
+      "out": "l3_fp_memory_probe.out",
+      "rows": 256,
+      "sha256": "eabfae7e529e47fb7da658ab84cfe2479f6550db5345ddade6952d40b6f664c0"
+    },
+    {
       "bytes": 2739,
       "out": "l3_fpcsr_codec_probe.out",
       "rows": 80,
