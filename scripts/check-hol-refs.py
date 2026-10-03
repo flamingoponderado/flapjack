@@ -4121,6 +4121,25 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
         )
     return errors
 
+# HOL's terminating eval_def generates eval_ind; the complete source block is
+# reviewed against the closed original kernel capture in the faithful expression
+# probes. This bounded recognition records provenance, not Lean/HOL equivalence.
+PANSEM_EVAL_IND_PATH = "cakeml/pancake/semantics/panSemScript.sml"
+PANSEM_EVAL_DEF_SHA256 = "21a7f3b7c750de70e880511098d0317098d3486515d226bdad734f651a61a715"
+
+
+def pansem_eval_ind_declaration(path: Path, source: str) -> int | None:
+    if path.parts[-4:] != tuple(PANSEM_EVAL_IND_PATH.split("/")):
+        return None
+    blocks = list(re.finditer(r"^Definition eval_def:\n.*?^End\b", source, re.M | re.S))
+    if len(blocks) != 1:
+        return None
+    block = blocks[0]
+    if hashlib.sha256(block.group().encode()).hexdigest() != PANSEM_EVAL_DEF_SHA256:
+        return None
+    return source.count("\n", 0, block.start()) + 1
+
+
 def hol_declaration_lines(
     path: Path, cache: dict[Path, dict[str, list[int]]]
 ) -> dict[str, list[int]]:
@@ -4181,6 +4200,9 @@ def hol_declaration_lines(
         ):
             names.setdefault(carrier, []).append(number)
         source_text = path.read_text(encoding="utf-8", errors="replace")
+        eval_ind_line = pansem_eval_ind_declaration(path, source_text)
+        if eval_ind_line is not None:
+            names.setdefault("eval_ind", []).append(eval_ind_line)
         # `val NAME = fetch "-" "NAME";` re-binds the theorem the factory
         # generated under its own name; it is the same declaration, already
         # recorded at the alias line, so the factory line is not a second one.
