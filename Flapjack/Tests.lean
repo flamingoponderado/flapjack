@@ -200,6 +200,7 @@ import Flapjack.Test.PanToCrepRelationsParity
 import Flapjack.Test.PanToCrepStateRelCarrierParity
 import Flapjack.Test.PanToCrepRetInst2Parity
 import Flapjack.Test.PanToCrepCodeRelParity
+import Flapjack.Test.PanToCrepFirstCompileParity
 import Flapjack.Test.PanToCrepContextExactParity
 import Flapjack.Test.PanToCrepCompFuncExactParity
 import Flapjack.Test.PanCommonParity

@@ -16,7 +16,7 @@ private theorem preAlloc_seq {width : Nat} [NeZero width]
     Bool.and_eq_true] at ha hb ⊢
   exact ⟨⟨ha.1, hb.1⟩, ha.2, hb.2⟩
 
-/-- Original Seq case, with only the genuine induction hypotheses added. -/
+/-- Original Seq case, with structurally generalized induction hypotheses added. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
 theorem ssaCcTrans_preAllocSeq {width : Nat} [NeZero width]
@@ -41,7 +41,7 @@ theorem ssaCcTrans_preAllocSeq {width : Nat} [NeZero width]
   rw [secondEq] at hb
   simpa only [ssaCcTrans, firstEq, secondEq] using preAlloc_seq a b ha hb
 
-/-- Original MustTerminate case with the source body induction hypothesis. -/
+/-- Original MustTerminate case with a structurally generalized source-body IH. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
 theorem ssaCcTrans_preAllocMustTerminate {width : Nat} [NeZero width]
@@ -59,7 +59,7 @@ theorem ssaCcTrans_preAllocMustTerminate {width : Nat} [NeZero width]
   simpa [ssaCcTrans, produced, preAllocConventionsHOL, everyStackVarHOL,
     callArgConventionHOL] using pre
 
-/-- Original If case with the two genuine branch induction hypotheses. -/
+/-- Original If case with the two structurally generalized branch induction hypotheses. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
 theorem ssaCcTrans_preAllocIf {width : Nat} [NeZero width]
@@ -109,7 +109,7 @@ private theorem preAlloc_reconcile {width : Nat} [NeZero width] {β : Type}
   dsimp only
   split <;> simp [preAllocConventionsHOL, everyStackVarHOL, callArgConventionHOL]
 
-/-- Original Loop case with the source body's genuine induction hypothesis. -/
+/-- Original Loop case with the source body structurally generalized induction hypothesis. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_pre_alloc_conventions" (words_as_type_indexed_bitvec)]
 theorem ssaCcTrans_preAllocLoop {width : Nat} [NeZero width]

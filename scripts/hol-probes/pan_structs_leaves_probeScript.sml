@@ -10,6 +10,7 @@ val _ = capture "compile_shape_n_no_name" (DB.fetch "pan_structsProof" "compile_
 val _ = capture "compile_shape_n_eq" (DB.fetch "pan_structsProof" "compile_shape_n_eq");
 val _ = capture "compile_shape_no_name" (DB.fetch "pan_structsProof" "compile_shape_no_name");
 val _ = capture "size_of_compile_shape" (DB.fetch "pan_structsProof" "size_of_compile_shape");
+val _ = capture "compile_top_no_names" (DB.fetch "pan_structsProof" "compile_top_no_names");
 val _ = capture "decs_stcnames_to_get_names" (DB.fetch "pan_structsProof" "decs_stcnames_to_get_names");
 val _ = types "decs_stcnames_to_get_names_types" (DB.fetch "pan_structsProof" "decs_stcnames_to_get_names");
 val _ = capture "decs_stcnames_infos_ok" (DB.fetch "pan_structsProof" "decs_stcnames_infos_ok");

@@ -59,7 +59,7 @@ theorem ssaCcTrans_fullInstTailCall {width : Nat} [NeZero width]
   simp [ssaCcTrans, fullInstOkLessExact, fullInstOkLessWith]
 
 /-- Original returning Call case, including both exception-handler options.
-Only genuine source subprogram induction hypotheses are added; actual handler
+Structurally generalized source subprogram induction hypotheses are added; actual handler
 map bounds and stack classes are derived from the original producers. -/
 @[hol "cakeml/compiler/backend/proofs/word_allocProofScript.sml"
   "ssa_cc_trans_full_inst_ok_less" (words_as_type_indexed_bitvec)]
