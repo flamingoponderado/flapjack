@@ -1,3 +1,5 @@
+import Flapjack.Test.PanToTargetOptionLtParity
+import Flapjack.Test.WordDepthParity
 import Flapjack.Test.WordFindCodeGenericCarriers
 import Flapjack.Test.BackendConfigAttachBitmaps
 import Flapjack.Test.L3DecodeImmediatesParity

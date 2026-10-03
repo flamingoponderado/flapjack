@@ -4621,6 +4621,10 @@ run_probe word_cse_conventions_probeScript.sml word_cse_conventions_probe.out \
   word_cse_every_inst_distinct_tar_reg_hypotheses word_cse_every_inst_two_reg_statement word_cse_every_inst_two_reg_hypotheses every_inst_distinct_tar_reg_word_common_subexp_elim_statement every_inst_distinct_tar_reg_word_common_subexp_elim_hypotheses \
   pre_alloc_conventions_word_common_subexp_elim_statement pre_alloc_conventions_word_common_subexp_elim_hypotheses full_inst_ok_less_word_common_subexp_elim_statement full_inst_ok_less_word_common_subexp_elim_hypotheses word_cse_full_inst_ok_less_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_compile_probeScript.sml word_to_word_compile_probe.out \
+  compile_single compile_single_typed compile_single_hypotheses full_compile_single full_compile_single_typed full_compile_single_hypotheses \
+  compile compile_typed compile_hypotheses \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7576,3 +7580,14 @@ run_probe word_to_stack_inst_long_arithmetic_probeScript.sml word_to_stack_inst_
 run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_word_witness_probe.out \
   state_rel_type state_rel_def_typed state_rel_intro_typed state_rel_IMP_typed_replay state_rel_with_clock_typed \
   "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_depth_probeScript.sml word_depth_probe.out \
+  max_depth_type max_depth_def_typed leaf unknown const_leaf nested_const branch_max branch_unknown call_hit call_miss call_hit_nested deep_calls branch_call unknown_deep \
+  "$cake_dir/compiler/backend/word_depthScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pan_to_target_option_lt_source_replay_probeScript.sml pan_to_target_option_lt_source_replay_probe.out \
+  option_lt_local_replay_type option_lt_local_replay_def_typed none_none some_none none_some less equal greater \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" /tmp
+run_probe word_to_stack_inst_division_probeScript.sml word_to_stack_inst_division_probe.out \
+  division_typed division_proved division_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

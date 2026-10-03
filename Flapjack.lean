@@ -1,5 +1,8 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
 import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
+import Flapjack.Pancake.Proofs.PanToTarget
+import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
@@ -37,6 +40,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
 import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
+import Flapjack.Compiler.Backend.WordToWord.Compile
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
