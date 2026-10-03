@@ -1,0 +1,12 @@
+bytes_in_memory_thm_statement=∀w s state a b c d. target_state_rel riscv_target s state ∧ bytes_in_memory s.pc [a; b; c; d] s.mem s.mem_domain ⇒ state.exception = NoException ∧ (state.c_MCSR state.procID).mstatus.VM = 0w ∧ (state.c_MCSR state.procID).mcpuid.ArchBase = 2w ∧ state.c_NextFetch state.procID = NONE ∧ aligned 2 (state.c_PC state.procID) ∧ state.MEM8 (state.c_PC state.procID) = a ∧ state.MEM8 (state.c_PC state.procID + 1w) = b ∧ state.MEM8 (state.c_PC state.procID + 2w) = c ∧ state.MEM8 (state.c_PC state.procID + 3w) = d ∧ state.c_PC state.procID + 3w ∈ s.mem_domain ∧ state.c_PC state.procID + 2w ∈ s.mem_domain ∧ state.c_PC state.procID + 1w ∈ s.mem_domain ∧ state.c_PC state.procID ∈ s.mem_domain
+bytes_in_memory_thm_types=w : :α, s : :64 asm_state, state : :riscv_state, a : :word8, b : :word8, c : :word8, d : :word8
+bytes_in_memory_thm_hypotheses=0
+bytes_in_memory_thm_proved=T
+bytes_in_memory_thm2_statement=∀w s state a b c d. target_state_rel riscv_target s state ∧ bytes_in_memory (s.pc + w) [a; b; c; d] s.mem s.mem_domain ⇒ state.MEM8 (state.c_PC state.procID + w) = a ∧ state.MEM8 (state.c_PC state.procID + w + 1w) = b ∧ state.MEM8 (state.c_PC state.procID + w + 2w) = c ∧ state.MEM8 (state.c_PC state.procID + w + 3w) = d ∧ state.c_PC state.procID + w + 3w ∈ s.mem_domain ∧ state.c_PC state.procID + w + 2w ∈ s.mem_domain ∧ state.c_PC state.procID + w + 1w ∈ s.mem_domain ∧ state.c_PC state.procID + w ∈ s.mem_domain
+bytes_in_memory_thm2_types=w : :word64, s : :64 asm_state, state : :riscv_state, a : :word8, b : :word8, c : :word8, d : :word8
+bytes_in_memory_thm2_hypotheses=0
+bytes_in_memory_thm2_proved=T
+bytes_in_memory_IMP_all_pcs_MEM8_statement=∀env a xs m dm. bytes_in_memory a xs m dm ∧ (∀i ms' a. a ∈ dm ⇒ (env i ms').MEM8 a = ms'.MEM8 a) ⇒ ∀i ms' pc. pc ∈ all_pcs (LENGTH xs) a 0 ⇒ (env i ms').MEM8 pc = ms'.MEM8 pc
+bytes_in_memory_IMP_all_pcs_MEM8_types=env : :num -> riscv_state -> riscv_state, a : :word64, xs : :word8 list, m : :word64 -> word8, dm : :word64 -> bool
+bytes_in_memory_IMP_all_pcs_MEM8_hypotheses=0
+bytes_in_memory_IMP_all_pcs_MEM8_proved=T

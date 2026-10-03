@@ -1,5 +1,9 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Get
 import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
@@ -1302,6 +1306,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExtCall
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
@@ -2311,6 +2316,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorFlat
 import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
 
 -- Tagged modules required by the HOL reference coverage gate.
 

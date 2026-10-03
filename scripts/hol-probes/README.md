@@ -7473,6 +7473,7 @@ rows retain the universally closed three-conjunct statement, arbitrary
 word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
 BitVec64/32 carriers and proves all three equations without premises.
 This is regression evidence; it does not prove HOL-to-Lean equivalence.
+
 `word_to_stack_register_spill_update_probeScript.sml` freshly replays the full
 original state_rel_set_var2 statement and literal proof2962–2997, including
 st/sp equalities, with zero open hypotheses and proved sentinel. This is
@@ -7494,6 +7495,33 @@ projection from the arbitrary whole target record. The local nonempty witness
 is only a carrier inhabitation proof and does not define that arbitrary record.
 The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
 These captures/regressions do not establish HOL-to-Lean equivalence.
+
+## Full native target byte-memory lemmas
+
+`riscv_target_bytes_probeScript.sml` replays both complete original local
+proofs unchanged. Eight rows capture all13/8conclusions, full binder types,
+zero hypotheses and kernel truth. The first unused `w` has arbitrary type
+α (not word64); the second offset is word64. Lean retains that distinction
+and all original premises/conclusions. Strict source/proof/Lean statement
+and full-driver guards reject drift. This does not prove cross-language
+equivalence or whole encoder correctness.
+
+`word_to_stack_register_spill_update_probeScript.sml` freshly replays the full
+original state_rel_set_var2 statement and literal proof2962–2997, including
+st/sp equalities, with zero open hypotheses and proved sentinel. This is
+regression evidence rather than HOL-to-Lean equivalence.
+
+`word_to_stack_register_write_probeScript.sml` replays the unchanged full
+wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
+continuation premise and full run/relation/resources. Closed hyp0/T captures
+provide regression evidence rather than cross-language equivalence.
+
+The native byte probe additionally retains the complete original
+`bytes_in_memory_IMP_all_pcs_MEM8` induction proof, with arbitrary native
+environment, byte list and domain. Its four new rows preserve all old eight
+rows and labels. Domain coverage is derived through the full generic
+`bytes_in_memory_all_pcs`, rather than assumed at instruction PCs.
+
 `stack_remove_init_semantics_probeScript.sml` prints the stored `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and `make_init_semantics` theorems (3856-4086), all closed with zero hypotheses.
 
 `stack_remove_init_ffi_probeScript.sml` prints the stored original `evaluate_init_code_ffi` and `make_init_any_ffi` (stack_removeProofScript.sml:3893-3902, 4088-4098) with zero hypotheses; the Lean ports derive them from the accepted `evaluate_ffi_neutral` and the initializer's clock-neutrality.
@@ -7509,6 +7537,7 @@ compiler correctness.
 and its ExtCall specialization, all quantified types and closed kernel truth.
 The Lean case retains all ten premises/seven conclusions without an IH or
 additional FFI agreement premise; full compiler correctness remains open.
+
 `word_to_stack_comp_get_probeScript.sml` captures the complete original Get
 evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
 both closed hyp0/T. These are original statement regression captures, not
@@ -7516,4 +7545,30 @@ literal local-case proof replay or cross-language equivalence.
 
 `word_to_stack_comp_locvalue_probeScript.sml` captures the full original
 LocValue induction obligation and arbitrary full specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+
+`pan_structs_program_shmem_load_probe` captures full original `compile_correct`
+and its ShMemLoad specialization, quantified types and closed kernel truth.
+The Lean case preserves all ten premises/seven conclusions, derives the actual
+mapped-read FFI and returned-word assignment internally, and adds no IH or
+oracle agreement premise. Full compiler correctness remains open.
+
+### Full If constructor
+
+`word_to_stack_comp_if_full_probe.out` freshly captures the complete literal
+If evaluate_ind obligation specialized to the original full comp_correct
+motive5719–5751, including both source-guarded branch IHs, and the entire
+original theorem specialized to arbitrary If operands and continuations. Both
+are closed, have zero kernel hypotheses, and EQT_INTRO proves T. This is
+original statement evidence through the proved original full theorem, not a
+replay of the local If proof or cross-assistant equivalence. The Lean proof
+executes register, accepted-immediate and constant-fallback routes, deriving
+all branch/clock/bitmap/label obligations without extra full-case premises.
+
+`word_to_stack_store_update_probeScript.sml` freshly replays the unchanged
+state_rel_set_store statement and literal proof5132–5147, closed hyp0/T.
+Regression evidence rather than cross-language equivalence.
+
+`word_to_stack_comp_set_probeScript.sml` captures the complete original Set
+induction obligation and whole arbitrary specialization, closed hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
