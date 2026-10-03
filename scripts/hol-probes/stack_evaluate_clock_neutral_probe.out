@@ -1,0 +1,9 @@
+neutral_clock_full_statement=∀c prog s res t. evaluate (prog,s) = (res,t) ∧ clock_neutral prog ⇒ evaluate (prog,s with clock := c) = (res,t with clock := c)
+neutral_clock_full_proved=T
+neutral_clock_skip=T
+neutral_clock_halt=T
+neutral_clock_inst=T
+neutral_clock_seq=T
+neutral_clock_nested=T
+neutral_clock_tick=F
+neutral_clock_loop=F
