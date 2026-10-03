@@ -6528,7 +6528,8 @@ FP Dirty effects, truncated-core IPI bounds, byte messages and post-write Delta
 readback. Original equations and arbitrary-state kernel regressions complement
 independent numeric FPCSR and counter expectations. The l3_fpcsr_codec probe
 checks every decoded field including reserved31..8; check-l3-fpcsr-codec.py and
-check-l3-csr-counters.py independently validate their captured values. High-counter
+check-l3-csr-counters.py independently validate their captured values. check-l3-csr-equations.py also
+requires all generic equations to evaluate to true and checks exact error bytes. High-counter
 writes shift word32 by32, clearing high32 rather than performing a widened shift;
 CSR3 replaces fullword32 although its read exposes low8. These are model-section
 regressions; fullRun/Next/pass correctness remains open.
