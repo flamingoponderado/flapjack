@@ -4820,6 +4820,14 @@ run_probe lab_to_target_inst_lemma_probeScript.sml lab_to_target_inst_lemma_prob
   Inst_lemma Inst_lemma_types \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_code_helpers_probeScript.sml lab_to_target_code_helpers_probe.out \
+  oracle_tie_shift_gen oracle_tie_shift_gen_types oracle_tie_ccache_residues oracle_tie_ccache_residues_types ffi_entry_pcs_NOT_ccache_OR_halt_pc ffi_entry_pcs_NOT_ccache_OR_halt_pc_types no_share_mem_lemma no_share_mem_lemma_types EL_get_ffi_index_MEM EL_get_ffi_index_MEM_types ffi_name_NOT_Mapped ffi_name_NOT_Mapped_types no_share_mem_APPEND no_share_mem_APPEND_types no_install_APPEND_IMP no_install_APPEND_IMP_types no_share_mem_IMP_get_shmem_info no_share_mem_IMP_get_shmem_info_types IMP_ffi_entry_pcs_disjoint_Asm IMP_ffi_entry_pcs_disjoint_Asm_types IMP_ffi_entry_pcs_disjoint_LabAsm IMP_ffi_entry_pcs_disjoint_LabAsm_types EVEN_add_AND EVEN_add_AND_types word_cmp_lemma word_cmp_lemma_types list_add_if_fresh_thm list_add_if_fresh_thm_types find_ffi_names_append find_ffi_names_append_types loc_to_pc_append loc_to_pc_append_types line_length_MOD_0 line_length_MOD_0_types all_enc_ok_aligned_pos_val all_enc_ok_aligned_pos_val_types \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_compile_correct_probeScript.sml lab_to_target_compile_correct_probe.out \
+  compile_correct compile_correct_types lab_evaluate_ind \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe ssa_loop_semantic_helpers_probeScript.sml ssa_loop_semantic_helpers_probe.out \
   collapse_full empty_cut_full collapse_type_first collapse_type_source collapse_type_after empty_cut_type_names empty_cut_type_locals empty_cut_type_map \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6399,3 +6407,18 @@ run_probe list_last_probeScript.sml list_last_probe.out \
   last_definition last_type last_hypotheses last_cons_statement last_cons_hypotheses last_cons_proved \
   last_total_statement last_total_hypotheses last_total_proved \
   "$hol_dir/src/list/src/listScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_initial_entry_contracts_probeScript.sml lab_to_target_initial_entry_contracts_probe.out \
+  init_ok_def init_ok_def_types init_ok_def_hypotheses init_ok_def_proved \
+  oracle_tie_make_init oracle_tie_make_init_types oracle_tie_make_init_hypotheses oracle_tie_make_init_proved \
+  make_init_simp make_init_simp_types make_init_simp_hypotheses make_init_simp_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lprefix_lub_finite_prefix_chain_probeScript.sml lprefix_lub_finite_prefix_chain_probe.out \
+  prefix_chain_def prefix_chain_def_types prefix_chain_def_hypotheses prefix_chain_def_proved \
+  prefix_chain_lprefix_chain prefix_chain_lprefix_chain_types prefix_chain_lprefix_chain_hypotheses prefix_chain_lprefix_chain_proved \
+  prefix_chain_FILTER prefix_chain_FILTER_types prefix_chain_FILTER_hypotheses prefix_chain_FILTER_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_limits_double_probeScript.sml stack_remove_init_limits_double_probe.out \
+  init_limits_double_definition init_limits_double_type init_limits_double_hypotheses init_limits_double_store_count \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

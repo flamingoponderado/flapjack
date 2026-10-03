@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.InitialStateContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.FullStateRel
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
 import Flapjack.RiscV.L3.Defs.RegisterShift
@@ -17,6 +18,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -623,6 +625,15 @@ import Flapjack.Compiler.Backend.LabToTarget.InstUpdates
 import Flapjack.Compiler.Backend.LabToTarget.InstFrame
 import Flapjack.Compiler.Backend.LabToTarget.InstMem
 import Flapjack.Compiler.Backend.LabToTarget.InstLemma
+import Flapjack.Compiler.Backend.LabToTarget.OracleResidues
+import Flapjack.Compiler.Backend.LabToTarget.CodeSafetyFacts
+import Flapjack.Compiler.Backend.LabToTarget.FfiEntryDisjoint
+import Flapjack.Compiler.Backend.LabToTarget.WordCmp
+import Flapjack.Compiler.Backend.LabToTarget.CodeAppend
+import Flapjack.Compiler.Backend.LabToTarget.AlignedPosVal
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Common
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Control
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
