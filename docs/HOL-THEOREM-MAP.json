@@ -79413,6 +79413,16 @@
     "reviewer": "flapjack-sol3 source comparison: original local lab_to_targetProofScript10564-10570 forall code c, all_enc_ok_pre c code implies all_enc_ok_pre c(filter_skip code). Fresh original verbatim local proof replay confirms code:alpha sec list and c:alpha asm_config, zero hypotheses. Lean retains code/config binder order and complete native Section/Line/HolAsm/HolAddr/HolRegImm/MlString carriers. EVERY over sections/lines is List membership quantification; actual filterSkip MAP retains each surviving original line with no successful compilation or post-encoding assumption. Native lineOkPreHOL uses the original asm_ok(cbw_to_asm instruction) and ignores cache/length exactly; other constructors true. The words_as_type_indexed_bitvec qualifier records alpha word/dimindex as positive BitVec width/NeZero. Original capture lab_to_target_filter_preconditions_probe.out."
   },
   {
+    "lean_path": "Flapjack/Misc/MachineIeee/SqrtReal.lean",
+    "lean_name": "holFp64SqrtR",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_sqrt_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
+  },
+  {
     "lean_path": "Flapjack/Misc/BinaryIeeeSqrt/RealCarrier.lean",
     "lean_name": "holIsClosestR",
     "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
@@ -81434,6 +81444,96 @@
     "reviewer": "flapjack-sol-b source comparison2026-10-03 original6743-6765 and stackLangScript82 const_inst overload: literal Inst(Const register word), original complete state relation transport with arbitrary extra and all six run/clock/relation/stack length/stack space/register conclusions; unconditional clock equation retains whole result and poststate for every register/word/clock/state. Only premise on transport is original state_rel, no target-run/output relation/success/bounds restriction. Actual evaluate_inst/instHOL/instInteger/assign/wordExp and canonical setVar semantics reduce Const to successful register update; scratch register k+1 preserves entire relation via original2917 state_rel_set_var_k. Named fields use actual imported canonical state owners with genuine same-module codec roundtrips; original List/Spt unchanged, positive BitVec/NeZero width and Type0 host translation. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
+    "lean_name": "compileCorrectShMemStore",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/final constructor proof1338-1346 and panSem sh_mem_store529-547: all ten premises/seven conclusions, actual ShMemStore opsz/address/value syntax, no recursive IH. Child failure or nonword struct branches excluded only by original no-Error; full expression theorem supplies actual compiled word evaluations. Original nb_op zero/nonzero guards, shared-domain address/byte_align address guards, whole-word versus TAKE nb word bytes plus address bytes and actual sharedMem MappedWrite callFFI arguments preserved for all positive widths. Target shared-domain/FFI are the same source fields, so target final/ret follows internally from actual same source call; no oracle agreement/target outcome/success/run/byte-width-bound hypothesis. Original final returns FinalFFI and unchanged source state; ret returns NONE and updates only ffi. Finite codec repacking derived from operation result equality with the broad counterpart, no assumed carrier relation; ffi-only update commutes with full state conversion. Original local/global FEVERY/maps and empty result-value predicates retained. Imported canonical four-map owner/full roundtrip and positive indexed word/Type0 host translation only. Fresh original whole/case statement/types closed/kernelT reviewed. Full program and executed compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Full canonical imported-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemStore.lean",
+    "lean_name": "repack",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Proof-irrelevance repack after proved broad-state equality; no additional public simulation or compatibility premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem6",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "slice_bit_eleven",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03: literal val lem6 all THREE conjuncts in original order, arbitrary fixedword64 c, extracts31..0 and63..32 at word32, bit11 maps to11/43, word complement bit maps to Boolean complement. No premise, narrowed port, target evaluation or omitted conjunct. Kernel simp proves generic64/32 statement. Original literal BBLAST_PROVE replay captured universally closed term/types/hyp0/T; probe evidence is not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelRegisterUpdate.lean",
+    "lean_name": "wordToStackStateRelSetVar2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_var2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2962-2997: full original state_rel_set_var2, extra0, not x<k, x<frame+k, explicit st=stack and sp=stackSpace equalities retained. Source setVar(2*x)value versus target List.set at sp+(f+k-(x+1)). Arbitrary positive width, Word/Loc payload, all stateRel conjuncts; frame shape and slot bounds derived. Rest-of-stack unchanged, locals wf and every lookup preserved. Same-module canonical owner codecs and five named finite-map fields plus words_as_type_indexed_bitvec. Fresh unchanged HOL statement AND literal proof replay hyp0/T. No numerical FP or cross-language equivalence claim; structural closure has no reals_as_rational_cuts evaluator dependency."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentWordMemory.lean",
+    "lean_name": "memLoadAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_load_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps537-570/624-657 full original good_dimindex guard and exact mem_load/store align_dm commutation. Native positive width/C/FFI full state and original Nat register/HolAddr carriers retained; no additional success/nonfailure/domain/poststate condition. Same original32/64 guard derives exact canonical holByteAligned iff word-byte modulo from accepted InstMem.holAligned_word_iff, without choosing unspecified LOG2 zero or rewriting runtime. Both address failure/success branches use actual native operations, preserve assertion result, memory/register updates and failures retaining writes. Internal Boolean helper has no independent HOL original and is not tagged. Standard word/Type0 qualifier only. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_word_memory_probe.out. Full evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentWordMemory.lean",
+    "lean_name": "memStoreAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "mem_store_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps537-570/624-657 full original good_dimindex guard and exact mem_load/store align_dm commutation. Native positive width/C/FFI full state and original Nat register/HolAddr carriers retained; no additional success/nonfailure/domain/poststate condition. Same original32/64 guard derives exact canonical holByteAligned iff word-byte modulo from accepted InstMem.holAligned_word_iff, without choosing unspecified LOG2 zero or rewriting runtime. Both address failure/success branches use actual native operations, preserve assertion result, memory/register updates and failures retaining writes. Internal Boolean helper has no independent HOL original and is not tagged. Standard word/Type0 qualifier only. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_word_memory_probe.out. Full evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison3722-3743: full original stateRel extra0, m<frame+k and arbitrary kont evaluation premise for every n<=k retained. Actual wRegWrite1Native target run existential/full postrelation/source setVar(2*m)/stack length/space conclusions. Literal helper lowers physical kont m or spilled Seq(kont k,StackStore k slot); original callback used exactly. Verified physical/spill state update laws derive all relation/resource facts; no new run/bound/postrelation assumption. Qualified five canonical fields and positive word dimensions, same-module genuine codec witnesses. Fresh unchanged original statement and proof replay; evaluator closure inherits reals_as_rational_cuts without numerical FP claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
     "lean_name": "evaluateInitCode",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
@@ -81522,15 +81622,5 @@
     "lean_name": "makeInitAnyFfi",
     "hol_name": "make_init_any_ffi",
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4088-4098: (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).ffi = s.ffi for arbitrary arguments; fallback branch is a record update of s, success branch init_reduce of the initializer post-state whose ffi equals s.ffi by evaluateInitCodeFfi. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
-  },
-  {
-    "lean_path": "Flapjack/Misc/MachineIeee/SqrtReal.lean",
-    "lean_name": "holFp64SqrtR",
-    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
-    "hol_name": "fp64_sqrt_def",
-    "hol_line": 16,
-    "statement_status": "reviewed_reals_as_rational_cuts",
-    "reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
   }
 ]
