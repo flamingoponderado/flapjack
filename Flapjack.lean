@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.IntegerStore
 import Flapjack.RiscV.L3.Defs.LRSC
 import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CopyEach
