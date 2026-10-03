@@ -70151,5 +70151,53 @@
     "hol_name": "dfn'CSRRCI_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/UpperJump.lean",
+    "lean_name": "Skip",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "Skip_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/UpperJump.lean",
+    "lean_name": "branchTo",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "branchTo_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/UpperJump.lean",
+    "lean_name": "«dfn'LUI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'LUI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/UpperJump.lean",
+    "lean_name": "«dfn'AUIPC»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AUIPC_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/UpperJump.lean",
+    "lean_name": "«dfn'JAL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'JAL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/UpperJump.lean",
+    "lean_name": "«dfn'JALR»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'JALR_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03 bead flapjack-pxn.18.5.13.8.1.21: literal Skip1276-1280, branchTo5702-5714, LUI/AUIPC5989-6011, JAL/JALR6828-6882. Fixed word5rd/rs1, word20upper/JALimm, word12JALRimm, full word64PC/Skip/GPR and original reviewed state carriers retained. LUI signextends concatenated32bits; AUIPC wraps oldPC plus same signedupper; JAL signextends20 then shifts1 and tests targetbit0 only; JALR adds signed12 to preupdateGPR then masks signextended word2value2; link oldPC plus Skip, rd0 suppression and rd/rs1 alias ordering retained. Misaligned JAL state goes to exact signalAddressException Fetch_Misaligned originaltarget with no GPRwrite; successful jumps write link then current-core NextFetch BranchTo without directly changing PC or Delta. Canonical ARB trap construction preserved through reviewed helper. Original71 independently stated whole-state/boundary/helper guards and kernel counterparts cover signbits/wrap/Skip2and4/rd0/alias/source0 and arbitrary prior exceptions. No successfultarget/mode/core premise. FullRun/Next correctness remains open."
   }
 ]

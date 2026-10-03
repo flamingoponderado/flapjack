@@ -6561,3 +6561,14 @@ cover zero/nonzero operands, rd0 and source alias, read-only and privilege
 traps, RV32/64/128, arbitrary prior exceptions and remaining state. The
 literal original CSRRWI zero-immediate path reads and skips writes. These
 checks supplement source review; full Run/Next correctness remains open.
+
+### Native upper-immediate and jump family
+
+`l3_upper_jump_probeScript.sml` captures the full original Skip, branchTo,
+LUI, AUIPC, JAL and JALR equations and 71 independent whole-state fixtures.
+`check-l3-upper-jump.py` requires every unique expected label to reduce to T.
+Kernel counterparts in L3UpperJumpParity cover signed immediate boundaries,
+PC wrap, Skip2/4, rd0, source alias and source0, the literal targetbit0 trap
+and JALR mask, while preserving arbitrary other state and prior exceptions.
+Successful jumps change NextFetch and link GPR, not PC or Delta. These probes
+supplement source review; full Run/Next correctness remains open.

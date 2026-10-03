@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.UpperJump
 import Flapjack.RiscV.L3.Defs.CSRInstructions
 import Flapjack.RiscV.L3.Defs.CSRDispatch
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
