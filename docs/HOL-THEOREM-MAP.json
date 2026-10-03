@@ -68246,5 +68246,69 @@
     "hol_name": "dfn'AMOSWAP_D_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7721-7768: complete fixed word1 aq/rl (unused as in HOL), word5 rd/rs1/rs2 and arbitrary native riscv_state. Virtual alignment before Data/Write translateAddr; returned state for old memory read, operand GPR rs2 and fault. rawWriteData operand is evaluated from returned translation state before write GPR rd; preserve overlapping rs2=rd. W extracts/sign extends low32, D retains full64. No architecture guard, success/alignment/core hypothesis, or modern ISA replacement. Full mechanical36-definition closure has zero failures; unconditional whole-state normal form kernel checked. Fresh original26 combined observations independently calculated via wrapping byte updates and compared, covering negative/positive words, destination/source/address overlap, zero registers, core255/totalCore1, RV32/RV128, virtual misalignment, returned Sv39 write dirty/read flags and read-only/invalid faults. Observed frame resets GPR/memory/TLB/NextFetch/exception and retains other arbitrary fields; numeric guards do not establish full transition equivalence. No whole Run/Next/compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOADD_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOADD_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7766-7816: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOADD_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOADD_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7817-7865: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOXOR_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOXOR_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7866-7916: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOXOR_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOXOR_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7917-7965: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOAND_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOAND_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7966-8016: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOAND_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOAND_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source8017-8065: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOOR_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOOR_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source8066-8116: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/AMOArithmetic.lean",
+    "lean_name": "«dfn'AMOOR_D»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'AMOOR_D_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source8117-8165: complete fixed word1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. Virtual alignment precedes Data/Write translation. Returned state supplies old memory and rs2 operand before destination register update. W sign extends low32 old value before word64 operation then stores4bytes; D uses full64 and stores8bytes. No architecture guard or success/core/alignment premise. Full42-definition mechanical closure0fail and unconditional whole-state normal forms kernel checked. Fresh original176 combined observations independently computed via wrapping bytes/registers: all virtual misalignment residues, all aq/rl bits, wrapping arithmetic, signed/positive memory, overlapping and zero registers, core255/totalCore1, RV32/RV128, returned Sv39 dirty/read PTE flags, read-only/invalid faults. Numeric observer records current/other source registers, three memory words/eight bytes/allTLBfields and frame outside GPR/MEM8/TLB/NextFetch/exception; regression evidence does not establish whole transition equivalence or full Run/Next/compiler correctness."
   }
 ]

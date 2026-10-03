@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.AMOArithmetic
 import Flapjack.RiscV.L3.Defs.AMOSwap
 import Flapjack.RiscV.L3.Defs.IntegerStore
 import Flapjack.Compiler.Backend.LabToTarget.ShmemCorrectness
