@@ -78475,5 +78475,28 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.8): Full original lab_filterScript21 forall ls filter_skip ls = MAP (lambda Section n xs => Section n (FILTER not_skip xs)) ls. Fresh original fulltype captures for theorem/not_skip_def/filter_skip_def show alpha sec list and alpha line: actual fixed native syntax indexed by HOL word dimension, no arbitrary other Line carriers to specialize. Lean retains full program binder and constructor-for-constructor Section/List/Line/ASM/register-immediate/MlString fields; map lambda written with structure projections is original single constructor case. Positive-width words_as_type_indexed_bitvec is sole translation; fixed bytes unchanged, no extra hypotheses. Kernel list induction follows unchanged source proof. Same-module untagged filterSkipAppend is derived map/append infrastructure for actual Install code/oracle successor, not a new HOL declaration. Original three declarations freshly replayed with full type/hyp0/kernel captures12rows. This is a missing original995/999/1005/1024/1028/1031 Install dependency; full Install/filter assembler remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpBytesInWord.lean",
+    "lean_name": "compileExpCorrectBytesInWord",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 BytesInWord case: all seven source hypotheses and three conclusions, no recursive IH. Actual faithful eval yields Word(bytesInWordHOL width); old shape One and field validity follow, actual compileExpExact retains BytesInWord and converted target evaluates to the same word. Positive width is the standard word translation; no byte-multiple, minimum-eight, range, target-run or compatibility premise. Imported canonical state owner with full two-way local roundtrip and four-map qualifier. Full original theorem/BytesInWord specialization/eval_ind kernel captured. Whole expression/compiler assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpBytesInWord.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack imported canonical state two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

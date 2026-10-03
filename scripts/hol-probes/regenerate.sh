@@ -6765,3 +6765,7 @@ run_probe pan_structs_exp_load32_faithful_probeScript.sml pan_structs_exp_load32
 run_probe lab_filter_map_probeScript.sml lab_filter_map_probe.out \
   not_skip_def_statement not_skip_def_types not_skip_def_hypotheses not_skip_def_proved filter_skip_def_statement filter_skip_def_types filter_skip_def_hypotheses filter_skip_def_proved filter_skip_MAP_statement filter_skip_MAP_types filter_skip_MAP_hypotheses filter_skip_MAP_proved \
   "$cake_dir/compiler/backend/lab_filterScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_exp_bytes_in_word_faithful_probeScript.sml pan_structs_exp_bytes_in_word_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_bytes_in_word_statement compile_exp_correct_bytes_in_word_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

@@ -7181,3 +7181,8 @@ and both direct definitions, full native word-indexed line/section binder types,
 zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
 proof's map prerequisite without specializing arbitrary generic Line carriers.
 The derived Lean append law is Flapjack infrastructure, not another HOL claim.
+
+`pan_structs_exp_bytes_in_word_faithful_probe` captures the original full theorem,
+BytesInWord specialization and eval_ind. The faithful native case retains all
+seven hypotheses and three conclusions, including the actual converted target
+evaluation, at every positive word width without an extra byte-size condition.
