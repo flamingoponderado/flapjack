@@ -9992,6 +9992,12 @@
       "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"
     },
     {
+      "bytes": 227,
+      "out": "word_to_stack_store_update_probe.out",
+      "rows": 3,
+      "sha256": "3d0de527e4e5489733ae02b0296054008c3dbb72606059bd56945a7bb086a15d"
+    },
+    {
       "bytes": 57,
       "out": "word_to_stack_stub_probe.out",
       "rows": 6,

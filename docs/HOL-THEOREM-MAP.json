@@ -81707,5 +81707,21 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison LocValue6905-6924, full comp_correct5756 motive5719-5751. Full original Seq.Simulation all quantified operands/source/compiler/target states, complete original premises and targetrun/resource/result conclusion. Actual successful source membership implies target code domain through original stateRel code-domain conjunct, deriving zero-offset locCheck. Original conventions/evenness and maxVar frame bound retained, actual native LocValue callback then full register-write execution. No new label/read/targetrun/postrelation assumption. Qualified named finite-support fields/positive words and genuine same-module codecs; inherited reals_as_rational_cuts unchanged. Fresh original whole LocValue induction obligation/specialization closed captures; no cross-language equivalence claim.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelStoreUpdate.lean",
+    "lean_name": "stateRelSetStore",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison5132-5147: entire state_rel arbitrary k/f/frame/lens/extra, arbitrary v/x and sole v!=Handler guard, simultaneous source/target set_store full relation conclusion. Canonical updateEq/eraseEq commute for nonHandler and preserve handler lookup; all original relation conjuncts retained. Same-module genuine source/target canonical codec witnesses and all five named finite-map fields; positive words qualified. No targetrun/postrelation/new bound assumptions. Structural closure has no evaluator reals_as_rational_cuts dependency; no numerical FP or cross-language equivalence claim. Fresh unchanged original statement and literal proof replay provides regression evidence."
   }
 ]
