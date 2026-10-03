@@ -2085,6 +2085,8 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.AllocationConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
