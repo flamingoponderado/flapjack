@@ -77114,5 +77114,43 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original DataBufferWrite constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCmpShift.lean",
+    "lean_name": "compileExpCorrectCmp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: genuine full Cmp case of original686-791 compile_exp_correct. All seven source hypotheses/three conclusions retained; only original full child IHs for both operands. Actual source evaluation supplies two Val Word operands and result; child IHs derive actual converted operand evaluations. Original operation (including Option shift failure) is preserved, producing word result/shape/field validity. No target run, compatibility, range, index or memory-adapter premise. Actual canonical state owner with local full roundtrip, four map fields and positive word/Type0 translation only. Original full theorem/case/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCmpShift.lean",
+    "lean_name": "compileExpCorrectShift",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: genuine full Shift case of original686-791 compile_exp_correct. All seven source hypotheses/three conclusions retained; only original full child IHs for both operands. Actual source evaluation supplies two Val Word operands and result; child IHs derive actual converted operand evaluations. Original operation (including Option shift failure) is preserved, producing word result/shape/field validity. No target run, compatibility, range, index or memory-adapter premise. Actual canonical state owner with local full roundtrip, four map fields and positive word/Type0 translation only. Original full theorem/case/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCmpShift.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: genuine actual imported canonical state two-way roundtrip, no HOL original."
   }
 ]

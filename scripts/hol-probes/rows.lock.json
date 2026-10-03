@@ -4658,6 +4658,12 @@
       "sha256": "291ca0773724dcec4dfab40e6295f2b555384ee4097abda2d1ba89134b60991a"
     },
     {
+      "bytes": 3022,
+      "out": "pan_structs_exp_cmp_shift_faithful_probe.out",
+      "rows": 7,
+      "sha256": "ac6e91eab736ae83d2f0d3aec684fa79304117e359c27009c5f8da781a162a23"
+    },
+    {
       "bytes": 2377,
       "out": "pan_structs_exp_nfield_faithful_probe.out",
       "rows": 5,

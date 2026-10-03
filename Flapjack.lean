@@ -1224,6 +1224,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
 import Flapjack.Pancake.Proofs.PanStructs.FieldsInOrderReorderNoop
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction

@@ -7129,3 +7129,7 @@ source lookup derive the shape-list and actual converted index correspondence.
 quantified types, zero hypotheses and kernel proof. Ignored info-field payload
 remains independently polymorphic; native theorem uses faithful MlS, ContextExact
 and actual compileFieldsExact, preserving both original premises.
+
+`pan_structs_exp_cmp_shift_faithful_probe` captures the full original theorem,
+both Cmp/Shift specializations and eval_ind. Both native cases retain all seven
+hypotheses and three conclusions, using only the two original child IHs.
