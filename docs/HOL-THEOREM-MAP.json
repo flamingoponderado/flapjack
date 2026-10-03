@@ -74282,5 +74282,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol whole source/statement comparison2026-10-03 bead flapjack-stackremove-init-read-memory: original local stack_removeProof2837-2844 states forall xs a p, (p STAR word_list a xs)(fun2set(m,dm)) implies read_mem a m (LENGTH xs)=xs; original free m/dm are generalized outside those binders. Native memory/domain and forall values/base/frame preserve that order and full framed assertion/conclusion on arbitrary payload beta:Type, actual function/domain graph, original forward list and original native readMem. Only HOL type-indexed positive word addresses become BitVec width/[NeZero width]; there is no extra element equality, no-wrap, good_dimindex, finite-domain, target run or desired-result premise. The full original local proof Induct/fs read_mem_def word_list_def STAR_ASSOC/rw/res_tac/SEP_R_TAC is replayed unchanged with original upstream helperLib and GEN_ALL, yielding zero hypotheses and T. Native induction uses existing faithful wordListNth graph membership for head and full STAR_ASSOC for the framed tail; reads are derived, not supplied. No finite-map/array/name representation change or new executable compiler/guest/FP parity claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decs_structs",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsStructs.lean",
+    "lean_name": "compileDeclsStructs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review 2026-10-03: original local theorem1346-1355 compared with full CompileDeclsExact/ContextExact and DeclHOL carriers. Arbitrary initial/final contexts and source/compiled declaration lists; sole original compiled-pair equality premise, identical struct-list equality conclusion. Exact MlS names, List fields, positive word-indexed declaration syntax. Induction generalizes initial context: Decl modifies globals only, Function/Exn recurse unchanged, Name drops without changing structs. No target run, extra relation, bounded width or production default. Original unchanged HOL induction proof kernel-replayed by pan_structs_compile_decs_structs_probe. This prerequisite does not close whole declaration or top-level semantic correctness."
   }
 ]

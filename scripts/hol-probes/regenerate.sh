@@ -6505,3 +6505,7 @@ run_probe stack_remove_init_mod_order_probeScript.sml stack_remove_init_mod_orde
 run_probe stack_remove_word_list_reverse_probeScript.sml stack_remove_word_list_reverse_probe.out \
   word_list_reverse_statement word_list_reverse_proved word_list_reverse_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_compile_decs_structs_probeScript.sml pan_structs_compile_decs_structs_probe.out \
+  compile_decs_structs_statement compile_decs_structs_proved compile_decs_structs_hypotheses \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
