@@ -30,6 +30,8 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_transform_probe.out` captures the types of `word_cseInst` (`knowledge -> α inst -> knowledge # α prog`), `word_cse` and `word_common_subexp_elim`, the full `word_cseInst_def` and `word_common_subexp_elim_def`, the clause count (26) of `word_cse_def`, and the zero-hypothesis `word_cse_wf_data`. The built theory exports `Seqs_ind` but no `Seqs_def`, so the `Seqs` test helper is compared against the script text only. Statement evidence for source review only.
 `word_cse_data_inv_transport_probe.out` captures the full zero-hypothesis statements of word_cseProof `canonicalArith_correct`, `data_inv_locals`, `wf_data_untracked`, `data_inv_set_var`, `data_inv_unset_var`, `not_seen_data_inv_alist_insert`, `data_inv_memory` and `data_inv_state_agree` (also typed: one state type for s1 and s2). Statement evidence for source review only.
 `word_cse_data_inv_updates_probe.out` captures the full zero-hypothesis statements of the 12 exported word_cseProof `data_inv` knowledge-update theorems ported in `WordCse/Proofs/DataInvUpdates.lean` (`data_inv_merge_l` through `evaluate_Move1`, with `data_inv_set_store` also typed); the 10 local ones are not exported. Statement evidence for source review only.
+`word_cse_fact_insert_probe.out` captures the full zero-hypothesis statements of the 7 exported word_cseProof fact-producer correctness theorems in `WordCse/Proofs/FactInsert.lean` (`add_to_data_aux_correct` through `add_to_load_correct`, with `add_to_data_Arith_correct` also typed); the 7 local ones are not exported. Statement evidence for source review only.
+`word_cse_moves_probe.out` captures the full zero-hypothesis statements of the 5 exported word_cseProof move/clock theorems in `WordCse/Proofs/MoveLemmas.lean` (`lookup_map_insert0`, `get_set_vars_lemma`, `MEM_FST_reduc`, `canonicalMoveRegs_lemma` (also typed), `data_inv_clock`); the 13 local ones are not exported. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
 `word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
@@ -7772,6 +7774,13 @@ same-model wrapper choice equality are proved internally; no supplied chain,
 LUB or target-semantics premise is added. It uses the distinct PanProps result
 datatype. Faithful evaluator wrapper correspondence remains separate.
 
+`pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
+PanSem wrapper equality, quantified state/start types and closed kernel truth.
+Lean retains the faithful evaluator, every overwritten clock, TailCall as
+Call NONE, exact result classification and FFI event projection. It derives
+forbidden/termination predicate equivalence internally, with the original
+choice/LUB formulas and canonical finite-support/positive-word translations.
+Whole-pass semantics correspondence and production routing remain separate.
 `word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
 ### Native Const instruction decoder evidence
 
@@ -7795,6 +7804,12 @@ separately named HOL composition identity exists. They do not establish the
 full Const encoder theorem's fetch, Next, interference, or assertions.
 `check-riscv-const32-value.py` pins the unrestricted signatures and original
 evidence; mutation tests reject an added run premise or a lost oracle row.
+
+`pan_structs_semantics_eq_probeScript.sml` captures the closed original
+`semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
+and quantified types. The Lean counterpart retains all eight source hypotheses
+and faithful semantics equality; production routing remains independent.
+Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
 `pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
 PanSem wrapper equality, quantified state/start types and closed kernel truth.
 Lean retains the faithful evaluator, every overwritten clock, TailCall as
@@ -7816,3 +7831,32 @@ This is untagged infrastructure because HOL has no separately named identity.
 It does not establish full native fetch/Next/interference/assertion execution.
 `check-riscv-const-wide-value.py` and its mutation regressions protect the
 unrestricted signature, original evidence, and all driver labels.
+
+`pan_structs_semantics_eq_probeScript.sml` captures the closed original
+`semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
+and quantified types. The Lean counterpart retains all eight source hypotheses
+and faithful semantics equality; production routing remains independent.
+Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
+## Whole native Const Run composition
+
+`riscv_const_run_probeScript.sml` executes original `riscv_ast_def` Const
+lowering and native `Run` using a RV64 register fixture. Twelve `T` observations
+cover signed12 ORI, both Const32 branches, and both wide paths with low/high
+bit11 choices. Each checks destination and scratch31 values, other-register
+and other-core preservation, physical register0 preservation, and complete
+state equality after restoring the GPR field. These are actual computation
+oracles; the unrestricted theorem is separately kernel-checked.
+
+`CorrectnessEncoding/ConstRun.lean` proves the full native state result for
+every constant/destination allowed by original `asm_ok` and `riscv_ok`. The
+latter discharges original SLLI RV32 trap exclusion. `constRunPost` preserves
+the exact wide-path scratch31 update, rather than discarding it. This untagged
+Run-fold infrastructure has no separately named HOL identity and does not
+establish fetch/Next/interference/assertion execution. The signature, complete
+post-state body, source probe, outputs, and driver labels are regression-pinned.
+`pan_structs_compile_top_semantics_decls_probeScript.sml` captures the closed
+original whole `compile_top_semantics_decls` theorem at pan_structsProof1535-1564,
+kernel truth and quantified types. Its Lean port retains four original premises,
+faithful declaration semantics and the original eshapes update. Executed routing
+is independent. Regenerate with
+`HOL_PROBE_ONLY=pan_structs_compile_top_semantics_decls_probeScript.sml`.
