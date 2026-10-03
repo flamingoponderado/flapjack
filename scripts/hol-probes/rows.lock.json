@@ -5726,6 +5726,12 @@
       "sha256": "c45afa36b2efab2cb3d75da61ab12f321162178cd70df3396a8f3e292c16bc90"
     },
     {
+      "bytes": 1707,
+      "out": "riscv_target_bytes_probe.out",
+      "rows": 8,
+      "sha256": "20da98bd2555087f8cf97c9b650fa1e4a56e0e988a9c0beee4e07a911548b7e5"
+    },
+    {
       "bytes": 960,
       "out": "riscv_target_helper_links_probe.out",
       "rows": 9,

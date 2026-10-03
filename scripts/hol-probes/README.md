@@ -7484,3 +7484,13 @@ projection from the arbitrary whole target record. The local nonempty witness
 is only a carrier inhabitation proof and does not define that arbitrary record.
 The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
 These captures/regressions do not establish HOL-to-Lean equivalence.
+
+## Full native target byte-memory lemmas
+
+`riscv_target_bytes_probeScript.sml` replays both complete original local
+proofs unchanged. Eight rows capture all13/8conclusions, full binder types,
+zero hypotheses and kernel truth. The first unused `w` has arbitrary type
+α (not word64); the second offset is word64. Lean retains that distinction
+and all original premises/conclusions. Strict source/proof/Lean statement
+and full-driver guards reject drift. This does not prove cross-language
+equivalence or whole encoder correctness.

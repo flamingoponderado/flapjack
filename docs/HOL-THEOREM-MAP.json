@@ -81515,5 +81515,23 @@
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise. Inherits reals_as_rational_cuts SOUNDNESS item8 via Step.NextRISCV -> Run; this marker records original native model rendering dependency, not a new correctness assumption.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_thm",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BytesInMemory.lean",
+    "lean_name": "bytes_in_memory_thm",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 full literal original14-54: native fixedword64/8 and exactAsmState/targetStateRel/bytesInMemoryHOL. First preserves unused polymorphic w:α as {α:Type}(_w:α); second w:word64. Original sole antecedent conjunction unchanged. Every13(first)/8(second) conclusion in exact order, no extra premise/domain restriction/target evaluation. Four wrapped byte offsets and descending domain conclusions derived from recursive bytes and original relation; full5validity conjuncts derived from target stateOK. Fresh unchanged original term/proof replay, full binder types,hyp0,T. Inherits reals_as_rational_cuts SOUNDNESS item8 via riscvTarget.next -> Step.NextRISCV -> Run; this marker records carrier/model dependency, not narrowed correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "bytes_in_memory_thm2",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BytesInMemory.lean",
+    "lean_name": "bytes_in_memory_thm2",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 full literal original14-54: native fixedword64/8 and exactAsmState/targetStateRel/bytesInMemoryHOL. First preserves unused polymorphic w:α as {α:Type}(_w:α); second w:word64. Original sole antecedent conjunction unchanged. Every13(first)/8(second) conclusion in exact order, no extra premise/domain restriction/target evaluation. Four wrapped byte offsets and descending domain conclusions derived from recursive bytes and original relation; full5validity conjuncts derived from target stateOK. Fresh unchanged original term/proof replay, full binder types,hyp0,T. Inherits reals_as_rational_cuts SOUNDNESS item8 via riscvTarget.next -> Step.NextRISCV -> Run; this marker records carrier/model dependency, not narrowed correctness."
   }
 ]

@@ -5,6 +5,44 @@ import Flapjack.RiscV.CorrectnessEncoding
     zero and largest in-range boundary cases for
     `riscv_targetProof$word_extract_6`. -/
 
+namespace Flapjack.Test.NativeBytesConsumers
+open Flapjack RiscV.L3 Compiler.Encoders.RiscV.Target
+
+example {α : Type} (_w : α) (s : AsmState 64) (state : riscv_state)
+    (a b c d : BitVec 8)
+    (h : targetStateRel riscvTarget s state ∧
+      bytesInMemoryHOL (s.pc) [a,b,c,d] s.mem s.memDomain) :
+    state.exception = exception.NoException ∧
+    (state.c_MCSR state.procID).mstatus.VM = 0 ∧
+    (state.c_MCSR state.procID).mcpuid.ArchBase = 2 ∧
+    state.c_NextFetch state.procID = none ∧
+    holAligned 2 (state.c_PC state.procID) = true ∧
+    state.MEM8 (state.c_PC state.procID) = a ∧
+    state.MEM8 (state.c_PC state.procID + 1) = b ∧
+    state.MEM8 (state.c_PC state.procID + 2) = c ∧
+    state.MEM8 (state.c_PC state.procID + 3) = d ∧
+    s.memDomain (state.c_PC state.procID + 3) ∧
+    s.memDomain (state.c_PC state.procID + 2) ∧
+    s.memDomain (state.c_PC state.procID + 1) ∧
+    s.memDomain (state.c_PC state.procID) :=
+  RiscV.TargetProof.bytes_in_memory_thm _w s state a b c d h
+
+example (w : BitVec 64) (s : AsmState 64) (state : riscv_state)
+    (a b c d : BitVec 8)
+    (h : targetStateRel riscvTarget s state ∧
+      bytesInMemoryHOL (s.pc + w) [a,b,c,d] s.mem s.memDomain) :
+    state.MEM8 (state.c_PC state.procID + w) = a ∧
+    state.MEM8 (state.c_PC state.procID + w + 1) = b ∧
+    state.MEM8 (state.c_PC state.procID + w + 2) = c ∧
+    state.MEM8 (state.c_PC state.procID + w + 3) = d ∧
+    s.memDomain (state.c_PC state.procID + w + 3) ∧
+    s.memDomain (state.c_PC state.procID + w + 2) ∧
+    s.memDomain (state.c_PC state.procID + w + 1) ∧
+    s.memDomain (state.c_PC state.procID + w) :=
+  RiscV.TargetProof.bytes_in_memory_thm2 w s state a b c d h
+
+end Flapjack.Test.NativeBytesConsumers
+
 namespace Flapjack.Test.RiscVWordExtract6Parity
 
 open Flapjack.RiscV
