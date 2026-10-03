@@ -7012,3 +7012,7 @@ run_probe word_to_stack_register_write_probeScript.sml word_to_stack_register_wr
 run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
   load_clock_statement load_clock_proved load_clock_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_if_full_probeScript.sml word_to_stack_comp_if_full_probe.out \
+  comp_correct_if_full_statement comp_correct_if_full_proved comp_correct_if_full_hypotheses comp_correct_if_whole_statement comp_correct_if_whole_proved comp_correct_if_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

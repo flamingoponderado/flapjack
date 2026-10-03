@@ -7491,3 +7491,15 @@ stack use and out-of-range failures. The whole evaluation pair is retained;
 the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
 This is original-source evidence, not cross-assistant equivalence or full
 compiler correctness.
+
+### Full If constructor
+
+`word_to_stack_comp_if_full_probe.out` freshly captures the complete literal
+If evaluate_ind obligation specialized to the original full comp_correct
+motive5719–5751, including both source-guarded branch IHs, and the entire
+original theorem specialized to arbitrary If operands and continuations. Both
+are closed, have zero kernel hypotheses, and EQT_INTRO proves T. This is
+original statement evidence through the proved original full theorem, not a
+replay of the local If proof or cross-assistant equivalence. The Lean proof
+executes register, accepted-immediate and constant-fallback routes, deriving
+all branch/clock/bitmap/label obligations without extra full-case premises.
