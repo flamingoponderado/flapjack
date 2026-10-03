@@ -7708,3 +7708,5 @@ including register zero and register31. These finite oracle rows are regression
 evidence, not exhaustive equivalence; the universal Lean proof and literal
 source comparison are separate obligations. The guard pins the unrestricted
 signature and all four original sentinels.
+
+`word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.

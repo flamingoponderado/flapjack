@@ -1,0 +1,3 @@
+add_to_data_type=:knowledge -> num -> α inst -> β inst -> knowledge # β prog
+add_to_data_def_typed=∀(data :knowledge) (r :num) (adjusted :β inst) (x :α inst). add_to_data data r adjusted x = (let (i :num list) = instToNumList adjusted in add_to_data_aux data r i (Inst x :α prog))
+add_to_data_def_hypotheses=0
