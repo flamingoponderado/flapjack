@@ -657,6 +657,7 @@ import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
 import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
 import Flapjack.Compiler.Backend.WordCse.CanonicalFp
+import Flapjack.Compiler.Backend.WordCse.ProductionStoreFacts
 import Flapjack.Compiler.Backend.WordCse.Proofs.ListOrder
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
 import Flapjack.Compiler.Backend.WordCse.Proofs.EvaluationFrames
