@@ -7383,3 +7383,10 @@ types and closed kernel proofs. The Lean piece retains all ten premises/seven
 conclusions and precisely the initializer-SOME/declared-shape guarded body IH
 at the actual updated local state. Source invariants supply body preconditions;
 restoration handles both absent and shadowed caller bindings.
+`word_to_stack_comp_return_probe.out` freshly specializes the entire original
+comp_correct theorem at arbitrary Return/register/value-list/source state,
+with kernel-proved=T, no free variables and zero hypotheses. The native Return
+case retains every quantified original premise and the complete existential
+execution/result/resource contract; it derives all source reads, frame/free
+bounds, postrelation and physical returned-value placements internally.
+This constructor port does not establish full pass or runtime correctness.
