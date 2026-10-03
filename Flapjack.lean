@@ -1215,6 +1215,8 @@ import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
+import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
+import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
@@ -1338,6 +1340,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectShMemLoad
 import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion

@@ -7135,6 +7135,9 @@ run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_se
 run_probe word_to_stack_loop_handler_probeScript.sml word_to_stack_loop_handler_probe.out \
   loop_handler_full loop_handler_hypotheses loop_handler_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_program_call_probeScript.sml pan_structs_program_call_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_call_statement compile_correct_call_proved compile_correct_full_types compile_correct_call_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe word_to_word_config_probeScript.sml word_to_word_config_probe.out \
   next_n_oracle next_n_oracle_types next_n_oracle_hypotheses next_n_oracle_proved config_reg_alg_type config_col_oracle_type oracle_zero oracle_equal oracle_short oracle_long \

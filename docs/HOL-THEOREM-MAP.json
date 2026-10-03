@@ -26058,6 +26058,429 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "compile_state_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL compile_state_def (word_removeProofScript.sml:10-19). compile_state clk c s = s with clock := s.clock+clk; termdep := 0; code := map (I ## remove_must_terminate) s.code; compile_oracle := (I ## MAP (I ## I ## remove_must_terminate)) o s.compile_oracle; compile := c. Lean: the same five-field record update over WordSemStateFiniteExact; sptree map is the tagged sptMap with (I ## f) as fun p => (p.1, f p.2); the oracle composition is written pointwise with the same PAIR_MAP images; c has the exact compile-field type (WordCompileFn abbrev). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "compileState_const",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "compile_state_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL compile_state_const (word_removeProofScript.sml:21-47). All 23 HOL projection conjuncts in HOL order (locals, permute, ffi, code_buffer, data_buffer, code image, clock + clk, termdep = 0, oracle image, compile = c, stack, store, fp_regs, memory, mdomain, sh_mdomain, be, gc_fun, handler, locals_size, stack_size, stack_max, stack_limit); no premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "findCode_map_I",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "find_code_map_I",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL find_code_map_I (word_removeProofScript.sml:49-54). find_code d l (map (I ## f) t) lsz = OPTION_MAP (I ## f ## I) (find_code d l t lsz) for arbitrary d l f t lsz, over the tagged wordSemFindCode and sptMap; (I ## f ## I) is fun r => (r.1, f r.2.1, r.2.2). No state carrier, so only the word qualifier. words_as_type_indexed_bitvec records only the positive BitVec width translation. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "compileState_update",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "compile_state_update",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL compile_state_update (word_removeProofScript.sml:57-75). All 15 HOL record-update commutation conjuncts in HOL order, including HOL's repeated memory conjunct (f7 and f5), each with its own free update value; no premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "getVar_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "get_var_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL get_var_compile_state (word_removeProofScript.sml:77-81). get_var x (compile_state clk c s) = get_var x s. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "getFpVar_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "get_fp_var_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL get_fp_var_compile_state (word_removeProofScript.sml:83-87). get_fp_var x (compile_state clk c s) = get_fp_var x s. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "getVars_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "get_vars_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL get_vars_compile_state (word_removeProofScript.sml:89-93). get_vars xs (compile_state clk c s) = get_vars xs s (the wordSem getVars). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "setVar_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "set_var_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL set_var_compile_state (word_removeProofScript.sml:95-99). set_var x y (compile_state clk c s) = compile_state clk c (set_var x y s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "unsetVar_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "unset_var_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL unset_var_compile_state (word_removeProofScript.sml:101-105). unset_var x (compile_state clk c s) = compile_state clk c (unset_var x s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "setFpVar_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "set_fp_var_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL set_fp_var_compile_state (word_removeProofScript.sml:107-111). set_fp_var x y (compile_state clk c s) = compile_state clk c (set_fp_var x y s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "setVars_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "set_vars_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL set_vars_compile_state (word_removeProofScript.sml:113-117). set_vars xs ys (compile_state clk c s) = compile_state clk c (set_vars xs ys s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "getStore_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "get_store_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL get_store_compile_state (word_removeProofScript.sml:119-123). get_store x (compile_state clk c s) = get_store x s. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "setStore_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "set_store_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL set_store_compile_state (word_removeProofScript.sml:125-129). set_store x y (compile_state clk c s) = compile_state clk c (set_store x y s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "pushEnv_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "push_env_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL push_env_compile_state (word_removeProofScript.sml:131-135). push_env env h (compile_state clk c s) = compile_state clk c (push_env env h s), arbitrary handler option. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "popEnv_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "pop_env_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL pop_env_compile_state (word_removeProofScript.sml:137-141). pop_env (compile_state clk c s) = OPTION_MAP (compile_state clk c) (pop_env s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "callEnv_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "call_env_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL call_env_compile_state (word_removeProofScript.sml:143-147). call_env x lsz (compile_state clk c z) = compile_state clk c (call_env x lsz z) (the wordSem callEnv). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "flushState_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "flush_state_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL flush_state_compile_state (word_removeProofScript.sml:149-153). flush_state x (compile_state clk c z) = compile_state clk c (flush_state x z), both Bool cases. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "hasSpace_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "has_space_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL has_space_compile_state (word_removeProofScript.sml:155-159). has_space n (compile_state clk c s) = has_space n s. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "gc_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "gc_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL gc_compile_state (word_removeProofScript.sml:161-167). gc (compile_state clk c s) = OPTION_MAP (compile_state clk c) (gc s), arbitrary gc_fun callback, no gc premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "alloc_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "alloc_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL alloc_compile_state (word_removeProofScript.sml:169-175). alloc w names (compile_state clk c s) = (I ## compile_state clk c) (alloc w names s); (I ## g) is Prod.map id g. All alloc branches, no premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "memLoad_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "mem_load_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL mem_load_compile_state (word_removeProofScript.sml:177-181). mem_load w (compile_state clk c s) = mem_load w s. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "memStore_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "mem_store_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL mem_store_compile_state (word_removeProofScript.sml:183-187). mem_store x y (compile_state clk c s) = OPTION_MAP (compile_state clk c) (mem_store x y s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "wordExp_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "word_exp_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL word_exp_compile_state (word_removeProofScript.sml:189-193). ∀s y. word_exp (compile_state clk c s) y = word_exp s y, clk c free outer binders, s y quantified in HOL order. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "assign_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "assign_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL assign_compile_state (word_removeProofScript.sml:195-199). assign x y (compile_state clk c s) = OPTION_MAP (compile_state clk c) (assign x y s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "inst_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "inst_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL inst_compile_state (word_removeProofScript.sml:201-207). inst i (compile_state clk c s) = OPTION_MAP (compile_state clk c) (inst i s) for every instruction (integer, memory and FP), no premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through untagged or tagged definitions, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "cutState_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "cut_state_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL cut_state_compile_state (word_removeProofScript.sml:209-215). cut_state names (compile_state clk c s) = OPTION_MAP (compile_state clk c) (cut_state names s). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "evaluate_add_clock_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "evaluate_add_clock_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL evaluate_add_clock_compile_state (word_removeProofScript.sml:217-227). HOL local: evaluate (p, compile_state clk c s) = (res, compile_state 0 c s') ∧ res ≠ SOME TimeOut ⇒ ∀extra. evaluate (p, compile_state (clk+extra) c s) = (res, compile_state extra c s'); same free variables, conjunctive premise and inner ∀extra, over the tagged exact evaluate; proved from the tagged evaluate_add_clock as HOL does. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through untagged or tagged definitions, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "compileState_decClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "compile_state_dec_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL compile_state_dec_clock (word_removeProofScript.sml:229-233). s.clock ≠ 0 ⇒ compile_state clk c (dec_clock s) = dec_clock (compile_state clk c s); the guard is HOL's (natural subtraction). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "jumpExc_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "jump_exc_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL jump_exc_compile_state (word_removeProofScript.sml:235-239). jump_exc (compile_state clk c s) = OPTION_MAP (compile_state clk c ## I) (jump_exc s); (g ## I) is Prod.map g id on (state, (l1, l2)). Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "getVarImm_compileState",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "get_var_imm_compile_state",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL get_var_imm_compile_state (word_removeProofScript.sml:241-245). get_var_imm x (compile_state clk c s) = get_var_imm x s, both Reg/Imm cases. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "pushEnv_case_handler",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "push_env_case_handler",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL push_env_case_handler (word_removeProofScript.sml:247-252). push_env x (case handler of NONE => NONE | SOME (v,prog,l1,l2) => SOME (v, f prog, l1, l2)) = push_env x handler as an equation of state transformers (function equality, as in HOL), arbitrary f. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/CompileState.lean",
+    "lean_name": "pair_map_I",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "pair_map_I",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL pair_map_I (word_removeProofScript.sml:254-260). HOL local, polymorphic: (λ(k,v). (k,f v)) = (I ## f) ∧ (λ(k,v). (f k,v)) = (f ## I) with one f : β → γ used in both conjuncts as HOL type inference forces; PAIR_MAP is Prod.map and I is id. No state or word carrier, so unqualified. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/Correct.lean",
+    "lean_name": "word_remove_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "word_remove_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.3): HOL word_remove_correct (word_removeProofScript.sml:262-430, including the resumed Loop case): ∀prog st res rst. evaluate (prog,st) = (res,rst) ∧ st.compile = (λcfg. c cfg o (MAP (I ## I ## remove_must_terminate))) ∧ res ≠ SOME Error ⇒ ∃clk. evaluate (remove_must_terminate prog, compile_state clk c st) = (res, compile_state 0 c rst). HOL's free c is the outermost explicit binder (exact compile-field type WordCompileFn); prog st res rst in HOL order; the three-way conjunctive premise is literal (I ## I ## f as fun t => (t.1, t.2.1, f t.2.2), o as Function.comp, MAP as List.map); the existential conclusion is exactly HOL's over the tagged exact wordSem evaluate, the tagged removeMustTerminate and the tagged compileState. No target-run, simulation, clock or termdep premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordRemoveCorrectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Proof follows HOL's recInduct evaluate_ind: untagged word_remove_correct_aux recurses on HOL's measure (termdep, clock, size); MustTerminate uses the tagged evaluate_dec_clock then evaluate_add_clock with clk + MustTerminate_limit - s1.clock as HOL; Seq/Loop/returning Call combine clocks with the tagged evaluate_add_clock_compile_state; Install uses the compile premise with the tagged sptree map_union/map_fromAList; the remaining constant statements commute with compile_state via the tagged commutation group. Kernel-checked; standard axioms. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "strong_locals_rel_set_vars_dom",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
@@ -51111,6 +51534,38 @@
     "lean_name": "sptLookup_sptMap",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sptreeScript.sml:1565-1569 ∀s x. lookup x (map f s) = OPTION_MAP f (lookup x s), f free in HOL (explicit Lean parameter); over the reviewed Spt carrier with the tagged sptMap/sptLookup, OPTION_MAP as Option.map. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_map",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptDomain_sptMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1561-1563 ∀s. domain (map f s) = domain s, f free (explicit Lean parameter); domain as the reviewed sptDomain predicate (lookup isSome), set equality as function equality over the tagged sptMap. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "map_insert",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptMap_sptInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1586-1602 ∀f x y z. map f (insert x y z) = insert x (f y) (map f z), binders in HOL order over the tagged sptMap/sptInsert. Kernel-checked by strong induction on the key as HOL; no premise (no wf assumption)."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "map_fromAList",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptMap_sptFromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1604-1610 map f (fromAList ls) = fromAList (MAP (λ(k,v). (k, f v)) ls), f ls free (explicit Lean parameters), the paired lambda as a pattern-matching function, MAP as List.map, over the tagged sptMap/sptFromAList. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "map_union",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptMap_sptUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1786-1791 ∀t1 t2. map f (union t1 t2) = union (map f t1) (map f t2), f free, over the tagged sptMap/sptUnion. Kernel-checked; no premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -83287,6 +83742,61 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison7724-7733: arbitrary original program/state/result, actual source evaluate and cont_loop guard only imply unchanged handler. Original NONE/Continue0 cases follow full accepted evaluate_stack_swap result, no additional success/handler premise. Canonical fmap_as_finite_support fpRegs/store and positive-width words only; inherits reals_as_rational_cuts through evaluator. Fresh literal original proof replay."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "compileCorrectCall",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061/Call1161-1220 and complete evaluate_ind Call minor: all ten premises/seven conclusions and exactly original body/exception-handler guarded IHs, retaining every argument/code tuple decomposition, actual body pair/exception, clock, handler identity/lookup/shape/original validity guard. Fixed transparent CallProperty spells full original predicate, no callerP or target compatibility. Full lookup_code_flds_ok yields actual target arguments/code and callee FEVERY. Source failures/NONE/Break/Continue/invalid shapes or bindings excluded solely by original no-Error. Body IH instantiated at actual decremented-clock callee state; faithful structs/WF invariants supply handler preconditions. Zero-clock TimeOut and terminal/exception propagation clear locals; return checks original return shape, handles tail/discarded/local/global targets. Global-map update neutrality derived from body global shape-map equality and original existing binding, no post-map premise. Handler source exception shape lookup and local validity give actual converted exception-shape/validity guards; original handler runs at restored caller locals with updated exception binding, map/fields/WF internally derived. Internal compiler equation maps optional handler program exactly; no changed executed evaluator or assumed target run. Canonical imported four-map owner/full roundtrip plus positive indexed words/Type0 host only. Fresh full/case/evaluate_ind/types closed kernelT. Whole program/compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Full imported canonical-state two-way roundtrip."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "mapExt",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lookup extensionality."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "mapUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal map2/update commutation."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "updateNeutral",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Lawful MlS update agrees internally with HOL equality, existing binding update neutral."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectCall.lean",
+    "lean_name": "everyUpdate",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
