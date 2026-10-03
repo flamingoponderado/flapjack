@@ -54306,6 +54306,18 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original word_gcFunctionsScript.sml:786-791. Statement as captured by the word_gc_functions_has_fp_ops probe: f (conf with <| has_fp_ops := b1; has_fp_tern := b2 |>) … = f conf …, with HOL's quantifier order and argument positions kept; conf with <|…|> is the Lean structure update { conf with hasFpOps := b1, hasFpTern := b2 } over the reviewed DataToWord.Config and GC definitions; 'a word is BitVec width with [NeZero width]; free variables implicit. An equation between functions as in HOL; the type ascription on wordGcFun only fixes the word width. No added premise."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "init_store_ok_def",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/InitStoreOk.lean",
+    "lean_name": "initStoreOk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_word_gcProofScript.sml:4569-4598, captured by the data_to_word_gc_init_store_ok probe. All eighteen conjuncts under ∃limit curr in HOL order: FLOOKUP store n is store.lookup n on the canonical HolFiniteMapExact binder store (bare relation entry), Word w is WordLocW.word, bytes_in_word is wordSemBytesInWord, n2w is BitVec.ofNat width, the gc_kind case keeps Generational ⇒ curr and the other two kinds ⇒ curr + bytes_in_word * n2w limit, buffer fields are the reviewed WordSemBuffer position/buffer/spaceLeft, word_list_exists/fun2set/byte_aligned are Misc.wordListExists/SetSep.fun2Set/holByteAligned. HOL's types are kept generic (probe types): memory values m : 'a word -> 'b as β, and the buffers' element widths 'c/'d as cw/dw with their own NeZero; dm : 'a word set is a Bool predicate, so fun2set (m,dm) is fun2Set (m, fun a => dm a = true), as in the reviewed init_prop. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
     "hol_name": "While",
     "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
@@ -88170,6 +88182,19 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3679-3702. Statement as captured by the stack_to_lab_encoding_init_state probe: the twenty premises in HOL order (EVERY stack_asm_name/stack_asm_remove over prog as membership quantifiers; names_ok c1.reg_names c.reg_count c.avoid_regs as namesOkSptHOL; fixed_names; addr_offset_ok c 0w; good_dimindex; byte_offset_ok c 0w; the max_stack_alloc valid_imm family with n2w (n * (dimindex (:'a) DIV 8)) as BitVec.ofNat width (n * (width / 8)); valid_imm (INL Add) 1w/(INL Sub) 1w/(INL Add) 4w/8w; store offsets; reg_name 10, sp+2, sp+1, sp; conf_ok (:'a) c2 as DataToWord.confOk width c2; sp ≠ 0) ⇒ all_enc_ok_pre c (compile c1 c2 c3 sp c.addr_offset prog), the HOL overload all_enc_ok_pre rendered by the untagged allEncOkPreHOL (EVERY sec_ok_pre) over the reviewed StackToLab.compile; c : 'a asm_config shares the program width (probe types); free variables implicit. The proof composes the ported compile_all_enc_ok_pre, stack_names_stack_asm_ok, stack_remove_stack_asm_name, stack_allocProof stack_alloc_stack_asm_convs and stack_rawcallProof stack_alloc_stack_asm_convs, as HOL does. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "IMP_init_store_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "impInitStoreOk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3704-3736, captured by the stack_to_lab_encoding_init_state probe: max_heap = 2 * max_heap_limit (:'a) c1 − 1 ∧ (fmis,xxx) = full_make_init stack_conf c1 max_heap sp offset bitmaps code s save_regs data_sp coracle ⇒ init_store_ok c1 (fmis.store \\\\ Handler) fmis.memory fmis.mdomain fmis.code_buffer fmis.data_buffer. Natural subtraction kept; DOMSUB is the reviewed HolFiniteMapExact.eraseEq; the store field of the imported StackSemStateFiniteExact owner is the canonical finite-support carrier, with the same-module relation witness; oracle and lab-state type variables are C F : Type. Inherits reals_as_rational_cuts through the fullMakeInit closure (SOUNDNESS item 8); the marker propagates that assumption only. No added premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",

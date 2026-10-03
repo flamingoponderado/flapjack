@@ -7,6 +7,8 @@ import Flapjack.Compiler.Backend.StackNames.AsmAdmissibility.Assembly
 import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
+import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
 
 /-! The encoding and initial-state group of `stack_to_labProofScript.sml:3620-3799`.
 `flatten_line_ok_pre` and `compile_all_enc_ok_pre` live in
@@ -80,5 +82,91 @@ theorem stackToLabCompileAllEncOk {width : Nat} [NeZero width] {c : AsmConfigExa
       StackRemove.Proofs.AsmName.regName_of_le h10 (by omega), hk2, hk1, hk, hk0⟩
   exact compileAllEncOkPreHOL c _ hb0 (StackNames.stackNamesStackAsmOk c c1.regNames _
     ⟨hremove, hno, hfix⟩)
+
+/-- Canonical owning-state roundtrip; Flapjack representation infrastructure. -/
+theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
+      (StackSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : StackSemStateFiniteExact width C F,
+      StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  StackSemStateSupport.holFmapAsFiniteSupportWitness
+
+/-- `make_init_opt` returns only states satisfying `init_prop` (Flapjack
+infrastructure: the `if` of `make_init_opt_def`). -/
+theorem initProp_of_makeInitOpt {width : Nat} [NeZero width] {C F : Type} {gen : Bool}
+    {maxHeap : Nat} {bitmaps : List (BitVec width)} {dataSp : Nat}
+    {oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)} {jump : Bool}
+    {bounds : BitVec width × BitVec width} {pointer : Nat} {code : Spt (HolProg width)}
+    {s t : StackSemStateFiniteExact width C F}
+    (h : StackRemove.Proofs.InitMake.makeInitOpt gen maxHeap bitmaps dataSp oracle jump bounds
+      pointer code s = some t) :
+    StackRemove.Proofs.InitProp.initProp gen maxHeap dataSp
+      (StackRemove.Proofs.InitLimits.getStackHeapLimit maxHeap
+        (StackRemove.Proofs.InitLimits.readPointers s)) t := by
+  unfold StackRemove.Proofs.InitMake.makeInitOpt at h
+  split at h
+  · simp at h
+  · split at h
+    · cases h; assumption
+    · simp at h
+
+/-- HOL `IMP_init_store_ok`. HOL's free `stack_conf c1 sp offset bitmaps code s
+save_regs data_sp coracle fmis xxx` are implicit; `fmis.store \\ Handler` is
+`fmis.store.eraseEq .handler`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IMP_init_store_ok"
+  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem impInitStoreOk {width : Nat} [NeZero width] {C F : Type} {maxHeap : Nat}
+    {c1 : DataToWord.Config} {stackConf : StackToLab.Config} {sp : Nat}
+    {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
+    {code : List (Nat × HolProg width)} {s : LabSem.State width C F} {saveRegs : Nat → Bool}
+    {dataSp : Nat} {coracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)}
+    {fmis : StackSemStateFiniteExact width C F} {xxx : Option (StackSemStateFiniteExact width C F)} :
+    maxHeap = 2 * DataToWord.maxHeapLimit width c1 - 1 ∧
+      (fmis, xxx) = fullMakeInit stackConf c1 maxHeap sp offset bitmaps code s saveRegs dataSp
+        coracle →
+      DataToWord.Proofs.Gc.initStoreOk c1 (fmis.store.eraseEq .handler) fmis.memory fmis.mdomain
+        fmis.codeBuffer fmis.dataBuffer := by
+  rintro ⟨hmh, hf⟩
+  simp only [fullMakeInit, Prod.mk.injEq] at hf
+  obtain ⟨rfl, -⟩ := hf
+  simp only [StackAlloc.makeInit]
+  unfold StackRemove.Proofs.InitMake.makeInitAny
+  split
+  · rename_i t ht
+    obtain ⟨cur, oth, bb, len, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15,
+      h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31, h32⟩ :=
+      initProp_of_makeInitOpt ht
+    have hmem : Misc.wordListExists cur (len + len)
+        (SetSep.fun2Set (t.memory, fun a => t.mdomain a = true)) := by
+      rw [StackRemove.Proofs.WordListMemory.wordListExistsAdd, ← h26]
+      exact h32
+    refine ⟨len, cur, by omega, ?_⟩
+    simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, reduceCtorEq, if_false]
+    refine ⟨h10, h11, h13, h1, by rw [h5, h4], h2, by rw [h4, h26]; rfl, ?_,
+      by rw [h7, BitVec.mul_comm]; rfl, h14, h15, h16, h17, h19, h20, hmem, h27⟩
+    rw [h3]
+    rcases c1.gcKind <;> simp [StackToLab.isGenGc, h26] <;> rfl
+  · refine ⟨0, 0, Nat.zero_le _, ?_⟩
+    simp only [HolFiniteMapExact.eraseEq, FDOMSUB_HOL, reduceCtorEq, if_false,
+      HolFiniteMapExact.lookup_updateListEq]
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, trivial, trivial, ?_, ?_⟩
+    all_goals try (simp [FUPDATE_LIST_HOL, FUPDATE_HOL, StackRemove.storeList,
+      StackSemRegisterTransfers.storeOfSyntax, HolFiniteMapExact.empty]; done)
+    · rcases c1.gcKind <;> simp [FUPDATE_LIST_HOL, FUPDATE_HOL, StackRemove.storeList,
+        StackSemRegisterTransfers.storeOfSyntax, HolFiniteMapExact.empty]
+    · have key : ∀ heap : (BitVec width × WordLocW width) → Prop, heap = (fun _ => False) →
+          Misc.wordListExists 0 (0 + 0) heap := by
+        rintro _ rfl
+        refine ⟨[], fun _ => False, fun _ => False, ⟨?_, by simp⟩, rfl, rfl, rfl⟩
+        funext e; simp
+      exact key _ (by funext e; simp [SetSep.fun2Set])
+    · have h0 : holAlign (holLOG2 (width / 8)) (0 : BitVec width) = 0 := by
+        apply BitVec.eq_of_getLsbD_eq
+        intro i _
+        simp [holAlign, holWordSlice, getLsbD_holFcpWord]
+      simp only [holByteAligned, holAligned, decide_eq_true_eq]
+      exact h0
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState

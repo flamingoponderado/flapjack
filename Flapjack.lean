@@ -1307,6 +1307,7 @@ import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas

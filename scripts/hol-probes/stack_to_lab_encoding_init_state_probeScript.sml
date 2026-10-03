@@ -38,3 +38,6 @@ val _ = type_list "full_make_init_has_fp_ops_statement_types" full_make_init_has
 val _ = checked "stack_to_lab_compile_all_enc_ok_statement" stack_to_lab_compile_all_enc_ok;
 val _ = typed_statement "stack_to_lab_compile_all_enc_ok_statement_typed" stack_to_lab_compile_all_enc_ok;
 val _ = type_list "stack_to_lab_compile_all_enc_ok_statement_types" stack_to_lab_compile_all_enc_ok;
+val _ = checked "IMP_init_store_ok_statement" IMP_init_store_ok;
+val _ = typed_statement "IMP_init_store_ok_statement_typed" IMP_init_store_ok;
+val _ = type_list "IMP_init_store_ok_statement_types" IMP_init_store_ok;
