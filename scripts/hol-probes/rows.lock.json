@@ -6986,6 +6986,12 @@
       "sha256": "eff6553096062ec2f547257e0e1748962b834a1f72a17261725879b7407cb887"
     },
     {
+      "bytes": 1768,
+      "out": "target_good_init_state_probe.out",
+      "rows": 7,
+      "sha256": "4bcd2f82edb4547298eb2628248b0fe1ac8181b6b992133ff880021f8f6076cd"
+    },
+    {
       "bytes": 4301,
       "out": "target_interference_contracts_probe.out",
       "rows": 4,
@@ -8130,6 +8136,12 @@
       "out": "word_to_stack_comp_code_labels_probe.out",
       "rows": 14,
       "sha256": "ee6ae651e6d67c1715dd3b3ab9926afeeaa6d5e80a490a4b1ac7f9c2de8a42f5"
+    },
+    {
+      "out": "word_to_stack_comp_control_probe.out",
+      "bytes": 5147,
+      "rows": 9,
+      "sha256": "9f853d50ae21d593b1b0dddbea76f71b1a2e641ca56e23d89b15fc5e5abcce5e"
     },
     {
       "bytes": 485,
