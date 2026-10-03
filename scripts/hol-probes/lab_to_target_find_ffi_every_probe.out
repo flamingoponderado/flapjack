@@ -1,0 +1,6 @@
+find_ffi_names_EVERY=∀(code :α sec list) (ls :ffiname list).
+  find_ffi_names code = ls ⇒
+  EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s) ls
+find_ffi_names_EVERY_types=(code :α sec list)::α sec list;(ls :ffiname list)::ffiname list;
+find_ffi_names_EVERY_hypotheses=0
+find_ffi_names_EVERY_proved=T
