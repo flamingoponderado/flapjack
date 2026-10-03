@@ -386,6 +386,12 @@
       "sha256": "aef4113ab38533177acbfc7924d7bcb3aaea556c90a5c8497e5f662f7fe1d037"
     },
     {
+      "bytes": 518,
+      "out": "bytes_in_memory_domain_probe.out",
+      "rows": 18,
+      "sha256": "2ddc222c6e810780abcb0e21828411578df91db896bf2824dc39fb499a289c17"
+    },
+    {
       "bytes": 307,
       "out": "cake_ssa_temp_probe.out",
       "rows": 6,
@@ -1686,6 +1692,12 @@
       "out": "l3_step_fetch_probe.out",
       "rows": 3,
       "sha256": "405e910e0fda61b17875346b9461591a21401816c5428eee64977b7f54b5667e"
+    },
+    {
+      "bytes": 4778,
+      "out": "l3_system_signals_probe.out",
+      "rows": 90,
+      "sha256": "c9f78cdabc2d185359ee04a4d53843d48a37118404f8eaaa2e1d6a2bc3b97fdd"
     },
     {
       "bytes": 413,
@@ -5654,6 +5666,12 @@
       "sha256": "15cbe3769187816460a6ec7478b0b2224efe576c3e43688c52d00e6f79e1dc14"
     },
     {
+      "out": "stack_code_bitmaps_calltail_probe.out",
+      "bytes": 662,
+      "rows": 3,
+      "sha256": "74fbc3d19ae0b577ad8360be34c77f1ecb79136a5e38eb06ff50c02042d2f4cf"
+    },
+    {
       "out": "stack_code_bitmaps_ffi_probe.out",
       "bytes": 669,
       "rows": 3,
@@ -5676,6 +5694,12 @@
       "out": "stack_code_bitmaps_install_probe.out",
       "rows": 3,
       "sha256": "9facf63a25ece1df7fb60cc395fd651b372c302577a16669f94c66519af2e33b"
+    },
+    {
+      "out": "stack_code_bitmaps_jumplower_probe.out",
+      "bytes": 661,
+      "rows": 3,
+      "sha256": "b3b87c8806d1cf64b80ba6606861ff92438667a1943059f65cc1ea91a970130d"
     },
     {
       "bytes": 643,
@@ -6006,6 +6030,12 @@
       "out": "stack_remove_comp_inst_probe.out",
       "rows": 3,
       "sha256": "762ffd3c2927f08374a27d6cc1a03343a5d9cad35ac80c7f420200be5bd58abc"
+    },
+    {
+      "bytes": 761,
+      "out": "stack_remove_comp_install_probe.out",
+      "rows": 2,
+      "sha256": "c74ad6752461397604b7b3d7862ec90ae147109d045cd3aee2747c87d7b8d95d"
     },
     {
       "bytes": 1548,
