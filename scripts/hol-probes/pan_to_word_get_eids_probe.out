@@ -1,0 +1,11 @@
+get_eids_pan_simp_compile_eq=∀(prog :α decl list).
+  FDOM (get_eids_from_decls prog) =
+  FDOM (get_eids_from_decls (compile_prog prog :α decl list))
+FDOM_get_eids_pan_globals_compile_eq=∀(pan_code :α decl list) (main :mlstring) (args :(mlstring # shape) list)
+    (body :α panLang$prog) (rshape :shape).
+  ALOOKUP (functions pan_code) main = SOME (args,body,rshape) ⇒
+  FDOM (get_eids_from_decls (compile_top pan_code main :α decl list)) =
+  FDOM (get_eids_from_decls pan_code)
+size_of_eids_compile_top=ALOOKUP (functions (pan_code :α decl list)) (main :mlstring) =
+SOME ((args :(mlstring # shape) list),(body :α panLang$prog),(rshape :shape)) ⇒
+size_of_eids (compile_top pan_code main :α decl list) = size_of_eids pan_code

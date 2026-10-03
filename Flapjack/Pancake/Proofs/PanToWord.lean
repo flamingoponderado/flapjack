@@ -18,6 +18,7 @@ import Flapjack.Pancake.Semantics.PanProps.HasMain
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
 import Flapjack.Pancake.PanGlobals.CompileExpExact
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.PanToCrep.ContextExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
 
 /-!
@@ -507,5 +508,124 @@ theorem functionsCompileDecsExnsHOL {width : Nat} [NeZero width]
   rcases h : compileDecsExactHOL ctxt prog with ⟨a, b, c, d⟩
   rw [PanGlobalsCompileDecsStructural.compile_decs_exns_are_exnsHOL ctxt prog a b c d h]
   exact functionsFilterNilHOL prog
+
+
+/-- The exception-code association list depends only on the exception names:
+`size_of_eids` is their number. Flapjack infrastructure for the `get_eids`
+domain lemmas below; no HOL original. -/
+theorem getEidsEntriesHOL_congr {width : Nat} [NeZero width] (a b : List (DeclHOL width))
+    (h : (exceptionsHOL a).map Prod.fst = (exceptionsHOL b).map Prod.fst) :
+    getEidsEntriesHOL a = getEidsEntriesHOL b := by
+  have hl : sizeOfEidsHOL a = sizeOfEidsHOL b := by
+    rw [← exceptionsHOL_length_eq_sizeOfEidsHOL, ← exceptionsHOL_length_eq_sizeOfEidsHOL,
+      ← List.length_map (f := Prod.fst), h, List.length_map]
+  simp only [getEidsEntriesHOL, h, hl]
+
+/-- pan_simp leaves the exception declarations unchanged. Flapjack
+infrastructure; no HOL original. -/
+theorem exceptionsHOL_panSimpDeclsHOL {width : Nat} [NeZero width] (prog : List (DeclHOL width)) :
+    exceptionsHOL (panSimpDeclsHOL prog) = exceptionsHOL prog := by
+  induction prog with
+  | nil => simp [panSimpDeclsHOL, exceptionsHOL]
+  | cons d ds ih => cases d <;> simp_all [panSimpDeclsHOL, exceptionsHOL]
+
+/-- pan_structs keeps the exception names in order (only their shapes are
+compiled). Flapjack infrastructure; no HOL original. -/
+theorem exceptionNames_compileDeclsExact {width : Nat} [NeZero width] :
+    ∀ (ctxt : Pancake.PanStructs.CompileShapeExact.ContextExact) (prog : List (DeclHOL width)),
+      (exceptionsHOL (Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt prog).1).map
+          Prod.fst = (exceptionsHOL prog).map Prod.fst := by
+  intro ctxt prog
+  induction prog generalizing ctxt with
+  | nil => simp [Pancake.PanStructs.CompileShapeExact.compileDeclsExact, exceptionsHOL]
+  | cons d ds ih =>
+    cases d <;> simp_all [Pancake.PanStructs.CompileShapeExact.compileDeclsExact, exceptionsHOL]
+
+/-- Exact HOL `get_eids_pan_simp_compile_eq` (`pan_to_wordProofScript.sml:105-116`);
+`FDOM` equality is pointwise definedness of the canonical lookups. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "get_eids_pan_simp_compile_eq"
+  (fmap_as_finite_support_result_observations := [Flapjack.getEidsFromDeclsHOL])]
+theorem getEidsPanSimpCompileEqHOL {width : Nat} [NeZero width] :
+    ∀ (prog : List (DeclHOL width)) (key : MlS),
+      ((getEidsFromDeclsHOL prog).lookup key).isSome =
+        ((getEidsFromDeclsHOL (panSimpDeclsHOL prog)).lookup key).isSome := by
+  intro prog key
+  have h := getEidsEntriesHOL_congr prog (panSimpDeclsHOL prog)
+    (by rw [exceptionsHOL_panSimpDeclsHOL])
+  simp only [getEidsFromDeclsHOL, h]
+
+/-- Exact HOL `FDOM_get_eids_pan_globals_compile_eq`
+(`pan_to_wordProofScript.sml:189-226`); `ALOOKUP` is `List.lookup`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "FDOM_get_eids_pan_globals_compile_eq"
+  (fmap_as_finite_support_result_observations := [Flapjack.getEidsFromDeclsHOL])]
+theorem fdomGetEidsPanGlobalsCompileEqHOL {width : Nat} [NeZero width] :
+    ∀ (pan_code : List (DeclHOL width)) (main : MlS) (args : List (MlS × ShapeHOL))
+      (body : ProgHOL width) (rshape : ShapeHOL),
+      List.lookup main (functionsHOL pan_code) = some (args, body, rshape) →
+      ∀ key, ((getEidsFromDeclsHOL (compileTopExactHOL pan_code main)).lookup key).isSome =
+        ((getEidsFromDeclsHOL pan_code).lookup key).isSome := by
+  intro pan_code main args body rshape hl key
+  have h := getEidsEntriesHOL_congr (compileTopExactHOL pan_code main) pan_code
+    (by rw [PanGlobalsCompileDecsStructural.exceptions_compile_topHOL pan_code main _ hl])
+  simp only [getEidsFromDeclsHOL, h]
+
+/-- Exact HOL `FDOM_get_eids_structs_compile_decs_eq` (first declaration,
+`pan_to_wordProofScript.sml:273-283`, local in HOL). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "FDOM_get_eids_structs_compile_decs_eq" 273
+  (fmap_as_finite_support_result_observations := [Flapjack.getEidsFromDeclsHOL])]
+theorem fdomGetEidsStructsCompileDecsEqHOL {width : Nat} [NeZero width] :
+    ∀ (ctxt : Pancake.PanStructs.CompileShapeExact.ContextExact) (prog : List (DeclHOL width))
+      (key : MlS),
+      ((getEidsFromDeclsHOL prog).lookup key).isSome =
+        ((getEidsFromDeclsHOL
+          (Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt prog).1).lookup key).isSome := by
+  intro ctxt prog key
+  have h := getEidsEntriesHOL_congr prog _ (exceptionNames_compileDeclsExact ctxt prog).symm
+  simp only [getEidsFromDeclsHOL, h]
+
+/-- Exact HOL `FDOM_get_eids_structs_compile_eq`
+(`pan_to_wordProofScript.sml:285-291`, local in HOL). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "FDOM_get_eids_structs_compile_eq"
+  (fmap_as_finite_support_result_observations := [Flapjack.getEidsFromDeclsHOL])]
+theorem fdomGetEidsStructsCompileEqHOL {width : Nat} [NeZero width]
+    (prog : List (DeclHOL width)) (key : MlS) :
+    ((getEidsFromDeclsHOL (Pancake.PanStructs.CompileShapeExact.compileTopExact prog)).lookup
+        key).isSome = ((getEidsFromDeclsHOL prog).lookup key).isSome :=
+  (fdomGetEidsStructsCompileDecsEqHOL _ prog key).symm
+
+/-- Exact HOL `FDOM_get_eids_structs_compile_decs_eq` (second declaration of
+the name, `pan_to_wordProofScript.sml:293-303`, local in HOL), which states
+`size_of_eids` preservation. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "FDOM_get_eids_structs_compile_decs_eq" 293
+  (words_as_type_indexed_bitvec)]
+theorem sizeOfEidsStructsCompileDecsEqHOL {width : Nat} [NeZero width] :
+    ∀ (ctxt : Pancake.PanStructs.CompileShapeExact.ContextExact) (prog : List (DeclHOL width)),
+      sizeOfEidsHOL prog =
+        sizeOfEidsHOL (Pancake.PanStructs.CompileShapeExact.compileDeclsExact ctxt prog).1 := by
+  intro ctxt prog
+  rw [← exceptionsHOL_length_eq_sizeOfEidsHOL, ← exceptionsHOL_length_eq_sizeOfEidsHOL,
+    ← List.length_map (f := Prod.fst), ← exceptionNames_compileDeclsExact ctxt prog,
+    List.length_map]
+
+/-- Exact HOL `size_of_eids_structs_compile_eq`
+(`pan_to_wordProofScript.sml:305-310`, local in HOL). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "size_of_eids_structs_compile_eq"
+  (words_as_type_indexed_bitvec)]
+theorem sizeOfEidsStructsCompileEqHOL {width : Nat} [NeZero width] (prog : List (DeclHOL width)) :
+    sizeOfEidsHOL (Pancake.PanStructs.CompileShapeExact.compileTopExact prog) =
+      sizeOfEidsHOL prog :=
+  (sizeOfEidsStructsCompileDecsEqHOL _ prog).symm
+
+/-- Exact HOL `size_of_eids_compile_top` (`pan_to_wordProofScript.sml:364-410`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "size_of_eids_compile_top"
+  (words_as_type_indexed_bitvec)]
+theorem sizeOfEidsCompileTopHOL {width : Nat} [NeZero width]
+    (pan_code : List (DeclHOL width)) (main : MlS) (args : List (MlS × ShapeHOL))
+    (body : ProgHOL width) (rshape : ShapeHOL) :
+    List.lookup main (functionsHOL pan_code) = some (args, body, rshape) →
+    sizeOfEidsHOL (compileTopExactHOL pan_code main) = sizeOfEidsHOL pan_code := by
+  intro hl
+  rw [← exceptionsHOL_length_eq_sizeOfEidsHOL, ← exceptionsHOL_length_eq_sizeOfEidsHOL,
+    PanGlobalsCompileDecsStructural.exceptions_compile_topHOL pan_code main _ hl]
 
 end Flapjack

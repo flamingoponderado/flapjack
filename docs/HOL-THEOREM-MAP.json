@@ -77112,5 +77112,102 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): functions (FST (SND (SND (compile_decs ctxt prog)))) = [], with the free ctxt prog bound explicitly; only the pan_globals context globals |-> field is translated. Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "getEidsPanSimpCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "get_eids_pan_simp_compile_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !prog. FDOM (get_eids_from_decls prog) = FDOM (get_eids_from_decls (pan_simp$compile_prog prog)). FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fdomGetEidsPanGlobalsCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_pan_globals_compile_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !pan_code main args body rshape. ALOOKUP (functions pan_code) main = SOME (args,body,rshape) ==> FDOM (get_eids_from_decls (compile_top pan_code main)) = FDOM (get_eids_from_decls pan_code); ALOOKUP is List.lookup. FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fdomGetEidsStructsCompileDecsEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_structs_compile_decs_eq",
+    "hol_line": 273,
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): (line 273) !ctxt prog. FDOM (get_eids_from_decls prog) = FDOM (get_eids_from_decls (FST (pan_structs$compile_decs ctxt prog))). FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fdomGetEidsStructsCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_structs_compile_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): FDOM (get_eids_from_decls (pan_structs$compile_top prog)) = FDOM (get_eids_from_decls prog), free prog bound explicitly. FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeOfEidsStructsCompileDecsEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_structs_compile_decs_eq",
+    "hol_line": 293,
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): (line 293, the second HOL declaration of this name) !ctxt prog. size_of_eids prog = size_of_eids (FST (pan_structs$compile_decs ctxt prog)). [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeOfEidsStructsCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "size_of_eids_structs_compile_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): size_of_eids (pan_structs$compile_top prog) = size_of_eids prog, free prog bound explicitly. [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeOfEidsCompileTopHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "size_of_eids_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): ALOOKUP (functions pan_code) main = SOME (args,body,rshape) ==> size_of_eids (compile_top pan_code main) = size_of_eids pan_code; free variables bound explicitly, ALOOKUP is List.lookup. Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "getEidsEntriesHOL_congr",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: the get_eids association list depends only on exception names (size_of_eids is their count); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "exceptionsHOL_panSimpDeclsHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: pan_simp compile_prog leaves exceptions unchanged; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "exceptionNames_compileDeclsExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: pan_structs compile_decs keeps exception names in order; no HOL original."
   }
 ]
