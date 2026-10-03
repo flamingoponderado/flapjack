@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep

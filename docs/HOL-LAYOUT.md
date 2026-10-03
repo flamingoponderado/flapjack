@@ -49,6 +49,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/proofs/word_simpProofScript.sml` | `Flapjack/Compiler/Backend/WordSimp/Proofs/` (`GcWordConst.lean` `is_gc_word_const`) |
 | `compiler/backend/proofs/wordConvsProofScript.sml` | `Flapjack/Pancake/Proofs/WordConvs/` |
 | `compiler/backend/wordLangScript.sml` | `Flapjack/Pancake/WordLang.lean` |
+| `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean` |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` and its `BackendCommon/BvlStubs.lean` submodule |
 | `compiler/backend/bvl_to_bviScript.sml` | `Flapjack/Compiler/Backend/BvlToBvi.lean` and its `BvlToBvi/Config.lean` submodule |
 | `compiler/backend/semantics/wordConvsScript.sml` | `Flapjack/Pancake/WordConvs.lean` |
