@@ -4970,6 +4970,12 @@
       "sha256": "62581396cd4a28f9d7de1d3e16d7c896726625b65ffba0bf09c12210f2dc7a7e"
     },
     {
+      "bytes": 472,
+      "out": "pan_structs_compile_top_semantics_decls_probe.out",
+      "rows": 3,
+      "sha256": "27eaaea2e5e525f7eba3ff2557fb900a1d11d3e8b1c3371ab76b767999706518"
+    },
+    {
       "bytes": 418,
       "out": "pan_structs_compiled_shapes_wf_probe.out",
       "rows": 3,

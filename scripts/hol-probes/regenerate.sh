@@ -7513,3 +7513,7 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
   from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_compile_top_semantics_decls_probe.out \
+  compile_top_semantics_decls_statement compile_top_semantics_decls_proved compile_top_semantics_decls_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

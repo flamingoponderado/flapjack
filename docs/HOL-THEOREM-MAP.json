@@ -87879,5 +87879,28 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol compared original1473-1533, convert_s58-67 and faithful PanSem semantics785-809. All eight source conjuncts retained in original order: non-Fail, ctxt structs fields projection, source empty locals, globals fields/wellformed shape, ctxt empty locals, alist shape map=FMAP_MAP2 shape_of, struct_infos_ok. Conclusion is actual semantics(convertStateExact ctxt source) start=semantics source start with no targetrun/trace equality/IH/hooks premise. Same canonical imported owner four maps, full two-way state roundtrip; positive indexed BitVec and Type0 FFI host. Full compileCorrectExact supplies actual compiled TailCall target run at identical clock; empty locals discharge FEVERY/map premises, compile args empty preserves TailCall, convertRes classification preserves original outcome and state conversion preserves ffi.ioEvents. Original tagged clock stability and event monotonicity discharge full six-premise PanProps wrapper equality internally. Fresh closed original statement/types/kernel truth capture; no executed production route completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileTopSemanticsDeclsExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Canonical imported two-way broad/state roundtrip, Flapjack representation infrastructure with no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileTopSemanticsDeclsExact.lean",
+    "lean_name": "compileTopSemanticsDeclsExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_top_semantics_decls",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared full original1535-1564, sourcecompile_top243-247/get_names236-242, exact semantics_decls861-869 and convert_s58-67. All four hypotheses in source order retained: semantics_decls non-Fail, empty locals, empty code, empty globals. Full original equality to actual semanticsDecls of the original state updated only at eshapes by FMAP_MAP2 compile_shape(get_names initial code).structs and compileTopExact code. HOL partial struct-only initial record is observed only through get_names structs projection; get_names changes only structs, so empty locals/globals from the standard compile_top initial context are immaterial there. Full source declaration simulation supplies actual target evaluateDeclsHOLFinite and final context/globals/invariants internally, original decs_stcnames lemmas supply names/info facts, then full eight-hypothesis semanticsEq applies; no targetrun/observation/traceeq/caller relation premise. State equality transported through the canonical evaluator with classically supplied memory-domain evidence; no new domain hypothesis. Canonical imported owner4maps with full same-module broad/state two-way roundtrip and positive indexedwords/Type0 FFI. Fresh closed whole original statement/types/kerneltruth capture. This is source semantics correctness, not an executed production-routing completion claim."
   }
 ]

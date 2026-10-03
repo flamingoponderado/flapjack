@@ -7829,3 +7829,10 @@ This is untagged infrastructure because HOL has no separately named identity.
 It does not establish full native fetch/Next/interference/assertion execution.
 `check-riscv-const-wide-value.py` and its mutation regressions protect the
 unrestricted signature, original evidence, and all driver labels.
+
+`pan_structs_compile_top_semantics_decls_probeScript.sml` captures the closed
+original whole `compile_top_semantics_decls` theorem at pan_structsProof1535-1564,
+kernel truth and quantified types. Its Lean port retains four original premises,
+faithful declaration semantics and the original eshapes update. Executed routing
+is independent. Regenerate with
+`HOL_PROBE_ONLY=pan_structs_compile_top_semantics_decls_probeScript.sml`.
