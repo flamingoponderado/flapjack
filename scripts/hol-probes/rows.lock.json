@@ -10826,6 +10826,12 @@
       "sha256": "34aa99890779e1e8b4390791107477cd6adedf1d1f851e2f17b6951d8092d833"
     },
     {
+      "out": "word_to_stack_store_register2_probe.out",
+      "sha256": "833dc4fd2d1387940992243820dec0f7db2d8acb5fcac4b2604d0becf307a539",
+      "bytes": 1533,
+      "rows": 6
+    },
+    {
       "bytes": 675,
       "out": "word_to_stack_store_register_probe.out",
       "rows": 6,

@@ -7663,3 +7663,7 @@ run_probe word_to_stack_load_register_offset_probeScript.sml word_to_stack_load_
 run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
   fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_store_register2_probeScript.sml word_to_stack_store_register2_probe.out \
+  storeReg2Continuation_typed storeReg2Continuation_proved storeReg2Continuation_hypotheses writeReg2Sequence_typed writeReg2Sequence_proved writeReg2Sequence_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
