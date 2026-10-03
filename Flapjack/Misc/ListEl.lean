@@ -28,6 +28,15 @@ noncomputable def holHd {α : Type} [Nonempty α] : List α → α
   | [] => holHdNil α
   | h :: _ => h
 
+/-- Exact HOL `LAST_DEF` (`listScript.sml:2052-2054`): `LAST (h::t) = if t = []
+then h else LAST t`, the `if` rendered by matching on `t`; the missing `[]`
+clause is the same unspecified `holHdNil` as for `HD`. -/
+@[hol "HOL/src/list/src/listScript.sml" "LAST_DEF"]
+noncomputable def holLast {α : Type} [Nonempty α] : List α → α
+  | [] => holHdNil α
+  | [h] => h
+  | _ :: t@(_ :: _) => holLast t
+
 /-- Exact HOL `EL_def` (`listScript.sml:225-228`). -/
 @[hol "HOL/src/list/src/listScript.sml" "EL_def"]
 noncomputable def holEl {α : Type} [Nonempty α] : Nat → List α → α
