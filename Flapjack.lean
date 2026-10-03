@@ -403,6 +403,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
@@ -431,6 +432,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning.Execution
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningHandler.Execution
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Call
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LocationLabels
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionLengths
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstractionPrefix
@@ -1275,6 +1277,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
+import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
@@ -2274,6 +2277,7 @@ import Flapjack.Misc.BalancedMap.LookupSemantics
 import Flapjack.Misc.BalancedMap.RotationAux
 import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
+import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 
 -- Tagged modules required by the HOL reference coverage gate.
 

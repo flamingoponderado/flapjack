@@ -6415,6 +6415,11 @@ run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq
   comp_correct_seq_obligation_statement comp_correct_seq_obligation_proved comp_correct_seq_obligation_hypotheses comp_correct_seq_first_non_none_statement comp_correct_seq_first_non_none_proved comp_correct_seq_first_non_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_comp_call_full_probeScript.sml word_to_stack_comp_call_full_probe.out \
+  comp_correct_call_full_statement comp_correct_call_full_proved comp_correct_call_full_hypotheses \
+  comp_correct_call_whole_statement comp_correct_call_whole_proved comp_correct_call_whole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_handler_full_probeScript.sml word_to_stack_comp_handler_full_probe.out \
   comp_correct_handler_full_statement comp_correct_handler_full_proved \
   comp_correct_handler_full_hypotheses comp_correct_call_induction_obligation \
@@ -6928,7 +6933,10 @@ run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantic
   semantics_compile_lemma_prime semantics_compile_lemma_prime_types semantics_compile_lemma_prime_hypotheses semantics_compile_lemma_prime_proved semantics_compile_lemma semantics_compile_lemma_types semantics_compile_lemma_hypotheses semantics_compile_lemma_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-run_probe riscv_target_wide_arithmetic_probeScript.sml riscv_target_wide_arithmetic_probe.out \
-  wide_mul_long_statement wide_mul_long_types wide_mul_long_hypotheses wide_mul_long_proved wide_product_type wide_slice_type \
-  wide_ror_statement wide_ror_types wide_ror_hypotheses wide_ror_proved \
-  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_register_probe.out \
+  wload_full_register_transport wload_full_continuation wload_original_definition wload_original_register_compiler \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoration_probe.out \
+  res_var_FMAP_MAP2_rev_statement res_var_FMAP_MAP2_rev_types res_var_FMAP_MAP2_rev_hypotheses res_var_FMAP_MAP2_rev_proved FEVERY_res_var_statement FEVERY_res_var_types FEVERY_res_var_hypotheses FEVERY_res_var_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
