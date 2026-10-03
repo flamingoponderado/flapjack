@@ -1,0 +1,48 @@
+make_init_def=∀(mc_conf :(α, 'state, γ) machine_config) (ffi :'ffi ffi_state)
+    (t :α asm_state) (m :α word -> α word_loc) (dm :α word -> bool)
+    (sdm :α word -> bool) (ms :'state) (code :α sec list)
+    (comp :β -> α sec list -> (word8 list # β) option) (cbpos :α word)
+    (cbspace :num) (coracle :num -> β # α sec list).
+  make_init mc_conf ffi t m dm sdm ms code comp cbpos cbspace coracle =
+  <|regs := (λ(k :num). Word (t.regs k :α word)); fp_regs := t.fp_regs;
+    mem := m; mem_domain := dm; shared_mem_domain := sdm; pc := (0 :num);
+    be := mc_conf.target.config.big_endian; ffi := ffi;
+    io_regs := target_io_regs mc_conf ffi ms;
+    io_fp_regs := target_io_fp_regs mc_conf ffi ms;
+    cc_regs := target_cc_regs mc_conf ffi ms;
+    cc_fp_regs := target_cc_fp_regs mc_conf ffi ms; code := code;
+    clock := (0 :num); failed := F; ptr_reg := mc_conf.ptr_reg;
+    len_reg := mc_conf.len_reg; ptr2_reg := mc_conf.ptr2_reg;
+    len2_reg := mc_conf.len2_reg;
+    link_reg :=
+      case mc_conf.target.config.link_reg of
+        (NONE :num option) => (0 :num)
+      | SOME n => n; compile := comp;
+    code_buffer :=
+      <|position := cbpos; buffer := ([] :word8 list);
+        space_left := cbspace|>; compile_oracle := coracle|>
+make_init_def_types=(mc_conf :(α, 'state, γ) machine_config)::(α, 'state, γ) machine_config;(ffi :'ffi ffi_state)::'ffi ffi_state;(t :α asm_state)::α asm_state;(m :α word -> α word_loc)::α word -> α word_loc;(dm :α word -> bool)::α word -> bool;(sdm :α word -> bool)::α word -> bool;(ms :'state)::'state;(code :α sec list)::α sec list;(comp :β -> α sec list -> (word8 list # β) option)::β -> α sec list -> (word8 list # β) option;(cbpos :α word)::α word;(cbspace :num)::num;(coracle :num -> β # α sec list)::num -> β # α sec list;
+make_init_def_hypotheses=0
+regs=T
+fp_regs=T
+mem=T
+mem_domain=T
+shared_mem_domain=T
+pc=T
+be=T
+ffi=T
+io_regs=T
+io_fp_regs=T
+cc_regs=T
+cc_fp_regs=T
+code=T
+clock=T
+failed=T
+ptr_reg=T
+len_reg=T
+ptr2_reg=T
+len2_reg=T
+link_reg=T
+compile=T
+code_buffer=T
+compile_oracle=T
