@@ -7736,6 +7736,12 @@
       "sha256": "aeea4502ca09f79e85e30a969b27fef9ebd4ac6f2e742efadab6a0d2f9e83370"
     },
     {
+      "bytes": 3685,
+      "out": "stack_to_lab_flatten_helpers_probe.out",
+      "rows": 16,
+      "sha256": "67b5b3b67705251bf5fe34ea0ae35a01c2495e780cc163224d9b2ef26b106df7"
+    },
+    {
       "bytes": 262,
       "out": "stack_to_lab_flatten_ops_probe.out",
       "rows": 10,

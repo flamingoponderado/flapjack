@@ -7595,3 +7595,5 @@ existential original callee parameter context. Call/DecCall remain open.
 `stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.
 
 `stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.
+
+`stack_to_lab_flatten_helpers_probeScript.sml` prints the stored flatten helper lemmas and result views of `stack_to_labProofScript.sml:890-1206` and replays the local `NOT_bad_fun_return_IMP_SOME` and the line-1022 `next_lab_non_zero` (rebound at 3211) with their source proofs; all closed with zero hypotheses.
