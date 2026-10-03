@@ -7602,3 +7602,10 @@ types and closed kernel truth. The Lean case retains all ten premises/seven
 conclusions and exactly two original guarded IHs; lookup, return comparisons,
 continuation preconditions and final binding restoration are derived internally.
 Full Call/whole program/compiler correctness remain open.
+
+`pan_structs_program_call_probe` captures full original `compile_correct`, its
+Call specialization and complete original `evaluate_ind`, quantified types and
+closed kernel truth. The Lean case keeps all ten premises/seven conclusions
+and exactly the original body/exception-handler guarded IHs. Actual target
+lookup, return comparisons/bindings and handler execution are derived internally.
+Whole program/compiler correctness remain open.

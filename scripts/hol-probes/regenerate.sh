@@ -7067,3 +7067,7 @@ run_probe pan_structs_convert_code_locals_probeScript.sml pan_structs_convert_co
 run_probe pan_structs_program_deccall_probeScript.sml pan_structs_program_deccall_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_deccall_statement compile_correct_deccall_proved compile_correct_full_types compile_correct_deccall_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_call_probeScript.sml pan_structs_program_call_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_call_statement compile_correct_call_proved compile_correct_full_types compile_correct_call_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

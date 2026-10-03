@@ -834,6 +834,7 @@
     {"bytes": 22, "out": "pan_structs_opt_mmap_probe.out", "rows": 2, "sha256": "e9b6280324b2ec31edfca1481d05655782945dd94d49d06b8f54ffe754a98de9"},
     {"bytes": 2404, "out": "pan_structs_program_assign_probe.out", "rows": 6, "sha256": "6daffc4feb115caaf1cbea20895bcc49bb76c80a76053ac6c45baa99fb86c014"},
     {"bytes": 4244, "out": "pan_structs_program_atomic_probe.out", "rows": 8, "sha256": "b3024de29c59ee7decbf435e91f1acf28515a2822e70a6b137a31662c47d6240"},
+    {"bytes": 5952, "out": "pan_structs_program_call_probe.out", "rows": 9, "sha256": "4acc98d4431085bfab15044939f36ed58e03a149e4860b14ce287345484d5fd6"},
     {"bytes": 5879, "out": "pan_structs_program_dec_probe.out", "rows": 9, "sha256": "a1b4febf0ea831a86065b2aa4898b03ba86382b2dfc2e524a667a6531f76b1ca"},
     {"bytes": 5934, "out": "pan_structs_program_deccall_probe.out", "rows": 9, "sha256": "70f3106dd326f56d9c384587e0b8d4dec734f914d547e18b6c84b2481253dbc7"},
     {"bytes": 2484, "out": "pan_structs_program_extcall_probe.out", "rows": 6, "sha256": "8abcb3851fbd5ddc4524a425fa90a19a15a7191e8b4e0aba374f4e8edbcde9ca"},
