@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership

@@ -6035,6 +6035,10 @@ run_probe l3_tlb_flush_probeScript.sml l3_tlb_flush_probe.out \
 run_probe stack_rel_aux_definition_probeScript.sml stack_rel_aux_definition_probe.out \
   stack_rel_aux_definition stack_rel_aux_hypotheses stack_rel_aux_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_mmio_classification_probeScript.sml lab_to_target_mmio_classification_probe.out \
+  mmio_pcs_min_index_is_SOME mmio_pcs_min_index_is_SOME_types mmio_pcs_min_index_is_SOME_hypotheses \
+  empty external read write mixed duplicate four_external length_guard prefix_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_code_bitmaps_call_probeScript.sml stack_code_bitmaps_call_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_call_statement \
