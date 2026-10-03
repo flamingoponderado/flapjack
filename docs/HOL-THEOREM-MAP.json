@@ -54318,6 +54318,15 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_word_gcProofScript.sml:4569-4598, captured by the data_to_word_gc_init_store_ok probe. All eighteen conjuncts under ∃limit curr in HOL order: FLOOKUP store n is store.lookup n on the canonical HolFiniteMapExact binder store (bare relation entry), Word w is WordLocW.word, bytes_in_word is wordSemBytesInWord, n2w is BitVec.ofNat width, the gc_kind case keeps Generational ⇒ curr and the other two kinds ⇒ curr + bytes_in_word * n2w limit, buffer fields are the reviewed WordSemBuffer position/buffer/spaceLeft, word_list_exists/fun2set/byte_aligned are Misc.wordListExists/SetSep.fun2Set/holByteAligned. HOL's types are kept generic (probe types): memory values m : 'a word -> 'b as β, and the buffers' element widths 'c/'d as cw/dw with their own NeZero; dm : 'a word set is a Bool predicate, so fun2set (m,dm) is fun2Set (m, fun a => dm a = true), as in the reviewed init_prop. No added premise."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "gc_fun_ok_word_gc_fun",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcFunOk.lean",
+    "lean_name": "gcFunOkWordGcFun",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_word_gcProofScript.sml:6419-6437, captured by the data_to_word_gc_init_store_ok probe: gc_fun_ok (word_gc_fun c1), over the reviewed wordProps gc_fun_ok (wordGcFunOk) and word_gcFunctions word_gc_fun (wordGcFun); the type ascription on wordGcFun only fixes the word width; free c1 implicit. The proof uses word_gc_fun_LENGTH and shows the collector reads and writes the store only at keys other than Handler. No added premise."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stackLangScript.sml",
     "hol_name": "While",
     "lean_path": "Flapjack/Compiler/Backend/StackLang/Overloads.lean",
@@ -88195,6 +88204,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3704-3736, captured by the stack_to_lab_encoding_init_state probe: max_heap = 2 * max_heap_limit (:'a) c1 − 1 ∧ (fmis,xxx) = full_make_init stack_conf c1 max_heap sp offset bitmaps code s save_regs data_sp coracle ⇒ init_store_ok c1 (fmis.store \\\\ Handler) fmis.memory fmis.mdomain fmis.code_buffer fmis.data_buffer. Natural subtraction kept; DOMSUB is the reviewed HolFiniteMapExact.eraseEq; the store field of the imported StackSemStateFiniteExact owner is the canonical finite-support carrier, with the same-module relation witness; oracle and lab-state type variables are C F : Type. Inherits reals_as_rational_cuts through the fullMakeInit closure (SOUNDNESS item 8); the marker propagates that assumption only. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "IMP_init_state_ok",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/EncodingInitState.lean",
+    "lean_name": "impInitStateOk",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_to_labProofScript.sml:3738-3787, captured by the stack_to_lab_encoding_init_state probe: the six premises in HOL order (4 < kkk; bitmaps = 4w::t; good_dimindex; ∀n the five oracle conventions over word_oracle n, with EVERY of the Boolean post_alloc_conventions/flat_exp_conventions as progs.all … = true as in the reviewed init_state_ok and (λy. raise_stub_location ≠ y) ∘ FST kept in HOL's orientation; the stack_oracle equation via compile_word_to_stack ac F kkk (compileWordToStackNative ac false) with append (FST bm) as appListAppend bm.1; full_make_init … = (fmis, SOME xxx)) ⇒ init_state_ok ac kkk fmis word_oracle (the reviewed initStateOk). Oracle configuration type 'b is C; regs/store of the imported StackSemStateFiniteExact owner are the canonical finite-support carriers with the same-module relation witness. Inherits reals_as_rational_cuts through the fullMakeInit closure (SOUNDNESS item 8); the marker propagates that assumption only. No added premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
