@@ -6850,3 +6850,9 @@ run_probe lab_to_target_filter_preconditions_probeScript.sml lab_to_target_filte
 run_probe lab_to_target_find_ffi_every_probeScript.sml lab_to_target_find_ffi_every_probe.out \
   find_ffi_names_EVERY find_ffi_names_EVERY_types find_ffi_names_EVERY_hypotheses find_ffi_names_EVERY_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_list_subset_probeScript.sml lab_to_target_list_subset_probe.out \
+  list_subset_TAKE list_subset_TAKE_types list_subset_TAKE_hypotheses list_subset_TAKE_proved \
+  list_subset_trans list_subset_trans_types list_subset_trans_hypotheses list_subset_trans_proved \
+  list_subset_refl list_subset_refl_types list_subset_refl_hypotheses list_subset_refl_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

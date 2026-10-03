@@ -20,4 +20,10 @@ theorem listSubsetTrans {α : Type} [DecidableEq α] (a b c : List α) :
   rintro ⟨hab, hbc⟩ x hx
   exact hbc x (hab x hx)
 
+/-- Original unconditional reflexivity over arbitrary element lists. -/
+@[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml" "list_subset_refl"]
+theorem listSubsetRefl {α : Type} [DecidableEq α] (xs : List α) :
+    listSubset xs xs = true := by
+  simp [listSubset, List.all_eq_true]
+
 end Flapjack.Compiler.Backend.LabToTarget
