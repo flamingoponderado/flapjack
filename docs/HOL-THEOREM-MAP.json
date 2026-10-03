@@ -80973,5 +80973,29 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 bead9.5: ENTIRE arbitrary-ret/arbitrary-handler Call constructor of original comp_correct5756, proof7924-10048 and complete induction motive5719-5751. OriginalInductionHypotheses spells ALL FOUR literal evaluate_ind Call source IHs, including every get/find/cut/tuple/result/pop/domain/nonzero clock/ret and handler option equality. Their recursive conclusions are the whole original Seq.Simulation motive, not a weakened outcome or extra arbitrary-state IH. Tail IH retains original actual callEnv(args1,ss,dec_clock source), handler=NONE/ret=NONE guard and intermediate v3/v10 binders. Returning NONE consumes only actual normal continuation and callee IHs; impossible exception/tail guards unused, not weakened. Returning SOME consumes the literal three returning IHs through checked constructor; impossible tail IH unused. Arbitrary option split is internal: no source/target successful-run restriction, no output relation or targetrun assumption. Entire clock/run/result/poststate/ffi/config/frame/bitmap/label/convention/max quantifiers and full mismatch Halt2 trace/stackMax versus matching NONE/Return placement/Exception pushLocals LASTN locals union reg1/Break/Continue/terminal FFI-clock conclusion retained. Source guards/compiler metadata/all failure/zero/allocation and normal/exception/body resource outcomes discharged by reviewed complete component constructors, ordinary checked NONE6f417 and own SOME9fa source reused. Canonical actual imported WordSemStateFiniteExact fpRegs/store and StackSemStateFiniteExact regs/fpRegs/store, same-module genuine owner codec witnesses; Spt/List unchanged and positive type-indexed BitVec with Type0 C/F. Inherits evaluator reals_as_rational_cuts assurance limit, no numerical FP correspondence or HOL-to-Lean equivalence claim. Fresh original complete Call induction obligation and arbitrary whole Call specialization are closed provedT/hyp0 captures via original full comp_correct, statement evidence rather than local proof replay. Whole pass/compiler remains open.",
     "hol_line": 5756
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListExistsAdd",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_ADD",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original38-47: forall m n a, word_list_exists a (m + n) = word_list_exists a m * word_list_exists (a + bytes_in_word * n2w m) n as whole predicate equality over accepted word_list_exists_def/STAR ports, arbitrary payload Type and modular addresses; no no-wrap premise. Stored theorem captured with zero hypotheses in scripts/hol-probes/stack_remove_word_list_exists_add_probe.out. Proof-only prerequisite of init_code_thm; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitCodeCorrect.lean",
+    "lean_name": "initCodeThm",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3225-3837 (captured stored statement): arbitrary gen_gc max_heap k bitmaps data_sp s jump off code coracle; the six original premises in order (accepted init_code_pre, code_rel, compile_oracle = (I ## MAP prog_comp ## I) o coracle as the pointwise triple used by accepted state_rel, oracle reg_bound/stack_num_stubs bound, lookup stack_err_lab = SOME (halt_inst 2w), max_stack_alloc <= max_heap); conclusion is the original case split on the native stackSem evaluate of the actual initCode: SOME branch False, NONE branch the full conjunction: exists w2 w3 w4 with s/t register lookups, byte_aligned, unsigned w2 <+ w4, t.regs k = w4 - bytes_in_word, the conditional (k+1) heap-end equation with literal (w3 + -1w*w2) >>> (shift+1) << (shift+1) + w2 + bytes_in_word * n2w (LENGTH store_list), s.regs 3; state_rel jump off k (init_reduce ... t) t; t.ffi = s.ffi; init_prop gen_gc max_heap data_sp (get_stack_heap_limit max_heap (read_pointers s)) (init_reduce ... t); mdomain and sh_mdomain equalities; fun2set equality on t0.mdomain (Bool domain as membership predicate). Kernel proof uses only propext/Classical.choice/Quot.sound; no target run, post-relation, heap representation or bound assumption. Inherited assumption: the statement mentions the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]

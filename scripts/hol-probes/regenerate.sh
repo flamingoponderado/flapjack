@@ -6938,3 +6938,11 @@ run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_registe
 run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoration_probe.out \
   res_var_FMAP_MAP2_rev_statement res_var_FMAP_MAP2_rev_types res_var_FMAP_MAP2_rev_hypotheses res_var_FMAP_MAP2_rev_proved FEVERY_res_var_statement FEVERY_res_var_types FEVERY_res_var_hypotheses FEVERY_res_var_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe stack_remove_word_list_exists_add_probeScript.sml stack_remove_word_list_exists_add_probe.out \
+  word_list_exists_ADD_statement word_list_exists_ADD_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_init_code_thm_probeScript.sml stack_remove_init_code_thm_probe.out \
+  init_code_thm_statement init_code_thm_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
