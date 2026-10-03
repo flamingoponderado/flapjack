@@ -84044,5 +84044,53 @@
     "hol_name": "init_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "VarName",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "var_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml23, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "Environment",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml27, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "EnvironmentGenerationStore",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment_generation_store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml33, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "EnvironmentStore",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment_store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml40, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "NextIndices",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "next_indices",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml303, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml413, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
   }
 ]

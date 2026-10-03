@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.SourceToFlat.Config
 import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.NamespaceHOL

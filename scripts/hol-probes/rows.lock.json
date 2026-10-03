@@ -5978,6 +5978,12 @@
       "sha256": "ac8aa6095a996c4a75a0ecd112dc0c8a2992fe037d6c71f47cca6f74d20250bc"
     },
     {
+      "bytes": 1993,
+      "out": "source_to_flat_config_probe.out",
+      "rows": 22,
+      "sha256": "ca5aa762284bb4d17df7e0d2596155e7a4993b3afbd1b01d5118be7d80b0f1c7"
+    },
+    {
       "bytes": 127,
       "out": "spt_map_probe.out",
       "rows": 10,
