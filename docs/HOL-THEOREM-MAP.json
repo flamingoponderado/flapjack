@@ -67994,5 +67994,13 @@
     "hol_name": "dfn'LR_D_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7506-7554: full fixed word1 aq/rl and word5 rd/rs1 arguments, arbitrary complete riscv_state; original unused order bits retained. in32BitMode first and forwards returned state to Illegal_Instr or subsequent GPR virtual address calculation; low3 virtual alignment failure AMO_Misaligned precedes any translation. Aligned route exact Data/Read; fault Load_Fault retains returned translation state and original virtual address; success rawReadData entire64word from returned state, writeGPR then reserve original virtual address on resulting state. No mode/alignment/success/core premise. Mechanically rendered full40-declaration closure0failed; definition and unconditional complete-state normal form kernel checked. Fresh pinned original definition/type+18 whole-state observations independently matched, all7misalignment residues, earlyRV32/RV128, orderbit combinations, register0/core255,totalCore1/Sv32 fault retention/Sv39 PTE3111 returned read, complete reservation/frame. No whole atomic/Run/Next or compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/LRSC.lean",
+    "lean_name": "«dfn'SC_W»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SC_W_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source7555-7607: full fixed word1 aq/rl and word5 rd/rs1/rs2 tuple with arbitrary native riscv_state. Source ordered low2 virtual AMO_Misaligned before reservation; failed match writes GPR1 without translation/clearing reservation; THE NONE stays canonical opaque and IsSome masks it. Literal Data/Read translation is retained, not changed to modern Write. Fault Store_AMO_Fault forwards translation-returned state and original virtual address; success reads rs2 from returned state, rawWriteData four bytes then GPR0 then clears current reservation. No alignment/reservation/success/core premise. Complete38-declaration render closure0failed, definition and unconditional whole-state normal form kernel checked. Fresh pinned original definition/type+19 observations independently matched via byte-wise updates, all order bits, early misalignment, fault reservation retention, missing/mismatch reservation with invalidVM31 showing no translation, read-onlyPTE2 success, zero rd/rs2/core255,totalCore1/RV32/RV128/Sv39 returned-state PTE update and partial upper-half write4. No whole atomic/Run/Next/compiler correctness claim."
   }
 ]

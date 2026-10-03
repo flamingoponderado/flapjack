@@ -6270,3 +6270,14 @@ core255 with totalCore1, aligned Sv32 faults and Sv39 returned-state PTE3111 rea
 are replayed. Reservation/current-core/other-core and entire frame outside the
 six potentially changed fields are observed. This is the LR_D clause only,
 not full atomic/Run/Next or compiler correctness.
+
+`l3_scw_probe.out` captures the complete original SC_W definition/type and
+19 whole-state observations. Missing/mismatched reservations with VM31 leave
+the native exception unchanged, demonstrating that translation is skipped.
+The read-only PTE2 observation intentionally succeeds under original Data/Read;
+this preserves the pinned source instead of substituting modern ISA behavior.
+Four-byte stores preserve the other memory bytes; successful stores clear only
+the current reservation, while faults/misalignment retain it. All order bits,
+rd/rs2 zero, core255 with totalCore1, RV32/RV128 and returned Sv39 walk updates
+are covered. Independent byte-wise expectations and arbitrary-base Lean state
+frames provide regressions only, not whole atomic/runtime correctness.

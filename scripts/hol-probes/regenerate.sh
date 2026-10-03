@@ -5891,3 +5891,7 @@ run_probe l3_lrw_probeScript.sml l3_lrw_probe.out \
 run_probe l3_lrd_probeScript.sml l3_lrd_probe.out \
   lrd_definition lrd_type lrd_negative lrd_positive lrd_rd_zero lrd_core_wrap lrd_fault_sv32 lrd_rv32_mode lrd_rv128_mode lrd_walk_returned_state lrd_misaligned_1 lrd_misaligned_2 lrd_misaligned_3 lrd_order_0_1 lrd_order_1_0 lrd_order_1_1 lrd_misaligned_4 lrd_misaligned_5 lrd_misaligned_6 lrd_misaligned_7 \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
+
+run_probe l3_scw_probeScript.sml l3_scw_probe.out \
+  scw_definition scw_type scw_negative scw_positive scw_rd_zero scw_core_wrap scw_fault_sv32 scw_rv32_mode scw_rv128_mode scw_walk_returned_state scw_misaligned_1 scw_misaligned_2 scw_misaligned_3 scw_order_0_1 scw_order_1_0 scw_order_1_1 scw_reservation_mismatch scw_reservation_none scw_read_only_page scw_rs2_zero scw_address_four \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$hol_dir/examples/l3-machine-code/riscv/model"
