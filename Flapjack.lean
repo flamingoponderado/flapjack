@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.SystemSignals
 import Flapjack.RiscV.L3.Defs.AMOMinMax
 import Flapjack.RiscV.L3.Defs.AMOArithmetic
 import Flapjack.Misc.FindIndex.Shift

@@ -68463,5 +68463,45 @@
     "hol_name": "dfn'AMOMAXU_D_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source8517-8565: complete fixedword1 aq/rl (unused as HOL), word5 rd/rs1/rs2 and arbitrary native state. W signextends old low32 memory before original64slt/ult comparison with full64GPR rs2; D uses full64. Strict comparison/tie branch retained. Alignment precedes Data/Write translation; returned state supplies operands before rd update and memory write4/8 or original virtual fault. No architecture/success/core/alignment premise. Full42-definition mechanical closure0fail, unconditional whole-state normalforms kernelchecked. Fresh original224combined observations independently match wrapping bytes/register/PTE calculations: signed extrema/equality/zero/sourceupper32, all alignment residues/orderbits, overlap, architecture/core values, returned Sv39 dirty/read flags and read-only/invalid faults. Numeric frame resets GPR/MEM8/TLB/NextFetch/exception while retaining arbitrary other fields. Regression checks do not establish transition equivalence, whole Run/Next or compiler correctness."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "signalEnvCall",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalEnvCall_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source3471-3495, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'ECALL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ECALL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10390-10393, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'EBREAK»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'EBREAK_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10394-10400, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'ERET»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ERET_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10401-10407, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'UnknownInstruction»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'UnknownInstruction_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10728-10735, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Test.L3SystemSignalsParity
 import Flapjack.Test.L3AMOMinMaxParity
 import Flapjack.Test.L3AMOArithmeticParity
 import Flapjack.Test.L3AMOSwapParity
