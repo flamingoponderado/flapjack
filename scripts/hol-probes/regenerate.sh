@@ -7074,7 +7074,6 @@ run_probe word_to_stack_comp_databufferwrite_probeScript.sml word_to_stack_comp_
   comp_correct_databufferwrite_full_statement comp_correct_databufferwrite_full_proved comp_correct_databufferwrite_full_hypotheses comp_correct_databufferwrite_whole_statement comp_correct_databufferwrite_whole_proved comp_correct_databufferwrite_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
-<<<<<<< HEAD
 run_probe word_to_stack_native_stackstore_probeScript.sml word_to_stack_native_stackstore_probe.out \
   native_stackstore_full_definition native_stackstore_empty native_stackstore_reverse native_stackstore_repeated_slot \
   "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
@@ -7082,8 +7081,6 @@ run_probe word_to_stack_native_stackstore_probeScript.sml word_to_stack_native_s
 run_probe word_to_stack_store_register_probeScript.sml word_to_stack_store_register_probe.out \
   store_reg1_full store_reg1_hypotheses store_reg1_proved write_seq_full write_seq_hypotheses write_seq_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
-=======
 run_probe lab_props_alignment_sdm_evaluate_probeScript.sml lab_props_alignment_sdm_evaluate_probe.out \
   evaluate_align_sdm evaluate_align_sdm_types evaluate_align_sdm_hypotheses evaluate_align_sdm_proved implements_align_sdm implements_align_sdm_types implements_align_sdm_hypotheses implements_align_sdm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
->>>>>>> origin/fleet-integration-post-1209-stack
