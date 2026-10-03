@@ -6236,6 +6236,14 @@ they are when saved in the original theory. It retains the arbitrary frame
 predicate and the complete separated-heap conclusion. The native counterpart
 uses the reviewed `memoryHOL` and SetSep carriers; the capture is regression
 evidence, not a cross-language equivalence proof.
+
+`stack_remove_comp_shmem_probeScript.sml` replays the complete original
+`comp_correct` ShMemOp case (1998–2022), including its literal local register
+and clock-relation prerequisites. The two rows record the full quantified
+case statement and original kernel proof success. All eight operators, the
+original four premises, and the complete target evaluation/postcondition are
+retained. This is regression evidence, not full pass correctness or a
+cross-language equivalence proof.
 `l3_address_exception_probe.out` captures the complete original native
 `signalAddressException` definition/type and four fault-kind/address/current-core
 observations. The corresponding Lean guard proves an unconditional full-state
@@ -6341,3 +6349,5 @@ Independent byte/register expectations cover every alignment residue, all order
 bits, arithmetic overflow, overlapping and zero registers, architecture values,
 and returned-state write translations/faults. Lean replays retain arbitrary
 unrelated state. This is regression evidence, not whole Run/Next correctness.
+
+`stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
