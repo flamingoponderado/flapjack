@@ -7509,3 +7509,11 @@ compiler correctness.
 and its ExtCall specialization, all quantified types and closed kernel truth.
 The Lean case retains all ten premises/seven conclusions without an IH or
 additional FFI agreement premise; full compiler correctness remains open.
+`word_to_stack_comp_get_probeScript.sml` captures the complete original Get
+evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
+both closed hyp0/T. These are original statement regression captures, not
+literal local-case proof replay or cross-language equivalence.
+
+`word_to_stack_comp_locvalue_probeScript.sml` captures the full original
+LocValue induction obligation and arbitrary full specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
