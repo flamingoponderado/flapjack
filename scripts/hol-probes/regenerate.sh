@@ -6682,6 +6682,7 @@ run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
 run_probe pan_structs_exp_var_faithful_probeScript.sml pan_structs_exp_var_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_var_statement compile_exp_correct_var_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe lab_filter_return_labels_probeScript.sml lab_filter_return_labels_probe.out \
   next_label_filter_skip next_label_filter_skip_types next_label_filter_skip_hypotheses next_label_filter_skip_proved \
   all_skips_get_lab_after all_skips_get_lab_after_types all_skips_get_lab_after_hypotheses all_skips_get_lab_after_proved \
@@ -6700,4 +6701,33 @@ run_probe pan_structs_exp_rfield_faithful_probeScript.sml pan_structs_exp_rfield
 
 run_probe pan_structs_exp_rstruct_faithful_probeScript.sml pan_structs_exp_rstruct_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_rstruct_statement compile_exp_correct_rstruct_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_exp_nfield_faithful_probeScript.sml pan_structs_exp_nfield_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nfield_statement compile_exp_correct_nfield_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe l3_next_step_probeScript.sml l3_next_step_probe.out \
+  NextRISCV_type NextRISCV_hypotheses NextRISCV_equation NextRISCV_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe lab_filter_full_simulation_probeScript.sml lab_filter_full_simulation_probe.out \
+  filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_reorder_faithful_probeScript.sml pan_structs_reorder_faithful_probe.out \
+  fields_in_order_reorder_noop_statement fields_in_order_reorder_noop_types fields_in_order_reorder_noop_hypotheses fields_in_order_reorder_noop_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_exp_cmp_shift_faithful_probeScript.sml pan_structs_exp_cmp_shift_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_cmp_statement compile_exp_correct_cmp_proved eval_ind_full_statement compile_exp_correct_shift_statement compile_exp_correct_shift_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
+  nextEval_binders nextEval_statement nextEval_hypotheses nextEval_proof nextBranch_binders nextBranch_statement nextBranch_hypotheses nextBranch_proof nextCond_binders nextCond_statement nextCond_hypotheses nextCond_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+
+run_probe l3_decode_transport_probeScript.sml l3_decode_transport_probe.out \
+  decodeWord_binders decodeWord_statement decodeWord_hypotheses decodeWord_proof decodeHalf_binders decodeHalf_statement decodeHalf_hypotheses decodeHalf_proof \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe pan_structs_exp_nstruct_faithful_probeScript.sml pan_structs_exp_nstruct_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nstruct_statement compile_exp_correct_nstruct_proved eval_ind_full_statement \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

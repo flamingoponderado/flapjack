@@ -7101,6 +7101,7 @@ CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` captur
 `pan_structs_exp_var_faithful_probe` captures the whole original expression theorem
 and its genuine generic Var specialization, including both Local and Global kinds.
 All seven hypotheses and three conclusions remain intact, with zero open assumptions.
+
 `lab_filter_return_labels_probeScript.sml` replays unchanged original local proofs416/425/468 with original simplifier setup. Twelve rows capture complete next-label and guarded skipped-run return-label equalities, full binder types, zero hypotheses and kernel reproofs.
 
 `lab_sem_independent_navigation_probeScript.sml` captures full original next-label, after-label and return-location definitions, including independent code/state and result word dimensions, zero hypotheses and kernel reproofs. Native navigation binds both positive widths independently.
@@ -7114,3 +7115,37 @@ the recursive child induction hypothesis; source success supplies the index look
 RStruct specialization, and evaluator induction theorem. Native list induction
 retains all seven hypotheses and all three conclusions, using only the original
 member-expression induction hypotheses.
+
+`pan_structs_exp_nfield_faithful_probe` captures the original full expression
+theorem, NField specialization, and eval_ind. Native NField preserves all seven
+hypotheses and three conclusions with only the original child IH. Validity and
+source lookup derive the shape-list and actual converted index correspondence.
+
+## Complete native step Next equation
+
+`l3_next_step_probeScript.sml` proves the universal original NextRISCV equation over arbitrary native state, with zero hypotheses. It retains the complete step Fetch and full Run/DecodeAny calls, exception result, PC+Skip continuation, BranchTo control clear/update, and every remaining TransferControl constructor returning NONE. `check-l3-next-step.py` pins the full multiline equation and type/proof rows. Drift coverage compares the literal generated body, explicitly resolving the combined export’s `riscv_step_Fetch` alias to the Step namespace owner. Full Run inherits the rational-cuts IEEE assumption (SOUNDNESS item 8). This ports the step theory definition; the model’s stronger Next trap/interrupt dispatcher and compiler correctness remain separate obligations.
+`lab_filter_full_simulation_probeScript.sml` captures the entire original filter_correct theorem, full types, zero hypotheses and kernel reproof. Native clock-zero and absent-fetch cases retain the full simulation conclusion and original branch guards; whole case assembly remains open.
+`pan_structs_reorder_faithful_probe` captures the original full theorem, kernel
+quantified types, zero hypotheses and kernel proof. Ignored info-field payload
+remains independently polymorphic; native theorem uses faithful MlS, ContextExact
+and actual compileFieldsExact, preserving both original premises.
+
+`pan_structs_exp_cmp_shift_faithful_probe` captures the full original theorem,
+both Cmp/Shift specializations and eval_ind. Both native cases retain all seven
+hypotheses and three conclusions, using only the two original child IHs.
+
+## Original native Next evaluation theorem group
+
+`l3_next_evaluation_probeScript.sml` proves universally quantified copies of original `NextRISCV`, `NextRISCV_branch` and `NextRISCV_cond_branch` using the pinned original theorems. Captures include every binder type, all original conjunction premises and complete result records, zero proof assumptions and proof markers. Lean preserves those literal premises; it does not assume the resulting Next transition. The conditional false path derives the full control-update identity from the original empty-control premise. `check-l3-next-evaluation.py` rejects carrier narrowing, circular-premise substitution, dropped premises or lost record updates. Original stepLib uses all three rules; encoder and compiler correctness remain further work. Full Run/Next inherit the rational-cuts IEEE assumption (SOUNDNESS item 8).
+## Original native Next evaluation theorem group
+
+`l3_next_evaluation_probeScript.sml` proves universally quantified copies of original `NextRISCV`, `NextRISCV_branch` and `NextRISCV_cond_branch` using the pinned original theorems. Captures include every binder type, all original conjunction premises and complete result records, zero proof assumptions and proof markers. Lean preserves those literal premises; it does not assume the resulting Next transition. The conditional false path derives the full control-update identity from the original empty-control premise. `check-l3-next-evaluation.py` rejects carrier narrowing, circular-premise substitution, dropped premises or lost record updates. Original stepLib uses all three rules; encoder and compiler correctness remain further work. Full Run/Next inherit the rational-cuts IEEE assumption (SOUNDNESS item 8).
+
+
+## Original native decoder transport rules
+
+`l3_decode_transport_probeScript.sml` proves universally quantified copies of original `Decode_IMP_DecodeAny` and `DecodeRVC_IMP_DecodeAny`, with full word32/word16 and instruction binder types, literal decoder equality premises and complete raw-selector conclusions. Strict captures record all binder types, statements, zero proof assumptions and proof markers. Lean uses the original equality premise after definitional selector reduction; no accepted-opcode or simplified decoder premise is added. Both rules are called by the original symbolic step library; target encoder and compiler correctness remain separate work.
+`pan_structs_exp_nstruct_faithful_probe` captures the original full theorem,
+NStruct specialization and eval_ind. Native NStruct retains all seven hypotheses
+and three conclusions, with only the original guarded member-expression IH;
+source evaluation and structInfosOk supply shape checks and reordering premises.
