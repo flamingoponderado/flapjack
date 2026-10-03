@@ -83,6 +83,20 @@ theorem holIntToFp64_eq_real (mode : HolRounding) (a : Int) :
   rw [← holRealToFp64R_ratCast]
   norm_cast
 
+/-- Generated HOL `fp64_to_int mode = float_to_int mode o fp64_to_float`
+(`machine_ieeeScript.sml:16`) over the arbitrary-real `float_to_int`. -/
+@[hol "HOL/src/floating-point/machine_ieeeScript.sml" "fp64_to_int_def" 16
+  (reals_as_rational_cuts)]
+noncomputable def holFp64ToIntR (mode : HolRounding) (a : BitVec 64) : Option Int :=
+  holFloatToIntR mode (holFp64ToFloat a)
+
+/-- The executed `fp64_to_int` equals the real-carrier one, for every mode and
+word (no premise). -/
+theorem holFp64ToInt_eq_real (mode : HolRounding) (a : BitVec 64) :
+    holFp64ToInt mode a = holFp64ToIntR mode a := by
+  unfold holFp64ToInt holFp64ToIntR
+  rw [holFloatToIntR_eq]
+
 theorem holRealToFp32WithFlagsR_ratCast (mode : HolRounding) (q : Rat) :
     holRealToFp32WithFlagsR mode (q : ℝ) = holRealToFp32WithFlags mode q := by
   unfold holRealToFp32WithFlagsR holRealToFp32WithFlags

@@ -80798,6 +80798,14 @@
     "reviewer": "Flapjack private map proof plumbing, no independent HOL declaration; generic lookup extensionality, map/update commutation, executed-update transfer to reviewed equality neutrality, or pointwise field validity."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ImplementsIntro.lean",
+    "lean_name": "implementsIntroGen",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "implements_intro_gen",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison original10620-10625: full Boolean b, canonical HolBehaviour x and predicate behavior-set y; both implications and precise true flag retained. HOL Boolean truth guard translates to b=true. No extra outer non-Fail premise: non-Fail is derived from the original implements guard. Singleton membership is equality. Fresh original full statement/types/hyp0/kernel ACCEPT_TAC replay in lab_to_target_implements_intro_probe.out. No word or representation qualifier needed."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegister.lean",
     "lean_name": "evaluateWStackLoadWReg1",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",

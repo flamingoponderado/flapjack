@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
 import Flapjack.Compiler.Backend.LabToTarget.ListSubset
 import Flapjack.RiscV.Encoding.NativeInstruction.Agreement
@@ -523,6 +524,8 @@ import Flapjack.Compiler.Backend.StackProps.StackLengths
 import Flapjack.Compiler.Backend.StackProps.SharedMemoryClock
 import Flapjack.FpSemHOL.RealSqrtAgreement
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst.RealSqrtAgreement
+import Flapjack.Compiler.Backend.Semantics.WordSem.Inst.RealConvertAgreement
+import Flapjack.Compiler.Backend.Semantics.StackSem.FpRegisterInstructions.RealAgreement
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.Padding
 import Flapjack.Compiler.Encoders.AsmProps.ArithmeticPreservation
@@ -1269,6 +1272,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes

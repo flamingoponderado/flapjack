@@ -2288,6 +2288,12 @@
       "sha256": "6d344ead7d6941097d29101ecfe53f265f4165d32749a366811123c88999f188"
     },
     {
+      "bytes": 300,
+      "out": "lab_to_target_implements_intro_probe.out",
+      "rows": 4,
+      "sha256": "1734c8feb2fb69cb31062a33c80aa026c6118f8b5a14a98894b991743bf3fd60"
+    },
+    {
       "bytes": 470,
       "out": "lab_to_target_initial_encoding_navigation_probe.out",
       "rows": 12,
@@ -4914,6 +4920,12 @@
       "out": "pan_structs_opt_mmap_probe.out",
       "rows": 2,
       "sha256": "e9b6280324b2ec31edfca1481d05655782945dd94d49d06b8f54ffe754a98de9"
+    },
+    {
+      "bytes": 2404,
+      "out": "pan_structs_program_assign_probe.out",
+      "rows": 6,
+      "sha256": "6daffc4feb115caaf1cbea20895bcc49bb76c80a76053ac6c45baa99fb86c014"
     },
     {
       "bytes": 4244,
