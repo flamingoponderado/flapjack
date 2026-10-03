@@ -2978,6 +2978,12 @@
       "sha256": "027136120f48a95073b598d0ccfcd72f2c83b060c217769b867afdf4ab775b44"
     },
     {
+      "bytes": 340,
+      "out": "misc_find_index_mem_probe.out",
+      "rows": 12,
+      "sha256": "0f2ab483d1baad86b1f756bd817b1b3b897624e684bad4f9785d0b7f43e518ac"
+    },
+    {
       "bytes": 351,
       "out": "misc_find_index_shift_probe.out",
       "rows": 11,

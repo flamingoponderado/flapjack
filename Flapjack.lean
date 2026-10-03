@@ -1,3 +1,4 @@
+import Flapjack.Misc.FindIndex.Membership
 import Flapjack.Misc.BytesInMem.Imp
 import Flapjack.Compiler.Backend.LabToTarget.WordSearch
 import Flapjack.RiscV.L3.Defs.SystemSignals

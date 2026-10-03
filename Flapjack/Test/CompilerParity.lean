@@ -5,6 +5,7 @@ import Flapjack.Test.BytesInMemoryDomainParity
 import Flapjack.Test.L3AMOSwapParity
 import Flapjack.Test.MiscBytesInMemImpParity
 import Flapjack.Test.LabToTargetWordSearchParity
+import Flapjack.Test.MiscFindIndexMemParity
 import Flapjack.Test.MiscFindIndexShiftParity
 import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity
