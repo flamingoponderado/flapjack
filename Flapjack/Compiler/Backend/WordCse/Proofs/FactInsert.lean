@@ -310,7 +310,7 @@ theorem add_to_data_const_correct {width : Nat} [NeZero width] {C : Type} {F : T
     exact data_inv_insert_to_latest _ _ r r ⟨d2, by simp [sptDomain, sptLookup_sptInsert_same],
       by simp [sptDomain, sptLookup_sptInsert_same], rfl⟩
 
-/-- Exact HOL `add_to_data_LocValue_correct` (`word_cseProof:1576-1611`); HOL
+/-- Exact HOL `add_to_data_LocValue_correct` (`word_cseProof:1591`); HOL
     `l ∈ domain s.code` is `sptMem l s.code`. -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_LocValue_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
@@ -328,7 +328,7 @@ theorem add_to_data_LocValue_correct {width : Nat} [NeZero width] {C : Type} {F 
     ⟨data_inv_fresh data s r _ hd hr (by omega), sptLookup_sptInsert_same _ _ _,
       sptLookup_sptInsert_same _ _ _⟩
 
-/-- Exact HOL `add_to_data_OpCurrHeap_correct` (`word_cseProof:1613-1663`). -/
+/-- Exact HOL `add_to_data_OpCurrHeap_correct` (`word_cseProof:1626`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_OpCurrHeap_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem add_to_data_OpCurrHeap_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -361,7 +361,7 @@ theorem add_to_data_OpCurrHeap_correct {width : Nat} [NeZero width] {C : Type} {
     rw [wordExp_opCurrHeap_congr s (setVar r1 w s) b r2' (getVar_setVar_other r1 r2' w s hne) rfl]
     exact exp'
 
-/-- Exact HOL `add_to_data_Arith_correct` (`word_cseProof:1665-1730`). -/
+/-- Exact HOL `add_to_data_Arith_correct` (`word_cseProof:1691`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_data_Arith_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem add_to_data_Arith_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -402,7 +402,7 @@ theorem add_to_data_Arith_correct {width : Nat} [NeZero width] {C : Type} {F : T
     rw [first] at this
     exact this
 
-/-- Exact HOL local `data_inv_insert_loads` (`word_cseProof:1732-1780`). -/
+/-- Exact HOL local `data_inv_insert_loads` (`word_cseProof:1785`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "data_inv_insert_loads"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem data_inv_insert_loads {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -421,7 +421,7 @@ theorem data_inv_insert_loads {width : Nat} [NeZero width] {C : Type} {F : Type}
   rw [memOpToNum_inj _ _ hop, BitVec.eq_of_toNat_eq hofs]
   exact ⟨w, hg, he⟩
 
-/-- Exact HOL `add_to_load_aux_correct` (`word_cseProof:1782-1838`). -/
+/-- Exact HOL `add_to_load_aux_correct` (`word_cseProof:1816`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_load_aux_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem add_to_load_aux_correct {width : Nat} [NeZero width] {C : Type} {F : Type}
@@ -457,7 +457,7 @@ theorem add_to_load_aux_correct {width : Nat} [NeZero width] {C : Type} {F : Typ
       refine ⟨hp, data_inv_insert_to_latest _ (setVar r w s) r r ⟨hmiss hev, ?_, ?_, rfl⟩⟩ <;>
         simp [sptDomain, sptLookup_sptInsert_same]
 
-/-- Exact HOL `add_to_load_correct` (`word_cseProof:1840-1950`). -/
+/-- Exact HOL `add_to_load_correct` (`word_cseProof:1879`). -/
 @[hol "cakeml/compiler/backend/proofs/word_cseProofScript.sml" "add_to_load_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem add_to_load_correct {width : Nat} [NeZero width] {C : Type} {F : Type}

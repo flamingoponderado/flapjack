@@ -7,7 +7,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitFfi
 import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
 
 /-! `full_make_init_def` and `full_make_init_buffer`/`_ffi`/`_compile`
-(`stack_to_labProofScript.sml:3051-3104`): the StackSem initial state of the
+(`stack_to_labProofScript.sml:3056`): the StackSem initial state of the
 whole stack-to-lab pipeline, built from the LabSem state by the four
 `make_init` stages in reverse pass order, and its buffer, FFI and compile
 fields. -/

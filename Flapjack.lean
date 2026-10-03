@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
@@ -775,9 +776,12 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
 import Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
+import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
+import Flapjack.Compiler.Backend.StackRemove.Proofs.AsmName
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.Conventions
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CallArgs
@@ -1309,6 +1313,9 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
+import Flapjack.Pancake.Proofs.WordConvs.WordCse
+import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
@@ -1317,6 +1324,8 @@ import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
+import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst
 import Flapjack.Compiler.Backend.WordSimp.Proofs.SeqAssoc
 import Flapjack.Compiler.Backend.WordSimp.Proofs.ConstFpLemmas
@@ -2391,6 +2400,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstInstruction
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.CallInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ProgramInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.DistinctTarReg
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
