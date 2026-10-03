@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.ClosToBvl.Config
 import Flapjack.Compiler.Backend.ClosKnown.Config
 import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
