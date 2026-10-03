@@ -7816,3 +7816,21 @@ This is untagged infrastructure because HOL has no separately named identity.
 It does not establish full native fetch/Next/interference/assertion execution.
 `check-riscv-const-wide-value.py` and its mutation regressions protect the
 unrestricted signature, original evidence, and all driver labels.
+
+## Whole native Const Run composition
+
+`riscv_const_run_probeScript.sml` executes original `riscv_ast_def` Const
+lowering and native `Run` using a RV64 register fixture. Twelve `T` observations
+cover signed12 ORI, both Const32 branches, and both wide paths with low/high
+bit11 choices. Each checks destination and scratch31 values, other-register
+and other-core preservation, physical register0 preservation, and complete
+state equality after restoring the GPR field. These are actual computation
+oracles; the unrestricted theorem is separately kernel-checked.
+
+`CorrectnessEncoding/ConstRun.lean` proves the full native state result for
+every constant/destination allowed by original `asm_ok` and `riscv_ok`. The
+latter discharges original SLLI RV32 trap exclusion. `constRunPost` preserves
+the exact wide-path scratch31 update, rather than discarding it. This untagged
+Run-fold infrastructure has no separately named HOL identity and does not
+establish fetch/Next/interference/assertion execution. The signature, complete
+post-state body, source probe, outputs, and driver labels are regression-pinned.

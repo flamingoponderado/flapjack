@@ -7503,3 +7503,8 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
   const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_const_run_probeScript.sml riscv_const_run_probe.out \
+  const_run_small_zero const_run_small_positive const_run_small_negative const_run_small_all_ones const_run_medium_positive const_run_medium_positive_max const_run_medium_negative const_run_medium_negative_low11 const_run_wide_or const_run_wide_or_high11 const_run_wide_xor const_run_wide_xor_low11_high11 \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
