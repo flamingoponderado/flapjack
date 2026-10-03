@@ -1,8 +1,19 @@
+import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
 
 /-! Whole original native config projections and all immediate-policy classes.
 Finite policy fixtures are not universal cross-language equivalence; the encoder
 projection is a full function equality, not a successful-run assumption. -/
+-- Full generic target-state consumers, independent of any successful run.
+example (s : Flapjack.RiscV.L3.riscv_state) :
+    Flapjack.Compiler.Encoders.RiscV.Target.riscvNext s =
+      Flapjack.holThe (Flapjack.RiscV.L3.Step.NextRISCV s) := rfl
+example (d : BitVec 64 → Prop) (s : Flapjack.RiscV.L3.riscv_state)
+    (a : BitVec 64) (b : BitVec 8) :
+    (Flapjack.Compiler.Encoders.RiscV.Target.riscvProj d s).2.2.2.2.2.1 (a,b) ↔
+      s.MEM8 a = b ∧ d a :=
+  Flapjack.Compiler.Encoders.RiscV.Target.riscvProj_memory d s a b
+
 namespace Flapjack.Test.RiscVNativeConfigParity
 open Flapjack.Compiler.Encoders.RiscV.Target
 

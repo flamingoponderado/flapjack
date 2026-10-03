@@ -1,0 +1,3 @@
+store_update_full=⊢ ∀x v t s lens k f' f extra ac. state_rel ac k f f' s t lens extra ∧ v ≠ Handler ⇒ state_rel ac k f f' (set_store v x s) (set_store v x t) lens extra
+store_update_hypotheses=0
+store_update_proved=T
