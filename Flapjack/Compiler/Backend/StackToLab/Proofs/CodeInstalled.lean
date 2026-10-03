@@ -2,6 +2,8 @@ import Flapjack.Compiler.Backend.LabSem.Navigation
 import Flapjack.Compiler.Backend.LabProps.Labels
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Mathlib.Tactic.SplitIfs
+import Mathlib.Tactic.Tauto
+import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 
 /-! Code-installation lemmas of `stack_to_labProofScript.sml` (lines 102-600):
 `code_installed`, `code_installed'`, `labs_correct` and the `asm_fetch_aux` /
@@ -88,15 +90,15 @@ theorem locToPcAppend {width : Nat} [NeZero width] :
       | label a b c =>
         simp only [List.cons_append, locToPc.eq_3] at h ⊢
         split_ifs at h ⊢ with h1 h2 h3
-        all_goals first | exact h | exact tail pc h | exact mapped _ rfl h | simp_all
+        all_goals first | exact h | exact tail pc h | exact mapped _ rfl h
       | asm i e l =>
         simp only [List.cons_append, locToPc.eq_4] at h ⊢
         split_ifs at h ⊢ with h1 h2 h3
-        all_goals first | exact h | exact tail pc h | exact mapped _ rfl h | simp_all
+        all_goals first | exact h | exact tail pc h | exact mapped _ rfl h
       | labAsm i p e l =>
         simp only [List.cons_append, locToPc.eq_4] at h ⊢
         split_ifs at h ⊢ with h1 h2 h3
-        all_goals first | exact h | exact tail pc h | exact mapped _ rfl h | simp_all
+        all_goals first | exact h | exact tail pc h | exact mapped _ rfl h
 
 
 /-- Complete original installation append law. -/
@@ -166,5 +168,136 @@ theorem codeInstalledAppendImp {width : Nat} [NeZero width] :
       refine ⟨by rw [if_neg lab]; exact ⟨h.1, first⟩, ?_⟩
       simp only [List.filter_cons, lab, Bool.not_false, if_true, List.length_cons]
       simpa [Nat.add_assoc, Nat.add_comm 1] using rest
+
+/-- Number of non-label lines in a list of sections (HOL
+`LENGTH (FLAT (MAP (FILTER ($~ o is_Label) o Section_lines) code))`). -/
+def codeLength {width : Nat} [NeZero width] (code : LabProgHOL width) : Nat :=
+  ((code.map fun s => s.lines.filter fun x => !isLabelHOL x).flatten).length
+
+/-- Fetch after skipping the non-label lines of one section. -/
+theorem asmFetchAuxSkipLines {width : Nat} [NeZero width] (sid : Nat) :
+    ∀ (lines : List (LabLineHOL width)) (pc : Nat) (rest : LabProgHOL width),
+      asmFetchAux ((lines.filter fun x => !isLabelHOL x).length + pc) (⟨sid, lines⟩ :: rest) =
+        asmFetchAux pc rest := by
+  intro lines
+  induction lines with
+  | nil => intro pc rest; simp [asmFetchAux.eq_2]
+  | cons line lines ih =>
+    intro pc rest
+    rw [asmFetchAux.eq_3]
+    by_cases lab : isLabelHOL line = true
+    · rw [if_pos lab]; simpa [List.filter_cons, lab] using ih pc rest
+    · rw [if_neg lab]
+      simp only [List.filter_cons, lab, Bool.not_false, if_true, List.length_cons]
+      rw [if_neg (by omega), show (lines.filter fun x => !isLabelHOL x).length + 1 + pc - 1 =
+        (lines.filter fun x => !isLabelHOL x).length + pc by omega]
+      exact ih pc rest
+
+/-- Complete original fetch law for code appended on the left. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_SOME_append2"
+  (words_as_type_indexed_bitvec)]
+theorem asmFetchAuxSomeAppend2 {width : Nat} [NeZero width] :
+    ∀ (pc : Nat) (code : LabProgHOL width) (l : LabLineHOL width) (code2 : LabProgHOL width),
+      asmFetchAux pc code2 = some l →
+      asmFetchAux (codeLength code + pc) (code ++ code2) = some l := by
+  intro pc code l code2 h
+  induction code with
+  | nil => simpa [codeLength] using h
+  | cons s rest ih =>
+    obtain ⟨sid, lines⟩ := s
+    have := asmFetchAuxSkipLines sid lines (codeLength rest + pc) (rest ++ code2)
+    simp only [codeLength, List.map_cons, List.flatten_cons, List.length_append] at this ih ⊢
+    rw [Nat.add_assoc, List.cons_append, this]
+    exact ih
+
+/-- Complete original installation law for code appended on the left. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "ALOOKUP_PARTITION"]
+theorem alookupPartition {α β : Type} [DecidableEq α] :
+    ∀ (ls : List (α × β)) (n : α) (v : β), holAlookup ls n = some v →
+      ∃ ls1 ls2, ls = ls1 ++ [(n, v)] ++ ls2 ∧ n ∉ ls1.map Prod.fst := by
+  intro ls
+  induction ls with
+  | nil => intro n v h; simp [holAlookup] at h
+  | cons e es ih =>
+    obtain ⟨k, w⟩ := e
+    intro n v h
+    simp only [holAlookup] at h
+    split at h
+    · cases h; rename_i hk; subst hk; exact ⟨[], es, rfl, by simp⟩
+    · rename_i hk
+      obtain ⟨ls1, ls2, rfl, notMem⟩ := ih n v h
+      exact ⟨(k, w) :: ls1, ls2, rfl, by simp [notMem]; exact fun h => hk h.symm⟩
+
+/-- Complete original installation predicate ignoring label positions. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed'_def"
+  (words_as_type_indexed_bitvec)]
+def codeInstalled' {width : Nat} [NeZero width] (n : Nat) :
+    List (LabLineHOL width) → LabProgHOL width → Prop
+  | [], _ => True
+  | x :: xs, code =>
+    if isLabelHOL x then codeInstalled' n xs code
+    else asmFetchAux n code = some x ∧ codeInstalled' (n + 1) xs code
+
+/-- Complete original label correctness predicate. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_def"
+  (words_as_type_indexed_bitvec)]
+def labsCorrect {width : Nat} [NeZero width] (n : Nat) :
+    List (LabLineHOL width) → LabProgHOL width → Prop
+  | [], _ => True
+  | x :: xs, code =>
+    if isLabelHOL x then labsCorrect n xs code ∧
+      (match x with
+       | .label l1 l2 _ => locToPc l1 l2 code = some n
+       | _ => True)
+    else labsCorrect (n + 1) xs code
+
+/-- Complete original decomposition of installation. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_eq"
+  (words_as_type_indexed_bitvec)]
+theorem codeInstalledEq {width : Nat} [NeZero width] :
+    ∀ (pc : Nat) (xs : List (LabLineHOL width)) (code : LabProgHOL width),
+      codeInstalled pc xs code ↔ codeInstalled' pc xs code ∧ labsCorrect pc xs code := by
+  intro pc xs
+  induction xs generalizing pc with
+  | nil => intro code; simp [codeInstalled, codeInstalled', labsCorrect]
+  | cons x xs ih =>
+    intro code
+    rw [codeInstalled_cons]
+    simp only [codeInstalled', labsCorrect]
+    by_cases lab : isLabelHOL x = true
+    · simp only [lab, if_true, ih]; tauto
+    · simp only [lab, Bool.false_eq_true, ite_false, ih]; tauto
+
+/-- Complete original `code_installed'` cons law for a leading section. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "code_installed_cons"
+  (words_as_type_indexed_bitvec)]
+theorem codeInstalledCons {width : Nat} [NeZero width] (rest : LabProgHOL width) :
+    ∀ (xs ys : List (LabLineHOL width)) (pos pc : Nat),
+      codeInstalled' pc xs rest →
+      codeInstalled' (pc + (ys.filter fun x => !isLabelHOL x).length) xs (⟨pos, ys⟩ :: rest) := by
+  intro xs
+  induction xs with
+  | nil => intros; trivial
+  | cons x xs ih =>
+    intro ys pos pc h
+    simp only [codeInstalled'] at h ⊢
+    by_cases lab : isLabelHOL x = true
+    · simp only [lab, if_true] at h ⊢; exact ih ys pos pc h
+    · simp only [lab] at h ⊢
+      refine ⟨?_, ?_⟩
+      · rw [Nat.add_comm, asmFetchAuxSkipLines]; exact h.1
+      · have := ih ys pos (pc + 1) h.2
+        rwa [show pc + 1 + (ys.filter fun x => !isLabelHOL x).length =
+          pc + (ys.filter fun x => !isLabelHOL x).length + 1 by omega] at this
+
+/-- Complete original fetch shift over a leading section. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "asm_fetch_aux_add"
+  (words_as_type_indexed_bitvec)]
+theorem asmFetchAuxAdd {width : Nat} [NeZero width] :
+    ∀ (ys : List (LabLineHOL width)) (pc pos : Nat) (rest : LabProgHOL width),
+      asmFetchAux (pc + (ys.filter fun x => !isLabelHOL x).length) (⟨pos, ys⟩ :: rest) =
+        asmFetchAux pc rest := by
+  intro ys pc pos rest
+  rw [Nat.add_comm]; exact asmFetchAuxSkipLines pos ys pc rest
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
