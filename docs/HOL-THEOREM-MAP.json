@@ -80811,7 +80811,8 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1; coordinator acceptance pending. Original local4417-4445: arbitrary wReg1 equality, EVEN/source lookup/full state_rel with extra0 imply actual existential native load execution, unchanged clock, full relation, stack length/space/bitmaps, every register except scratch k, output register unequal k+1 and exact loaded value. Lean keeps all premises and conjuncts, derives spill bounds from the full locals relation, and writes only scratch k. No target-run premise or additional bound. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator rational-cut assurance remains; no new IEEE equivalence claim."
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1; coordinator acceptance pending. Original local4417-4445: arbitrary wReg1 equality, EVEN/source lookup/full state_rel with extra0 imply actual existential native load execution, unchanged clock, full relation, stack length/space/bitmaps, every register except scratch k, output register unequal k+1 and exact loaded value. Lean keeps all premises and conjuncts, derives spill bounds from the full locals relation, and writes only scratch k. No target-run premise or additional bound. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator rational-cut assurance remains; no new IEEE equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegister.lean",
@@ -80825,6 +80826,7 @@
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1; coordinator acceptance pending. Original4512-4523: unconditional equality for every load list, continuation and whole state, including invalid indices, disabled stack and all non-NONE outcomes. Lean list induction uses unconditional native Seq clock identity; no success/range premise. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator rational-cut assurance remains; no new IEEE equivalence claim."
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1; coordinator acceptance pending. Original4512-4523: unconditional equality for every load list, continuation and whole state, including invalid indices, disabled stack and all non-NONE outcomes. Lean list induction uses unconditional native Seq clock identity; no success/range premise. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator rational-cut assurance remains; no new IEEE equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

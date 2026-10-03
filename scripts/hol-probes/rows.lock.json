@@ -9428,6 +9428,12 @@
       "sha256": "5d98aaf9cf54bd2f91a2a3c4acda0754b54cfc7a15ebdfede7942b15ccfc422f"
     },
     {
+      "bytes": 845,
+      "out": "word_to_stack_load_register_probe.out",
+      "rows": 4,
+      "sha256": "7b5c695431a5b4ce2994382885c4fae26da4a7fdc909c8cd161eda0d05e2355f"
+    },
+    {
       "bytes": 483,
       "out": "word_to_stack_location_labels_probe.out",
       "rows": 9,

@@ -7327,3 +7327,11 @@ all source field values and every immediate-policy operator boundary. These
 captures and kernel proofs remain evidence for source review, not a proof of
 HOL-to-Lean equivalence or full target execution correctness.
 `stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+`word_to_stack_load_register_probe.out` freshly replays the unchanged original
+local `evaluate_wStackLoad_wReg1` proof (4417–4445) and captures the original
+unconditional `evaluate_wStackLoad_seq` (4512–4523), plus both compiler equations.
+All four theorem rows have zero hypotheses. LoadRegister kernel ports preserve
+the complete source lookup/full relation premises and all preservation conjuncts;
+the continuation law covers arbitrary loads/programs/states and failed loads.
+These proof-side prerequisites do not establish the full Return case or pass.
