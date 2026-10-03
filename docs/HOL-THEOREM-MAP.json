@@ -75366,6 +75366,16 @@
     "reviewer": "flapjack-sol-b source comparison 2026-10-03: wordConvsScript.sml460-471 arbitrary predicate P, P0 and every_var_exp P exp imply P(max_var_exp exp), retained exactly as Bool=true conjunction. All six expression constructors and mutual argument-list traversal match exact WordLang carrier and max_var_exp_def, including empty Op lists and zero-valued Const/Lookup maxima. Only positive type-indexed word dimension translates to BitVec width with NeZero; no numeric-bound premise, extra predicate restriction, or target execution assumption. Original local statement and unchanged induction proof replay captured with GEN_ALL closing P, proved=T and hypotheses=0; cross-language source comparison, not an equivalence proof."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "semantics_make_init",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/Initialization/Semantics.lean",
+    "lean_name": "semanticsMakeInit",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.152): Original derived semantics_make_init10524-10537 full statement and all original free variable types freshly queried/captured from HOL, 0hyp/kernel T. Every original machine/source/config/FFI/memory/domain/oracle/code/labels/clock/MMIO/name/buffer binder and all sixteen original guards retained: leading encoder_correct, fourteen full initializer guards, final source-initializer semantics!=Fail. Positive word dimension with NeZero, independent machine S/projection Q/FFI F Type, concrete Config, fixed byte8/FP64 and exact MlString. Original independent gamma value type of good_code config LN is explicitly retained as arbitrary G; a same-file unconditional full empty-tree guard equivalence derives the Nat-normalized guard consumed by accepted initializer helper. Both empty label domains vanish; every remaining goodCode conjunct is identical, so no arbitrary nonempty carrier specialization is used. Prior full151 declaration now locally documents its vacuous empty-LN normalization; its elaborated type/body and all prior manifest records remain unchanged. Exact source FFIname ExtCall existence predicate is constructor-tested Boolean filtering; all source list order/duplicates and full MMIO/buffer arithmetic are unchanged. Accepted full151 seventeen-case stateRel assembly and unconditional oracleTie_makeInit derive real initOk witnesses. Actual full31 machineSemEqSem derives exact singleton target machine behavior equality to complete actual initialized source semantics; initial.ffi=ffi is definitional, not a supplied hypothesis. No successful target run/simulation/desired initialized relation/default/clock-bound premise. Existing canonical total source conventions and inherited FP reals_as_rational_cuts (SOUNDNESS item8) are unchanged; no stronger real-number or cross-language equivalence claim. Full filtering/final semantics_compile composition remains open."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/DecodeBits.lean",
     "lean_name": "boolify8",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
@@ -75391,6 +75401,51 @@
     "hol_line": 20507,
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison 2026-10-03: BL(16) at line20507 invokes Import.sml443-450 bitify_boolify; bitstringLib406-412/482-503 generates word16 to right-associated 16-Bool product, descending word_bit(width-1-j,w). Lean fixed BitVec 16/getLsbD literal full tuple, arbitrary w, no extra hypotheses. Original DB.fetch full equation/type/zero hypotheses/full quantified bitorder proof captured in l3_boolify_provenance_probe.out. Generic fullEquation kernel check. Source/body comparison complete; fleet publication tracked separately on the three open beads."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_decs_structs",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileDeclsStructs.lean",
+    "lean_name": "compileDeclsStructs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review 2026-10-03: original local theorem1346-1355 compared with full CompileDeclsExact/ContextExact and DeclHOL carriers. Arbitrary initial/final contexts and source/compiled declaration lists; sole original compiled-pair equality premise, identical struct-list equality conclusion. Exact MlS names, List fields, positive word-indexed declaration syntax. Induction generalizes initial context: Decl modifies globals only, Function/Exn recurse unchanged, Name drops without changing structs. No target run, extra relation, bounded width or production default. Original unchanged HOL induction proof kernel-replayed by pan_structs_compile_decs_structs_probe. This prerequisite does not close whole declaration or top-level semantic correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "decs_stcnames_compile_decs",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/DecsStcnamesCompileDecls.lean",
+    "lean_name": "decsStcnamesCompileDecls",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source review 2026-10-03: original1435-1444 entire theorem compared with exact CompileDeclsExact/decsStcnamesHOLExact. Arbitrary compile context, source declarations and initial struct-info accumulator (original free acc universally closed); no premises or declaration-kind assumptions. Name constructors removed by compiler; other compiled constructors skipped by faithful scan. MlS identifiers, exact List/StructInfoHOLExact/ContextExact, positive word-indexed DeclHOL only translation. Original unchanged compile_decs_ind proof kernel-replayed, full closed theorem/T/hyp0 captured. Direct prerequisite for whole compile_top_semantics_decls; that parent remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/WordConvs/MaxVarIntro.lean",
+    "lean_name": "maxVarIntro",
+    "hol_path": "cakeml/compiler/backend/semantics/wordConvsScript.sml",
+    "hol_name": "max_var_intro",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead9.4.2.2: wordConvsScript.sml473-493 forall arbitrary P and prog, P0 and every_var P prog imply P(max_var prog), retained as Bool=true conjunction and conclusion. Complete max_var/every_var equation families wordLangScript.sml127 onward compared: all source operands and both Spt cut-set key lists retained; recursive Call return body and handler only under SOME return; Seq, MustTerminate, If and Loop use actual body hypotheses. Instruction subproof retains width=64 FP transfer branch and all integer operand maxima; zero/empty-list cases use original P0, no bounds, conventions, successful-run or target assumptions. Original exported HOL kernel theorem captured via DB.fetch, closed forall P/prog, proved=T hypotheses=0; source comparison rather than cross-language equivalence. Only dimension translation BitVec width with NeZero is qualified."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/LiveExpressions.lean",
+    "lean_name": "everyVarExp_getLiveExp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "every_var_exp_get_live_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:2385-2396: unconditional original arbitrary expression occurrence in domain(get_live_exp exp); native faithful positive-width expression carrier includes full operator list and both Shift operands. Domain membership is canonical sptDomain via decidable Boolean reflection; no tree well-formedness, target occurrence or support premise. Constructor recursion proves the whole domain predicate using original every_var_exp_mono and literal union. words_as_type_indexed_bitvec is the only carrier translation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/OracleConventions.lean",
+    "lean_name": "oracleColourOk_conventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "oracle_colour_ok_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11355-11372: entire original pre_alloc_conventions conjunction with actual oracle_colour_ok k colOpt (get_clash_tree prog lt) prog ls = SOME x implies full post_alloc_conventions k x. All prog/k/colOpt/lt/ls/x arbitrary; canonical Spt maps and original native validator retained. Output physical occurrence derived from every_var_is_phy_var_total_colour; stack bound from original guard; call_arg_convention from original occurrence-local preservation with physical fixation derived from actual every_even_colour lookup entries. No added support, canonical-tree, success or target-convention premises. words_as_type_indexed_bitvec is sole carrier translation."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Defs/Run.lean",

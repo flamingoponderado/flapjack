@@ -1,9 +1,10 @@
 import Flapjack.RiscV.L3.Defs.Run
-import Flapjack.RiscV.L3.Defs.DecodeBits
 import Flapjack.Pancake.WordConvs.MaxVarIntro
+import Flapjack.Compiler.Backend.LabToTarget.Initialization.Semantics
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
 import Flapjack.Compiler.Backend.LabFilter.Proofs
 import Flapjack.RiscV.L3.Defs.DecodeImmediates
+import Flapjack.RiscV.L3.Defs.DecodeBits
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.RiscV.L3.Defs.FPMemory
 import Flapjack.RiscV.L3.Defs.ControlFetch
@@ -1194,6 +1195,8 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
+import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
 import Flapjack.Pancake.PanStructs.CompileProgCorrespondence
@@ -2081,6 +2084,7 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
