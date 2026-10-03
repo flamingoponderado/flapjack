@@ -7348,3 +7348,10 @@ and its `Primitive v pop es` specialization, with binder types and closed kernel
 proofs. The Lean case retains all ten premises and seven conclusions, executes
 the original argument mmap and AddCarry operation, and derives local validity
 and update postconditions internally from the full Assign case.
+`word_to_stack_load_register_probe.out` freshly replays the unchanged original
+local `evaluate_wStackLoad_wReg1` proof (4417–4445) and captures the original
+unconditional `evaluate_wStackLoad_seq` (4512–4523), plus both compiler equations.
+All four theorem rows have zero hypotheses. LoadRegister kernel ports preserve
+the complete source lookup/full relation premises and all preservation conjuncts;
+the continuation law covers arbitrary loads/programs/states and failed loads.
+These proof-side prerequisites do not establish the full Return case or pass.

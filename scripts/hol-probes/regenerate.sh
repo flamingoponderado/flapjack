@@ -6926,3 +6926,6 @@ run_probe pan_structs_program_primitive_probeScript.sml pan_structs_program_prim
 run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantics_compile_probe.out \
   semantics_compile_lemma_prime semantics_compile_lemma_prime_types semantics_compile_lemma_prime_hypotheses semantics_compile_lemma_prime_proved semantics_compile_lemma semantics_compile_lemma_types semantics_compile_lemma_hypotheses semantics_compile_lemma_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_load_register_probeScript.sml word_to_stack_load_register_probe.out \
+  wload_full_register_transport wload_full_continuation wload_original_definition wload_original_register_compiler \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

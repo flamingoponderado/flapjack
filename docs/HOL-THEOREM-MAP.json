@@ -80893,5 +80893,37 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison original11012-11171: full original prime sixteen guards and machine_sem equality, and derived nonprime fifteen guards/implements-prime T conclusion. Original independent alpha word, beta machine state, gamma projection, delta empty-label value and epsilon FFI types preserved as positive width and S/Q/G/F; generic LN remains Spt(Spt G). Native exact config, code/compile, all oracle/non-sharing, initial-state, MMIO entry/exit/address tuples, boundary, strict whole-buffer bound and provided ExtCall classification retained verbatim. No target execution/result or simulation premise. Actual compile success is decomposed through both FFI choices, removeLabels and shared-info recursion; accepted filtering/initializer proof supplies semantics equality. Last buffer guard derived via bounded native list-search entries and modular arithmetic, no total EL/LEAST adoption. Final implements lift internally discharges non-Fail; no extra outer premise. words_as_type_indexed_bitvec records only standard positive word/Type0 host translation. Imported semantic real operations inherit reals_as_rational_cuts assumption, SOUNDNESS section8 rational-cut assurance; no full real closure or cross-language equivalence claim. Fresh mechanically extracted verbatim original prime proof and original nonprime REWRITE_RULE/MATCH_MP chain kernel replay/fulltypes/hyp0 in lab_to_target_semantics_compile_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegister.lean",
+    "lean_name": "evaluateWStackLoadWReg1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_wReg1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1. Source comparison is recorded here; fleet acceptance is tracked separately on the open bead. Original local4417-4445: arbitrary wReg1 equality, EVEN/source lookup/full state_rel with extra0 imply actual existential native load execution, unchanged clock, full relation, stack length/space/bitmaps, every register except scratch k, output register unequal k+1 and exact loaded value. Lean keeps all premises and conjuncts, derives spill bounds from the full locals relation, and writes only scratch k. No target-run premise or additional bound. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator reals_as_rational_cuts assurance remains; no new IEEE equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegister.lean",
+    "lean_name": "evaluateWStackLoadSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03, bead .27.1.1.10.1. Source comparison is recorded here; fleet acceptance is tracked separately on the open bead. Original4512-4523: unconditional equality for every load list, continuation and whole state, including invalid indices, disabled stack and all non-NONE outcomes. Lean list induction uses unconditional native Seq clock identity; no success/range premise. HOL lists and Spt carriers unchanged; only named HOL finite maps use canonical HolFiniteMapExact and positive type-indexed words/FFI Type0 use the standard translation. Same-module genuine codec roundtrips re-export the actual imported source/target owners. Inherited evaluator reals_as_rational_cuts assurance remains; no new IEEE equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
