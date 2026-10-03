@@ -79251,6 +79251,26 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: clear_flags with InvalidOp := EXISTS float_is_signalling l (List.any). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
   },
   {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatSomeQnan",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_some_qnan_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: (@f. let qnan = f fp_op in float_is_nan qnan /\\ ~float_is_signalling qnan) fp_op; the choice is over functions fp_op -> float and is applied to fp_op, as in HOL. HOL @ is Classical.epsilon on the same predicate (external translation assumption, as for closest_such); the chosen NaN is only claimed to meet the same specification, not to equal HOL's choice. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because the body names float_is_nan/float_is_signalling renderings (SOUNDNESS item 8); the NaN choice itself involves no real. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeConvert.lean",
+    "lean_name": "holFloatToInt",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_to_int_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.3.3) against the pinned HOL source and the definition captured with types by binary_ieee_convert_probe: case float_value x of Float r => SOME (roundTiesToEven: f = INT_FLOOR r, df = abs (r - real_of_int f), f if df < 1/2 \\/ df = 1/2 /\\ EVEN (Num (ABS f)) else INT_CEILING r; roundTowardPositive INT_CEILING r; roundTowardNegative INT_FLOOR r; roundTowardZero if x.Sign = 1w then INT_CEILING r else INT_FLOOR r) | _ => NONE. r is a float value, a rational rendered as Rat (reals_as_rational_cuts, SOUNDNESS item 8); INT_FLOOR/INT_CEILING are Rat.floor/Rat.ceil, EVEN (Num (ABS f)) is f.natAbs % 2 = 0. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. No other difference."
+  },
+  {
     "lean_path": "Flapjack/Misc/BinaryIeeeArith.lean",
     "lean_name": "holFloatAdd",
     "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",

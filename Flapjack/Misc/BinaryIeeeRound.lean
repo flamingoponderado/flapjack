@@ -11,7 +11,8 @@ A rendering of the rounding specification of
 `check_for_signalling`.
 
 Tagged (source-reviewed against the pinned HOL): the float constants, `flags`,
-`clear_flags`/`invalidop_flags`/`dividezero_flags`, `rounding`, `fp_op`, and
+`clear_flags`/`invalidop_flags`/`dividezero_flags`, `rounding`, `fp_op`,
+`float_some_qnan` (HOL `@` as `Classical.epsilon`), and
 `check_for_signalling`.  Deliberately untagged:
 * `is_closest`, `closest_such`, `closest`, `round`, `float_round` and
   `float_round_with_flags` take a HOL `real` argument, rendered here by `Rat`.
@@ -20,7 +21,6 @@ Tagged (source-reviewed against the pinned HOL): the float constants, `flags`,
   `Flapjack.Misc.BinaryIeeeSqrt.RealCarrier`.
 * `largest` and `threshold` are word-free reals indexed by two HOL type
   dimensions; no reviewed qualifier covers a two-dimension numeric use.
-* `float_some_qnan`'s NaN choice is outside `reals_as_rational_cuts`.
 * `holRatAbs`, `holUintMax`, `holIntMin` render HOL library constants, not
   `binary_ieee` declarations.
 
@@ -214,7 +214,12 @@ inductive HolFpOp (t : Nat) (w : Nat) [NeZero t] [NeZero w] where
 /-- HOL `float_some_qnan_def` (`binary_ieeeScript.sml:495-499`):
     `(@f. let qnan = f fp_op in float_is_nan qnan ∧ ¬float_is_signalling qnan)
     fp_op`.  Like HOL, this chooses a function and applies it to the
-    operation, so the NaN's bit pattern is unspecified. -/
+    operation, so the NaN's bit pattern is unspecified.  HOL `@` is
+    `Classical.epsilon` on the same predicate (as for `closest_such`); the
+    chosen NaN is not claimed to coincide with HOL's choice, only to satisfy
+    the same specification. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_some_qnan_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 noncomputable def holFloatSomeQnan {t : Nat} {w : Nat} [NeZero t] [NeZero w] (fpOp : HolFpOp t w) : HolFloat t w :=
   (Classical.epsilon (fun f : HolFpOp t w → HolFloat t w =>
     holFloatIsNan (f fpOp) = true ∧ holFloatIsSignalling (f fpOp) = false)) fpOp

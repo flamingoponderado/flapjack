@@ -1537,6 +1537,9 @@ run_probe binary_ieee_arith_probeScript.sml binary_ieee_arith_probe.out \
 run_probe binary_ieee_real_probeScript.sml binary_ieee_real_probe.out \
   real_to_float_def float_sqrt_def \
   "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
+run_probe binary_ieee_convert_probeScript.sml binary_ieee_convert_probe.out \
+  float_to_int_def real_to_float_def \
+  "$repo_dir/HOL/src/floating-point/binary_ieeeScript.sml" "$repo_dir/HOL/src/floating-point"
 run_probe pan_to_crep_first_compile_oracle_probeScript.sml pan_to_crep_first_compile_oracle_probe.out \
   distinct_names duplicate_names \
   "$cake_dir/pancake/proofs/pan_to_crepProofScript.sml"

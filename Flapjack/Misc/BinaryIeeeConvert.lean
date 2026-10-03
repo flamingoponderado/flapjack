@@ -10,7 +10,9 @@ inputs (`HOL/src/floating-point/binary_ieeeScript.sml:539-572`), with the
 `machine_ieeeLib` generates (bead `flapjack-h29l.6.3.1`).  These are used by
 wordSem `inst_def`'s `FPToInt` and `FPFromInt` cases.  HOL `INT_FLOOR` and
 `INT_CEILING` are `Rat.floor` and `Rat.ceil`, and `Num (ABS f)` is
-`Int.natAbs`.  HOL standard library, so untagged.
+`Int.natAbs`.  `float_to_int` is tagged; the `Rat`-input `real_to_float`
+rendering is not (see `holRealToFloat`), and the generated `machine_ieeeLib`
+wrappers stay untagged here.
 -/
 
 namespace Flapjack
@@ -21,7 +23,10 @@ namespace Flapjack
       equals `1/2` and `Num (ABS f)` is even, and `INT_CEILING r` otherwise;
     * roundTowardPositive: the ceiling; roundTowardNegative: the floor;
     * roundTowardZero: the ceiling for a negative sign, else the floor.
-    Infinities and NaNs give `NONE`. -/
+    Infinities and NaNs give `NONE`.  The real `r` is a float value, a
+    rational, so `INT_FLOOR`/`INT_CEILING` on it are `Rat.floor`/`Rat.ceil`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_to_int_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatToInt {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) : Option Int :=
   match holFloatValue x with
   | .float r =>
