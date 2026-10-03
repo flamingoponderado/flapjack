@@ -724,6 +724,38 @@ theorem enterHandlerCallee {width : Nat} [NeZero width] {C F : Type}
       rw [Nat.sub_add_cancel (show args1.length-k ≤ header.stackSpace by omega)] at tail
       exact tail
 
+/-- Derive the handler callee non-error obligation from the actual whole
+source call run before using its original guarded induction hypothesis. The
+handler cannot intercept Error. This is Flapjack factoring of the original
+handler body-IH step; no target run or additional non-error premise is used.
+There is no separate HOL declaration for this case-local elimination. -/
+theorem handlerCalleeNotError {width : Nat} [NeZero width] {C F : Type}
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handler : Option (Nat × WordLangProgHOL (BitVec width) × Nat × Nat))
+    (source sourcePost calleePost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args handler) source =
+      (result, sourcePost)) (notError : result ≠ some .error)
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs handler (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, calleePost)) : bodyResult ≠ some .error := by
+  intro error
+  rw [error] at bodyRun
+  obtain ⟨get, bad, find, valid, cut⟩ := guards
+  rw [WordSemStateFiniteExact.evaluate] at execution
+  simp only [get, bad, Bool.false_eq_true, if_false, find, valid, cut] at execution
+  rw [dif_neg nonzero, WordSemStateFiniteExact.fix_clock_evaluate, bodyRun] at execution
+  simp only [Prod.mk.injEq] at execution
+  exact absurd execution.1.symm notError
+
 /-- Actual native restoration state after reading the saved handler slot,
 setting the handler store and freeing precisely the three header words.
 Flapjack proof infrastructure for the original normal-return branch9495+;
