@@ -66609,6 +66609,35 @@
     "reviewer": "flapjack-sol-b source comparison 2026-10-02, bead .5.8.6: original stack_allocProofScript.sml5078-5105. Retains allocation equality, nonerror, word_gc_fun equality, bitmap length and stack byte bound, register0 return and register1 word premises. Exhausts original None/Simple/Generational gc_kind internally using their reviewed full statements; no kind-selection or successful target evaluation premise. Retains existential clock/register map, actual wordGcCode evaluate equation and complete compiled-code/state overrides, non-none Halt Word1, SUBMAP and normal-return register0 conclusions. Canonical regs/fpRegs/store use same imported owning StackSemStateFiniteExact and local genuine broad/canonical roundtrip witness; positive BitVec width with NeZero and universe0 host types only. Inherits the reals_as_rational_cuts assumption through evaluate Inst closure (SOUNDNESS item8), not a claim to review arbitrary untagged dependencies. Overall allocation/pass correctness remains open."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocCorrect.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "alloc_correct",
+    "lean_name": "alloc_correct",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.8: original stack_allocProofScript.sml:5107-5135. Free HOL w s r t c l n' m anything implicit; all five premises retained (alloc w s = (r,t), r <> SOME Error, s.gc_fun = word_gc_fun c, LENGTH bitmaps < dimword-1, stack byte bound, FLOOKUP l 1 = SOME (Word w)); no register-0, kind or target-evaluation premise. Conclusion: exists ck l2 with the actual evaluate of Call (SOME (Skip,0,n',m)) (INL gc_stub_location) NONE from the source state override (use_store/use_stack T, use_alloc F, clock s.clock+ck, regs l, gc_fun anything, code fromAList (compile c (toAList s.code))) equal to (r, t with the same overrides and regs l2), and t.regs SUBMAP l2. The duplicated source update use_alloc := F is one field update. Proof as HOL: find_code of the stub in compile c, alloc_correct_lemma at l |+ (0, Loc n' m), clock ck+1. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and the module's re-exported roundtrip witness; positive BitVec width with NeZero. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_allocProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackAlloc/Proofs/AllocCorrect.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "hol_name": "alloc_length_stack",
+    "lean_name": "alloc_length_stack",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03, bead flapjack-pxn.18.5.15.5.8: original stack_allocProofScript.sml:5146-5157. HOL c (the requested word) and conf (GC config) implicit; premises alloc c s = (r,t), s.gc_fun = word_gc_fun conf and !w. r <> SOME (Halt w) all retained (the gc_fun premise is unused by the proof, as source review confirms, but kept literally); conclusion LENGTH t.stack = LENGTH s.stack. Proof through gc_def/alloc_def and dec_stack_length (take/drop of stack_space). Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and re-exported roundtrip witness; positive BitVec width with NeZero."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/stack_rawcallScript.sml",
     "hol_name": "dest_case_def",
     "lean_path": "Flapjack/Compiler/Backend/StackRawCall.lean",
