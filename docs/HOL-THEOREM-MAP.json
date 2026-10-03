@@ -85921,5 +85921,47 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-semantic-invariant): faithful imported WordSemStateFiniteExact retains exact Spt locals/code, original full WordLocW, native lists/sets and canonical HolFiniteMapExact fpRegs/store. Same-module canonical roundtrip re-exports the owning broad/exact state witness without duplicate state carriers. The field-based fmap qualifier records the full state map representation only; positive BitVec width/NeZero and C:Type/F:Type preserve original word/configuration/FFI carriers. word_cseProof493-496 universally quantifies an arbitrary faithful state and concludes full data_inv empty_data. Lean proves both complete predicates by literal empty sparse trees, native balanced trees and store list, with no run/invariant/output premise. This supplies an unconditional non-vacuous empty-knowledge instance, not whole CSE correctness. The elaborated declaration closure inherits the existing reals_as_rational_cuts IEEE rendering assumption through the full imported WordSem evaluate/inst, recorded under docs/SOUNDNESS.md item 8; it introduces no new hypothesis or narrowed evaluator.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CanonicalRegs.lean",
+    "lean_name": "canonicalRegsCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-canonical-regs-correct): word_cseProof95-104 retains arbitrary knowledge/register/state and exactly data_inv as premise, concluding get_var canonicalRegs = get_var original. Missing/default and present canonical bindings both covered; proof uses only original sem_inv alias conjunct. Faithful WordSemStateFiniteExact and complete native dataInv preserve original Spt locals/knowledge, full positive-width WordLocW and universe-zero configuration/FFI parameters. Canonical fpRegs/store fields use same-module genuine broad/exact owning-state roundtrip, standard words qualifier only; imported dataInv declaration closure inherits the existing IEEE reals_as_rational_cuts dependency under docs/SOUNDNESS.md item 8, explicitly recorded without an extra theorem hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CanonicalRegs.lean",
+    "lean_name": "canonicalRegsAvoidCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs'_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-canonical-regs-correct): word_cseProof106-110 retains arbitrary avoid/data/register/state and exactly data_inv, with full avoid-branch get_var equality, no avoid inequality or successful binding premise. Faithful WordSemStateFiniteExact and complete native dataInv preserve original Spt locals/knowledge, full positive-width WordLocW and universe-zero configuration/FFI parameters. Canonical fpRegs/store fields use same-module genuine broad/exact owning-state roundtrip, standard words qualifier only; imported dataInv declaration closure inherits the existing IEEE reals_as_rational_cuts dependency under docs/SOUNDNESS.md item 8, explicitly recorded without an extra theorem hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/CanonicalRegs.lean",
+    "lean_name": "canonicalRegsCorrectBis",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "canonicalRegs_correct_bis",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-canonical-regs-correct): word_cseProof112-119 retains arbitrary data/register/state and soledata_inv input, concluding exact Spt locals lookup equality including absent/Word/Loc values; derives by original get_var definition, with no Word-only or target-run premise. Faithful WordSemStateFiniteExact and complete native dataInv preserve original Spt locals/knowledge, full positive-width WordLocW and universe-zero configuration/FFI parameters. Canonical fpRegs/store fields use same-module genuine broad/exact owning-state roundtrip, standard words qualifier only; imported dataInv declaration closure inherits the existing IEEE reals_as_rational_cuts dependency under docs/SOUNDNESS.md item 8, explicitly recorded without an extra theorem hypothesis."
   }
 ]
