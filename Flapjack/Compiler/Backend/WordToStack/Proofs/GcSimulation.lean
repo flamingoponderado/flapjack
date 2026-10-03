@@ -41,7 +41,8 @@ theorem readBitmapNotEmpty {width : Nat} [NeZero width] (stack : List (BitVec wi
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "n2w_lsr_1"
   (words_as_type_indexed_bitvec)]
 theorem n2wLsr1 {width : Nat} [NeZero width] (n : Nat) :
-    n < 2 ^ width → BitVec.ofNat width n >>> (1 : Nat) = BitVec.ofNat width (n / 2) := by
+    n < 2 ^ width →
+      (BitVec.ofNat width n : BitVec width) >>> (1 : Nat) = BitVec.ofNat width (n / 2) := by
   intro h
   apply BitVec.eq_of_toNat_eq
   rw [BitVec.toNat_ushiftRight, BitVec.toNat_ofNat, BitVec.toNat_ofNat, Nat.shiftRight_eq_div_pow,

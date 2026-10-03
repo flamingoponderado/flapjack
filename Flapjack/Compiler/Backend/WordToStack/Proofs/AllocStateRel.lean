@@ -33,6 +33,15 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
       StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
   StackSemStateSupport.holFmapAsFiniteSupportWitness
 
+/-- Canonical source-state codec re-export for the WordSem carrier
+(`fmap_as_finite_support` on `word_gc_empty_frame`); no separate HOL original. -/
+theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : WordSemStateBroad width C F) (h : state.FiniteSupport),
+      (WordSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : WordSemStateFiniteExact width C F,
+      WordSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  WordSemStateExact.holFmapAsFiniteSupportWitness
+
 /-- Inhabitation of the source frame carrier for total HOL `EL`, as in `stackRelAux`. -/
 local instance {width : Nat} [NeZero width] : Nonempty (WordSemStackFrame width) :=
   ⟨.stackFrame none [] [] none⟩

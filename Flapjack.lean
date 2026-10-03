@@ -327,6 +327,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexList
 import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexListLemmas
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MapFst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackAbstraction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocSimulation
+import Flapjack.Compiler.Backend.WordToStack.Proofs.GcSimulation
+import Flapjack.Compiler.Backend.WordToStack.Proofs.AllocStateRel
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRelAuxStackSize
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StackRel
