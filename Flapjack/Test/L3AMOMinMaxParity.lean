@@ -918,6 +918,36 @@ example (base : riscv_state) :
     holUpdate,List.range_succ,List.map] <;> decide
 
 
+-- Original amomax_w_aligned_rd0; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAX_W» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 0 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758544817573359,0,18364758544817573359,[239,205,171,137,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAX_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amomax_w_aligned_rd2; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAX_W» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 2 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758544817573359,0,18364758544817573359,[239,205,171,137,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAX_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
 -- Original amomax_w_positive_memory_rd3; independent byte/register expectations.
 example (base : riscv_state) :
     observation «dfn'AMOMAX_W» (fixture base 1311768465173141119 0 0 0 0 7 2 0 81985529216486895)
@@ -968,6 +998,36 @@ example (base : riscv_state) :
     observation «dfn'AMOMAX_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
       0 0 3 2 3 (BitVec.ofNat 64 0) =
       (18364758546640568448,18364758546640568448,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAX_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amomax_d_aligned_rd0; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAX_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 0 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAX_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amomax_d_aligned_rd2; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAX_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 2 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
   all_goals simp [«dfn'AMOMAX_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
@@ -1248,6 +1308,36 @@ example (base : riscv_state) :
     holUpdate,List.range_succ,List.map] <;> decide
 
 
+-- Original amominu_w_aligned_rd0; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMINU_W» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 0 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758544817573359,0,18364758544817573359,[239,205,171,137,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMINU_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amominu_w_aligned_rd2; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMINU_W» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 2 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758544817573359,0,18364758544817573359,[239,205,171,137,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMINU_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
 -- Original amominu_w_positive_memory_rd3; independent byte/register expectations.
 example (base : riscv_state) :
     observation «dfn'AMOMINU_W» (fixture base 1311768465173141119 0 0 0 0 7 2 0 81985529216486895)
@@ -1298,6 +1388,36 @@ example (base : riscv_state) :
     observation «dfn'AMOMINU_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
       0 0 3 2 3 (BitVec.ofNat 64 0) =
       (18364758546640568448,18364758546640568448,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMINU_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amominu_d_aligned_rd0; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMINU_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 0 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMINU_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amominu_d_aligned_rd2; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMINU_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 2 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,81985529216486895,0,81985529216486895,[239,205,171,137,103,69,35,1],none,none,true,1,7) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
   all_goals simp [«dfn'AMOMINU_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
@@ -1578,6 +1698,36 @@ example (base : riscv_state) :
     holUpdate,List.range_succ,List.map] <;> decide
 
 
+-- Original amomaxu_w_aligned_rd0; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAXU_W» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 0 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568448,0,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAXU_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amomaxu_w_aligned_rd2; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAXU_W» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 2 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568448,0,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAXU_W»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
 -- Original amomaxu_w_positive_memory_rd3; independent byte/register expectations.
 example (base : riscv_state) :
     observation «dfn'AMOMAXU_W» (fixture base 1311768465173141119 0 0 0 0 7 2 0 81985529216486895)
@@ -1628,6 +1778,36 @@ example (base : riscv_state) :
     observation «dfn'AMOMAXU_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
       0 0 3 2 3 (BitVec.ofNat 64 0) =
       (18364758546640568448,18364758546640568448,81985529216486895,(0,none),true,18364758546640568448,0,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAXU_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amomaxu_d_aligned_rd0; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAXU_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 0 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568448,0,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
+  simp only [observation, Prod.mk.injEq]
+  repeat' apply And.intro
+  all_goals simp [«dfn'AMOMAXU_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
+    GPR,gpr,«write'GPR»,«write'gpr»,signalAddressException,signalException,setTrap,«write'NextFetch»,
+    in32BitMode,curArch,architecture,translateAddr,MCSR,vmType,privilege,translate64,curASID,ASID_SIZE,
+    SCSR,TLB,«write'TLB»,mkTLBEntry,lookupTLB,TLBEntries,Flapjack.holFor,walk64,rawReadData,rawWriteData,MEM,«write'MEM»,
+    «rec'SV_Vaddr»,«rec'SV_PTE»,«reg'SV_PTE»,checkMemPermission,isGlobal,LEVEL_BITS,PAGESIZE_BITS,holWordExtract,
+    holUpdate,List.range_succ,List.map] <;> decide
+
+
+-- Original amomaxu_d_aligned_rd2; independent byte/register expectations.
+example (base : riscv_state) :
+    observation «dfn'AMOMAXU_D» (fixture base 18364758546640568448 0 0 0 0 7 2 0 81985529216486895)
+      0 0 2 2 3 (BitVec.ofNat 64 0) =
+      (81985529216486895,81985529216486895,81985529216486895,(0,none),true,18364758546640568448,0,18364758546640568448,[128,128,84,246,152,186,220,254],none,none,true,1,7) := by
   simp only [observation, Prod.mk.injEq]
   repeat' apply And.intro
   all_goals simp [«dfn'AMOMAXU_D»,fixture,trapView,tlbView,singletonWord,writeFullWord,lookupEmpty,insertEmpty,
