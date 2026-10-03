@@ -83888,5 +83888,29 @@
     "hol_name": "TotOrder_imp_good_cmp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: comparisonScript79-83 arbitrary cmp, sole TotOrd premise, original full good_cmp conclusion. Imported exact Toto.totOrd retains all3 original clauses; existing exact goodCmp retains all7 original comparison clauses. Key types and comparison constructors are identity translations; proof derives reflexivity, symmetry, reversal, equality substitutions and both transitivity cases with no extra assumptions."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Join.lean",
+    "lean_name": "bmInterEqAcc",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "bm_inter_eq_acc_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source493-503: Tip returns arbitrary accumulator; Bin conditionally inserts current key/value when second lookup equals SOME value, then recurses right and left in that exact nesting. Arbitrary payload alpha retained, DecidableEq discharges intrinsic HOL equality, no Nat narrowing, tree invariant or cached-size normalization. Literal BalancedMap Tip/Bin cachedSize/key/value/subtree fields, original Spt and ordered association-list store carrier retained, all quantifiers/branches unchanged. Actual Std.TreeMap merge/invariant transport and full CSE correctness remain linked open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Join.lean",
+    "lean_name": "bmInterEq",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "bm_inter_eq_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source505-507: original argument order, arbitrary payload alpha with intrinsic equality, bmInterEqAcc second first empty. No Nat narrowing or tree invariant premise. Literal BalancedMap Tip/Bin cachedSize/key/value/subtree fields, original Spt and ordered association-list store carrier retained, all quantifiers/branches unchanged. Actual Std.TreeMap merge/invariant transport and full CSE correctness remain linked open work."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Join.lean",
+    "lean_name": "mergeData",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "merge_data_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source509-518: original five Knowledge fields, spt inter_eq of canonical maps, latest LN reset, FILTER ordered first store list by exact second ALOOKUP/value equality; both native fact maps use literal bmInterEq. Concrete Nat register payloads original knowledge, not narrowed standalone helpers. Literal BalancedMap Tip/Bin cachedSize/key/value/subtree fields, original Spt and ordered association-list store carrier retained, all quantifiers/branches unchanged. Actual Std.TreeMap merge/invariant transport and full CSE correctness remain linked open work."
   }
 ]
