@@ -1,0 +1,25 @@
+float_to_int_def=∀(mode :rounding) (x :(τ, χ) float).
+  float_to_int mode x =
+  case float_value x of
+    Float r =>
+      SOME
+        (case mode of
+           roundTiesToEven =>
+             (let
+                (f :int) = ⌊r⌋;
+                (df :real) = abs (r − real_of_int f)
+              in
+                if
+                  df < (1 :real) / (2 :real) ∨
+                  df = (1 :real) / (2 :real) ∧ EVEN (Num (ABS f))
+                then
+                  f
+                else ⌈r⌉)
+         | roundTowardPositive => ⌈r⌉
+         | roundTowardNegative => ⌊r⌋
+         | roundTowardZero => if x.Sign = (1w :word1) then ⌈r⌉ else ⌊r⌋)
+  | Infinity => (NONE :int option)
+  | NaN => (NONE :int option)
+real_to_float_def=∀(m :rounding).
+  (real_to_float m :real -> (α, β) float) =
+  (float_round m (m = roundTowardNegative) :real -> (α, β) float)

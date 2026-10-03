@@ -1,0 +1,4 @@
+fupdate_elim2_statement=∀y x fm. FLOOKUP fm x = SOME y ⇒ fm⟨x ↦ y⟩ = fm
+fupdate_elim2_types=y::α;x::β;fm::β |-> α
+fupdate_elim2_hypotheses=0
+fupdate_elim2_proved=T

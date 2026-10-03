@@ -48,7 +48,7 @@ theorem filterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
           cases instruction with
           | inst instruction =>
             apply filterCorrectInstruction s1 t1 res s2 instruction bytes len heval hrel hfailed hf
-            intro target result final _
+            intro _ target result final _
             exact recur _ (by simp only [incPc, decClock, (asmInstConsts instruction s1).2.2.1]; omega) target result final
           | jump offset => exact filterCorrectPlainJump s1 t1 res s2 offset bytes len heval hrel hfailed hf
           | jumpCmp cmp register operand offset =>
@@ -60,22 +60,22 @@ theorem filterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
             | word value => exact filterCorrectJumpRegWord s1 t1 res s2 register value bytes len heval hrel hfailed hf hr
             | loc sid lid =>
               apply filterCorrectJumpRegLoc s1 t1 res s2 register sid lid bytes len heval hrel hfailed hf hr
-              intro pc _
+              intro _ pc _
               exact recur _ (by simp only [updPc, decClock]; omega)
         | cbw r1 r2 =>
           apply filterCorrectBufferWrite s1 t1 res s2 r1 r2 bytes len heval hrel hfailed hf
-          intro address value buffer _ _ _
+          intro _ address value buffer _ _ _
           exact recur _ (by simp only [incPc, decClock]; omega)
         | shareMem operator register address =>
           apply filterCorrectSharedMemory s1 t1 res s2 operator register address bytes len heval hrel hfailed hf
-          intro ffi returned next hshare
+          intro _ ffi returned next hshare
           have hn := shareMemOp_ret_clock operator register address s1 next ffi returned hshare
           exact recur _ (by change next.clock < s1.clock; omega)
       | labAsm instruction position bytes len =>
         cases instruction with
         | jump label =>
           apply filterCorrectJump s1 t1 res s2 label position bytes len heval hrel hfailed hf
-          intro pc _
+          intro _ pc _
           exact recur _ (by simp only [updPc, decClock]; omega)
         | jumpCmp cmp register operand label =>
           cases hcmp : wordSemWordCmp cmp (s1.regs register) (regImm operand s1) with
@@ -84,27 +84,28 @@ theorem filterCorrect {width : Nat} [NeZero width] {C : Type} {F : Type}
             cases value with
             | false =>
               apply filterCorrectJumpCmpFalse s1 t1 res s2 cmp register operand label position bytes len heval hrel hfailed hf hcmp
+              intro _
               exact recur _ (by simp only [incPc, decClock]; omega)
             | true =>
               apply filterCorrectJumpCmpTrue s1 t1 res s2 cmp register operand label position bytes len heval hrel hfailed hf hcmp
-              intro pc _
+              intro _ pc _
               exact recur _ (by simp only [updPc, decClock]; omega)
         | call label =>
           apply filterCorrectCall s1 t1 res s2 label position bytes len heval hrel hfailed hf
-          intro pc location _ _
+          intro _ pc location _ _
           exact recur _ (by simp only [updPc, decClock, updReg]; omega)
         | locValue register label =>
           apply filterCorrectLocValue s1 t1 res s2 register label position bytes len heval hrel hfailed hf
-          intro _
+          intro _ _
           exact recur _ (by simp only [incPc, decClock, updReg]; omega)
         | halt => exact filterCorrectHalt s1 t1 res s2 position bytes len heval hrel hfailed hf
         | install =>
           apply filterCorrectInstall s1 t1 res s2 position bytes len heval hrel hfailed hf
-          intro program installedSection pc buffer _
+          intro _ program installedSection pc buffer _
           exact recur _ (by change s1.clock - 1 < s1.clock; omega)
         | callFFI function =>
           apply filterCorrectCallFfi s1 t1 res s2 function position bytes len heval hrel hfailed hf
-          intro start2 pc ffi returned _
+          intro _ start2 pc ffi returned _
           exact recur _ (by change s1.clock - 1 < s1.clock; omega)
 
 end Flapjack.Compiler.Backend.LabFilter.Proofs

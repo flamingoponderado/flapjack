@@ -1,0 +1,171 @@
+evaluate_ind=∀(P :(α, γ, 'ffi) labSem$state -> bool).
+  (∀(s :(α, γ, 'ffi) labSem$state).
+     (∀(v25 :α line) (v47 :α asm_or_cbw) (v50 :word8 list) (v51 :num)
+          (v62 :α asm) (i :α inst) (s1 :(α, γ, 'ffi) labSem$state).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+        v47 = Asmi v62 ∧ v62 = (Inst i :α asm) ∧ s1 = asm_inst i s ∧
+        ¬s1.failed ⇒
+        P (inc_pc (dec_clock s1))) ∧
+     (∀(v25 :α line) (v47 :α asm_or_cbw) (v50 :word8 list) (v51 :num)
+          (v62 :α asm) (r :num) (n1 :num) (n2 :num) (p :num).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+        v47 = Asmi v62 ∧ v62 = (JumpReg r :α asm) ∧
+        (read_reg r s :α word_loc) = (Loc n1 n2 :α word_loc) ∧
+        loc_to_pc n1 n2 s.code = SOME p ⇒
+        P (upd_pc p (dec_clock s))) ∧
+     (∀(v25 :α line) (v47 :α asm_or_cbw) (v50 :word8 list) (v51 :num)
+          (m :memop) (r :num) (ad :α addr)
+          (v :'ffi ffi_result # (α, γ, 'ffi) labSem$state)
+          (v1 :'ffi ffi_result) (s' :(α, γ, 'ffi) labSem$state)
+          (v3 :'ffi ffi_state) (v4 :word8 list).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+        v47 = ShareMem m r ad ∧ share_mem_op m r ad s = SOME v ∧
+        v = (v1,s') ∧ v1 = FFI_return v3 v4 ⇒
+        P
+          (s' with
+           <|io_regs := shift_seq (1 :num) s'.io_regs;
+             io_fp_regs := shift_seq (1 :num) s'.io_fp_regs|>)) ∧
+     (∀(v25 :α line) (v47 :α asm_or_cbw) (v50 :word8 list) (v51 :num)
+          (r1 :num) (r2 :num) (v2 :α word_loc) (v3 :α word_loc) (w1 :α word)
+          (w2 :α word) (new_cb :(α, 8) buffer).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧ v25 = Asm v47 v50 v51 ∧
+        v47 = (Cbw r1 r2 :α asm_or_cbw) ∧
+        ((read_reg r1 s :α word_loc),(read_reg r2 s :α word_loc)) = (v2,v3) ∧
+        v2 = Word w1 ∧ v3 = Word w2 ∧
+        buffer_write s.code_buffer w1 (w2w w2 :word8) = SOME new_cb ⇒
+        P (inc_pc (dec_clock (s with code_buffer := new_cb)))) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (c :cmp) (r'' :num) (ri :α reg_imm) (l' :lab) (v :bool)
+          (p :num).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧
+        v52 = (JumpCmp c r'' ri l' :α asm_with_lab) ∧
+        (word_cmp c (read_reg r'' s :α word_loc) (reg_imm ri s :α word_loc) :
+         bool option) = SOME v ∧ v ∧ get_pc_value l' s = SOME p ⇒
+        P (upd_pc p (dec_clock s))) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (c :cmp) (r'' :num) (ri :α reg_imm) (l' :lab) (v :bool).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧
+        v52 = (JumpCmp c r'' ri l' :α asm_with_lab) ∧
+        (word_cmp c (read_reg r'' s :α word_loc) (reg_imm ri s :α word_loc) :
+         bool option) = SOME v ∧ ¬v ⇒
+        P (inc_pc (dec_clock s))) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (l'' :lab) (p :num) (k :α word_loc)
+          (s1 :(α, γ, 'ffi) labSem$state).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧ v52 = (Call l'' :α asm_with_lab) ∧
+        get_pc_value l'' s = SOME p ∧
+        (get_ret_Loc s :α word_loc option) = SOME k ∧
+        s1 = upd_reg s.link_reg k s ⇒
+        P (upd_pc p (dec_clock s1))) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (l :lab) (p :num).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧ v52 = (Jump l :α asm_with_lab) ∧
+        get_pc_value l s = SOME p ⇒
+        P (upd_pc p (dec_clock s))) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (ffi_index :mlstring) (v4 :α word_loc)
+          (v5 :α word_loc # α word_loc # α word_loc # α word_loc) (w :α word)
+          (v16 :α word_loc) (v17 :α word_loc # α word_loc # α word_loc)
+          (w2 :α word) (v26 :α word_loc) (v27 :α word_loc # α word_loc)
+          (w3 :α word) (v36 :α word_loc) (v37 :α word_loc) (n1 :num)
+          (n2 :num) (w4 :α word) (v2 :word8 list option)
+          (v3 :word8 list option # num option) (bytes :word8 list)
+          (v8 :word8 list option) (v9 :num option) (bytes2 :word8 list)
+          (new_pc :num) (new_ffi :'ffi ffi_state) (new_bytes :word8 list)
+          (new_io_regs :num -> ffiname -> num -> α word option)
+          (new_io_fp_regs :num -> num -> word64)
+          (new_m :α word -> α word_loc).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧
+        v52 = (CallFFI ffi_index :α asm_with_lab) ∧
+        ((read_reg s.len_reg s :α word_loc),
+         (read_reg s.ptr_reg s :α word_loc),
+         (read_reg s.len2_reg s :α word_loc),
+         (read_reg s.ptr2_reg s :α word_loc),
+         (read_reg s.link_reg s :α word_loc)) = (v4,v5) ∧ v4 = Word w ∧
+        v5 = (v16,v17) ∧ v16 = Word w2 ∧ v17 = (v26,v27) ∧ v26 = Word w3 ∧
+        v27 = (v36,v37) ∧ v37 = (Loc n1 n2 :α word_loc) ∧ v36 = Word w4 ∧
+        (read_bytearray w2 (w2n w)
+           (mem_load_byte_aux s.mem s.mem_domain s.be),
+         read_bytearray w4 (w2n w3)
+           (mem_load_byte_aux s.mem s.mem_domain s.be),loc_to_pc n1 n2 s.code) =
+        (v2,v3) ∧ v2 = SOME bytes ∧ v3 = (v8,v9) ∧ v8 = SOME bytes2 ∧
+        v9 = SOME new_pc ∧
+        call_FFI s.ffi (ExtCall ffi_index) bytes bytes2 =
+        FFI_return new_ffi new_bytes ∧
+        new_io_regs = shift_seq (1 :num) s.io_regs ∧
+        new_io_fp_regs = shift_seq (1 :num) s.io_fp_regs ∧
+        new_m = write_bytearray w4 new_bytes s.mem s.mem_domain s.be ⇒
+        P
+          (s with
+           <|mem := new_m; ffi := new_ffi; io_regs := new_io_regs;
+             io_fp_regs := new_io_fp_regs;
+             regs :=
+               (λ(a :num).
+                    get_reg_value (s.io_regs (0 :num) (ExtCall ffi_index) a)
+                      (read_reg a s :α word_loc) (Word :α word -> α word_loc));
+             fp_regs := (λ(n :num). s.io_fp_regs (0 :num) n); pc := new_pc;
+             clock := s.clock − (1 :num)|>)) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (r' :num) (lab :lab) (s1 :(α, γ, 'ffi) labSem$state).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧
+        v52 = (LocValue r' lab :α asm_with_lab) ∧
+        get_pc_value lab s ≠ (NONE :num option) ∧
+        s1 = upd_reg r' (lab_to_loc lab :α word_loc) s ⇒
+        P (inc_pc (dec_clock s1))) ∧
+     (∀(v25 :α line) (v52 :α asm_with_lab) (v53 :α word) (v54 :word8 list)
+          (v55 :num) (v8 :α word_loc) (v11 :α word_loc # α word_loc)
+          (w1 :α word) (v21 :α word_loc) (v22 :α word_loc) (n1 :num)
+          (n2 :num) (w2 :α word) (v4 :(word8 list # (α, 8) buffer) option)
+          (v5 :num option) (v10 :word8 list # (α, 8) buffer) (new_pc :num)
+          (bytes :word8 list) (cb :(α, 8) buffer) (cfg :γ) (prog :α sec list)
+          (new_oracle :num -> γ # α sec list) (v2 :(word8 list # γ) option)
+          (v3 :α sec list) (v6 :α sec) (v7 :α sec list) (v9 :word8 list # γ)
+          (bytes' :word8 list) (cfg' :γ) (k :num) (v17 :α line list).
+        s.clock ≠ (0 :num) ∧ asm_fetch s = SOME v25 ∧
+        v25 = LabAsm v52 v53 v54 v55 ∧ v52 = (Install :α asm_with_lab) ∧
+        ((read_reg s.ptr_reg s :α word_loc),
+         (read_reg s.len_reg s :α word_loc),
+         (read_reg s.link_reg s :α word_loc)) = (v8,v11) ∧ v8 = Word w1 ∧
+        v11 = (v21,v22) ∧ v22 = (Loc n1 n2 :α word_loc) ∧ v21 = Word w2 ∧
+        ((buffer_flush s.code_buffer w1 w2 :
+          (word8 list # (α, 8) buffer) option),loc_to_pc n1 n2 s.code) =
+        (v4,v5) ∧ v4 = SOME v10 ∧ v5 = SOME new_pc ∧ v10 = (bytes,cb) ∧
+        (cfg,prog) = (s.compile_oracle (0 :num) :γ # α sec list) ∧
+        new_oracle = shift_seq (1 :num) s.compile_oracle ∧
+        ((s.compile cfg prog :(word8 list # γ) option),prog) = (v2,v3) ∧
+        v3 = v6::v7 ∧ v2 = SOME v9 ∧ v9 = (bytes',cfg') ∧
+        v6 = Section k v17 ∧ bytes = bytes' ∧
+        FST (new_oracle (0 :num)) = cfg' ⇒
+        P
+          (s with
+           <|pc := new_pc; code_buffer := cb; code := s.code ++ prog;
+             cc_regs := shift_seq (1 :num) s.cc_regs;
+             cc_fp_regs := shift_seq (1 :num) s.cc_fp_regs;
+             regs :=
+               (λ(a :num).
+                    get_reg_value (s.cc_regs (0 :num) a)
+                      (read_reg a s :α word_loc) (Word :α word -> α word_loc))⦇
+                 s.ptr_reg ↦ (Loc k (0 :num) :α word_loc)
+               ⦈; fp_regs := (λ(n :num). s.cc_fp_regs (0 :num) n);
+             compile_oracle := new_oracle; clock := s.clock − (1 :num)|>)) ⇒
+     P s) ⇒
+  ∀(v :(α, γ, 'ffi) labSem$state). P v
+evaluate_ind_types=(P :(α, γ, 'ffi) labSem$state -> bool)::(α, γ, 'ffi) labSem$state -> bool;
+evaluate_ind_hypotheses=0
+evaluate_ind_proved=T
+filter_correct=∀(s1 :(α, γ, 'ffi) labSem$state) (t1 :(α, γ, 'ffi) labSem$state)
+    (res :machine_result) (s2 :(α, γ, 'ffi) labSem$state).
+  (evaluate s1 :machine_result # (α, γ, 'ffi) labSem$state) = (res,s2) ∧
+  state_rel s1 t1 ∧ ¬t1.failed ⇒
+  ∃(k :num) (t2 :(α, γ, 'ffi) labSem$state).
+    (evaluate (t1 with clock := s1.clock + k) :
+     machine_result # (α, γ, 'ffi) labSem$state) = (res,t2) ∧ s2.ffi = t2.ffi
+filter_correct_types=(s1 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;(t1 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;(res :machine_result)::machine_result;(s2 :(α, γ, 'ffi) labSem$state)::(α, γ, 'ffi) labSem$state;
+filter_correct_hypotheses=0
+filter_correct_proved=T
