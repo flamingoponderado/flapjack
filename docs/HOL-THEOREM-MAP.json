@@ -68230,5 +68230,20 @@
     "hol_name": "dfn'SD_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c literal pinned source7415-7455: complete SD, fixed word5 rs1/rs2 and word12 offset with arbitrary native riscv_state. Signed12 offset plus GPR rs1 wraps64. Literal Data/Write translateAddr forwards returned state to both Store_AMO_Fault with original virtual address and GPR rs2 read/rawWriteData8bytes. Original in32BitMode runs first and forwards returned state to Illegal_Instr or all later routes. No alignment/success/core premise. Full mechanical source closure0failed; definition and unconditional whole-state normal form kernel checked. Fresh pinned original definition/type and15complete observations independently matched via wrapping byte-wise updates: unaligned negative cross-word offsets, address/offset wrapping, positive offset, register-zero reads, core255,totalCore1,RV32/RV128, Sv32 virtual faults, Sv39 Write dirty/read bits and returned-state memory, read-only/invalidPTE faults. Current/other rs2, three full memory-word reads/eight bytes/allTLBfields and entire frame outside only MEM8/TLB/NextFetch/exception retain arbitrary unrelated fields and unchanged GPR/reservation. No whole Decode/Run/Next/compiler theorem claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Loop.lean",
+    "lean_name": "evaluateCodeBitmapsLoop",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.3: original evaluate_code_bitmaps421-440 Loop case. CodeBitmaps definitionally literal full existential shifted oracle/code union left-fold/bitmap append flatten. Actual native Loop execution and only true source-path IHs: body at source, reentry after actual body execution/contLoop true/nonzero min clock at exact decClock-clamped middle. Strict descent derived from min bound/nonzero/subtraction; not supplied as independent success premise. Native timeout emptyEnv and exit retain fields; reentry composes actual prefix counts/order using checked transitivity. No target/prefix/count/postfield assumptions. Imported canonical regs/fpRegs/store same-module witness, positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment or FP correspondence claim and no runtime rewrite. Parent assembly and other cases open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
