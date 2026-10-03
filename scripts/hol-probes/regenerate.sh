@@ -6982,6 +6982,7 @@ run_probe riscv_target_wide_arithmetic_probeScript.sml riscv_target_wide_arithme
 run_probe lab_props_alignment_operations_probeScript.sml lab_props_alignment_operations_probe.out \
   arith_upd_align_dm arith_upd_align_dm_types arith_upd_align_dm_hypotheses arith_upd_align_dm_proved fp_upd_align_dm fp_upd_align_dm_types fp_upd_align_dm_hypotheses fp_upd_align_dm_proved addr_align_dm addr_align_dm_types addr_align_dm_hypotheses addr_align_dm_proved arith_upd_align_sdm arith_upd_align_sdm_types arith_upd_align_sdm_hypotheses arith_upd_align_sdm_proved fp_upd_align_sdm fp_upd_align_sdm_types fp_upd_align_sdm_hypotheses fp_upd_align_sdm_proved addr_align_sdm addr_align_sdm_types addr_align_sdm_hypotheses addr_align_sdm_proved \
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
 run_probe word_to_stack_register_update_probeScript.sml word_to_stack_register_update_probe.out \
   register_update_full register_update_hypotheses register_update_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7005,3 +7006,14 @@ run_probe riscv_target_state_probeScript.sml riscv_target_state_probe.out \
 run_probe riscv_target_bytes_probeScript.sml riscv_target_bytes_probe.out \
   bytes_in_memory_thm_statement bytes_in_memory_thm_types bytes_in_memory_thm_hypotheses bytes_in_memory_thm_proved bytes_in_memory_thm2_statement bytes_in_memory_thm2_types bytes_in_memory_thm2_hypotheses bytes_in_memory_thm2_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe word_to_stack_register_spill_update_probeScript.sml word_to_stack_register_spill_update_probe.out \
+  register_spill_update_full register_spill_update_hypotheses register_spill_update_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_props_alignment_word_memory_probeScript.sml lab_props_alignment_word_memory_probe.out \
+  mem_load_align_dm mem_load_align_dm_types mem_load_align_dm_hypotheses mem_load_align_dm_proved mem_store_align_dm mem_store_align_dm_types mem_store_align_dm_hypotheses mem_store_align_dm_proved \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_to_stack_register_write_probeScript.sml word_to_stack_register_write_probe.out \
+  register_write_full register_write_hypotheses register_write_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
