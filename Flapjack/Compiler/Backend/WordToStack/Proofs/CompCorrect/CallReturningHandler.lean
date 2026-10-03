@@ -1304,6 +1304,10 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
           (none,entry) ∧
       StackSemEvaluate.evaluate (body,{entry with clock := entry.clock+extra}) =
         (targetResult,targetPost) ∧
+      StackSemEvaluate.evaluate
+        (calleeCode,{StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
+          with clock := (StackSemStateOps.decClock moved).clock + extra}) =
+        (targetResult,targetPost) ∧
       compCorrectResult ac k calleeSize calleeFrame
         (WordSemStateFiniteExact.callEnv args1 ss
           (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
@@ -1383,9 +1387,29 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
       calleeIndex calleeIndexPost body (frame :: lens)
       ⟨bodyRun,bodyNotError,entryRelation,bodyConventions,bodyFlat,bodyCompile,
         calleeBitmapLength,entryBitmapBound,entryBitmapPrefix,bodyLabels,bodyMaximum⟩
+  have allocationClock (bump : Nat) : StackSemEvaluate.evaluate
+      (.stackAlloc (calleeSize-(args1.length-k)),
+        {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
+          with clock := (StackSemStateOps.decClock moved).clock + bump}) =
+      (none,{entry with clock := entry.clock + bump}) := by
+    have success := allocateRun
+    rw [StackSemEvaluate.evaluate_stackAlloc] at success
+    split_ifs at success with disabled insufficient
+    · cases (Prod.mk.inj success).1
+    · cases (Prod.mk.inj success).1
+    obtain ⟨_,rfl⟩ := Prod.mk.inj success
+    rw [StackSemEvaluate.evaluate_stackAlloc,if_neg disabled,if_neg insufficient]
+    rfl
+  have calleeExecution : StackSemEvaluate.evaluate
+      (calleeCode,{StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
+        with clock := (StackSemStateOps.decClock moved).clock + extra}) =
+      (targetResult,targetPost) := by
+    rw [codeEq,StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,
+      allocationClock extra]
+    exact execution
   exact ⟨destinationTarget,saved,header,moved,entry,targetPost,calleeCode,body,calleeSize,
     calleeFrame,extra,targetResult,destinationRun,savedRun,pushRun,moveRun,found,codeEq,
-    allocateRun,execution,conclusion⟩
+    allocateRun,execution,calleeExecution,conclusion⟩
 
 /-- Actual native restoration state after reading the saved handler slot,
 setting the handler store and freeing precisely the three header words.
