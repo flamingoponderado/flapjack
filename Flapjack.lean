@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.TargetOk
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmShared
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmNavigation
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
@@ -2338,5 +2339,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-
-import Flapjack.RiscV.CorrectnessEncoding.TargetOk
