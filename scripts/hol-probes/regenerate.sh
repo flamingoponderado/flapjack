@@ -7176,7 +7176,7 @@ run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_pr
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_flatten_correct_probeScript.sml stack_to_lab_flatten_correct_probe.out \
-  flatten_correct_statement \
+  flatten_correct_statement flatten_correct_statement_typed flatten_correct_statement_types \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_comp_opcurrheap_probeScript.sml word_to_stack_comp_opcurrheap_probe.out \
@@ -7189,11 +7189,11 @@ run_probe word_to_stack_cut_state_probeScript.sml word_to_stack_cut_state_probe.
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_flatten_semantics_probeScript.sml stack_to_lab_flatten_semantics_probe.out \
-  flatten_call_correct_statement halt_assum_def_statement flatten_semantics_statement \
+  flatten_call_correct_statement flatten_call_correct_statement_typed flatten_call_correct_statement_types halt_assum_def_statement halt_assum_def_statement_typed halt_assum_def_statement_types flatten_semantics_statement flatten_semantics_statement_typed flatten_semantics_statement_types \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_make_init_probeScript.sml stack_to_lab_make_init_probe.out \
-  make_init_def_statement make_init_semantics_statement memory_assumption_def_statement halt_assum_lemma_statement FLOOKUP_regs_statement state_rel_make_init_statement \
+  make_init_def_statement make_init_def_statement_typed make_init_def_statement_types make_init_semantics_statement make_init_semantics_statement_typed make_init_semantics_statement_types memory_assumption_def_statement memory_assumption_def_statement_typed memory_assumption_def_statement_types halt_assum_lemma_statement halt_assum_lemma_statement_typed halt_assum_lemma_statement_types FLOOKUP_regs_statement FLOOKUP_regs_statement_typed FLOOKUP_regs_statement_types state_rel_make_init_statement state_rel_make_init_statement_typed state_rel_make_init_statement_types \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe stack_to_lab_flatten_helpers_probeScript.sml stack_to_lab_flatten_helpers_probe.out \
