@@ -82502,5 +82502,59 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 full source comparison labProps1174-1245: original good_dimindex guard and forall generic native width/C/FFI state preserved. Full evaluate_align_sdm equality retains let result/poststate shape; actual evaluator induction handles all original instruction/navigation/shared-memory/Install/FFI/error/clock cases using genuine recursive hypotheses. Full implements_align_sdm retains precise true flag and original source-state singleton first/aligned singleton second, not reversed. Faithful behaviors retain existential clocks, optional terminating choice and lazy-list trace LUB. Private full behavior equality derives refinement with no assumed execution/result/simulation/postcondition premise. Shared-domain projection changes neither source error guards nor FFI bytes/results/clock updates. No LOG2zero/runtime changes or total HD/EL policy adoption. Inherits reals_as_rational_cuts assumption of SOUNDNESS item8 through actual native evaluator, no full real-carrier closure/HOL-to-Lean equivalence claim. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_sdm_evaluate_probe.out; final DM/SDM compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmControl.lean",
+    "lean_name": "decClockAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "dec_clock_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmControl.lean",
+    "lean_name": "incPcAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "inc_pc_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmControl.lean",
+    "lean_name": "updPcAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "upd_pc_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmControl.lean",
+    "lean_name": "getPcValueAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "get_pc_value_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmControl.lean",
+    "lean_name": "getRetLocAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "get_ret_Loc_align_dm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/DomainAlignmentDmControl.lean",
+    "lean_name": "shareMemOpAlignDM",
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "share_mem_op_align_dm_simp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison labProps724-755/789-801: complete original unconditional clock/PC/label/return-location laws and exact three shared-memory implications for NONE, FFI_final and FFI_return. Independent output word dimension of get_ret_Loc retained. Generic native op/register/address/state/C/FFI result, final event, returned FFI state and byte list carriers preserved. Actual shared-memory transition observes unchanged shared domain, all8sizes/request bytes/FFI outcomes/register/clock/PC updates retained; projection changes only ordinary memory domain. No good_dimindex/transition-success/simulation/result premise added; original antecedents remain exactly. No LOG2zero choice/runtime edits. Fresh original6 fulltypes/hyp0/kernelT in lab_props_alignment_dm_control_probe.out. Full ordinary-memory evaluator/refinement remains open."
   }
 ]

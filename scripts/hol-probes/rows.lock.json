@@ -2066,6 +2066,12 @@
       "sha256": "904f882bfc261bbc8c53544aaf146f827b2266dbb397cb1776f1baf3f353ba00"
     },
     {
+      "bytes": 2269,
+      "out": "lab_props_alignment_dm_control_probe.out",
+      "rows": 24,
+      "sha256": "0f324e2bc9dc33217e7535d6afa1d8d1bfdd08dc33e8dffa0dab5aa3e5561800"
+    },
+    {
       "bytes": 1609,
       "out": "lab_props_alignment_operations_probe.out",
       "rows": 24,
