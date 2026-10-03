@@ -7345,3 +7345,6 @@ run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.ou
 run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_shapes_wf_probe.out \
   is_wf_shape_compile_shape_statement is_wf_shape_compile_shape_proved is_wf_shape_compile_shape_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
+  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

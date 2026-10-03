@@ -86214,5 +86214,20 @@
     "hol_name": "is_wf_shape_compile_shape",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol compared full original298-308 and compiler213-independent shape definition/induction. Both unconditional conjuncts retained: arbitrary MlS x alpha target context, original MlS x List(MlS x shape) compilation context, single compiled shape and EVERY over compiled shape list. Generic target payload alpha retained after accepted in-place PanLang predicate repair; no source-WF or target-result premise, no String/cache carrier. HOL EVERY encoded by forall list member, BOOL truth by equality true. Mutual compile_shape induction handles scalar/comb/named dropWhile hit/miss and list nil/cons; named expansion strictly removes names. Full source nested bound types/closed theorem capture accompany port. Production routing remains separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveAux.lean",
+    "lean_name": "wMoveAuxThm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wMoveAux_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 Move evaluator prerequisite: full original wMoveAux_thm2856-2867. Both original empty and cons evaluator equalities retain arbitrary formatted moves/frame/targetstate and every result including failure. Native singleton is literal wMoveSingle; trailing Skip equality derives actual evaluateClock bound, not a supplied successful evaluation or postclock premise. Canonical imported target finite-map fields with same-module genuine codec roundtrip; List/Sum/Nat products unchanged, positive type-indexed words/Type0 host. Inherits reals_as_rational_cuts evaluator closure limit, no new FP correspondence or cross-language equivalence. Fresh literal original whole HOL proof replay with full statement/closed hypotheses. Entire move-list simulation remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
