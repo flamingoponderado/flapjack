@@ -2,10 +2,12 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitClock
 import Flapjack.Compiler.Backend.StackRemove.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.Semantics.StackSem.Semantics
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeRelation
 
 /-! Initializer semantics of `stack_removeProofScript.sml` (3856-4087):
-`evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics`,
-`IMP_code_rel` and `make_init_semantics`.
+`evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and
+`make_init_semantics`; the latter uses the accepted `IMP_code_rel` port of
+`InitCodeRelation`.
 -/
 
 namespace Flapjack.Compiler.Backend.StackRemove.Proofs.InitSemantics
@@ -230,93 +232,6 @@ theorem makeInitOptSomeSemantics {width : Nat} [NeZero width] {C F : Type}
       rw [semEq]
       exact CompileSemantics.compileSemantics jump bounds pointer start r t ⟨rel, notFail⟩
 
-theorem sptAListLookup_mem {α : Type} (key : Nat) (value : α) :
-    ∀ entries : List (Nat × α), sptAListLookup key entries = some value →
-      (key, value) ∈ entries := by
-  intro entries
-  induction entries with
-  | nil => simp [sptAListLookup]
-  | cons e es ih =>
-    obtain ⟨other, v⟩ := e
-    intro h
-    simp only [sptAListLookup] at h
-    split at h
-    · cases h; subst key; simp
-    · exact List.mem_cons_of_mem _ (ih h)
-
-theorem sptAListLookup_append {α : Type} (key : Nat) (l1 l2 : List (Nat × α)) :
-    sptAListLookup key (l1 ++ l2) =
-      (sptAListLookup key l1).or (sptAListLookup key l2) := by
-  induction l1 with
-  | nil => simp [sptAListLookup]
-  | cons e es ih =>
-    obtain ⟨other, v⟩ := e
-    simp only [List.cons_append, sptAListLookup]
-    split <;> simp [ih]
-
-theorem sptAListLookup_map {α β : Type} (key : Nat) (f : α → β) (l : List (Nat × α)) :
-    sptAListLookup key (l.map fun e => (e.1, f e.2)) = (sptAListLookup key l).map f := by
-  induction l with
-  | nil => simp [sptAListLookup]
-  | cons e es ih =>
-    obtain ⟨other, v⟩ := e
-    simp only [List.map_cons, sptAListLookup]
-    split <;> simp [ih]
-
-/-- Complete original local code-relation theorem for the compiled program:
-register bounds and stub numbering of the source sections give the original
-`code_rel` between their `fromAList` table and the compiled table. -/
-@[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "IMP_code_rel"
-  (words_as_type_indexed_bitvec)]
-theorem impCodeRel {width : Nat} [NeZero width] (jump : Bool)
-    (bounds : BitVec width × BitVec width) (generateGc : Bool) (maxHeap pointer start : Nat)
-    (code1 : List (Nat × HolProg width)) (code2 : Spt (HolProg width))
-    (hyp : (∀ entry ∈ code1, Compiler.Backend.StackProps.regBound entry.2 pointer ∧
-        stackNumStubs ≤ entry.1 + 1) ∧
-      code2 = sptFromAList (compileHOL jump bounds generateGc maxHeap pointer start code1)) :
-    codeRelHOL jump bounds pointer (sptFromAList code1) code2 := by
-  obtain ⟨every, rfl⟩ := hyp
-  have stubs : ∀ name, (sptAListLookup name (initStubs (width := width) generateGc maxHeap
-      pointer start)).isSome = (name = 0 ∨ name = 1 ∨ name = 2) := by
-    intro name
-    simp only [initStubs, sptAListLookup]
-    by_cases h0 : name = 0 <;> by_cases h1 : name = 1 <;> by_cases h2 : name = 2 <;> simp_all
-  refine ⟨fun name program found => ?_, ?_⟩
-  · rw [sptLookup_sptFromAList] at found
-    have member := sptAListLookup_mem _ _ _ found
-    obtain ⟨bound, stub⟩ := every _ member
-    simp only [stackNumStubs] at stub
-    refine ⟨bound, ?_⟩
-    rw [sptLookup_sptFromAList, compileHOL, sptAListLookup_append]
-    have n0 : name ≠ 0 := by omega
-    have n1 : name ≠ 1 := by omega
-    have n2 : name ≠ 2 := by omega
-    have none : sptAListLookup name (initStubs (width := width) generateGc maxHeap pointer start) =
-        none := by
-      simp [initStubs, sptAListLookup, n0, n1, n2]
-    rw [none, Option.none_or]
-    have mapped : sptAListLookup name (code1.map (progComp jump bounds pointer)) =
-        (sptAListLookup name code1).map (comp jump bounds pointer) :=
-      sptAListLookup_map name (comp jump bounds pointer) code1
-    rw [mapped, found]
-    rfl
-  · funext name
-    apply propext
-    simp only [sptDomain, sptLookup_sptFromAList, compileHOL, sptAListLookup_append]
-    have mapped : sptAListLookup name (code1.map (progComp jump bounds pointer)) =
-        (sptAListLookup name code1).map (comp jump bounds pointer) :=
-      sptAListLookup_map name (comp jump bounds pointer) code1
-    rw [mapped, Option.isSome_or, Option.isSome_map]
-    have := stubs name
-    constructor
-    · intro h
-      rcases Bool.or_eq_true_iff.mp h with h | h
-      · exact Or.inr (this.mp h)
-      · exact Or.inl h
-    · rintro (h | h)
-      · exact Bool.or_eq_true_iff.mpr (Or.inr h)
-      · exact Bool.or_eq_true_iff.mpr (Or.inl (this.mpr h))
-
 /-- Complete original top-level initialization semantics theorem: from the
 compiler-side `discharge_these` and machine-side `propagate_these` bundles,
 the optional initialization of the compiled program succeeds and the
@@ -341,8 +256,8 @@ theorem makeInitSemantics {width : Nat} [NeZero width] {C F : Type}
     albp, big, heap⟩ := hyp
   apply makeInitOptSomeSemantics generateGc maxHeap bitmaps dataSpace pointer start s2 jump
     bounds oracle (sptFromAList code)
-  refine ⟨⟨?_, ?_, maxOk⟩, oracleEq, oracleBound, impCodeRel jump bounds generateGc maxHeap
-    pointer start code s2.code ⟨every, codeEq⟩, ?_⟩
+  refine ⟨⟨?_, ?_, maxOk⟩, oracleEq, oracleBound, InitCodeRelation.impCodeRel jump bounds
+    generateGc maxHeap pointer start code s2.code ⟨every, codeEq⟩, ?_⟩
   · rw [codeEq, sptLookup_sptFromAList]
     simp [compileHOL, initStubs, sptAListLookup]
   · have sub : -1 * ptr2 + ptr4 = ptr4 - ptr2 := by

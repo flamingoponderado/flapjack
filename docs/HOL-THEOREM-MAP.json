@@ -81480,15 +81480,6 @@
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
-    "lean_name": "impCodeRel",
-    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
-    "hol_name": "IMP_code_rel",
-    "words_as_type_indexed_bitvec": true,
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3988-4005 (local, replayed): EVERY (reg_bound p k and num_stubs <= n+1) code1 and code2 = fromAList (compile jump off gen_gc max_heap k start code1) imply code_rel jump off k (fromAList code1) code2; EVERY as list membership quantifier, fromAList as accepted sptFromAList, compile as accepted compileHOL. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
-  },
-  {
-    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
     "lean_name": "makeInitSemantics",
     "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
     "hol_name": "make_init_semantics",
@@ -81531,5 +81522,15 @@
     "lean_name": "makeInitAnyFfi",
     "hol_name": "make_init_any_ffi",
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4088-4098: (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).ffi = s.ffi for arbitrary arguments; fallback branch is a record update of s, success branch init_reduce of the initializer post-state whose ffi equals s.ffi by evaluateInitCodeFfi. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Misc/MachineIeee/SqrtReal.lean",
+    "lean_name": "holFp64SqrtR",
+    "hol_path": "HOL/src/floating-point/machine_ieeeScript.sml",
+    "hol_name": "fp64_sqrt_def",
+    "hol_line": 16,
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (dshl): pinned machine_ieeeScript.sml factory line 16, machine_ieeeLib lift1 and mk_fp_encoding instantiate binary_ieee float_sqrt at significand 52/exponent 11 and pack its SND as word64. holFp64SqrtR preserves every rounding mode, flags projection, negative-zero, infinity and unspecified NaN branch. The literal Mathlib Real.sqrt carrier preserves binary_ieee float_to_real, float_value, is_closest/closest_such/closest, largest/threshold, all-mode round, signed-zero float_round and flags clauses. holFp64Sqrt_eq_holFp64SqrtR proves unconditional kernel equality for every mode and word64; no external cut-criterion premise. Generic t/w helpers remain untagged because their zero-width domain exceeds HOL's positive type dimensions. Fixed BitVec 64 matches HOL word64 directly; no generic word-dimension qualifier applies. reals_as_rational_cuts is conservatively retained for reviewed legacy IEEE helper dependencies, as required by the current checker; SOUNDNESS item 8 still records external HOL-to-Lean real correspondence, distinct from the kernel-proven cut-to-Mathlib-real equality. No whole-inst qualifier removal or formal cross-assistant equivalence is claimed."
   }
 ]
