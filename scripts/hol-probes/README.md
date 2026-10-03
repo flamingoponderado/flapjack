@@ -7596,3 +7596,11 @@ existential original callee parameter context. Call/DecCall remain open.
 `convert_code_locals_upd` statement and unchanged simp proof, captures its
 closed statement, quantified types and kernel truth. The Lean theorem retains
 arbitrary caller locals update and unconditional whole code-map equality.
+
+`word_to_stack_comp_codebufferwrite_probeScript.sml` freshly captures the full
+original CodeBufferWrite obligation and arbitrary whole specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+
+`word_to_stack_comp_databufferwrite_probeScript.sml` captures the full original
+DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.

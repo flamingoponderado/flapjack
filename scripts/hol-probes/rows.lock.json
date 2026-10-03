@@ -9344,10 +9344,22 @@
       "sha256": "ee6ae651e6d67c1715dd3b3ab9926afeeaa6d5e80a490a4b1ac7f9c2de8a42f5"
     },
     {
+      "bytes": 3643,
+      "out": "word_to_stack_comp_codebufferwrite_probe.out",
+      "rows": 6,
+      "sha256": "92c244ab6c9a3db794a24b2f504ec4c8299a3906550412746d334f0153fbfc63"
+    },
+    {
       "bytes": 5147,
       "out": "word_to_stack_comp_control_probe.out",
       "rows": 9,
       "sha256": "9f853d50ae21d593b1b0dddbea76f71b1a2e641ca56e23d89b15fc5e5abcce5e"
+    },
+    {
+      "bytes": 3643,
+      "out": "word_to_stack_comp_databufferwrite_probe.out",
+      "rows": 6,
+      "sha256": "3be80d5346637365c3d5d70bf535957602f309b94f68f0b05a154e17bfc1eaf3"
     },
     {
       "bytes": 3566,
