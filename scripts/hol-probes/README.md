@@ -6289,8 +6289,6 @@ NONE as unspecified, masked by IsSome. This is not LR/SC/Run/Next assembly.
 
 `stack_remove_word_list_exists_probeScript.sml` replays the complete literal original zero/successor existential heap-list theorem. Both full predicate equalities, arbitrary address/count and payloads retained; two rows capture statement and proof success.
 
-`stack_remove_comp_call_full_probeScript.sml` replays all three original scoped Call proofs and assembles the complete Call constructor across arbitrary return/handler options, using exactly their guarded source IHs. Eight rows capture the three complete branch statements/proof successes and the full assembled statement/proof success; no full `comp_correct` is assumed. The branch source proof tactics remain the reviewed originals; assembly uses direct matching and top-level implication currying rather than proof search.
-
 `stackprops_code_bitmaps_probe.out` captures the complete original existential oracle/code/bitmap theorem and explicitly checks zero theorem hypotheses. The StoreConsts case retains all dispatch guards and primitive errors, deriving count zero from the full preservation theorem. This is source evidence, not runtime parity or full theorem assembly.
 `l3_lrw_probe.out` captures the complete original LR_W definition/type and
 14 whole-state observations. These retain all aq/rl payloads, early virtual
@@ -6339,8 +6337,6 @@ and executed deltas; the complete accepted-instruction producer relation uses
 the real instruction encoder, retaining every ordered operand. No whole
 allocator or source-program producer correctness is claimed.
 
-`stack_remove_copy_loop_full_probeScript.sml` replays the complete literal original `copy_loop_thm` proof (1334–1471), retaining every original premise, arbitrary bitmap recursion, clock allowance, temporary-register alternative and full framed memory result. Two rows capture its full statement and kernel proof success. The native Lean theorem derives execution by the source induction and accepted full CopyEach theorem. This proof-only slice makes no executed compiler parity claim.
-
 `l3_amoswap_probe.out` captures the literal AMOSWAP_W/D definitions and types
 and 26 original state observations, including rs2=rd operand ordering, rd=rs1,
 zero registers, signed word loads, RV32/RV128 without added mode guards,
@@ -6364,8 +6360,6 @@ unrelated state. This is regression evidence, not whole Run/Next correctness.
 
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
 
-`stack_remove_comp_install_probeScript.sml` replays the complete literal original `comp_correct` Install case (1932–1997) after introducing its original four premises; the local original `state_rel_get_var` is replayed unchanged. Two rows capture the full specialized statement and kernel proof success, with no open hypotheses or free variables. The native Lean case derives target execution and the full oracle/code/register/buffer/heap post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
-
 `l3_amo_minmax_probe.out` captures eight original AMOMIN/MAX/MINU/MAXU W/D
 definitions/types and 224 state observations. Independent calculations cover
 signed extrema, unsigned ordering, equality, zero, upper source-register bits
@@ -6383,8 +6377,6 @@ unrelated state; this does not establish whole Run/Next or compiler correctness.
 `stack_code_bitmaps_ffi_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and native FFI specialization. All four word reads, both bytearray reads and final/return outcomes preserve oracle/code/bitmaps with count zero; no name/alignment or poststate premise is introduced. Whole evaluator assembly remains open.
 
 `stack_code_bitmaps_rawcall_probe.out` captures the full original evaluate_code_bitmaps theorem, zero hypotheses and RawCall specialization. The recursive IH follows only actual lookup/destSeq/nonzero-clock dispatch at decClock source; errors and timeout preserve fields/count zero, bad-function-return changes result only. Whole evaluator assembly remains open.
-
-`stack_remove_comp_storeconsts_probeScript.sml` replays the complete literal original `comp_correct` StoreConsts case (1504–1575) with its original four premises, together with the original local `state_rel_get_var` and `mem_load_lemma` proofs. Two rows record the closed specialized statement and kernel proof success. The full Lean constructor case derives the actual bitmap prefix, CopyLoop memory transition, final moves and full post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
 
 `stack_code_bitmaps_jumplower_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and JumpLower specialization. Callee IH follows only actual word reads/lower comparison/code lookup/nonzero clock at decClock source; all failures/false comparison/timeout preserve fields with count zero. Whole evaluator assembly remains open.
 
@@ -6429,6 +6421,50 @@ assumed. The native consumer module kernel-checks all 23 generic statements.
 These captures provide source regression evidence, not cross-language equivalence
 or full evaluator/pass/compiler correctness.
 
+`stack_code_bitmaps_call_probe.out` captures the original full theorem, zero hypotheses and arbitrary-ret Call specialization. The Lean constructor case assembles actual NONE/SOME branch proofs with source-path guarded recursive IHs and all three existential conjuncts. Whole evaluator assembly is separate.
+
+`stack_code_bitmaps_full_probe.out` freshly replays the complete original evaluate_code_bitmaps proof, checks absence of hypotheses/free variables, and records full theorem/type. The Lean whole theorem retains the sole actual source execution premise and all three existential conjuncts; native clock-first induction discharges every recursive case internally. This structural preservation theorem does not establish full compiler or floating-point correspondence.
+`l3_csr_access_probe.out` captures seven complete CSR privilege/access definitions
+and types, 285 boundary observations across RV32/RV64/RV128 with eight privilege/
+access combinations each, and 18 unspecified-mode exception/frame observations.
+Original signed word12 range comparisons, unsigned privilege comparison, MPRV,
+ignored rs1 and returned states are preserved. Arbitrary architecture remains
+arbitrary. These regressions do not establish whole Run/Next/compiler correctness.
+`stack_remove_comp_storeconsts_probeScript.sml` replays the complete literal original `comp_correct` StoreConsts case (1504–1575) with its original four premises, together with the original local `state_rel_get_var` and `mem_load_lemma` proofs. Two rows record the closed specialized statement and kernel proof success. The full Lean constructor case derives the actual bitmap prefix, CopyLoop memory transition, final moves and full post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
+
+`stack_evaluate_clock_neutral_probeScript.sml` replays the literal original
+local `inst_clock_neutral` proof and then the full original
+`evaluate_clock_neutral` proof (stackPropsScript.sml:679–692). It captures the
+fully generalized theorem and proof success, plus seven independent neutral
+predicate observations including nested Seq/Inst/Halt and excluded Tick/Loop.
+The native theorem retains its sole source-evaluation/neutrality conjunction;
+clock commutation and unchanged post-clock are derived by structural recursion.
+Generic kernel consumers include widths 1/8/64/80 and zero replacement clocks.
+These fixtures do not prove cross-language equivalence or full initialization.
+`stack_rel_definition_probe.out` captures the complete original stack_rel equation, zero hypotheses and polymorphic type. Source frames, rest stack and bitmaps share alpha; the target handler has independent beta. Lean preserves both dimensions and all conjuncts, uses accepted total EL without a chosen default, and represents LASTN by drop(length-n). This proof-side relation is not an executed compiler change or whole pass theorem.
+`l3_machine_csr_codec_probe.out` captures all 14 original machine CSR rec/reg
+codec definitions and 490 observations over every single-bit basis vector,
+zero, all ones, alternating bits and mixed patterns. Independent calculations
+check both packed words and every decoded field, including discontiguous
+reserved-bit segments. Full CSR transitions and Run/Next remain open.
+`word_to_stack_state_rel_probe.out` captures the complete original state_rel equation, zero hypotheses and full polymorphic type. The Lean relation preserves all compiler/oracle/code-domain/stub/resource/stack/local conjuncts and the source num×config vs target config callback carriers. Canonical source/target map codec witnesses cover only named finite-map fields; sptrees remain native. This definition does not prove simulation or full compiler correctness.
 `stack_remove_comp_correct_full_probeScript.sml` replays the entire unchanged original StackRemove `comp_correct` proof (1481–2426), including its original evaluator induction and every constructor case. Its 28 original local helper proofs are replayed in source order; their free-variable form is preserved because the original RawCall branch specializes `find_code_lemma` before generalizing it. The original `write_fun2set2` proof transformation and local stub overload are retained. Two rows record the full closed statement and kernel proof success. Lean assembles the complete native pass theorem using the same clock-first evaluator measure, with exactly the original four premises and no supplied target execution or simulation. Downstream semantics/initialization and whole compiler correctness remain separate goals.
 
 `stack_props_evaluate_io_events_mono_probeScript.sml` replays the complete unchanged original StackProps `evaluate_io_events_mono` proof (454–475), including evaluator induction and both external/shared-memory FFI cases. Two rows record the full closed statement and kernel proof success. The native Lean theorem keeps the sole source-run premise and every original result. This single-run prefix law does not claim extra-clock monotonicity, FP numerical parity or whole compiler correctness.
+`stack_evaluate_mono_probeScript.sml` replays the literal full original
+`evaluate_mono` proof (stackPropsScript.sml:442–452), checking its fully
+generalized statement and original proof success. Four independent original
+observations cover left-biased union at an overlapping and a fresh key, a bitmap
+prefix extension and a rejected truncation. Native kernel/runtime replays and
+five generic theorem consumers include Error, TimeOut and successful results,
+and preservation of a source code lookup. The theorem retains its sole source
+execution premise and both original conclusions. These captures are regression
+evidence, not cross-language equivalence or whole compiler correctness.
+`word_to_stack_initial_state_rel_probe.out` captures full init_state_ok equation/type and freshly replays the literal complete original init_state_ok_IMP_state_rel proof. Full statements have zero hypotheses/free variables. The Lean family preserves the two stub/code-entry/domain/full-contract premises and derives the complete native initial state relation at frame0/lens[]/extra0. Frame-map and stack arithmetic are proved internally; no post-relation or extra success premise is supplied. This is initialization relation correctness, not whole pass/semantics correctness.
+
+`l3_supervisor_csr_probe.out` captures all 15 complete original supervisor CSR
+codec/lift/lower definitions and 862 independently calculated observations:
+210 codec basis/mixed patterns, 512 VM/status/privilege combinations and 140
+interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
+reserved-bit framing and supervisor-only interrupt replacement are preserved.
+These regressions do not establish whole CSR transitions or Run/Next correctness.

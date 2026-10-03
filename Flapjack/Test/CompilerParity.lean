@@ -1,14 +1,22 @@
+import Flapjack.Test.L3SupervisorCSRParity
+import Flapjack.Test.L3MachineCSRCodecParity
+import Flapjack.Test.L3CSRAccessParity
 import Flapjack.Test.L3TLBFlushParity
 import Flapjack.Test.L3SystemSignalsParity
+import Flapjack.Test.StackEvaluateClockNeutralParity
+import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
+import Flapjack.Test.BytesInMemoryDomainParity
+import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.L3AMOMinMaxParity
 import Flapjack.Test.L3AMOArithmeticParity
-import Flapjack.Test.BytesInMemoryDomainParity
-import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.L3AMOSwapParity
 import Flapjack.Test.MiscBytesInMemImpParity
 import Flapjack.Test.LabToTargetWordSearchParity
 import Flapjack.Test.MiscFindIndexMemParity
 import Flapjack.Test.MiscFindIndexSuccessfulMemParity
+import Flapjack.Test.LabToTargetMmioClassificationParity
+import Flapjack.Test.LabToTargetFfiEntryExclusionParity
+import Flapjack.Test.LabToTargetInitializationParity
 import Flapjack.Test.MiscFindIndexShiftParity
 import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity
@@ -2061,6 +2069,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.AsmSemFpUpdatesParity.runChecks,
     Flapjack.Test.AsmSemArithmeticParity.runChecks,
     Flapjack.Test.BytesInMemParity.runChecks,
+    Flapjack.Test.StackEvaluateMonoParity.runChecks,
     Flapjack.Test.BytesInMemoryDomainParity.runChecks,
     Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
     ].mapM id
