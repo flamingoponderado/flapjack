@@ -76810,7 +76810,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open. PR1207 review repair: IH additionally retains the original asm_inst nonfailed source-success guard, discharged by hok only on the successful source branch."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.2): Full original filter_correct669 Asm/Asmi/Inst branch694-780 for arbitrary native HolInst, including Skip/Const/all arithmetic/all memory/all sixteen FP clauses. Retains source s1/t1/res/s2 binders and evaluate/stateRel/nonfailed hypotheses, with exactly concrete original instruction-fetch guard and native recursive induction hypothesis for incPc(decClock(asmInst instruction s1)). The IH states original full simulation for that actual source successor, not arbitrary supplied post-state correspondence; successor stateRel/nonfailed derived from literal instruction frame updates and adjust_pc_all_skips. Count from asmFetchAuxEq2, actual target execution from allSkipsEvaluate plus native evaluator clauses and actual IH witness. Source failed branch returns original state including Error; no success/clock-default/desired-target premise or outcome restriction. Full original capture/type/hyp0/reproof refreshed; kernel commutation proofs check all instruction constructors, preserving writes before failure, aliased destinations and original FP operations. Positive-width words only; inherits reals_as_rational_cuts through asmInst/evaluate, SOUNDNESS item8 unchanged. Entire filterCorrect case assembly and semantic lift remain open. PR1207 review repair: IH additionally retains the original asm_inst nonfailed source-success guard, discharged by hok only on the successful source branch. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/InstructionValidity.lean",
@@ -76873,7 +76873,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: full labelled Jump including missing target. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: full labelled Jump including missing target. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
@@ -76883,7 +76883,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: JumpReg location-valued operand, including missing target. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: JumpReg location-valued operand, including missing target. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
@@ -77555,7 +77555,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: LocValue: missing label and successful register-write/fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: LocValue: missing label and successful register-write/fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
@@ -77565,7 +77565,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: Call: missing target, missing return label, actual link write and target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: Call: missing target, missing return label, actual link write and target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
@@ -77575,7 +77575,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp taken: missing target and actual target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp taken: missing target and actual target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
@@ -77595,7 +77595,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: false comparison fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: false comparison fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/DecoderTransport.lean",
@@ -77742,7 +77742,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original CBW branch797-816, all invalid operand/buffer-write NONE paths and actual SOME buffer successor. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original CBW branch797-816, all invalid operand/buffer-write NONE paths and actual SOME buffer successor. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "lean_path": "Flapjack/RiscV/L3/Step/BitRewrites.lean",
@@ -77871,7 +77871,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.5): Full genuine original filter_correct669 SharedMem evaluator branch817-859. Retains original s1/t1/res/s2 evaluate/stateRel/nonfailed hypotheses, native shareMem constructor fetch guard and full existential target run/result/extra clock/FFI conclusion. All native HolMemop/address/positive word/configuration/FFI carriers remain generic. Explicit primitive split NONE/final/ret retains every outcome; the only IH is full simulation for actual returned source state with shift_seq1 io_regs/io_fp_regs, guarded by its actual source primitive return. Accepted full share_mem_op_NONE/FFI_final/FFI_return_filter_correct helpers derive target primitive, entire native relation and clock extension. Shifted IO successor relation and target/source successor clock equality proved from literal original relation, and all target executions derive from all_skips_evaluate. No target execution, desired postrelation, success narrowing, guessed target primitive or clock law assumed. Full original669 capture/type/hyp0/kernel reproof replayed. words_as_type_indexed_bitvec is the only carrier translation; evaluate inherits reals_as_rational_cuts and SOUNDNESS item8 remains. CallFFI/Install/full assembler/lift still open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.5): Full genuine original filter_correct669 SharedMem evaluator branch817-859. Retains original s1/t1/res/s2 evaluate/stateRel/nonfailed hypotheses, native shareMem constructor fetch guard and full existential target run/result/extra clock/FFI conclusion. All native HolMemop/address/positive word/configuration/FFI carriers remain generic. Explicit primitive split NONE/final/ret retains every outcome; the only IH is full simulation for actual returned source state with shift_seq1 io_regs/io_fp_regs, guarded by its actual source primitive return. Accepted full share_mem_op_NONE/FFI_final/FFI_return_filter_correct helpers derive target primitive, entire native relation and clock extension. Shifted IO successor relation and target/source successor clock equality proved from literal original relation, and all target executions derive from all_skips_evaluate. No target execution, desired postrelation, success narrowing, guessed target primitive or clock law assumed. Full original669 capture/type/hyp0/kernel reproof replayed. words_as_type_indexed_bitvec is the only carrier translation; evaluate inherits reals_as_rational_cuts and SOUNDNESS item8 remains. CallFFI/Install/full assembler/lift still open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
@@ -78326,7 +78326,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.6): Full genuine original filter_correct669 external CallFFI branch962-981, native labSem Evaluate callFFI constructor. Retains full source s1/t1/res/s2 evaluate/stateRel/nonfailed and literal native fetch guard, existential target execution/result/extra clock/FFI conclusion, all generic native word/configuration/FFI and exact MlString carriers. Covers all five actual register matches, both native bytearray read NONE/SOME cases, locator NONE/SOME, and FFI final/ret without success narrowing. IH only for literal actual returned source successor: its path guard packages original five register, two memory-read, source locator and FFI-return choices existentially; no target evaluation, desired result/postrelation, or universally vacuous context supplied. Local private callFfiReturnState merely names exact inline native record update, no independent HOL declaration: returned memory/FFI, IO/register/FP/PC/clock clauses unchanged. Full target successor relation and source/target return locator derive from original stateRel plus accepted loc_to_pc_eq_NONE/SOME; actual skipped-run and target evaluation derived. Positive-width words translation only; exact fixed bytes preserved. Original full669 capture/type/hyp0/kernel reproof freshly replayed. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Install/full evaluator assembly/semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.6): Full genuine original filter_correct669 external CallFFI branch962-981, native labSem Evaluate callFFI constructor. Retains full source s1/t1/res/s2 evaluate/stateRel/nonfailed and literal native fetch guard, existential target execution/result/extra clock/FFI conclusion, all generic native word/configuration/FFI and exact MlString carriers. Covers all five actual register matches, both native bytearray read NONE/SOME cases, locator NONE/SOME, and FFI final/ret without success narrowing. IH only for literal actual returned source successor: its path guard packages original five register, two memory-read, source locator and FFI-return choices existentially; no target evaluation, desired result/postrelation, or universally vacuous context supplied. Local private callFfiReturnState merely names exact inline native record update, no independent HOL declaration: returned memory/FFI, IO/register/FP/PC/clock clauses unchanged. Full target successor relation and source/target return locator derive from original stateRel plus accepted loc_to_pc_eq_NONE/SOME; actual skipped-run and target evaluation derived. Positive-width words translation only; exact fixed bytes preserved. Original full669 capture/type/hyp0/kernel reproof freshly replayed. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Install/full evaluator assembly/semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/WordConvs/SSAFlatHelpers.lean",
@@ -78959,7 +78959,7 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.7): Full original filter_correct669 Install branch982-1033 against native labSem Evaluate Install. Retains source s1/t1/res/s2 evaluate/stateRel/nonfailed, literal native fetch guard, full existential target execution/result/extra clock/FFI conclusion, all positive-width word/configuration/FFI carriers and fixed byte widths. All three register patterns, buffer flush and locator NONE/SOME, compiler failure, empty/nonempty program, and both actual bytes/next-configuration consistency outcomes are covered without success narrowing or added configuration equality instances. IH only simulates the literal successful installed source successor under existentially packaged actual source register/flush/locator/oracle/compiler/nonempty/consistency choices; no desired target evaluation, compiler result or postrelation premise. Private installReturnState names exactly original inline record update with appended code, shifted compile oracle and cc registers, ptr/register/FP/buffer/PC/clock updates, with no separate HOL declaration. Full target compile output derives from original stateRel compiler clause; full installed successor relation derives from accepted filter_skip_MAP/append and loc_to_pc_adjust_pc_append. Target skip execution, recursive run, result/clock/FFI derive from source IH and actual guards. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full filter_correct assembly and semantic lift remain open."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.7): Full original filter_correct669 Install branch982-1033 against native labSem Evaluate Install. Retains source s1/t1/res/s2 evaluate/stateRel/nonfailed, literal native fetch guard, full existential target execution/result/extra clock/FFI conclusion, all positive-width word/configuration/FFI carriers and fixed byte widths. All three register patterns, buffer flush and locator NONE/SOME, compiler failure, empty/nonempty program, and both actual bytes/next-configuration consistency outcomes are covered without success narrowing or added configuration equality instances. IH only simulates the literal successful installed source successor under existentially packaged actual source register/flush/locator/oracle/compiler/nonempty/consistency choices; no desired target evaluation, compiler result or postrelation premise. Private installReturnState names exactly original inline record update with appended code, shifted compile oracle and cc registers, ptr/register/FP/buffer/PC/clock updates, with no separate HOL declaration. Full target compile output derives from original stateRel compiler clause; full installed successor relation derives from accepted filter_skip_MAP/append and loc_to_pc_adjust_pc_append. Target skip execution, recursive run, result/clock/FFI derive from source IH and actual guards. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full filter_correct assembly and semantic lift remain open. PR1208 clock-IH source review: original labSem evaluate_def490-617/evaluate_ind recursive paths carry s1.clock <> 0. Case-piece IH now includes precisely s1.clock != 0 antecedent, discharged only in the actual nonzero source branch; Inst source-success guard retained. The full assembly supplies these guarded IHs internally, with unchanged original full theorem statement."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
@@ -80026,5 +80026,441 @@
     "hol_name": "list_subset_refl",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: original lab_to_targetProofScript10065: forall xs, list_subset xs xs. Generic HOL alpha list carrier is retained as arbitrary Lean List alpha with standard DecidableEq, exactly as the reviewed misc list_subset_def; no custom BEq, FFI-only or word specialization. Original quantifier/binder order and all hypotheses/conclusions retained. Lean Boolean true expresses the HOL predicate and EVERY/MEM is List.all with standard membership equality. Direct membership proof establishes source law; no callback or desired relation assumption. Original fulltypes/zero hypotheses/kernel replays in lab_to_target_list_subset_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "call_arg_convention_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2590: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "call_arg_convention_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2603: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_seqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_stack_var_is_stack_var_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2612: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "every_stack_var_is_stack_var_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2628: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "preAllocConventions_removeUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "pre_alloc_conventions_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source comparison wordConvsProofScript.sml:2637: full native programme and arbitrary accumulator; recursive lemmas retain both original source convention premises, remove_unreach wrappers retain exactly sole source premise. Native Seq_assoc_right/SimpSeq compared against word_unreachScript12-73, including terminal/move merging and both Call handler families. callArgConventionHOL compared wordConvsScript391-421 including GENLIST even argument/result and exception2 guards; everyStackVarHOL compared wordLangScript179-205 including original Spt cutsets; preAlloc conjunction matches wordConvsScript425-429. No output/run/codec assumption, narrowed constructors or extra cutset hypothesis. Positive native word carrier translation only; proof-side conventions do not complete separate production routing."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "callArgConvention_simpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachPreAlloc.lean",
+    "lean_name": "stackVarConvention_simpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only descriptor/SimpSeq factoring for original pre-allocation component proofs; HOL has no separately named theorem for these helpers."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStore.lean",
+    "lean_name": "compileCorrectStore",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 and final constructor proof1338-1342 general Store: all ten premises/seven conclusions, no recursive IH or added domain/target/update/width/validity premise. Original actual finite source evaluator requires destination Val Word, any source expression value including nested structs, and panMemStoresHOL returning SOME memory; all error branches contradict original no-Error premise. Full faithful expression correctness establishes both target child runs, unconditional full flattenConvertV preserves flattened words for arbitrary value. Converter preserves original memory/domain, so target panMemStoresHOL has the same address/word list/domain/memory arguments and its actual success follows internally from source operation. Canonical state conversion commutes with memory update, other state fields unchanged; original FEVERY/shape maps and both empty NONE result-value predicates retained. Imported canonical four-map owner/full state roundtrip, positive indexed words and Type0 host only. Fresh original whole/case statements/binder types/closed kernelT reviewed. Full program/production compiler correctness remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectStore.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "insertDeleteEqDelete",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "INSERT_DELETE_EQ_DELETE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2846-2850: arbitrary element type, x and set s; (x INSERT s) DELETE x = s DELETE x with INSERT as y = x or s y and DELETE as s y and y <> x, the standard predicate-set rendering. No premise. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListAndRevJoinLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_and_rev_join_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2827-2835: arbitrary a,b,xs,ys,p,q,ss,b1; literal conjunction b = a + n2w (LENGTH xs + LENGTH ys) * bytes_in_word, left-associated STAR (p * word_list a (xs ++ REVERSE ys) * q) ss and b1 implies (p * word_list a xs * word_list_rev b ys * q) ss and b1. Actual native wordList/wordListRev over arbitrary payload Type and predicate heaps; proof uses accepted word_list_APPEND and word_list_EQ_rev ports. No no-wrap, distinctness or finiteness premise. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListSet",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_set",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3101-3164: forall xs a, good_dimindex and w2n a + LENGTH xs * w2n bytes_in_word < dimword imply word_list a xs (set (GENLIST (λi. (a + n2w i * bytes_in_word, EL i xs)) (LENGTH xs))). Both original premises retained; Lean proof derives address distinctness from the bound and good_dimindex. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListSeteq",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_seteq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3166-3178: same premises as word_list_set, conclusion word_list a xs = (λs. s = set (GENLIST ...)), whole predicate equality; proved from wordListSet and accepted word_list_inj port. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListElInMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_EL_in_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3180-3199: arbitrary a,xs,r1,r2,m,dm,i; literal four-conjunct premise good_dimindex, no-wrap bound, (r1 * word_list a xs * r2) (fun2set (m,dm)), i < LENGTH xs; conclusion m (a + n2w i * bytes_in_word) = EL i xs. Memory codomain is the arbitrary payload Type as in HOL m : alpha word -> beta. Lean proof does not need the first two premises but they are retained. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListInMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_in_memory",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3201-3222: premises in original order (r1 * word_list a xs * r2) (fun2set (m,dm)), good_dimindex, no-wrap bound; conclusion memory m (addresses a (LENGTH xs)) = word_list a xs as whole predicate equality using accepted memory_def (memoryHOL) and addresses_def ports. HOL sets are predicates; set (GENLIST f n) is the membership predicate of (List.range n).map f; EL is the exact holEl (HOL inhabited payload type rendered by [Nonempty β]); w2n is toNat, dimword is 2^width, bytes_in_word is bytesInWord width. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListExistsAddresses",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_addresses",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2852-2871: forall m1 n a, dimindex DIV 8 * n < dimword and good_dimindex imply word_list_exists a n (fun2set (m1, addresses a n)); m1 arbitrary memory with arbitrary payload Type, base address unrestricted (may wrap), only the original range-size bound. Uses accepted word_list_exists_def, fun2set_def, addresses_def, read_mem_def ports. HOL replay also checks aconv with the stored theorem. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListWrap",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_wrap",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2995-3015: forall a ls, good_dimindex and dimword DIV (dimindex DIV 8) < LENGTH ls imply exists x xs y ys b with word_list a ls = word_list a (x::xs) * word_list b (y::ys) and b = a, whole predicate equality. Arbitrary payload Type. HOL replay also checks aconv with the stored theorem. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemVal.lean",
+    "lean_name": "memVal",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "mem_val_def",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2631-2634, captured type (num |-> alpha word_loc) -> alpha word + num -> alpha word_loc: INL w maps to Word w; INR n maps to regs FAPPLY n, rendered by accepted holFapply whose absent-key value is the opaque unspecified HOL FAPPLY value, no zero default or presence assumption. Register map is the canonical HolFiniteMapExact Nat (WordLocW width) standalone parameter with same-module holFmapAsFiniteSupportParamWitness_memVal_regs; HOL sum is Lean Sum (BitVec width) Nat; local Nonempty instance only records HOL type inhabitedness. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/MemVal.lean",
+    "lean_name": "mapMemValMapInl",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "MAP_mem_val_MAP_INL",
+    "statement_status": "reviewed_fmap_as_finite_support_parameters_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_parameters": [
+      "f"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2811-2815: forall ws f, MAP (mem_val f) (MAP INL ws) = MAP Word ws for arbitrary word list and arbitrary canonical register map f (witness holFmapAsFiniteSupportParamWitness_mapMemValMapInl_f); uses the reviewed memVal port. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/FmapSimp.lean",
+    "lean_name": "fmapSimpLemma1",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "fmap_simp_lemma1",
+    "statement_status": "reviewed_fmap_as_finite_support_equality",
+    "fmap_as_finite_support_equality": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3041-3046 fmap_as_finite_support_equality: forall g x y z over num-keyed maps with arbitrary value Type, g |+ (0,x) |+ (5,y) |+ (0,z) = g |+ (0,z) |+ (5,y). HOL |+ is HolFiniteMapExact.updateEq (HOL key equality via DecidableEq); single map equality witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fmapSimpLemma1, whose two sides are exactly the theorem sides applied to the same universally bound key. Captured HOL statement prints updates latest-first. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimits.lean",
+    "lean_name": "getStackHeapLimitPrime",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_stack_heap_limit'_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3053-3068, captured type num -> 'b word -> 'c word -> 'a word -> num # num: p2 and p3 have independent positive widths (width2/width3 with own NeZero) read only through w2n; p4, bytes_in_word, dimindex DIV 8, shift (:'a) = word_shift (wordShiftAmount width), max_heap_w guarded product or -1w, unsigned <+ comparison and reg3 = n2w ptr2 + (((...) >>> (shift+1)) <<< (shift+1)) all at the p4 width, as the captured typed RHS shows; result via accepted get_stack_heap_limit'' port. 8 EVAL rows (incl. mixed 32/16/64 and 64/32 widths, overflow -1w branch, wrapped order) kernel-replayed by Flapjack.Test.StackRemoveInitLimits. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimits.lean",
+    "lean_name": "getStackHeapLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_stack_heap_limit_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3070-3077, type num -> 'a word # 'a word # 'a word -> num # num: tupled pointer argument; middle = ptr2 + (((-1w*ptr2+ptr4) >>> (shift+1)) <<< shift), adj_ptr2/adj_ptr4 with bytes_in_word * n2w max_stack_alloc, unsigned <=+ margins select ptr3 or middle, then get_stack_heap_limit' at one width. 5 EVAL rows (in-margin, midpoint, wrapped base, 32-bit) kernel-replayed. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimits.lean",
+    "lean_name": "readPointers",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "read_pointers_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3079-3083: triple theWord (THE (FLOOKUP s.regs i)) for i = 2,3,4 using accepted holThe (opaque THE NONE) and wordSemTheWord (shared ARB on Loc); no register presence or word-valuedness premise. Only regs is traversed. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "makeInitOpt",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_opt_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3839-3847: arguments in original order gen_gc max_heap bitmaps data_sp coracle jump off k code s; native stackSem evaluate of actual initCode; (SOME _,t) gives NONE, (NONE,t) gives SOME (init_reduce ... t) iff init_prop gen_gc max_heap data_sp (get_stack_heap_limit max_heap (read_pointers s)) (init_reduce ... t), using accepted initCode/initProp/initReduce ports and the new limit/pointer ports; classical decision of the Prop guard only. No successful-run premise. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead. Inherited assumption: the actual native stackSem evaluate reaches inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so this declaration records inherits_reals_as_rational_cuts and the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "initPre",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_pre_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3849-3854: lookup 0 s.code = SOME (Seq (init_code gen_gc max_heap k) (Call NONE (INL start) NONE)) and accepted init_code_pre k bitmaps data_sp s and max_stack_alloc <= max_heap; argument order gen_gc max_heap bitmaps data_sp k start s. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "makeInitAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4007-4027: SOME t gives t; NONE gives literal record update of s with all fifteen fields: regs FEMPTY |+ (0, Loc 1 0) (updateEq), fp_regs FEMPTY, mdomain EMPTY, bitmaps [4w], use_stack T, use_store T, use_alloc F, stack [Word 0w], stack_space 0, compile via MAP (prog_comp jump off k), compile_oracle coracle, empty data/code buffers at 0w, code, store FEMPTY |++ MAP (x, Word 0w) (CurrHeap::store_list) via updateListEq and the accepted storeOfSyntax key translation used by initReduce. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead. Inherited assumption: the actual native stackSem evaluate reaches inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so this declaration records inherits_reals_as_rational_cuts and the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "dischargeThese",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "discharge_these_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4029-4039: EVERY (λ(n,p). reg_bound p k ∧ stack_num_stubs <= n+1) code as membership quantifier; universal oracle MEM bound; s2.compile_oracle = (I ## MAP (prog_comp jump off k) ## I) o coracle as the same pointwise triple rendering used by accepted state_rel; s2.code = fromAList (compile jump off gen_gc max_heap k start code) with sptFromAList and accepted compileHOL; 8 <= k, 1 IN domain, {k;k+1;k+2} SUBSET ffi_save_regs, three disabled flags, max_stack_alloc <= max_heap. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "propagateThese",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "propagate_these_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4041-4067: good_dimindex and four existential words with every conjunct in original order: three register lookups, five header loads, empty code buffer, unsigned ptr2 <=+ ptr4, three byte alignments, 1024w * bytes_in_word <=+ ptr4 - ptr2 (unsigned toNat), and the left-associated STAR of word_list bitmap_ptr (MAP Word bitmaps), word_list_exists data space and word_list_exists ptr2 (w2n (-1w * ptr2 + ptr4) DIV w2n bytes_in_word), literally -1w*ptr2+ptr4 unlike init_code_pre's ptr4 - ptr2, over fun2set (s.memory, s.mdomain). State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyBitmaps",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4100-4107: (make_init_any ...).bitmaps = if IS_SOME (make_init_opt ...) then bitmaps else [4w], IS_SOME as Option.isSome. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyUseStack",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_use_stack",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4109-4114: (make_init_any ...).use_stack, HOL bool field as = true. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyUseStore",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_use_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4116-4121: (make_init_any ...).use_store as = true. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyUseAlloc",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_use_alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4123-4128: negated (make_init_any ...).use_alloc as not = true. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyCode",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_code",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4130-4135: (make_init_any ...).code = code. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyStackLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_stack_limit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4137-4149: LENGTH (make_init_any ...).stack * (dimindex DIV 8) < dimword, i.e. length * (width / 8) < 2 ^ width; success branch from the actual init_prop conjunct, fallback stack [Word 0w]. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitAny.lean",
+    "lean_name": "makeInitAnyCompileOracle",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_compile_oracle",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4151-4157 (binder named ggc in source): (make_init_any ...).compile_oracle = coracle. Arbitrary gen_gc, max_heap, bitmaps, data_sp, coracle, jump, off, k, code and state over the imported StackSemStateFiniteExact carrier (same-module re-exported holFmapAsFiniteSupportWitness); no successful-initialization premise. Inherited assumption: the statement mentions makeInitAny, whose body reaches the native stackSem evaluate and its inst FP cases rendered by the reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records the external SOUNDNESS item 8 assumption; no direct rendering call and no added premise. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "memoryAddresses",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "memory_addresses",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2776-2803 (local): forall n a m with m : 'a word -> 'a word_loc (Lean BitVec width -> WordLocW width), n * (dimindex DIV 8) < dimword and good_dimindex imply memory m (addresses a n) = word_list a (read_mem a m n), whole predicate equality over accepted memory_def/addresses_def/read_mem_def/word_list_def ports; base may wrap. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitModOrder.lean",
+    "lean_name": "modEqImpMult",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "MOD_EQ_IMP_MULT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2727-2731 (local): forall n d, n MOD d = 0 and d <> 0 imply exists k. n = d * k over Nat; original conjunctive premise retained. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "starMoveLemma",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "star_move_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2733-2737 (local): p0 * p1 * p1' * p2 * p3 * p4 = p2 * (p1 * p1' * STAR p3 (p4 * p0)) for arbitrary assertions over an arbitrary heap-element type, HOL * as left-associated accepted SetSep.star; proof by AC from accepted STAR_ASSOC/STAR_COMM ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]
