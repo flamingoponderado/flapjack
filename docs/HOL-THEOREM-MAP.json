@@ -77067,5 +77067,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original DataBufferWrite constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/ShareInstructionValidity.lean",
+    "lean_name": "ssaCcTrans_fullInstShareInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
+    "hol_name": "ssa_cc_trans_full_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source review word_allocProofScript.sml:11012-11152, complete original ShareInst case. Same source every_var bound/is_alloc_var/ssa_map_ok/full_inst_ok_less premises and full same-config actual native compiler-output validity. Source validity establishes actual exp_to_addr witness; original exp_to_addr_ShareInst characterization and literal ssa_cc_trans_exp preserve its offset through both address forms. All native memop constructors retained, including source store partition; no target-run, target-convention or address-subset premise. Native config/WordLang/Spt/List carriers retained; words_as_type_indexed_bitvec records only positive HOL word dimension."
   }
 ]
