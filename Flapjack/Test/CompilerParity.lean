@@ -35,6 +35,7 @@ import Flapjack.Test.StackRawCallSeqStandardParity
 import Flapjack.Test.StackRawCallSeqParity
 import Flapjack.Test.StackRawCallCallTailParity
 import Flapjack.Test.StackRawCallCallParity
+import Flapjack.Test.StackRawCallCompileCodeInfoParity
 import Flapjack.Test.StackRawCallCaseParity
 import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.StackEvaluateClockNeutralParity
