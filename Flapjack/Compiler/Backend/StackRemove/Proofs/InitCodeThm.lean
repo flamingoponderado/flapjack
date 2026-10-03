@@ -422,6 +422,48 @@ theorem runSegmentLoads (k : Nat) (rest : List (HolProg width)) (nonempty : rest
   simp only [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
   split_ifs <;> simp_all
 
+/-- Memory store through an address register. -/
+theorem stepStore (r a : Nat) (address : BitVec width) (value : WordLocW width)
+    (s : StackSemStateFiniteExact width C F)
+    (readA : s.regs.lookup a = some (.word address)) (readR : s.regs.lookup r = some value)
+    (domain : s.mdomain address = true) :
+    StackSemEvaluate.evaluate (storeInst r a, s) =
+      (none, {s with memory := fun key => if key = address then value else s.memory key}) := by
+  simp [storeInst, StackSemEvaluate.evaluate_inst, StackSemInst.instHOL,
+    StackSemIntegerInstructions.instInteger, StackSemExpressions.wordExp, readA, readR,
+    StackSemStateOps.getVar, StackSemStateOps.memStore, domain, wordOpHOL, wordOp]
+
+/-- The initializer's stack-bottom setup before the store list. -/
+theorem runInitMemory (k : Nat) (values : List (BitVec width ⊕ Nat))
+    (s : StackSemStateFiniteExact width C F) (p4 : BitVec width) (k8 : 8 ≤ k)
+    (readK : s.regs.lookup k = some (.word p4))
+    (domain : s.mdomain (p4 - bytesInWord width) = true) :
+    StackSemEvaluate.evaluate (initMemory k values, s) =
+      StackSemEvaluate.evaluate (storeListCode (k + 1) 0 values,
+        {s with
+          memory := fun key => if key = p4 - bytesInWord width then .word 0 else s.memory key
+          regs := ((s.regs.updateEq (0, .word (bytesInWord width))).updateEq
+            (k, .word (p4 - bytesInWord width))).updateEq (0, .word 0)}) := by
+  simp only [initMemory]
+  rw [stepCons _ _ _ _ (by simp) (stepConst 0 (bytesInWord width) _) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepSub k 0 p4 (bytesInWord width) _ (by simp [FUPDATE_HOL, show k ≠ 0 by omega, readK])
+      (by simp [FUPDATE_HOL])) rfl]
+  rw [stepCons _ _ _ _ (by simp) (stepConst 0 0 _) rfl]
+  rw [stepCons _ _ _ _ (by simp)
+    (stepStore 0 k (p4 - bytesInWord width) (.word 0) _
+      (by simp [FUPDATE_HOL, show k ≠ 0 by omega]) (by simp [FUPDATE_HOL])
+      (by simpa using domain)) rfl]
+  rfl
+
+/-- The final location value. -/
+theorem runLocValue (s : StackSemStateFiniteExact width C F) (entry : sptDomain s.code 1) :
+    StackSemEvaluate.evaluate (.locValue 0 1 0, s) =
+      (none, {s with regs := s.regs.updateEq (0, .loc 1 0)}) := by
+  have check : StackSem.locCheckExact s.code (1, 0) := Or.inl ⟨rfl, entry⟩
+  rw [StackSemEvaluate.evaluate_locValue, if_pos check]
+  rfl
+
 /-! ### Layout arithmetic of the computed pointers -/
 
 theorem middleNat (good : goodDimindex width) (p2 p4 : BitVec width)
