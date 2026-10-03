@@ -9722,6 +9722,12 @@
       "rows": 6
     },
     {
+      "out": "word_to_stack_comp_move_probe.out",
+      "sha256": "99641bed09c913b6e9805c694345608ee3158519e2df90bf8db1db59709a77c6",
+      "bytes": 2844,
+      "rows": 3
+    },
+    {
       "bytes": 305,
       "out": "word_to_stack_comp_native_probe.out",
       "rows": 19,

@@ -86488,5 +86488,23 @@
     "hol_name": "alist_insert_REVERSE",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison2026-10-03 full original miscScript4086–4096. Arbitrary natural key list, independent generic payload list and arbitrary native Spt payload tree; only ALL_DISTINCT keys and equal key/value list lengths imply equality reversing both insertion lists. No WF/tree shape/read/lookup/postcondition hypothesis added. Both complete tree expressions use actual native alist_insert, including truncation behavior; proof derives paired append and pull-insert from existing literal unrestricted native insert_swap. Original finite native tree carrier is constructor-for-constructor, no finite-map qualifier appropriate. Fresh literal original proof replay and typed closed theorem capture regression evidence, no cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/MoveFull.lean",
+    "lean_name": "compCorrectMove",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 full original comp_correct Move6132–6313 under original motive5719–5751. Arbitrary priority/move list/source, all original quantified source evaluation/nonerror/stateRel/conventions/flat/compilation/bitmap-prefix/labels/max-variable guards retained; entire existential actual native target evaluation and result-dependent relation/resources conclude. No recursive IH for this leaf. Internally derive original source successful reads/distinct destinations/even endpoints, scheduled scratch/read/frame guards, native wMove run and ENTIRE source-state equality from actual parmove_correct/fullDIV2/native alist_insert_REVERSE/alistInsertGetVars. Locals WF comes from original stateRel, no extra premise. Choose actual extra clock0 as HOL does. Original full guards kept even when unused on this leaf. Five canonical finite maps and positive words qualified with genuine same-module source/target codec witnesses; inherits reals_as_rational_cuts evaluator assurance. Original typed kernel specialization of full comp_correct provides statement/regression evidence only, not a local proof replay or HOL-to-Lean equivalence claim. No target-run/scheduler success/desired relation assumption or total HD/EL/default change. Whole compiler remains unfinished.",
+    "hol_line": 5756
   }
 ]
