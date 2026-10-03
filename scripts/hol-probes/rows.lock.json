@@ -6104,6 +6104,12 @@
       "sha256": "b753bd06ddd1d669e64803319e73b8ebdbf09c54ee4a7f82da5eaee915d8db20"
     },
     {
+      "bytes": 3611,
+      "out": "stack_rawcall_call_tail_probe.out",
+      "rows": 9,
+      "sha256": "2afda82d7e4f4c159b61eafd14324d70e2a3d0efe404f1162d3e1a92d59dede3"
+    },
+    {
       "bytes": 130,
       "out": "stack_rawcall_collect_probe.out",
       "rows": 4,

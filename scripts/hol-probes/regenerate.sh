@@ -6386,3 +6386,6 @@ run_probe l3_register_shift_probeScript.sml l3_register_shift_probe.out \
 run_probe word_to_stack_inter_union_left_probeScript.sml word_to_stack_inter_union_left_probe.out \
   inter_union_left_statement inter_union_left_proved inter_union_left_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_call_tail_probeScript.sml stack_rawcall_call_tail_probe.out \
+  call_tail_full_statement call_tail_full_hypotheses call_tail_case64 call_tail_case80 call_tail_evaluate_ind_obligation call_tail_direct64 call_tail_handler64 call_tail_direct80 call_tail_handler80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"

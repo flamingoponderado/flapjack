@@ -72129,5 +72129,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original175-282/full135-149: complete paired compTop/comp Seq simulation over arbitrary native first/second programs, original source evaluate/nonError/stateRel three premises and actual evaluate_ind first fixed-source/second first-NONE-run guarded IH. Only the comp components of paired recursive motives are used; unused compTop components omitted. Standard composition derives intermediate successful stackspace equality and combines actual clock extensions. Compiler fallback and all optimized StackFree/direct NONE Call shapes covered via compSeqNeqImp and actual info lookup. stateOk supplies original callee Seq(StackAlloc l) body; stateRel supplies target compTop entry with same leading allocation. Target unchanged Call run is DERIVED from second IH, not assumed; no extra callee IH. Native successfulOptimization transports all body outcomes with +1 clock exactly for greater frame Tick. Zero clock and failed greater allocation derive outcomes directly; emptyEnv retains stackspace, which is accounted for solely via original timeout/HaltWord2 guard. Greater allocation failure uses no extra clock so clock/poststate match, success one extra. Full imported canonical regs/fpRegs/store owner and same-module genuine roundtrip; literal List/Spt/native mlstring, positive words and Type0 config/FFI. Inherits reals_as_rational_cuts SOUNDNESS8. Fresh original evaluate_ind clause/source statement/compile observations provide regression evidence, not cross-language equivalence or whole-pass completion. No allowlist/default/individual HOLD changes."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/Call/Tail.lean",
+    "lean_name": "compCorrectCallTail",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 original409-446/full135-149: genuine NONE-return Call branch with arbitrary direct/indirect destination and arbitrary optional handler. Original evaluate/nonError/stateRel three premises and actual callee evaluate_ind hypothesis guarded by handler NONE, successful findCode and nonzero clock; uses compTop component only, unused comp component omitted. Missing lookup and present handler yield actual Error, excluded solely by original nonError; clock0 empties environment. Native canonical register lookup transports location label0 and literal Spt code entries to per-entry compTop, with frame information derived from stateRel. Callee target evaluation is DERIVED from original IH at decClock source/target, explicit fixClock removed using unconditional checked evaluator bound. badFunReturn is preserved for every outcome; target clock extension commutes with decClock. Outer frame stateOk is derived from actual evaluation monotonicity, not assumed postrelation. Both full existential conclusions retain original timeout/HaltWord2 stackspace exceptions. Canonical imported finite-support regs/fpRegs/store owner, nonvacuous local roundtrip; positive words/Type0 hosts/literal List/Spt; inherited reals_as_rational_cuts SOUNDNESS8. Fresh original theorem specialization, closed Call induction clause and compiler observations are regression evidence, not cross-language equivalence or full Call/pass completion. No allowlist/default/individual HOLD changes."
   }
 ]
