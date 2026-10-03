@@ -17,7 +17,11 @@ theorem oracleTie_clock {width : Nat} [NeZero width] {S Q C : Type} {F : Type}
     (h : oracleTie mc ms s) : oracleTie mc ms { s with clock := k } := h
 
 /-- Full original state clock preservation, over the entire original tuple
-and relation. This implication has exactly the original source direction. -/
+and relation. This implication has exactly the original source direction.
+The Lab state's configuration type is `Config` because the original
+`state_rel_def` (lab_to_targetProofScript.sml:960) annotates its `s1` as
+`('a,lab_to_target$config,'ffi) labSem$state`, which `state_rel_clock`
+inherits; `oracleTie_clock` stays generic as `oracle_tie_def` (line 790) does. -/
 @[hol "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml"
   "state_rel_clock" (words_as_type_indexed_bitvec)]
 theorem stateRelClock {width : Nat} [NeZero width] {S Q : Type} {F : Type}

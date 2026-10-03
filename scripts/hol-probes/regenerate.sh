@@ -6525,3 +6525,31 @@ run_probe l3_fp_bits_probeScript.sml l3_fp_bits_probe.out \
 run_probe stack_rawcall_compile_code_info_probeScript.sml stack_rawcall_compile_code_info_probe.out \
   code_info_domain_statement code_info_domain_hypotheses code_info_domain_case64 code_info_domain_case80 code_info_lookup_statement code_info_lookup_hypotheses code_info_lookup_case64 code_info_lookup_case80 code_info_frames_statement code_info_frames_hypotheses code_info_frames_case64 code_info_frames_case80 code_info_duplicate_keys64 code_info_lookup_absent64 code_info_lookup_bare_rest64 code_info_lookup_zero64 code_info_lookup_large64 code_info_frame_application64 code_info_frame_hypotheses64 code_info_duplicate_keys80 code_info_lookup_absent80 code_info_lookup_bare_rest80 code_info_lookup_zero80 code_info_lookup_large80 code_info_frame_application80 code_info_frame_hypotheses80 \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_init_prop_probeScript.sml stack_remove_init_prop_probe.out \
+  init_prop_definition init_prop_type init_prop_hypotheses init_prop_witness_count init_prop_conjunct_count \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_init_read_memory_probeScript.sml stack_remove_init_read_memory_probe.out \
+  init_read_memory_statement init_read_memory_hypotheses init_read_memory_proved \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_remove_word_list_reverse_probeScript.sml stack_remove_word_list_reverse_probe.out \
+  word_list_reverse_statement word_list_reverse_proved word_list_reverse_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_inj_probeScript.sml stack_remove_word_list_inj_probe.out \
+  word_list_inj_statement word_list_inj_proved word_list_inj_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_filter_skip_runs_probeScript.sml lab_filter_skip_runs_probe.out \
+  adjust_pc_def adjust_pc_def_types adjust_pc_def_hypotheses adjust_pc_def_proved \
+  all_skips_def all_skips_def_types all_skips_def_hypotheses all_skips_def_proved \
+  is_Label_not_skip is_Label_not_skip_types is_Label_not_skip_hypotheses is_Label_not_skip_proved \
+  asm_fetch_aux_eq asm_fetch_aux_eq_types asm_fetch_aux_eq_hypotheses asm_fetch_aux_eq_proved \
+  state_rw state_rw_types state_rw_hypotheses state_rw_proved \
+  all_skips_evaluate all_skips_evaluate_types all_skips_evaluate_hypotheses all_skips_evaluate_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine_sem_eq_sem_probe.out \
+  machine_sem_EQ_sem machine_sem_EQ_sem_types machine_sem_EQ_sem_hypotheses machine_sem_EQ_sem_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_stack_move_clock_probeScript.sml word_to_stack_stack_move_clock_probe.out \
+  evaluate_stack_move_clock_statement evaluate_stack_move_clock_proved evaluate_stack_move_clock_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
