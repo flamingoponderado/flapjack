@@ -617,6 +617,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
+import Flapjack.Misc.BinaryIeeeSqrtExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
