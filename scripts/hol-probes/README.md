@@ -7145,3 +7145,7 @@ hypotheses and three conclusions, using only the two original child IHs.
 ## Original native decoder transport rules
 
 `l3_decode_transport_probeScript.sml` proves universally quantified copies of original `Decode_IMP_DecodeAny` and `DecodeRVC_IMP_DecodeAny`, with full word32/word16 and instruction binder types, literal decoder equality premises and complete raw-selector conclusions. Strict captures record all binder types, statements, zero proof assumptions and proof markers. Lean uses the original equality premise after definitional selector reduction; no accepted-opcode or simplified decoder premise is added. Both rules are called by the original symbolic step library; target encoder and compiler correctness remain separate work.
+`pan_structs_exp_nstruct_faithful_probe` captures the original full theorem,
+NStruct specialization and eval_ind. Native NStruct retains all seven hypotheses
+and three conclusions, with only the original guarded member-expression IH;
+source evaluation and structInfosOk supply shape checks and reordering premises.

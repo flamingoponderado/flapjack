@@ -77706,5 +77706,52 @@
     "hol_name": "DecodeRVC_IMP_DecodeAny",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison2026-10-03 original step541-551: arbitrary word16 and full native instruction i, exactly original DecodeRVC equality premise and DecodeAny(Half) equality conclusion; literal fixed-width source carrier and complete source-reviewed decoder, no opcode restrictions or extra hypotheses. Fresh universal original proof capture includes all binder types and zero open proof assumptions; Lean proof is direct definitional selector reduction using precisely the original premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "compileExpCorrectNStruct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 NStruct case: all seven original source hypotheses and three conclusions. Only full child IH guarded by actual source structure lookup, matching field-name lists and membership in field expressions, exactly original eval_ind after UNZIP normalization. Source success supplies original shape zip/all check and evaluated fields; successful field evaluation preserves names/length, so zip check gives whole shape equality. Child IH list induction derives all field validity and actual converted expression-list evaluation. Original distinctness comes from source structInfosOk; accepted full faithful fields_in_order_reorder_noop discharges actual compiler reordering. No new target evaluation, compatibility, memory adapter, distinctness or bounds premise. Actual canonical state owner/local roundtrip and four map/positive-width Type0 qualifiers. Original full theorem/NStruct specialization/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "evalFields_names",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "shapes_zip_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "evalFields_converted",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
   }
 ]

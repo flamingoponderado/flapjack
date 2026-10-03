@@ -6719,3 +6719,6 @@ run_probe l3_next_evaluation_probeScript.sml l3_next_evaluation_probe.out \
 run_probe l3_decode_transport_probeScript.sml l3_decode_transport_probe.out \
   decodeWord_binders decodeWord_statement decodeWord_hypotheses decodeWord_proof decodeHalf_binders decodeHalf_statement decodeHalf_hypotheses decodeHalf_proof \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe pan_structs_exp_nstruct_faithful_probeScript.sml pan_structs_exp_nstruct_faithful_probe.out \
+  compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_nstruct_statement compile_exp_correct_nstruct_proved eval_ind_full_statement \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
