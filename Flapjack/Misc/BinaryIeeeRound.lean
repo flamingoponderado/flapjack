@@ -8,8 +8,20 @@ A rendering of the rounding specification of
 `flapjack-h29l.6.2.1`): float constants, `flags`, `rounding`, `is_closest`,
 `closest_such`/`closest`, `largest`/`threshold`, `round`, `fp_op`,
 `float_some_qnan`, `float_round`, `float_round_with_flags`, and
-`check_for_signalling`.  This is the HOL standard library, so nothing here is
-tagged.
+`check_for_signalling`.
+
+Tagged (source-reviewed against the pinned HOL): the float constants, `flags`,
+`clear_flags`/`invalidop_flags`/`dividezero_flags`, `rounding`, `fp_op`, and
+`check_for_signalling`.  Deliberately untagged:
+* `is_closest`, `closest_such`, `closest`, `round`, `float_round` and
+  `float_round_with_flags` take a HOL `real` argument, rendered here by `Rat`.
+  That restricts HOL's arbitrary-real domain to rationals (the same open gap as
+  `real_to_float`, bead `flapjack-h29l.6.3.1.1`), so they are not exact ports.
+* `largest` and `threshold` are word-free reals indexed by two HOL type
+  dimensions; no reviewed qualifier covers a two-dimension numeric use.
+* `float_some_qnan`'s NaN choice is outside `reals_as_rational_cuts`.
+* `holRatAbs`, `holUintMax`, `holIntMin` render HOL library constants, not
+  `binary_ieee` declarations.
 
 HOL specifies rounding by Hilbert choice (`@`), and the rendering keeps it
 that way: HOL `@a. P a` is `Classical.epsilon P` on the inhabited float type.
@@ -44,37 +56,55 @@ def holUintMax (w : Nat) : Nat := 2 ^ w - 1
 def holIntMin (w : Nat) : Nat := 2 ^ (w - 1)
 
 /-- HOL `float_plus_infinity_def` (`binary_ieeeScript.sml:165-170`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_plus_infinity_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatPlusInfinity (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := BitVec.allOnes w, significand := 0 }
 
 /-- HOL `float_plus_zero_def` (`binary_ieeeScript.sml:172-177`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_plus_zero_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatPlusZero (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := 0, significand := 0 }
 
 /-- HOL `float_top_def` (`binary_ieeeScript.sml:179-184`):
     `Exponent := UINT_MAXw - 1w; Significand := UINT_MAXw`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_top_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatTop (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := BitVec.allOnes w - 1, significand := BitVec.allOnes t }
 
 /-- HOL `float_plus_min_def` (`binary_ieeeScript.sml:187-192`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_plus_min_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatPlusMin (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := 0, significand := 1 }
 
 /-- HOL `float_minus_infinity_def` (`binary_ieeeScript.sml:194-197`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_minus_infinity_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatMinusInfinity (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   holFloatNegate (holFloatPlusInfinity t w)
 
 /-- HOL `float_minus_zero_def` (`binary_ieeeScript.sml:199-201`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_minus_zero_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatMinusZero (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w := holFloatNegate (holFloatPlusZero t w)
 
 /-- HOL `float_bottom_def` (`binary_ieeeScript.sml:203-205`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_bottom_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatBottom (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w := holFloatNegate (holFloatTop t w)
 
 /-- HOL `float_minus_min_def` (`binary_ieeeScript.sml:207-209`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "float_minus_min_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holFloatMinusMin (t : Nat) (w : Nat) [NeZero t] [NeZero w] : HolFloat t w := holFloatNegate (holFloatPlusMin t w)
 
 /-- HOL `binary_ieee$flags` (`binary_ieeeScript.sml:217-225`), with its fields
     in HOL order. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "flags"
+  (reals_as_rational_cuts)]
 structure HolFloatFlags where
   divideByZero : Bool
   invalidOp : Bool
@@ -85,17 +115,24 @@ structure HolFloatFlags where
   deriving DecidableEq, Repr
 
 /-- HOL `clear_flags_def` (`binary_ieeeScript.sml:227-235`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "clear_flags_def"
+  (reals_as_rational_cuts)]
 def holClearFlags : HolFloatFlags :=
   { divideByZero := false, invalidOp := false, overflow := false, precision := false,
     underflowBeforeRounding := false, underflowAfterRounding := false }
 
 /-- HOL `invalidop_flags_def` (`binary_ieeeScript.sml:237-239`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "invalidop_flags_def"
+  (reals_as_rational_cuts)]
 def holInvalidopFlags : HolFloatFlags := { holClearFlags with invalidOp := true }
 
 /-- HOL `dividezero_flags_def` (`binary_ieeeScript.sml:241-243`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "dividezero_flags_def"
+  (reals_as_rational_cuts)]
 def holDividezeroFlags : HolFloatFlags := { holClearFlags with divideByZero := true }
 
 /-- HOL `binary_ieee$rounding` (`binary_ieeeScript.sml:245-250`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "rounding"]
 inductive HolRounding where
   | roundTiesToEven
   | roundTowardPositive
@@ -162,6 +199,8 @@ noncomputable def holRound {t : Nat} {w : Nat} [NeZero t] [NeZero w] (mode : Hol
       else holClosest (fun a => holFloatIsFinite a = true ∧ holFloatToReal a ≤ x) x
 
 /-- HOL `binary_ieee$fp_op` (`binary_ieeeScript.sml:481-489`). -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "fp_op"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 inductive HolFpOp (t : Nat) (w : Nat) [NeZero t] [NeZero w] where
   | fpSqrt (mode : HolRounding) (x : HolFloat t w)
   | fpAdd (mode : HolRounding) (x y : HolFloat t w)
@@ -209,6 +248,8 @@ noncomputable def holFloatRoundWithFlags {t : Nat} {w : Nat} [NeZero t] [NeZero 
 
 /-- HOL `check_for_signalling_def` (`binary_ieeeScript.sml:534-537`):
     `clear_flags with InvalidOp := EXISTS float_is_signalling l`. -/
+@[hol "HOL/src/floating-point/binary_ieeeScript.sml" "check_for_signalling_def"
+  (words_as_type_indexed_bitvec) (reals_as_rational_cuts)]
 def holCheckForSignalling {t : Nat} {w : Nat} [NeZero t] [NeZero w] (l : List (HolFloat t w)) : HolFloatFlags :=
   { holClearFlags with invalidOp := l.any holFloatIsSignalling }
 

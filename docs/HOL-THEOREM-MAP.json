@@ -78937,5 +78937,149 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.8) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: x with Sign := 0w. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]; bit-only form, no real involved."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatPlusInfinity",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_plus_infinity_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: <|Sign := 0w; Exponent := UINT_MAXw; Significand := 0w|> (UINT_MAXw = BitVec.allOnes w). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatPlusZero",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_plus_zero_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: <|Sign := 0w; Exponent := 0w; Significand := 0w|>. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatTop",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_top_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: <|Sign := 0w; Exponent := UINT_MAXw - 1w; Significand := UINT_MAXw|>. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatPlusMin",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_plus_min_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: <|Sign := 0w; Exponent := 0w; Significand := 1w|>. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatMinusInfinity",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_minus_infinity_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: float_negate (float_plus_infinity (:'t # 'w)). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatMinusZero",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_minus_zero_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: float_negate (float_plus_zero (:'t # 'w)). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatBottom",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_bottom_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: float_negate (float_top (:'t # 'w)). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holFloatMinusMin",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_minus_min_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_carrier_probe: float_negate (float_plus_min (:'t # 'w)). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "HolFloatFlags",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "flags",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by the Datatype text at binary_ieeeScript.sml:218-226: record of six bool fields DivideByZero, InvalidOp, Overflow, Precision, Underflow_BeforeRounding, Underflow_AfterRounding, in HOL order (Lean camelCase field names). reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holClearFlags",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "clear_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: all six flags F. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holInvalidopFlags",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "invalidop_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: clear_flags with InvalidOp := T. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holDividezeroFlags",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "dividezero_flags_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: clear_flags with DivideByZero := T. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "HolRounding",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "rounding",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by the Datatype text at binary_ieeeScript.sml:246-251: enumeration roundTiesToEven | roundTowardPositive | roundTowardNegative | roundTowardZero in HOL order. Exact."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "HolFpOp",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "fp_op",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by the Datatype text at binary_ieeeScript.sml:484-493: constructors FP_Sqrt/Add/Sub/Mul/Div/MulAdd/MulSub with a rounding mode followed by 1, 2, 2, 2, 2, 3, 3 ('t,'w) float arguments, in HOL order. HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRound.lean",
+    "lean_name": "holCheckForSignalling",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "check_for_signalling_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-h29l.6.2.9) against the pinned HOL source and the definition captured with types by binary_ieee_round_probe: clear_flags with InvalidOp := EXISTS float_is_signalling l (List.any). HOL ('t,'w) float dimensions are positive-width BitVec t/w under [NeZero t] [NeZero w]. reals_as_rational_cuts is carried because check-hol-refs requires it for any BinaryIeee rendering name (SOUNDNESS item 8); this declaration itself involves no real value. No other difference."
   }
 ]
