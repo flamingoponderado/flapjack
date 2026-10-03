@@ -1,0 +1,17 @@
+load "bossLib";
+load "preamble";
+load "lab_to_targetProofTheory";
+open bossLib HolKernel Parse preamble lab_to_targetProofTheory;
+val th = DB.fetch "lab_to_targetProof" "implements_intro_gen";
+val _ = show_types := true;
+val _ = print "implements_intro_gen=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "implements_intro_gen_types=";
+val _ = app (fn v => print (term_to_string v ^ ":" ^ type_to_string (type_of v) ^ ";")) (fst (strip_forall (concl th)) @ free_vars (concl th));
+val _ = print "\n";
+val _ = print ("implements_intro_gen_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = show_types := false;
+val _ = print "implements_intro_gen_proved=";
+val _ = print_term (rhs (concl (EQT_INTRO (prove (concl th, ACCEPT_TAC th)))));
+val _ = print "\n";

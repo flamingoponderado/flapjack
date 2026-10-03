@@ -1331,6 +1331,8 @@ theorem compiledCalleeFrameFailure {width : Nat} [NeZero width] {C F : Type}
     (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
       (target.bitmaps.drop (n - (appListAppend bs).length))) :
     ∃ calleeSize : Nat, ss.getD calleeSize = calleeSize ∧
+      calleeSize = (if max (maxVarHOL prog / 2 + 1 - k) (args1.length - k) = 0 then 0
+        else max (maxVarHOL prog / 2 + 1 - k) (args1.length - k) + 1) ∧
       (target.stackSpace < calleeSize →
         ∃ targetPost : StackSemStateFiniteExact width C F,
           StackSemEvaluate.evaluate (compiled, target) =
@@ -1347,7 +1349,9 @@ theorem compiledCalleeFrameFailure {width : Nat} [NeZero width] {C F : Type}
       xs args1 prog ss envs bs savedBitmaps n savedIndex destinationCode savedCode destination
       guards related conventions maximum destinationCompile savedCompile lengthBound bitmapBound
       savedPrefix space
-  refine ⟨calleeSize, calleeLocalsSize, ?_⟩
+  have canonicalSize := calleeCompile
+  simp only [compileProgNative, Prod.mk.injEq] at canonicalSize
+  refine ⟨calleeSize, calleeLocalsSize, canonicalSize.2.1.symm, ?_⟩
   intro insufficient
   have countEq := stackArgumentCount values names retCode l1 l2 dest args source xs args1
     prog ss envs k f frame destinationCode destination guards destinationCompile
@@ -3866,7 +3870,8 @@ theorem calleeCompilationAt {width : Nat} [NeZero width] {C F : Type}
       (appListAppend bsPost).IsPrefix (target.bitmaps.drop (n - (appListAppend bs).length)) ∧
       ss.getD calleeSize = calleeSize ∧
       (if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1) ∧
-      args1.length - k ≤ calleeFrame ∧ maxVarHOL prog < 2 * calleeFrame + 2 * k := by
+      args1.length - k ≤ calleeFrame ∧ maxVarHOL prog < 2 * calleeFrame + 2 * k ∧
+      calleeFrame = max (maxVarHOL prog / 2 + 1 - k) (args1.length - k) := by
   unfold stateRel at related
   obtain ⟨_, _, _, _, _, _, _, _, _, kPositive, _, _, _, _, _, _, _, _, _, _, _, _, _, _, code, _⟩ := related
   obtain ⟨conventions, flat, bs, n, bsPost, nPost, calleeSize, stackProg,
@@ -3892,7 +3897,7 @@ theorem calleeCompilationAt {width : Nat} [NeZero width] {C F : Type}
     omega
   refine ⟨bs, bsPost, n, nPost, body, calleeSize, calleeFrame,
     sourceCode, targetCode, conventions, flat, bodyCompile, bitmapLength,
-    bitmapBound, bitmapPrefix, ?_, shape, argumentBound, maximumBound⟩
+    bitmapBound, bitmapPrefix, ?_, shape, argumentBound, maximumBound, frameDef⟩
   rwa [sourceSize]
 
 /-- Identify native find_code with lookup at the actual selected source key
@@ -4034,6 +4039,7 @@ theorem prepareCalleeDestinationAt {width : Nat} [NeZero width] {C F : Type}
       ss.getD calleeSize = calleeSize ∧
       (if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1) ∧
       args1.length - k ≤ calleeFrame ∧ maxVarHOL prog < 2 * calleeFrame + 2 * k ∧
+      calleeFrame = max (maxVarHOL prog / 2 + 1 - k) (args1.length - k) ∧
       StackSemControl.findCode destination (moved.regs.eraseEq 0) moved.code =
         some (.seq (.stackAlloc (calleeSize - (args1.length - k))) body) ∧
       saved.stackSpace = target.stackSpace ∧
@@ -4048,7 +4054,7 @@ theorem prepareCalleeDestinationAt {width : Nat} [NeZero width] {C F : Type}
     source.code source.stackSize args1 prog ss find
   obtain ⟨calleeBs, calleeBsPost, calleeIndex, calleeIndexPost, body, calleeSize, calleeFrame,
     _, targetCode, bodyConventions, bodyFlat, bodyCompile, calleeBitmapLength, calleeBitmapBound,
-    calleeBitmapPrefix, calleeLocalsSize, calleeShape, calleeArgumentBound, bodyMaximum⟩ :=
+    calleeBitmapPrefix, calleeLocalsSize, calleeShape, calleeArgumentBound, bodyMaximum, calleeFrameEq⟩ :=
     calleeCompilationAt ac k f frame source target lens args1 prog ss location sourceCode
       sourceSize related
   obtain ⟨destinationTarget, destinationRun, destinationRelation,
@@ -4103,7 +4109,7 @@ theorem prepareCalleeDestinationAt {width : Nat} [NeZero width] {C F : Type}
     calleeBs, calleeBsPost, calleeIndex, calleeIndexPost, destinationRun, savedRun, moveRun,
     savedRelation, pushedRelation, sourceCode, savedLookup, bodyCompile, bodyConventions, bodyFlat,
     calleeBitmapLength, calleeBitmapBound, calleeBitmapPrefix, calleeLocalsSize, calleeShape,
-    calleeArgumentBound, bodyMaximum, finalFound, savedSpace.trans destinationSpace, stack, regs,
+    calleeArgumentBound, bodyMaximum, calleeFrameEq, finalFound, savedSpace.trans destinationSpace, stack, regs,
     movedState⟩
 
 /-- Apply the original guarded callee-body IH to the SAME compiled body,
@@ -4305,6 +4311,7 @@ theorem simulatePreparedCalleeBody {width : Nat} [NeZero width] {C F : Type}
       ss.getD calleeSize = calleeSize ∧
       (if calleeFrame = 0 then calleeSize = 0 else calleeSize = calleeFrame + 1) ∧
       args1.length - k ≤ calleeFrame ∧ maxVarHOL prog < 2 * calleeFrame + 2 * k ∧
+      calleeFrame = max (maxVarHOL prog / 2 + 1 - k) (args1.length - k) ∧
       StackSemControl.findCode destination (moved.regs.eraseEq 0) moved.code =
         some (.seq (.stackAlloc (calleeSize - (args1.length - k))) body) ∧
       saved.stackSpace = target.stackSpace ∧
@@ -4331,7 +4338,7 @@ theorem simulatePreparedCalleeBody {width : Nat} [NeZero width] {C F : Type}
     calleeBs, calleeBsPost, calleeIndex, calleeIndexPost, destinationRun, savedRun, moveRun,
     savedRelation, pushedRelation, sourceCode, savedLookup, bodyCompile, bodyConventions,
     bodyFlat, calleeBitmapLength, calleeBitmapBound, calleeBitmapPrefix, calleeLocalsSize,
-    calleeShape, calleeArgumentBound, bodyMaximum, found, savedSpace, movedState⟩ :=
+    calleeShape, calleeArgumentBound, bodyMaximum, calleeFrameEq, found, savedSpace, movedState⟩ :=
     prepareCalleeDestinationAt ac k f frame values names retCode l1 l2 dest args source target
       lens xs args1 prog ss envs bs savedBitmaps n savedIndex destinationCode savedCode destination
       guards related conventions maximum destinationCompile savedCompile bitmapLength bitmapBound
@@ -4340,7 +4347,7 @@ theorem simulatePreparedCalleeBody {width : Nat} [NeZero width] {C F : Type}
     calleeBs, calleeBsPost, calleeIndex, calleeIndexPost, destinationRun, savedRun, moveRun,
     savedRelation, pushedRelation, sourceCode, savedLookup, bodyCompile, bodyConventions,
     bodyFlat, calleeBitmapLength, calleeBitmapBound, calleeBitmapPrefix, calleeLocalsSize,
-    calleeShape, calleeArgumentBound, bodyMaximum, found, savedSpace, ?_⟩
+    calleeShape, calleeArgumentBound, bodyMaximum, calleeFrameEq, found, savedSpace, ?_⟩
   intro calleeSpace
   have destinationGrowth := (Compiler.Backend.StackProps.EvaluateMono.evaluateMono
     destinationCode target destinationTarget none destinationRun).1

@@ -6415,6 +6415,11 @@ run_probe word_to_stack_comp_seq_non_none_probeScript.sml word_to_stack_comp_seq
   comp_correct_seq_obligation_statement comp_correct_seq_obligation_proved comp_correct_seq_obligation_hypotheses comp_correct_seq_first_non_none_statement comp_correct_seq_first_non_none_proved comp_correct_seq_first_non_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_comp_handler_full_probeScript.sml word_to_stack_comp_handler_full_probe.out \
+  comp_correct_handler_full_statement comp_correct_handler_full_proved \
+  comp_correct_handler_full_hypotheses comp_correct_call_induction_obligation \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_seq_full_probeScript.sml word_to_stack_comp_seq_full_probe.out \
   comp_correct_seq_full_statement comp_correct_seq_full_proved comp_correct_seq_full_hypotheses comp_correct_seq_first_none_statement comp_correct_seq_first_none_proved comp_correct_seq_first_none_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6898,3 +6903,26 @@ run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
 run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutral_probe.out \
   fupdate_elim2_statement fupdate_elim2_types fupdate_elim2_hypotheses fupdate_elim2_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe riscv_target_helper_links_probeScript.sml riscv_target_helper_links_probe.out \
+  helper_binop_statement helper_binop_hypotheses helper_binop_proved helper_shift_imm_statement helper_shift_imm_hypotheses helper_shift_imm_proved helper_shift_reg_statement helper_shift_reg_hypotheses helper_shift_reg_proved \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_code_probe.out \
+  store_list_code_thm_statement store_list_code_thm_hypotheses store_list_code_thm_free_vars \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_to_target_filter_safety_probeScript.sml lab_to_target_filter_safety_probe.out \
+  no_install_or_no_share_mem_filter_skip no_install_or_no_share_mem_filter_skip_types no_install_or_no_share_mem_filter_skip_hypotheses no_install_or_no_share_mem_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_assign_probeScript.sml pan_structs_program_assign_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_assign_statement compile_correct_assign_proved compile_correct_full_types compile_correct_assign_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_to_target_implements_intro_probeScript.sml lab_to_target_implements_intro_probe.out \
+  implements_intro_gen implements_intro_gen_types implements_intro_gen_hypotheses implements_intro_gen_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_program_primitive_probeScript.sml pan_structs_program_primitive_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_primitive_statement compile_correct_primitive_proved compile_correct_full_types compile_correct_primitive_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_to_target_semantics_compile_probeScript.sml lab_to_target_semantics_compile_probe.out \
+  semantics_compile_lemma_prime semantics_compile_lemma_prime_types semantics_compile_lemma_prime_hypotheses semantics_compile_lemma_prime_proved semantics_compile_lemma semantics_compile_lemma_types semantics_compile_lemma_hypotheses semantics_compile_lemma_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

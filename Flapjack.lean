@@ -1,3 +1,6 @@
+import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
+import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
+import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
 import Flapjack.Compiler.Backend.LabToTarget.ListSubset
 import Flapjack.RiscV.Encoding.NativeInstruction.Agreement
 import Flapjack.RiscV.Encoding.NativeInstruction
@@ -10,6 +13,7 @@ import Flapjack.Test.L3EncodeParity
 import Flapjack.Compiler.Encoders.RiscV.Target
 import Flapjack.Test.RiscVNativeTargetParity
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+import Flapjack.Compiler.Encoders.RiscV.Target.HelperLinks
 import Flapjack.Test.RiscVNativeConfigParity
 import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
@@ -292,6 +296,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.FmapSimp
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitMake
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
+import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
@@ -1267,6 +1272,8 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectSeqIf
 import Flapjack.Pancake.Proofs.PanStructs.FlattenConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStoreWords
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
