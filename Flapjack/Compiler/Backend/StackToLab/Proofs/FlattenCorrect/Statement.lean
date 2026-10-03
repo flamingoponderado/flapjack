@@ -5,7 +5,8 @@ import Flapjack.Compiler.Backend.LabProps.EvaluateAddClock
 import Flapjack.Compiler.Backend.Semantics.StackSem.EvaluateDef
 
 /-! Statement of `flatten_correct` (`stack_to_labProofScript.sml:1207-2740`)
-split along the HOL proof's own `evaluate_ind` cases. `FlattenHyps` and
+split by evaluator constructor, proved using well-founded induction on clock
+and program size rather than HOL's `evaluate_ind`. `FlattenHyps` and
 `FlattenConcl` are the theorem's hypotheses and conclusion verbatim;
 `FlattenProp prog s1` quantifies the remaining variables. Each constructor
 case proves `FlattenProp` from an induction hypothesis for the strictly
