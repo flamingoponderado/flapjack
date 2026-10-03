@@ -1,6 +1,8 @@
 import Flapjack.RiscV.L3.Step.FetchTheorems
 import Flapjack.RiscV.L3.Defs.Encode
 import Flapjack.Test.L3EncodeParity
+import Flapjack.Compiler.Encoders.RiscV.Target
+import Flapjack.Test.RiscVNativeTargetParity
 import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
@@ -1232,6 +1234,9 @@ import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
 import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
 import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState

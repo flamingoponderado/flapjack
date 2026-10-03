@@ -7176,6 +7176,7 @@ preservation of memory/domain/byte order, using only the original child IH.
 Load32 specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions with only the original child IH, deriving the32-bit load
 through actual memory/domain/byte-order preservation.
+
 `lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
 and both direct definitions, full native word-indexed line/section binder types,
 zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
@@ -7203,9 +7204,42 @@ original HOL model route. Finite fixtures and literal rendering drift checks
 are regression/transcription evidence, not a universal HOL-to-Lean proof.
 The native executed encoder configuration and final encoder correctness are
 separate downstream beads; this batch does not replace the compiler route.
+
 `pansem_eval_ind_probe` captures the original generated faithful expression
 induction theorem with its predicate type, closed hypotheses and kernel proof.
 The reference checker recognizes only this exact source path and the reviewed
 complete terminating `eval_def` block; its hash pin prevents unrelated source
 changes from silently authorizing the generated name. This is provenance
 checking, while the native theorem still requires independent statement review.
+
+`pan_structs_exp_correct_full_probe` captures the whole original expression
+correctness theorem, binder types, closed hypotheses and kernel proof. Native
+assembly preserves all seven hypotheses and three conclusions across all sixteen
+constructors through the original guarded evaluator induction principle.
+## Native target assembler lowering and bytes
+
+`l3_target_encoder_probeScript.sml` regenerates from the pinned original
+CakeML `compiler/encoders/riscv` directory. It records all ten encoder-section
+types and zero-assumption definition theorems; the partial helper conjunctions
+are retained exactly, and missing Sub/Ror cases intentionally remain unreduced.
+The executable full AST lowering never executes these unspecified cases.
+
+300 inputs cover the source constructors and branching/range boundaries,
+including register truncation, all comparison polarities in register/immediate
+and short/far modes, constant sign-extension/build choices, rotations above64,
+memory widths and unsupported FP/LongDiv. Every observation includes the complete
+native instruction list and original encoded byte list; all600 results are
+replayed by the Lean kernel in `RiscVNativeTargetParity.lean`. The checker rejects
+nonconcrete AST payloads, wrong carriers, unreduced bytes and capture drift.
+These finite checks do not establish universal cross-language equivalence.
+The executed compiler configuration replacement remains a separate dependency.
+
+`pan_structs_program_atomic_probe` captures the complete original program
+correctness theorem and Skip/Break/Continue specializations, all closed and
+kernel-proved. Native cases preserve all ten premises and seven conclusions,
+including actual compiled evaluation, state invariants and result validity.
+
+`pan_structs_program_tick_annot_probe` captures the full original program
+correctness theorem and Tick/Annot specializations as closed kernel theorems.
+Native Tick retains both zero-clock timeout and decrement branches without
+extra premises; both cases retain all ten hypotheses and seven conclusions.
