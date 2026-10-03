@@ -76718,6 +76718,15 @@
     "reviewer": "flapjack-sol2 source comparison2026-10-03 original625-end: full original ALL_DISTINCT source keys, use_stack true, code fromAList, and non-Fail premises retained; complete target/source semantics equality at arbitrary entry start and positive width/FFI/configuration. Actual native compile collects full code info; initial stateRel and independent per-entry witnesses derived from accepted domain/lookup/collectInfo laws. Full comp_correct derives target entry executions with additional clock and identical whole FFI state from source run and nonError derived from nonFail. Shared Flapjack semanticsAux_shift proof infrastructure derives target nonFail, equality of entire termination predicates, and cofinal native ioEvents chain LUB equality using native clock stability/monotonicity, all obligations discharged inside theorem. No target run, final relation, external IH, event-prefix or simulation premises added. Canonical imported regs/fpRegs/store owner plus checked roundtrip, Spt/List unchanged; evaluator inherits reals_as_rational_cuts SOUNDNESS8. Full consumers arbitrary/1/8/64/80; original probe regression does not establish cross-language equivalence or production-route completion."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "extract_labels_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/ExtractLabels.lean",
+    "lean_name": "extractLabelsComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:818-832: ∀i p. extract_labels (comp i p) = extract_labels p ∧ extract_labels (comp_top i p) = extract_labels p over the reviewed StackRawCall.comp/compTop; no premise. Proof follows the source (comp_seq_neq_IMP case split). Axioms propext, Classical.choice, Quot.sound."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/ClashOccurrences.lean",
     "lean_name": "everyVarExp_getReadsExp",
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -82778,6 +82787,15 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4088-4098: (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).ffi = s.ffi for arbitrary arguments; fallback branch is a record update of s, success branch init_reduce of the initializer post-state whose ffi equals s.ffi by evaluateInitCodeFfi. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_lab_pres",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/LabPres.lean",
+    "lean_name": "stackRemoveLabPres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_removeProofScript.sml:4176-4200: ∀jump off k p. extract_labels p = extract_labels (comp jump off k p) over the reviewed StackRemove.comp and stackProps extractLabels; no premise. Proof by comp's functional induction with untagged no-label lemmas for stack_alloc/stack_free/upshift/downshift (HOL's completeInduct steps). Axioms propext, Quot.sound."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterClock.lean",
     "lean_name": "evaluateWStackLoadClock",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
@@ -85061,5 +85079,52 @@
     "lean_name": "contain",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3360-3362: contain b = Abbrev b, where markerTheory Abbrev is the identity (Abbrev x = x); rendered as the identity on Prop."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "MAP_FST_compile_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/CompileLabPres.lean",
+    "lean_name": "mapFstCompileCompile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3194-3207 (local, replayed in the probe with its source proof). Free jump off gen max_heap k c code implicit; MAP FST (stack_remove$compile jump off gen max_heap k InitGlobals_location (stack_alloc$compile c (stack_rawcall$compile code))) = 0::1::2::gc_stub_location::MAP FST code verbatim over the reviewed compileHOL/compile/initGlobalsLocation/gcStubLocation. Axioms propext, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "next_lab_non_zero",
+    "hol_line": 3211,
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/CompileLabPres.lean",
+    "lean_name": "nextLabNonZero'",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3211-3216 ([allow_rebind]; distinct from the 1022 declaration): ∀p. 1 ≤ next_lab p 1 ∧ 2 ≤ next_lab p 2 over the reviewed StackAlloc.nextLabHOL; probe captures the rebound theorem."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "MAP_prog_to_section_FST",
+    "hol_line": 3272,
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/CompileLabPres.lean",
+    "lean_name": "mapProgToSectionFst'",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3272-3278 (local rebind of the line-228 statement, replayed in the probe): MAP (λs. case s of Section n v => n) (MAP prog_to_section prog) = MAP FST prog, the section-name projection rendered as sectionId; proof reuses the reviewed line-228 port."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "extract_label_store_list_code",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/CompileLabPres.lean",
+    "lean_name": "extractLabelStoreListCode",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3280-3286 (local, replayed): ∀a t ls. extract_labels (store_list_code a t ls) = [] over the reviewed stack_remove storeListCode (ls : (α word + num) list rendered as List (BitVec width ⊕ Nat)). Axioms propext, Quot.sound."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "stack_to_lab_compile_lab_pres",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/CompileLabPres.lean",
+    "lean_name": "stackToLabCompileLabPres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3288-3347. Free c c2 c3 sp offset prog implicit. Premises verbatim: EVERY (λn. n ≠ 0 ∧ n ≠ 1 ∧ n ≠ 2 ∧ n ≠ gc_stub_location) (MAP FST prog), EVERY (λ(n,p). let labs = extract_labels p in EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0 ∧ l2 ≠ 1) labs ∧ ALL_DISTINCT labs) prog (let inlined, EVERY as membership, tuple lambdas by projections), ALL_DISTINCT (MAP FST prog); conclusion labels_ok (stack_to_lab$compile c c2 c3 sp offset prog) over the reviewed labelsOk and StackToLab.compile. Proof via prog_to_section_labels_ok, MAP_FST_compile, MAP_FST_compile_compile, stack_names/stack_remove/stack_alloc label preservation, extract_labels_comp, and untagged no-label lemmas for init_code and word_gc_code (HOL EVAL_TAC steps). Axioms propext, Classical.choice, Quot.sound."
   }
 ]
