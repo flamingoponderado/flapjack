@@ -6890,3 +6890,7 @@ run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutra
 run_probe stack_remove_store_list_code_probeScript.sml stack_remove_store_list_code_probe.out \
   store_list_code_thm_statement store_list_code_thm_hypotheses store_list_code_thm_free_vars \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_remove_word_list_exists_add_probeScript.sml stack_remove_word_list_exists_add_probe.out \
+  word_list_exists_ADD_statement word_list_exists_ADD_hypotheses \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

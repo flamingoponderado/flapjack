@@ -80506,5 +80506,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2636-2725: free registers a t (captured free vars) then forall xs s w frame ys m dm; all eight original conjuncts in order: (word_list w ys * frame) (fun2set (m,dm)), m = s.memory, dm = s.mdomain (Bool domain as its membership predicate), LENGTH ys = LENGTH xs, a <> t, get_var a s = SOME (Word w), t IN FDOM s.regs (lookup <> none on the canonical map), EVERY INR guard as list membership; conclusion exists r1 m1 with (word_list w (MAP (mem_val s.regs) xs) * frame) (fun2set (m1, s.mdomain)) and native stackSem evaluate (store_list_code a t xs, s) = (NONE, s with memory := m1; regs := s.regs |++ [(a, Word (w + bytes_in_word * n2w (LENGTH xs))); (t, r1)]) via updateListEq. Uses accepted storeListCode/mem_val/word_list/write_fun2set ports; no added premise, no supplied run. Inherited assumption: statement mentions the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts IEEE declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored theorem captured with zero hypotheses in scripts/hol-probes/stack_remove_store_list_code_probe.out. Proof-only initializer prerequisite of init_code_thm; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/WordListMemory.lean",
+    "lean_name": "wordListExistsAdd",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "word_list_exists_ADD",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original38-47: forall m n a, word_list_exists a (m + n) = word_list_exists a m * word_list_exists (a + bytes_in_word * n2w m) n as whole predicate equality over accepted word_list_exists_def/STAR ports, arbitrary payload Type and modular addresses; no no-wrap premise. Stored theorem captured with zero hypotheses in scripts/hol-probes/stack_remove_word_list_exists_add_probe.out. Proof-only prerequisite of init_code_thm; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]
