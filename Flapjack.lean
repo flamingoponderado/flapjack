@@ -638,6 +638,7 @@ import Flapjack.Compiler.Encoders.AsmProps.FpPreservation
 import Flapjack.Compiler.Encoders.AsmProps.AsmConsts
 import Flapjack.Compiler.Encoders.AsmSem.FpUpdates
 import Flapjack.Pancake.WordConvs.ProgramMonotonicity
+import Flapjack.Pancake.WordConvs.StackOccurrences
 import Flapjack.Compiler.Backend.Parmove.StepMapInj
 import Flapjack.Compiler.Backend.Parmove.MapInj
 import Flapjack.Compiler.Backend.Parmove.PathLemmas
@@ -2071,6 +2072,8 @@ import Flapjack.Compiler.Backend.RegAlloc.Proofs.MkGraphCheckClashTree
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.DoRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SelectRegAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.ColourOccurrences
 import Flapjack.Compiler.Backend.RegAlloc.Proofs.ArrayRead
 import Flapjack.Compiler.Backend.RegAlloc.SplitDegree
 import Flapjack.Compiler.Backend.RegAlloc.ConsideredVar
