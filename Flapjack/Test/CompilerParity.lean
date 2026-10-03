@@ -1,12 +1,13 @@
 import Flapjack.Test.L3SupervisorCSRParity
 import Flapjack.Test.L3MachineCSRCodecParity
 import Flapjack.Test.L3CSRAccessParity
+import Flapjack.Test.StackRawCallCaseParity
+import Flapjack.Test.StackEvaluateMonoParity
+import Flapjack.Test.StackEvaluateClockNeutralParity
 import Flapjack.Test.L3TLBFlushParity
 import Flapjack.Test.L3SystemSignalsParity
-import Flapjack.Test.StackEvaluateClockNeutralParity
 import Flapjack.Test.StackCodeBitmapsNonrecursiveParity
 import Flapjack.Test.BytesInMemoryDomainParity
-import Flapjack.Test.StackEvaluateMonoParity
 import Flapjack.Test.L3AMOMinMaxParity
 import Flapjack.Test.L3AMOArithmeticParity
 import Flapjack.Test.L3AMOSwapParity
@@ -17,6 +18,7 @@ import Flapjack.Test.MiscFindIndexSuccessfulMemParity
 import Flapjack.Test.LabToTargetMmioClassificationParity
 import Flapjack.Test.LabToTargetFfiEntryExclusionParity
 import Flapjack.Test.LabToTargetInitializationParity
+import Flapjack.Test.LabToTargetInitializationContractsParity
 import Flapjack.Test.MiscFindIndexShiftParity
 import Flapjack.Test.LabToTargetShmemEntryMaxParity
 import Flapjack.Test.LabToTargetShmemOffsetParity
