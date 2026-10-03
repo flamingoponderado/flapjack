@@ -1,4 +1,6 @@
 import Flapjack.RiscV.L3.Step.FetchTheorems
+import Flapjack.RiscV.L3.Defs.Encode
+import Flapjack.Test.L3EncodeParity
 import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
@@ -1117,6 +1119,8 @@ import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatHelpers
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
@@ -1236,6 +1240,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpBytesInWord
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
