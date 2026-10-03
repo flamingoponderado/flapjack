@@ -7176,3 +7176,30 @@ preservation of memory/domain/byte order, using only the original child IH.
 Load32 specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions with only the original child IH, deriving the32-bit load
 through actual memory/domain/byte-order preservation.
+`lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
+and both direct definitions, full native word-indexed line/section binder types,
+zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
+proof's map prerequisite without specializing arbitrary generic Line carriers.
+The derived Lean append law is Flapjack infrastructure, not another HOL claim.
+
+`pan_structs_exp_bytes_in_word_faithful_probe` captures the original full theorem,
+BytesInWord specialization and eval_ind. The faithful native case retains all
+seven hypotheses and three conclusions, including the actual converted target
+evaluation, at every positive word width without an extra byte-size condition.
+
+## Complete native Encode
+
+`l3_encode_probeScript.sml` captures the original full `Encode` and nine
+fixed-width format helper types with zero assumptions. It evaluates all 163
+accepted instruction constructors: zero, maximal, nonuniform and sign-bit
+payloads (one observation for nullary constructors), for 634 fully reduced
+word32 results. The probe registers the complete original definitions and
+rejects nonnumeric residual terms. `scripts/l3/check-encode-fixtures.py`
+checks exact labels, types, result range, complete AST payload widths and the
+Lean kernel replay fixture. `check-l3-encode.py` joins the central native gate.
+
+Regenerate with `HOL_PROBE_ONLY=l3_encode_probeScript.sml` using the pinned
+original HOL model route. Finite fixtures and literal rendering drift checks
+are regression/transcription evidence, not a universal HOL-to-Lean proof.
+The native executed encoder configuration and final encoder correctness are
+separate downstream beads; this batch does not replace the compiler route.
