@@ -6638,3 +6638,9 @@ run_probe lab_filter_location_lookup_probeScript.sml lab_filter_location_lookup_
   loc_to_pc_eq_SOME loc_to_pc_eq_SOME_types loc_to_pc_eq_SOME_hypotheses loc_to_pc_eq_SOME_proved \
   loc_to_pc_adjust_pc_append loc_to_pc_adjust_pc_append_types loc_to_pc_adjust_pc_append_hypotheses loc_to_pc_adjust_pc_append_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_return_labels_probeScript.sml lab_filter_return_labels_probe.out \
+  next_label_filter_skip next_label_filter_skip_types next_label_filter_skip_hypotheses next_label_filter_skip_proved \
+  all_skips_get_lab_after all_skips_get_lab_after_types all_skips_get_lab_after_hypotheses all_skips_get_lab_after_proved \
+  get_lab_after_adjust get_lab_after_adjust_types get_lab_after_adjust_hypotheses get_lab_after_adjust_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
