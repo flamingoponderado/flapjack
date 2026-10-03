@@ -355,6 +355,7 @@ import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.FFI
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.JumpLower
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallTail
+import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.CallReturn
 import Flapjack.Compiler.Backend.StackProps.OrderedLabels
 import Flapjack.Compiler.Backend.StackRemove.ProgComp
 import Flapjack.Compiler.Backend.StackRemove.Comp
@@ -736,6 +737,8 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
 import Flapjack.Compiler.Backend.WordAlloc.ProductionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlySets
+import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
+import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
