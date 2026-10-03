@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabSem.Navigation
 import Flapjack.Compiler.Backend.LabProps.Labels
+import Flapjack.Compiler.Backend.LabProps.LabelSets
 import Flapjack.Compiler.Backend.StackToLab.Native
 import Mathlib.Tactic.SplitIfs
 import Mathlib.Tactic.Tauto
@@ -482,5 +483,82 @@ theorem labsCorrectAppend {width : Nat} [NeZero width] (rest : List (LabLineHOL 
     by_cases lab : isLabelHOL x = true
     · rw [if_pos lab] at h ⊢; exact ⟨ih pc h.1, h.2⟩
     · rw [if_neg lab] at h ⊢; exact ih (pc + 1) h
+
+open Flapjack.Compiler.Backend.LabProps.LabelSets in
+/-- Searching a positive label through a section prefix that does not contain
+it. Local factoring of `labs_correct_hd`. -/
+theorem locToPcPrefix {width : Nat} [NeZero width] (n b sid : Nat) (hb : b ≠ 0)
+    (rest : List (LabLineHOL width)) (code : LabProgHOL width) :
+    ∀ extra : List (LabLineHOL width), (n, b) ∉ extractLabels extra →
+      locToPc n b (⟨sid, extra ++ rest⟩ :: code) =
+        (locToPc n b (⟨sid, rest⟩ :: code)).map (· + (extra.filter fun x => !isLabelHOL x).length) := by
+  intro extra
+  induction extra with
+  | nil => intro _; simp
+  | cons x extra ih =>
+    intro notMem
+    cases x with
+    | label a c d =>
+      simp only [extractLabels, List.mem_cons, not_or] at notMem
+      rw [List.cons_append, locToPc.eq_3, if_neg (by omega)]
+      have : ¬((a == n && c == b && b != 0) = true) := by
+        intro h
+        simp only [Bool.and_eq_true, beq_iff_eq, bne_iff_ne] at h
+        obtain ⟨⟨ha, hc⟩, _⟩ := h
+        exact notMem.1 (by rw [ha, hc])
+      rw [if_neg this]
+      simp only [isLabelHOL, if_true, List.filter_cons, Bool.not_true]
+      exact ih notMem.2
+    | asm i e l =>
+      simp only [extractLabels] at notMem
+      rw [List.cons_append, locToPc.eq_4, if_neg (by omega)]
+      · simp only [isLabelHOL, Bool.false_eq_true, if_false, Bool.false_and, List.filter_cons,
+          Bool.not_false, if_true, List.length_cons, ih notMem, Option.map_map]
+        rfl
+      · intro _ _ _ h; cases h
+    | labAsm i p e l =>
+      simp only [extractLabels] at notMem
+      rw [List.cons_append, locToPc.eq_4, if_neg (by omega)]
+      · simp only [isLabelHOL, Bool.false_eq_true, if_false, Bool.false_and, List.filter_cons,
+          Bool.not_false, if_true, List.length_cons, ih notMem, Option.map_map]
+        rfl
+      · intro _ _ _ h; cases h
+
+open Flapjack.Compiler.Backend.LabProps.LabelSets in
+/-- Complete original label correctness of a section's own labels. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "labs_correct_hd"
+  (words_as_type_indexed_bitvec)]
+theorem labsCorrectHd {width : Nat} [NeZero width] (n : Nat) (code : LabProgHOL width) :
+    ∀ (extra l : List (LabLineHOL width)),
+      (extractLabels (extra ++ l)).Nodup ∧
+        (∀ p ∈ extractLabels (extra ++ l), p.1 = n ∧ p.2 ≠ 0) →
+      labsCorrect ((extra.filter fun x => !isLabelHOL x).length) l (⟨n, extra ++ l⟩ :: code) := by
+  intro extra l
+  induction l generalizing extra with
+  | nil => intros; trivial
+  | cons x l ih =>
+    rintro ⟨nodup, every⟩
+    have shifted := ih (extra ++ [x]) ⟨by simpa using nodup, by simpa using every⟩
+    simp only [List.append_assoc, List.singleton_append] at shifted
+    simp only [labsCorrect]
+    by_cases lab : isLabelHOL x = true
+    · rw [if_pos lab]
+      refine ⟨by simpa [List.filter_append, lab] using shifted, ?_⟩
+      cases x with
+      | label a b c =>
+        have hab := every (a, b) (by simp [extractLabels_append, extractLabels])
+        simp only at hab
+        obtain ⟨rfl, hb⟩ := hab
+        have notMem : (a, b) ∉ extractLabels extra := by
+          rw [extractLabels_append] at nodup
+          simp only [extractLabels] at nodup
+          intro m
+          exact (List.nodup_append.mp nodup).2.2 _ m _ List.mem_cons_self rfl
+        show locToPc a b (⟨a, extra ++ Line.label a b c :: l⟩ :: code) = _
+        rw [locToPcPrefix a b a hb _ code extra notMem, locToPc.eq_3, if_neg (by omega)]
+        simp [hb]
+      | _ => simp [isLabelHOL] at lab
+    · rw [if_neg lab]
+      simpa [List.filter_append, lab] using shifted
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
