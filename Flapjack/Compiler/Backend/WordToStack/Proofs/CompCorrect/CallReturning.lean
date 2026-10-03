@@ -2346,4 +2346,55 @@ theorem returnedCallerLookupIndex {width : Nat} [NeZero width]
   exact ⟨index, returnedBound, nameOption.symm,
     List.getElem?_eq_some_iff.mpr ⟨returnedBound, item⟩⟩
 
+/-- Factor the unchanged fields of the full caller relation after actual
+pop/setVars and return-copy updates. The existing full relation supplies every
+cold field, code/oracle obligation and dimension constraint. The conclusion
+keeps all changed frame/local/stack obligations explicit on the right of an
+iff; it does not assume the restored relation or prove it from weakened
+semantics. Target store is unchanged here, so handler-store restoration needs
+its own proof. Case-local infrastructure, with no separate HOL declaration. -/
+theorem callerStateRelUpdates {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k oldSize oldFrame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (oldLens : List Nat) (oldExtra : Nat)
+    (locals : Spt (WordLocW width)) (sourceStack : List (WordSemStackFrame width))
+    (localsSize : Option Nat) (handler : Nat) (stack : List (WordLocW width))
+    (regs : HolFiniteMapExact Nat (WordLocW width)) (space f frame : Nat)
+    (lens : List Nat) (extra : Nat)
+    (related : stateRel ac k oldSize oldFrame source target oldLens oldExtra)
+    (length : stack.length = target.stack.length) :
+    stateRel ac k f frame
+      {source with locals := locals, stack := sourceStack, localsSize := localsSize, handler := handler}
+      {target with stack := stack, regs := regs, stackSpace := space} lens extra ↔
+      space + f ≤ stack.length ∧
+      (if frame = 0 then f = 0 else f = frame + 1) ∧ sptWf locals = true ∧
+      stackSizeRel f localsSize source.stackLimit source.stackMax sourceStack stack space extra ∧
+      (let active := stack.drop (space + extra)
+       let currentFrame := active.take f
+       let restOfStack := active.drop f
+       stackRel k handler sourceStack (target.store.lookup .handler) restOfStack
+         stack.length target.bitmaps lens ∧
+       ∀ name value, sptLookup name locals = some value →
+         name % 2 = 0 ∧
+         if name / 2 < k then regs.lookup (name / 2) = some value
+         else currentFrame[f - 1 - (name / 2 - k)]? = some value ∧ name / 2 < k + frame) := by
+  unfold stateRel at related
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16,
+    h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31,
+    h32, _, h34, _, _, _, _⟩ := related
+  simp only [stateRel, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14,
+    h15, h18, h19, h20, h21, h22, h23, h24, h26, h27, h28, h29,
+    h30, h31, h32, length, h34, true_and]
+  constructor
+  · rintro ⟨_, _, _, residual⟩
+    exact residual
+  · intro residual
+    refine ⟨h17, ?_, h25, residual⟩
+    intro n zero
+    have oracle := h23 n
+    change (source.compileOracle n).1.1 = target.bitmaps.length
+    generalize source.compileOracle n = call at oracle ⊢
+    obtain ⟨⟨bm, cfg⟩, progs⟩ := call
+    exact oracle.2.2.2.2 zero
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
