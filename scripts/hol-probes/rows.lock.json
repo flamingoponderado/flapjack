@@ -9806,6 +9806,12 @@
       "sha256": "dab3b6be749d1bc05a24ed88ea0b7bb07b31cdc01b3549449dab81480845d248"
     },
     {
+      "bytes": 418,
+      "out": "word_to_stack_register_write_probe.out",
+      "rows": 3,
+      "sha256": "4a4c9ba930b95c897dd458daf107e5a4f4305951b69340853ca385280bfeac82"
+    },
+    {
       "bytes": 252,
       "out": "word_to_stack_retained_frame_probe.out",
       "rows": 8,

@@ -7440,3 +7440,8 @@ and proved sentinels. This is regression evidence, not cross-language equivalenc
 original state_rel_set_var2 statement and literal proof2962–2997, including
 st/sp equalities, with zero open hypotheses and proved sentinel. This is
 regression evidence rather than HOL-to-Lean equivalence.
+
+`word_to_stack_register_write_probeScript.sml` replays the unchanged full
+wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
+continuation premise and full run/relation/resources. Closed hyp0/T captures
+provide regression evidence rather than cross-language equivalence.

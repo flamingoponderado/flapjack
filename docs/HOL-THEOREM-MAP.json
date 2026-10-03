@@ -81426,5 +81426,22 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2962-2997: full original state_rel_set_var2, extra0, not x<k, x<frame+k, explicit st=stack and sp=stackSpace equalities retained. Source setVar(2*x)value versus target List.set at sp+(f+k-(x+1)). Arbitrary positive width, Word/Loc payload, all stateRel conjuncts; frame shape and slot bounds derived. Rest-of-stack unchanged, locals wf and every lookup preserved. Same-module canonical owner codecs and five named finite-map fields plus words_as_type_indexed_bitvec. Fresh unchanged HOL statement AND literal proof replay hyp0/T. No numerical FP or cross-language equivalence claim; structural closure has no reals_as_rational_cuts evaluator dependency."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison3722-3743: full original stateRel extra0, m<frame+k and arbitrary kont evaluation premise for every n<=k retained. Actual wRegWrite1Native target run existential/full postrelation/source setVar(2*m)/stack length/space conclusions. Literal helper lowers physical kont m or spilled Seq(kont k,StackStore k slot); original callback used exactly. Verified physical/spill state update laws derive all relation/resource facts; no new run/bound/postrelation assumption. Qualified five canonical fields and positive word dimensions, same-module genuine codec witnesses. Fresh unchanged original statement and proof replay; evaluator closure inherits reals_as_rational_cuts without numerical FP claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
