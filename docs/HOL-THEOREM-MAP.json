@@ -83766,6 +83766,75 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2835-2840. Free start s1 s2 implicit. All four premises retained: halt_assum (:'ffi#'c) s1.code (reviewed haltAssum C F), state_rel s1 s2, loc_to_pc start 0 s2.code = SOME s2.pc, and stackSem semantics start s1 <> Fail; conclusion labSem semantics s2 = stackSem semantics start s1, both the tagged semantics_def ports. Proof: both semantics rewritten (untagged Flapjack lemmas, by unfolding) as the reviewed semantics_wrapper of their clock-indexed runs, the LabSem family shifted by the call tick, then the ported semantics_wrapper_eq with flatten_call_correct, stackProps/labProps evaluate_add_clock and evaluate_add_clock_io_events_mono. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "make_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "makeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3027-3045. Parameters code coracle regs save_regs s in source order. All seventeen given fields verbatim: regs FEMPTY |++ MAP (λr. (r, read_reg r s)) regs (updateListEq from empty, LabSem overload read_reg r s = s.regs r), fp_regs FEMPTY, memory/mdomain/sh_mdomain from s.mem/mem_domain/shared_mem_domain, use_stack/use_store/use_alloc F, compile (λc p. s.compile c (MAP prog_to_section p)), compile_oracle coracle, code_buffer, clock, code, ffi, ffi_save_regs save_regs (num set as Bool predicate), be. The six fields the HOL record literal leaves to ARB (store, stack, stack_space, bitmaps, data_buffer, gc_fun) are each the shared opaque holArb of the (C/F-free) field type; no statement uses them. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "make_init_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "makeInitSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3047-3049 (SML val, replayed in the probe): flatten_semantics instantiated at s1 := make_init code coracle regs save_regs s, s2 := s, with (make_init ...).code evaluated to code. Free code coracle regs save_regs s start implicit. Premises halt_assum (:'ffi#'c) code, state_rel (make_init ...) s, loc_to_pc start 0 s.code = SOME s.pc, stackSem semantics start (make_init ...) <> Fail; conclusion labSem semantics s = stackSem semantics start (make_init ...). The type ascription on make_init names the owning carrier only. Proof is the ported flatten_semantics. Canonical regs/fpRegs via the imported owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "memory_assumption_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "memoryAssumption",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3106-3130. Parameters rnames bitmaps data_sp t in source order; existential ptr2 ptr3 ptr4 bitmap_ptr; all sixteen conjuncts verbatim: three register reads (LabSem overload read_reg r t = t.regs r, find_name over the num_map as findNameSpt), five memory words at ptr2 + i*bytes_in_word (n2w as BitVec.ofNat, LENGTH as length), empty code buffer, ptr2 <=+ ptr4 as unsigned BitVec <=, three byte_aligned (holByteAligned), 1024w * bytes_in_word <=+ ptr4 - ptr2, and the left-associated separating conjunction word_list bitmap_ptr (MAP Word bitmaps) * word_list_exists (bitmap_ptr + bytes_in_word * n2w (LENGTH bitmaps)) data_sp * word_list_exists ptr2 (w2n (-1w * ptr2 + ptr4) DIV w2n bytes_in_word) over fun2set (t.mem, t.mem_domain), using the reviewed misc word_list/word_list_exists and set_sep STAR/fun2set ports. Positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "halt_assum_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "haltAssumLemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3132-3150 (local, replayed in the probe with its source proof). Free f jump off gen max_heap k l code implicit; conclusion halt_assum (:'ffi#'c) (fromAList (stack_names$compile f (stack_remove$compile jump off gen max_heap k l code))) over the reviewed haltAssum, stack_names compileHOL, stack_remove compileHOL and sptFromAList. No premise. Proof: procedure 1 is the renamed halt_inst 0w, which sets the renamed register 1 to Word 0w and halts. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through haltAssum's evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "FLOOKUP_regs",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "flookupRegs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3152-3159 (local, replayed in the probe). Binders regs n v s in source order with s a LabSem state (probe shows read_reg at labSem$state); FLOOKUP (FEMPTY |++ MAP (λr. (r, read_reg r s)) regs) n = SOME v implies read_reg n s = v, the map rendered as HolFiniteMapExact.empty.updateListEq (as in make_init_def) and read_reg as s.regs. The HOL binder f has an unconstrained type variable and does not occur in the statement, so it is vacuous and omitted (documented beside the theorem). Axiom propext. Positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_make_init",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "stateRelMakeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3161-3192. Free code coracle regs save_regs s implicit. Iff between state_rel (make_init code coracle regs save_regs s) s and the sixteen right-hand conjuncts in source order: installed procedures of code, ¬s.failed, s.compile_oracle = (λn. (λ(c,p,_). (c, MAP prog_to_section p)) (coracle n)) and the per-k oracle conditions (tuple lambdas rendered by projections as in the reviewed state_rel_def), four link-register distinctness facts, link_reg ∉ save_regs, domain code = set (MAP Section_num s.code) pointwise, EVERY sec_labels_ok, io_regs/cc_regs NONE on save_regs, both domain alignments and good_dimindex. Canonical regs/fpRegs via the imported owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound."
+  },
+  {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "lem4",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Immediate.lean",
