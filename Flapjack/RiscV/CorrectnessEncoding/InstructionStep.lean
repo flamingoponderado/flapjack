@@ -70,7 +70,7 @@ def writePost (ms : riscv_state) (r : BitVec 5) (v : BitVec 64) : riscv_state :=
     c_gpr := holUpdate ms.procID (holUpdate r v (ms.c_gpr ms.procID)) ms.c_gpr
     c_PC := holUpdate ms.procID (ms.c_PC ms.procID + 4) ms.c_PC}
 
-private theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
+theorem aligned_add_four (pc : BitVec 64) (h : holAligned 2 pc = true) :
     holAligned 2 (pc + 4) = true := by
   have he := congrArg BitVec.toNat (of_decide_eq_true h)
   rw [holAlign_eq_div] at he

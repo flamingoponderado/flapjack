@@ -191,7 +191,7 @@ theorem stackRemoveCompStackAsmName {width : Nat} [NeZero width] {c : AsmConfigE
     try simp only [comp]
   all_goals (try split) <;>
     (try simp_all [stackAsmName, stackAsmRemove, instName, arithName, regImmName, addrName,
-      moveInst, moveHOL, addInst, subInst, stackStore, stackLoad, listSeqHOL, 
+      moveInst, moveHOL, addInst, subInst, stackStore, stackLoad, listSeqHOL,
       upshift_name, downshift_name, stackFree_name,
       stackAlloc_name, asmAddrOffsetOkExact, leftShift_name, rightShift_name, copyLoop_name])
   all_goals simp_all (config := { zetaDelta := true })

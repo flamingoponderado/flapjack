@@ -1,6 +1,17 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
+import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
+import Flapjack.Pancake.Proofs.PanToTarget
+import Flapjack.Compiler.Backend.WordDepth
+import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+import Flapjack.RiscV.CorrectnessEncoding.ConstInterference
+import Flapjack.RiscV.CorrectnessEncoding.ConstStep
+import Flapjack.RiscV.CorrectnessEncoding.ConstExecution
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
 import Flapjack.RiscV.CorrectnessEncoding.ConstRun
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
@@ -33,6 +44,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
 import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
+import Flapjack.Compiler.Backend.WordToWord.Compile
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -726,6 +738,7 @@ import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvUpdates
 import Flapjack.Compiler.Backend.WordCse.Proofs.FactInsert
 import Flapjack.Compiler.Backend.WordCse.Proofs.MoveLemmas
 import Flapjack.Compiler.Backend.WordCse.Proofs.CompCorrect
+import Flapjack.Compiler.Backend.WordCse.Proofs.Conventions
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
@@ -1298,6 +1311,9 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
+import Flapjack.Pancake.Proofs.WordConvs.WordCse
+import Flapjack.Pancake.Proofs.WordConvs.CopyProp
+import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
@@ -2383,6 +2399,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstInstruction
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.CallInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ProgramInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.DistinctTarReg
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions

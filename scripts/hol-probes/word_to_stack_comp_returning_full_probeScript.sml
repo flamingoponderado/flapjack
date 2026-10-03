@@ -47,3 +47,7 @@ val _ = (print "comp_correct_returning_full_statement="; print_term(concl whole)
 val _ = print("comp_correct_returning_full_proved=" ^ term_to_string(rhs(concl(EQT_INTRO whole))) ^ "\n");
 val _ = print("comp_correct_returning_full_hypotheses=" ^ Int.toString(length(hyp whole)) ^ "\n");
 val _ = (print "comp_correct_returning_induction_obligation="; print_term(call); print "\n");
+
+(* Full typed original terms for source/carrier review; original replay is unchanged. *)
+val _ = (print "comp_correct_returning_full_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl whole); print "\n");
+val _ = (print "comp_correct_returning_induction_obligation_typed="; Lib.with_flag (Globals.show_types,true) print_term (call); print "\n");
