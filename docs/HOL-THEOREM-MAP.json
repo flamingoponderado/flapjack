@@ -80002,5 +80002,29 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ListSubset.lean",
+    "lean_name": "listSubsetTake",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "list_subset_TAKE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original lab_to_targetProofScript10076: forall i xs, list_subset (TAKE i xs) xs. Generic HOL alpha list carrier is retained as arbitrary Lean List alpha with standard DecidableEq, exactly as the reviewed misc list_subset_def; no custom BEq, FFI-only or word specialization. Original quantifier/binder order and all hypotheses/conclusions retained. Lean Boolean true expresses the HOL predicate and EVERY/MEM is List.all with standard membership equality. Direct membership proof establishes source law; no callback or desired relation assumption. Original fulltypes/zero hypotheses/kernel replays in lab_to_target_list_subset_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ListSubset.lean",
+    "lean_name": "listSubsetTrans",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "list_subset_trans",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original lab_to_targetProofScript10090: list_subset a b and list_subset b c imply list_subset a c. Generic HOL alpha list carrier is retained as arbitrary Lean List alpha with standard DecidableEq, exactly as the reviewed misc list_subset_def; no custom BEq, FFI-only or word specialization. Original quantifier/binder order and all hypotheses/conclusions retained. Lean Boolean true expresses the HOL predicate and EVERY/MEM is List.all with standard membership equality. Direct membership proof establishes source law; no callback or desired relation assumption. Original fulltypes/zero hypotheses/kernel replays in lab_to_target_list_subset_probe.out."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ListSubset.lean",
+    "lean_name": "listSubsetRefl",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "list_subset_refl",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original lab_to_targetProofScript10065: forall xs, list_subset xs xs. Generic HOL alpha list carrier is retained as arbitrary Lean List alpha with standard DecidableEq, exactly as the reviewed misc list_subset_def; no custom BEq, FFI-only or word specialization. Original quantifier/binder order and all hypotheses/conclusions retained. Lean Boolean true expresses the HOL predicate and EVERY/MEM is List.all with standard membership equality. Direct membership proof establishes source law; no callback or desired relation assumption. Original fulltypes/zero hypotheses/kernel replays in lab_to_target_list_subset_probe.out."
   }
 ]
