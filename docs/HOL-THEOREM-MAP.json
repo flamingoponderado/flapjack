@@ -74268,5 +74268,86 @@
     "lean_name": "wordAlloc_cases",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only exhaustive input-or-colouring branch factorization, not a separate HOL declaration. Derived from original oracle rejection/success and allocator failure/success without any assumed result validity; used to factor the four source preservation proofs."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "not_not_skip_IMP_Skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "notNotSkipImpSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original not_not_skip_IMP_Skip at source10636, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "MAP_Section_num_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "mapSectionNumFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original MAP_Section_num_filter_skip at source10571, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "filter_skip_extract_labels",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "filterSkipExtractLabels",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original filter_skip_extract_labels at source10578, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_labels_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "getLabelsFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original get_labels_filter_skip at source10608, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "get_code_labels_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "getCodeLabelsFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original get_code_labels_filter_skip at source10588, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_ffi_names_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "findFfiNamesFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original find_ffi_names_filter_skip at source10555, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "asm_fetch_aux_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "asmFetchAuxFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original asm_fetch_aux_filter_skip at source10644, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "IMP_asm_fetch_aux_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "impAsmFetchAuxFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original IMP_asm_fetch_aux_filter_skip at source10688, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "no_share_mem_filter_skip",
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FilterSkip.lean",
+    "lean_name": "noShareMemFilterSkip",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.186): Original no_share_mem_filter_skip at source10706, complete statement and full types freshly queried/captured from original HOL. Every original binder, hypothesis, label/FFI equality and existential fetch conclusion retained over native word-indexed alpha line/sec, actual HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString payloads, fixed byte8/FP64, positive BitVec width with NeZero. Native LabFilter.filterSkip is the executed compiler operation. Non-skip classification retains all payload witnesses; label-set memberships are compared extensionally; FFI collection preserves actual equality/fresh-name order. Both fetch directions construct actual native asmFetchAux PCs using structural membership/non-label equivalence, never assume supplied existential witness. Full fetched-ShareMem exclusion preserves all original operator/register/address/byte/length quantifiers. No target run, simulation, successful compilation, default or restricted carrier premise. These are independent true observational prerequisites of full semantics_compile, not whole compiler correctness."
   }
 ]

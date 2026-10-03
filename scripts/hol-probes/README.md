@@ -6843,3 +6843,14 @@ eight-command non-instrumented sequence, proved=T, and zero hypotheses are
 captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
 registers and order; this equation neither assumes nor proves target execution
 or full Raise correctness.
+### Native skip-filter observations
+
+`lab_to_target_filter_skip_probeScript.sml` freshly captures nine complete
+original declarations from lab_to_targetProofScript10555–10723, their full
+word-indexed variable types, zero hypotheses and kernel proof T (36 rows).
+The native compiler executes this same skip filter. Label sets, extracted
+labels, section ids and FFI ordering are preserved; both fetch implications
+construct actual PCs, and preserve full fetched shared-memory exclusion.
+These supply observational prerequisites of semantics_compile; the whole
+machine/compiler simulation remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_filter_skip_probeScript.sml`.
