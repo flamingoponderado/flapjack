@@ -6753,3 +6753,10 @@ and zero hypotheses. Local theorem lookup is restored after constituent probe
 opens to resolve the original induction theorem in word_to_stackProof. Native
 HandlerTransition retains the original positive word dimension and total EL;
 this slice does not establish full comp_correct Raise or HOL-to-Lean equivalence.
+
+`word_to_stack_raise_stub_false_probe` replays the literal original
+`raise_stub_F` syntax equality and proof (word_to_stackProof74–86). The complete
+eight-command non-instrumented sequence, proved=T, and zero hypotheses are
+captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
+registers and order; this equation neither assumes nor proves target execution
+or full Raise correctness.

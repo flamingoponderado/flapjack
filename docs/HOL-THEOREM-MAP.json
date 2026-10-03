@@ -72141,5 +72141,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.2: full local2687-2796 six original premises n bound/source handler bound/strict adjacent source env sort/source LASTN equation/actual decoder/full stackRelAux. Complete existential ex/payload, target LASTN head+tail, both3 length bounds, absolute Loc l3 l4 and conditional saved-handler Word n2w, cleared source handler with exact env_to_list(fromAList l)(K I), full cleared auxiliary relation and successful original DROP(offset+3) decoder conclusion. All actual target payload/header/run facts derived; no supplied postrelation/success/safety premise. Source/raw/frame word dimension unified by original decoder and relation; positive BitVec with NeZero; actual Option/List/Spt/word_loc carriers preserved. Total original EL keeps unspecified out-of-range behavior, local inhabitation does not select it. Native source-sized helpers derive suffix/absolute offsets/header obligations/unwinding; full original bounds kept even redundant. Source comparison recorded; coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/Stubs.lean",
+    "lean_name": "raiseStubFalse",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "raise_stub_F",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.3: original74-86 entire arbitrary-k equation retained. Actual native raiseStubNative false expands Get Handler, StackSetSize, Skip, StackLoad2, Set Handler, StackLoad1, StackFree3, Raise in identical nested Seq order. Original handler_slots F=3; no instruction omitted, register changed, state/run/success premise or conclusion added. Positive type-indexed word carrier only translation, no maps/real evaluator dependency in this syntax equation. Source comparison recorded; acceptance tracked on bead."
   }
 ]

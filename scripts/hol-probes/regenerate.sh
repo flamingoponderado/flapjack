@@ -6392,3 +6392,7 @@ run_probe word_to_stack_env_identity_probeScript.sml word_to_stack_env_identity_
 run_probe word_to_stack_handler_transition_probeScript.sml word_to_stack_handler_transition_probe.out \
   stack_rel_raise_statement stack_rel_raise_proved stack_rel_raise_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_raise_stub_false_probeScript.sml word_to_stack_raise_stub_false_probe.out \
+  raise_stub_false_statement raise_stub_false_proved raise_stub_false_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

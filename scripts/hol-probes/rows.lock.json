@@ -8822,6 +8822,12 @@
       "sha256": "f3b1b5571015a0b119d0d427215b38ce1669c78e064548855795459e59081ac7"
     },
     {
+      "bytes": 256,
+      "out": "word_to_stack_raise_stub_false_probe.out",
+      "rows": 3,
+      "sha256": "0ab3d219d73a004a49d5831c2d75acfd545ce552a9e1513bc9e10375572ea8ab"
+    },
+    {
       "bytes": 10556,
       "out": "word_to_stack_reg_bound_mono_probe.out",
       "rows": 457,
