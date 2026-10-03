@@ -5,6 +5,10 @@ import Flapjack.Compiler.Backend.ClosLang.Syntax
 import Flapjack.AstHOL.BackendOperators
 import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
+import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
+import Flapjack.RiscV.CorrectnessEncoding.JumpReg
+import Flapjack.RiscV.CorrectnessEncoding.Skip
+import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsShort
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ChunkBitsMsb
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsPattern
@@ -14,9 +18,6 @@ import Flapjack.Compiler.Backend.FlatPattern.Config
 import Flapjack.Compiler.Backend.BackendCommon.Trace
 import Flapjack.NamespaceHOL
 import Flapjack.Compiler.Backend.PresLang.Config
-import Flapjack.Compiler.Backend.WordToWord.Config
-import Flapjack.RiscV.CorrectnessEncoding.Skip
-import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl

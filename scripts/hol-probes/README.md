@@ -7695,3 +7695,16 @@ payloads still give true name presence; nested missing names fail. The executed 
 the same generalized definition used by existing StructInfoHOLExact states,
 with explicit prior payload types at empty-context calls. The separate
 full generic compiled-shape theorem and production inventory remain open.
+
+### Universal native ADDI decoder roundtrip
+
+`CorrectnessEncoding/DecodeAddi.lean` proves the original Decode/Encode
+composition for every five-bit register field and twelve-bit immediate with
+no input premises, through symbolic bit reconstruction. It is untagged
+infrastructure because there is no separate named original HOL declaration
+for this composition. The original `riscv_addi_decode_probeScript.sml` checks
+four ground boundaries: all zero, all ones, sign-bit-only and positive maximum,
+including register zero and register31. These finite oracle rows are regression
+evidence, not exhaustive equivalence; the universal Lean proof and literal
+source comparison are separate obligations. The guard pins the unrestricted
+signature and all four original sentinels.

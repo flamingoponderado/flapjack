@@ -7224,6 +7224,15 @@ run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.
   comp_correct_loop_whole_statement comp_correct_loop_whole_proved comp_correct_loop_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe riscv_addi_decode_probeScript.sml riscv_addi_decode_probe.out \
+  addi_decode_zero addi_decode_all_ones addi_decode_sign_bit addi_decode_positive_max \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_target_jumpReg_probeScript.sml riscv_target_jumpReg_probe.out \
+  riscv_encoder_correct_jumpReg_statement riscv_encoder_correct_jumpReg_types \
+  riscv_encoder_correct_jumpReg_hypotheses riscv_encoder_correct_jumpReg_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe stack_to_lab_no_ret_review_probeScript.sml stack_to_lab_no_ret_review_probe.out \
   no_ret_correct no_ret_correct_types no_ret_correct_hypotheses no_ret_correct_proved stack_regs_type stack_fp_regs_type stack_store_type stack_code_type \
@@ -7247,11 +7256,6 @@ run_probe word_to_stack_chunk_msb_full_probeScript.sml word_to_stack_chunk_msb_f
 run_probe word_to_stack_copy_short_full_probeScript.sml word_to_stack_copy_short_full_probe.out \
   short_full short_hypotheses short_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
-run_probe riscv_target_jumpReg_probeScript.sml riscv_target_jumpReg_probe.out \
-  riscv_encoder_correct_jumpReg_statement riscv_encoder_correct_jumpReg_types \
-  riscv_encoder_correct_jumpReg_hypotheses riscv_encoder_correct_jumpReg_proved \
-  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
-  "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe pres_lang_config_probeScript.sml pres_lang_config_probe.out \
   default_tap_config default_tap_config_types default_tap_config_hypotheses default_tap_config_proved default_tap_config_type tap_config_explore_flag_type tap_config_component_equality \
   "$cake_dir/compiler/backend/presLangScript.sml" "$cake_dir/compiler/backend"
