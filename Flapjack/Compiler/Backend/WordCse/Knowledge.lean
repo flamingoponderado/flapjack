@@ -29,7 +29,7 @@ def emptyData : Knowledge :=
   ⟨.ln, .ln, [], Misc.BalancedMap.empty, Misc.BalancedMap.empty⟩
 
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "keep_data_def"]
-def keepData (canon : Spt Nat) (written : Nat) : Bool :=
+def keepData {α : Type} (canon : Spt α) (written : Nat) : Bool :=
   (sptLookup written canon).isNone
 
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "invalidate_data_def"]

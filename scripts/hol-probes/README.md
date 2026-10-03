@@ -7626,3 +7626,9 @@ Full Call/whole program/compiler correctness remain open.
 ### Signed native immediate reconstruction
 
 `riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+# Polymorphic CSE definition signatures
+
+`word_cse_polymorphic_probeScript.sml` captures the original equations and
+inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
+is arbitrary, not restricted to register numbers. These signatures are review
+and regression evidence, not a HOL-to-Lean equivalence proof.

@@ -82040,7 +82040,7 @@
     "statement_status": "reviewed_exact",
     "lean_name": "keepData",
     "hol_name": "keep_data_def",
-    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines88-91: arbitrary num num_map and register; IS_NONE(lookup written canon) becomes Option.isNone(sptLookup written canon), retaining original sparse-tree recursive key arithmetic. No invariant or comparison premise. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+    "reviewer": "Source comparison against word_cseScript88-91 and word_cse_polymorphic_probe: arbitrary Spt alpha input, numeric written key and IS_NONE lookup; no restriction of the free HOL value carrier."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Knowledge.lean",
@@ -82611,7 +82611,7 @@
     "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
     "hol_name": "map_insert_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:149-154: exact empty and pair-cons equations; tail processed first then sparse insert of head key/value. Arbitrary Spt Nat retained, including malformed trees; duplicate head bindings win as in source. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+    "reviewer": "Source comparison against word_cseScript149-153 and word_cse_polymorphic_probe: arbitrary value type alpha is retained in List(Nat*alpha) and Spt alpha, literal tail-first insertion/head binding precedence; Nat is instantiated only at production callers."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",

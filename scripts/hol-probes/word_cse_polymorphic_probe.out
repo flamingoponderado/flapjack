@@ -1,0 +1,4 @@
+map_insert_statement=⊢ (∀m. map_insert [] m = m) ∧ ∀y xs x m. map_insert ((x,y)::xs) m = insert x y (map_insert xs m)
+map_insert_type=:(num # α) list -> α sptree$num_map -> α sptree$num_map
+keep_data_statement=⊢ ∀canon write_to_reg. keep_data canon write_to_reg ⇔ IS_NONE (lookup write_to_reg canon)
+keep_data_type=:α sptree$num_map -> num -> bool
