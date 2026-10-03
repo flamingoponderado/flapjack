@@ -6137,3 +6137,7 @@ run_probe word_to_stack_comp_clock_probeScript.sml word_to_stack_comp_clock_prob
 run_probe word_to_stack_location_labels_probeScript.sml word_to_stack_location_labels_probe.out \
   state_rel_code_domain_statement state_rel_code_domain_proved state_rel_code_domain_hypotheses get_labels_wStackLoad_statement get_labels_wStackLoad_proved get_labels_wStackLoad_hypotheses loc_check_SUBSET_statement loc_check_SUBSET_proved loc_check_SUBSET_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_flat_probeScript.sml word_to_stack_comp_flat_probe.out \
+  comp_correct_assign_statement comp_correct_assign_proved comp_correct_assign_hypotheses comp_correct_store_statement comp_correct_store_proved comp_correct_store_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
