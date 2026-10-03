@@ -1,3 +1,5 @@
+import Flapjack.Test.LabToTargetInitializerFullStateRelParity
+import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3SetLessParity
 import Flapjack.Test.L3ImmediateALUParity
 import Flapjack.Test.L3RegisterALUParity
