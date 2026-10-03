@@ -659,6 +659,7 @@ import Flapjack.Compiler.Backend.StackProps.RegisterBounds
 import Flapjack.Compiler.Backend.WordCse.Knowledge
 import Flapjack.Compiler.Backend.WordCse.RegisterData
 import Flapjack.Compiler.Backend.WordCse.ProductionKnowledge
+import Flapjack.Compiler.Backend.WordCse.ProductionFactInsert
 import Flapjack.Compiler.Backend.WordCse.ProductionRegisterData
 import Flapjack.Compiler.Backend.WordCse.CanonicalMove
 import Flapjack.Compiler.Backend.WordCse.CanonicalArith
