@@ -6734,3 +6734,15 @@ The same-module native composition derives actual initOk from full original
 initializer guards with concrete witnesses; it receives no initialized relation
 or desired machine run. Full machine/compile semantics remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initial_entry_contracts_probeScript.sml`.
+
+### Original finite-list prefix-chain prerequisites
+
+`lprefix_lub_finite_prefix_chain_probeScript.sml` loads the original HOL
+lprefix_lub theory and captures the complete generic `prefix_chain_def`,
+`prefix_chain_lprefix_chain` and `prefix_chain_FILTER` statements, all variable
+types, zero hypotheses and kernel proof T (twelve rows). Native List and
+predicate-backed sets preserve all members, and both image predicates retain
+their existential witnesses. This independently supplies the lazy-list image
+chain used by original machine_sem_EQ_sem; full compiler simulation and machine
+semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.

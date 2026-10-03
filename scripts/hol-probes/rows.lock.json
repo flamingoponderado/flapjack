@@ -3092,6 +3092,12 @@
       "sha256": "f00192c0330218ec1ff363d1f9674ba0290808edc3571b26ed7d560d0107251e"
     },
     {
+      "bytes": 806,
+      "out": "lprefix_lub_finite_prefix_chain_probe.out",
+      "rows": 12,
+      "sha256": "b2584be9ceece417d80184d5a2fc47de435088c2df4712e632dc3da2d34b343d"
+    },
+    {
       "bytes": 222,
       "out": "lprefix_lub_llist_shorter_probe.out",
       "rows": 8,
