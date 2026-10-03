@@ -88154,6 +88154,24 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_rawcallProofScript.sml:956-975. Statement as captured by the stack_to_lab_good_code_labels probe: ∀i p k. stack_get_handler_labels k (comp i p) = stack_get_handler_labels k p ∧ stack_get_handler_labels k (comp_top i p) = stack_get_handler_labels k p, over the reviewed StackRawCall.comp/compTop and StackProps.stackGetHandlerLabels; 'a prog is HolProg width with [NeZero width]. No premise."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_asm_name_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/AsmNames.lean",
+    "lean_name": "stackAsmNameComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_rawcallProofScript.sml:838-860. Statement as captured by the stack_rawcall_asm_names probe: ∀i p. ((stack_asm_name c (comp i p) ⇔ stack_asm_name c p) ∧ (… comp_top …)) ∧ (stack_asm_remove c (comp i p) ⇔ …) ∧ (… comp_top …); HOL bool equations are Lean Prop equalities over the reviewed StackProps.stackAsmName/stackAsmRemove and StackRawCall.comp/compTop; c : 'a asm_config shares the program width (probe types), so AsmConfigExact width; free c implicit. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_alloc_stack_asm_convs",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/AsmNames.lean",
+    "lean_name": "stackAllocStackAsmConvs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original stack_rawcallProofScript.sml:862-869 (the stack_rawcall theorem of this name, not stack_allocProof's). Statement as captured by the probe: (EVERY (λ(n,p). stack_asm_name c p) (compile prog) ⇔ EVERY (λ(n,p). stack_asm_name c p) prog) ∧ (the same for stack_asm_remove); EVERY (λ(n,p). P p) l is ∀ np ∈ l, P np.2 and ⇔ is Prop equality; compile is the reviewed StackRawCall.compile; c : AsmConfigExact width as in the probe types; free c prog implicit. No added premise."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/DataInvUpdates.lean",
     "lean_name": "all_distinct_map_fst_filter",
     "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",

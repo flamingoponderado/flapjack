@@ -763,6 +763,7 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
 import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
 import Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
