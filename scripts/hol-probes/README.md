@@ -6451,3 +6451,13 @@ actual oracle, label trees and FFI names. This proof-script contract neither
 replaces an executable compiler nor establishes initializer simulation or
 HOL-to-Lean equivalence. Selector:
 `HOL_PROBE_ONLY=lab_to_target_compiler_oracle_ok_probeScript.sml`.
+
+The machine-configuration initializer contract probe captures the full original
+`mc_conf_ok_def` at9602, its independent state/projection carriers and zero
+hypotheses. Five kernel observations check all eight clauses, actual encoder
+and target validity projections, and rejection of arbitrary configurations at
+positive but unsupported dimensions8 and128. Native generic consumers retain
+the original dimension guard separately from intrinsic word positivity. The
+encoder relation inherits the existing FP real-rendering assumption in
+SOUNDNESS item8; no initializer or machine simulation closure is inferred.
+Selector: `HOL_PROBE_ONLY=lab_to_target_mc_conf_ok_probeScript.sml`.

@@ -69218,5 +69218,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison9588-9598 and original complete fulltype0hyp: all five arguments retained, actual concrete word-free Config oracle and independent natural-valued nested Spt initial labels, arbitrary positive source word width, fixed word8 code bytes and exact HolFfiName list. Every index keeps good_code and no_share_mem_inst, index zero keeps labels/pos/SOME ffi-name equalities. Imported reviewed goodCode generic label-value carrier is genuinely instantiated at Nat by the original concrete Config labels, not arbitrarily specialized. Pair destructuring and unused zero code component preserved; no extra successful compiler/desired target state premise or default/hold change. Fresh original definition and four full generic kernel consumers are compared with native generic consumers. Full151 initializer simulation remains open; this source comparison does not close that theorem. This is a proof-script contract, not an executed compiler replacement or cross-language equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitializationContracts.lean",
+    "lean_name": "mcConfOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "mc_conf_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison9602-9614 and original full typed definition0hyp: arbitrary positive word dimension and independent native MachineConfig state/projection types retained. Complete eight conjuncts: original good_dimindex32-or64, actual full encoderCorrect simulation, all four pointer/length register validities, exact source Option link register NONE0/SOME n validity, full encOk. Reviewed Boolean asmRegOkExact validity enters Prop as equality to true, preserving both register bound and avoided-register membership; no new register guards, default or target evaluation premise. Intrinsic NeZero does not replace original dimension clause. Fresh original fullbody/types0hyp, full iff, encoder/target projections and universal dimension8/128 rejection allT, with corresponding generic native consumers. Inherited reals_as_rational_cuts through encoderCorrect/asmStep and FP instruction semantics, docs/SOUNDNESS.md item8; definition uses no real rendering itself. Full151 initializer remains open; no whole machine correctness or cross-language equivalence claim."
   }
 ]

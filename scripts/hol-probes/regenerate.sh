@@ -6072,3 +6072,8 @@ run_probe lab_to_target_compiler_oracle_ok_probeScript.sml lab_to_target_compile
   compiler_oracle_ok_def compiler_oracle_ok_def_types compiler_oracle_ok_def_hypotheses \
   full_contract all_good_code all_no_share_mem zero_config \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_mc_conf_ok_probeScript.sml lab_to_target_mc_conf_ok_probe.out \
+  mc_conf_ok_def mc_conf_ok_def_types mc_conf_ok_def_hypotheses \
+  full_contract encoder_correct target_ok dimension8_rejected dimension128_rejected \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
