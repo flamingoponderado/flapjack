@@ -21,12 +21,18 @@ section Shape
 
 variable {width : Nat} [NeZero width]
 
+/-- The leaf statements `word_cse` may replace by a move (Flapjack
+    infrastructure). -/
+def CseLeaf : WordLangProgHOL (BitVec width) → Prop
+  | .inst _ | .get _ _ | .set _ _ | .opCurrHeap _ _ _ | .locValue _ _ => True
+  | _ => False
+
 /-- The output shape of `word_cse`: each instruction-level program is kept or
     replaced by a move, and structure is preserved (Flapjack infrastructure for
     the HOL convention proofs). -/
 inductive CseOut : WordLangProgHOL (BitVec width) → WordLangProgHOL (BitVec width) → Prop
   | refl (p) : CseOut p p
-  | move (p) (pri : Nat) (rs : List (Nat × Nat)) : CseOut p (.move pri rs)
+  | move (p) (pri : Nat) (rs : List (Nat × Nat)) : CseLeaf p → CseOut p (.move pri rs)
   | seq (a b a' b') : CseOut a a' → CseOut b b' → CseOut (.seq a b) (.seq a' b')
   | ite (cmp r ri a b a' b') : CseOut a a' → CseOut b b' →
       CseOut (.ite cmp r ri a b) (.ite cmp r ri a' b')
@@ -44,15 +50,15 @@ theorem addToLoadAux_out (data : Knowledge) (r : Nat) (i : List Nat) (p : WordLa
   split <;> (try split) <;> simp
 
 omit [NeZero width] in
-theorem cseOut_of_or (p q : WordLangProgHOL (BitVec width))
+theorem cseOut_of_or (p q : WordLangProgHOL (BitVec width)) (hl : CseLeaf p)
     (h : q = p ∨ ∃ pri rs, q = .move pri rs) : CseOut p q := by
   rcases h with rfl | ⟨pri, rs, rfl⟩
   · exact .refl _
-  · exact .move _ pri rs
+  · exact .move _ pri rs hl
 
 theorem wordCseInst_out (data : Knowledge) (j : HolInst width) :
     CseOut (.inst j.toWordLangInst) (wordCseInst data j).2 := by
-  apply cseOut_of_or
+  apply cseOut_of_or _ _ (by trivial)
   cases j with
   | skip => simp [wordCseInst]
   | const r w =>
@@ -85,11 +91,11 @@ theorem wordCse_out : ∀ (p : WordLangProgHOL (BitVec width)) (data : Knowledge
       rwa [HolInst.to_of] at this
   | .get r x, data => by
       simp only [wordCse, getClause]
-      apply cseOut_of_or
+      apply cseOut_of_or _ _ (by trivial)
       split <;> split <;> simp
   | .set x e, data => by
       simp only [wordCse, setClause]
-      apply cseOut_of_or
+      apply cseOut_of_or _ _ (by trivial)
       split
       · simp
       · split
@@ -105,13 +111,13 @@ theorem wordCse_out : ∀ (p : WordLangProgHOL (BitVec width)) (data : Knowledge
       exact .ite _ _ _ _ _ _ _ (wordCse_out p1 data) (wordCse_out p2 data)
   | .opCurrHeap b r1 r2, data => by
       simp only [wordCse]
-      apply cseOut_of_or
+      apply cseOut_of_or _ _ (by trivial)
       split
       · simp
       · exact addToDataAux_out _ _ _ _
   | .locValue r l, data => by
       simp only [wordCse]
-      exact cseOut_of_or _ _ (addToDataAux_out _ _ _ _)
+      exact cseOut_of_or _ _ (by trivial) (addToDataAux_out _ _ _ _)
   | .skip, _ => .refl _
   | .store _ _, _ => .refl _
   | .assign _ _, _ => .refl _
