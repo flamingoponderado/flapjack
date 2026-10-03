@@ -6597,3 +6597,7 @@ run_probe pan_structs_convert_eshapes_probeScript.sml pan_structs_convert_eshape
 run_probe pan_structs_shape_field_polymorphism_probeScript.sml pan_structs_shape_field_polymorphism_probe.out \
   compile_shape_definition compile_shape_type compile_shapes_type compile_shape_hypotheses compile_shapes_eq_map_statement compile_shapes_eq_map_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_convert_code_probeScript.sml pan_structs_convert_code_probe.out \
+  convert_code_definition convert_code_type convert_code_hypotheses \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

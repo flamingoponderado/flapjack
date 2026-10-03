@@ -7017,3 +7017,7 @@ context, map and key.
 `pan_structs_shape_field_polymorphism_probe` captures the original full mutual
 shape definition and polymorphic field-name types, and replays the unchanged whole
 `compile_shapes_eq_map` proof with its free context universally closed.
+
+`pan_structs_convert_code_probe` captures the complete original kernel definition,
+polymorphic map-key/program-carrier type and zero hypotheses. Parameters keep
+source names; body compilation scopes original parameters rather than compiled ones.
