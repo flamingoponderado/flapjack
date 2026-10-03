@@ -1,0 +1,3 @@
+evaluate_stack_move_clock_statement=∀clk a b c d t. evaluate (stack_move a b c d Skip,t with clock := clk) = (FST (evaluate (stack_move a b c d Skip,t)),SND (evaluate (stack_move a b c d Skip,t)) with clock := clk)
+evaluate_stack_move_clock_proved=T
+evaluate_stack_move_clock_hypotheses=0

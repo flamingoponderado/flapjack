@@ -75292,5 +75292,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 (source comparison, 2026-10-03; bead flapjack-pxn.18.5.15.10.31): Entire original machine_sem_EQ_sem9364-9526 fresh full type/statement/0hyp/kernel T queried and captured. All four original mc_conf/p/ms/s1 binders preserved: shared positive word width with NeZero, arbitrary independent machine S/projection Q/FFI F Type, concrete source Config. Exact three premises encoder_correct mc.target, original init_ok pair(mc,p), source semantics!=Fail, and exact singleton behavior predicate equality for original machine_sem and source semantics. Canonical full target/source evaluators and whole MachineConfig/State/ffi/behavior/lazy-list carriers retained. Full compileCorrect7528 supplies actual target clock k+extra and matching full source result/FFI for every unrestricted source clock; real init_ok witnesses, whole stateRelClock and oracleTie_clock discharge its premises. Unit instantiates only the original unused existential t2 type inside compileCorrect application, no public binder or guard omitted. Source nonfailure excludes every source Error. Termination preserves chosen source halt/outcome/exact event list and actual existential target run; whole completed target clock uniqueness excludes other outcomes/divergence/errors. Nontermination proves every source and target clock TimeOut via actual compile simulation and target clock stability. Both actual all-clock event families form genuine prefix chains; matching compiled run gives source-to-target inclusion, target clock-prefix law gives reverse cofinality, and complete lazy-list LUB uniqueness establishes exact divergence trace equality. No clock bound, supplied simulation/target run, desired result, nonempty image, event equality/prefix or LUB premise. Canonical total target EL/HD convention is unchanged; no new provenance allowlist/default policy or unsupported LAST nil assumption. Inherits reviewed reals_as_rational_cuts through both evaluators/FP updates (SOUNDNESS item8), no stronger real-number assurance or cross-language equivalence claim. This is full original machine theorem over the reviewed native model, not whole compiled-program composition."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CallReturnStackMoveClock.lean",
+    "lean_name": "evaluateStackMoveClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_stack_move_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 child9.4.2.1 original local Q.prove5349-5359, no-handler use8339 and handler9172: full arbitrary a,b,c,d native target and original free replacement clk explicitly quantified; complete evaluation equality under clock update returns unchanged result and entire original poststate with only clock replaced. Literal stack_move n start offset register Skip recursion unchanged. No stack-enabled, bounds, successful run, result or target-postrelation premise; original all failures retained. Native ClockFree skip/load/store and Seq cover disabled stack, invalid access, missing register, error/none/nonNone/fixClock; structural induction composes exact program. Actual imported StackSemStateFiniteExact sole owner has canonical regs/fpRegs/store and local genuine broad/finite roundtrip; code native Spt and all other fields unchanged; positive BitVec width NeZero, C/F Type0 retained. Inherits reals_as_rational_cuts evaluator closure, no numerical FP correspondence claim. Original unchanged local Q.prove proof replay and original SIMP_RULE plus GEN_ALL freeclk captures full closed statement/T/hyp0. Source comparison recorded; coordinator acceptance on bead, full returningCall remains open. Proof-only no executed compiler change."
   }
 ]

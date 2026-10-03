@@ -6550,3 +6550,6 @@ run_probe lab_filter_skip_runs_probeScript.sml lab_filter_skip_runs_probe.out \
 run_probe lab_to_target_machine_sem_eq_sem_probeScript.sml lab_to_target_machine_sem_eq_sem_probe.out \
   machine_sem_EQ_sem machine_sem_EQ_sem_types machine_sem_EQ_sem_hypotheses machine_sem_EQ_sem_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_stack_move_clock_probeScript.sml word_to_stack_stack_move_clock_probe.out \
+  evaluate_stack_move_clock_statement evaluate_stack_move_clock_proved evaluate_stack_move_clock_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
