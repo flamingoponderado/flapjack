@@ -6310,3 +6310,4 @@ offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
 and executed deltas; the complete accepted-instruction producer relation uses
 the real instruction encoder, retaining every ordered operand. No whole
 allocator or source-program producer correctness is claimed.
+`stack_code_bitmaps_inst_probe.out` freshly captures the complete original evaluate_code_bitmaps theorem, zero open hypotheses, and its native Inst specialization. The Lean case retains all three existential conjuncts and derives count zero on primitive success and failure; inherited rational-cut limits remain, with no numeric byte-alignment equivalence claim.

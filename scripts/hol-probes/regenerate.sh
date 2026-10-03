@@ -5896,3 +5896,7 @@ run_probe misc_find_index_distinct_probeScript.sml misc_find_index_distinct_prob
   first last offset large_offset missing duplicate_guard empty actual_extracted_pcs \
   "$cake_dir/misc/miscScript.sml" \
   "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_inst_probeScript.sml stack_code_bitmaps_inst_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_inst_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
