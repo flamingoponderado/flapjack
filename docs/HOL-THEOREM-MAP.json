@@ -74224,5 +74224,49 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .27.1.1.6.3: original74-86 entire arbitrary-k equation retained. Actual native raiseStubNative false expands Get Handler, StackSetSize, Skip, StackLoad2, Set Handler, StackLoad1, StackFree3, Raise in identical nested Seq order. Original handler_slots F=3; no instruction omitted, register changed, state/run/success premise or conclusion added. Positive type-indexed word carrier only translation, no maps/real evaluator dependency in this syntax equation. Source comparison recorded; acceptance tracked on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_alloc_lab_pres",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "wordAlloc_labPres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: source2791-2921 retains unconditional extract_labels prog = extract_labels allocated; all fc/config/algorithm/register-count/program/optional-colouring parameters retained, original native wordAlloc/oracle branches and reviewed ApplyColour carriers. BitVec width with NeZero is the sole word translation. No target evaluation, output validity or allocation success premise; private factoring proves input-or-colouring exhaustiveness including oracle rejection and allocator failure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_alloc_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "wordAlloc_notCreatedSubprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: source2791-2921 retains arbitrary P and original not_created_subprogs implication; all fc/config/algorithm/register-count/program/optional-colouring parameters retained, original native wordAlloc/oracle branches and reviewed ApplyColour carriers. BitVec width with NeZero is the sole word translation. No target evaluation, output validity or allocation success premise; private factoring proves input-or-colouring exhaustiveness including oracle rejection and allocator failure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_get_code_labels_word_alloc",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "getCodeLabels_wordAlloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: source2791-2921 retains unconditional word_get_code_labels allocated = word_get_code_labels prog; all fc/config/algorithm/register-count/program/optional-colouring parameters retained, original native wordAlloc/oracle branches and reviewed ApplyColour carriers. BitVec width with NeZero is the sole word translation. No target evaluation, output validity or allocation success premise; private factoring proves input-or-colouring exhaustiveness including oracle rejection and allocator failure."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "word_good_handlers_word_alloc",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "goodHandlers_wordAlloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: source2791-2921 retains arbitrary n and original word_good_handlers allocated iff input; all fc/config/algorithm/register-count/program/optional-colouring parameters retained, original native wordAlloc/oracle branches and reviewed ApplyColour carriers. BitVec width with NeZero is the sole word translation. No target evaluation, output validity or allocation success premise; private factoring proves input-or-colouring exhaustiveness including oracle rejection and allocator failure."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordAlloc.lean",
+    "lean_name": "wordAlloc_cases",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only exhaustive input-or-colouring branch factorization, not a separate HOL declaration. Derived from original oracle rejection/success and allocator failure/success without any assumed result validity; used to factor the four source preservation proofs."
   }
 ]
