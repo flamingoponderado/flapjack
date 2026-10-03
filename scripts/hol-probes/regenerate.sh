@@ -6962,3 +6962,7 @@ run_probe stack_remove_init_code_thm_probeScript.sml stack_remove_init_code_thm_
 run_probe pan_structs_program_dec_probeScript.sml pan_structs_program_dec_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_dec_statement compile_correct_dec_proved compile_correct_full_types compile_correct_dec_types evaluate_ind_statement evaluate_ind_proved evaluate_ind_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_slice_probeScript.sml riscv_target_slice_probe.out \
+  slice_statement slice_types slice_hypotheses slice_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"

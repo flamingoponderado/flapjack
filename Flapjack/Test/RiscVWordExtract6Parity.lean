@@ -54,6 +54,12 @@ example (w : BitVec 64) (n : Nat) (h : n < 64) :
     ((w <<< (64 - n)) ||| (w >>> n)) = w.rotateRight n :=
   TargetProof.ror w n h
 
+example (c : BitVec 64) :
+    ((BitVec.extractLsb' 0 32 c).getLsbD 11 = c.getLsbD 11) ∧
+    ((BitVec.extractLsb' 32 32 c).getLsbD 11 = c.getLsbD 43) ∧
+    ((~~~(BitVec.extractLsb' 32 32 c)).getLsbD 11 = !(c.getLsbD 43)) :=
+  TargetProof.slice_bit_eleven c
+
 #guard zeroGuard
 #guard maxInRangeGuard
 #guard zeroGuard && maxInRangeGuard

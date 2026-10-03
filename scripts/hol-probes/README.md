@@ -7410,3 +7410,12 @@ types and closed kernel proofs. The Lean piece retains all ten premises/seven
 conclusions and precisely the initializer-SOME/declared-shape guarded body IH
 at the actual updated local state. Source invariants supply body preconditions;
 restoration handles both absent and shadowed caller bindings.
+
+## Native encoder full slice conjunction
+
+`riscv_target_slice_probeScript.sml` replays the literal original `lem6`
+term with its original `blastLib.BBLAST_PROVE` construction. The four
+rows retain the universally closed three-conjunct statement, arbitrary
+word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
+BitVec64/32 carriers and proves all three equations without premises.
+This is regression evidence; it does not prove HOL-to-Lean equivalence.
