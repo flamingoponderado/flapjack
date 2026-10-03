@@ -142,4 +142,27 @@ theorem simulationCons {width : Nat} [NeZero width] {C F : Type}
   · have reconstruction := MoveAuxReconstruction.sourceStateReconstruction destination sourceReg moves env source value read guards.2.2.2.2.2.2
     cases destination <;> simpa only [reconstruction] using tailRelation
 
+/-- Complete original list simulation3130–3285. The structural induction
+hypothesis is discharged; all original guards and conclusions are retained. -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_wMoveAux_seqsem"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateWMoveAuxSeqsem {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat) (lens : List Nat)
+    (moves : List (Option Nat × Option Nat))
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (env : Option Nat → Option (WordLocW width)) :
+    Simulation ac k f frame lens moves source target env := by
+  induction moves generalizing source target env with
+  | nil =>
+    intro guards
+    refine ⟨target,(MoveAux.wMoveAuxThm (.inl 0,.inl 0) [] (k,f,frame) target).1,?_,rfl,rfl⟩
+    simpa [MoveAuxReconstruction.sourcePost,MoveAuxReconstruction.destinations,
+      WordSemStateFiniteExact.setVars,LoopSemStateFiniteExact.sptAlistInsert] using guards.1
+  | cons move moves ih =>
+    rcases move with ⟨destination,sourceReg⟩
+    exact simulationCons ac k f frame lens destination sourceReg moves ih source target env
+
 end Flapjack.WordToStackProofs.MoveAuxSimulation
