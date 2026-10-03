@@ -7886,10 +7886,10 @@
       "sha256": "aeea4502ca09f79e85e30a969b27fef9ebd4ac6f2e742efadab6a0d2f9e83370"
     },
     {
-      "bytes": 1278,
+      "bytes": 3651,
       "out": "stack_to_lab_flatten_correct_probe.out",
-      "rows": 1,
-      "sha256": "33635d11d62c9a96af079099a169b66f375d06d6cea46d22e9626debd5142052"
+      "rows": 3,
+      "sha256": "11fa19aaf5bfabe95a03d32baabe25989afd6f98e1c8993671b1282001bb9c29"
     },
     {
       "bytes": 3685,
@@ -7910,10 +7910,10 @@
       "sha256": "54a79a9880ec84098f8719f8bff7c2e57ec163f7cda13f55a2118269c2d81382"
     },
     {
-      "bytes": 1360,
+      "bytes": 4813,
       "out": "stack_to_lab_flatten_semantics_probe.out",
-      "rows": 3,
-      "sha256": "81b4941a82f19709ead7f0b26883e36be236bee97a28e8545db71aed534ec77f"
+      "rows": 9,
+      "sha256": "2a307488fcb402d9a2e506de6e82f770a8fc77d1d17c44ba94b90fa47b04c2f8"
     },
     {
       "bytes": 938,
@@ -7928,10 +7928,10 @@
       "sha256": "ee0034c1d72ca0ccbd1a65120490d1f888c719f9e6ca557152414552a2479ac7"
     },
     {
-      "bytes": 3348,
+      "bytes": 10522,
       "out": "stack_to_lab_make_init_probe.out",
-      "rows": 6,
-      "sha256": "16a81b3c424c8f49c16739d9744869d04a66b2c4d07f9f1c1e5ac1e13cba0a52"
+      "rows": 18,
+      "sha256": "b9c50a63e890b2e617ba1a77d21f17cf4fd93f9180db391fd7616a3fb9950303"
     },
     {
       "bytes": 7335,
