@@ -8990,6 +8990,12 @@
       "sha256": "e8dd4f6cc42bb9903d50e1cb8f3936240726d3c848cdffcb86780a59b8b2f9a9"
     },
     {
+      "bytes": 1240,
+      "out": "word_cse_intersection_acc_probe.out",
+      "rows": 5,
+      "sha256": "6836be66cff0b9632756ea921cf30d91c6099a5d0f2e4ca550b47d7521636343"
+    },
+    {
       "bytes": 24945,
       "out": "word_cse_list_order_probe.out",
       "rows": 212,

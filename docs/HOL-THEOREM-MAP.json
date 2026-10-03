@@ -85582,5 +85582,24 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL inst_const (wordPropsScript.sml:935-938). All 2 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Statement unchanged from the earlier untagged kernel prerequisite; its old caveat is superseded now that inst_const_full is accepted with the inherited reals_as_rational_cuts marker. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemInstConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the constant closure computed by the exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/IntersectionAccumulator.lean",
+    "lean_name": "bmInterEqAccThm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "bm_inter_eq_acc_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.Misc.BalancedMap.toFmap"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-sola-cse-intersection-acc-semantics): HOL bm_inter_eq_acc_thm (word_cseProof:576-584). Arbitrary payload alpha (with the DecidableEq that the tagged bmInterEqAcc needs for HOL's equality test) and native balanced maps m2 m1 acc in HOL order. The premise is exactly the three invariant listCmp facts as one conjunction. The conclusion is the output invariant together with the full equation, for every semantic key set ks : Set (List Nat) (HOL num list -> bool), of FLOOKUP (to_fmap listCmp ...) as the canonical lookup of the reviewed producer toFmap. It keeps the NONE/SOME case split and the m2 equality test with its fallback to the accumulator; keys are not narrowed to keySet images and there is no output-lookup or successful-run premise. fmap_as_finite_support_result_observations names only the producer toFmap (insertThm/lookupThm precedent). Proof follows HOL's induction on m1, generalising acc, using insertThm, lookupThm, invariantEq and goodCmpListCmp. Kernel-checked with standard axioms only. The word_cse_intersection_acc probe captures the statement (0 hypotheses, typed)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/IntersectionAccumulator.lean",
+    "lean_name": "lookupBmInterEq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "lookup_bm_inter_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-sola-cse-intersection-lookup): HOL lookup_bm_inter_eq (word_cseProof:621-638). Arbitrary payload alpha, native maps m1 m2, key k : List Nat and value v, in HOL order. The sole premise is invariant listCmp m1 and invariant listCmp m2; the conclusion is the iff between lookup listCmp k (bm_inter_eq m1 m2) = SOME v and both input lookups being SOME v. There is no output-relation or run assumption and no finite-map carrier in the statement. The proof, as in HOL, applies bm_inter_eq_acc_thm with the empty accumulator and lookup_thm. Kernel-checked; the word_cse_intersection_acc probe captures the statement (0 hypotheses)."
   }
 ]
