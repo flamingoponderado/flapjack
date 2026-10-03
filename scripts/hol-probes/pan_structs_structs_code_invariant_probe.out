@@ -1,0 +1,4 @@
+evaluate_structs_code_inv_statement=∀s' s res p. evaluate (p,s) = (res,s') ⇒ s'.structs = s.structs ∧ s'.code = s.code
+evaluate_structs_code_inv_types=s'::(α, β) state;s::(α, β) state;res::α result option;p::α panLang$prog
+evaluate_structs_code_inv_hypotheses=0
+evaluate_structs_code_inv_proved=T
