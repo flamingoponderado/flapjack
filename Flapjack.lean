@@ -2130,6 +2130,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstructionVali
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.PrimitiveInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ShareInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.AllocationInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
