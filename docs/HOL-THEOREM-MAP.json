@@ -79182,5 +79182,15 @@
     "hol_name": "riscv_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source comparison2026-10-03 riscv_targetScript277-304: whole16-field record over accepted exact AsmConfigExact64/HolAsm64/List(BitVec8), actual full native riscvEnc field, fixed signed word64 offsets and strict Sub lower bound retained. ISA RISC_V/reg32/avoid0,2,3,4,31/fp0/link1/twoRegfalse/endianfalse/alignment2 unchanged; all six offset pairs and every valid_imm input retained. Source numeric min/max ML evaluations compared to original signed bit patterns. Fresh original complete record equation/type/hyp0 and full function encode=riscv_enc proof,78all-op immediate-boundary observations kernel replayed; no successful-pass/target-run premise or carrier restrictions. Finite regressions are not universal cross-language equivalence. Actual compiler emitted-byte route remains independently tracked on .1.3.2; legacy AsmConfig check carrier stays untagged."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_skip_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/Semantics.lean",
+    "lean_name": "filterSkipSemantics",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.10): Full original1154 forall s t, pc=0 and BOTH nonfailed conjuncts and existential sourceCompile record equality plus target compiler/filterSkip clause imply whole native semantics equality. Original code and compile-oracle transformations, arbitrary compiler configuration and FFI state, all state fields and duplicate nonfailed guard retained exactly; lambda/product-projection oracle notation is source pair-map composition, no behavioral difference. Complete native semantics equality derives from full original state_rel_IMP_sem_EQ_sem1039 and actual adjustPc zero equation; no additional success, target execution, semantic equality or oracle/compiler premise. Positive-width words_as_type_indexed_bitvec is sole carrier translation, fixed bytes unchanged. Fresh original full1154 statement/type/hyp0/kernel capture retains both original guards. Native semantics inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. make_init_filter_skip10540 and full compiler composition remain open."
   }
 ]

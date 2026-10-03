@@ -7261,3 +7261,5 @@ projections, full encoder-field equality and all policy observations.
 The legacy production/check configuration stays explicitly untagged; actual
 emitted-byte routing remains a separate blocking bead. These finite regressions
 and source-reviewed record equations are not universal HOL-to-Lean equivalence.
+
+`lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.
