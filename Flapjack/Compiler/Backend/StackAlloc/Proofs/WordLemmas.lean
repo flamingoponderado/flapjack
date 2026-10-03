@@ -395,4 +395,27 @@ theorem good_dimindex_byte_aligned_eq {width : Nat} [NeZero width] {w : BitVec w
     simp at this ⊢
     omega
 
+/-- HOL `word_bits h l w` (`(h -- l) w`): bits `l .. MIN h (dimindex - 1)` of `w`,
+shifted down to position 0. Flapjack infrastructure (HOL `wordsTheory`, outside
+`cakeml/`); `gcWordBits h 0 = gcWordBitsLow h`. -/
+def gcWordBits {width : Nat} (h l : Nat) (w : BitVec width) : BitVec width :=
+  BitVec.ofNat width ((w.toNat / 2 ^ l) % 2 ^ (h + 1 - l))
+
+/-- Exact HOL `select_eq_select_0` (`stack_allocProofScript.sml:282-286`):
+`k <= n ==> (n -- k) w = (n - k -- 0) (w >>> k)`. -/
+@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "select_eq_select_0"
+  (words_as_type_indexed_bitvec)]
+theorem select_eq_select_0 {width : Nat} [NeZero width] {k n : Nat} {w : BitVec width} :
+    k ≤ n → gcWordBits n k w = gcWordBitsLow (n - k) (w >>> k) := by
+  intro h
+  rw [gcWordBits, gcWordBitsLow, BitVec.toNat_ushiftRight, Nat.shiftRight_eq_div_pow,
+    show n + 1 - k = n - k + 1 by omega]
+
+/-- Exact HOL `lt_dimindex_MOD_dimword` (`stack_allocProofScript.sml:364-370`). -/
+@[hol "cakeml/compiler/backend/proofs/stack_allocProofScript.sml" "lt_dimindex_MOD_dimword"
+  (word_dimension_as_width := width)]
+theorem lt_dimindex_MOD_dimword (width : Nat) [NeZero width] {n : Nat} :
+    n < width → n % 2 ^ width = n :=
+  fun h => Nat.mod_eq_of_lt (Nat.lt_trans h Nat.lt_two_pow_self)
+
 end Flapjack.Compiler.Backend.StackAlloc
