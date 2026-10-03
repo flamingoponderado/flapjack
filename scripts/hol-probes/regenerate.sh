@@ -6028,3 +6028,8 @@ run_probe lab_to_target_mmio_classification_probeScript.sml lab_to_target_mmio_c
 run_probe stack_code_bitmaps_callreturn_probeScript.sml stack_code_bitmaps_callreturn_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_callreturn_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_ffi_entry_exclusion_probeScript.sml lab_to_target_ffi_entry_exclusion_probe.out \
+  asm_fetch_NOT_ffi_entry_pcs asm_fetch_NOT_ffi_entry_pcs_types asm_fetch_NOT_ffi_entry_pcs_hypotheses \
+  first wrap next next_last shift_wrap shift shift_next byte_bound_guard fetch_guard \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

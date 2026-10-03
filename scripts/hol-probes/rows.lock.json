@@ -1850,6 +1850,12 @@
       "sha256": "dde891b348687f4e3e6a2651eb5d837bbda4fe19684f0f03b2705ff916e286fc"
     },
     {
+      "bytes": 1975,
+      "out": "lab_to_target_ffi_entry_exclusion_probe.out",
+      "rows": 12,
+      "sha256": "bb6c0c13b4412c765d1a8ac584906a8b8932ca4380a63701dcf86fbca4d1cb50"
+    },
+    {
       "bytes": 1175,
       "out": "lab_to_target_good_code_probe.out",
       "rows": 17,

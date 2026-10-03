@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.Misc.FindIndex.Membership
