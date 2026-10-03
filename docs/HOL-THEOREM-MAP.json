@@ -76935,5 +76935,55 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 WIP): Genuine original669 control branch: JumpReg word-valued operand failure. Retains full s1/t1/res/s2 source evaluation/stateRel/nonfailed and existential actual target-clock execution/result/FFI conclusions, exactly original instruction/operand case guards, and only the actual successful source recursive successor IH guarded by the source lookup. Native full NONE/SOME lemmas derive target lookup and existential original PC, skipped count from asmFetchAuxEq2; successor stateRel derived rather than supplied. All result constructors retained; no target run/desired postrelation/success assumption. Positive-width words translation only. Fresh complete original669 source capture/type/zero hypotheses/kernel reproof; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. This does not complete whole control group: LocValue/JumpCmp/Call and full assembler remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectLocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: LocValue: missing label and successful register-write/fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectCall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: Call: missing target, missing return label, actual link write and target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpCmpTrue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp taken: missing target and actual target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpCmpNone",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: comparison NONE failure. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpCmpFalse",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: false comparison fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
   }
 ]
