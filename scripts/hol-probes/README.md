@@ -6455,3 +6455,15 @@ interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
 
+
+The l3_csr_dispatch/read_value/direct_write/special_write/unknown/counter probes
+cover the complete native CSR read/write section. All66 read clauses and41 write
+clauses retain literal counter widths, masks, supervisor lowering, timer clears,
+FP Dirty effects, truncated-core IPI bounds, byte messages and post-write Delta
+readback. Original equations and arbitrary-state kernel regressions complement
+independent numeric FPCSR and counter expectations. The l3_fpcsr_codec probe
+checks every decoded field including reserved31..8; check-l3-fpcsr-codec.py and
+check-l3-csr-counters.py independently validate their captured values. High-counter
+writes shift word32 by32, clearing high32 rather than performing a widened shift;
+CSR3 replaces fullword32 although its read exposes low8. These are model-section
+regressions; fullRun/Next/pass correctness remains open.

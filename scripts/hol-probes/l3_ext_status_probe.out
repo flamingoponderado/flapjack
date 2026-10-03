@@ -1,0 +1,6 @@
+ext_status_definition=∀e. ext_status e = case e of Off => 0w | Initial => 1w | Clean => 2w | Dirty => 3w
+ext_status_type=:ExtStatus -> word2
+off=0w
+initial=1w
+clean=2w
+dirty=3w

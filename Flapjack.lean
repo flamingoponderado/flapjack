@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.CSRDispatch
 import Flapjack.RiscV.L3.Defs.SupervisorCSR
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
