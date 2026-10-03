@@ -46,8 +46,10 @@ theorem wordRemoveDeadProgramViaHOL_outputCodec {width : Nat} [NeZero width]
           have reencoded := wordLangProgToHOL_of_fromHOL _ body decoded
           simp [reencoded]
 
-/-- Codec closure in the actual native allocator cleanup order, with both
-reviewed native dead-code routers. Flapjack production infrastructure. -/
+/-- Codec closure of the historical cleanup order with the legacy
+unreachable-code pass (used by the historical allocator callers; the executed
+native-SSA route runs the reviewed `removeUnreach`, see
+`wordRemoveUnreachViaHOL?_outputCodec`). Flapjack production infrastructure. -/
 theorem nativeAllocatorStagesCodec {width : Nat} [NeZero width]
     (program : WordProg (BitVec width))
     (accepted : (wordLangProgToHOL program).isSome = true) :
@@ -80,13 +82,10 @@ theorem nativeSsaRetainedAllocator_programCodec {width : Nat} [NeZero width]
         | none => simp [produced] at allocated
         | some result =>
             rcases result with ⟨state, formals, body⟩
-            have accepted := wordFullSsaCcTransNativeWithStateFromHOL_outputCodec
-              parameters.length native (state, formals, body) produced
-            have stages := nativeAllocatorStagesCodec body accepted
             simp only [produced, Option.bind_some] at allocated
             repeat' (split at allocated <;> simp_all)
             all_goals rcases allocated with ⟨_, _, _, rfl⟩
-            all_goals exact stages
+            all_goals exact wordRemoveDeadProgramViaHOL_outputCodec (width := width) _ (wordRemoveUnreachViaHOL?_outputCodec _ _ (by assumption))
 
 /-- The actual native retained colouring result also has a native encoding;
 colouring is the real allocator result, with no reconstructed colour premise. -/
