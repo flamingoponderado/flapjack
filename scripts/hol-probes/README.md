@@ -7633,3 +7633,12 @@ closed kernel truth. The Lean case keeps all ten premises/seven conclusions
 and exactly the original body/exception-handler guarded IHs. Actual target
 lookup, return comparisons/bindings and handler execution are derived internally.
 Whole program/compiler correctness remain open.
+### Native encoder correctness Skip case
+
+`riscv_target_skip_probeScript.sml` specializes the complete original
+`riscv_encoder_correct` theorem only at `Inst Skip`, recording its entire
+source premise, existential step count, every interference environment, both
+assertion predicates, native types, zero stored hypotheses, and proved `T`.
+Lean derives actual native Fetch/DecodeAny/Run/Next and post-relation before
+using the original zero assertion witness. The fixture is original evidence,
+not a cross-language equivalence proof.

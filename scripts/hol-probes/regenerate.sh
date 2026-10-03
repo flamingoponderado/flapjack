@@ -7146,3 +7146,9 @@ run_probe word_to_stack_comp_loop_probeScript.sml word_to_stack_comp_loop_probe.
   comp_correct_loop_full_statement comp_correct_loop_full_proved comp_correct_loop_full_hypotheses \
   comp_correct_loop_whole_statement comp_correct_loop_whole_proved comp_correct_loop_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_skip_probeScript.sml riscv_target_skip_probe.out \
+  riscv_encoder_correct_skip_statement riscv_encoder_correct_skip_types \
+  riscv_encoder_correct_skip_hypotheses riscv_encoder_correct_skip_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

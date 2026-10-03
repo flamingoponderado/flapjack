@@ -83863,5 +83863,14 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison original7767-7922 and motive5719-5751/comp_correct5756. Complete original guarded body/recursive IHs and every original simulation premise retained. Actual cut/body target witness, mismatch overflow with original trace/resource propagation, continuation timeout, recursive clocks+monotone bitmap/labels, passthrough incl original exception handler, Break0 source exit cut all assembled. No extra target-run or postrelation hypothesis in tagged theorem; internal execution equations consume derived actual IH witnesses only. Canonical fmap_as_finite_support_relation/positive word width translation, inherits reals_as_rational_cuts. Fresh original full guarded obligation and unconditional specialization capture are statement evidence, not literal local-case proof replay.",
     "hol_line": 5756
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Skip.lean",
+    "lean_name": "riscv_encoder_correct_skip",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03: genuine Inst Skip constructor case original512-530 with encoder_correct_def117-133 full asmStep+targetStateRel premise and existential n, every env, interference, full asserts validity/code bytes/PC/final target relation, and asserts2 outside-domain bytes conclusion. Fixed original :64 asm_state and whole native riscv_state retained. Actual full Fetch derives word19 from emitted four bytes, DecodeAny word19 gives ADDI000, full Run unchanged because rd0, actual Next writes Skip4/PC+4 and preserves all other native fields. Post validity follows original bareVM/Arch2/NextFetchNONE/NoException/alignedPC, exact target relation, no extra premise. Witness n0 uses original assertion base and projection transport from accepted targetOk; full memory preserved. Original arbitrary omitted FP getter preserved; config fpRegCount0 makes source FP conjunct vacuous. Inherited reals_as_rational_cuts assumption arises from the reviewed complete native riscv_state/L3 Run closure, retained unchanged; no additional arithmetic or target-run assumption. Fresh original riscv_encoder_correct specialization only InstSkip full types/hyp0/T; capture is not cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
