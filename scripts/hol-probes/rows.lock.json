@@ -416,6 +416,12 @@
       "sha256": "2568949fab64d29bfc38e41c18259047e2eb05e90ab7ec663383fd61600dcf9e"
     },
     {
+      "bytes": 424,
+      "out": "binary_ieee_two_dimensions_probe.out",
+      "rows": 4,
+      "sha256": "dac324b1ba6bab4a5f355e7a8aa5ef7ede95445de4ac5b3d27ab2fe956196373"
+    },
+    {
       "bytes": 4729,
       "out": "bvi_syntax_probe.out",
       "rows": 2,
@@ -5960,6 +5966,12 @@
       "sha256": "b9650b527d94b68ea367eeb2863383e81af20d62a0e3436a624525ba047ccf1d"
     },
     {
+      "bytes": 463,
+      "out": "riscv_const_next_probe.out",
+      "rows": 16,
+      "sha256": "ade42c6fb84b72c53ba06fa2368cd8189115c18ff5df0b4ca31783a3763e9f57"
+    },
+    {
       "bytes": 328,
       "out": "riscv_const_run_probe.out",
       "rows": 12,
@@ -9278,6 +9290,12 @@
       "sha256": "bc76fdc56daf1d62f4fb2e7b0f6cb513a45e2ab4d32d29f27ada4e6fa48aad5e"
     },
     {
+      "bytes": 1193,
+      "out": "word_cse_moves_probe.out",
+      "rows": 11,
+      "sha256": "7a8a43bf3584b31a8bcd4cb738c43bb8338808b3e6c3583a0c0b5ee4c44cb640"
+    },
+    {
       "bytes": 366,
       "out": "word_cse_polymorphic_probe.out",
       "rows": 4,
@@ -10148,6 +10166,12 @@
       "sha256": "0ebf5c30e8a3dac6ce997125ad7d48583a4ab6948806c965f2deb22870eb98bb"
     },
     {
+      "bytes": 3624,
+      "out": "word_to_stack_inst_carry_overflow_probe.out",
+      "rows": 9,
+      "sha256": "b1d726e6140485254b57d86db94cb78f7cb0aee9564940b900ce20453ce215e3"
+    },
+    {
       "bytes": 954,
       "out": "word_to_stack_inst_const_probe.out",
       "rows": 3,
@@ -10638,6 +10662,12 @@
       "out": "word_to_stack_state_rel_probe.out",
       "rows": 3,
       "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"
+    },
+    {
+      "bytes": 896,
+      "out": "word_to_stack_store_reg1_zero_probe.out",
+      "rows": 3,
+      "sha256": "34aa99890779e1e8b4390791107477cd6adedf1d1f851e2f17b6951d8092d833"
     },
     {
       "bytes": 675,

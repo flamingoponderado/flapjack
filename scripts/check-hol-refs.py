@@ -303,6 +303,9 @@ WORDS_AS_TYPE_INDEXED_BITVEC_RE = re.compile(
 WORD_DIMENSION_AS_WIDTH_RE = re.compile(
     r'\(\s*word_dimension_as_width\s*:=\s*([A-Za-z_][A-Za-z0-9_\']*)\s*\)'
 )
+WORD_DIMENSIONS_AS_WIDTHS_RE = re.compile(
+    r'\(\s*word_dimensions_as_widths\s*:=\s*\[([^]]*)\]\s*\)'
+)
 REALS_AS_RATIONAL_CUTS_RE = re.compile(
     r'\(\s*reals_as_rational_cuts\s*\)'
 )
@@ -505,7 +508,8 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                         include_fmap_heterogeneous_function: bool = False,
                         include_reals_as_rational_cuts: bool = False,
                         include_fmap_as_finite_support_equality: bool = False,
-                        include_result_observations: bool = False):
+                        include_result_observations: bool = False,
+                        include_word_dimensions_widths: bool = False):
     """Yield HOL attributes, including attributes split across Lean lines."""
     comment_depth = 0
     start: int | None = None
@@ -590,6 +594,13 @@ def hol_attribute_sites(lines: list[str], *, include_fmap_existentials: bool = F
                     if FMAP_RESULT_OBSERVATIONS_RE.search(attribute) and not observations:
                         observations = ("",)
                     site += (observations,)
+                if include_word_dimensions_widths:
+                    matches = list(WORD_DIMENSIONS_AS_WIDTHS_RE.finditer(attribute))
+                    dimensions = tuple(field.strip() for match in matches
+                                       for field in match.group(1).split(","))
+                    if len(matches) > 1:
+                        dimensions += ("",)  # Repeated qualifiers fail closed.
+                    site += (dimensions,)
                 yield site
         start = None
         chunks = []
@@ -4362,6 +4373,35 @@ def word_dimension_as_width_errors(declaration_text: str, declaration: str,
         )
     return errors
 
+def word_dimensions_as_widths_errors(declaration_text: str, declaration: str,
+                                     width_names: tuple[str, ...]) -> list[str]:
+    """Two independent word-free dimensions; never merge or fix either width."""
+    qualifier = "word_dimensions_as_widths"
+    if len(width_names) != 2 or len(set(width_names)) != 2:
+        return [f"{qualifier} requires exactly two distinct dimensions"]
+    errors = []
+    for name in width_names:
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_']*", name) is None:
+            errors.append(f"{qualifier} dimensions must be bound identifiers, not fixed widths")
+        errors.extend(error.replace("word_dimension_as_width", qualifier)
+                      for error in word_dimension_as_width_errors(
+                          declaration_text, declaration, name))
+    # This approved route is dimension-only: no hidden word-valued argument,
+    # extra type/dimension or positivity premise may be smuggled into it.
+    source = strip_lean_comments(declaration_text)
+    start = re.search(r"\bdef\s+" + re.escape(declaration) + r"\b", source)
+    if start is None:
+        errors.append(f"{qualifier} requires a direct dimension-only definition")
+        return errors
+    header = source[start.end():].split(":=", 1)[0]
+    for name in width_names:
+        header = re.sub(r"\(\s*" + re.escape(name) + r"\s*:\s*Nat\s*\)", "", header)
+        header = re.sub(r"\[\s*NeZero\s+" + re.escape(name) + r"\s*\]", "", header)
+    if re.fullmatch(r"\s*:\s*(?:ℝ|Real)\s*", header) is None:
+        errors.append(f"{qualifier} requires only the two explicit Nat/NeZero binders and a real result; no words or extra premises")
+    return errors
+
+
 # HOL's terminating eval_def generates eval_ind; the complete source block is
 # reviewed against the closed original kernel capture in the faithful expression
 # probes. This bounded recognition records provenance, not Lean/HOL equivalence.
@@ -4546,7 +4586,7 @@ def main(argv: list[str]) -> int:
              fmap_relation, fmap_equalities, words_bitvec,
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations) in hol_attribute_sites(
+             fmap_equality, result_observations, dimension_widths) in hol_attribute_sites(
                 lines, include_fmap_existentials=True,
                 include_word_dimension_width=True,
                 include_fmap_function=True,
@@ -4554,12 +4594,13 @@ def main(argv: list[str]) -> int:
                 include_reals_as_rational_cuts=True,
                 include_fmap_as_finite_support_equality=True,
                 include_result_observations=True,
+                include_word_dimensions_widths=True,
              ):
             where = f"{rel}:{number}"
             if result_observations:
                 if (list_fields or names_fields or fmap_fields or fmap_result or fmap_relation or
                     fmap_equalities or words_bitvec or fmap_parameters or fmap_existentials or
-                    dimension_width or fmap_function_positions or fmap_heterogeneous_function_positions or
+                    dimension_width or dimension_widths or fmap_function_positions or fmap_heterogeneous_function_positions or
                     reals_cuts or fmap_equality):
                     errors.append(f"{where}: result observations cannot combine with other representation qualifiers")
                 errors.extend(f"{where}: {error}" for error in fmap_result_observation_errors(
@@ -4708,6 +4749,14 @@ def main(argv: list[str]) -> int:
                         dimension_width,
                     )
                 )
+            if dimension_widths:
+                if (dimension_width or words_bitvec or list_fields or names_fields or boundary_fields
+                        or fmap_fields or fmap_result or fmap_relation or fmap_equalities
+                        or fmap_parameters or fmap_existentials or fmap_function_positions
+                        or fmap_heterogeneous_function_positions or fmap_equality or result_observations):
+                    errors.append(f"{where}: word_dimensions_as_widths conflicts with other representation qualifiers except reals_as_rational_cuts")
+                errors.extend(f"{where}: {error}" for error in word_dimensions_as_widths_errors(
+                    tagged_declaration_text(lines, number), lean_decl, dimension_widths))
             target = ROOT / hol_path
             source_error = hol_source_error(ROOT, hol_path)
             if source_error is not None:
