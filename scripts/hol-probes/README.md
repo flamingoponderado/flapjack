@@ -7322,3 +7322,8 @@ named source declarations. The existing full native configuration probe checks
 all source field values and every immediate-policy operator boundary. These
 captures and kernel proofs remain evidence for source review, not a proof of
 HOL-to-Lean equivalence or full target execution correctness.
+
+`pan_structs_fupdate_neutral_probe` replays original local `fupdate_elim2`
+with its unchanged source proof, closed binder types, zero hypotheses and
+kernel proof. Native update neutrality keeps arbitrary key/value types and
+uses canonical finite-support maps with HOL equality and no comparison premise.
