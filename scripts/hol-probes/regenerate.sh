@@ -6894,3 +6894,7 @@ run_probe pan_structs_program_assign_probeScript.sml pan_structs_program_assign_
 run_probe pan_structs_program_primitive_probeScript.sml pan_structs_program_primitive_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_primitive_statement compile_correct_primitive_proved compile_correct_full_types compile_correct_primitive_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_map_restoration_probeScript.sml pan_structs_map_restoration_probe.out \
+  res_var_FMAP_MAP2_rev_statement res_var_FMAP_MAP2_rev_types res_var_FMAP_MAP2_rev_hypotheses res_var_FMAP_MAP2_rev_proved FEVERY_res_var_statement FEVERY_res_var_types FEVERY_res_var_hypotheses FEVERY_res_var_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
