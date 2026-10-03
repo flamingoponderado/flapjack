@@ -6569,3 +6569,6 @@ run_probe word_convs_max_var_exp_intro_probeScript.sml word_convs_max_var_exp_in
 run_probe lab_to_target_semantics_make_init_probeScript.sml lab_to_target_semantics_make_init_probe.out \
   semantics_make_init semantics_make_init_types semantics_make_init_hypotheses semantics_make_init_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_compile_decs_structs_probeScript.sml pan_structs_compile_decs_structs_probe.out \
+  compile_decs_structs_statement compile_decs_structs_proved compile_decs_structs_hypotheses \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

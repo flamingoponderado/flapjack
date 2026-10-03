@@ -6870,6 +6870,7 @@ Supervisor MPRV and Mrts NextFetch, and both fetch exception trap/address fields
 These finite regressions supplement source comparison, not a cross-language
 transition equivalence theorem. Full Run and Next remain open.
 
+`stack_remove_init_read_memory_probeScript.sml` replays the complete original local `word_list_IMP_read_mem` proof with upstream `helperLib.SEP_R_TAC`. The captured theorem is fully generalized over memory, domain, values, base and frame and has zero hypotheses. The native proof derives head reads from actual separated graph membership and inducts on the original list; it introduces no no-wrap, good-dimension or desired-output premise.
 `word_to_stack_comp_raise_full_probeScript.sml` captures the complete original evaluate_ind Raise obligation of comp_correct, including the entire clock/resource/result motive, by specialization of the original complete theorem. Closed statement/proved/hypothesis rows are statement evidence; this is not literal Raise proof replay or a HOL-to-Lean equivalence proof. Read-only original backend/proofs theory; proof-only Lean case.
 
 `stack_remove_init_mod_order_probeScript.sml` replays local original `MOD_LESS_EQ_MOD_IMP` (stack_removeProofScript.sml:2805-2809) with its unchanged complete natural-number conjunction implication and `rw []`/`fs []` proof. Full closed statement, proved=T and zero-hypothesis rows are captured against the read-only original backend proof theory; no extra positive-divisor premise.
@@ -6969,3 +6970,8 @@ The conclusion retains exact initialized source semantics and machine
 behavior equality, with inherited real rendering (SOUNDNESS item8). Whole
 filtering/final-pass composition remains open. Regenerate with
 `HOL_PROBE_ONLY=lab_to_target_semantics_make_init_probeScript.sml`.
+`stack_remove_word_list_reverse_probeScript.sml` replays the unchanged full original `word_list_EQ_rev` statement and SNOC induction proof (stack_removeProofScript.sml:2817-2825), with the original simplifier context. Captures complete predicate equality, proved=T and zero hypotheses; preserves arbitrary payloads and modular addresses without no-wrap assumptions.
+
+`pan_structs_compile_decs_structs_probe` replays the complete original local
+`compile_decs_structs` theorem and unchanged induction proof, recording its full
+statement, closed kernel proof, and zero hypotheses.

@@ -4496,6 +4496,12 @@
       "sha256": "5a1f7a1633642de9abccc83773568926f735b5b59a20487354fe00263fe1a399"
     },
     {
+      "bytes": 193,
+      "out": "pan_structs_compile_decs_structs_probe.out",
+      "rows": 3,
+      "sha256": "70b730d7b9bb07f05461b027164f7231a9642624ce547f52df3916e779f12201"
+    },
+    {
       "bytes": 1375,
       "out": "pan_structs_compile_exp_correct_probe.out",
       "rows": 26,
