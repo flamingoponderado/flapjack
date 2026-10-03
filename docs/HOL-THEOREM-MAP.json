@@ -68135,5 +68135,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03; bead flapjack-pxn.18.5.15.4.17.5: original evaluate_code_bitmaps421-440 Inst constructor case, literal full three-conjunct existential compile_oracle shift/code FOLDL union/bitmap append FLAT retained. Sole premise actual native evaluate equality; primitive success is derived internally and full original inst_const323-345 supplies code/bitmap/oracle preservation; failure returns source state. Both derive count0 without exposed success/field-invariant/target-run hypotheses. Minimal EvaluateDef/InstructionConstants imports avoid incomplete sibling cases. Canonical imported regs/fpRegs/store roundtrip witness; positive BitVec/NeZero and C/F Type0; Spt code not claimed finite-map translation. Inherited reals_as_rational_cuts explicitly retained. Byte-alignment dependency assessed by closed flapjack-wordsem-byte-align-total: this preservation proof is independent of alignment result and does not assert cross-language numeric LOG2-zero equivalence or alter runtime. Parent whole evaluator and other cases remain open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Call.lean",
+    "lean_name": "compCorrectCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-call), full original Call constructor1784-1931 of comp_correct1481-1493. Arbitrary return/handler AST options and all destination/state/result/compiler parameters retained. The original source evaluation/nonError/full stateRel/regBound premises and full target existential/extra clock/evaluation/all-result postcondition remain. Match-indexed calleeIH/returnIH/handlerIH are exactly the three reviewed source-branch IHs: actual successful source callee lookup (ordinary regs for tail or link-erased for returning), tail handlerNONE/nonzero clock; returning nonzero clock/callee entry; successful matching returnLoc continuation or matching exceptionLoc handler. These are conditional on ret/handler AST options, not universally across unrelated source states, programs or current Call runs. Full option assembly applies the already reviewed three original-case proofs, eliminates dependent result matches without statement weakening, and derives every target execution and complete26field postrelation/abnormal FFI result. No current-run simulation, target success or output relation assumption. Actual imported canonical StackSemStateFiniteExact regs/fpRegs/store owner and genuine local broad/exact codec checked; Spt code/list carriers unchanged. Word/FFI positive BitVec/Type translation only. Native evaluator closure inherits SOUNDNESS item8 reals_as_rational_cuts, including arbitrary callees. Full Call constructor only, not full comp_correct/pass/whole compiler theorem."
   }
 ]
