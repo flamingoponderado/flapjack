@@ -1,0 +1,4 @@
+evaluate_init_code_ffi_statement=∀t s res max_heap k gen_gc c. evaluate (init_code gen_gc max_heap k,s) = (res,t) ⇒ evaluate (init_code gen_gc max_heap k,s with ffi := c) = (res,t with ffi := c)
+evaluate_init_code_ffi_hypotheses=0
+make_init_any_ffi_statement=∀s off max_heap k jump gen_gc data_sp coracle code bitmaps. (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).ffi = s.ffi
+make_init_any_ffi_hypotheses=0

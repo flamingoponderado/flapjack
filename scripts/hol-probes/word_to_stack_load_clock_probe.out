@@ -1,0 +1,3 @@
+load_clock_statement=⊢ ∀x t. evaluate (wStackLoad x Skip,t with clock := clk) = (I ## (λs. s with clock := clk)) (evaluate (wStackLoad x Skip,t))
+load_clock_proved=T
+load_clock_hypotheses=0

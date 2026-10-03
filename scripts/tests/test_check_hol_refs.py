@@ -16,6 +16,15 @@ CHECKER = runpy.run_path(
 )
 SITES = CHECKER["hol_attribute_sites"]
 REF_ERROR = CHECKER["hol_ref_error"]
+_REPO_REALS_RENDERING_NAMES = None
+
+
+def repo_reals_rendering_names():
+    """The real tree's rendering-name scan, computed once for the module."""
+    global _REPO_REALS_RENDERING_NAMES
+    if _REPO_REALS_RENDERING_NAMES is None:
+        _REPO_REALS_RENDERING_NAMES = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+    return _REPO_REALS_RENDERING_NAMES
 
 
 class ExternalHolSourcesTest(unittest.TestCase):
@@ -650,7 +659,7 @@ noncomputable def cmp : FpCmp -> Bool
     def test_rounding_enum_is_source_bound_and_real_free(self):
         root = CHECKER["ROOT"]
         self.assertTrue(CHECKER["source_bound_rounding_enum"](root))
-        names = CHECKER["reals_rendering_names"](root)
+        names = repo_reals_rendering_names()
         self.assertNotIn("HolRounding", names)
         check = CHECKER["reals_as_rational_cuts_errors"]
         enum = "def modes : Option HolRounding := some HolRounding.roundTiesToEven"
@@ -710,14 +719,9 @@ End
             original.unlink()
             self.assertFalse(check(root))
 
-    def test_reals_rendering_names_cover_machine_ieee(self):
-        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
-        self.assertIn("holFp64Sqrt", names)
-        self.assertIn("holFp64Add", names)
-
     def test_bit_only_ieee_forms_do_not_require_real_qualifier(self):
         root = CHECKER["ROOT"]
-        names = CHECKER["reals_rendering_names"](root)
+        names = repo_reals_rendering_names()
         forms = CHECKER["REAL_FREE_IEEE_FORMS"]
         self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
                          len(CHECKER["REAL_FREE_IEEE_FORMS"]))
@@ -725,7 +729,7 @@ End
             self.assertNotIn(name, names)
             self.assertEqual(CHECKER["reals_as_rational_cuts_errors"](form, False, names), [])
         # Rational values/rounding/sqrt still need the marker.
-        for name in ("holFloatToReal", "holFp64Add", "holFp64SqrtReal"):
+        for name in ("holFloatToReal", "holFp64Add", "holFp64Sqrt", "holFp64SqrtReal"):
             self.assertIn(name, names)
             self.assertTrue(CHECKER["reals_as_rational_cuts_errors"](
                 "def caller := " + name, False, names))
@@ -808,8 +812,9 @@ End
                 self.assertIn("holFp64Abs", CHECKER["reals_rendering_names"](root))
 
     def test_reals_rendering_names_cover_nested_sqrt_real(self):
-        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
-        self.assertIn("holFp64SqrtReal", names)
+        # Real-tree membership is asserted by the bit-only test; nested
+        # discovery by test_reals_rendering_names_recurse_beneath_binary_ieee.
+        names = {"holFp64SqrtReal"}
         user = "noncomputable def sqrtCase : BitVec 64 -> BitVec 64 := holFp64SqrtReal .roundTiesToEven"
         check = CHECKER["reals_as_rational_cuts_errors"]
         self.assertEqual(check(user, True, names), [])

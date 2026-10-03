@@ -1,8 +1,9 @@
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.RegisterWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
 import Flapjack.Compiler.Backend.LabProps.DomainAlignment
-import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
 import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
@@ -18,6 +19,7 @@ import Flapjack.Test.L3EncodeParity
 import Flapjack.Compiler.Encoders.RiscV.Target
 import Flapjack.Test.RiscVNativeTargetParity
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+import Flapjack.Compiler.Encoders.RiscV.Target.State
 import Flapjack.Compiler.Encoders.RiscV.Target.HelperLinks
 import Flapjack.Test.RiscVNativeConfigParity
 import Flapjack.RiscV.L3.Step.BitRewrites
@@ -304,6 +306,8 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitAny
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeThm
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitSemantics
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitFfi
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStore
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordStoreLaws
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabelBuilders
@@ -2298,6 +2302,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorFlat
 import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 
 -- Tagged modules required by the HOL reference coverage gate.
 

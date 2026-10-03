@@ -81515,5 +81515,161 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison labProps537-570/624-657 full original good_dimindex guard and exact mem_load/store align_dm commutation. Native positive width/C/FFI full state and original Nat register/HolAddr carriers retained; no additional success/nonfailure/domain/poststate condition. Same original32/64 guard derives exact canonical holByteAligned iff word-byte modulo from accepted InstMem.holAligned_word_iff, without choosing unspecified LOG2 zero or rewriting runtime. Both address failure/success branches use actual native operations, preserve assertion result, memory/register updates and failures retaining writes. Internal Boolean helper has no independent HOL original and is not tagged. Standard word/Type0 qualifier only. Fresh original fulltypes/hyp0/kernelT in lab_props_alignment_word_memory_probe.out. Full evaluator/refinement/final semantics_compile remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/RegisterWrite.lean",
+    "lean_name": "wRegWrite1Thm1",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "wRegWrite1_thm1",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison3722-3743: full original stateRel extra0, m<frame+k and arbitrary kont evaluation premise for every n<=k retained. Actual wRegWrite1Native target run existential/full postrelation/source setVar(2*m)/stack length/space conclusions. Literal helper lowers physical kont m or spilled Seq(kont k,StackStore k slot); original callback used exactly. Verified physical/spill state update laws derive all relation/resource facts; no new run/bound/postrelation assumption. Qualified five canonical fields and positive word dimensions, same-module genuine codec witnesses. Fresh unchanged original statement and proof replay; evaluator closure inherits reals_as_rational_cuts without numerical FP claim.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_next_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvNext",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise. Inherits reals_as_rational_cuts SOUNDNESS item8 via Step.NextRISCV -> Run; this marker records original native model rendering dependency, not a new correctness assumption.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_ok_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_proj_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvProj",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_target_def",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/State.lean",
+    "lean_name": "riscvTarget",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author full source comparison2026-10-03: fixed64 native state carrier, all original binders/fields and source clauses. riscvNext uses reviewed holThe on exact Step.NextRISCV with unspecified NONE unchanged. riscvOk all5conjuncts VMword5/ArchBaseword2/NextFetchNONE/NoException/aligned2. riscvProj full7right-associated product and reviewed fun2Set predicate graph on entire domain. riscvTarget full exactAsmTarget/nativeconfig, getReg n2w toword5, stateMEM8 and original omitted get_fp_reg projection of ARB WHOLE target record (original SIMP capture ARB.get_fp_reg), not separate arbitrary function/zero. Local Nonempty witness does not specify holArb. Full original definition theorem/type/hyp0/T captures and generic kernel regressions; no target-step assumption or omitted premise. Inherits reals_as_rational_cuts SOUNDNESS item8 via Step.NextRISCV -> Run; this marker records original native model rendering dependency, not a new correctness assumption.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "evaluateInitCode",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "evaluate_init_code",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3856-3873: premises init_pre, compile_oracle equation, oracle reg_bound/num_stubs bound, lookup stack_err_lab = SOME (halt_inst 2w), code_rel in original order; conclusion case evaluate (init_code ...) of (NONE,t) => exists r. make_init_opt ... s = SOME r and state_rel jump off k r t and t.ffi = s.ffi | _ => F, via the accepted makeInitOpt and the new initCodeThm. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "initSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_semantics",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3904-3969: premises lookup stack_err_lab, code_rel, init_pre, compile_oracle equation, oracle bound in original order; conclusion case evaluate (init_code ...) of (NONE,t) => semantics 0 s = semantics start t and exists r. make_init_opt ... s = SOME r and state_rel jump off k r t | _ => F, over the accepted native stackSem semantics_def; the clock argument (entry call at k+1 runs init_code clock-neutrally then the start call at k; clock 0 times out) is the Flapjack semanticsAux_shift lemma. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "makeInitOptSomeSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_opt_SOME_semantics",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3971-3986: premises init_pre, compile_oracle equation, oracle bound, code_rel, lookup stack_err_lab; conclusion exists s1. make_init_opt ... s2 = SOME s1 and (semantics start s1 <> Fail ==> semantics 0 s2 = semantics start s1), via initSemantics and the accepted compile_semantics port. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitSemantics.lean",
+    "lean_name": "makeInitSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_semantics",
+    "words_as_type_indexed_bitvec": true,
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4069-4086: discharge_these jump off gen_gc max_heap k start coracle code s2 and propagate_these s2 bitmaps data_sp imply exists s1. make_init_opt gen_gc max_heap bitmaps data_sp coracle jump off k (fromAList code) s2 = SOME s1 and (semantics start s1 <> Fail ==> semantics 0 s2 = semantics start s1); uses the accepted discharge/propagate definitions, impCodeRel and makeInitOptSomeSemantics. State carrier is the imported StackSemStateFiniteExact with same-module re-exported holFmapAsFiniteSupportWitness; HOL num_stubs is stack_num_stubs; compile_oracle equation uses the pointwise triple rendering of (I ## MAP prog_comp ## I) o coracle as in accepted state_rel. Inherited assumption: the statement reaches the native stackSem evaluate (directly or through make_init_opt/semantics) whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_semantics_probe.out. Kernel proof; no target run, relation or semantics assumption. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitFfi.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "evaluateInitCodeFfi",
+    "hol_name": "evaluate_init_code_ffi",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3893-3902: for arbitrary gen_gc max_heap k s t res c, evaluate (init_code ...,s) = (res,t) implies evaluate (init_code ...,s with ffi := c) = (res,t with ffi := c); FFI replacement keeps the host type as in HOL; derived from accepted evaluate_ffi_neutral and init_code clock neutrality. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitFfi.lean",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "lean_name": "makeInitAnyFfi",
+    "hol_name": "make_init_any_ffi",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4088-4098: (make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s).ffi = s.ffi for arbitrary arguments; fallback branch is a record update of s, success branch init_reduce of the initializer post-state whose ffi equals s.ffi by evaluateInitCodeFfi. Inherited assumption: the statement reaches the native stackSem evaluate whose inst FP cases are rendered by reviewed reals_as_rational_cuts declarations, so inherits_reals_as_rational_cuts records SOUNDNESS item 8; no direct rendering call. Stored original captured with zero hypotheses in scripts/hol-probes/stack_remove_init_ffi_probe.out. Kernel proof, no added premise. Proof-only; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterClock.lean",
+    "lean_name": "evaluateWStackLoadClock",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_clock",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 original4470-4476: entire unconditional evaluation pair equality for arbitrary load list/state/clock, literal wStackLoad loads Skip and I##postclock update. Native list induction covers every register/index, disabled stack, out-of-range emptyEnv failure and successful setVar followed by remaining loads; actual fixClock min-self reduced with no bounds/useStack/source or targetrun hypothesis. Every result and complete poststate retained. Only three actual imported StackSemStateFiniteExact canonical map fields translated, same-module genuine codec roundtrip, original List/Spt unchanged, positive NeZero/BitVec width and Type0 host. Inherits evaluator reals_as_rational_cuts assurance limit; no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
   }
 ]

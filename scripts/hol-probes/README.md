@@ -7477,3 +7477,31 @@ This is regression evidence; it does not prove HOL-to-Lean equivalence.
 original state_rel_set_var2 statement and literal proof2962–2997, including
 st/sp equalities, with zero open hypotheses and proved sentinel. This is
 regression evidence rather than HOL-to-Lean equivalence.
+
+`word_to_stack_register_write_probeScript.sml` replays the unchanged full
+wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
+continuation premise and full run/relation/resources. Closed hyp0/T captures
+provide regression evidence rather than cross-language equivalence.
+
+## Full native target state definition group
+
+`riscv_target_state_probeScript.sml` captures all four original definition
+theorems (`riscv_next`, `riscv_ok`, `riscv_proj`, `riscv_target`) with complete
+statements, inferred types, zero hypotheses and kernel truth. It also reduces
+the omitted floating-register field: the result is `ARB.get_fp_reg`, not an
+arbitrary function chosen independently and not zero. Lean preserves the
+projection from the arbitrary whole target record. The local nonempty witness
+is only a carrier inhabitation proof and does not define that arbitrary record.
+The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
+These captures/regressions do not establish HOL-to-Lean equivalence.
+`stack_remove_init_semantics_probeScript.sml` prints the stored `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and `make_init_semantics` theorems (3856-4086), all closed with zero hypotheses.
+
+`stack_remove_init_ffi_probeScript.sml` prints the stored original `evaluate_init_code_ffi` and `make_init_any_ffi` (stack_removeProofScript.sml:3893-3902, 4088-4098) with zero hypotheses; the Lean ports derive them from the accepted `evaluate_ffi_neutral` and the initializer's clock-neutrality.
+### Full load-prefix clock law
+
+`word_to_stack_load_clock_probe.out` freshly replays the unchanged original
+local proof4470–4476 with all load lists and target states, including invalid
+stack use and out-of-range failures. The whole evaluation pair is retained;
+the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
+This is original-source evidence, not cross-assistant equivalence or full
+compiler correctness.
