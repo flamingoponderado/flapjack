@@ -76866,5 +76866,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack exact first-match/list/validity representation infrastructure, or actual imported canonical state roundtrip. No independent HOL declaration; no infrastructure premise added to the original case."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Next.lean",
+    "lean_name": "NextRISCV",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV_def",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source comparison2026-10-03 riscv_stepScript41-54: whole native state->Option state equation, literal Step.Fetch (not model Fetch), full Run/DecodeAny followed by exception check and all NextFetch alternatives. NONE adds word64 PC+Skip; BranchTo clears NextFetch on returned state before full PC writer; Ereturn/Mrts/Trap all NONE. No source-success, target-run, accepted-opcode, mode or core-bound premise. Complete native fixedword state carriers/helper ownership retained. Run inherits reals_as_rational_cuts through full IEEE handlers, SOUNDNESS item 8; no direct real operation in Next body. Universal original source equation and Lean kernel equation checked, not overall model/Sail or compiler correctness."
   }
 ]

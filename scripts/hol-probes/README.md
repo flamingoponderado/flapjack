@@ -7119,3 +7119,7 @@ member-expression induction hypotheses.
 theorem, NField specialization, and eval_ind. Native NField preserves all seven
 hypotheses and three conclusions with only the original child IH. Validity and
 source lookup derive the shape-list and actual converted index correspondence.
+
+## Complete native step Next equation
+
+`l3_next_step_probeScript.sml` proves the universal original NextRISCV equation over arbitrary native state, with zero hypotheses. It retains the complete step Fetch and full Run/DecodeAny calls, exception result, PC+Skip continuation, BranchTo control clear/update, and every remaining TransferControl constructor returning NONE. `check-l3-next-step.py` pins the full multiline equation and type/proof rows. Drift coverage compares the literal generated body, explicitly resolving the combined export’s `riscv_step_Fetch` alias to the Step namespace owner. Full Run inherits the rational-cuts IEEE assumption (SOUNDNESS item 8). This ports the step theory definition; the model’s stronger Next trap/interrupt dispatcher and compiler correctness remain separate obligations.
