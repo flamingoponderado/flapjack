@@ -77038,5 +77038,35 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: false comparison fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/BufferTerminalCases.lean",
+    "lean_name": "filterCorrectLabel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original Label/default Error constructor branch688. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/BufferTerminalCases.lean",
+    "lean_name": "filterCorrectHalt",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original Halt terminal branch1034-1036 and native labSem524-529, all Word zero/nonzero and Loc outcomes. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/BufferTerminalCases.lean",
+    "lean_name": "filterCorrectBufferWrite",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.4): Genuine original CBW branch797-816, all invalid operand/buffer-write NONE paths and actual SOME buffer successor. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses, literal constructor fetch guard and original existential target execution/result/extra clock/FFI conclusion. Label and Halt have no recursive IH or narrowed outcome assumption. CBW retains native WordSemBuffer width 8 carrier (position word width, fixed-byte list, numeric spaceLeft), literal two source operand matches and buffer_write clauses; guarded IH only for actual incPc/decClock/codeBuffer source successor. Target register/buffer equality and updated successor stateRel are derived from original relation and adjust_pc_all_skips, all target runs from original skipped-run alignment. No supplied target run, desired state relation, successful result or extra default premise. Full original669 capture/type/hyp0/kernel reproof freshly replayed. Positive-width word translation only; evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full evaluator assembly and semantic lift remain open."
   }
 ]

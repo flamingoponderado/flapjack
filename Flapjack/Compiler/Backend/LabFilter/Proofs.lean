@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabFilter.Proofs.BufferTerminalCases
 import Flapjack.Compiler.Backend.LabFilter.Proofs.ControlCases
 import Flapjack.Compiler.Backend.LabFilter.Proofs.InstructionCases
 import Flapjack.Compiler.Backend.LabFilter.Proofs.Simulation
