@@ -68213,5 +68213,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.3: original evaluate_code_bitmaps421-440 Loop case. CodeBitmaps definitionally literal full existential shifted oracle/code union left-fold/bitmap append flatten. Actual native Loop execution and only true source-path IHs: body at source, reentry after actual body execution/contLoop true/nonzero min clock at exact decClock-clamped middle. Strict descent derived from min bound/nonzero/subtraction; not supplied as independent success premise. Native timeout emptyEnv and exit retain fields; reentry composes actual prefix counts/order using checked transitivity. No target/prefix/count/postfield assumptions. Imported canonical regs/fpRegs/store same-module witness, positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment or FP correspondence claim and no runtime rewrite. Parent assembly and other cases open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Alloc.lean",
+    "lean_name": "evaluateCodeBitmapsAlloc",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.6: original evaluate_code_bitmaps421-440 Alloc case. CodeBitmaps definitionally retains literal full existential shifted oracle/code union left-fold/bitmap append flatten. Actual native evaluate equality sole premise; disabled allocation and absent/nonword register reject with source/count0. Actual allocation result including GC errors supplies full alloc_const170-189 field preservation, deriving count0 without success/field/poststate assumptions. Native useAlloc guard/getVar/alloc dispatch retained. Imported canonical regs/fpRegs/store same-module roundtrip witness; positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence or runtime rewrite. Full parent and remaining cases remain open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]

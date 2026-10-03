@@ -5921,3 +5921,7 @@ run_probe stack_code_bitmaps_if_probeScript.sml stack_code_bitmaps_if_probe.out 
 run_probe stack_code_bitmaps_loop_probeScript.sml stack_code_bitmaps_loop_probe.out \
   code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_loop_statement \
   "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_alloc_probeScript.sml stack_code_bitmaps_alloc_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_alloc_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"
