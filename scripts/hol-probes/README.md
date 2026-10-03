@@ -7028,3 +7028,9 @@ with all four original premises at arbitrary positive/1/8/64/80 widths. The Lean
 proof derives entry simulations and native clock/event-chain obligations; these
 captures are regression evidence, not a HOL-to-Lean equivalence proof or evidence
 of production routing or whole compiler completion.
+
+The same probe now also fetches the exported original `max_var_intro` kernel theorem: full arbitrary predicate and program, original P0/occurrence premise, proved=T and zero hypotheses (three additional rows). Lean `WordConvs.maxVarIntro` retains every constructor and the return-dependent Call handler scope, both Spt cut-set lists, and dimension-64 instruction clauses. No numeric-bound or execution premise is added.
+
+`pan_structs_convert_state_probe` captures the entire original state and value
+conversion kernel definitions/types and zero hypotheses. The state record updates
+exactly locals, globals, structs, code and exception shapes.
