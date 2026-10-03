@@ -7135,3 +7135,7 @@ run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_se
 run_probe word_to_stack_loop_handler_probeScript.sml word_to_stack_loop_handler_probe.out \
   loop_handler_full loop_handler_hypotheses loop_handler_proved \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_no_ret_review_probeScript.sml stack_to_lab_no_ret_review_probe.out \
+  no_ret_correct no_ret_correct_types no_ret_correct_hypotheses no_ret_correct_proved stack_regs_type stack_fp_regs_type stack_store_type stack_code_type \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
