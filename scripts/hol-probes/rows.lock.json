@@ -8096,10 +8096,22 @@
       "sha256": "ef7779c2b09beff1a68bc40e6711922205b57856795d099cca01b418f82f5ada"
     },
     {
+      "bytes": 14823,
+      "out": "stack_to_lab_good_code_labels_probe.out",
+      "rows": 75,
+      "sha256": "b05ac4ccae2ee11058497ec7b458d9467d483615c17ea86ea90c70a6a00a6c93"
+    },
+    {
       "bytes": 441,
       "out": "stack_to_lab_good_code_probe.out",
       "rows": 2,
       "sha256": "4088bf48ee25a7b281130547ecf885c1598b9ab942041305ce00cb90cd5e1d13"
+    },
+    {
+      "bytes": 6988,
+      "out": "stack_to_lab_good_handler_labels_probe.out",
+      "rows": 36,
+      "sha256": "b3712ecde4228ffaef78e634d2402b34ac693ab2063763347a67e4044df08305"
     },
     {
       "bytes": 111,

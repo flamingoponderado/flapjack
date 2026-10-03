@@ -754,6 +754,9 @@ import Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInitSemantics
 import Flapjack.Compiler.Backend.StackToLab.Proofs.NoShmemop
 import Flapjack.Compiler.Backend.StackToLab.Proofs.NoInstall
 import Flapjack.Compiler.Backend.StackToLab.Proofs.LabelSets
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodCodeLabels
+import Flapjack.Compiler.Backend.StackToLab.Proofs.GoodHandlerLabels
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.HandlerLabels
 import Flapjack.Compiler.Backend.StackToLab.Proofs.CompileLabPres
 import Flapjack.Compiler.Backend.StackRemove.Proofs.LabPres
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.ExtractLabels
