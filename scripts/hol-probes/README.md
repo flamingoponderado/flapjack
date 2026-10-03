@@ -7176,6 +7176,7 @@ preservation of memory/domain/byte order, using only the original child IH.
 Load32 specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions with only the original child IH, deriving the32-bit load
 through actual memory/domain/byte-order preservation.
+
 `lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
 and both direct definitions, full native word-indexed line/section binder types,
 zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
@@ -7215,6 +7216,23 @@ checking, while the native theorem still requires independent statement review.
 correctness theorem, binder types, closed hypotheses and kernel proof. Native
 assembly preserves all seven hypotheses and three conclusions across all sixteen
 constructors through the original guarded evaluator induction principle.
+## Native target assembler lowering and bytes
+
+`l3_target_encoder_probeScript.sml` regenerates from the pinned original
+CakeML `compiler/encoders/riscv` directory. It records all ten encoder-section
+types and zero-assumption definition theorems; the partial helper conjunctions
+are retained exactly, and missing Sub/Ror cases intentionally remain unreduced.
+The executable full AST lowering never executes these unspecified cases.
+
+300 inputs cover the source constructors and branching/range boundaries,
+including register truncation, all comparison polarities in register/immediate
+and short/far modes, constant sign-extension/build choices, rotations above64,
+memory widths and unsupported FP/LongDiv. Every observation includes the complete
+native instruction list and original encoded byte list; all600 results are
+replayed by the Lean kernel in `RiscVNativeTargetParity.lean`. The checker rejects
+nonconcrete AST payloads, wrong carriers, unreduced bytes and capture drift.
+These finite checks do not establish universal cross-language equivalence.
+The executed compiler configuration replacement remains a separate dependency.
 
 `pan_structs_program_atomic_probe` captures the complete original program
 correctness theorem and Skip/Break/Continue specializations, all closed and
@@ -7231,6 +7249,20 @@ induction and exactly simplified reversed shape-conversion theorems, binder
 types and closed kernel proofs. Local statements and original unchanged proof
 text are replayed. The whole unused binder is polymorphic; induction n is num.
 Native proofs retain original guards and derive named lookup/field shapes.
+`lab_filter_semantics_probe.out` mechanically replays the literal original local `state_rel_IMP_sem_EQ_sem` proof from source1039-1152, with native quantified state types, zero hypotheses and kernel reproof. It does not assume local theorems are exported by HOL. The native Lean lift derives failure and terminating-choice predicate equivalences and whole divergence LUB equality from full evaluator simulation and original clock/prefix laws; no target run or semantic equality is supplied as a premise. This is source-review evidence, not HOL-to-Lean equivalence.
+## Full native RISC-V configuration
+
+`l3_native_config_probeScript.sml` captures the complete original record,
+all scalar fields, its fixed64 ASM/word8 encode type, and a generic zero-assumption
+proof that its encode field is the complete `riscv_enc` function. It also captures
+78 immediate-policy observations: every binop/comparison class at both signed
+bounds and surrounding values. The Lean default build checks native record
+projections, full encoder-field equality and all policy observations.
+The legacy production/check configuration stays explicitly untagged; actual
+emitted-byte routing remains a separate blocking bead. These finite regressions
+and source-reviewed record equations are not universal HOL-to-Lean equivalence.
+
+`lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.
 
 `pan_structs_program_return_raise_probe` captures the original whole program
 correctness theorem and Return/Raise specializations as closed kernel theorems.
