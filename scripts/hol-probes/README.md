@@ -30,6 +30,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_transform_probe.out` captures the types of `word_cseInst` (`knowledge -> α inst -> knowledge # α prog`), `word_cse` and `word_common_subexp_elim`, the full `word_cseInst_def` and `word_common_subexp_elim_def`, the clause count (26) of `word_cse_def`, and the zero-hypothesis `word_cse_wf_data`. The built theory exports `Seqs_ind` but no `Seqs_def`, so the `Seqs` test helper is compared against the script text only. Statement evidence for source review only.
 `word_cse_data_inv_transport_probe.out` captures the full zero-hypothesis statements of word_cseProof `canonicalArith_correct`, `data_inv_locals`, `wf_data_untracked`, `data_inv_set_var`, `data_inv_unset_var`, `not_seen_data_inv_alist_insert`, `data_inv_memory` and `data_inv_state_agree` (also typed: one state type for s1 and s2). Statement evidence for source review only.
 `word_cse_data_inv_updates_probe.out` captures the full zero-hypothesis statements of the 12 exported word_cseProof `data_inv` knowledge-update theorems ported in `WordCse/Proofs/DataInvUpdates.lean` (`data_inv_merge_l` through `evaluate_Move1`, with `data_inv_set_store` also typed); the 10 local ones are not exported. Statement evidence for source review only.
+`word_cse_fact_insert_probe.out` captures the full zero-hypothesis statements of the 7 exported word_cseProof fact-producer correctness theorems in `WordCse/Proofs/FactInsert.lean` (`add_to_data_aux_correct` through `add_to_load_correct`, with `add_to_data_Arith_correct` also typed); the 7 local ones are not exported. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
 `word_inst_locals_rel_group_probe.out` captures, from the original built theories, the full zero-hypothesis statements of the exported wordProps locals_rel family (`locals_rel_def` through `locals_rel_evaluate_thm`), word_instProof `pull_ops_simp_def`, `binary_branch_exp_def`, `inst_select_thm` and `inst_select_Loop_helper`, misc `PERM_PART`/`PERM_PARTITION` and sorting `PARTs_HAVE_PROP`, with full types for `inst_select_thm`, `inst_select_Loop_helper` and `locals_rel_evaluate_thm`. The `[local]` theorems of these scripts are not exported and are reviewed against the script source. Statement evidence for source review only, not an equivalence proof.
@@ -7772,6 +7773,13 @@ same-model wrapper choice equality are proved internally; no supplied chain,
 LUB or target-semantics premise is added. It uses the distinct PanProps result
 datatype. Faithful evaluator wrapper correspondence remains separate.
 
+`pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
+PanSem wrapper equality, quantified state/start types and closed kernel truth.
+Lean retains the faithful evaluator, every overwritten clock, TailCall as
+Call NONE, exact result classification and FFI event projection. It derives
+forbidden/termination predicate equivalence internally, with the original
+choice/LUB formulas and canonical finite-support/positive-word translations.
+Whole-pass semantics correspondence and production routing remain separate.
 `word_cse_add_to_data_typed_probe.out` captures the fully typed word_cse `add_to_data_def` and the type of `add_to_data` (`knowledge -> num -> α inst -> β inst -> knowledge # β prog`): the adjusted instruction width is independent of the original instruction and output program width (review of #1211). Statement evidence for source review only.
 ### Native Const instruction decoder evidence
 
@@ -7817,6 +7825,11 @@ It does not establish full native fetch/Next/interference/assertion execution.
 `check-riscv-const-wide-value.py` and its mutation regressions protect the
 unrestricted signature, original evidence, and all driver labels.
 
+`pan_structs_semantics_eq_probeScript.sml` captures the closed original
+`semantics_eq` theorem (pan_structsProofScript.sml:1473-1533), kernel truth,
+and quantified types. The Lean counterpart retains all eight source hypotheses
+and faithful semantics equality; production routing remains independent.
+Regenerate with `HOL_PROBE_ONLY=pan_structs_semantics_eq_probeScript.sml`.
 ## Whole native Const Run composition
 
 `riscv_const_run_probeScript.sml` executes original `riscv_ast_def` Const

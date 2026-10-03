@@ -1,4 +1,5 @@
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Constant
 import Flapjack.RiscV.CorrectnessEncoding.ConstRun
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveFull
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
@@ -720,6 +721,7 @@ import Flapjack.Compiler.Backend.WordCse.Transform
 import Flapjack.Compiler.Backend.WordCse.Proofs.WfDataPreservation
 import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvTransport
 import Flapjack.Compiler.Backend.WordCse.Proofs.DataInvUpdates
+import Flapjack.Compiler.Backend.WordCse.Proofs.FactInsert
 import Flapjack.Compiler.Backend.WordCse.Proofs.SemanticInvariant
 import Flapjack.Compiler.Backend.WordCse.Proofs.CanonicalRegs
 import Flapjack.Compiler.Backend.WordCse.Proofs.DeletionFrames
@@ -1424,6 +1426,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsCorrectExact
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapper
 import Flapjack.Pancake.Semantics.PanProps.SemanticsWrapperEquality
 import Flapjack.Pancake.Semantics.PanProps.PanSemIsWrapper
+import Flapjack.Pancake.Proofs.PanStructs.SemanticsEq
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
