@@ -1,20 +1,21 @@
 import Flapjack.Compiler.Backend.LabSem.State
 import Flapjack.Compiler.Encoders.Asm
+import Flapjack.Misc.Alignment
 
 namespace Flapjack.Compiler.Backend.LabProps
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Encoders.Asm
 
 /-! Literal domain projections used by original LabProps alignment proofs.
-HOL byte_aligned is aligned(LOG2(dimindex DIV 8)); asmAligned implements
-aligned by equality after clearing those low bits, equivalently divisibility
-by 2^alignment. Bool conjunction is the native HOL set intersection.
+HOL byte_aligned is the canonical holByteAligned predicate, preserving
+unconstrained HOL LOG2 0 when width DIV 8 is zero. Bool conjunction is
+the native HOL set intersection.
 No word-width guard beyond the reviewed positive-width carrier is added.
 -/
 
 @[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_dm_def"
   (words_as_type_indexed_bitvec)]
-def alignDm {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Flapjack.Compiler.Backend.LabSem.State width C F :=
-  {s with memDomain := fun address => s.memDomain address && asmAligned (Nat.log2 (width / 8)) address}
+noncomputable def alignDm {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Flapjack.Compiler.Backend.LabSem.State width C F :=
+  {s with memDomain := fun address => s.memDomain address && Flapjack.holByteAligned address}
 
 /-- The complete original eighteen unchanged fields, in source order. -/
 @[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_dm_const"
@@ -47,8 +48,8 @@ theorem alignDmWithClock {width : Nat} [NeZero width] {C F : Type} (s : Flapjack
 
 @[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_sdm_def"
   (words_as_type_indexed_bitvec)]
-def alignSdm {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Flapjack.Compiler.Backend.LabSem.State width C F :=
-  {s with sharedMemDomain := fun address => s.sharedMemDomain address && asmAligned (Nat.log2 (width / 8)) address}
+noncomputable def alignSdm {width : Nat} [NeZero width] {C F : Type} (s : Flapjack.Compiler.Backend.LabSem.State width C F) : Flapjack.Compiler.Backend.LabSem.State width C F :=
+  {s with sharedMemDomain := fun address => s.sharedMemDomain address && Flapjack.holByteAligned address}
 
 /-- The complete original eighteen unchanged fields, in source order. -/
 @[hol "cakeml/compiler/backend/semantics/labPropsScript.sml" "align_sdm_const"
