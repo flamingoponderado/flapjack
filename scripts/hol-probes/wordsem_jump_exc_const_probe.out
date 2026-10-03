@@ -1,0 +1,3 @@
+jump_exc_const_statement=∀y s' s. jump_exc s = SOME (s',y) ⇒ (s'.be ⇔ s.be) ∧ s'.gc_fun = s.gc_fun ∧ s'.mdomain = s.mdomain ∧ s'.sh_mdomain = s.sh_mdomain ∧ s'.code = s.code ∧ s'.code_buffer = s.code_buffer ∧ s'.data_buffer = s.data_buffer ∧ s'.compile = s.compile ∧ s'.compile_oracle = s.compile_oracle ∧ s'.clock = s.clock ∧ s'.ffi = s.ffi ∧ s'.stack_limit = s.stack_limit ∧ s'.stack_max = s.stack_max ∧ s'.stack_size = s.stack_size
+jump_exc_const_proved=T
+jump_exc_const_hypotheses=0
