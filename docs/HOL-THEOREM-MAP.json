@@ -83273,5 +83273,14 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 full source comparison11247-11316: all fifteen original guards in source order, including good_code asm_conf c.labels, actual native Config and successful compile, independent machine-state/projection/FFI types, MMIO boundary and complete entry/address/exit tuples, no-install/no-share alternative, strict byte-buffer bound and every provided name ExtCall. Final singleton implements-prime T conclusion preserves both canonical dm and sdm intersections with source byte_aligned. Actual source proof composition follows outer DM and inner SDM refinements plus accepted full compile lemma; initializer projections are definitional and good_code specialization follows only original config equalities. Generic empty-label value parameter of the prerequisite lemma is instantiated internally at actual Config Nat carrier, not added to final source signature. No target result/execution/simulation premise, no narrowed scope or extra defaults, no LOG2zero/HD/EL/runtime policy change. Standard positive type-indexed words/Type0 host translation only; native FP evaluator inherits reals_as_rational_cuts assumption SOUNDNESS item8, not full real closure or HOL-to-Lean equivalence. Fresh mechanically extracted verbatim original final proof replay captures full typed statement, hypotheses0 and kernel T. Whole compiler/machine/end-to-end correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/ProductionSet.lean",
+    "lean_name": "destVar",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "dest_Var_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison 2026-10-03: dest_Var_def481-485 returns SOME v exactly for Var v and NONE for every other exp constructor. Original wordLang exp15-20 has Const word, Var num, Lookup store_name, Load exp, Op binop list exp, Shift shift exp exp; imported WordLangExpHOL matches all six and full WordStoreHOL retains fixed5bit Temp and all named stores. Positive-width BitVec width records only standard word translation. No added success/evaluation hypothesis; full Set/CSE definition and semantics remain separate open work."
   }
 ]
