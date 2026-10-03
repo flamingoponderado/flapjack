@@ -6586,3 +6586,15 @@ PC wrap, Skip2/4, rd0, source alias and source0, the literal targetbit0 trap
 and JALR mask, while preserving arbitrary other state and prior exceptions.
 Successful jumps change NextFetch and link GPR, not PC or Delta. These probes
 supplement source review; full Run/Next correctness remains open.
+
+### Native conditional branches
+
+`l3_conditional_branch_probeScript.sml` captures the full BEQ/BNE/BLT/BGE/
+BLTU/BGEU equations and 156 independent whole-state fixtures.
+`check-l3-conditional-branches.py` requires every unique expected row to be T.
+Kernel counterparts in L3ConditionalBranchParity cover RV32 selector0, RV64
+selector2, RV128 selector3, signed/unsigned and truncated comparisons, target
+wrap and direct odd-target BranchTo. Selector1 fixtures preserve exact error
+bytes/prior exceptions using zero operands without choosing architecture ARB.
+Both mode checks and returned states are retained. The original conditional
+clauses contain no JAL-style alignment trap. Full Run/Next remains open.
