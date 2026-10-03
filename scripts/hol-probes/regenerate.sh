@@ -7439,11 +7439,11 @@ run_probe word_to_stack_comp_storeconsts_probeScript.sml word_to_stack_comp_stor
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_comp_returning_full_probeScript.sml word_to_stack_comp_returning_full_probe.out \
-  comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation \
+  comp_correct_returning_full_statement comp_correct_returning_full_proved comp_correct_returning_full_hypotheses comp_correct_returning_induction_obligation comp_correct_returning_full_typed comp_correct_returning_induction_obligation_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_move_div2_probeScript.sml word_to_stack_move_div2_probe.out \
-  times2_div2_statement times2_div2_proved times2_div2_hypotheses parsem_parmove_div2_statement parsem_parmove_div2_proved parsem_parmove_div2_hypotheses \
+  times2_div2_statement times2_div2_proved times2_div2_hypotheses parsem_parmove_div2_statement parsem_parmove_div2_proved parsem_parmove_div2_hypotheses times2_div2_typed parsem_parmove_div2_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe ast_backend_operators_probeScript.sml ast_backend_operators_probe.out \
   word_size_case_def word_size_nchotomy thunk_mode_case_def thunk_mode_nchotomy thunk_op_case_def thunk_op_nchotomy test_case_def test_nchotomy \
@@ -7466,7 +7466,7 @@ run_probe clos_to_bvl_config_probeScript.sml clos_to_bvl_config_probe.out \
   "$cake_dir/compiler/backend/clos_to_bvlScript.sml" "$cake_dir/compiler/backend"
 
 run_probe word_to_stack_move_single_probeScript.sml word_to_stack_move_single_probe.out \
-  wMoveSingle_statement wMoveSingle_proved wMoveSingle_hypotheses \
+  wMoveSingle_statement wMoveSingle_proved wMoveSingle_hypotheses wMoveSingle_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_syntax_probeScript.sml bvl_syntax_probe.out \
@@ -7500,11 +7500,11 @@ run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrappe
   semantics_wrapper_def_statement semantics_wrapper_def_proved semantics_wrapper_def_types \
   "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
-  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
+  wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses wMoveAux_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_seqsem_probe.out \
-  moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
+  moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses moveAuxSeqsem_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \

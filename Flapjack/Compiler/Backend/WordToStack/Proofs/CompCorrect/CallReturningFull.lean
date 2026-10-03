@@ -89,7 +89,15 @@ theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
 /-- Whole original returning-Call case (8166–10048), for arbitrary optional
 handler. Both original source branches prove the entire simulation under the
 literal original guarded IHs. Inherited reals_as_rational_cuts applies only to
-the evaluator closure; no new numerical FP correspondence is claimed. -/
+the evaluator closure; no new numerical FP correspondence is claimed.
+
+This specialized entry point fixes the return descriptor to SOME and retains
+all three literal returning-Call IHs. It is kept alongside Call.compCorrectCall,
+which permits arbitrary return options and retains the fourth tail-call IH.
+That fourth IH is vacuous here because its original guard requires ret = NONE.
+Both entry points assemble the same checked NONE/SOME handler simulations;
+this overlap is intentional specialization, not a second independent proof of
+the whole pass. No conclusion or source guard is omitted. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "comp_correct" 5756
   (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
     WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
