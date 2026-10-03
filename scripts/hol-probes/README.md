@@ -7761,3 +7761,11 @@ both clock-stability and Incomplete event-prefix hypotheses. Prefix chains and
 same-model wrapper choice equality are proved internally; no supplied chain,
 LUB or target-semantics premise is added. It uses the distinct PanProps result
 datatype. Faithful evaluator wrapper correspondence remains separate.
+
+`pan_props_pan_sem_is_wrapper_probe` captures the full original no-premise
+PanSem wrapper equality, quantified state/start types and closed kernel truth.
+Lean retains the faithful evaluator, every overwritten clock, TailCall as
+Call NONE, exact result classification and FFI event projection. It derives
+forbidden/termination predicate equivalence internally, with the original
+choice/LUB formulas and canonical finite-support/positive-word translations.
+Whole-pass semantics correspondence and production routing remain separate.

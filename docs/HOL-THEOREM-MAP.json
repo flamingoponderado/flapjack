@@ -86547,5 +86547,20 @@
     "hol_name": "semantics_wrapper_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol compared full original1831-1929, result datatype1818 and wrapper1824. Arbitrary original absf/concf:Nat→distinct PanProps SemanticsRunResHOL HolOutcome×List HolIoEvent retained; all six curried hypotheses and wrapper equality exactly retained. Original IS_PREFIX ev evprime means evprime prefix ev, encoded evprime <+: ev. Source non-Fail, non-RunError matching extension, both non-Incomplete stability premises, both Incomplete event-prefix premises unchanged. Error/completion/incomplete result cases derive both chains and equal same-wrapper choices internally, with no supplied LUB/chain/event-equality or target-semantics premise. Reused identical proof structure of the separately sourced CrepToLoop theorem after substituting the distinct reviewed PanProps datatype and wrapper; no datatype identification assumed. Standard choice formula translation retains existing boundary limitation; equality is internal to the same model. Fresh closed full HOL theorem/types/kernelT capture. Faithful PanSem evaluator wrapper and PanStructs semantics_eq still separate pending obligations."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Semantics/PanProps/PanSemIsWrapper.lean",
+    "lean_name": "panPropsPanSemIsWrapper",
+    "hol_path": "cakeml/pancake/semantics/panPropsScript.sml",
+    "hol_name": "pan_sem_is_wrapper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol compared original1931-1954 and PanSem semantics785-809. Exact no-premise equality over faithful PanSemStateFiniteExact.semantics and evaluateHOLFiniteState, original TailCall as Call NONE start [], every overwritten clock, TimeOut→Incomplete/FinalFFI→CompleteResult FFI_outcome/Return→CompleteResult Success/other→RunError and ffi.io_events projection. No evaluator hook, supplied chain/LUB/successful-run/target-observation premise. Forbidden/termination predicates shown equivalent by all result constructors, then identical holOptionSome predicate and divergence image; no cross-assistant choice equality claimed. Canonical imported owning state4maps with full same-module state/broad roundtrip and positive indexed words/Type0 FFI host; no shadow state carrier. Fresh closed original theorem/full quantified types/kernelT. Full PanStructs semantics correspondence and executed production inventory remain independent obligations."
   }
 ]

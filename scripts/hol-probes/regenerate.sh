@@ -7398,3 +7398,7 @@ run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
 run_probe pan_props_semantics_wrapper_eq_probeScript.sml pan_props_semantics_wrapper_eq_probe.out \
   semantics_wrapper_eq_statement semantics_wrapper_eq_proved semantics_wrapper_eq_types \
   "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
+
+run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrapper_probe.out \
+  pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
