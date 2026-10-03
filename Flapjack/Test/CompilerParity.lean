@@ -1,3 +1,4 @@
+import Flapjack.Test.L3CSRInstructionsParity
 import Flapjack.Test.L3CSRDispatchParity
 import Flapjack.Test.L3CSRCounterParity
 import Flapjack.Test.L3FPCSRParity
