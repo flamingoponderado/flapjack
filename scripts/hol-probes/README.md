@@ -7390,3 +7390,11 @@ case retains every quantified original premise and the complete existential
 execution/result/resource contract; it derives all source reads, frame/free
 bounds, postrelation and physical returned-value placements internally.
 This constructor port does not establish full pass or runtime correctness.
+`word_to_stack_load_register_two_probe.out` replays the unchanged original
+local evaluate_wStackLoad_wReg2 proof4478–4510, records its whole statement,
+closed hypotheses=0/proved=T and original wReg2 definition. The native helper
+preserves every execution, clock, bitmap, full state relation, stack, register,
+additive expression and exact value conjunct with only the four original
+premises. Bounds and spilled values are derived from actual source lookup and
+state relation. This is transcription/regression evidence, not a cross-language
+equivalence proof or full instruction/If/compiler correctness claim.

@@ -81258,5 +81258,22 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 bead .27.1.1.10: original full motive5719-5751 and Return6494-6585, entire Seq.Simulation with all original source run/nonerror/fullstateRel/postallocation conventions/flat/nativecompile/bitmap size-prefix/labels/maxVar hypotheses and quantified contexts. Derives successful Loc getVar/getVars from source nonerror, EVEN register and canonical GENLIST one-based even values from conventions, release bound from maxVar+frame relation including frame0, then actual wReg1 load, SeqStackFree and Ret with zero added clock. Full flushed-source stateRel k0 0 with extra LENGTH ys-(k-1), every returned physical register and remaining stack slot proved; stackSizeRel maximum/option/stack size and complete stackRel preserved. No extra bounds, target run, postrelation or placement hypothesis on full case; countBound is case-local infrastructure derived internally. Five named canonical map fields use actual imported source/target owners and genuine same-module roundtrips; HOL List/Spt unchanged, positive BitVec/NeZero width and FFI Type0 standard translation only. Inherits evaluator reals_as_rational_cuts assurance, no numerical FP equivalence claim. Fleet acceptance tracked separately on open bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LoadRegisterTwo.lean",
+    "lean_name": "evaluateWStackLoadWReg2",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackLoad_wReg2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 bead11.1: full original local evaluate_wStackLoad_wReg2 word_to_stackProofScript.sml4478-4510, four original wReg2 tuple/EVEN/source get_var/full state_rel premises and ALL nine actual target run/clock/bitmap/full state_rel/stack length/space/non-k+1 get_var/additive word_exp/exact loaded value conclusions retained. Arbitrary source payload Word or Loc, Nat registers/frame slots/lens, positive shared word width and config/FFI host types; no maxVar/success/range/postrelation/targetrun guard added. wReg2 below-k branch empty load derives physical register lookup; spill branch derives bound and exact target stack value from original full locals relation/source lookup, actual StackLoad writes k+1. Scratch stateRel update uses accepted stateRel_setVar_of_ge; every other register and word_exp(Op Add[Var r;Const c]) are preserved, including missing/Loc/Word values and all constants, by exact canonical lookup update and literal expression equations. Genuine same-module codecs reexport actual imported canonical source fpRegs/store and target regs/fpRegs/store owners; Spt/List unchanged. Fresh original local statement and unchanged HOL proof replay from pinned source, closed hyp0, original wReg2 and stack-load definitions captured. No executable path change, no HOL-to-Lean equivalence/full case or pass completion. Inherits reals_as_rational_cuts from the source/target state relation evaluator assurance limit.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
