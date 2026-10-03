@@ -7179,3 +7179,7 @@ run_probe namespace_carrier_probeScript.sml namespace_carrier_probe.out \
 run_probe backend_common_trace_probeScript.sml backend_common_trace_probe.out \
   tra_case tra_case_types tra_case_hypotheses tra_case_proved orphan_trace orphan_trace_types orphan_trace_hypotheses orphan_trace_proved mk_cons mk_cons_types mk_cons_hypotheses mk_cons_proved tra_SourceLoc_type tra_Cons_type tra_Union_type tra_None_type \
   "$cake_dir/compiler/backend/backend_commonScript.sml" "$cake_dir/compiler/backend"
+
+run_probe flat_pattern_config_probeScript.sml flat_pattern_config_probe.out \
+  init_config init_config_types init_config_hypotheses init_config_proved init_config_type config_pat_heuristic_type config_component_equality \
+  "$cake_dir/compiler/backend/flat_patternScript.sml" "$cake_dir/compiler/backend"

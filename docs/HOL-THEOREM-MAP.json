@@ -84028,5 +84028,21 @@
     "hol_name": "mk_cons_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Config.lean",
+    "lean_name": "initConfig",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "init_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
   }
 ]

@@ -1418,6 +1418,12 @@
       "sha256": "9df93e08f2137b5180c972581a77fa17b58b34a87053825d96ce587699361820"
     },
     {
+      "bytes": 324,
+      "out": "flat_pattern_config_probe.out",
+      "rows": 7,
+      "sha256": "35fe497e7d2febc3a1371ca4a9bf51fcdee1685065191b2a062c9f49d0d7f476"
+    },
+    {
       "bytes": 81,
       "out": "fm_empty_zip_alist_probe.out",
       "rows": 4,
