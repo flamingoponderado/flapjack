@@ -68305,6 +68305,21 @@
     "reviewer": "flapjack-sol-c literal pinned source7721-7768: complete fixed word1 aq/rl (unused as in HOL), word5 rd/rs1/rs2 and arbitrary native riscv_state. Virtual alignment before Data/Write translateAddr; returned state for old memory read, operand GPR rs2 and fault. rawWriteData operand is evaluated from returned translation state before write GPR rd; preserve overlapping rs2=rd. W extracts/sign extends low32, D retains full64. No architecture guard, success/alignment/core hypothesis, or modern ISA replacement. Full mechanical36-definition closure has zero failures; unconditional whole-state normal form kernel checked. Fresh original26 combined observations independently calculated via wrapping byte updates and compared, covering negative/positive words, destination/source/address overlap, zero registers, core255/totalCore1, RV32/RV128, virtual misalignment, returned Sv39 write dirty/read flags and read-only/invalid faults. Observed frame resets GPR/memory/TLB/NextFetch/exception and retains other arbitrary fields; numeric guards do not establish full transition equivalence. No whole Run/Next/compiler theorem claim."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Alloc.lean",
+    "lean_name": "evaluateCodeBitmapsAlloc",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.6: original evaluate_code_bitmaps421-440 Alloc case. CodeBitmaps definitionally retains literal full existential shifted oracle/code union left-fold/bitmap append flatten. Actual native evaluate equality sole premise; disabled allocation and absent/nonword register reject with source/count0. Actual allocation result including GC errors supplies full alloc_const170-189 field preservation, deriving count0 without success/field/poststate assumptions. Native useAlloc guard/getVar/alloc dispatch retained. Imported canonical regs/fpRegs/store same-module roundtrip witness; positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence or runtime rewrite. Full parent and remaining cases remain open.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ShmemEntryMax.lean",
     "lean_name": "genlistLineToInfo_entryPcMax",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
