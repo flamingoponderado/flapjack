@@ -1,3 +1,4 @@
+import Flapjack.Test.L3RegisterALUParity
 import Flapjack.Test.L3ConditionalBranchParity
 import Flapjack.Test.L3UpperJumpParity
 import Flapjack.Test.L3CSRInstructionsParity

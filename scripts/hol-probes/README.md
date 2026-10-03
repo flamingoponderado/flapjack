@@ -6598,3 +6598,7 @@ wrap and direct odd-target BranchTo. Selector1 fixtures preserve exact error
 bytes/prior exceptions using zero operands without choosing architecture ARB.
 Both mode checks and returned states are retained. The original conditional
 clauses contain no JAL-style alignment trap. Full Run/Next remains open.
+
+### Native register arithmetic and bitwise equations
+
+`l3_register_alu_probeScript.sml` checks 160 independent whole-state ADD/SUB/AND/OR/XOR equations on the pinned original model. Eight input groups cover zero, full64 wraparound, signed boundaries, alternating bits, values exceeding32bits and either source register zero; four destinations cover suppression, both source aliases and a separate destination. All other fields and prior exceptions remain arbitrary. `check-l3-register-alu.py` requires the complete unique label set and every captured equation to reduce to T. Matching Lean fixtures use kernel-checked closed numeric certificates and whole-state equations. These original clauses have no architecture check. Full Run correctness remains open.
