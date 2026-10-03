@@ -6524,6 +6524,8 @@ predicate does not prove initializer simulation or machine/compiler correctness.
 Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.
 
 `word_to_stack_comp_clock_probe.out` freshly replays the unchanged original full `comp_correct` Tick/MustTerminate case proofs and `state_rel_dec_clock`. All nine rows capture closed full statements with proof=T and hypotheses=0. Tick retains timeout/flush and successful decrement branches; MustTerminate uses the original state-relation termdep=0 contradiction with error-free execution. The helper retains arbitrary frames/lens/extra. All simulation hypotheses and full result/resource conclusion remain; this family does not assemble the full pass theorem.
+
+`stack_remove_compile_semantics_full_probeScript.sml` replays the complete unchanged original `compile_semantics` proof (2418–2615). The original non-exported `comp_correct` and `state_rel_with_clock` prerequisites are freshly replayed through the existing complete comp-correct probe using HOL's quotation-aware loader, retaining the original local simplifier settings. Its two rows record the universally closed full statement and kernel proof success. Lean retains exactly the native state relation and source non-Fail premises, deriving target failure exclusion, termination-choice equivalence, and both divergence-family prefix directions from actual entry simulations and accepted native clock/IO theorems. The inherited rational-cut FP carrier is explicit. This is full StackRemove observational preservation; remaining initialization and whole compiler correctness are separate obligations.
 The LabToTarget code-safety transport probe captures the full original
 `code_similar_IMP_both_no_share_mem` at7364, both program carriers and zero
 hypotheses. An actual width8 Skip program changes its encoding bytes and length
@@ -6638,14 +6640,11 @@ supplement source review; full Run/Next correctness remains open.
 
 `wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.
 
-### Native register arithmetic and bitwise equations
+`stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
 
-`l3_register_alu_probeScript.sml` checks 160 independent whole-state ADD/SUB/AND/OR/XOR equations on the pinned original model. Eight input groups cover zero, full64 wraparound, signed boundaries, alternating bits, values exceeding32bits and either source register zero; four destinations cover suppression, both source aliases and a separate destination. All other fields and prior exceptions remain arbitrary. `check-l3-register-alu.py` requires the complete unique label set and every captured equation to reduce to T. Matching Lean fixtures use kernel-checked closed numeric certificates and whole-state equations. These original clauses have no architecture check. Full Run correctness remains open.
+`stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
 
-### Native immediate arithmetic and bitwise equations
-
-`l3_immediate_alu_probeScript.sml` contains120 independent whole-state original ADDI/ANDI/ORI/XORI equations with matching Lean kernel fixtures. Ten input groups include immediate0/1/2047/2048/4095, modularwrap, high32 bits, signboundaries and sourcezero; destinations0/1/7 cover suppression/sourcealias/separate write. Arbitrary reststate and prior exceptions are retained. Allfour original clauses signextend12to64 without a mode query. The strict checker requires every unique label to reduce to T. FullRun remains open.
-
+`stack_remove_init_code_pre_probeScript.sml` exports the complete original kernel definition and generic type of the initializer precondition (2953–2978), with zero stored hypotheses. The native port retains all four pointer witnesses, header words, characteristic-function sets, unsigned word capacity checks and the original three separated heap factors. This is the precondition definition, not the initializer execution proof.
 ### Native conditional branches
 
 `l3_conditional_branch_probeScript.sml` captures the full BEQ/BNE/BLT/BGE/
@@ -6657,6 +6656,17 @@ wrap and direct odd-target BranchTo. Selector1 fixtures preserve exact error
 bytes/prior exceptions using zero operands without choosing architecture ARB.
 Both mode checks and returned states are retained. The original conditional
 clauses contain no JAL-style alignment trap. Full Run/Next remains open.
+
+### Native register arithmetic and bitwise equations
+
+`l3_register_alu_probeScript.sml` checks 160 independent whole-state ADD/SUB/AND/OR/XOR equations on the pinned original model. Eight input groups cover zero, full64 wraparound, signed boundaries, alternating bits, values exceeding32bits and either source register zero; four destinations cover suppression, both source aliases and a separate destination. All other fields and prior exceptions remain arbitrary. `check-l3-register-alu.py` requires the complete unique label set and every captured equation to reduce to T. Matching Lean fixtures use kernel-checked closed numeric certificates and whole-state equations. These original clauses have no architecture check. Full Run correctness remains open.
+
+`stack_rawcall_allocation_store_probe` freshly captures original full comp_correct/zero hypotheses and Alloc/StoreConsts specializations (original153-163), plus original compiled stub identities at64/80 bits. Ten full final-theorem consumers preserve both simulations at arbitrary positive and1/8/64/80 widths, with a generic kernel stub identity. Actual GC/store-copy transport derives target execution/postrelation; the optional stub target guard follows per-entry stateRel compilation. Captures are statement/regression evidence, not cross-language equivalence.
+`word_to_stack_comp_seq_non_none_probe.out` freshly captures the complete original Seq `evaluate_ind` obligation at the full `comp_correct` motive, and the first-source non-NONE branch selected by HOL’s own case split. Both statements are derived using the original full `comp_correct`, with closed binders and zero open hypotheses; this is statement evidence, not replay of the literal original case proof or cross-language equivalence. The native proof retains the fixed first-source and actual-run/result-NONE guarded second IH, all original premises and the entire target clock/run/resource/result conclusion. Full Seq first-NONE resource composition and pass assembly remain open.
+
+### Native immediate arithmetic and bitwise equations
+
+`l3_immediate_alu_probeScript.sml` contains120 independent whole-state original ADDI/ANDI/ORI/XORI equations with matching Lean kernel fixtures. Ten input groups include immediate0/1/2047/2048/4095, modularwrap, high32 bits, signboundaries and sourcezero; destinations0/1/7 cover suppression/sourcealias/separate write. Arbitrary reststate and prior exceptions are retained. Allfour original clauses signextend12to64 without a mode query. The strict checker requires every unique label to reduce to T. FullRun remains open.
 
 ### Native set-less-than equations
 
