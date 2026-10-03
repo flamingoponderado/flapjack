@@ -6997,3 +6997,7 @@ The same probe now also fetches the exported original `max_var_intro` kernel the
 `pan_structs_convert_state_probe` captures the entire original state and value
 conversion kernel definitions/types and zero hypotheses. The state record updates
 exactly locals, globals, structs, code and exception shapes.
+
+`pan_structs_shape_map_codec_probe` captures the external HOL alistTheory right-fold
+definition and unconditional lookup theorem used by PanStructs. Original duplicate
+keys keep the first binding; other, missing and empty lookups are recorded.

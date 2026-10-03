@@ -6593,3 +6593,7 @@ run_probe pan_structs_convert_code_probeScript.sml pan_structs_convert_code_prob
 run_probe pan_structs_convert_state_probeScript.sml pan_structs_convert_state_probe.out \
   convert_state_definition convert_state_type convert_state_hypotheses convert_value_definition convert_value_type convert_value_hypotheses \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_shape_map_codec_probeScript.sml pan_structs_shape_map_codec_probe.out \
+  shape_map_definition shape_map_lookup_statement shape_map_lookup_hypotheses shape_map_first_binding shape_map_other_binding shape_map_missing shape_map_empty \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

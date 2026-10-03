@@ -75566,5 +75566,13 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical owning-carrier roundtrip representation witness re-exporting the imported PanSemStateFiniteExact witness. Genuine two-way ofExact/toExact equations with broad finite-support counterpart; not an independent HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/ShapeMap.lean",
+    "lean_name": "shapeMap_lookup",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol2026-10-03: Flapjack canonical finite-map codec correspondence to external HOL alistTheory right-fold FUPDATE/FEMPTY, not a CakeML declaration. Arbitrary exact MlS/ShapeHOL entries/key including duplicates; unconditional independent raw alistToFmap lookup equality. Source alistScript21/ALOOKUP_EQ_FLOOKUP67 checked; no distinctness, extra support or desired map relation premise. Enables canonical original shape-map equality hypotheses of faithful PanStructs compile_exp_correct."
   }
 ]
