@@ -639,6 +639,10 @@ import Flapjack.Compiler.Backend.LabToTarget.AlignedPosVal
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Common
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Step
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Control
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Asm
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Cbw
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.ShareMem
+import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp

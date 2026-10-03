@@ -1994,6 +1994,12 @@
       "sha256": "dde891b348687f4e3e6a2651eb5d837bbda4fe19684f0f03b2705ff916e286fc"
     },
     {
+      "bytes": 6395,
+      "out": "lab_to_target_ffi_bytearray_probe.out",
+      "rows": 20,
+      "sha256": "093c6f27e517535cf74275ccdc122287639370edbd268f066393318f781fdfbd"
+    },
+    {
       "bytes": 1975,
       "out": "lab_to_target_ffi_entry_exclusion_probe.out",
       "rows": 12,
