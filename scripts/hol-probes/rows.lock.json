@@ -9764,6 +9764,12 @@
       "sha256": "cf43dd90b6c8a9f24359b24241f44bd6af033df1cc2a74651823d98f64a270e4"
     },
     {
+      "bytes": 439,
+      "out": "word_to_stack_native_stackstore_probe.out",
+      "rows": 4,
+      "sha256": "816ce7bc501780cac22b820c0043970337ebc42123cf402c1d6392b6944516be"
+    },
+    {
       "bytes": 553,
       "out": "word_to_stack_native_top_probe.out",
       "rows": 24,
@@ -10086,6 +10092,12 @@
       "out": "word_to_stack_state_rel_probe.out",
       "rows": 3,
       "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"
+    },
+    {
+      "out": "word_to_stack_store_register_probe.out",
+      "sha256": "4ebfb4ed266feefa89a3f171150cd9784e280d3e1e72f4ce1ca0795352a1f155",
+      "bytes": 675,
+      "rows": 6
     },
     {
       "bytes": 227,

@@ -7605,3 +7605,8 @@ Statement regression evidence, not literal local proof replay or equivalence.
 DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
 `stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.
+
+`word_to_stack_native_stackstore_probeScript.sml` captures the original full
+wStackStore definition and empty/reverse/repeated-slot continuation cases.
+Original production script uses it only at its definition; compiler direct
+store clauses are retained. Regression evidence, not equivalence.

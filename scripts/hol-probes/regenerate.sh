@@ -7081,3 +7081,10 @@ run_probe lab_props_alignment_sdm_evaluate_probeScript.sml lab_props_alignment_s
 run_probe stack_to_lab_state_rel_probeScript.sml stack_to_lab_state_rel_probe.out \
   state_rel_def_statement loc_check_IMP_loc_to_pc_statement state_rel_dec_clock_statement state_rel_with_pc_statement state_rel_with_clock_statement set_var_upd_reg_statement set_var_Word_upd_reg_statement set_fp_var_upd_fp_reg_statement mem_store_upd_mem_statement state_rel_read_reg_FLOOKUP_regs_statement state_rel_read_fp_reg_FLOOKUP_fp_regs_statement state_rel_get_var_imm_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_native_stackstore_probeScript.sml word_to_stack_native_stackstore_probe.out \
+  native_stackstore_full_definition native_stackstore_empty native_stackstore_reverse native_stackstore_repeated_slot \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_store_register_probeScript.sml word_to_stack_store_register_probe.out \
+  store_reg1_full store_reg1_hypotheses store_reg1_proved write_seq_full write_seq_hypotheses write_seq_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
