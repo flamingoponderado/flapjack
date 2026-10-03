@@ -7328,17 +7328,24 @@ captures and kernel proofs remain evidence for source review, not a proof of
 HOL-to-Lean equivalence or full target execution correctness.
 `stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
 
-## Native RISC-V encoder arithmetic prerequisites
 
-`riscv_target_arithmetic_probeScript.sml` replays the unchanged local `lem5`,
-`lem8` and `lem9` proofs from original `riscv_targetProofScript.sml:67–100`.
-The closed statements retain every free/quantified operand, the original sole
-alignment premise, the fixed word64 input and word65 carry-expression types,
-and both carry equivalences (with and without carry-in). Each replay has zero
-hypotheses and a kernel `EQT_INTRO` result `T`. The strict checker compares the
-literal replay terms/proofs to the pinned original, and rejects captured
-statement, type, hypothesis or proof-result drift. Lean ports live beneath the
-existing source counterpart in `RiscV/CorrectnessEncoding/Arithmetic.lean`;
-their generic consumers use the full statements. This source review and these
-kernel proofs do not establish cross-assistant equivalence or the full
-`riscv_encoder_correct` theorem; its target-state/step obligations remain open.
+`pan_structs_program_assign_probe` captures the full original `compile_correct`
+and its `Assign vk v e` specialization, with all quantified binder types and
+closed kernel proofs. The Lean case retains all ten original premises and seven
+conclusions for both local and global assignment, deriving target validity and
+shape-map neutrality internally from source validity and full value conversion.
+
+`word_to_stack_comp_handler_full_probe.out` records the full original SOME-handler
+returning Call specialization of comp_correct, its closed kernel theorem
+(proved=T, hypotheses=0), and the complete original evaluate_ind Call obligation.
+The native constructor retains the three literal guarded returning IHs; the
+fixed SOME return makes the fourth tail IH impossible. Header/argument/callee
+allocation, zero clock, all body results and normal/exception continuations are
+assembled with the entire original result/resource conclusion. This capture is
+statement evidence from the original full theorem, not a replay of the local
+9020–10048 proof or a HOL-to-Lean equivalence proof. The full pass remains open.
+`pan_structs_program_primitive_probe` captures the full original program theorem
+and its `Primitive v pop es` specialization, with binder types and closed kernel
+proofs. The Lean case retains all ten premises and seven conclusions, executes
+the original argument mmap and AddCarry operation, and derives local validity
+and update postconditions internally from the full Assign case.

@@ -80,4 +80,70 @@ theorem evaluateClockNeutral {width : Nat} [NeZero width] {C F : Type}
   rw [hypothesis.1] at commute
   exact commute
 
+/-- Flapjack structural infrastructure: on the original neutral programs, FFI
+update commutes with evaluation. Proved by structural induction; nothing about
+subprograms is assumed. -/
+private theorem neutralFfiFree {width : Nat} [NeZero width] {C F : Type}
+    (p : HolProg width) (neutral : clockNeutralHOL p)
+    (source : StackSemStateFiniteExact width C F) (k : HolFfiState F) :
+    evaluate (p, {source with ffi := k}) =
+      ((evaluate (p, source)).1, {(evaluate (p, source)).2 with ffi := k}) := by
+  cases programEq : p
+  all_goals rw [programEq] at neutral
+  case skip => simp only [evaluate_skip]
+  case halt register =>
+    simp only [evaluate_halt, getVar]
+    split <;> rfl
+  case locValue register label entry =>
+    simp only [evaluate_locValue]
+    split <;> rfl
+  case inst instruction =>
+    simp only [evaluate_inst]
+    cases h : StackSemInst.instHOL instruction source with
+    | none =>
+      rw [(StackPropsInstructionConstants.instClockNeutralFfi instruction source source k).2 h]
+    | some t =>
+      rw [(StackPropsInstructionConstants.instClockNeutralFfi instruction source t k).1 h]
+  case seq first second =>
+    obtain ⟨neutralFirst, neutralSecond⟩ := neutral
+    rw [evaluate_seq, evaluate_seq,
+      neutralFfiFree (C := C) (F := F) first neutralFirst source k]
+    cases firstRun : evaluate (first, source) with
+    | mk result post =>
+      simp only [fixClock]
+      cases result with
+      | none =>
+        exact neutralFfiFree (C := C) (F := F) second neutralSecond
+          {post with clock := min source.clock post.clock} k
+      | some value => rfl
+  case ite comparison register immediate first second =>
+    obtain ⟨neutralFirst, neutralSecond⟩ := neutral
+    have immediateSame : StackSemStateOps.getVarImm (HolRegImm.toWordRegImm immediate)
+        {source with ffi := k} = StackSemStateOps.getVarImm (HolRegImm.toWordRegImm immediate) source := by
+      cases immediate <;> rfl
+    simp only [evaluate_ite, immediateSame, StackSemStateOps.getVar]
+    repeat' (first | split | dsimp only)
+    all_goals first
+      | exact neutralFfiFree (C := C) (F := F) first neutralFirst source k
+      | exact neutralFfiFree (C := C) (F := F) second neutralSecond source k
+  all_goals simp [clockNeutralHOL] at neutral
+
+termination_by sizeOf p
+decreasing_by all_goals simp_all <;> omega
+
+/-- Full original FFI-neutral evaluator theorem (`stackPropsScript.sml:694-705`).
+All arbitrary program, source/result/post-state and replacement-FFI binders are
+retained; HOL's record update keeps the FFI type, as here. The only premises
+are source evaluation and the original neutrality predicate; the updated
+evaluation is derived. The evaluator closure inherits reals_as_rational_cuts
+(SOUNDNESS item 8); no new floating-point agreement is asserted. -/
+@[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_ffi_neutral"
+  (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
+theorem evaluateFfiNeutral {width : Nat} [NeZero width] {C : Type} {F : Type}
+    (program : HolProg width) (source post : StackSemStateFiniteExact width C F)
+    (result : Option (StackSemResult width)) (ffi : HolFfiState F)
+    (hypothesis : evaluate (program, source) = (result, post) ∧ clockNeutralHOL program) :
+    evaluate (program, {source with ffi := ffi}) = (result, {post with ffi := ffi}) := by
+  rw [neutralFfiFree (C := C) (F := F) program hypothesis.2 source ffi, hypothesis.1]
+
 end Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
