@@ -23,6 +23,27 @@ theorem supportsCodec_wordInstSelectLoadTail {α : Type u} [WordInstSelectImmedi
   unfold wordInstSelectLoadTail
   repeat' (split <;> simp_all [selectSeqDomain, supportsCodec])
 
+/-- Flapjack-only pair API shape of the executed load tail. HOL returns a
+program directly, so this selected-expression projection has no HOL original. -/
+theorem wordInstSelectLoadTail_selected {α : Type u} [WordInstSelectImmediate α]
+    (temporary : Nat) (prelude : WordProg α) (address : WordExp α) :
+    (wordInstSelectLoadTail temporary prelude address).2 = .var temporary := by
+  unfold wordInstSelectLoadTail
+  repeat' (split <;> simp_all)
+
+/-- The executed expression selector always returns its own temporary. This
+unconditional pair API invariant is Flapjack-only infrastructure: HOL's
+inst_select_exp returns only a program. It assumes neither successful codec
+conversion nor a desired output shape. -/
+theorem wordInstSelectAtom_selected {α : Type u}
+    [Sub α] [Add α] [DecidableEq α] [OfNat α 0] [OfNat α 1]
+    [WordInstSelectImmediate α] (temporary : Nat) (expression : WordExp α) :
+    (wordInstSelectAtom temporary expression).2 = .var temporary := by
+  fun_cases wordInstSelectAtom temporary expression
+  all_goals try dsimp +zetaDelta only at *
+  all_goals repeat' split
+  all_goals simp_all [wordInstSelectLoadTail_selected]
+
 /-- Every expression-selection prelude is accepted structurally, including
 all recursive load/operation/shift branches and arbitrary natural temporaries.
 Flapjack-only infrastructure; no input/output semantic relation, normal-form,

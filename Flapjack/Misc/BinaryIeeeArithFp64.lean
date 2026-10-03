@@ -1,4 +1,4 @@
-import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.MachineIeee.Arith
 import Flapjack.Misc.BinaryIeeeRoundFp64
 import Flapjack.FpSemHOL
 

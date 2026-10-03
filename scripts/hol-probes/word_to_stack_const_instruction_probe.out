@@ -1,0 +1,4 @@
+const_full_transport=⊢ state_rel ac k f f' s t lens extra ⇒ ∃t'. evaluate (const_inst (k + 1) i,t) = (NONE,t') ∧ t.clock = t'.clock ∧ state_rel ac k f f' s t' lens extra ∧ LENGTH t'.stack = LENGTH t.stack ∧ t'.stack_space = t.stack_space ∧ get_var (k + 1) t' = SOME (Word i)
+const_full_clock=⊢ evaluate (const_inst k i,t with clock := clk) = (I ## (λt. t with clock := clk)) (evaluate (const_inst k i,t))
+const_transport_closed=⊢ state_rel ac k f f' s t lens extra ⇒ (∃t'. evaluate (const_inst (k + 1) i,t) = (NONE,t') ∧ t.clock = t'.clock ∧ state_rel ac k f f' s t' lens extra ∧ LENGTH t'.stack = LENGTH t.stack ∧ t'.stack_space = t.stack_space ∧ get_var (k + 1) t' = SOME (Word i)) ⇔ T
+const_clock_closed=⊢ evaluate (const_inst k i,t with clock := clk) = (I ## (λt. t with clock := clk)) (evaluate (const_inst k i,t)) ⇔ T

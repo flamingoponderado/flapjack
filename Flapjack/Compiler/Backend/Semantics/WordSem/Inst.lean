@@ -1,7 +1,7 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Alloc
 import Flapjack.Compiler.Backend.BackendCommon
-import Flapjack.Misc.BinaryIeeeArith
-import Flapjack.Misc.BinaryIeeeConvert
+import Flapjack.Misc.MachineIeee.Arith
+import Flapjack.Misc.MachineIeee.ConvertInt
 import Flapjack.Misc.BinaryIeeeSqrt
 import Flapjack.FpSemHOL
 

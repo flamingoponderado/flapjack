@@ -1,0 +1,2 @@
+neutral_ffi_full_statement=∀c prog s res t. evaluate (prog,s) = (res,t) ∧ clock_neutral prog ⇒ evaluate (prog,s with ffi := c) = (res,t with ffi := c)
+neutral_ffi_full_proved=T
