@@ -2300,6 +2300,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorFlat
 import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 
 -- Tagged modules required by the HOL reference coverage gate.
 

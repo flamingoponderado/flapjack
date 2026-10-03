@@ -9578,6 +9578,12 @@
       "sha256": "8b852ce023efd3d117bb1688c9471d87fe7544bd6a3e15511e82df78fb804281"
     },
     {
+      "bytes": 195,
+      "out": "word_to_stack_load_clock_probe.out",
+      "rows": 3,
+      "sha256": "9d9c5a449e93eec668b1ce84ad0d53fbdbe6d4a849ee07e9afc224b65c729fae"
+    },
+    {
       "bytes": 432807,
       "out": "word_to_stack_load_continuations_probe.out",
       "rows": 412,

@@ -7019,3 +7019,6 @@ run_probe stack_remove_init_semantics_probeScript.sml stack_remove_init_semantic
 run_probe stack_remove_init_ffi_probeScript.sml stack_remove_init_ffi_probe.out \
   evaluate_init_code_ffi_statement evaluate_init_code_ffi_hypotheses make_init_any_ffi_statement make_init_any_ffi_hypotheses \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_stack_load_clock_probeScript.sml word_to_stack_load_clock_probe.out \
+  load_clock_statement load_clock_proved load_clock_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
