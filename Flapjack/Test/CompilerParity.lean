@@ -1,3 +1,4 @@
+import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3SetLessParity

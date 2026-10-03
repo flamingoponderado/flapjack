@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.WordArithmetic
 import Flapjack.RiscV.L3.Defs.ImmediateShift
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.DomainCodeCase
 import Flapjack.Compiler.Backend.LabToTarget.Initialization.MemorySeparationCases

@@ -6719,3 +6719,12 @@ Coverage includes numeric/count boundaries, RV32 illegal routes using the
 reviewed signalException helper, twelve invalid-mode error/prior-exception
 cases and six symbolic ARB branches seeded with NoException. ARB is unspecified.
 The complete definitions retain arbitrary states and original hypotheses.
+
+### Native word arithmetic
+
+`l3_word_arithmetic_probeScript.sml` captures 363 whole-state ADDIW/ADDW/SUBW
+equations from original HOL. `check-l3-word-arithmetic.py` requires every
+registered row to reduce to T. `L3WordArithmeticParity` checks the same
+inputs/states independently in Lean, including wrap/sign/zero/alias boundaries,
+RV32 Illegal_Instr routes through the reviewed helper and symbolic invalid-mode
+ARB branches seeded NoException. The full definitions retain arbitrary states.

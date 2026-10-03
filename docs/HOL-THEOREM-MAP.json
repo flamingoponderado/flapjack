@@ -71408,5 +71408,29 @@
     "hol_name": "dfn'SRAIW_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.27): literal full fixed word5 register inputs and word6 regular/word5 W immediates over arbitrary reviewed native state. Regular RV32 bit5 legality and W RV32 Illegal_Instr routes are preserved. SLLI shifts full64; SRLI zero-extends and SRAI sign-extends low32 BEFORE the 64-bit shift and threads a second mode check after legality. W forms shift low32 then sign-extend every result, including SRLIW. All returned mode-check states, rd0 suppression, source aliases, error retention and unspecified canonical ARB remain literal; no mode/core/success/target-run premise. Fresh original and kernel fixtures pass 540 valid-mode numeric/illegal routes, twelve explicit invalid-mode error/prior-exception routes and six symbolic invalid-mode equations seeded with NoException. Illegal routes compare the reviewed signalException helper without selecting a trap default. These fixtures are regression evidence, not a full cross-language equivalence theorem; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/WordArithmetic.lean",
+    "lean_name": "«dfn'ADDIW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADDIW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.28): complete literal ADDIW5726/ADDW6025/SUBW6067 fixed word5 registers, word12 immediate and arbitrary reviewed native state. A single in32BitMode call supplies the state for reads, writes and RV32 Illegal_Instr. ADDIW adds signextended12 to full64 before low32 extraction; ADDW/SUBW calculate with low32 operands; all successful results signextend64. Canonical ARB is unspecified and error-state retention remains literal. No mode/core/success/target-run premises. Fresh original and kernel fixtures: 360 numeric/illegal whole-state equations with wrap/sign/zero/alias boundaries and three symbolic invalid-mode equations seeded NoException, all363 PASS. Illegal routes compare reviewed signalException, not a fabricated trap default. Finite regressions do not establish full cross-language equivalence; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/WordArithmetic.lean",
+    "lean_name": "«dfn'ADDW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADDW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.28): complete literal ADDIW5726/ADDW6025/SUBW6067 fixed word5 registers, word12 immediate and arbitrary reviewed native state. A single in32BitMode call supplies the state for reads, writes and RV32 Illegal_Instr. ADDIW adds signextended12 to full64 before low32 extraction; ADDW/SUBW calculate with low32 operands; all successful results signextend64. Canonical ARB is unspecified and error-state retention remains literal. No mode/core/success/target-run premises. Fresh original and kernel fixtures: 360 numeric/illegal whole-state equations with wrap/sign/zero/alias boundaries and three symbolic invalid-mode equations seeded NoException, all363 PASS. Illegal routes compare reviewed signalException, not a fabricated trap default. Finite regressions do not establish full cross-language equivalence; full Run/Next correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/WordArithmetic.lean",
+    "lean_name": "«dfn'SUBW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'SUBW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison (2026-10-03; bead flapjack-pxn.18.5.13.8.1.28): complete literal ADDIW5726/ADDW6025/SUBW6067 fixed word5 registers, word12 immediate and arbitrary reviewed native state. A single in32BitMode call supplies the state for reads, writes and RV32 Illegal_Instr. ADDIW adds signextended12 to full64 before low32 extraction; ADDW/SUBW calculate with low32 operands; all successful results signextend64. Canonical ARB is unspecified and error-state retention remains literal. No mode/core/success/target-run premises. Fresh original and kernel fixtures: 360 numeric/illegal whole-state equations with wrap/sign/zero/alias boundaries and three symbolic invalid-mode equations seeded NoException, all363 PASS. Illegal routes compare reviewed signalException, not a fabricated trap default. Finite regressions do not establish full cross-language equivalence; full Run/Next correctness remains open."
   }
 ]
