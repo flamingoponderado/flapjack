@@ -85926,5 +85926,22 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison2026-10-03 Move evaluator prerequisite: full original wMoveAux_thm2856-2867. Both original empty and cons evaluator equalities retain arbitrary formatted moves/frame/targetstate and every result including failure. Native singleton is literal wMoveSingle; trailing Skip equality derives actual evaluateClock bound, not a supplied successful evaluation or postclock premise. Canonical imported target finite-map fields with same-module genuine codec roundtrip; List/Sum/Nat products unchanged, positive type-indexed words/Type0 host. Inherits reals_as_rational_cuts evaluator closure limit, no new FP correspondence or cross-language equivalence. Fresh literal original whole HOL proof replay with full statement/closed hypotheses. Entire move-list simulation remains open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/MoveAuxSimulation.lean",
+    "lean_name": "simulationCons",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wMoveAux_seqsem",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 full original cons induction case3130–3285. OriginalGuards expands all seven original guards including actual real-source read success, scratch first-read/write ordering, EVERY endpoint bound and distinct real destinations. Simulation expands entire actual native existential evaluation NONE/post, full state_rel to original reversed-destination seqsem set_vars expression, target stack length and stack_space preservation. Only original generalized structural tail IH added. Head value and run derived internally, every tail guard proved, actual evaluator fixClock law used, complete source reconstruction proved. Positive width and arbitrary Word/Loc/source/target/environment retained. No target-run, postrelation, scheduler or success assumptions added. THE defaults unobserved below SOME filters; no total HD/EL approval bypass. Five canonical fields qualified with genuine same-module source/target codec witnesses; inherited reals_as_rational_cuts evaluator assurance retained. Fresh literal original whole proof replay provides regression evidence only, no HOL-to-Lean equivalence claim.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
