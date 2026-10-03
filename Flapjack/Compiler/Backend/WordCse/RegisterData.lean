@@ -33,7 +33,7 @@ def canonicalMultRegs (data : Knowledge) (registers : List Nat) : List Nat :=
 /-- Literal tail-first insertion: the head binding is inserted last and wins
 on repeated keys, preserving the original arbitrary sparse-tree input. -/
 @[hol "cakeml/compiler/backend/word_cseScript.sml" "map_insert_def"]
-def mapInsert : List (Nat × Nat) → Spt Nat → Spt Nat
+def mapInsert {α : Type} : List (Nat × α) → Spt α → Spt α
   | [], map => map
   | (key, value) :: entries, map => sptInsert key value (mapInsert entries map)
 

@@ -1,0 +1,3 @@
+wMoveAux_statement=∀xs x s kf. evaluate (wMoveAux [] kf,s) = (NONE,s) ∧ evaluate (wMoveAux (x::xs) kf,s) = evaluate (Seq (wMoveSingle x kf) (wMoveAux xs kf),s)
+wMoveAux_proved=T
+wMoveAux_hypotheses=0

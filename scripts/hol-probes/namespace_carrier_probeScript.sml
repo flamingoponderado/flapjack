@@ -1,0 +1,16 @@
+load "bossLib"; load "namespaceTheory";
+open bossLib HolKernel Parse boolLib boolSyntax namespaceTheory;
+val th = DB.fetch "namespace" "namespace_case_def";
+val _ = show_types := true;
+val _ = print "namespace_case=";
+val _ = print_term (concl th);
+val _ = print "\n";
+val _ = print "namespace_case_types=";
+val _ = app (fn v => print (term_to_string v ^ ":" ^ type_to_string (type_of v) ^ ";")) (fst (strip_forall (concl th)) @ free_vars (concl th));
+val _ = print "\n";
+val _ = print ("namespace_case_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n");
+val _ = show_types := false;
+val _ = print "namespace_case_proved=";
+val _ = print_term (rhs (concl (EQT_INTRO (prove (concl th, ACCEPT_TAC th)))));
+val _ = print "\n";
+val _ = print "namespace_Bind_type="; val _ = print (type_to_string (type_of ``namespace$Bind``)); val _ = print "\n";

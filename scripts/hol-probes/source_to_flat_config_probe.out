@@ -1,0 +1,33 @@
+var_name_shape=(∀(a0 :tra) (a1 :num) (f :tra -> num -> α) (f1 :tra -> mlstring -> α).
+   (var_name_CASE (Glob a0 a1) f f1 :α) = f a0 a1) ∧
+∀(a0 :tra) (a1 :mlstring) (f :tra -> num -> α) (f1 :tra -> mlstring -> α).
+  (var_name_CASE (Local a0 a1) f f1 :α) = f1 a0 a1
+environment_shape=∀(e1 :environment) (e2 :environment). e1 = e2 ⇔ e1.c = e2.c ∧ e1.v = e2.v
+environment_generation_store_shape=∀(e1 :environment_generation_store) (e2 :environment_generation_store).
+  e1 = e2 ⇔
+  e1.next = e2.next ∧ e1.generation = e2.generation ∧ e1.envs = e2.envs
+environment_store_shape=∀(e1 :environment_store) (e2 :environment_store).
+  e1 = e2 ⇔ e1.next = e2.next ∧ e1.env_gens = e2.env_gens
+next_indices_shape=∀(n1 :next_indices) (n2 :next_indices).
+  n1 = n2 ⇔ n1.vidx = n2.vidx ∧ n1.tidx = n2.tidx ∧ n1.eidx = n2.eidx
+config_shape=∀(c1 :config) (c2 :config).
+  c1 = c2 ⇔
+  c1.next = c2.next ∧ c1.mod_env = c2.mod_env ∧
+  c1.pattern_cfg = c2.pattern_cfg ∧ c1.envs = c2.envs
+Glob_type=:tra -> num -> var_name
+Local_type=:tra -> mlstring -> var_name
+environment_c_type=:environment ->
+(mlstring, mlstring, num # (num # (num # num) list) option) namespace
+environment_v_type=:environment -> (mlstring, mlstring, var_name) namespace
+environment_generation_store_next_type=:environment_generation_store -> num
+environment_generation_store_generation_type=:environment_generation_store -> num
+environment_generation_store_envs_type=:environment_generation_store -> environment sptree$num_map
+environment_store_next_type=:environment_store -> num
+environment_store_env_gens_type=:environment_store -> environment sptree$num_map sptree$num_map
+next_indices_vidx_type=:next_indices -> num
+next_indices_tidx_type=:next_indices -> num
+next_indices_eidx_type=:next_indices -> num
+config_next_type=:config -> next_indices
+config_mod_env_type=:config -> environment
+config_pattern_cfg_type=:config -> flat_pattern$config
+config_envs_type=:config -> environment_store

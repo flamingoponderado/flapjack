@@ -74,6 +74,8 @@ class CoordinatorPendingReviewNoteTest(unittest.TestCase):
             "coordinator is pending",
             "source review pending coordinator.",
             "acceptance pending coordinator.",
+            "Coordinator acceptance tracked on bead.",
+            "Fleet acceptance tracked separately.",
         ]
         for note in notes:
             with self.subTest(note=note):

@@ -97,9 +97,23 @@ theorem everyIsSomeLocToPcPrefix {width : Nat} [NeZero width] {n : Nat} {cs : Li
   rintro ⟨all, pre⟩ k mem
   exact isSomeLocToPcPrefix ⟨all k mem, pre⟩
 
+/-- Canonical native StackSem state roundtrip, re-exported here as qualifier
+infrastructure; this witness has no independently named HOL original. -/
+theorem holFmapAsFiniteSupportRelationWitness_StackSemStateFiniteExact
+    {width : Nat} [NeZero width] {C F : Type} :
+    (∀ (state : StackSemStateBroad width C F) (h : state.FiniteSupport),
+      (StackSemStateBroad.ofBroad state h).toBroad = state) ∧
+    (∀ state : StackSemStateFiniteExact width C F,
+      StackSemStateBroad.ofBroad state.toBroad state.toBroad_finiteSupport = state) :=
+  StackSemStateSupport.holFmapAsFiniteSupportWitness
+
 /-- Programs that `flatten` marks as not returning always produce a StackSem
-result. -/
+result. The quantified native state translates the original `regs`, `fp_regs`
+and `store` finite maps through the canonical finite-support representation;
+the `code` field remains a literal sptree and is not qualified as a finite map. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "no_ret_correct"
+  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
   (words_as_type_indexed_bitvec)]
 theorem noRetCorrect {width : Nat} [NeZero width] {C F : Type} :
     ∀ (t : Bool) (p : HolProg width) (y z : Nat) (cs bs : List Nat),

@@ -1,0 +1,4 @@
+addi_decode_zero=T
+addi_decode_all_ones=T
+addi_decode_sign_bit=T
+addi_decode_positive_max=T

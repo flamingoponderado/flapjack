@@ -1,0 +1,24 @@
+word_size_case_def=(∀(v0 :α) (v1 :α). (case W8 of W8 => v0 | W64 => v1) = v0) ∧
+∀(v0 :α) (v1 :α). (case W64 of W8 => v0 | W64 => v1) = v1
+word_size_nchotomy=∀(a :word_size). a = W8 ∨ a = W64
+thunk_mode_case_def=(∀(v0 :α) (v1 :α).
+   (case Evaluated of Evaluated => v0 | NotEvaluated => v1) = v0) ∧
+∀(v0 :α) (v1 :α).
+  (case NotEvaluated of Evaluated => v0 | NotEvaluated => v1) = v1
+thunk_mode_nchotomy=∀(a :thunk_mode). a = Evaluated ∨ a = NotEvaluated
+thunk_op_case_def=(∀(a :thunk_mode) (f :thunk_mode -> α) (f1 :thunk_mode -> α) (v :α).
+   (thunk_op_CASE (AllocThunk a) f f1 v :α) = f a) ∧
+(∀(a :thunk_mode) (f :thunk_mode -> α) (f1 :thunk_mode -> α) (v :α).
+   (thunk_op_CASE (UpdateThunk a) f f1 v :α) = f1 a) ∧
+∀(f :thunk_mode -> α) (f1 :thunk_mode -> α) (v :α).
+  (thunk_op_CASE ForceThunk f f1 v :α) = v
+thunk_op_nchotomy=∀(tt :thunk_op).
+  (∃(t :thunk_mode). tt = AllocThunk t) ∨
+  (∃(t :thunk_mode). tt = UpdateThunk t) ∨ tt = ForceThunk
+test_case_def=(∀(v :α) (f :opb -> α) (f1 :opb -> α). (test_CASE Equal v f f1 :α) = v) ∧
+(∀(a :opb) (v :α) (f :opb -> α) (f1 :opb -> α).
+   (test_CASE (Compare a) v f f1 :α) = f a) ∧
+∀(a :opb) (v :α) (f :opb -> α) (f1 :opb -> α).
+  (test_CASE (AltCompare a) v f f1 :α) = f1 a
+test_nchotomy=∀(tt :test).
+  tt = Equal ∨ (∃($o :opb). tt = Compare $o) ∨ ∃($o :opb). tt = AltCompare $o

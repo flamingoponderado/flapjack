@@ -1,0 +1,557 @@
+const_case_def=(∀(a0 :num) (a1 :const list) (f :num -> const list -> β) (f1 :int -> β)
+     (f2 :mlstring -> β) (f3 :word64 -> β).
+   (const_CASE (ConstCons a0 a1) f f1 f2 f3 :β) = f a0 a1) ∧
+(∀(a :int) (f :num -> const list -> β) (f1 :int -> β) (f2 :mlstring -> β)
+     (f3 :word64 -> β). (const_CASE (ConstInt a) f f1 f2 f3 :β) = f1 a) ∧
+(∀(a :mlstring) (f :num -> const list -> β) (f1 :int -> β)
+     (f2 :mlstring -> β) (f3 :word64 -> β).
+   (const_CASE (ConstStr a) f f1 f2 f3 :β) = f2 a) ∧
+∀(a :word64) (f :num -> const list -> β) (f1 :int -> β) (f2 :mlstring -> β)
+    (f3 :word64 -> β). (const_CASE (ConstWord64 a) f f1 f2 f3 :β) = f3 a
+const_nchotomy=∀(cc :const).
+  (∃(n :num) (l :const list). cc = ConstCons n l) ∨
+  (∃(i :int). cc = ConstInt i) ∨ (∃(m :mlstring). cc = ConstStr m) ∨
+  ∃(c :word64). cc = ConstWord64 c
+const_part_case_def=(∀(a0 :num) (a1 :num list) (f :num -> num list -> α) (f1 :int -> α)
+     (f2 :mlstring -> α) (f3 :word64 -> α).
+   (const_part_CASE (Con a0 a1 :const_part) f f1 f2 f3 :α) = f a0 a1) ∧
+(∀(a :int) (f :num -> num list -> α) (f1 :int -> α) (f2 :mlstring -> α)
+     (f3 :word64 -> α). (const_part_CASE (Int a) f f1 f2 f3 :α) = f1 a) ∧
+(∀(a :mlstring) (f :num -> num list -> α) (f1 :int -> α) (f2 :mlstring -> α)
+     (f3 :word64 -> α). (const_part_CASE (Str a) f f1 f2 f3 :α) = f2 a) ∧
+∀(a :word64) (f :num -> num list -> α) (f1 :int -> α) (f2 :mlstring -> α)
+    (f3 :word64 -> α).
+  (const_part_CASE (W64 a :const_part) f f1 f2 f3 :α) = f3 a
+const_part_nchotomy=∀(cc :const_part).
+  (∃(n :num) (l :num list). cc = (Con n l :const_part)) ∨
+  (∃(i :int). cc = Int i) ∨ (∃(m :mlstring). cc = Str m) ∨
+  ∃(c :word64). cc = (W64 c :const_part)
+int_op_case_def=(∀(a :int) (f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α)
+     (v6 :α) (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE (Const a) f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = f a) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Add f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Sub f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v1) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Mult f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v2) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Div f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v3) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Mod f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v4) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Less f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v5) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE LessEq f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v6) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE Greater f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v7) ∧
+(∀(f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :num -> α).
+   (int_op_CASE GreaterEq f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = v8) ∧
+∀(a :num) (f :int -> α) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (v5 :α)
+    (v6 :α) (v7 :α) (v8 :α) (f1 :num -> α).
+  (int_op_CASE (LessConstSmall a) f v v1 v2 v3 v4 v5 v6 v7 v8 f1 :α) = f1 a
+int_op_nchotomy=∀(ii :int_op).
+  (∃(i :int). ii = Const i) ∨ ii = Add ∨ ii = Sub ∨ ii = Mult ∨ ii = Div ∨
+  ii = Mod ∨ ii = Less ∨ ii = LessEq ∨ ii = Greater ∨ ii = GreaterEq ∨
+  ∃(n :num). ii = LessConstSmall n
+word_op_case_def=(∀(a0 :word_size) (a1 :opw) (f :word_size -> opw -> α)
+     (f1 :word_size -> shift -> num -> α) (f2 :word_size -> test -> α) (v :α)
+     (v1 :α) (f3 :bool -> α) (f4 :fp_cmp -> α) (f5 :fp_uop -> α)
+     (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (WordOpw a0 a1) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f a0 a1) ∧
+(∀(a0 :word_size) (a1 :shift) (a2 :num) (f :word_size -> opw -> α)
+     (f1 :word_size -> shift -> num -> α) (f2 :word_size -> test -> α) (v :α)
+     (v1 :α) (f3 :bool -> α) (f4 :fp_cmp -> α) (f5 :fp_uop -> α)
+     (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (WordShift a0 a1 a2) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) =
+   f1 a0 a1 a2) ∧
+(∀(a0 :word_size) (a1 :test) (f :word_size -> opw -> α)
+     (f1 :word_size -> shift -> num -> α) (f2 :word_size -> test -> α) (v :α)
+     (v1 :α) (f3 :bool -> α) (f4 :fp_cmp -> α) (f5 :fp_uop -> α)
+     (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (WordTest a0 a1) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f2 a0 a1) ∧
+(∀(f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+     (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+     (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE WordFromInt f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = v) ∧
+(∀(f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+     (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+     (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE WordToInt f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = v1) ∧
+(∀(a :bool) (f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+     (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+     (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (WordFromWord a) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f3 a) ∧
+(∀(a :fp_cmp) (f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+     (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+     (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (FP_cmp a) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f4 a) ∧
+(∀(a :fp_uop) (f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+     (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+     (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (FP_uop a) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f5 a) ∧
+(∀(a :fp_bop) (f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+     (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+     (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+   (word_op_CASE (FP_bop a) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f6 a) ∧
+∀(a :fp_top) (f :word_size -> opw -> α) (f1 :word_size -> shift -> num -> α)
+    (f2 :word_size -> test -> α) (v :α) (v1 :α) (f3 :bool -> α)
+    (f4 :fp_cmp -> α) (f5 :fp_uop -> α) (f6 :fp_bop -> α) (f7 :fp_top -> α).
+  (word_op_CASE (FP_top a) f f1 f2 v v1 f3 f4 f5 f6 f7 :α) = f7 a
+word_op_nchotomy=∀(ww :word_op).
+  (∃(w :word_size) ($o :opw). ww = WordOpw w $o) ∨
+  (∃(w :word_size) (s :shift) (n :num). ww = WordShift w s n) ∨
+  (∃(w :word_size) (t :test). ww = WordTest w t) ∨ ww = WordFromInt ∨
+  ww = WordToInt ∨ (∃(b :bool). ww = WordFromWord b) ∨
+  (∃(f :fp_cmp). ww = FP_cmp f) ∨ (∃(f :fp_uop). ww = FP_uop f) ∨
+  (∃(f :fp_bop). ww = FP_bop f) ∨ ∃(f :fp_top). ww = FP_top f
+block_op_case_def=(∀(a :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (Cons a :block_op) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4
+      f9 f10 :α) = f a) ∧
+(∀(a :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (ElemAt a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :
+    α) = f1 a) ∧
+(∀(a0 :num) (a1 :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α)
+     (f3 :num -> α) (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α)
+     (f6 :num -> α) (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α)
+     (f9 :const_part -> α) (f10 :const_part list -> α).
+   (block_op_CASE (TagLenEq a0 a1) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = f2 a0 a1) ∧
+(∀(a :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (LenEq a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :α) =
+   f3 a) ∧
+(∀(a :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (TagEq a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :α) =
+   f4 a) ∧
+(∀(f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE LengthBlock f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = v) ∧
+(∀(a :test) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (BoolTest a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = f5 a) ∧
+(∀(f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE BoolNot f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :α) =
+   v1) ∧
+(∀(f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE BoundsCheckBlock f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = v2) ∧
+(∀(a :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (ConsExtend a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = f6 a) ∧
+(∀(a :num) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE (FromList a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = f7 a) ∧
+(∀(f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE ListAppend f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :
+    α) = v3) ∧
+(∀(a :const) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α)
+     (f3 :num -> α) (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α)
+     (f6 :num -> α) (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α)
+     (f9 :const_part -> α) (f10 :const_part list -> α).
+   (block_op_CASE (Constant a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = f8 a) ∧
+(∀(f :num -> α) (f1 :num -> α) (f2 :num -> num -> α) (f3 :num -> α)
+     (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α) (f6 :num -> α)
+     (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α) (f9 :const_part -> α)
+     (f10 :const_part list -> α).
+   (block_op_CASE Equal f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :α) =
+   v4) ∧
+(∀(a :const_part) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α)
+     (f3 :num -> α) (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α)
+     (f6 :num -> α) (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α)
+     (f9 :const_part -> α) (f10 :const_part list -> α).
+   (block_op_CASE (EqualConst a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9
+      f10 :α) = f9 a) ∧
+∀(a :const_part list) (f :num -> α) (f1 :num -> α) (f2 :num -> num -> α)
+    (f3 :num -> α) (f4 :num -> α) (v :α) (f5 :test -> α) (v1 :α) (v2 :α)
+    (f6 :num -> α) (f7 :num -> α) (v3 :α) (f8 :const -> α) (v4 :α)
+    (f9 :const_part -> α) (f10 :const_part list -> α).
+  (block_op_CASE (Build a) f f1 f2 f3 f4 v f5 v1 v2 f6 f7 v3 f8 v4 f9 f10 :α) =
+  f10 a
+block_op_nchotomy=∀(bb :block_op).
+  (∃(n :num). bb = (Cons n :block_op)) ∨ (∃(n :num). bb = ElemAt n) ∨
+  (∃(n :num) (n0 :num). bb = TagLenEq n n0) ∨ (∃(n :num). bb = LenEq n) ∨
+  (∃(n :num). bb = TagEq n) ∨ bb = LengthBlock ∨
+  (∃(t :test). bb = BoolTest t) ∨ bb = BoolNot ∨ bb = BoundsCheckBlock ∨
+  (∃(n :num). bb = ConsExtend n) ∨ (∃(n :num). bb = FromList n) ∨
+  bb = ListAppend ∨ (∃(c :const). bb = Constant c) ∨ bb = Equal ∨
+  (∃(c :const_part). bb = EqualConst c) ∨ ∃(l :const_part list). bb = Build l
+glob_op_case_def=(∀(a :num) (f :num -> α) (f1 :num -> α) (v :α) (v1 :α) (v2 :α).
+   (glob_op_CASE (Global a) f f1 v v1 v2 :α) = f a) ∧
+(∀(a :num) (f :num -> α) (f1 :num -> α) (v :α) (v1 :α) (v2 :α).
+   (glob_op_CASE (SetGlobal a) f f1 v v1 v2 :α) = f1 a) ∧
+(∀(f :num -> α) (f1 :num -> α) (v :α) (v1 :α) (v2 :α).
+   (glob_op_CASE AllocGlobal f f1 v v1 v2 :α) = v) ∧
+(∀(f :num -> α) (f1 :num -> α) (v :α) (v1 :α) (v2 :α).
+   (glob_op_CASE GlobalsPtr f f1 v v1 v2 :α) = v1) ∧
+∀(f :num -> α) (f1 :num -> α) (v :α) (v1 :α) (v2 :α).
+  (glob_op_CASE SetGlobalsPtr f f1 v v1 v2 :α) = v2
+glob_op_nchotomy=∀(gg :glob_op).
+  (∃(n :num). gg = Global n) ∨ (∃(n :num). gg = SetGlobal n) ∨
+  gg = AllocGlobal ∨ gg = GlobalsPtr ∨ gg = SetGlobalsPtr
+mem_op_case_def=(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE Ref v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13 v14
+      f3 f4 v15 v16 v17 :α) = v) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE Update v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13
+      v14 f3 f4 v15 v16 v17 :α) = v1) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE El v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13 v14
+      f3 f4 v15 v16 v17 :α) = v2) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE Length v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13
+      v14 f3 f4 v15 v16 v17 :α) = v3) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE LengthByte v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v4) ∧
+(∀(a :bool) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α)
+     (v6 :α) (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α)
+     (v12 :α) (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE (RefByte a) v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = f a) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE RefArray v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13
+      v14 f3 f4 v15 v16 v17 :α) = v5) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE DerefByte v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v6) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE UpdateByte v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v7) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE ConcatByteVec v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12
+      f2 v13 v14 f3 f4 v15 v16 v17 :α) = v8) ∧
+(∀(a :bool) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α)
+     (v6 :α) (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α)
+     (v12 :α) (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE (CopyByte a) v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = f1 a) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE FromListByte v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v9) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE ToListByte v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v10) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE LengthByteVec v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12
+      f2 v13 v14 f3 f4 v15 v16 v17 :α) = v11) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE DerefByteVec v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v12) ∧
+(∀(a0 :bool) (a1 :opb) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α)
+     (v5 :α) (v6 :α) (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α)
+     (v11 :α) (v12 :α) (f2 :bool -> opb -> α) (v13 :α) (v14 :α)
+     (f3 :bool -> α) (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE (StringCmp a0 a1) v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11
+      v12 f2 v13 v14 f3 f4 v15 v16 v17 :α) = f2 a0 a1) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE XorByte v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13
+      v14 f3 f4 v15 v16 v17 :α) = v13) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE BoundsCheckArray v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11
+      v12 f2 v13 v14 f3 f4 v15 v16 v17 :α) = v14) ∧
+(∀(a :bool) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α)
+     (v6 :α) (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α)
+     (v12 :α) (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE (BoundsCheckByte a) v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11
+      v12 f2 v13 v14 f3 f4 v15 v16 v17 :α) = f3 a) ∧
+(∀(a0 :num) (a1 :num) (v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α)
+     (v5 :α) (v6 :α) (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α)
+     (v11 :α) (v12 :α) (f2 :bool -> opb -> α) (v13 :α) (v14 :α)
+     (f3 :bool -> α) (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE (MutCons a0 a1) v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12
+      f2 v13 v14 f3 f4 v15 v16 v17 :α) = f4 a0 a1) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE UpdateCons v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v15) ∧
+(∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+     (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+     (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+     (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+   (mem_op_CASE FinaliseCons v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2
+      v13 v14 f3 f4 v15 v16 v17 :α) = v16) ∧
+∀(v :α) (v1 :α) (v2 :α) (v3 :α) (v4 :α) (f :bool -> α) (v5 :α) (v6 :α)
+    (v7 :α) (v8 :α) (f1 :bool -> α) (v9 :α) (v10 :α) (v11 :α) (v12 :α)
+    (f2 :bool -> opb -> α) (v13 :α) (v14 :α) (f3 :bool -> α)
+    (f4 :num -> num -> α) (v15 :α) (v16 :α) (v17 :α).
+  (mem_op_CASE ConfigGC v v1 v2 v3 v4 f v5 v6 v7 v8 f1 v9 v10 v11 v12 f2 v13
+     v14 f3 f4 v15 v16 v17 :α) = v17
+mem_op_nchotomy=∀(mm :mem_op).
+  mm = Ref ∨ mm = Update ∨ mm = El ∨ mm = Length ∨ mm = LengthByte ∨
+  (∃(b :bool). mm = RefByte b) ∨ mm = RefArray ∨ mm = DerefByte ∨
+  mm = UpdateByte ∨ mm = ConcatByteVec ∨ (∃(b :bool). mm = CopyByte b) ∨
+  mm = FromListByte ∨ mm = ToListByte ∨ mm = LengthByteVec ∨
+  mm = DerefByteVec ∨ (∃(b :bool) ($o :opb). mm = StringCmp b $o) ∨
+  mm = XorByte ∨ mm = BoundsCheckArray ∨
+  (∃(b :bool). mm = BoundsCheckByte b) ∨
+  (∃(n :num) (n0 :num). mm = MutCons n n0) ∨ mm = UpdateCons ∨
+  mm = FinaliseCons ∨ mm = ConfigGC
+op_case_def=(∀(a :num) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (Label a) f f1 f2 f3 f4 f5 f6 v f7 :α) = f a) ∧
+(∀(a :mlstring) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (FFI a :op) f f1 f2 f3 f4 f5 f6 v f7 :α) = f1 a) ∧
+(∀(a :int_op) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (IntOp a) f f1 f2 f3 f4 f5 f6 v f7 :α) = f2 a) ∧
+(∀(a :word_op) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (WordOp a) f f1 f2 f3 f4 f5 f6 v f7 :α) = f3 a) ∧
+(∀(a :block_op) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (BlockOp a) f f1 f2 f3 f4 f5 f6 v f7 :α) = f4 a) ∧
+(∀(a :glob_op) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (GlobOp a) f f1 f2 f3 f4 f5 f6 v f7 :α) = f5 a) ∧
+(∀(a :mem_op) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+     (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+     (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+   (op_CASE (MemOp a) f f1 f2 f3 f4 f5 f6 v f7 :α) = f6 a) ∧
+(∀(f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α) (f3 :word_op -> α)
+     (f4 :block_op -> α) (f5 :glob_op -> α) (f6 :mem_op -> α) (v :α)
+     (f7 :thunk_op -> α). (op_CASE Install f f1 f2 f3 f4 f5 f6 v f7 :α) = v) ∧
+∀(a :thunk_op) (f :num -> α) (f1 :mlstring -> α) (f2 :int_op -> α)
+    (f3 :word_op -> α) (f4 :block_op -> α) (f5 :glob_op -> α)
+    (f6 :mem_op -> α) (v :α) (f7 :thunk_op -> α).
+  (op_CASE (ThunkOp a :op) f f1 f2 f3 f4 f5 f6 v f7 :α) = f7 a
+op_nchotomy=∀(oo :op).
+  (∃(n :num). oo = Label n) ∨ (∃(m :mlstring). oo = (FFI m :op)) ∨
+  (∃(i :int_op). oo = IntOp i) ∨ (∃(w :word_op). oo = WordOp w) ∨
+  (∃(b :block_op). oo = BlockOp b) ∨ (∃(g :glob_op). oo = GlobOp g) ∨
+  (∃(m :mem_op). oo = MemOp m) ∨ oo = Install ∨
+  ∃(t :thunk_op). oo = (ThunkOp t :op)
+exp_case_def=(∀(a0 :tra) (a1 :num) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Var a0 a1 :exp) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) = f a0 a1) ∧
+(∀(a0 :tra) (a1 :exp) (a2 :exp) (a3 :exp) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (If a0 a1 a2 a3 :exp) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f1 a0 a1 a2 a3) ∧
+(∀(a0 :tra) (a1 :exp list) (a2 :exp) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Let a0 a1 a2) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f2 a0 a1 a2) ∧
+(∀(a0 :tra) (a1 :exp) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Raise a0 a1 :exp) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f3 a0 a1) ∧
+(∀(a0 :tra) (a1 :exp) (a2 :exp) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Handle a0 a1 a2 :exp) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f4 a0 a1 a2) ∧
+(∀(a0 :tra) (a1 :exp) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Tick a0 a1) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) = f5 a0 a1) ∧
+(∀(a0 :tra) (a1 :num) (a2 :num) (a3 :exp list) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Call a0 a1 a2 a3) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f6 a0 a1 a2 a3) ∧
+(∀(a0 :tra) (a1 :num option) (a2 :exp) (a3 :exp list) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (App a0 a1 a2 a3 :exp) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f7 a0 a1 a2 a3) ∧
+(∀(a0 :mlstring) (a1 :num option) (a2 :num list option) (a3 :num) (a4 :exp)
+     (f :tra -> num -> α) (f1 :tra -> exp -> exp -> exp -> α)
+     (f2 :tra -> exp list -> exp -> α) (f3 :tra -> exp -> α)
+     (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Fn a0 a1 a2 a3 a4) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f8 a0 a1 a2 a3 a4) ∧
+(∀(a0 :mlstring list) (a1 :num option) (a2 :num list option)
+     (a3 :(num # exp) list) (a4 :exp) (f :tra -> num -> α)
+     (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+     (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+     (f6 :tra -> num -> num -> exp list -> α)
+     (f7 :tra -> num option -> exp -> exp list -> α)
+     (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+     (f9 :mlstring list ->
+          num option -> num list option -> (num # exp) list -> exp -> α)
+     (f10 :tra -> op -> exp list -> α).
+   (exp_CASE (Letrec a0 a1 a2 a3 a4 :exp) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) =
+   f9 a0 a1 a2 a3 a4) ∧
+∀(a0 :tra) (a1 :op) (a2 :exp list) (f :tra -> num -> α)
+    (f1 :tra -> exp -> exp -> exp -> α) (f2 :tra -> exp list -> exp -> α)
+    (f3 :tra -> exp -> α) (f4 :tra -> exp -> exp -> α) (f5 :tra -> exp -> α)
+    (f6 :tra -> num -> num -> exp list -> α)
+    (f7 :tra -> num option -> exp -> exp list -> α)
+    (f8 :mlstring -> num option -> num list option -> num -> exp -> α)
+    (f9 :mlstring list ->
+         num option -> num list option -> (num # exp) list -> exp -> α)
+    (f10 :tra -> op -> exp list -> α).
+  (exp_CASE (Op a0 a1 a2) f f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 :α) = f10 a0 a1 a2
+exp_nchotomy=∀(ee :exp).
+  (∃(t :tra) (n :num). ee = (Var t n :exp)) ∨
+  (∃(t :tra) (e :exp) (e0 :exp) (e1 :exp). ee = (If t e e0 e1 :exp)) ∨
+  (∃(t :tra) (l :exp list) (e :exp). ee = Let t l e) ∨
+  (∃(t :tra) (e :exp). ee = (Raise t e :exp)) ∨
+  (∃(t :tra) (e :exp) (e0 :exp). ee = (Handle t e e0 :exp)) ∨
+  (∃(t :tra) (e :exp). ee = Tick t e) ∨
+  (∃(t :tra) (n0 :num) (n :num) (l :exp list). ee = Call t n0 n l) ∨
+  (∃(t :tra) (o' :num option) (e :exp) (l :exp list).
+     ee = (App t o' e l :exp)) ∨
+  (∃(m :mlstring) (o0 :num option) (o' :num list option) (n :num) (e :exp).
+     ee = Fn m o0 o' n e) ∨
+  (∃(l0 :mlstring list) (o0 :num option) (o' :num list option)
+       (l :(num # exp) list) (e :exp). ee = (Letrec l0 o0 o' l e :exp)) ∨
+  ∃(t :tra) (o' :op) (l :exp list). ee = Op t o' l

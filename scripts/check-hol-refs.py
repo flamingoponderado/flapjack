@@ -3723,6 +3723,40 @@ def _qualified_word_owner_names(module: str, name: str, root: str) -> set[str]:
     return names
 
 
+def predicate_quantified_carrier_scope(signature: str, body: str) -> str:
+    """Types of explicit logical quantifier binders in a plain Prop definition.
+
+    Unlike an abbreviation, a predicate's entire RHS is not a carrier scope:
+    proof terms and discarded local values must not license a word qualifier.
+    This deliberately narrow route handles direct logical predicates such as
+    HOL wf_data; it does not infer types or inspect arbitrary helper bodies.
+    """
+    if (not re.match(r"\s*def\s", signature)
+            or not re.search(r":\s*Prop\s*$", signature)
+            or '"' in body
+            or re.search(r"\b(?:let|have|by|fun|match)\b|:=|=>", body)):
+        return ""
+    carrier_types: list[str] = []
+    for quantifier in re.finditer(r"[∀∃]\s*", body):
+        start = quantifier.end()
+        stack: list[str] = []
+        closer = {"(": ")", "{": "}", "[": "]"}
+        for end in range(start, len(body)):
+            char = body[end]
+            if char in closer:
+                stack.append(char)
+            elif char in (")", "}", "]"):
+                if not stack or closer[stack.pop()] != char:
+                    break
+            elif char == "," and not stack:
+                carrier_types.extend(
+                    typ for typ in _binder_types(body[start:end])
+                    if not _is_proof_premise_type(typ)
+                )
+                break
+    return "\n".join(carrier_types)
+
+
 def words_as_type_indexed_bitvec_errors(
     declaration_text: str,
     declaration: str,
@@ -3762,6 +3796,12 @@ def words_as_type_indexed_bitvec_errors(
     duplicate shadowing an imported owner is rejected as ambiguous. Existing
     special handling for HOL ``ValueHOL``/``HolWordLab`` additionally checks
     their exact one-constructor wrapper shape.
+
+    A plain ``def`` returning ``Prop`` may instead quantify word values
+    internally. Only explicit logical quantifier binder types contribute to
+    this scope; discarded local terms and proof bodies do not. Each internal
+    dimension must still be discharged by the predicate's own signature.
+    See docs/HOL-WORD-PREDICATES.md for this deliberately narrow contract.
     """
     errors: list[str] = []
     if not declaration_text.strip():
@@ -3782,7 +3822,41 @@ def words_as_type_indexed_bitvec_errors(
     # For a type abbreviation, the words occur in its RHS, while Lean's
     # elaborated declaration type is only `Nat → Type`. Check the body for
     # carriers and the signature for the matching Nat/[NeZero] binders.
-    word_scope = signature + ("\n" + body if re.search(r"\babbrev\s", signature) else "")
+    predicate_scope = predicate_quantified_carrier_scope(signature, body)
+    if re.search(r"\babbrev\s", signature):
+        word_scope = signature + "\n" + body
+    else:
+        word_scope = signature + "\n" + predicate_scope
+
+    # Internal quantifiers cannot supply a replacement width binder or a
+    # nested positivity instance: their word dimensions belong to the tagged
+    # predicate's own signature, just as for a signature-level word value.
+    if predicate_scope:
+        errors.extend(word_dimension_errors(signature + "\n" + predicate_scope))
+        if lines is not None and module and root:
+            internal_headers = structure_headers(lines)
+            internal_headers.update(inductive_headers(lines))
+            imported_headers: dict[str, list[str]] = {}
+            for owners in (imported_structure_owners(module, root),
+                           imported_inductive_owners(module, root)):
+                for name, entries in owners.items():
+                    imported_headers.setdefault(name, []).extend(header for _, header, _ in entries)
+            for name, header in internal_headers.items():
+                imported_headers.setdefault(name, []).append(header)
+            for name, headers in imported_headers.items():
+                for header in headers:
+                    # The reviewed width-first carrier convention. Other
+                    # carrier application forms remain outside this route.
+                    if not re.match(r"\s*[({]\s*[^:(){}]+\s*:\s*Nat\s*[)}]", header):
+                        continue
+                    for width in re.findall(r"(?<![A-Za-z0-9_'])" + re.escape(name)
+                                            + r"\s+(\(?[A-Za-z_][A-Za-z0-9_']*\)?|\(?\d+\)?)",
+                                            predicate_scope):
+                        if width.strip("()").isdigit():
+                            errors.append("words_as_type_indexed_bitvec internal carrier "
+                                          "requires its predicate signature's Nat width, "
+                                          "not a fixed literal dimension")
+                        errors.extend(word_dimension_errors(signature + "\nBitVec " + width))
 
     errors.extend(word_dimension_errors(word_scope))
     direct_ids = set(word_dimension_identifier_atoms(word_scope))

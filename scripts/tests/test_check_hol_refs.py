@@ -2377,6 +2377,73 @@ class WordsAsTypeIndexedBitvecQualifierTest(unittest.TestCase):
 
     ERRORS = staticmethod(CHECKER["words_as_type_indexed_bitvec_errors"])
 
+    PREDICATE = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
+  (∀ register (value : BitVec width), value.toNat = register) ∧
+  (∃ (offset : BitVec width), offset.toNat = 0)
+"""
+
+    def test_accepts_explicit_internal_predicate_word_quantifiers(self):
+        self.assertEqual(self.ERRORS(self.PREDICATE, "wordPredicate"), [])
+
+    def test_internal_predicate_words_require_signature_nat_and_nezero(self):
+        for old, new in [("(width : Nat)", "(width : Int)"),
+                         (" [NeZero width]", ""),
+                         ("[NeZero width]", "[NeZero other]")]:
+            with self.subTest(mutation=old + new):
+                self.assertTrue(self.ERRORS(self.PREDICATE.replace(old, new), "wordPredicate"))
+
+    def test_internal_predicate_words_check_every_dimension(self):
+        for dimension in ["0", "(0)", "other"]:
+            text = self.PREDICATE.replace("(offset : BitVec width)",
+                                          f"(offset : BitVec {dimension})")
+            with self.subTest(dimension=dimension):
+                self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_word_route_rejects_nonpredicate_and_proof_commands(self):
+        for text in [self.PREDICATE.replace("def wordPredicate", "theorem wordPredicate"),
+                     self.PREDICATE.replace(": Prop :=", ": Bool :="),
+                     self.PREDICATE.replace(": Prop :=", ": Prop := by\n  exact")]:
+            with self.subTest(text=text):
+                self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_word_route_rejects_discarded_or_unquantified_carriers(self):
+        for body in ["let unused : BitVec width := 0; True",
+                     "let unused := (∀ (value : BitVec width), True); True",
+                     "have unused : BitVec width := 0; True",
+                     "True -- ∀ (value : BitVec width), True",
+                     '"∀ (value : BitVec width), True" = "unrelated"',
+                     "True"]:
+            text = "def wordPredicate (width : Nat) [NeZero width] : Prop := " + body
+            with self.subTest(body=body):
+                self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_word_route_rejects_word_mentions_in_proof_binders(self):
+        text = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
+          ∀ (proof : ∀ value : BitVec width, value = value), True"""
+        self.assertTrue(self.ERRORS(text, "wordPredicate"))
+
+    def test_internal_predicate_resolves_imported_word_carrier_and_its_width(self):
+        root = Path(__file__).resolve().parents[2]
+        module = "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean"
+        lines = (root / module).read_text().splitlines()
+        text = """def wordPredicate (width : Nat) [NeZero width] : Prop :=
+          ∀ (operation : HolArith width), True"""
+        self.assertEqual(self.ERRORS(text, "wordPredicate", module, str(root), lines), [])
+        for mutation in [text.replace("[NeZero width]", ""),
+                         text.replace("HolArith width", "HolArith other"),
+                         text.replace("HolArith width", "HolArith 0"),
+                         text.replace("HolArith width", "HolArith 64"),
+                         text.replace("HolArith width", "HolArith (64)")]:
+            with self.subTest(mutation=mutation):
+                self.assertTrue(self.ERRORS(mutation, "wordPredicate", module, str(root), lines))
+
+    def test_internal_direct_word_does_not_hide_another_carrier_width(self):
+        root = Path(__file__).resolve().parents[2]
+        module = "Flapjack/Compiler/Backend/WordCse/InstructionKeys.lean"
+        lines = (root / module).read_text().splitlines()
+        text = self.PREDICATE + " ∧ (∀ (operation : HolArith other), True)"
+        self.assertTrue(self.ERRORS(text, "wordPredicate", module, str(root), lines))
+
     GOOD = (
         "@[hol \"cakeml/pancake/semantics/crepSemScript.sml\" \"evaluate_def\" 240",
         "  (fmap_as_finite_support := [locals, globals, code])",
@@ -3820,6 +3887,45 @@ class PanSemGeneratedEvalIndTest(unittest.TestCase):
         self.assertIsNone(recognize(Path("other/pancake/semantics/panSemScript.sml"), source))
         block = source[source.index("Definition eval_def:"):]
         self.assertIsNone(recognize(path, source + "\n" + block))
+
+
+class NoRetCorrectFmapRegressionTest(unittest.TestCase):
+    """Protect the reviewed theorem even if tag and manifest are both weakened."""
+
+    MODULE = "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean"
+
+    def test_native_state_maps_have_explicit_relation_qualifier_and_witness(self):
+        root = CHECKER["ROOT"]
+        lines = (root / self.MODULE).read_text().splitlines()
+        sites = [site for site in SITES(lines) if site[2] == "no_ret_correct"]
+        self.assertEqual(len(sites), 1)
+        site = sites[0]
+        state_lines = (root / "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean").read_text().splitlines()
+        fields = CHECKER["structure_field_types"](state_lines)["StackSemStateFiniteExact"]
+        required = tuple(("StackSemStateFiniteExact", field)
+                         for field, typ in fields.items() if "HolFiniteMapExact" in typ)
+        self.assertEqual(len(required), 3)
+        self.assertEqual(site[9], required)
+        signature = CHECKER["tagged_declaration_text"](lines, site[0])
+        self.assertIn("∀ s : StackSemStateFiniteExact", signature)
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, required, self.MODULE, signature), [])
+
+    def test_manifest_retains_combined_qualifier_and_inherited_assumption(self):
+        import json
+        root = CHECKER["ROOT"]
+        records = json.loads((root / "docs/HOL-THEOREM-MAP.json").read_text())
+        rows = [row for row in records if row.get("lean_path") == self.MODULE
+                and row.get("lean_name") == "noRetCorrect"]
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["statement_status"],
+                         "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec")
+        self.assertEqual(row["fmap_as_finite_support_relation"],
+                         ["StackSemStateFiniteExact.regs", "StackSemStateFiniteExact.fpRegs",
+                          "StackSemStateFiniteExact.store"])
+        self.assertTrue(row["words_as_type_indexed_bitvec"])
+        self.assertTrue(row["inherits_reals_as_rational_cuts"])
 
 
 if __name__ == "__main__":
