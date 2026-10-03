@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
