@@ -623,6 +623,7 @@ import Flapjack.Misc.Sptree.Map
 import Flapjack.Misc.Sptree.InterEq
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashTreeColouringOk.Assembly
 import Flapjack.Misc.Sptree.Mapi
+import Flapjack.Misc.Sptree.MapiLookup
 import Flapjack.Misc.ListLookup
 import Flapjack.Compiler.Backend.Parmove.Independence
 import Flapjack.Compiler.Backend.WordAlloc.GetPrefs
