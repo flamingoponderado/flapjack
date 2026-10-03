@@ -848,4 +848,32 @@ theorem semanticsSizeDecsStcnamesCompileStructsHOL {width : Nat} {σ : Type} [Ne
       exact sizeDecsStcnamesCompileDecsStructsCore pan_code { s with structs := st } _ _ s' c2 x2
         hev hc hok (fun n v hv => by simp [hglob] at hv) rfl
 
+
+/-- Exact HOL `ALL_DISTINCT_MAP_INJ_o` (`pan_to_wordProofScript.sml:514-517`,
+local in HOL): `ALL_DISTINCT_MAP_INJ` specialised to `MAP FST xs` and
+simplified by `MAP_MAP_o`/`o_DEF`. The elaborated statement (free `xs`, bound
+`f`) is reproduced by `pan_to_word_derived_probe`. -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "ALL_DISTINCT_MAP_INJ_o"]
+theorem allDistinctMapInjOHOL {α β ε : Type} (xs : List (α × ε)) :
+    ∀ (f : α → β),
+      (∀ x y, x ∈ xs.map Prod.fst ∧ y ∈ xs.map Prod.fst ∧ f x = f y → x = y) ∧
+        (xs.map Prod.fst).Nodup →
+      (xs.map (fun x => f x.1)).Nodup := by
+  rintro f ⟨hinj, hnd⟩
+  have key : ∀ l : List α, (∀ x ∈ l, ∀ y ∈ l, f x = f y → x = y) → l.Nodup →
+      (l.map f).Nodup := by
+    intro l
+    induction l with
+    | nil => intro _ _; exact List.nodup_nil
+    | cons a l ih =>
+      intro hi hn
+      rw [List.nodup_cons] at hn
+      rw [List.map_cons, List.nodup_cons]
+      refine ⟨?_, ih (fun x hx y hy => hi x (by simp [hx]) y (by simp [hy])) hn.2⟩
+      intro hm
+      obtain ⟨b, hb, hfb⟩ := List.mem_map.mp hm
+      exact hn.1 (hi a (by simp) b (by simp [hb]) hfb.symm ▸ hb)
+  have h := key (xs.map Prod.fst) (fun x hx y hy hxy => hinj x y ⟨hx, hy, hxy⟩) hnd
+  simpa [List.map_map, Function.comp_def] using h
+
 end Flapjack

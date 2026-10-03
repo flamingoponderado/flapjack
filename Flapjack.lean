@@ -1614,6 +1614,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel
 import Flapjack.Pancake.Proofs.PanToCrep.CompileExpValRel.Load
 import Flapjack.Pancake.Proofs.PanToCrep.Primop
 import Flapjack.Pancake.Proofs.PanToCrep.CompileProgParams
+import Flapjack.Pancake.Proofs.PanToCrep.FirstCompileProgAllDistinct
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect
 import Flapjack.Pancake.Proofs.PanToCrep.EvalDistinctLists
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.Call

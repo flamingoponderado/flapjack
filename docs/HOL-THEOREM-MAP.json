@@ -77414,5 +77414,30 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure: size_decs_stcnames_compile_decs_structs generic in the evaluate_decls memory decider, by evaluate_decls recursion; no separate HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "allDistinctMapInjOHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "ALL_DISTINCT_MAP_INJ_o",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): local derived theorem ALL_DISTINCT_MAP_INJ |> Q.SPEC `MAP FST xs` |> SIMP_RULE std_ss [MAP_MAP_o, o_DEF]. The elaborated statement !f. (!x y. MEM x (MAP FST xs) /\\ MEM y (MAP FST xs) /\\ f x = f y ==> x = y) /\\ ALL_DISTINCT (MAP FST xs) ==> ALL_DISTINCT (MAP (\\x. f (FST x)) xs), with free xs, is reproduced by pan_to_word_derived_probe and rendered over polymorphic α β ε with List.Nodup and membership."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/FirstCompileProgAllDistinct.lean",
+    "lean_name": "panToCrepFirstCompileProgAllDistinctExact",
+    "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-wur.1): ALL_DISTINCT (MAP FST (functions prog)) ==> ALL_DISTINCT (MAP FST (pan_to_crep$compile_prog prog)) over the reviewed exact compileProgDeclsHOLW (compile_to_crep + compile_inl_top). The free prog is bound explicitly, and ALL_DISTINCT is List.Nodup. Statement captured with types by pan_to_crep_first_compile_probe. Supersedes the documented_mismatch production analogue firstCompileProgAllDistinct, which is retained."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/FirstCompileProgAllDistinct.lean",
+    "lean_name": "compileProgDeclsHOLW_names",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: exact pan_to_crep compile_prog keeps source function names in order; no HOL original."
   }
 ]
