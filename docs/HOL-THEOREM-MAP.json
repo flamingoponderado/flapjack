@@ -87011,5 +87011,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-wh3jo): HOL can_mem_arith_ODD_reads (word_cseProof:1511-1516). can_mem_arith a implies EVERY ODD (arithReads a), with EVERY as a forall-over-membership and ODD as % 2 = 1, over the HolArith width carrier. HOL local, so there is no probe capture; it was compared against the source text. Kernel-checked.",
     "words_as_type_indexed_bitvec": true
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/AlistInsertReverse.lean",
+    "lean_name": "alistInsertReverse",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "alist_insert_REVERSE",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol2 source comparison2026-10-03 full original miscScript4086–4096. Arbitrary natural key list, independent generic payload list and arbitrary native Spt payload tree; only ALL_DISTINCT keys and equal key/value list lengths imply equality reversing both insertion lists. No WF/tree shape/read/lookup/postcondition hypothesis added. Both complete tree expressions use actual native alist_insert, including truncation behavior; proof derives paired append and pull-insert from existing literal unrestricted native insert_swap. Original finite native tree carrier is constructor-for-constructor, no finite-map qualifier appropriate. Fresh literal original proof replay and typed closed theorem capture regression evidence, no cross-language equivalence claim."
   }
 ]

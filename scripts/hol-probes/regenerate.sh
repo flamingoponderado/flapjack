@@ -7412,6 +7412,10 @@ run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.ou
   wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_seqsem_probe.out \
+  moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 run_probe riscv_upper_decode_probeScript.sml riscv_upper_decode_probe.out \
   lui_decode_zero lui_decode_all_ones lui_decode_sign_bit lui_decode_positive_max auipc_decode_zero auipc_decode_all_ones auipc_decode_sign_bit auipc_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
@@ -7451,3 +7455,7 @@ run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
   xor_decode_zero xor_decode_all_ones xor_decode_sign_bit xor_decode_positive_max \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_reverse_probe.out \
+  alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
