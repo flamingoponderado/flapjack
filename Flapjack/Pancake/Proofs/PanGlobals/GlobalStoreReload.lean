@@ -28,7 +28,7 @@ theorem stateRel_storeReload {width : Nat} {σ : Type} [NeZero width]
   classical
   rcases hrel with ⟨_, _, _, _, _, _, _, _, hglobals, _, _, _, _, _, _, _, hnot, htop, hw⟩
   obtain ⟨address, hc, hwf, hload, _, ha⟩ := hglobals name oldValue hlookup
-  have hwf' : isWfShapeExactHOL [] (shapeOfHOLExact value) = true := by
+  have hwf' : isWfShapeExactHOL ([] : Flapjack.Pancake.PanLang.StructContextExact) (shapeOfHOLExact value) = true := by
     simpa [hshape, isWfShapeNilHOL] using hwf
   obtain ⟨memory, hstore⟩ := memLoadMemStoreHOL.1
     (shapeOfHOLExact oldValue) (target.topAddr - address) target.memaddrs target.memory

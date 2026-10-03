@@ -13627,7 +13627,7 @@
     "lean_path": "Flapjack/Pancake/PanLang/Decl.lean",
     "lean_name": "isWfShapeExactHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "Codex (source comparison against panLangScript.sml:139-144: ShapeHOL matches the One/Comb/Nam stcname=mlstring datatype, StructContextExact is the `(stcname # struct_info) list`, and structContextLookupHOL implements first-match ALOOKUP using exact MlString equality. isWfShapeExactHOL preserves One=T, Comb=EVERY, Named=case ALOOKUP with SOME=T/NONE=F, with no additional hypotheses or side conditions. The iwf_one/iwf_comb/iwf_named_hit/iwf_named_miss rows from pan_lang_is_wf_shape_probe.out are reproduced by PanLangIsWfShapeParity.lean on exact carriers."
+    "reviewer": "flapjack-sol correction/source comparison2026-10-03 panLang139-146: HOL is_wf_shape_def is payload-polymorphic ctxt :(mlstring x alpha)list and only checks ALOOKUP presence. Generalized existing structContextLookupHOL and mutually recursive isWfShapeExactHOL/isWfShapesExactHOL/isWfFldsExactHOL to arbitrary alpha at Type0, preserving fixed faithful MlS keys, One=true, Comb=EVERY, Named=first equality-key lookup isSome. Existing source-state evaluators instantiate same generalized definitions at StructInfoHOLExact, so no duplicate or bridge/run premise. Full alpha : Type universal retained without default; existing empty-context calls explicitly name prior StructContextExact payload, changing elaboration only. All specialized source constructors/carriers, lookup order/equality, Bool behavior unchanged. Closed original full definition with complete bound-carrier types and direct Nat/Bool payload observations captured; kernel replays confirm zero/false payload presence and nested missing names. Generic full compiled-shape theorem tracked separately; production String paths remain open inventory."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -13635,7 +13635,7 @@
     "lean_path": "Flapjack/Pancake/PanLang/Decl.lean",
     "lean_name": "isWfFldsExactHOL",
     "statement_status": "reviewed_exact",
-    "reviewer": "flapjack-ds8 (source comparison, 2026-09-26; bead flapjack-4ac.1.24). HOL panLangScript.sml:148-152 defines is_wf_flds ctxt [] = T and is_wf_flds ctxt ((fld,sh)::flds) = is_wf_shape ctxt sh and is_wf_flds ctxt flds. Lean isWfFldsExactHOL has exactly the same two clauses over the exact carriers: the field list is List (MlS x ShapeHOL) with MlS the mlstring name and ShapeHOL the exact shape carrier; the field name fld is ignored exactly as HOL ignores it, and is_wf_shape is the tagged exact isWfShapeExactHOL. No extra hypotheses or side conditions."
+    "reviewer": "flapjack-sol original is_wf_flds_def148-153 source correction: context is arbitrary (MlS x alpha)list, ignored field keys independently polymorphic beta : Type, shapes faithful ShapeHOL; Nil true and Cons conjunction of generalized is_wf_shape on head and recursive tail preserve both original equations/operator order. Same executed faithful source helper now generalized at alpha : Type; all state uses instantiate StructInfoHOLExact automatically. No extra hypotheses/carrier restrictions/defaults; direct original closed full definition/types and generic false-payload field observations plus kernel replays captured. Original state-context predicate remains fixed StructInfo as source demands."
   },
   {
     "hol_path": "cakeml/pancake/panLangScript.sml",
@@ -26533,6 +26533,57 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.2): HOL inst_select_thm (word_instProofScript.sml:724-749, with resumed Assign, Set, Store, Seq, MustTerminate, ShareInst, If, Call and Loop cases): \u2200c temp prog st res rst loc. evaluate (prog,st) = (res,rst) \u2227 every_var (\u03bbx. x < temp) prog \u2227 res \u2260 SOME Error \u2227 locals_rel temp st.locals loc \u21d2 \u2203loc'. evaluate (inst_select c temp prog, st with locals := loc) = (res, rst with locals := loc') \u2227 case res of NONE | SOME (Break _) | SOME (Continue _) \u21d2 locals_rel temp rst.locals loc' | SOME _ \u21d2 rst.locals = loc'. Binders and premise order as HOL over the tagged instSelect, everyVarHOL and exact evaluate; the case as a Lean match with the same arms. Unchanged statements use the tagged locals_rel_evaluate_thm machinery, as HOL's inst_select_def,locals_rel_evaluate_thm simp step; Loop uses inst_select_Loop_helper as HOL. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstSelectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "locals_rel_cut_envs_local",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "locals_rel_cut_envs_local",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL local locals_rel_cut_envs_local (word_instProofScript.sml:985-1004): locals_rel temp loc loc' \u2227 every_name (\u03bbx. x < temp) names \u2227 cut_envs names loc = SOME x \u21d2 cut_envs names loc' = SOME x, free temp loc loc' names x as explicit binders, over the tagged wordLocalsRel/everyNameHOL/wordSemCutEnvs; the same statement as wordProps locals_rel_cut_envs, from which it is derived. words_as_type_indexed_bitvec records only the positive BitVec width translation. Kernel-checked; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "three_to_two_reg_Loop",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "three_to_two_reg_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL three_to_two_reg_Loop (word_instProofScript.sml:1144-1169): \u2200s names prog exit_names res s'. (\u2200v res s'. evaluate (prog,v) = (res,s') \u2227 res \u2260 SOME Error \u21d2 evaluate (three_to_two_reg prog,v) = (res,s')) \u2227 evaluate (Loop names prog exit_names,s) = (res,s') \u2227 res \u2260 SOME Error \u21d2 evaluate (Loop names (three_to_two_reg prog) exit_names,s) = (res,s'); binders in HOL order over the tagged threeToTwoReg and exact evaluate; proved by strong induction on s.clock as HOL. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstThreeToTwoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "three_to_two_reg_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "three_to_two_reg_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL three_to_two_reg_correct (word_instProofScript.sml:1172-1243): \u2200prog s res s'. every_inst distinct_tar_reg prog \u2227 evaluate (prog,s) = (res,s') \u2227 res \u2260 SOME Error \u21d2 evaluate (three_to_two_reg prog,s) = (res,s'); binders and premise order as HOL over the tagged threeToTwoReg and exact evaluate; recursion on the program (HOL three_to_two_reg_ind) covering Binop/Shift/AddCarry/AddOverflow/SubOverflow (copy then two-register form, insert_shadow), OpCurrHeap, Seq, MustTerminate, If, both Call shapes and Loop. HOL distinct_tar_reg on the wordLang instruction carrier is the clause-for-clause Flapjack distinctTarReg (WordConvs.lean; untagged only because its own width binder admits zero, here instantiated at the theorem's positive width), and every_inst is the tagged everyInst. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstThreeToTwoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/ThreeToTwo.lean",
+    "lean_name": "evaluate_three_to_two_reg_prog",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "evaluate_three_to_two_reg_prog",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.3): HOL evaluate_three_to_two_reg_prog (word_instProofScript.sml:1245-1254): evaluate (prog,s) = (res,s') \u2227 res \u2260 SOME Error \u2227 every_inst distinct_tar_reg prog \u21d2 evaluate (three_to_two_reg_prog t prog,s) = (res,s'), free prog s res s' t as explicit binders, over the tagged threeToTwoRegProg. HOL distinct_tar_reg on the wordLang instruction carrier is the clause-for-clause Flapjack distinctTarReg (WordConvs.lean; untagged only because its own width binder admits zero, here instantiated at the theorem's positive width), and every_inst is the tagged everyInst. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstThreeToTwoSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
     "inherits_reals_as_rational_cuts": true
   },
   {
@@ -84602,6 +84653,144 @@
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: Source480-484 sole conclusion good_cmp listCmp, no premises. Full original seven comparator conjuncts retained via exact general TotOrder_imp_good_cmp and original TotOrd_listCmp result. Original arbitrary numeral-list carrier and direct three-constructor Ordering translation retained; no finite-map carrier, word dimension, range, invariant, sortedness, evaluation or output assumption added. Existing Sol2 equality/reversal/transitivity ports reused unchanged."
   },
   {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/JumpReg.lean",
+    "lean_name": "riscv_encoder_correct_jumpReg",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03 original730-736/encoder_correct_def117-133: genuine complete JumpReg constructor case, unrestricted natural r and full original :64 asm_state/riscv_state carriers. Original asmStep+targetStateRel premise only; source asmOk derives register<32 and avoid-register/zero exclusion, source nonfailure derives align2 register value. Finite native register decoder proof covers all32 five-bit values (intrinsic datatype domain, not a public bound); exact four-byte fetch and full JALR Run derive branch control from original mask sw2sw(2:word2), then original NextRISCV_branch clears only current control and updates PC while all unrelated state fields remain. Full target validity/alignment, memory/register/FP relation retained; canonical omitted FP getter unchanged with original fpRegCount0. Original existential n/every env/interference/full asserts validity-code-byte-PC/final relation/asserts2 outside-domain-byte conclusion preserved, original witness0 derived by real native execution. No target-run/evaluation premise or narrowed domain. Inherited reals_as_rational_cuts assumption from full reviewed native state/Run closure retained (SOUNDNESS item8), no new real assumption or trust allowance. Fresh original complete theorem specialization only JumpReg arbitrary r:num, native types, storedhyp0/provedT; original capture is not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Config.lean",
+    "lean_name": "TapConfig",
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "tap_config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Config.lean",
+    "lean_name": "defaultTapConfig",
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "default_tap_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Alist",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "alist",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Namespace",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "namespace",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison namespaceScript11/34-37: alist retains literal List(Key x Value), namespace retains the sole Bind constructor with name/value association list and module-name/recursive-namespace association list in original order. All three source-independent type parameters retained at Type, no well-formedness/canonicalization/uniqueness/map-function premises or field dropping. Lists preserve arbitrary duplicate keys and order, including nested modules. Fresh original full polymorphic Bind constructor type and namespace_case_def/fulltyped/hyp0/kernelT captured. This provides the actual generic source carrier to instantiate concrete source_to_flat environment names/values, not a substitute arbitrary Type for backend configuration fields. No lookup/default or runtime change; full source environment/record/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "Tra",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "tra",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "orphanTrace",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "orphan_trace_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Trace.lean",
+    "lean_name": "mkCons",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "mk_cons_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full source comparison backend_common74-107: complete tra SourceLoc four num arguments, Cons tra num, Union tra tra, None in original constructor order, represented literally by Nat and recursive Tra. orphan_trace is actual source SourceLoc 2 2 1 1; preceding historical four-Cons comment is not the definition. mk_cons preserves None, otherwise Cons tr n with original argument order; no generic trace placeholder or other clauses. Fresh original datatype case/full constructor types and both complete original definitions/fulltypes/hyp0/kernelT captured. This is a concrete prerequisite of source_to_flat var_name/environment config, not a source evaluator/pass correctness theorem. Full source config/backend/compiler and executed production adoption remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/FlatPattern/Config.lean",
+    "lean_name": "initConfig",
+    "hol_path": "cakeml/compiler/backend/flat_patternScript.sml",
+    "hol_name": "init_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: flat_patternScript.sml16-23 declares the one-field config pat_heuristic:num and init_config ph = record with that field ph. Lean uses precisely one Nat field and preserves arbitrary Nat input, including zero. Historical commented function types are not carrier types; no heuristic callback, default, omitted field, added premise, runtime-policy change or whole-compiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "VarName",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "var_name",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml23, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "Environment",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml27, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "EnvironmentGenerationStore",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment_generation_store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml33, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "EnvironmentStore",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "environment_store",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml40, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "NextIndices",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "next_indices",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml303, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/SourceToFlat/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/source_to_flatScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml413, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CopyWordsCorrect.lean",
+    "lean_name": "copyWordsCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_words_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5994-6051 full arbitrary-length copy_words_correct. Arbitrary words/prefix/suffix/address/offset/domain/memory; retains exactly const_addresses and good_dimindex guards. Complete actual copyWordsExact on native constWordsToBitmapW words LENGTH words equals SOME modular address plus bytes_in_word*n2w total length and whole const_writes memory. No chunk-length restriction, target-run assumption or simplified evaluator. Native TAKE/DROP recursion and accepted full shortchunk/pattern/MSB and const_addresses/const_writes append laws used. Prop-domain set maps via decide to native Bool addresses; word_loc memory is total function. Only words_as_type_indexed_bitvec word translation. Kernel checked and original literal full proof replay."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",
     "lean_name": "addToData",
     "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
@@ -84619,6 +84808,336 @@
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-intersection-invariant): word_cseProof611-619 quantifies arbitrary two balanced maps and assumes exactly their native listCmp invariants, concluding the invariant of bm_inter_eq. Lean retains the generic payload alpha (not Nat), both original input invariants, original numeral-list key comparator, cached-size/native tree carrier and full output invariant. DecidableEq alpha implements HOL payload equality for the reviewed literal intersection; no additional proposition or run, lookup, output-relation assumption is imposed. The private invariant-only structural induction traverses right then left and uses original insertThm; it is not tagged as bm_inter_eq_acc_thm, whose arbitrary semantic-key lookup conclusion remains open. Native invariants preserve all original cached-size, ordering, balance and recursive conjuncts."
   },
   {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_call_correct",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenCallCorrect.lean",
+    "lean_name": "flattenCallCorrect",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2741-2767. Free HOL variables start s1 s2 res t1 as implicit binders. All five premises retained in order: native StackSem evaluate (Call NONE (INL start) NONE, s1) = (res,s2), state_rel s1 t1, loc_to_pc start 0 t1.code = SOME t1.pc, res <> SOME Error, and res <> SOME TimeOut implies SOME (Halt (Word w)) or SOME (FinalFFI f) or SOME (Result (Loc n 0)) with the inner halting hypothesis for every same-typed StackSem state s (subspt s1.code s.code, s.clock <> 0 implies exists t, evaluate (Call NONE (INL n) NONE, s) = (SOME (Halt (Word 0w)), t), t.ffi = s.ffi, t.clock = s.clock - 1). Conclusion exists ck r2 t2 with native LabSem evaluate (t1 with clock := t1.clock - 1 + ck) = (r2,t2), the FinalFFI, Halt (case w of Word 0w => Halt Success | Word _ => Halt Resource_limit_hit | _ => Error, rendered as a match on the word_loc with if w = 0), Result (Loc n 0) => Halt Success clauses, t2.ffi = s2.ffi, r2 <> Error and res = SOME TimeOut => r2 = TimeOut. No supplied target run or success premise. Proof from the ported flatten_correct (twice for the Result case via the halting hypothesis at s2 with clock + 1), state_rel_dec_clock and evaluate_mono. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate Inst closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "halt_assum_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenCallCorrect.lean",
+    "lean_name": "haltAssum",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2827-2833. The HOL type argument (:('ffi#'c)) is the explicit C F; code is the sptree num_map of programs (Spt). Body verbatim: for every StackSem state s of those types, subspt code s.code and s.clock <> 0 imply exists t with native evaluate (Call NONE (INL 1) NONE, s) = (SOME (Halt (Word 0w)), t), t.ffi = s.ffi and t.clock = s.clock - 1. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported roundtrip witness; positive BitVec width with NeZero. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "flatten_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenSemantics.lean",
+    "lean_name": "flattenSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:2835-2840. Free start s1 s2 implicit. All four premises retained: halt_assum (:'ffi#'c) s1.code (reviewed haltAssum C F), state_rel s1 s2, loc_to_pc start 0 s2.code = SOME s2.pc, and stackSem semantics start s1 <> Fail; conclusion labSem semantics s2 = stackSem semantics start s1, both the tagged semantics_def ports. Proof: both semantics rewritten (untagged Flapjack lemmas, by unfolding) as the reviewed semantics_wrapper of their clock-indexed runs, the LabSem family shifted by the call tick, then the ported semantics_wrapper_eq with flatten_call_correct, stackProps/labProps evaluate_add_clock and evaluate_add_clock_io_events_mono. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module re-exported relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/StoreConsts.lean",
+    "lean_name": "compCorrectStoreConsts",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison6053-6130 original comp_correct5756/motive5719-5751: entire Seq.Simulation over arbitrary original four registers/constants/source/config/width. Every original premise and full existential targetrun/result/resource conclusion retained. Original convention derives0/2/4/6; source nonerror derives actual word reads/addressguard/fullpoststate. Original insertion/prefix/index guards derive actual bitmap slice/index. Full copy_words_correct gives actual native memory-copy result; relation provides stub/flags/goodDimindex/word-index bound. Actual inst/storeConsts execution with zero additional clock and entire post-state relation proved, including full source local updates/deletions, scratch registers, frame, stack, compiler metadata, domains and memory. No added read/run/postrelation/memory/address/bounds assumptions. Five canonical finite-map owners/positive words and local genuine codecs; inherited reals_as_rational_cuts retained. Original full case obligation and arbitrary theorem specialization captured; no cross-language equivalence claim. Literal original Resume StoreConsts proof6054-6125 replayed on full evaluate_ind obligation with original theory-open order and simplifier setup; hyp0/T, separately closed arbitrary specialization hyp0/T.",
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 5756
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "make_init_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "makeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3027-3045. Parameters code coracle regs save_regs s in source order. All seventeen given fields verbatim: regs FEMPTY |++ MAP (\u03bbr. (r, read_reg r s)) regs (updateListEq from empty, LabSem overload read_reg r s = s.regs r), fp_regs FEMPTY, memory/mdomain/sh_mdomain from s.mem/mem_domain/shared_mem_domain, use_stack/use_store/use_alloc F, compile (\u03bbc p. s.compile c (MAP prog_to_section p)), compile_oracle coracle, code_buffer, clock, code, ffi, ffi_save_regs save_regs (num set as Bool predicate), be. The six fields the HOL record literal leaves to ARB (store, stack, stack_space, bitmaps, data_buffer, gc_fun) are each the shared opaque holArb of the (C/F-free) field type; no statement uses them. Canonical regs/fpRegs/store via the imported StackSemStateFiniteExact owner and same-module re-exported witness; positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "make_init_semantics",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "makeInitSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3047-3049 (SML val, replayed in the probe): flatten_semantics instantiated at s1 := make_init code coracle regs save_regs s, s2 := s, with (make_init ...).code evaluated to code. Free code coracle regs save_regs s start implicit. Premises halt_assum (:'ffi#'c) code, state_rel (make_init ...) s, loc_to_pc start 0 s.code = SOME s.pc, stackSem semantics start (make_init ...) <> Fail; conclusion labSem semantics s = stackSem semantics start (make_init ...). The type ascription on make_init names the owning carrier only. Proof is the ported flatten_semantics. Canonical regs/fpRegs via the imported owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "memory_assumption_def",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "memoryAssumption",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3106-3130. Parameters rnames bitmaps data_sp t in source order; existential ptr2 ptr3 ptr4 bitmap_ptr; all sixteen conjuncts verbatim: three register reads (LabSem overload read_reg r t = t.regs r, find_name over the num_map as findNameSpt), five memory words at ptr2 + i*bytes_in_word (n2w as BitVec.ofNat, LENGTH as length), empty code buffer, ptr2 <=+ ptr4 as unsigned BitVec <=, three byte_aligned (holByteAligned), 1024w * bytes_in_word <=+ ptr4 - ptr2, and the left-associated separating conjunction word_list bitmap_ptr (MAP Word bitmaps) * word_list_exists (bitmap_ptr + bytes_in_word * n2w (LENGTH bitmaps)) data_sp * word_list_exists ptr2 (w2n (-1w * ptr2 + ptr4) DIV w2n bytes_in_word) over fun2set (t.mem, t.mem_domain), using the reviewed misc word_list/word_list_exists and set_sep STAR/fun2set ports. Positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "halt_assum_lemma",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "haltAssumLemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3132-3150 (local, replayed in the probe with its source proof). Free f jump off gen max_heap k l code implicit; conclusion halt_assum (:'ffi#'c) (fromAList (stack_names$compile f (stack_remove$compile jump off gen max_heap k l code))) over the reviewed haltAssum, stack_names compileHOL, stack_remove compileHOL and sptFromAList. No premise. Proof: procedure 1 is the renamed halt_inst 0w, which sets the renamed register 1 to Word 0w and halts. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through haltAssum's evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "FLOOKUP_regs",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "flookupRegs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3152-3159 (local, replayed in the probe). Binders regs n v s in source order with s a LabSem state (probe shows read_reg at labSem$state); FLOOKUP (FEMPTY |++ MAP (\u03bbr. (r, read_reg r s)) regs) n = SOME v implies read_reg n s = v, the map rendered as HolFiniteMapExact.empty.updateListEq (as in make_init_def) and read_reg as s.regs. The HOL binder f has an unconstrained type variable and does not occur in the statement, so it is vacuous and omitted (documented beside the theorem). Axiom propext. Positive BitVec width with NeZero."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "state_rel_make_init",
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/MakeInit.lean",
+    "lean_name": "stateRelMakeInit",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3161-3192. Free code coracle regs save_regs s implicit. Iff between state_rel (make_init code coracle regs save_regs s) s and the sixteen right-hand conjuncts in source order: installed procedures of code, \u00acs.failed, s.compile_oracle = (\u03bbn. (\u03bb(c,p,_). (c, MAP prog_to_section p)) (coracle n)) and the per-k oracle conditions (tuple lambdas rendered by projections as in the reviewed state_rel_def), four link-register distinctness facts, link_reg \u2209 save_regs, domain code = set (MAP Section_num s.code) pointwise, EVERY sec_labels_ok, io_regs/cc_regs NONE on save_regs, both domain alignments and good_dimindex. Canonical regs/fpRegs via the imported owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "WordSize",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "word_size",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal word_size datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "ThunkMode",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "thunk_mode",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal thunk_mode datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "ThunkOp",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "thunk_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal thunk_op datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/BackendOperators.lean",
+    "lean_name": "Test",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "test",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: astScript43-64 literal test datatype, complete constructor order and arity retained. word_size W8/W64; thunk_mode Evaluated/NotEvaluated; thunk_op AllocThunk/UpdateThunk with actual ThunkMode and nullary ForceThunk; test Equal/Compare/AltCompare with imported exact Opb. No expression/evaluation approximation or width parameter."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendCommon/Operators.lean",
+    "lean_name": "Opw",
+    "hol_path": "cakeml/compiler/backend/backend_commonScript.sml",
+    "hol_name": "opw",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: backend_commonScript12-14 literal opw=Andw|Orw|Xor|Add|Sub. Same five nullary constructors in same order; no word carrier or width side condition, no partial enum."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "Const",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "const",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 const datatype, all 4 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "ConstPart",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "const_part",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 const_part datatype, all 4 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "IntOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "int_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 int_op datatype, all 11 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "WordOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "word_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 word_op datatype, all 10 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "BlockOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "block_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 block_op datatype, all 16 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "GlobOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "glob_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 glob_op datatype, all 5 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "MemOp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "mem_op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 mem_op datatype, all 23 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "Op",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "op",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 op datatype, all 9 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosLang/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/compiler/backend/closLangScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 exp datatype, all 11 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "ValApprox",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "val_approx",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "InliningDecision",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "inliningDecision",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "defaultInlineFactor",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "default_inline_factor_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "defaultMaxBodySize",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "default_max_body_size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "mkConfig",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "mk_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "defaultConfig",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "default_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "decInlineFactor",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "dec_inline_factor_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "resetInlineFactor",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "reset_inline_factor_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_to_bvlScript687-705 literal seven-field config retains Nat next_loc/start/max_app, Bool do_mti/do_call, Option actual ClosKnown.Config and call_state num_set # (num,num # ClosLang.Exp) alist. NumSet=Spt Unit, alist=List(Nat x (Nat x Exp)); no raw finite-map or generic syntax parameter. Exact default next_loc0/start1/do_mtiT/known_conf SOME(clos_known default_config10)/do_callT/call_state(LN,[])/max_app10. Full source/default types captured; no omitted unused fields, extra defaults or executed production-adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosToBvl/Config.lean",
+    "lean_name": "defaultConfig",
+    "hol_path": "cakeml/compiler/backend/clos_to_bvlScript.sml",
+    "hol_name": "default_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_to_bvlScript687-705 literal seven-field config retains Nat next_loc/start/max_app, Bool do_mti/do_call, Option actual ClosKnown.Config and call_state num_set # (num,num # ClosLang.Exp) alist. NumSet=Spt Unit, alist=List(Nat x (Nat x Exp)); no raw finite-map or generic syntax parameter. Exact default next_loc0/start1/do_mtiT/known_conf SOME(clos_known default_config10)/do_callT/call_state(LN,[])/max_app10. Full source/default types captured; no omitted unused fields, extra defaults or executed production-adoption claim."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WellFormedData.lean",
     "lean_name": "wfData",
     "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
@@ -84626,6 +85145,721 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-wf-data): word_cseProof25-54 all eleven conjuncts retained in source order: canonical self/odd facts; latest canonical-domain membership; instruction holder canonical self; arbitrary arith key implies in_names_set and can_mem_arith; CurrHeap key implies canonical source self; ordered store ALOOKUP implies canonical holder self; distinct store keys; full instruction-tree invariant; load holder self; arbitrary memop/address/word-offset load key implies canonical address self; full load-tree invariant. Nat ODD is modulo-two equality one, Bool can_mem_arith is equality true, source ALL_DISTINCT(MAP FST) is List.Nodup after Prod.fst, and exact sparse-tree domain membership uses sptDomain. Both fact maps retain literal balanced-tree cached sizes/order/balance, store facts retain original list first lookup and fixed-five-bit Temp store names. The original type-itself word dimension is width:Nat/NeZero width, appearing only in internally quantified full HolArith width and BitVec width offset; the reviewed internal-predicate qualifier route records these actual binder types without a dummy signature word, narrowed operation/offset quantifier, flatness, successful run or desired invariant premise. No executed-state correspondence or full comp_correct port is claimed."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "prodMap_eq_pair",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "PAIR_MAP_EQ_PAIR",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL PAIR_MAP_EQ_PAIR (wordPropsScript.sml:112-113). HOL's (f ## g) p = (a,b) <=> ?x y. p = (x,y) /\\ f x = a /\\ g y = b over arbitrary types, with ## as Prod.map; the iff and the existential are as in HOL. No word or state carrier, no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "optionElim_map",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "OPTION_CASE_OPTION_MAP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL OPTION_CASE_OPTION_MAP (wordPropsScript.sml:122-123). HOL's option_CASE (OPTION_MAP f a) e g = option_CASE a e (\\x. g (f x)) over arbitrary types, with option_CASE x e g as Option.elim x e g (same argument order) and OPTION_MAP as Option.map. No word or state carrier, no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "optionElim_some",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "OPTION_CASE_MAP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL OPTION_CASE_MAP (wordPropsScript.sml:130-131). HOL's option_CASE x NONE (\\x. SOME (f x)) = OPTION_MAP f x over arbitrary types, with option_CASE as Option.elim and OPTION_MAP as Option.map. No word or state carrier, no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_var_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_var_with_const (wordPropsScript.sml:137-159). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getVarsWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_vars_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_vars_with_const (wordPropsScript.sml:164-186). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "unsetVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "unset_var_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL unset_var_with_const (wordPropsScript.sml:272-294). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "setVarsWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "set_vars_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL set_vars_with_const (wordPropsScript.sml:326-348). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getStoreWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_store_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_store_with_const (wordPropsScript.sml:353-375). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "setStoreWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "set_store_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL set_store_with_const (wordPropsScript.sml:407-429). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "pushEnvWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "push_env_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL push_env_with_const (wordPropsScript.sml:461-467). All 6 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "popEnvWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "pop_env_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL pop_env_with_const (wordPropsScript.sml:501-509). All 8 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "callEnvWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "call_env_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL call_env_with_const (wordPropsScript.sml:558-566). All 8 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "flushStateWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "flush_state_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL flush_state_with_const (wordPropsScript.sml:588-594). All 6 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "hasSpaceWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "has_space_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL has_space_with_const (wordPropsScript.sml:599-607). All 8 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "gcWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "gc_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL gc_with_const (wordPropsScript.sml:632-640). All 8 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "allocWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "alloc_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL alloc_with_const (wordPropsScript.sml:690-695). All 5 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getFpVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_fp_var_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_fp_var_with_const (wordPropsScript.sml:700-722). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "setFpVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "set_fp_var_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL set_fp_var_with_const (wordPropsScript.sml:754-776). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's ffi record update is type-changing (the typed capture shows the updated ffi at an independent delta), so the FFI conjunct binds an independent host OtherF : Type, as in the imh9.1 repair. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "memLoadWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "mem_load_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL mem_load_with_const (wordPropsScript.sml:781-789). All 8 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "memStoreWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "mem_store_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL mem_store_with_const (wordPropsScript.sml:819-826). All 7 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "wordExpWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "word_exp_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL word_exp_with_const (wordPropsScript.sml:831-839). All 7 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "assignWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "assign_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL assign_with_const (wordPropsScript.sml:877-883). All 6 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "instWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "inst_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL inst_with_const (wordPropsScript.sml:888-894). All 6 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the constant closure computed by the exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "jumpExcWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "jump_exc_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL jump_exc_with_const (wordPropsScript.sml:963-965). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getVarImmWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_var_imm_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_var_imm_with_const (wordPropsScript.sml:970-977). All 7 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemSetVarWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_set_var_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_set_var_with_const (wordPropsScript.sml:1187-1191). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemLoadWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_load_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_load_with_const (wordPropsScript.sml:1200-1204). All 4 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemLoadByteWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_load_byte_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_load_byte_with_const (wordPropsScript.sml:1209-1213). All 4 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemLoad16WithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_load16_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_load16_with_const (wordPropsScript.sml:1218-1222). All 4 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemLoad32WithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_load32_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_load32_with_const (wordPropsScript.sml:1227-1231). All 4 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStoreWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store_with_const (wordPropsScript.sml:1236-1240). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStoreByteWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store_byte_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store_byte_with_const (wordPropsScript.sml:1245-1249). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStore16WithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store16_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store16_with_const (wordPropsScript.sml:1254-1258). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStore32WithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store32_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store32_with_const (wordPropsScript.sml:1263-1267). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shareInstWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "share_inst_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL share_inst_with_const (wordPropsScript.sml:1272-1276). All 2 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "cutStateWithConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "cut_state_with_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL cut_state_with_const (wordPropsScript.sml:1281-1287). All 6 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "unsetVarConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "unset_var_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL unset_var_const (wordPropsScript.sml:245-267). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "setVarsConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "set_vars_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL set_vars_const (wordPropsScript.sml:299-321). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "pushEnvConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "push_env_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL push_env_const (wordPropsScript.sml:435-453). All 18 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "callEnvConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "call_env_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL call_env_const (wordPropsScript.sml:535-553). All 18 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "flushStateConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "flush_state_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL flush_state_const (wordPropsScript.sml:571-583). All 12 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "setFpVarConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "set_fp_var_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL set_fp_var_const (wordPropsScript.sml:727-749). All 22 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "stateConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "state_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL state_const (wordPropsScript.sml:103-107). All 4 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "decClockConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "dec_clock_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL dec_clock_const (wordPropsScript.sml:982-1006). All 24 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "assignConstFull",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "assign_const_full",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL assign_const_full (wordPropsScript.sml:850-864). All 13 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "assignConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "assign_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL assign_const (wordPropsScript.sml:869-872). All 2 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemSetVarConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_set_var_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_set_var_const (wordPropsScript.sml:1011-1034). All 22 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStoreConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store_const (wordPropsScript.sml:1045-1066). All 20 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStoreByteConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store_byte_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store_byte_const (wordPropsScript.sml:1074-1095). All 20 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStore16Const",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store16_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store16_const (wordPropsScript.sml:1103-1124). All 20 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "shMemStore32Const",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "sh_mem_store32_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL sh_mem_store32_const (wordPropsScript.sml:1132-1153). All 20 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. HOL's 'a result is at the state's word dimension, so the result width is fixed to the state width (rw := width). Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getVarSetStore",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_var_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_var_set_store (wordPropsScript.sml:1350-1351). All 1 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getVarSetFpVar",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_var_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_var_set_fp_var (wordPropsScript.sml:1356-1357). All 1 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getStoreSetStore",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_store_set_store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_store_set_store (wordPropsScript.sml:1368-1369). All 1 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/StateConst.lean",
+    "lean_name": "getFpVarSetFpVar",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "get_fp_var_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL get_fp_var_set_fp_var (wordPropsScript.sml:1375-1376). All 1 original conjuncts in source order; each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemStateConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/InstConst.lean",
+    "lean_name": "instConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "inst_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.44): HOL inst_const (wordPropsScript.sml:935-938). All 2 original conjuncts in source order, under HOL's single equation premise as the sole hypothesis (HOL's implicational conjuncts kept as implications with the same antecedents); each conjunct has the same function, arguments, updated field and result shape as HOL (OPTION_MAP as Option.map, I ## f as Prod.map id f, a paired lambda as a pair projection, record update as Lean structure update). HOL's free variables are bound explicitly at their HOL types. Statement unchanged from the earlier untagged kernel prerequisite; its old caveat is superseded now that inst_const_full is accepted with the inherited reals_as_rational_cuts marker. Exact native WordSemStateFiniteExact carrier with canonical fpRegs/store (fmap_as_finite_support, same-module witness WordSemInstConstSupport.holFmapAsFiniteSupportWitness) and positive-width BitVec words (words_as_type_indexed_bitvec); no extra premise. Kernel-checked; wordsem_state_const_group probe captures the statement (0 hypotheses). Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the constant closure computed by the exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/SemanticInvariant.lean",

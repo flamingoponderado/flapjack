@@ -113,21 +113,21 @@ private theorem memStoresLoadDisjoint_aux {width : Nat} [NeZero width]
     (memory m : BitVec width → HolWordLab width)
     (hm : panMemStoresHOL addr vs addrs memory = some m) :
     (∀ (sh : ShapeHOL) (addr' : BitVec width),
-      isWfShapeExactHOL [] sh = true →
+      isWfShapeExactHOL ([] : StructContextExact) sh = true →
       (∀ x, addresses addr' (sizeOfShapeHOL sh) x → ¬ addresses addr vs.length x) →
       memLoadHOLExact sh addr' addrs m [] = memLoadHOLExact sh addr' addrs memory []) ∧
     (∀ (shs : List ShapeHOL) (addr' : BitVec width),
-      isWfShapesExactHOL [] shs = true →
+      isWfShapesExactHOL ([] : StructContextExact) shs = true →
       (∀ x, addresses addr' (sizeOfShapesHOL shs) x → ¬ addresses addr vs.length x) →
       memLoadsHOLExact shs addr' addrs m [] = memLoadsHOLExact shs addr' addrs memory []) := by
   have hcons : ∀ (sh : ShapeHOL) (rest : List ShapeHOL),
-      (∀ addr' : BitVec width, isWfShapeExactHOL [] sh = true →
+      (∀ addr' : BitVec width, isWfShapeExactHOL ([] : StructContextExact) sh = true →
         (∀ x, addresses addr' (sizeOfShapeHOL sh) x → ¬ addresses addr vs.length x) →
         memLoadHOLExact sh addr' addrs m [] = memLoadHOLExact sh addr' addrs memory []) →
-      (∀ addr' : BitVec width, isWfShapesExactHOL [] rest = true →
+      (∀ addr' : BitVec width, isWfShapesExactHOL ([] : StructContextExact) rest = true →
         (∀ x, addresses addr' (sizeOfShapesHOL rest) x → ¬ addresses addr vs.length x) →
         memLoadsHOLExact rest addr' addrs m [] = memLoadsHOLExact rest addr' addrs memory []) →
-      ∀ addr' : BitVec width, isWfShapesExactHOL [] (sh :: rest) = true →
+      ∀ addr' : BitVec width, isWfShapesExactHOL ([] : StructContextExact) (sh :: rest) = true →
         (∀ x, addresses addr' (sizeOfShapesHOL (sh :: rest)) x → ¬ addresses addr vs.length x) →
         memLoadsHOLExact (sh :: rest) addr' addrs m [] =
           memLoadsHOLExact (sh :: rest) addr' addrs memory [] := by
@@ -139,12 +139,12 @@ private theorem memStoresLoadDisjoint_aux {width : Nat} [NeZero width]
     rw [ihSh addr' hwf.1 (fun x hx => hdis x ((addresses_add _ _ addr' x).2 (Or.inl hx))),
       ihRest (addr' + bytesInWordHOL width * BitVec.ofNat width (sizeOfShapeHOL sh)) hwf.2 (fun x hx => hdis x ((addresses_add _ _ addr' x).2 (Or.inr hx)))]
   have hshape : ∀ (sh : ShapeHOL) (addr' : BitVec width),
-      isWfShapeExactHOL [] sh = true →
+      isWfShapeExactHOL ([] : StructContextExact) sh = true →
       (∀ x, addresses addr' (sizeOfShapeHOL sh) x → ¬ addresses addr vs.length x) →
       memLoadHOLExact sh addr' addrs m [] = memLoadHOLExact sh addr' addrs memory [] := by
     intro sh
     induction sh using ShapeHOL.rec (motive_2 := fun shs =>
-        ∀ addr' : BitVec width, isWfShapesExactHOL [] shs = true →
+        ∀ addr' : BitVec width, isWfShapesExactHOL ([] : StructContextExact) shs = true →
           (∀ x, addresses addr' (sizeOfShapesHOL shs) x → ¬ addresses addr vs.length x) →
           memLoadsHOLExact shs addr' addrs m [] = memLoadsHOLExact shs addr' addrs memory []) with
     | one =>
@@ -207,21 +207,21 @@ private theorem memLoad_domain_cover {width : Nat} [NeZero width]
     (addrs : BitVec width → Prop) [DecidablePred addrs]
     (memory : BitVec width → HolWordLab width) :
     (∀ (sh : ShapeHOL) (addr : BitVec width) (v : ValueHOL width),
-      memLoadHOLExact sh addr addrs memory [] = some v → isWfShapeExactHOL [] sh = true →
+      memLoadHOLExact sh addr addrs memory [] = some v → isWfShapeExactHOL ([] : StructContextExact) sh = true →
       ∀ x, addresses addr (sizeOfShapeHOL sh) x → addrs x) ∧
     (∀ (shs : List ShapeHOL) (addr : BitVec width) (vs : List (ValueHOL width)),
-      memLoadsHOLExact shs addr addrs memory [] = some vs → isWfShapesExactHOL [] shs = true →
+      memLoadsHOLExact shs addr addrs memory [] = some vs → isWfShapesExactHOL ([] : StructContextExact) shs = true →
       ∀ x, addresses addr (sizeOfShapesHOL shs) x → addrs x) := by
   have hcons : ∀ (sh : ShapeHOL) (rest : List ShapeHOL),
       (∀ (addr : BitVec width) (v : ValueHOL width),
-        memLoadHOLExact sh addr addrs memory [] = some v → isWfShapeExactHOL [] sh = true →
+        memLoadHOLExact sh addr addrs memory [] = some v → isWfShapeExactHOL ([] : StructContextExact) sh = true →
         ∀ x, addresses addr (sizeOfShapeHOL sh) x → addrs x) →
       (∀ (addr : BitVec width) (vs : List (ValueHOL width)),
-        memLoadsHOLExact rest addr addrs memory [] = some vs → isWfShapesExactHOL [] rest = true →
+        memLoadsHOLExact rest addr addrs memory [] = some vs → isWfShapesExactHOL ([] : StructContextExact) rest = true →
         ∀ x, addresses addr (sizeOfShapesHOL rest) x → addrs x) →
       ∀ (addr : BitVec width) (vs : List (ValueHOL width)),
         memLoadsHOLExact (sh :: rest) addr addrs memory [] = some vs →
-        isWfShapesExactHOL [] (sh :: rest) = true →
+        isWfShapesExactHOL ([] : StructContextExact) (sh :: rest) = true →
         ∀ x, addresses addr (sizeOfShapesHOL (sh :: rest)) x → addrs x := by
     intro sh rest ihSh ihRest addr vs h hwf x hx
     simp only [isWfShapesExactHOL_cons, Bool.and_eq_true] at hwf
@@ -239,12 +239,12 @@ private theorem memLoad_domain_cover {width : Nat} [NeZero width]
             · exact ihSh addr v h1 hwf.1 x hx
             · exact ihRest _ vs' h2 hwf.2 x hx
   have hshape : ∀ (sh : ShapeHOL) (addr : BitVec width) (v : ValueHOL width),
-      memLoadHOLExact sh addr addrs memory [] = some v → isWfShapeExactHOL [] sh = true →
+      memLoadHOLExact sh addr addrs memory [] = some v → isWfShapeExactHOL ([] : StructContextExact) sh = true →
       ∀ x, addresses addr (sizeOfShapeHOL sh) x → addrs x := by
     intro sh
     induction sh using ShapeHOL.rec (motive_2 := fun shs =>
         ∀ (addr : BitVec width) (vs : List (ValueHOL width)),
-          memLoadsHOLExact shs addr addrs memory [] = some vs → isWfShapesExactHOL [] shs = true →
+          memLoadsHOLExact shs addr addrs memory [] = some vs → isWfShapesExactHOL ([] : StructContextExact) shs = true →
           ∀ x, addresses addr (sizeOfShapesHOL shs) x → addrs x) with
     | one =>
         intro addr v h _ x hx
@@ -341,7 +341,7 @@ mutual
       ∀ (val : ValueHOL width) (addr : BitVec width) (memory m : BitVec width → HolWordLab width),
         panMemStoresHOL addr (flattenHOL val) addrs memory = some m →
         (flattenHOL val).length * (width / 8) < 2 ^ width →
-        isWfShapeExactHOL [] (shapeOfHOLExact val) = true →
+        isWfShapeExactHOL ([] : StructContextExact) (shapeOfHOLExact val) = true →
         memLoadHOLExact (shapeOfHOLExact val) addr addrs m [] = some val
     | .val w, addr, memory, m, hm, _, _ => by
         simp only [flattenHOL, panMemStoresHOL, panMemStoreHOL] at hm
@@ -365,7 +365,7 @@ mutual
         (memory m : BitVec width → HolWordLab width),
         panMemStoresHOL addr (vals.map flattenHOL).flatten addrs memory = some m →
         (vals.map flattenHOL).flatten.length * (width / 8) < 2 ^ width →
-        isWfShapesExactHOL [] (vals.map shapeOfHOLExact) = true →
+        isWfShapesExactHOL ([] : StructContextExact) (vals.map shapeOfHOLExact) = true →
         memLoadsHOLExact (vals.map shapeOfHOLExact) addr addrs m [] = some vals
     | [], _, _, _, _, _, _ => by
         simp only [List.map_nil]

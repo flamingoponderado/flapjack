@@ -1,0 +1,7 @@
+namespace_case=∀(a0 :(ξ # φ) list) (a1 :(ν # (ν, ξ, φ) namespace) list)
+    (f :(ξ # φ) list -> (ν # (ν, ξ, φ) namespace) list -> β).
+  (namespace_CASE (Bind a0 a1) f :β) = f a0 a1
+namespace_case_types=(a0 :(ξ # φ) list)::(ξ # φ) list;(a1 :(ν # (ν, ξ, φ) namespace) list)::(ν # (ν, ξ, φ) namespace) list;(f :(ξ # φ) list -> (ν # (ν, ξ, φ) namespace) list -> β)::(ξ # φ) list -> (ν # (ν, ξ, φ) namespace) list -> β;
+namespace_case_hypotheses=0
+namespace_case_proved=T
+namespace_Bind_type=:(α # β) list -> (γ # (γ, α, β) namespace) list -> (γ, α, β) namespace

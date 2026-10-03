@@ -1,0 +1,32 @@
+tra_case=(∀(a0 :num) (a1 :num) (a2 :num) (a3 :num) (f :num -> num -> num -> num -> α)
+     (f1 :tra -> num -> α) (f2 :tra -> tra -> α) (v :α).
+   (tra_CASE (SourceLoc a0 a1 a2 a3) f f1 f2 v :α) = f a0 a1 a2 a3) ∧
+(∀(a0 :tra) (a1 :num) (f :num -> num -> num -> num -> α)
+     (f1 :tra -> num -> α) (f2 :tra -> tra -> α) (v :α).
+   (tra_CASE (a0 ▷ a1) f f1 f2 v :α) = f1 a0 a1) ∧
+(∀(a0 :tra) (a1 :tra) (f :num -> num -> num -> num -> α)
+     (f1 :tra -> num -> α) (f2 :tra -> tra -> α) (v :α).
+   (tra_CASE (Union a0 a1) f f1 f2 v :α) = f2 a0 a1) ∧
+∀(f :num -> num -> num -> num -> α) (f1 :tra -> num -> α)
+    (f2 :tra -> tra -> α) (v :α). (tra_CASE None f f1 f2 v :α) = v
+tra_case_types=
+tra_case_hypotheses=0
+tra_case_proved=T
+orphan_trace=orphan_trace = SourceLoc (2 :num) (2 :num) (1 :num) (1 :num)
+orphan_trace_types=
+orphan_trace_hypotheses=0
+orphan_trace_proved=T
+mk_cons=∀(tr :tra) (n :num).
+  tr § n =
+  case tr of
+    SourceLoc v8 v9 v10 v11 => tr ▷ n
+  | v12 ▷ v13 => tr ▷ n
+  | Union v14 v15 => tr ▷ n
+  | None => None
+mk_cons_types=(tr :tra)::tra;(n :num)::num;
+mk_cons_hypotheses=0
+mk_cons_proved=T
+tra_SourceLoc_type=:num -> num -> num -> num -> tra
+tra_Cons_type=:tra -> num -> tra
+tra_Union_type=:tra -> tra -> tra
+tra_None_type=:tra

@@ -1,0 +1,7 @@
+init_config=∀(ph :num). init_config ph = <|pat_heuristic := ph|>
+init_config_types=(ph :num)::num;
+init_config_hypotheses=0
+init_config_proved=T
+init_config_type=:num -> config
+config_pat_heuristic_type=:config -> num
+config_component_equality=∀(c1 :config) (c2 :config). c1 = c2 ⇔ c1.pat_heuristic = c2.pat_heuristic
