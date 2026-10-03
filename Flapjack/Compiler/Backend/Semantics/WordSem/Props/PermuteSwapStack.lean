@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.PermuteSwap
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Leaves
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.NoInstallEvaluate
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.StateLaws
 import Flapjack.Misc.Sorting
@@ -203,64 +204,6 @@ section StackConst
 
 variable {width : Nat} [NeZero width] {C : Type} {F : Type}
 
-theorem wordExp_withStack (s : WordSemStateFiniteExact width C F)
-    (k : List (WordSemStackFrame width)) :
-    ∀ e : WordLangExpHOL (BitVec width), wordExp { s with stack := k } e = wordExp s e
-  | .const w => by rw [wordExp, wordExp]
-  | .var v => by rw [wordExp, wordExp]; rfl
-  | .lookup n => by rw [wordExp, wordExp]; rfl
-  | .load a => by
-      rw [wordExp, wordExp, wordExp_withStack s k a]
-      rfl
-  | .op op args => by
-      rw [wordExp, wordExp]
-      have : (args.attach.map fun (x : { x // x ∈ args }) => wordExp { s with stack := k } x.1) =
-          (args.attach.map fun (x : { x // x ∈ args }) => wordExp s x.1) := by
-        apply List.map_congr_left
-        intro ⟨e, he⟩ _
-        have := List.sizeOf_lt_of_mem he
-        exact wordExp_withStack s k e
-      simp only [] at this ⊢
-      rw [this]
-  | .shift sh e1 e2 => by
-      rw [wordExp, wordExp, wordExp_withStack s k e1, wordExp_withStack s k e2]
-termination_by e => sizeOf e
-
-theorem getVars_withStack (s : WordSemStateFiniteExact width C F)
-    (k : List (WordSemStackFrame width)) :
-    ∀ ns, getVars ns { s with stack := k } = getVars ns s
-  | [] => rfl
-  | n :: ns => by
-      simp only [getVars, getVars_withStack s k ns]
-      rfl
-
-theorem memStore_withStack (s : WordSemStateFiniteExact width C F)
-    (k : List (WordSemStackFrame width)) (a : BitVec width) (w : WordLocW width) :
-    memStore a w { s with stack := k } =
-      (memStore a w s).map (fun s' => { s' with stack := k }) := by
-  unfold memStore
-  by_cases h : s.mdomain a = true <;> simp [h]
-
-set_option linter.unusedSimpArgs false in
-theorem inst_withStack (s : WordSemStateFiniteExact width C F)
-    (k : List (WordSemStackFrame width)) (i : WordLangInst (BitVec width)) :
-    inst i { s with stack := k } = (inst i s).map (fun s' => { s' with stack := k }) := by
-  cases i with
-  | skip => rfl
-  | const r w => simp only [inst, assign, wordExp_withStack]; split <;> rfl
-  | arith a =>
-    cases a <;> simp only [inst, assign, wordExp_withStack, getVars_withStack] <;>
-      (repeat' split) <;> rfl
-  | mem op r a =>
-    cases a
-    cases op <;> simp only [inst, wordExp_withStack, getVar, memStore_withStack] <;>
-      (repeat' split) <;> first | rfl |
-        (simp_all [memLoad, memStore, setVar]; done) |
-        (simp_all [memLoad, memStore, setVar]; obtain ⟨_, rfl⟩ := ‹_ ∧ _›; subst_vars; rfl)
-  | fp f =>
-    cases f <;> simp only [inst, getFpVar, getVar] <;>
-      (repeat' split) <;> rfl
-
 theorem cutState_withStack (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) (names : WordLangCutsetsHOL) :
     cutState names { s with stack := k } =
@@ -275,7 +218,7 @@ def stackOut (s' : WordSemStateFiniteExact width C F) (k : List (WordSemStackFra
     List (WordSemStackFrame width) :=
   if s'.stack = [] then [] else k
 
-theorem shMemSetVar_withStack (s : WordSemStateFiniteExact width C F)
+theorem shMemSetVar_withStackOut (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) (hs : s.stack ≠ [])
     (res : Option (HolFfiResult F)) (v : Nat) :
     shMemSetVar (rw := width) res v { s with stack := k } =
@@ -287,14 +230,14 @@ theorem shMemSetVar_withStack (s : WordSemStateFiniteExact width C F)
   | some r => cases r <;> simp [shMemSetVar, stackOut, hs, flushState, setVar]
 
 set_option linter.unusedSimpArgs false in
-theorem shareInst_withStack (s : WordSemStateFiniteExact width C F)
+theorem shareInst_withStackOut (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) (hs : s.stack ≠ [])
     (op : WordMemOp) (v : Nat) (ad : BitVec width) :
     shareInst (rw := width) op v ad { s with stack := k } =
       ((shareInst (rw := width) op v ad s).1,
         { (shareInst (rw := width) op v ad s).2 with
           stack := stackOut (shareInst (rw := width) op v ad s).2 k }) := by
-  cases op <;> simp only [shareInst, shMemSetVar_withStack s k hs] <;>
+  cases op <;> simp only [shareInst, shMemSetVar_withStackOut s k hs] <;>
     simp only [shMemLoad, shMemLoadByte, shMemLoad16, shMemLoad32,
       shMemStore, shMemStoreByte, shMemStore16, shMemStore32, getVar] <;>
     (repeat' split) <;> first | rfl | simp_all [flushState, setVar, stackOut]
@@ -302,7 +245,7 @@ theorem shareInst_withStack (s : WordSemStateFiniteExact width C F)
 set_option linter.unusedSimpArgs false in
 /-- A permute-constant statement other than `Raise` runs the same over any
     replacement of a nonempty stack, ending with `stackOut`. -/
-theorem evaluate_withStack_const (s : WordSemStateFiniteExact width C F)
+theorem evaluate_withStackOut_const (s : WordSemStateFiniteExact width C F)
     (k : List (WordSemStackFrame width)) (hs : s.stack ≠ [])
     (p : WordLangProgHOL (BitVec width)) (hp : wordProgPermuteConst p = true)
     (hr : ∀ n, p ≠ .raise n) :
@@ -311,7 +254,7 @@ theorem evaluate_withStack_const (s : WordSemStateFiniteExact width C F)
   cases p <;> simp only [wordProgPermuteConst, Bool.false_eq_true] at hp <;>
     rw [evaluate, evaluate] <;>
     simp only [getVar, getVars_withStack, wordExp_withStack, inst_withStack,
-      shareInst_withStack s k hs, memStore_withStack, getStore] <;>
+      shareInst_withStackOut s k hs, memStore_withStack, getStore] <;>
     (repeat' split) <;>
     first
       | rfl
@@ -518,7 +461,7 @@ theorem swap_const (s : WordSemStateFiniteExact width C F) (k : Nat → Nat → 
   · have hc := evaluate_const_stack s p hp hr
     have he : ({ s with permute := k, stack := xs } : WordSemStateFiniteExact width C F) =
         { { s with stack := xs } with permute := k } := rfl
-    rw [he, evaluate_withPermute_const _ k p hp, evaluate_withStack_const s xs hs p hp hr]
+    rw [he, evaluate_withPermute_const _ k p hp, evaluate_withStackOut_const s xs hs p hp hr]
     refine ⟨k, stackOut (evaluate p s).2 xs, rfl, ?_⟩
     unfold stackOut
     split
