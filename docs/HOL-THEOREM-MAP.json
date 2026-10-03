@@ -77179,5 +77179,105 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript85-99: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion Boolean b chooses a or nxt PC+Skip; the whole record still clears NextFetch on both branches. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/PanToWord.lean",
+    "lean_name": "panToWordCompileProgHOL",
+    "hol_path": "cakeml/pancake/pan_to_wordScript.sml",
+    "hol_name": "compile_prog_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordScript.sml:10-18: compile_prog arch prog = loop_to_word$compile (crep_to_loop$compile_prog arch (pan_to_crep$compile_prog (pan_globals$compile_top (pan_structs$compile_top (pan_simp$compile_prog prog)) «main»))); each stage is the reviewed exact port (panSimpDeclsHOL, PanStructs compileTopExact, compileTopExactHOL with ofString \"main\", compileProgDeclsHOLW, compileProgHOLExact, loopToWordCompileHOL); arch is AsmArchitecture as in compileProgHOLExact. Proof-side; the executed route remains Pipeline.lean. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "crepStateHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "crep_state_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:14-27 field for field: locals/globals FEMPTY, code alist_to_fmap (pan_to_crep$compile_prog pan_code) rendered as empty.updateList of the reversed compileProgDeclsHOLW list, memory mem, memaddrs/sh_memaddrs/clock/be/ffi/top_addr/base_addr from the Pan state. Only the three Crep |-> fields are translated. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "wlocWlabHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "wloc_wlab_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:29-31: wloc_wlab (Word w) = Word w; the Loc case, absent in HOL, is the shared unspecified holArb. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "noLabelsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "no_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:39-41: no_labels mem dom = (!a. a IN dom ==> ?w. mem a = Word w); the word set dom is a predicate as in the tagged addresses. Types follow the elaborated constant captured by pan_to_word_definitions_probe: address type arbitrary α, word width independent."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "loopStateHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "loop_state_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:43-56 field for field: locals LN (Spt.ln), globals FEMPTY, memory mem, mdomain s.memaddrs, sh_mdomain s.sh_memaddrs, code fromAList (crep_to_loop$compile_prog c crep_code) (sptFromAList, compileProgHOLExact), clock ck, be/ffi/top_addr/base_addr from s. The reviewed Loop carrier renders word sets as Bool predicates, so Crep Prop membership is decided classically (same set). Only LoopSemStateFiniteExact.globals is a |-> field. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "distinctParamsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "distinct_params_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:58-61: distinct_params prog <=> EVERY (\\(name,params,body). ALL_DISTINCT params) prog over a polymorphic triple list, rendered with type parameters α β γ, EVERY as membership quantification and ALL_DISTINCT as List.Nodup. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "globalsAllocatableHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "globals_allocatable_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:228-239: same let-bound dec_shs/struct_ctxt/sz; THE is holThe; conjuncts struct_ctxt <> NONE, DISJOINT s.memaddrs (addresses s.top_addr sz) as no common member, s.top_addr + bytes_in_word * n2w sz NOTIN s.memaddrs, sz * w2n bytes_in_word < dimword(:a) = 2^width; bytes_in_word is StackRemove.bytesInWord (n2w (dimindex DIV 8)). Types follow the elaborated constant captured by pan_to_word_definitions_probe: pan_code word width width' independent of the state width."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
   }
 ]

@@ -4772,6 +4772,12 @@
       "sha256": "d824a765fcab77cb2ffd58283740edfd9e6e43d48f0e4b2941f0c05185de330c"
     },
     {
+      "bytes": 2813,
+      "out": "pan_to_word_definitions_probe.out",
+      "rows": 7,
+      "sha256": "333164c7f5ede19fad406059f1e2b14df45aedce4d334319e660cb8e6c586ba0"
+    },
+    {
       "bytes": 867,
       "out": "pan_to_word_probe.out",
       "rows": 7,
