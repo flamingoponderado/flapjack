@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import Flapjack.Test.BackendConfigAttachBitmaps
+=======
+import Flapjack.Test.WordFindCodeGenericCarriers
+>>>>>>> origin/fleet-integration-post-1211-stack
 import Flapjack.Test.L3DecodeImmediatesParity
 import Flapjack.Test.WordSimpGenericCarriersParity
 import Flapjack.Test.L3FPMemoryParity
