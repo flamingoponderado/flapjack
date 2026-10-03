@@ -6867,3 +6867,7 @@ run_probe lab_to_target_list_subset_probeScript.sml lab_to_target_list_subset_pr
 run_probe pan_structs_program_store_probeScript.sml pan_structs_program_store_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_store_statement compile_correct_store_proved compile_correct_full_types compile_correct_store_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutral_probe.out \
+  fupdate_elim2_statement fupdate_elim2_types fupdate_elim2_hypotheses fupdate_elim2_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"

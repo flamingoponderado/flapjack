@@ -80049,5 +80049,16 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FupdateElim2.lean",
+    "lean_name": "fupdateElim2",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "fupdate_elim2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-10-03 original local fupdate_elim2: arbitrary polymorphic finite map/key/value, sole FLOOKUP fm x=SOME y premise, exact FUPDATE fm(x,y)=fm conclusion. Canonical finite-support fm is the only representation translation, named standalone relation parameter; no state carrier/witness needed for a bare map entry. Actual updateEq uses Classical HOL equality internally with no public BEq/LawfulBEq/DecidableEq compatibility premise. Native map constructor proof irrelevance and pointwise key equality case split establish whole canonical map equality, not merely selected-key equality. No width/state/shape/wf restriction. Fresh original local statement and unchanged FUPDATE_ELIM/TO_FLOOKUP proof replay, closed types/hyp0/kernelT reviewed. Assign and whole compiler correctness remain separate."
   }
 ]

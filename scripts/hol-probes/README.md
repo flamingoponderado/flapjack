@@ -7301,3 +7301,8 @@ and general Store specialization, closed binder types and kernel proofs.
 Native general Store retains arbitrary nested values, all ten premises/seven
 conclusions and original memory/domain/error behavior. Full expression and
 unconditional flatten conversion derive the identical target memory operation.
+
+`pan_structs_fupdate_neutral_probe` replays original local `fupdate_elim2`
+with its unchanged source proof, closed binder types, zero hypotheses and
+kernel proof. Native update neutrality keeps arbitrary key/value types and
+uses canonical finite-support maps with HOL equality and no comparison premise.
