@@ -68588,6 +68588,78 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompCorrect/Install.lean",
+    "lean_name": "compCorrectInstall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-install), full original comp_correct Install1932-1997. Retains arbitrary five source registers including the unused return register, both native states, source result/poststate, jump/bounds/register bound parameters and exactly the original source evaluate/non-Error/state_rel/reg_bound premises. Derives the same existential target clock and actual native comp evaluation with the identical result and complete original result-dispatch postrelation. No target evaluation, compiler success, post code_rel, callback law, narrowed register alias/word width or post-state premise. Full source branch analysis retains failures, actual four word reads, code/data buffer flush, compileOracle head and shift, compiler output equality, nonempty program list and all original output/config checks. Source relation supplies target reads, compiler and oracle mapping; native target skips the data flush because its original useStack=false is derived. Successful source data flush proves the new bitmap list plus remaining data-buffer payload is exactly the old combined payload and proves the updated bitmap position. Whole separated heap and every unchanged carrier/field retained. Actual left-biased Spt code union respects first-match duplicate names, full domain equality and original stackNumStubs=5 oracle entry bound preserving error/init stubs; no finite-map qualifier applied to Spt code. Saved-register restriction is transported on all registers below the bound, and the three special registers survive because the original source relation supplies their mask membership. Local actual imported StackSemStateFiniteExact roundtrip witness has no shadow owner. Relation qualifier names only its canonical regs/fpRegs/store maps; word qualifier records original positive type-indexed BitVec and FFI Type carriers. Native evaluator closure inherits reviewed reals_as_rational_cuts FP carrier (SOUNDNESS item 8), though Install executes no FP instruction. No native_decide, whole-pass correctness or executed compiler parity claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "signalEnvCall",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "signalEnvCall_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source3471-3495, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'ECALL»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ECALL_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10390-10393, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'EBREAK»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'EBREAK_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10394-10400, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'ERET»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ERET_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10401-10407, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
+    "lean_name": "«dfn'UnknownInstruction»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'UnknownInstruction_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c literal pinned source10728-10735, full arbitrary native riscv_state. signalEnvCall retains Unit argument and literal MCSR.mstatus.MPRV privilege selector through original privilege, U/S/H/M environment exceptions. ECALL invokes this helper, EBREAK uses signalException Breakpoint, UnknownInstruction uses Illegal_Instr, ERET writes SOME Ereturn without privilege/mode guard. Existing reviewed MCSR/signalException/setTrap/writeNextFetch owners used directly. No success/core/architecture premise. Mechanical10definition closure0fail; five unconditional whole-state normalforms kernelchecked. Fresh original80observations independently matched and Lean kernel replayed: four MPRV values, existing/no internal exception (exact word8 character-list existing payload), core7/255 withtotalCore1 and initialEreturn. Current trap/badaddr orEreturn, unchangedothercore/exception and completeframe outside onlyc_NextFetch compared. No wholeRun/Next/compiler correctness claim."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BytesInMemory/Domain.lean",
+    "lean_name": "bytesInMemoryInDomain",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "bytes_in_memory_in_domain",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 full source/type comparison2026-10-03 miscScript4238-4248 and original exported type0hyp: same arbitrary address, fixed word8 list/memory, arbitrary predicate domain and Nat index. Exactly original bytes_in_memory AND index<len premises imply domain(address+n2w index). Existing reviewed bytesInMemoryHOL used, positive arbitrary BitVec width/NeZero translation only. No no-wrap, bounded byte-region length, alignment, memory correctness or target premise. Induction retains wrapped word addition including regions longer than address space; fixed word8 data remains8. Fresh literal original proof plus16 original wrap/invalid-domain/byte/index observations at widths1/8/64/80; native kernel/runtime observations and12 whole theorem consumers. Independent prerequisite of fetched-byte FFI exclusion/initializer, not initializer/fullcompiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Misc/FindIndex/Membership.lean",
+    "lean_name": "findIndex_mem",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "find_index_MEM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 full original source1088 and fresh fulltype0hyp comparison: generic alpha list/target/arbitrary Nat offset, sole membership premise and complete existential find_index success at offset+i, original i<length bound and EL i list=target. DecidableEq supplies same propositional equality; Nonempty exposes intrinsic HOL inhabited carrier for existing bounded EL. No Nodup, extra outer bound, assumed search/target/default or hold change; structural first-match recursion retains duplicates. Fresh original seven complete theorem instances with original membership guards kernel discharged and two missing/empty guard observations allT; generic native full consumer and actual arbitrary machineConfig FFI-entry-PC/word/offset consumer. Every EL remains under original existential bound. Evidence is source comparison/regression, not HOL-to-Lean equivalence or full FFI/initializer/compiler correctness."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/CallReturn.lean",
     "lean_name": "evaluateCodeBitmapsCallReturn",
     "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
