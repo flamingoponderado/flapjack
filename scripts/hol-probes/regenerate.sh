@@ -6457,3 +6457,6 @@ run_probe word_simp_compile_exp_probeScript.sml word_simp_compile_exp_probe.out 
 run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
   add3 sub_const big_imm store_off load_off shifts curr_heap share_load8 set_and const_fold two_reg \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+run_probe stack_remove_init_limits_double_probeScript.sml stack_remove_init_limits_double_probe.out \
+  init_limits_double_definition init_limits_double_type init_limits_double_hypotheses init_limits_double_store_count \
+  "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"

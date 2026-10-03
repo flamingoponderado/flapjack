@@ -6560,6 +6560,12 @@
       "sha256": "866cde928af7e2d8b363e4466936ce86900e9724c518d39204572884bf01d5bb"
     },
     {
+      "bytes": 251,
+      "out": "stack_remove_init_limits_double_probe.out",
+      "rows": 4,
+      "sha256": "b81104a94885af1d807cfa4b5a32fa47cc9077dcf98286b5fa2acfb83933e6a1"
+    },
+    {
       "bytes": 124,
       "out": "stack_remove_init_probe.out",
       "rows": 8,
