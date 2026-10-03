@@ -1,4 +1,5 @@
 import Flapjack.Misc.FindIndex.SuccessfulMembership
+import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
 import Flapjack.Compiler.Backend.StackProps.EvaluateCodeBitmaps.Nonrecursive
 import Flapjack.Misc.BytesInMemory.Domain
@@ -741,6 +742,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlySets
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
 import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
+import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCosts
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
