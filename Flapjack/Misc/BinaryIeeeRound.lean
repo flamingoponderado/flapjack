@@ -31,7 +31,7 @@ handled separately in bead `h29l.6.3`.
 
 namespace Flapjack
 
-instance {t w : Nat} : Inhabited (HolFloat t w) := ⟨{ sign := 0, exponent := 0, significand := 0 }⟩
+instance {t w : Nat} [NeZero t] [NeZero w] : Inhabited (HolFloat t w) := ⟨{ sign := 0, exponent := 0, significand := 0 }⟩
 
 /-- HOL `abs` on reals, rendered on `Rat`: `abs x = if x < 0 then -x else x`
     (HOL `realTheory.abs`). -/
@@ -44,34 +44,34 @@ def holUintMax (w : Nat) : Nat := 2 ^ w - 1
 def holIntMin (w : Nat) : Nat := 2 ^ (w - 1)
 
 /-- HOL `float_plus_infinity_def` (`binary_ieeeScript.sml:165-170`). -/
-def holFloatPlusInfinity (t w : Nat) : HolFloat t w :=
+def holFloatPlusInfinity (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := BitVec.allOnes w, significand := 0 }
 
 /-- HOL `float_plus_zero_def` (`binary_ieeeScript.sml:172-177`). -/
-def holFloatPlusZero (t w : Nat) : HolFloat t w :=
+def holFloatPlusZero (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := 0, significand := 0 }
 
 /-- HOL `float_top_def` (`binary_ieeeScript.sml:179-184`):
     `Exponent := UINT_MAXw - 1w; Significand := UINT_MAXw`. -/
-def holFloatTop (t w : Nat) : HolFloat t w :=
+def holFloatTop (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := BitVec.allOnes w - 1, significand := BitVec.allOnes t }
 
 /-- HOL `float_plus_min_def` (`binary_ieeeScript.sml:187-192`). -/
-def holFloatPlusMin (t w : Nat) : HolFloat t w :=
+def holFloatPlusMin (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   { sign := 0, exponent := 0, significand := 1 }
 
 /-- HOL `float_minus_infinity_def` (`binary_ieeeScript.sml:194-197`). -/
-def holFloatMinusInfinity (t w : Nat) : HolFloat t w :=
+def holFloatMinusInfinity (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w :=
   holFloatNegate (holFloatPlusInfinity t w)
 
 /-- HOL `float_minus_zero_def` (`binary_ieeeScript.sml:199-201`). -/
-def holFloatMinusZero (t w : Nat) : HolFloat t w := holFloatNegate (holFloatPlusZero t w)
+def holFloatMinusZero (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w := holFloatNegate (holFloatPlusZero t w)
 
 /-- HOL `float_bottom_def` (`binary_ieeeScript.sml:203-205`). -/
-def holFloatBottom (t w : Nat) : HolFloat t w := holFloatNegate (holFloatTop t w)
+def holFloatBottom (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w := holFloatNegate (holFloatTop t w)
 
 /-- HOL `float_minus_min_def` (`binary_ieeeScript.sml:207-209`). -/
-def holFloatMinusMin (t w : Nat) : HolFloat t w := holFloatNegate (holFloatPlusMin t w)
+def holFloatMinusMin (t w : Nat) [NeZero t] [NeZero w] : HolFloat t w := holFloatNegate (holFloatPlusMin t w)
 
 /-- HOL `binary_ieee$flags` (`binary_ieeeScript.sml:217-225`), with its fields
     in HOL order. -/
@@ -106,30 +106,30 @@ inductive HolRounding where
 /-- HOL `is_closest_def` (`binary_ieeeScript.sml:253-257`).  `a IN s` and
     every `b IN s` is at least as far from `x`.  HOL sets are rendered as
     predicates. -/
-def holIsClosest {t w : Nat} (s : HolFloat t w → Prop) (x : Rat) (a : HolFloat t w) : Prop :=
+def holIsClosest {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (x : Rat) (a : HolFloat t w) : Prop :=
   s a ∧ ∀ b, s b → holRatAbs (holFloatToReal a - x) ≤ holRatAbs (holFloatToReal b - x)
 
 /-- HOL `closest_such_def` (`binary_ieeeScript.sml:347-350`):
     `@a. is_closest s x a ∧ ∀b. is_closest s x b ∧ p b ⇒ p a`. -/
-noncomputable def holClosestSuch {t w : Nat} (p : HolFloat t w → Prop)
+noncomputable def holClosestSuch {t w : Nat} [NeZero t] [NeZero w] (p : HolFloat t w → Prop)
     (s : HolFloat t w → Prop) (x : Rat) : HolFloat t w :=
   Classical.epsilon (fun a => holIsClosest s x a ∧ ∀ b, holIsClosest s x b ∧ p b → p a)
 
 /-- HOL `closest_def` (`binary_ieeeScript.sml:352-353`):
     `closest = closest_such (K T)`. -/
-noncomputable def holClosest {t w : Nat} (s : HolFloat t w → Prop) (x : Rat) : HolFloat t w :=
+noncomputable def holClosest {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (x : Rat) : HolFloat t w :=
   holClosestSuch (fun _ => True) s x
 
 /-- HOL `largest_def` (`binary_ieeeScript.sml:355-359`):
     `(2 pow (UINT_MAX (:'w) - 1) / 2 pow (INT_MAX (:'w))) * (2 - inv (2 pow
     dimindex (:'t)))`. -/
-def holFloatLargest (t w : Nat) : Rat :=
+def holFloatLargest (t w : Nat) [NeZero t] [NeZero w] : Rat :=
   (2 ^ (holUintMax w - 1) / 2 ^ holFloatBias w) * (2 - (2 ^ t : Rat)⁻¹)
 
 /-- HOL `threshold_def` (`binary_ieeeScript.sml:361-365`):
     `(2 pow (UINT_MAX (:'w) - 1) / 2 pow (INT_MAX (:'w))) * (2 - inv (2 pow SUC
     (dimindex (:'t))))`. -/
-def holFloatThreshold (t w : Nat) : Rat :=
+def holFloatThreshold (t w : Nat) [NeZero t] [NeZero w] : Rat :=
   (2 ^ (holUintMax w - 1) / 2 ^ holFloatBias w) * (2 - (2 ^ (t + 1) : Rat)⁻¹)
 
 /-- HOL `round_def` (`binary_ieeeScript.sml:411-443`), for all four modes.
@@ -137,7 +137,7 @@ def holFloatThreshold (t w : Nat) : Rat :=
     `largest` (the others) to an infinity or to `top`/`bottom`.  Otherwise it
     takes the closest float of the mode's candidate set; ties-to-even prefers
     an even significand (`¬word_lsb`). -/
-noncomputable def holRound {t w : Nat} (mode : HolRounding) (x : Rat) : HolFloat t w :=
+noncomputable def holRound {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : Rat) : HolFloat t w :=
   match mode with
   | .roundTiesToEven =>
       let th := holFloatThreshold t w
@@ -162,7 +162,7 @@ noncomputable def holRound {t w : Nat} (mode : HolRounding) (x : Rat) : HolFloat
       else holClosest (fun a => holFloatIsFinite a = true ∧ holFloatToReal a ≤ x) x
 
 /-- HOL `binary_ieee$fp_op` (`binary_ieeeScript.sml:481-489`). -/
-inductive HolFpOp (t w : Nat) where
+inductive HolFpOp (t w : Nat) [NeZero t] [NeZero w] where
   | fpSqrt (mode : HolRounding) (x : HolFloat t w)
   | fpAdd (mode : HolRounding) (x y : HolFloat t w)
   | fpSub (mode : HolRounding) (x y : HolFloat t w)
@@ -175,13 +175,13 @@ inductive HolFpOp (t w : Nat) where
     `(@f. let qnan = f fp_op in float_is_nan qnan ∧ ¬float_is_signalling qnan)
     fp_op`.  Like HOL, this chooses a function and applies it to the
     operation, so the NaN's bit pattern is unspecified. -/
-noncomputable def holFloatSomeQnan {t w : Nat} (fpOp : HolFpOp t w) : HolFloat t w :=
+noncomputable def holFloatSomeQnan {t w : Nat} [NeZero t] [NeZero w] (fpOp : HolFpOp t w) : HolFloat t w :=
   (Classical.epsilon (fun f : HolFpOp t w → HolFloat t w =>
     holFloatIsNan (f fpOp) = true ∧ holFloatIsSignalling (f fpOp) = false)) fpOp
 
 /-- HOL `float_round_def` (`binary_ieeeScript.sml:507-515`): round, then
     replace a zero result by `-0` or `+0` according to `toneg`. -/
-noncomputable def holFloatRound {t w : Nat} (mode : HolRounding) (toneg : Bool) (r : Rat) :
+noncomputable def holFloatRound {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool) (r : Rat) :
     HolFloat t w :=
   let x : HolFloat t w := holRound mode r
   if holFloatIsZero x then
@@ -194,7 +194,7 @@ noncomputable def holFloatRound {t w : Nat} (mode : HolRounding) (toneg : Bool) 
     * Underflow after rounding: `inexact` and the exponent of `r` rounded at
       exponent width `w + 1` is `<=+ n2w (INT_MIN (:'w))`.
     * Precision: `inexact`, where `inexact = (float_value x ≠ Float r)`. -/
-noncomputable def holFloatRoundWithFlags {t w : Nat} (mode : HolRounding) (toNeg : Bool)
+noncomputable def holFloatRoundWithFlags {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool)
     (r : Rat) : HolFloatFlags × HolFloat t w :=
   let x : HolFloat t w := holFloatRound mode toNeg r
   let a := holRatAbs r
@@ -209,19 +209,19 @@ noncomputable def holFloatRoundWithFlags {t w : Nat} (mode : HolRounding) (toNeg
 
 /-- HOL `check_for_signalling_def` (`binary_ieeeScript.sml:534-537`):
     `clear_flags with InvalidOp := EXISTS float_is_signalling l`. -/
-def holCheckForSignalling {t w : Nat} (l : List (HolFloat t w)) : HolFloatFlags :=
+def holCheckForSignalling {t w : Nat} [NeZero t] [NeZero w] (l : List (HolFloat t w)) : HolFloatFlags :=
   { holClearFlags with invalidOp := l.any holFloatIsSignalling }
 
 /-- `closest_such` meets HOL's own specification whenever some candidate
     does, which is the defining property of HOL `@`. -/
-theorem holClosestSuch_spec {t w : Nat} (p : HolFloat t w → Prop) (s : HolFloat t w → Prop)
+theorem holClosestSuch_spec {t w : Nat} [NeZero t] [NeZero w] (p : HolFloat t w → Prop) (s : HolFloat t w → Prop)
     (x : Rat) (h : ∃ a, holIsClosest s x a ∧ ∀ b, holIsClosest s x b ∧ p b → p a) :
     holIsClosest s x (holClosestSuch p s x) ∧
       ∀ b, holIsClosest s x b ∧ p b → p (holClosestSuch p s x) :=
   Classical.epsilon_spec h
 
 /-- `float_some_qnan` is a quiet NaN (HOL's `float_some_qnan` specification). -/
-theorem holFloatSomeQnan_spec {t w : Nat} [NeZero t] (fpOp : HolFpOp t w) :
+theorem holFloatSomeQnan_spec {t w : Nat} [NeZero t] [NeZero w] (fpOp : HolFpOp t w) :
     holFloatIsNan (holFloatSomeQnan fpOp) = true ∧
       holFloatIsSignalling (holFloatSomeQnan fpOp) = false := by
   unfold holFloatSomeQnan

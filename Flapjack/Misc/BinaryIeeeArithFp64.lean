@@ -22,7 +22,7 @@ standard library, so untagged.
 namespace Flapjack
 
 /-- The float component of `float_round_with_flags` is `float_round`. -/
-theorem holFloatRoundWithFlags_snd {t w : Nat} (mode : HolRounding) (toNeg : Bool) (r : Rat) :
+theorem holFloatRoundWithFlags_snd {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool) (r : Rat) :
     (holFloatRoundWithFlags mode toNeg r : HolFloatFlags × HolFloat t w).2 =
       holFloatRound mode toNeg r := rfl
 

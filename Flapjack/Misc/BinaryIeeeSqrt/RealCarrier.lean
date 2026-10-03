@@ -42,7 +42,7 @@ inductive HolFloatValueR where
   | nan
 
 /-- HOL `float_to_real_def` (`binary_ieeeScript.sml:47-56`) over `ℝ`. -/
-noncomputable def holFloatToRealR {t w : Nat} (x : HolFloat t w) : ℝ :=
+noncomputable def holFloatToRealR {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : ℝ :=
   let s : ℝ := (-1) ^ x.sign.toNat
   if x.exponent = 0 then
     s * (2 / 2 ^ holFloatBias w) * ((x.significand.toNat : ℝ) / 2 ^ t)
@@ -50,34 +50,34 @@ noncomputable def holFloatToRealR {t w : Nat} (x : HolFloat t w) : ℝ :=
     s * (2 ^ x.exponent.toNat / 2 ^ holFloatBias w) * (1 + (x.significand.toNat : ℝ) / 2 ^ t)
 
 /-- HOL `float_value_def` (`binary_ieeeScript.sml:58-63`) over `ℝ`. -/
-noncomputable def holFloatValueR {t w : Nat} (x : HolFloat t w) : HolFloatValueR :=
+noncomputable def holFloatValueR {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloatValueR :=
   if x.exponent = BitVec.allOnes w then
     if x.significand = 0 then .infinity else .nan
   else .float (holFloatToRealR x)
 
 /-- HOL `is_closest_def` (`binary_ieeeScript.sml:253-257`) over `ℝ`. -/
-def holIsClosestR {t w : Nat} (s : HolFloat t w → Prop) (x : ℝ) (a : HolFloat t w) : Prop :=
+def holIsClosestR {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (x : ℝ) (a : HolFloat t w) : Prop :=
   s a ∧ ∀ b, s b → |holFloatToRealR a - x| ≤ |holFloatToRealR b - x|
 
 /-- HOL `closest_such_def` (`binary_ieeeScript.sml:347-350`) over `ℝ`. -/
-noncomputable def holClosestSuchR {t w : Nat} (p : HolFloat t w → Prop)
+noncomputable def holClosestSuchR {t w : Nat} [NeZero t] [NeZero w] (p : HolFloat t w → Prop)
     (s : HolFloat t w → Prop) (x : ℝ) : HolFloat t w :=
   Classical.epsilon (fun a => holIsClosestR s x a ∧ ∀ b, holIsClosestR s x b ∧ p b → p a)
 
 /-- HOL `closest_def` (`binary_ieeeScript.sml:352-353`) over `ℝ`. -/
-noncomputable def holClosestR {t w : Nat} (s : HolFloat t w → Prop) (x : ℝ) : HolFloat t w :=
+noncomputable def holClosestR {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (x : ℝ) : HolFloat t w :=
   holClosestSuchR (fun _ => True) s x
 
 /-- HOL `largest_def` (`binary_ieeeScript.sml:355-359`) over `ℝ`. -/
-noncomputable def holFloatLargestR (t w : Nat) : ℝ :=
+noncomputable def holFloatLargestR (t w : Nat) [NeZero t] [NeZero w] : ℝ :=
   (2 ^ (holUintMax w - 1) / 2 ^ holFloatBias w) * (2 - (2 ^ t : ℝ)⁻¹)
 
 /-- HOL `threshold_def` (`binary_ieeeScript.sml:361-365`) over `ℝ`. -/
-noncomputable def holFloatThresholdR (t w : Nat) : ℝ :=
+noncomputable def holFloatThresholdR (t w : Nat) [NeZero t] [NeZero w] : ℝ :=
   (2 ^ (holUintMax w - 1) / 2 ^ holFloatBias w) * (2 - (2 ^ (t + 1) : ℝ)⁻¹)
 
 /-- HOL `round_def` (`binary_ieeeScript.sml:411-443`) over `ℝ`, all four modes. -/
-noncomputable def holRoundR {t w : Nat} (mode : HolRounding) (x : ℝ) : HolFloat t w :=
+noncomputable def holRoundR {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : ℝ) : HolFloat t w :=
   match mode with
   | .roundTiesToEven =>
       let th := holFloatThresholdR t w
@@ -102,7 +102,7 @@ noncomputable def holRoundR {t w : Nat} (mode : HolRounding) (x : ℝ) : HolFloa
       else holClosestR (fun a => holFloatIsFinite a = true ∧ holFloatToRealR a ≤ x) x
 
 /-- HOL `float_round_def` (`binary_ieeeScript.sml:507-515`) over `ℝ`. -/
-noncomputable def holFloatRoundR {t w : Nat} (mode : HolRounding) (toneg : Bool) (r : ℝ) :
+noncomputable def holFloatRoundR {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool) (r : ℝ) :
     HolFloat t w :=
   let x : HolFloat t w := holRoundR mode r
   if holFloatIsZero x then
@@ -111,7 +111,7 @@ noncomputable def holFloatRoundR {t w : Nat} (mode : HolRounding) (toneg : Bool)
 
 /-- HOL `float_round_with_flags_def` (`binary_ieeeScript.sml:517-532`) over `ℝ`;
 `a = abs r` and `inexact = (float_value x ≠ Float r)` as in HOL. -/
-noncomputable def holFloatRoundWithFlagsR {t w : Nat} (mode : HolRounding) (toNeg : Bool)
+noncomputable def holFloatRoundWithFlagsR {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool)
     (r : ℝ) : HolFloatFlags × HolFloat t w :=
   let x : HolFloat t w := holFloatRoundR mode toNeg r
   let a := |r|
@@ -126,7 +126,7 @@ noncomputable def holFloatRoundWithFlagsR {t w : Nat} (mode : HolRounding) (toNe
 
 /-- HOL `float_sqrt_def` (`binary_ieeeScript.sml:574-585`) over `ℝ`, with HOL `sqrt`
 as `Real.sqrt`. -/
-noncomputable def holFloatSqrtR {t w : Nat} (mode : HolRounding) (x : HolFloat t w) :
+noncomputable def holFloatSqrtR {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   if x.sign = 0 then
     match holFloatValueR x with
@@ -152,12 +152,12 @@ noncomputable def holFp64SqrtR (mode : HolRounding) (a : BitVec 64) : BitVec 64 
 
 /-! ## The real carrier at `Real.sqrt r` is the sqrt-specialised real rendering -/
 
-theorem holFloatToRealR_eq_cast {t w : Nat} (x : HolFloat t w) :
+theorem holFloatToRealR_eq_cast {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) :
     holFloatToRealR x = (holFloatToReal x : ℝ) := by
   unfold holFloatToRealR holFloatToReal
   split <;> push_cast <;> rfl
 
-theorem holFloatValueR_eq {t w : Nat} (x : HolFloat t w) :
+theorem holFloatValueR_eq {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) :
     holFloatValueR x = match holFloatValue x with
       | .float q => .float (q : ℝ)
       | .infinity => .infinity
@@ -167,11 +167,11 @@ theorem holFloatValueR_eq {t w : Nat} (x : HolFloat t w) :
   · split <;> rfl
   · simp [holFloatToRealR_eq_cast]
 
-theorem holFloatLargestR_eq_cast (t w : Nat) :
+theorem holFloatLargestR_eq_cast (t w : Nat) [NeZero t] [NeZero w] :
     holFloatLargestR t w = (holFloatLargest t w : ℝ) := by
   unfold holFloatLargestR holFloatLargest; push_cast; rfl
 
-theorem holFloatThresholdR_eq_cast (t w : Nat) :
+theorem holFloatThresholdR_eq_cast (t w : Nat) [NeZero t] [NeZero w] :
     holFloatThresholdR t w = (holFloatThreshold t w : ℝ) := by
   unfold holFloatThresholdR holFloatThreshold; push_cast; rfl
 
@@ -185,25 +185,25 @@ theorem holRatAbs_cast (q : Rat) : ((holRatAbs q : Rat) : ℝ) = |(q : ℝ)| := 
     have : (0 : ℝ) ≤ q := by exact_mod_cast (not_lt.mp h)
     rw [abs_of_nonneg this]
 
-theorem holIsClosestR_sqrt {t w : Nat} (s : HolFloat t w → Prop) (r : Rat) (a : HolFloat t w) :
+theorem holIsClosestR_sqrt {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (r : Rat) (a : HolFloat t w) :
     holIsClosestR s (realSqrtOfRat r) a ↔ holIsClosestSqrtReal s r a := by
   unfold holIsClosestR holIsClosestSqrtReal realSqrtDistLe
   simp only [holFloatToRealR_eq_cast]
 
-theorem holClosestSuchR_sqrt {t w : Nat} (p s : HolFloat t w → Prop) (r : Rat) :
+theorem holClosestSuchR_sqrt {t w : Nat} [NeZero t] [NeZero w] (p s : HolFloat t w → Prop) (r : Rat) :
     holClosestSuchR p s (realSqrtOfRat r) = holClosestSuchSqrtReal p s r := by
   unfold holClosestSuchR holClosestSuchSqrtReal
   congr 1
   funext a
   simp only [holIsClosestR_sqrt]
 
-theorem holClosestR_sqrt {t w : Nat} (s : HolFloat t w → Prop) (r : Rat) :
+theorem holClosestR_sqrt {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (r : Rat) :
     holClosestR s (realSqrtOfRat r) = holClosestSqrtReal s r :=
   holClosestSuchR_sqrt (fun _ => True) s r
 
 /-- HOL `round mode (sqrt r)` over the real carrier is the sqrt-specialised real
 rendering, for every mode and every rational `r` (`Real.sqrt` is nonnegative). -/
-theorem holRoundR_sqrt {t w : Nat} (mode : HolRounding) (r : Rat) :
+theorem holRoundR_sqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : Rat) :
     (holRoundR mode (realSqrtOfRat r) : HolFloat t w) = holRoundSqrtReal mode r := by
   have hs : |realSqrtOfRat r| = realSqrtOfRat r := abs_of_nonneg (realSqrtOfRat_nonneg r)
   cases mode with
@@ -235,13 +235,13 @@ theorem holRoundR_sqrt {t w : Nat} (mode : HolRounding) (r : Rat) :
       funext a
       rw [holFloatToRealR_eq_cast]
 
-theorem holFloatRoundR_sqrt {t w : Nat} (mode : HolRounding) (toneg : Bool) (r : Rat) :
+theorem holFloatRoundR_sqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool) (r : Rat) :
     (holFloatRoundR mode toneg (realSqrtOfRat r) : HolFloat t w) =
       holFloatRoundSqrtReal mode toneg r := by
   unfold holFloatRoundR holFloatRoundSqrtReal
   rw [holRoundR_sqrt mode r]
 
-theorem holFloatRoundWithFlagsR_sqrt {t w : Nat} (mode : HolRounding) (toNeg : Bool) (r : Rat) :
+theorem holFloatRoundWithFlagsR_sqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool) (r : Rat) :
     (holFloatRoundWithFlagsR mode toNeg (realSqrtOfRat r) : HolFloatFlags × HolFloat t w) =
       holFloatRoundWithFlagsSqrtReal mode toNeg r := by
   have hs : |realSqrtOfRat r| = realSqrtOfRat r := abs_of_nonneg (realSqrtOfRat_nonneg r)
@@ -252,7 +252,7 @@ theorem holFloatRoundWithFlagsR_sqrt {t w : Nat} (mode : HolRounding) (toNeg : B
 
 /-- HOL `float_sqrt mode` over the real carrier is the sqrt-specialised real
 rendering, for every mode and input. -/
-theorem holFloatSqrtR_eq_real {t w : Nat} (mode : HolRounding) (x : HolFloat t w) :
+theorem holFloatSqrtR_eq_real {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     holFloatSqrtR mode x = holFloatSqrtReal mode x := by
   unfold holFloatSqrtR holFloatSqrtReal
   rw [holFloatValueR_eq]
@@ -265,7 +265,7 @@ theorem holFloatSqrtR_eq_real {t w : Nat} (mode : HolRounding) (x : HolFloat t w
 
 /-- The executed rational-cut `float_sqrt` equals the literal real-carrier HOL
 `float_sqrt`, for every rounding mode and input (no premise). -/
-theorem holFloatSqrt_eq_holFloatSqrtR {t w : Nat} (mode : HolRounding) (x : HolFloat t w) :
+theorem holFloatSqrt_eq_holFloatSqrtR {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     holFloatSqrt mode x = holFloatSqrtR mode x :=
   (holFloatSqrt_agreement mode x).trans (holFloatSqrtR_eq_real mode x).symm
 

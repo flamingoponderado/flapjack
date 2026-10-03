@@ -629,7 +629,7 @@ section Negate
 
 theorem fp64Pat_negate (f : HolFloat 52 11) : fp64Pat (holFloatNegate f) = fp64Pat f := rfl
 
-theorem holFloatNegate_negate {t w : Nat} (f : HolFloat t w) :
+theorem holFloatNegate_negate {t w : Nat} [NeZero t] [NeZero w] (f : HolFloat t w) :
     holFloatNegate (holFloatNegate f) = f := by
   unfold holFloatNegate; simp
 
@@ -742,7 +742,7 @@ theorem holFloatRound_rte_fp64 (toneg : Bool) (x : Rat) :
     have hPa : fp64RtePred x (holFloatNegate a') := by
       have := fp64RtePred_negate hPa'; rwa [Rat.neg_neg] at this
     have hc := hspec _ hPa
-    generalize holClosestSuch _ _ x = c at hc ⊢
+    generalize holClosestSuch (t := 52) (w := 11) _ _ x = c at hc ⊢
     have ⟨hz, hne⟩ := hall _ (fp64RtePred_negate hc)
     have hcfin : holFloatIsFinite c = true := hc.1.1
     have ha'fin : holFloatIsFinite a' = true := hPa'.1.1
@@ -758,7 +758,7 @@ theorem holFloatRound_rte_fp64 (toneg : Bool) (x : Rat) :
     obtain ⟨hPa, hall⟩ := fp64_rte_core hx hth
     generalize fp64OfPat false (fp64Nearest (x * 2 ^ 1074)) = a at hPa hall
     have hc := hspec _ hPa
-    generalize holClosestSuch _ _ x = c at hc ⊢
+    generalize holClosestSuch (t := 52) (w := 11) _ _ x = c at hc ⊢
     have ⟨hz, hne⟩ := hall _ hc
     exact fp64_zero_select hz hne
 

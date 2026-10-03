@@ -66,22 +66,22 @@ instance (r A B : Rat) : Decidable (holSqrtDistLe r A B) := by
 
 /-- HOL `is_closest s (sqrt r) a` (`binary_ieeeScript.sml:253-257`) with the
     distance comparison rendered by `holSqrtDistLe`. -/
-def holIsClosestSqrt {t w : Nat} (s : HolFloat t w → Prop) (r : Rat) (a : HolFloat t w) : Prop :=
+def holIsClosestSqrt {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (r : Rat) (a : HolFloat t w) : Prop :=
   s a ∧ ∀ b, s b → holSqrtDistLe r (holFloatToReal a) (holFloatToReal b)
 
 /-- HOL `closest_such p s (sqrt r)` (`binary_ieeeScript.sml:347-350`). -/
-noncomputable def holClosestSuchSqrt {t w : Nat} (p : HolFloat t w → Prop)
+noncomputable def holClosestSuchSqrt {t w : Nat} [NeZero t] [NeZero w] (p : HolFloat t w → Prop)
     (s : HolFloat t w → Prop) (r : Rat) : HolFloat t w :=
   Classical.epsilon (fun a => holIsClosestSqrt s r a ∧ ∀ b, holIsClosestSqrt s r b ∧ p b → p a)
 
 /-- HOL `closest s (sqrt r) = closest_such (K T) s (sqrt r)`. -/
-noncomputable def holClosestSqrt {t w : Nat} (s : HolFloat t w → Prop) (r : Rat) : HolFloat t w :=
+noncomputable def holClosestSqrt {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (r : Rat) : HolFloat t w :=
   holClosestSuchSqrt (fun _ => True) s r
 
 /-- HOL `round mode (sqrt r)` (`binary_ieeeScript.sml:411-443`), for all four
     modes.  The threshold tests and candidate sets compare float values with
     `sqrt r` through the rational criteria. -/
-noncomputable def holRoundSqrt {t w : Nat} (mode : HolRounding) (r : Rat) : HolFloat t w :=
+noncomputable def holRoundSqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : Rat) : HolFloat t w :=
   match mode with
   | .roundTiesToEven =>
       let th := holFloatThreshold t w
@@ -107,7 +107,7 @@ noncomputable def holRoundSqrt {t w : Nat} (mode : HolRounding) (r : Rat) : HolF
       else holClosestSqrt (fun a => holFloatIsFinite a = true ∧ holSqrtGe r (holFloatToReal a)) r
 
 /-- HOL `float_round mode toneg (sqrt r)` (`binary_ieeeScript.sml:507-515`). -/
-noncomputable def holFloatRoundSqrt {t w : Nat} (mode : HolRounding) (toneg : Bool) (r : Rat) :
+noncomputable def holFloatRoundSqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool) (r : Rat) :
     HolFloat t w :=
   let x : HolFloat t w := holRoundSqrt mode r
   if holFloatIsZero x then
@@ -119,7 +119,7 @@ noncomputable def holFloatRoundSqrt {t w : Nat} (mode : HolRounding) (toneg : Bo
     * `inexact` means the rounded value is not `Float (sqrt r)`.
     * Overflow: `2 pow INT_MIN (:'w) ≤ sqrt r`.
     * Underflow before rounding: `sqrt r < 2 / 2 pow bias`. -/
-noncomputable def holFloatRoundWithFlagsSqrt {t w : Nat} (mode : HolRounding) (toNeg : Bool)
+noncomputable def holFloatRoundWithFlagsSqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool)
     (r : Rat) : HolFloatFlags × HolFloat t w :=
   let x : HolFloat t w := holFloatRoundSqrt mode toNeg r
   let inexact : Bool :=
@@ -139,7 +139,7 @@ noncomputable def holFloatRoundWithFlagsSqrt {t w : Nat} (mode : HolRounding) (t
       `check_for_signalling`, an infinity gives `+inf`, and `Float r` rounds
       `sqrt r` with zero sign `F`.
     * Negative sign: `-0` gives `-0`, and anything else is invalid. -/
-noncomputable def holFloatSqrt {t w : Nat} (mode : HolRounding) (x : HolFloat t w) :
+noncomputable def holFloatSqrt {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   if x.sign = 0 then
     match holFloatValue x with

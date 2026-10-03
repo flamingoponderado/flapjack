@@ -54,18 +54,18 @@ def realSqrtDistLe (r a b : Rat) : Prop :=
 
 /-- HOL `is_closest s (sqrt r) a` with distances measured against the real
     `realSqrtOfRat r` instead of the rational cut `holSqrtDistLe`. -/
-def holIsClosestSqrtReal {t w : Nat} (s : HolFloat t w → Prop) (r : Rat)
+def holIsClosestSqrtReal {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (r : Rat)
     (a : HolFloat t w) : Prop :=
   s a ∧ ∀ b, s b → realSqrtDistLe r (holFloatToReal a) (holFloatToReal b)
 
 /-- HOL `closest_such p s (sqrt r)` with real distances. -/
-noncomputable def holClosestSuchSqrtReal {t w : Nat} (p : HolFloat t w → Prop)
+noncomputable def holClosestSuchSqrtReal {t w : Nat} [NeZero t] [NeZero w] (p : HolFloat t w → Prop)
     (s : HolFloat t w → Prop) (r : Rat) : HolFloat t w :=
   Classical.epsilon
     (fun a => holIsClosestSqrtReal s r a ∧ ∀ b, holIsClosestSqrtReal s r b ∧ p b → p a)
 
 /-- HOL `closest s (sqrt r)` with real distances. -/
-noncomputable def holClosestSqrtReal {t w : Nat} (s : HolFloat t w → Prop) (r : Rat) :
+noncomputable def holClosestSqrtReal {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) (r : Rat) :
     HolFloat t w :=
   holClosestSuchSqrtReal (fun _ => True) s r
 
@@ -73,7 +73,7 @@ noncomputable def holClosestSqrtReal {t w : Nat} (s : HolFloat t w → Prop) (r 
     The threshold or `largest` test and the mode's candidate set compare float
     values with the real `realSqrtOfRat r` instead of the rational cuts of
     `holRoundSqrt`. -/
-noncomputable def holRoundSqrtReal {t w : Nat} (mode : HolRounding) (r : Rat) : HolFloat t w :=
+noncomputable def holRoundSqrtReal {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (r : Rat) : HolFloat t w :=
   match mode with
   | .roundTiesToEven =>
       let th := holFloatThreshold t w
@@ -105,11 +105,11 @@ noncomputable def holRoundSqrtReal {t w : Nat} (mode : HolRounding) (r : Rat) : 
 
 /-- `round roundTiesToEven (sqrt r)`, real-distance rendering, kept as the
     `roundTiesToEven` specialization of `holRoundSqrtReal`. -/
-noncomputable def holRoundSqrtRealTiesToEven {t w : Nat} (r : Rat) : HolFloat t w :=
+noncomputable def holRoundSqrtRealTiesToEven {t w : Nat} [NeZero t] [NeZero w] (r : Rat) : HolFloat t w :=
   holRoundSqrtReal .roundTiesToEven r
 
 /-- HOL `float_round mode toneg (sqrt r)`, real-distance rendering. -/
-noncomputable def holFloatRoundSqrtReal {t w : Nat} (mode : HolRounding) (toneg : Bool)
+noncomputable def holFloatRoundSqrtReal {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool)
     (r : Rat) : HolFloat t w :=
   let x : HolFloat t w := holRoundSqrtReal mode r
   if holFloatIsZero x then
@@ -118,7 +118,7 @@ noncomputable def holFloatRoundSqrtReal {t w : Nat} (mode : HolRounding) (toneg 
 
 /-- HOL `float_round_with_flags mode toNeg (sqrt r)`, real-distance
     rendering. -/
-noncomputable def holFloatRoundWithFlagsSqrtReal {t w : Nat} (mode : HolRounding)
+noncomputable def holFloatRoundWithFlagsSqrtReal {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding)
     (toNeg : Bool) (r : Rat) : HolFloatFlags × HolFloat t w :=
   let x : HolFloat t w := holFloatRoundSqrtReal mode toNeg r
   let inexact : Bool :=
@@ -136,7 +136,7 @@ noncomputable def holFloatRoundWithFlagsSqrtReal {t w : Nat} (mode : HolRounding
       precision := inexact }, x)
 
 /-- HOL `float_sqrt mode`, real-distance rendering. -/
-noncomputable def holFloatSqrtReal {t w : Nat} (mode : HolRounding) (x : HolFloat t w) :
+noncomputable def holFloatSqrtReal {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   if x.sign = 0 then
     match holFloatValue x with
@@ -152,7 +152,7 @@ noncomputable def holFp64SqrtReal (mode : HolRounding) (a : BitVec 64) : BitVec 
 
 /-- The real and cut closeness predicates are pointwise equivalent for
     `r ≥ 0`, by `holSqrtDistLe_real_iff`. -/
-theorem holIsClosestSqrt_real_iff {t w : Nat} (s : HolFloat t w → Prop) {r : Rat}
+theorem holIsClosestSqrt_real_iff {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) {r : Rat}
     (hr : 0 ≤ r) (a : HolFloat t w) :
     holIsClosestSqrt s r a ↔ holIsClosestSqrtReal s r a := by
   unfold holIsClosestSqrt holIsClosestSqrtReal realSqrtDistLe
@@ -164,7 +164,7 @@ theorem holIsClosestSqrt_real_iff {t w : Nat} (s : HolFloat t w → Prop) {r : R
 
 /-- The `Classical.epsilon` choices of the cut and real `closest_such`
     coincide, because their predicates are pointwise equivalent. -/
-theorem holClosestSuchSqrt_real_eq {t w : Nat} (p s : HolFloat t w → Prop) {r : Rat}
+theorem holClosestSuchSqrt_real_eq {t w : Nat} [NeZero t] [NeZero w] (p s : HolFloat t w → Prop) {r : Rat}
     (hr : 0 ≤ r) :
     holClosestSuchSqrt p s r = holClosestSuchSqrtReal p s r := by
   unfold holClosestSuchSqrt holClosestSuchSqrtReal
@@ -180,19 +180,19 @@ theorem holClosestSuchSqrt_real_eq {t w : Nat} (p s : HolFloat t w → Prop) {r 
         fun b hb => hp b ⟨(holIsClosestSqrt_real_iff s hr b).mp hb.1, hb.2⟩⟩)
 
 /-- Pointwise equality of the cut and real `closest` (the `K T` instance). -/
-theorem holClosestSqrt_real_eq {t w : Nat} (s : HolFloat t w → Prop) {r : Rat}
+theorem holClosestSqrt_real_eq {t w : Nat} [NeZero t] [NeZero w] (s : HolFloat t w → Prop) {r : Rat}
     (hr : 0 ≤ r) :
     holClosestSqrt s r = holClosestSqrtReal s r :=
   holClosestSuchSqrt_real_eq (fun _ => True) s hr
 
 /-- Congruence of the real `closest` in its candidate predicate. -/
-theorem holClosestSqrtReal_congr {t w : Nat} {s s' : HolFloat t w → Prop} {r : Rat}
+theorem holClosestSqrtReal_congr {t w : Nat} [NeZero t] [NeZero w] {s s' : HolFloat t w → Prop} {r : Rat}
     (h : s = s') : holClosestSqrtReal s r = holClosestSqrtReal s' r :=
   congrArg (fun u => holClosestSqrtReal u r) h
 
 /-- `round mode (sqrt r)` agrees between the cut and real renderings for
     `r ≥ 0`, for every rounding mode. -/
-theorem holRoundSqrt_eq_real {t w : Nat} (mode : HolRounding) {r : Rat} (hr : 0 ≤ r) :
+theorem holRoundSqrt_eq_real {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) {r : Rat} (hr : 0 ≤ r) :
     (holRoundSqrt mode r : HolFloat t w) = holRoundSqrtReal mode r := by
   cases mode with
   | roundTiesToEven =>
@@ -302,7 +302,7 @@ theorem holRoundSqrt_eq_real {t w : Nat} (mode : HolRounding) {r : Rat} (hr : 0 
 
 /-- `float_round mode toneg (sqrt r)` agrees between the cut and real
     renderings for `r ≥ 0`, for every rounding mode. -/
-theorem holFloatRoundSqrt_eq_real {t w : Nat} (mode : HolRounding) (toneg : Bool) {r : Rat}
+theorem holFloatRoundSqrt_eq_real {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toneg : Bool) {r : Rat}
     (hr : 0 ≤ r) :
     (holFloatRoundSqrt mode toneg r : HolFloat t w) =
       (holFloatRoundSqrtReal mode toneg r : HolFloat t w) := by
@@ -311,7 +311,7 @@ theorem holFloatRoundSqrt_eq_real {t w : Nat} (mode : HolRounding) (toneg : Bool
 
 /-- `float_round_with_flags mode toNeg (sqrt r)` agrees between the cut and
     real renderings for `r ≥ 0`, for every rounding mode. -/
-theorem holFloatRoundWithFlagsSqrt_agreement {t w : Nat} (mode : HolRounding) (toNeg : Bool)
+theorem holFloatRoundWithFlagsSqrt_agreement {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (toNeg : Bool)
     {r : Rat} (hr : 0 ≤ r) :
     (holFloatRoundWithFlagsSqrt mode toNeg r : HolFloatFlags × HolFloat t w) =
       (holFloatRoundWithFlagsSqrtReal mode toNeg r : HolFloatFlags × HolFloat t w) := by
@@ -323,7 +323,7 @@ theorem holFloatRoundWithFlagsSqrt_agreement {t w : Nat} (mode : HolRounding) (t
   · rfl
 
 /-- A positive-sign float has a nonnegative real value. -/
-theorem holFloatToReal_nonneg_of_sign_zero {t w : Nat} {x : HolFloat t w}
+theorem holFloatToReal_nonneg_of_sign_zero {t w : Nat} [NeZero t] [NeZero w] {x : HolFloat t w}
     (hs : x.sign = 0) : 0 ≤ holFloatToReal x := by
   unfold holFloatToReal
   rw [hs]
@@ -334,7 +334,7 @@ theorem holFloatToReal_nonneg_of_sign_zero {t w : Nat} {x : HolFloat t w}
 
 /-- `float_sqrt mode` agrees between the cut and real renderings, for every
     rounding mode. -/
-theorem holFloatSqrt_agreement {t w : Nat} (mode : HolRounding) (x : HolFloat t w) :
+theorem holFloatSqrt_agreement {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x : HolFloat t w) :
     holFloatSqrt mode x = holFloatSqrtReal mode x := by
   unfold holFloatSqrt holFloatSqrtReal
   by_cases hs : x.sign = 0
@@ -361,14 +361,14 @@ theorem holFp64Sqrt_agreement (mode : HolRounding) (a : BitVec 64) :
 
 /-- `round roundTiesToEven (sqrt r)` agrees between the cut and real
     renderings for `r ≥ 0` (corollary of `holRoundSqrt_eq_real`). -/
-theorem holRoundSqrt_tiesToEven_eq_real {t w : Nat} {r : Rat} (hr : 0 ≤ r) :
+theorem holRoundSqrt_tiesToEven_eq_real {t w : Nat} [NeZero t] [NeZero w] {r : Rat} (hr : 0 ≤ r) :
     (holRoundSqrt .roundTiesToEven r : HolFloat t w) =
       (holRoundSqrtRealTiesToEven r : HolFloat t w) :=
   holRoundSqrt_eq_real .roundTiesToEven hr
 
 /-- `float_round roundTiesToEven toneg (sqrt r)` agrees between the cut and
     real renderings for `r ≥ 0` (corollary of `holFloatRoundSqrt_eq_real`). -/
-theorem holFloatRoundSqrt_tiesToEven_eq_real {t w : Nat} (toneg : Bool) {r : Rat}
+theorem holFloatRoundSqrt_tiesToEven_eq_real {t w : Nat} [NeZero t] [NeZero w] (toneg : Bool) {r : Rat}
     (hr : 0 ≤ r) :
     (holFloatRoundSqrt .roundTiesToEven toneg r : HolFloat t w) =
       (holFloatRoundSqrtReal .roundTiesToEven toneg r : HolFloat t w) :=
@@ -377,7 +377,7 @@ theorem holFloatRoundSqrt_tiesToEven_eq_real {t w : Nat} (toneg : Bool) {r : Rat
 /-- `float_round_with_flags roundTiesToEven toNeg (sqrt r)` agrees between the
     cut and real renderings for `r ≥ 0` (corollary of
     `holFloatRoundWithFlagsSqrt_agreement`). -/
-theorem holFloatRoundWithFlagsSqrt_tiesToEven_agreement {t w : Nat} (toNeg : Bool) {r : Rat}
+theorem holFloatRoundWithFlagsSqrt_tiesToEven_agreement {t w : Nat} [NeZero t] [NeZero w] (toNeg : Bool) {r : Rat}
     (hr : 0 ≤ r) :
     (holFloatRoundWithFlagsSqrt .roundTiesToEven toNeg r : HolFloatFlags × HolFloat t w) =
       (holFloatRoundWithFlagsSqrtReal .roundTiesToEven toNeg r :
@@ -386,7 +386,7 @@ theorem holFloatRoundWithFlagsSqrt_tiesToEven_agreement {t w : Nat} (toNeg : Boo
 
 /-- `float_sqrt roundTiesToEven` agrees between the cut and real renderings
     (corollary of `holFloatSqrt_agreement`). -/
-theorem holFloatSqrt_tiesToEven_agreement {t w : Nat} (x : HolFloat t w) :
+theorem holFloatSqrt_tiesToEven_agreement {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) :
     holFloatSqrt .roundTiesToEven x = holFloatSqrtReal .roundTiesToEven x :=
   holFloatSqrt_agreement .roundTiesToEven x
 

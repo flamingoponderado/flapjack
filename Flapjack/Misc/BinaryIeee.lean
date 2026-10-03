@@ -29,7 +29,7 @@ namespace Flapjack
 
 /-- HOL `binary_ieee$float` (`binary_ieeeScript.sml:30-32`):
     `<| Sign : word1; Exponent : 'w word; Significand : 't word |>`. -/
-structure HolFloat (t w : Nat) where
+structure HolFloat (t w : Nat) [NeZero t] [NeZero w] where
   sign : BitVec 1
   exponent : BitVec w
   significand : BitVec t
@@ -43,7 +43,7 @@ def holFloatBias (w : Nat) : Nat := 2 ^ (w - 1) - 1
       precision)`.
     * Otherwise: `-1 pow sign * (2 pow exponent / 2 pow bias) * (1 +
       &significand / 2 pow precision)`. -/
-def holFloatToReal {t w : Nat} (x : HolFloat t w) : Rat :=
+def holFloatToReal {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Rat :=
   let s : Rat := (-1) ^ x.sign.toNat
   if x.exponent = 0 then
     s * (2 / 2 ^ holFloatBias w) * ((x.significand.toNat : Rat) / 2 ^ t)
@@ -61,59 +61,59 @@ inductive HolFloatValue where
 /-- HOL `float_value_def` (`binary_ieeeScript.sml:58-63`).  An all-ones
     exponent (`UINT_MAXw`) is `Infinity` when the significand is `0w` and
     `NaN` otherwise.  Every other float is `Float (float_to_real x)`. -/
-def holFloatValue {t w : Nat} (x : HolFloat t w) : HolFloatValue :=
+def holFloatValue {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloatValue :=
   if x.exponent = BitVec.allOnes w then
     if x.significand = 0 then .infinity else .nan
   else .float (holFloatToReal x)
 
 /-- HOL `float_is_nan_def` (`binary_ieeeScript.sml:88-93`). -/
-def holFloatIsNan {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsNan {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   match holFloatValue x with
   | .nan => true
   | _ => false
 
 /-- HOL `float_is_signalling_def` (`binary_ieeeScript.sml:95-98`):
     `float_is_nan x ∧ ¬word_msb x.Significand`. -/
-def holFloatIsSignalling {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsSignalling {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   holFloatIsNan x && !x.significand.msb
 
 /-- HOL `float_is_infinite_def` (`binary_ieeeScript.sml:100-105`). -/
-def holFloatIsInfinite {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsInfinite {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   match holFloatValue x with
   | .infinity => true
   | _ => false
 
 /-- HOL `float_is_normal_def` (`binary_ieeeScript.sml:107-110`):
     `x.Exponent ≠ 0w ∧ x.Exponent ≠ UINT_MAXw`. -/
-def holFloatIsNormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsNormal {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent ≠ 0) && decide (x.exponent ≠ BitVec.allOnes w)
 
 /-- HOL `float_is_subnormal_def` (`binary_ieeeScript.sml:112-115`):
     `x.Exponent = 0w ∧ x.Significand ≠ 0w`. -/
-def holFloatIsSubnormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsSubnormal {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent = 0) && decide (x.significand ≠ 0)
 
 /-- HOL `float_is_zero_def` (`binary_ieeeScript.sml:117-122`): `Float r` with
     `r = 0`. -/
-def holFloatIsZero {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsZero {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   match holFloatValue x with
   | .float r => decide (r = 0)
   | _ => false
 
 /-- HOL `float_is_finite_def` (`binary_ieeeScript.sml:124-129`). -/
-def holFloatIsFinite {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsFinite {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   match holFloatValue x with
   | .float _ => true
   | _ => false
 
 /-- HOL `float_negate_def` (`binary_ieeeScript.sml:153-155`):
     `x with Sign := ~x.Sign`. -/
-def holFloatNegate {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatNegate {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := ~~~x.sign }
 
 /-- HOL `float_abs_def` (`binary_ieeeScript.sml:157-159`):
     `x with Sign := 0w`. -/
-def holFloatAbs {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatAbs {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := 0 }
 
 /-- HOL `float_compare = LT | EQ | GT | UN` (`binary_ieeeScript.sml:755`). -/
@@ -130,7 +130,7 @@ inductive HolFloatCompare where
     * two infinities compare by sign;
     * one infinity is below or above every finite value according to its sign;
     * two finite values compare by their values. -/
-def holFloatCompare {t w : Nat} (x y : HolFloat t w) : HolFloatCompare :=
+def holFloatCompare {t w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : HolFloatCompare :=
   match holFloatValue x, holFloatValue y with
   | .nan, _ => .un
   | _, .nan => .un
@@ -142,12 +142,12 @@ def holFloatCompare {t w : Nat} (x y : HolFloat t w) : HolFloatCompare :=
 
 /-- HOL `float_less_than_def` (`binary_ieeeScript.sml:779-782`):
     `float_compare x y = LT`. -/
-def holFloatLessThan {t w : Nat} (x y : HolFloat t w) : Bool :=
+def holFloatLessThan {t w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   holFloatCompare x y == .lt
 
 /-- HOL `float_less_equal_def` (`binary_ieeeScript.sml:784-790`): `LT` or
     `EQ`. -/
-def holFloatLessEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
+def holFloatLessEqual {t w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   match holFloatCompare x y with
   | .lt => true
   | .eq => true
@@ -155,12 +155,12 @@ def holFloatLessEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
 
 /-- HOL `float_greater_than_def` (`binary_ieeeScript.sml:792-795`):
     `float_compare x y = GT`. -/
-def holFloatGreaterThan {t w : Nat} (x y : HolFloat t w) : Bool :=
+def holFloatGreaterThan {t w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   holFloatCompare x y == .gt
 
 /-- HOL `float_greater_equal_def` (`binary_ieeeScript.sml:797-803`): `GT` or
     `EQ`. -/
-def holFloatGreaterEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
+def holFloatGreaterEqual {t w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   match holFloatCompare x y with
   | .gt => true
   | .eq => true
@@ -168,7 +168,7 @@ def holFloatGreaterEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
 
 /-- HOL `float_equal_def` (`binary_ieeeScript.sml:805-808`):
     `float_compare x y = EQ`. -/
-def holFloatEqual {t w : Nat} (x y : HolFloat t w) : Bool :=
+def holFloatEqual {t w : Nat} [NeZero t] [NeZero w] (x y : HolFloat t w) : Bool :=
   holFloatCompare x y == .eq
 
 end Flapjack

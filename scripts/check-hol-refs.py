@@ -3528,26 +3528,26 @@ def holFloatToFp32 (a : HolFloat 23 8) : BitVec 32 :=
   (a.sign ++ a.exponent ++ a.significand).cast (by decide)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsNormal"): """
-def holFloatIsNormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsNormal {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent ≠ 0) && decide (x.exponent ≠ BitVec.allOnes w)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatIsSubnormal"): """
-def holFloatIsSubnormal {t w : Nat} (x : HolFloat t w) : Bool :=
+def holFloatIsSubnormal {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : Bool :=
   decide (x.exponent = 0) && decide (x.significand ≠ 0)
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "HolFloat"): """
-structure HolFloat (t w : Nat) where
+structure HolFloat (t w : Nat) [NeZero t] [NeZero w] where
   sign : BitVec 1
   exponent : BitVec w
   significand : BitVec t
   deriving DecidableEq, Repr
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatNegate"): """
-def holFloatNegate {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatNegate {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := ~~~x.sign }
 """,
     ("Flapjack/Misc/BinaryIeee.lean", "holFloatAbs"): """
-def holFloatAbs {t w : Nat} (x : HolFloat t w) : HolFloat t w :=
+def holFloatAbs {t w : Nat} [NeZero t] [NeZero w] (x : HolFloat t w) : HolFloat t w :=
   { x with sign := 0 }
 """,
     ("Flapjack/Misc/MachineIeee.lean", "holFp64ToFloat"): """

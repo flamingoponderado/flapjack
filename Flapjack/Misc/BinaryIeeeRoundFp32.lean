@@ -612,7 +612,7 @@ section Negate
 
 theorem fp32Pat_negate (f : HolFloat 23 8) : fp32Pat (holFloatNegate f) = fp32Pat f := rfl
 
-theorem holFloatNegate_negate {t w : Nat} (f : HolFloat t w) :
+theorem holFloatNegate_negate {t w : Nat} [NeZero t] [NeZero w] (f : HolFloat t w) :
     holFloatNegate (holFloatNegate f) = f := by
   unfold holFloatNegate; simp
 
@@ -725,7 +725,7 @@ theorem holFloatRound_rte_fp32 (toneg : Bool) (x : Rat) :
     have hPa : fp32RtePred x (holFloatNegate a') := by
       have := fp32RtePred_negate hPa'; rwa [Rat.neg_neg] at this
     have hc := hspec _ hPa
-    generalize holClosestSuch _ _ x = c at hc ⊢
+    generalize holClosestSuch (t := 23) (w := 8) _ _ x = c at hc ⊢
     have ⟨hz, hne⟩ := hall _ (fp32RtePred_negate hc)
     have hcfin : holFloatIsFinite c = true := hc.1.1
     have ha'fin : holFloatIsFinite a' = true := hPa'.1.1
@@ -741,7 +741,7 @@ theorem holFloatRound_rte_fp32 (toneg : Bool) (x : Rat) :
     obtain ⟨hPa, hall⟩ := fp32_rte_core hx hth
     generalize fp32OfPat false (fp32Nearest (x * 2 ^ 149)) = a at hPa hall
     have hc := hspec _ hPa
-    generalize holClosestSuch _ _ x = c at hc ⊢
+    generalize holClosestSuch (t := 23) (w := 8) _ _ x = c at hc ⊢
     have ⟨hz, hne⟩ := hall _ hc
     exact fp32_zero_select hz hne
 

@@ -29,7 +29,7 @@ namespace Flapjack
     * two finite values round `r1 + r2`.  The zero sign is `x.Sign = 1w` when
       both are zero with equal signs, and `mode = roundTowardNegative`
       otherwise. -/
-noncomputable def holFloatAdd {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+noncomputable def holFloatAdd {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   match holFloatValue x, holFloatValue y with
   | .nan, _ => (holCheckForSignalling [x, y], holFloatSomeQnan (.fpAdd mode x y))
@@ -49,7 +49,7 @@ noncomputable def holFloatAdd {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * infinities of the same sign are invalid;
     * `_ - Infinity` is `float_negate y`;
     * the zero sign of `0 - 0` uses `x.Sign ≠ y.Sign`. -/
-noncomputable def holFloatSub {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+noncomputable def holFloatSub {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   match holFloatValue x, holFloatValue y with
   | .nan, _ => (holCheckForSignalling [x, y], holFloatSomeQnan (.fpSub mode x y))
@@ -69,7 +69,7 @@ noncomputable def holFloatSub {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * Infinity times a nonzero value or infinity is an infinity signed by
       `x.Sign = y.Sign`.
     * Two finite values round `r1 * r2` with zero sign `x.Sign ≠ y.Sign`. -/
-noncomputable def holFloatMul {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+noncomputable def holFloatMul {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   let signedInf : HolFloat t w :=
     if x.sign = y.sign then holFloatPlusInfinity t w else holFloatMinusInfinity t w
@@ -92,7 +92,7 @@ noncomputable def holFloatMul {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * `0 / 0` is invalid, and a nonzero value over zero is a signed infinity
       with the divide-by-zero flag.
     * Otherwise `r1 / r2` is rounded with zero sign `x.Sign ≠ y.Sign`. -/
-noncomputable def holFloatDiv {t w : Nat} (mode : HolRounding) (x y : HolFloat t w) :
+noncomputable def holFloatDiv {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   let signedInf : HolFloat t w :=
     if x.sign = y.sign then holFloatPlusInfinity t w else holFloatMinusInfinity t w
@@ -120,7 +120,7 @@ noncomputable def holFloatDiv {t w : Nat} (mode : HolRounding) (x y : HolFloat t
     * otherwise round `r = x*y + z`.  The zero sign is chosen as HOL does:
       when `r = 0` it follows the same rule as `float_add` on `x*y` and `z`,
       and a negative `r` also selects it. -/
-noncomputable def holFloatMulAdd {t w : Nat} (mode : HolRounding) (x y z : HolFloat t w) :
+noncomputable def holFloatMulAdd {t w : Nat} [NeZero t] [NeZero w] (mode : HolRounding) (x y z : HolFloat t w) :
     HolFloatFlags × HolFloat t w :=
   let signP := x.sign ^^^ y.sign
   let infP := holFloatIsInfinite x || holFloatIsInfinite y
