@@ -767,6 +767,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionExpressionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionInstructionClashTree
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCutsetContext
 import Flapjack.Compiler.Backend.WordAlloc.ProductionColouringCutsets
+import Flapjack.Compiler.Backend.WordAlloc.ProductionColouringInstructions
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCallInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocatorWrapperInputs
 import Flapjack.Compiler.Backend.WordAlloc.ProductionForced
