@@ -7142,3 +7142,7 @@ run_probe pan_structs_program_call_probeScript.sml pan_structs_program_call_prob
 run_probe word_to_word_config_probeScript.sml word_to_word_config_probe.out \
   next_n_oracle next_n_oracle_types next_n_oracle_hypotheses next_n_oracle_proved config_reg_alg_type config_col_oracle_type oracle_zero oracle_equal oracle_short oracle_long \
   "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pres_lang_config_probeScript.sml pres_lang_config_probe.out \
+  default_tap_config default_tap_config_types default_tap_config_hypotheses default_tap_config_proved default_tap_config_type tap_config_explore_flag_type tap_config_component_equality \
+  "$cake_dir/compiler/backend/presLangScript.sml" "$cake_dir/compiler/backend"

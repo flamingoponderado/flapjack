@@ -83813,5 +83813,21 @@
     "hol_name": "next_n_oracle_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Config.lean",
+    "lean_name": "TapConfig",
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "tap_config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/PresLang/Config.lean",
+    "lean_name": "defaultTapConfig",
+    "hol_path": "cakeml/compiler/backend/presLangScript.sml",
+    "hol_name": "default_tap_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison presLang1466-1472: the full tap_config carrier has exactly explore_flag:bool and no type parameters; TapConfig retains literal Bool, and defaultTapConfig sets that field to false exactly. Fresh original field projection function type, datatype component equality and literal default full typed theorem/hyp0/kernelT captured. BackendScript28 retains this concrete carrier; no unconstrained Type substitute, omitted field or changed presentation policy. Source-to-RISC-V/backend composition and executable config adoption remain separately open."
   }
 ]
