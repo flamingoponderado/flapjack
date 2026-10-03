@@ -77376,5 +77376,43 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for size_of_shape_compile_pass_eq's qualifier; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeDecsStcnamesCompileDecsStructsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "size_decs_stcnames_compile_decs_structs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the statement captured with types by pan_to_word_get_eids_probe: same binders s pan_code ctxt s' code' ctxt' and five conjuncts in order. FEVERY over s.globals is the pointwise statement on canonical lookups, the evaluate_decls memory decider is chosen classically (as in the tagged semantics_decls), and compile_decs is pan_structs compileDeclsExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "semanticsSizeDecsStcnamesCompileStructsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "semantics_size_decs_stcnames_compile_structs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the statement captured with types by pan_to_word_get_eids_probe: semantics_decls s nm pan_code <> Fail /\\ s.globals = FEMPTY ==> MAP size_of_shape (dec_shapes (pan_structs$compile_top pan_code)) = MAP (size_of_sh_with_ctxt (THE (decs_stcnames [] pan_code))) (dec_shapes pan_code). THE is holThe and the free s nm pan_code are bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeDecsStcnamesCompileDecsStructsCore",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: size_decs_stcnames_compile_decs_structs generic in the evaluate_decls memory decider, by evaluate_decls recursion; no separate HOL original."
   }
 ]
