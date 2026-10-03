@@ -70166,5 +70166,53 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.2 wordProps475-497: complete original arbitrary native input/output states, sole pop_env=SOME premise, all19 original conclusions in order clock/ffi/be/compile/compileOracle/memory/mdomain/shMdomain/store/fpRegs/gcFun/termdep/permute/dataBuffer/codeBuffer/code/stackLimit/stackMax/stackSize. Actual popEnv538-547 changes only locals/localsSize/stack and optional handler, both frame branches covered; empty stack contradicts successful premise. No stack-shape/safe-for-space/target-run assumptions. Actual imported positive-width WordSemStateFiniteExact with C/F:Type and exact Spt fields; canonical fpRegs/store owner and genuine same-module codec witness, function/set equalities and Bool equivalence rendered as equality. No numerical FP evaluator used or numerical correspondence assertion. Original Alloc4322/Call4357 max induction needs this invariant. Fresh unchanged literal full proof replay; resource evaluator/Seq/full pass remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
+    "lean_name": "«dfn'CSRRW»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRW_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
+    "lean_name": "«dfn'CSRRS»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRS_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
+    "lean_name": "«dfn'CSRRC»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRC_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
+    "lean_name": "«dfn'CSRRWI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRWI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
+    "lean_name": "«dfn'CSRRSI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRSI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/CSRInstructions.lean",
+    "lean_name": "«dfn'CSRRCI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'CSRRCI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
   }
 ]

@@ -1538,6 +1538,12 @@
       "sha256": "7db284df938bc10094b99223cb4141cdda7d9257794f198a6fa88506525a3b43"
     },
     {
+      "bytes": 5049,
+      "out": "l3_csr_instruction_probe.out",
+      "rows": 102,
+      "sha256": "77e0656aa529c0417c48cd0cbc5462449f1e0a850ddc5ae64aeed02a68a02cc8"
+    },
+    {
       "bytes": 926,
       "out": "l3_csr_read_value_probe.out",
       "rows": 44,

@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.LabToTarget.CodeSimilar.CodeSafety
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
 import Flapjack.RiscV.L3.Defs.CSRDispatch
+import Flapjack.RiscV.L3.Defs.CSRInstructions
 import Flapjack.Compiler.Backend.Semantics.TargetSem.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization

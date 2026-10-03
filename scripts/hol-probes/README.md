@@ -6571,3 +6571,14 @@ regressions; fullRun/Next/pass correctness remains open.
 
 
 `wordsem_pop_env_const_probe.out` freshly replays the unchanged original full wordProps pop_env_const proof. The closed statement preserves the sole successful pop premise and all nineteen original field equalities, including both handler branches; replay=T and hypotheses=0. This prerequisite does not establish the full evaluator resource family.
+
+### Complete native CSR instructions
+
+`l3_csr_instruction_probeScript.sml` captures all six literal original
+register/immediate equations and 96 independently stated whole-state fixtures.
+`check-l3-csr-instructions.py` requires the full unique label set and `T` for
+every fixture. Kernel counterparts live in `L3CSRInstructionsParity`. Cases
+cover zero/nonzero operands, rd0 and source alias, read-only and privilege
+traps, RV32/64/128, arbitrary prior exceptions and remaining state. The
+literal original CSRRWI zero-immediate path reads and skips writes. These
+checks supplement source review; full Run/Next correctness remains open.
