@@ -7451,3 +7451,24 @@ theorem and its `ShMemStore opsz e1 e2` specialization, binder types and closed
 kernel proofs. The Lean case keeps all ten premises/seven conclusions without
 an IH, covers original byte-count/domain and MappedWrite FFI final/ret branches,
 and derives target arguments/outcomes and finite state repacking internally.
+
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+`stack_remove_word_list_exists_add_probeScript.sml` prints the stored original `word_list_exists_ADD` (stack_removeProofScript.sml:38-47) with zero hypotheses; the Lean port keeps arbitrary payloads and modular addresses.
+
+`stack_remove_init_code_thm_probeScript.sml` prints the stored original `init_code_thm` (stack_removeProofScript.sml:3225-3837) in full with zero hypotheses. The Lean port `Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect.initCodeThm` proves the complete statement over the native stackSem evaluator by symbolically executing the actual `init_code` (InitCodeThm.lean) and establishing the original `state_rel`/`init_prop` conclusions; it adds no premise.
+`pan_structs_program_dec_probe` captures the full original program theorem, its
+`Dec v sh e c1` specialization, and the original `evaluate_ind`, with all binder
+types and closed kernel proofs. The Lean piece retains all ten premises/seven
+conclusions and precisely the initializer-SOME/declared-shape guarded body IH
+at the actual updated local state. Source invariants supply body preconditions;
+restoration handles both absent and shadowed caller bindings.
+
+## Native encoder full slice conjunction
+
+`riscv_target_slice_probeScript.sml` replays the literal original `lem6`
+term with its original `blastLib.BBLAST_PROVE` construction. The four
+rows retain the universally closed three-conjunct statement, arbitrary
+word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
+BitVec64/32 carriers and proves all three equations without premises.
+This is regression evidence; it does not prove HOL-to-Lean equivalence.

@@ -81473,5 +81473,13 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Proof-irrelevance repack after proved broad-state equality; no additional public simulation or compatibility premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "lem6",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Arithmetic.lean",
+    "lean_name": "slice_bit_eleven",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c author source comparison2026-10-03: literal val lem6 all THREE conjuncts in original order, arbitrary fixedword64 c, extracts31..0 and63..32 at word32, bit11 maps to11/43, word complement bit maps to Boolean complement. No premise, narrowed port, target evaluation or omitted conjunct. Kernel simp proves generic64/32 statement. Original literal BBLAST_PROVE replay captured universally closed term/types/hyp0/T; probe evidence is not cross-language equivalence."
   }
 ]

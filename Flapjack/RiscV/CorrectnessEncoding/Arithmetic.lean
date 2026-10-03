@@ -10,6 +10,14 @@ execution hypothesis is added. -/
 namespace Flapjack.RiscV.TargetProof
 open Flapjack.RiscV.L3
 
+/-- Full original low/high32 bit11 and complemented-high32 conjunction. -/
+@[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem6"]
+theorem slice_bit_eleven (c : BitVec 64) :
+    ((BitVec.extractLsb' 0 32 c).getLsbD 11 = c.getLsbD 11) ∧
+    ((BitVec.extractLsb' 32 32 c).getLsbD 11 = c.getLsbD 43) ∧
+    ((~~~(BitVec.extractLsb' 32 32 c)).getLsbD 11 = !(c.getLsbD 43)) := by
+  simp
+
 @[hol "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "lem5"]
 theorem aligned_bit_one (c : BitVec 64) (h : Flapjack.holAligned 2 c = true) :
     c.getLsbD 1 = false := by
