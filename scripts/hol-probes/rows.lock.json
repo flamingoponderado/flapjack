@@ -1742,6 +1742,12 @@
       "sha256": "90624f1131519978c0c920713d37932eca2e8f50ae33ac8efb3646df8d7f50b2"
     },
     {
+      "bytes": 569,
+      "out": "l3_next_step_probe.out",
+      "rows": 4,
+      "sha256": "4f2921ff72d46d04dbff487070a87666602e8afcde02fcc031b7fa063184d573"
+    },
+    {
       "bytes": 187,
       "out": "l3_raise_exception_probe.out",
       "rows": 2,
@@ -4538,6 +4544,12 @@
       "sha256": "708dacc3619cc46ad86d4235939dd5b298634a2bc3671437474baf80ed0d9a80"
     },
     {
+      "bytes": 3520,
+      "out": "pan_simp_semantics_statement_probe.out",
+      "rows": 11,
+      "sha256": "0ff7532c92695be4ddc283e20ed413e86a457c726925ebd5a23872134782b9d9"
+    },
+    {
       "bytes": 285,
       "out": "pan_store32_endian_probe.out",
       "rows": 7,
@@ -4644,6 +4656,24 @@
       "out": "pan_structs_exp_atomic_faithful_probe.out",
       "rows": 6,
       "sha256": "291ca0773724dcec4dfab40e6295f2b555384ee4097abda2d1ba89134b60991a"
+    },
+    {
+      "bytes": 2377,
+      "out": "pan_structs_exp_nfield_faithful_probe.out",
+      "rows": 5,
+      "sha256": "9be41249cab573214b7202f4b01dca77e4fdbb79d8595c8926aa86d468ef5da3"
+    },
+    {
+      "bytes": 2385,
+      "out": "pan_structs_exp_rfield_faithful_probe.out",
+      "rows": 5,
+      "sha256": "6d6cdaf2a4cd015f132388a68b5f0ec3df0012c6f4beabf9e400008b0a1f2741"
+    },
+    {
+      "bytes": 2370,
+      "out": "pan_structs_exp_rstruct_faithful_probe.out",
+      "rows": 5,
+      "sha256": "d3ead46583a64d773503f2ba8fe49893abbe264dc1a9258a0746e4e2105528b0"
     },
     {
       "bytes": 1216,
