@@ -1,3 +1,7 @@
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
+import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
+import Flapjack.Compiler.Backend.LabProps.DomainAlignment
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
 import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
@@ -407,6 +411,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.EvaluateWLive
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallDest
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegister
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Return
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterTwo
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnSupport
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnEval
@@ -1164,6 +1169,7 @@ import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
+import Flapjack.Compiler.Backend.WordRemove.Production
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
@@ -1280,6 +1286,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectStore
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAssign
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectPrimitive
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDec
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectWhile
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
@@ -2283,6 +2290,7 @@ import Flapjack.Misc.BalancedMap.Membership
 import Flapjack.Misc.BalancedMap.BalanceArithmetic
 import Flapjack.Compiler.Backend.WordToStack.ProductionFlatCodec
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
+import Flapjack.Compiler.Backend.WordToStack.ProductionSelectorFlat
 
 -- Tagged modules required by the HOL reference coverage gate.
 

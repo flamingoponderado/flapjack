@@ -1,0 +1,3 @@
+register_update_full=⊢ ∀x v t s lens k f' f extra ac. state_rel ac k f f' s t lens extra ∧ x < k ⇒ state_rel ac k f f' (set_var (2 * x) v s) (set_var x v t) lens extra
+register_update_hypotheses=0
+register_update_proved=T
