@@ -4608,6 +4608,11 @@ run_probe word_cse_fact_insert_probeScript.sml word_cse_fact_insert_probe.out \
   add_to_data_LocValue_correct_hypotheses add_to_data_OpCurrHeap_correct_statement add_to_data_OpCurrHeap_correct_hypotheses add_to_data_Arith_correct_statement add_to_data_Arith_correct_hypotheses \
   add_to_load_aux_correct_statement add_to_load_aux_correct_hypotheses add_to_load_correct_statement add_to_load_correct_hypotheses add_to_data_Arith_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_moves_probeScript.sml word_cse_moves_probe.out \
+  lookup_map_insert0_statement lookup_map_insert0_hypotheses get_set_vars_lemma_statement get_set_vars_lemma_hypotheses MEM_FST_reduc_statement \
+  MEM_FST_reduc_hypotheses canonicalMoveRegs_lemma_statement canonicalMoveRegs_lemma_hypotheses data_inv_clock_statement data_inv_clock_hypotheses \
+  canonicalMoveRegs_lemma_typed \
+  "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_inst_locals_rel_group_probeScript.sml word_inst_locals_rel_group_probe.out \
   pull_ops_simp_def_statement pull_ops_simp_def_hypotheses binary_branch_exp_def_statement binary_branch_exp_def_hypotheses inst_select_thm_statement \
   inst_select_thm_hypotheses inst_select_Loop_helper_statement inst_select_Loop_helper_hypotheses locals_rel_def_statement locals_rel_def_hypotheses \
@@ -7505,6 +7510,12 @@ run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bi
   config_component_equality_typed source_conf_type clos_conf_type bvl_conf_type data_conf_type word_to_word_conf_type word_conf_type stack_conf_type lab_conf_type symbols_type tap_conf_type exported_type attach_bitmaps_type attach_bitmaps_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 
+run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
+  semantics_eq_statement semantics_eq_proved semantics_eq_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrapper_probe.out \
+  pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.out \
   const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
@@ -7530,3 +7541,6 @@ run_probe word_to_stack_store_reg1_zero_probeScript.sml word_to_stack_store_reg1
 run_probe word_to_stack_inst_carry_overflow_probeScript.sml word_to_stack_inst_carry_overflow_probe.out \
   carry_typed carry_proved carry_hypotheses addOverflow_typed addOverflow_proved addOverflow_hypotheses subOverflow_typed subOverflow_proved subOverflow_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_compile_top_semantics_decls_probe.out \
+  compile_top_semantics_decls_statement compile_top_semantics_decls_proved compile_top_semantics_decls_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
