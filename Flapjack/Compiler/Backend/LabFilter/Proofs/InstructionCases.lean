@@ -149,6 +149,7 @@ theorem filterCorrectInstruction {width : Nat} [NeZero width] {C F : Type}
     (hfetch : asmFetch s1 = some (.asm (.asmi (.inst instruction)) bytes len))
     (ih : ∀ (target : Flapjack.Compiler.Backend.LabSem.State width C F)
         (result : MachineResult) (final : Flapjack.Compiler.Backend.LabSem.State width C F),
+      (asmInst instruction s1).failed = false →
       evaluate (incPc (decClock (asmInst instruction s1))) = (result, final) →
       stateRel (incPc (decClock (asmInst instruction s1))) target → target.failed = false →
       ∃ extra t2, evaluate {target with
@@ -179,7 +180,7 @@ theorem filterCorrectInstruction {width : Nat} [NeZero width] {C F : Type}
     have he := heval
     conv at he => lhs; rw [evaluate]
     simp only [hc, ↓reduceIte, hfetch, hok, Bool.false_eq_true] at he
-    obtain ⟨extra, t2, hrun, hffi⟩ := ih _ res s2 he hn hn.2
+    obtain ⟨extra, t2, hrun, hffi⟩ := ih _ res s2 hok he hn hn.2
     have hsourceClock : (incPc (decClock (asmInst instruction s1))).clock = t1.clock - 1 := by
       simp only [incPc, decClock, (asmInstConsts instruction s1).2.2.1, hsclock]
     have hstep : incPc (decClock (asmInst instruction (retime (t1.pc + count) (t1.clock + extra) t1))) =

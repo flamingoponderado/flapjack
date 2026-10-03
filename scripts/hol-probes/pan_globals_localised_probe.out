@@ -1,0 +1,27 @@
+compile_exp_localised=∀(ctxt :α context) (e :α exp). localised_exp (compile_exp ctxt e)
+compile_localised=∀(ctxt :α context) (body :α prog). localised_prog (compile ctxt body :α prog)
+compile_decs_localised=∀(ctxt :α context) (code :α decl list).
+  EVERY
+    ((localised_prog :α prog -> bool) ∘ (FST :α prog # shape -> α prog) ∘
+     (SND :(mlstring # shape) list # α prog # shape -> α prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α prog # shape ->
+           (mlstring # shape) list # α prog # shape))
+    (functions (FST (SND (compile_decs ctxt code))))
+compile_decs_localised'=∀(ctxt :α context) (code :α decl list).
+  EVERY
+    ((localised_prog :α prog -> bool) ∘ (FST :α prog # shape -> α prog) ∘
+     (SND :(mlstring # shape) list # α prog # shape -> α prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α prog # shape ->
+           (mlstring # shape) list # α prog # shape))
+    (functions (FST (SND (SND (compile_decs ctxt code)))))
+compile_decs_localised_main=∀(ctxt :α context) (code :α decl list).
+  EVERY (localised_prog :α prog -> bool) (FST (compile_decs ctxt code))
+nested_seqs_localised=∀(ps :α prog list).
+  localised_prog (nested_seq ps) ⇔ EVERY (localised_prog :α prog -> bool) ps
+compile_top_localised=∀(pan_code :α decl list) (main :mlstring).
+  EVERY
+    ((localised_prog :α prog -> bool) ∘ (FST :α prog # shape -> α prog) ∘
+     (SND :(mlstring # shape) list # α prog # shape -> α prog # shape) ∘
+     (SND :mlstring # (mlstring # shape) list # α prog # shape ->
+           (mlstring # shape) list # α prog # shape))
+    (functions (compile_top pan_code main))

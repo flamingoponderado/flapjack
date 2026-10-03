@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToStack.Proofs.IndexReconstruction
 import Flapjack.Compiler.Backend.StackProps.EvaluateConsts
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CallReturnHandler
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturning
@@ -800,9 +801,7 @@ theorem enterHandlerCallee {width : Nat} [NeZero width] {C F : Type}
     destinationCode destination guards callerRelation plainConventions plainMaximum destinationCompile
   have countCallee : args1.length-k ≤ calleeSize := by
     split_ifs at calleeShape <;> omega
-  have useStack : saved.useStack = true := by
-    unfold stateRel at callerRelation
-    aesop (config := { enableSimp := false })
+  have useStack : saved.useStack = true := callerRelation.2.2.2.2.1
   have stackBound : saved.stackSpace+callerSize ≤ saved.stack.length := by
     unfold stateRel at callerRelation
     aesop (config := { enableSimp := false })
@@ -960,12 +959,9 @@ theorem prepareHandlerCalleeDestination {width : Nat} [NeZero width] {C F : Type
       xs args1 prog ss envs bs savedBitmaps n savedIndex savedCode guards destinationRelation
       plainConventions plainMaximum savedCompile bitmapLength (by rwa [destinationBitmaps])
       (by rwa [destinationBitmaps])
-  have useStack : saved.useStack = true := by
-    unfold stateRel at savedRelation
-    aesop (config := { enableSimp := false })
-  have frameBound : saved.stackSpace + f ≤ saved.stack.length := by
-    unfold stateRel at savedRelation
-    aesop (config := { enableSimp := false })
+  have useStack : saved.useStack = true := savedRelation.2.2.2.2.1
+  have frameBound : saved.stackSpace + f ≤ saved.stack.length :=
+    savedRelation.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1
   have moveBound := CallReturning.stackArgumentFrameBound ac k f frame values names retCode l1 l2 dest args
     source saved lens xs args1 prog ss envs destinationCode destination guards savedRelation
     plainConventions plainMaximum destinationCompile
@@ -1304,6 +1300,10 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
           (none,entry) ∧
       StackSemEvaluate.evaluate (body,{entry with clock := entry.clock+extra}) =
         (targetResult,targetPost) ∧
+      StackSemEvaluate.evaluate
+        (calleeCode,{StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
+          with clock := (StackSemStateOps.decClock moved).clock + extra}) =
+        (targetResult,targetPost) ∧
       compCorrectResult ac k calleeSize calleeFrame
         (WordSemStateFiniteExact.callEnv args1 ss
           (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
@@ -1383,9 +1383,29 @@ theorem simulateHandlerCalleeBody {width : Nat} [NeZero width] {C F : Type}
       calleeIndex calleeIndexPost body (frame :: lens)
       ⟨bodyRun,bodyNotError,entryRelation,bodyConventions,bodyFlat,bodyCompile,
         calleeBitmapLength,entryBitmapBound,entryBitmapPrefix,bodyLabels,bodyMaximum⟩
+  have allocationClock (bump : Nat) : StackSemEvaluate.evaluate
+      (.stackAlloc (calleeSize-(args1.length-k)),
+        {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
+          with clock := (StackSemStateOps.decClock moved).clock + bump}) =
+      (none,{entry with clock := entry.clock + bump}) := by
+    have success := allocateRun
+    rw [StackSemEvaluate.evaluate_stackAlloc] at success
+    split_ifs at success with disabled insufficient
+    · cases (Prod.mk.inj success).1
+    · cases (Prod.mk.inj success).1
+    obtain ⟨_,rfl⟩ := Prod.mk.inj success
+    rw [StackSemEvaluate.evaluate_stackAlloc,if_neg disabled,if_neg insufficient]
+    rfl
+  have calleeExecution : StackSemEvaluate.evaluate
+      (calleeCode,{StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved)
+        with clock := (StackSemStateOps.decClock moved).clock + extra}) =
+      (targetResult,targetPost) := by
+    rw [codeEq,StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,
+      allocationClock extra]
+    exact execution
   exact ⟨destinationTarget,saved,header,moved,entry,targetPost,calleeCode,body,calleeSize,
     calleeFrame,extra,targetResult,destinationRun,savedRun,pushRun,moveRun,found,codeEq,
-    allocateRun,execution,conclusion⟩
+    allocateRun,execution,calleeExecution,conclusion⟩
 
 /-- Actual native restoration state after reading the saved handler slot,
 setting the handler store and freeing precisely the three header words.
@@ -1662,12 +1682,12 @@ theorem evaluateHandlerReturnRestore {width : Nat} [NeZero width] {C F β γ : T
   rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, freeRun]
   exact popRun
 
-/-- The original call conventions and maximum imply the actual number of
-stack return values fits the caller frame. This discharges the copy/restore
-count bound from source hypotheses rather than strengthening the full case.
-Flapjack arithmetic factoring of the original normal-return proof. -/
-theorem handlerReturnCountBound {width : Nat} [NeZero width]
-    (k frame localsFrame : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
+/-- The original conventions and maximum bound stack return values by the
+payload itself, including zero payloads. This stronger derived bound keeps
+the bitmap and saved caller values inside the untouched copy prefix. It is
+Flapjack arithmetic factoring with no separate HOL original. -/
+theorem handlerReturnPayloadCountBound {width : Nat} [NeZero width]
+    (k localsFrame : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
     (retCode handlerCode : WordLangProgHOL (BitVec width))
     (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
     (conventions : postAllocConventionsHOL k
@@ -1676,8 +1696,8 @@ theorem handlerReturnCountBound {width : Nat} [NeZero width]
     (maximum : maxVarHOL
       (.call (some (values,names,retCode,l1,l2)) dest args
         (some (handlerVar,handlerCode,h1,h2))) < 2 * localsFrame + 2 * k)
-    (frameShape : if localsFrame = 0 then frame = 0 else frame = localsFrame + 1) :
-    Compiler.Backend.WordToStack.numStackRet k values ≤ frame := by
+    :
+    Compiler.Backend.WordToStack.numStackRet k values ≤ localsFrame := by
   have sequence : values = (List.range values.length).map (fun x => 2 * (x + 1)) := by
     simp only [postAllocConventionsHOL, everyVarHOL, everyStackVarHOL,
       callArgConventionHOL, Bool.and_eq_true, beq_iff_eq] at conventions
@@ -1698,6 +1718,27 @@ theorem handlerReturnCountBound {width : Nat} [NeZero width]
     simp only [maxVarHOL, Flapjack.WordAlloc.max3Eq]
     omega
   unfold Compiler.Backend.WordToStack.numStackRet
+  omega
+
+
+/-- The original call conventions and maximum imply the actual number of
+stack return values fits the caller frame. This discharges the copy/restore
+count bound from source hypotheses rather than strengthening the full case.
+Flapjack arithmetic factoring of the original normal-return proof. -/
+theorem handlerReturnCountBound {width : Nat} [NeZero width]
+    (k frame localsFrame : Nat) (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 h1 h2 handlerVar : Nat) (dest : Option Nat) (args : List Nat)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) < 2 * localsFrame + 2 * k)
+    (frameShape : if localsFrame = 0 then frame = 0 else frame = localsFrame + 1) :
+    Compiler.Backend.WordToStack.numStackRet k values ≤ frame := by
+  have payloadBound := handlerReturnPayloadCountBound k localsFrame values names
+    retCode handlerCode l1 l2 h1 h2 handlerVar dest args conventions maximum
   split at frameShape <;> omega
 
 /-- Recover the actual SOME-handler caller frame after the source callee
@@ -2186,5 +2227,237 @@ theorem compiledHandlerCallTimeout {width : Nat} [NeZero width] {C F : Type}
     simp only [compCorrectResult, Option.map_some, compileResult, ne_eq,
       not_true_eq_false, ↓reduceIte]
     exact ⟨movedFfi.symm,zero.trans movedZero.symm⟩
+
+/-- Recover actual SOME-handler frame slots from the full saved stack
+relation. Bitmap decoding determines the header/payload; the original
+filterBitmap and indexList membership laws derive each GC optional slot and
+its range. Non-GC observations retain the original stackRelAux guards.
+No target slot value or lookup is assumed. This is Flapjack factoring of the
+original normal/exception caller-local reconstruction, not a separate HOL
+port or a completed caller relation. -/
+theorem savedHandlerCallerFrameSlots {width : Nat} [NeZero width]
+    (k currentHandler : Nat) (size : Option Nat)
+    (nonGc gc : List (Nat × WordLocW width)) (savedHandler h1 h2 : Nat)
+    (rest : List (WordSemStackFrame width)) (handler : Option (WordLocW width))
+    (stack : List (WordLocW width)) (length : Nat) (bitmaps : List (BitVec width))
+    (frameSize : Nat) (lens : List Nat)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      handler stack length bitmaps (frameSize :: lens)) :
+    ∃ saved bitmap payload bits,
+      stack = .word 1 :: .loc h1 h2 :: saved :: bitmap :: payload ∧
+      StackSem.fullReadBitmap bitmaps bitmap = some bits ∧
+      bits.length = frameSize ∧ frameSize ≤ payload.length ∧
+      size.getD (frameSize + 1) = frameSize + 1 ∧
+      (∀ key value, (key,value) ∈ gc →
+        k ≤ adjustNames key ∧ adjustNames key < k + frameSize ∧
+        (payload.take frameSize)[frameSize - (adjustNames key-k+1)]? = some value) ∧
+      (∀ key value, nonGc.lookup key = some value → gc.lookup key = none →
+        adjustNames key < k + bits.length ∧
+        bits[k + bits.length - (adjustNames key + 1)]? = some false ∧
+        (indexList (payload.take frameSize) k).lookup (key/2) = some value) := by
+  obtain ⟨sorted,decodedFrames,decoded,handlerRelation,auxiliary⟩ := relation
+  obtain ⟨location,saved,bitmap,payload,bits,tail,stackEq,read,bitsLength,
+    frameBound,tailDecoded,decodedEq⟩ := absStackConsSome bitmaps size nonGc gc
+      (savedHandler,h1,h2) rest stack frameSize lens decodedFrames decoded
+  rw [decodedEq] at auxiliary
+  simp only [stackRelAux] at auxiliary
+  obtain ⟨savedValue,locationEq,nonGcSlots,filtered,sizeEq,tailAux⟩ := auxiliary
+  have payloadLength : (payload.take frameSize).length = frameSize := by
+    simp only [List.length_take,Nat.min_eq_left frameBound]
+  refine ⟨saved,bitmap,payload,bits,?_,read,bitsLength,frameBound,?_,?_,nonGcSlots⟩
+  · simpa only [locationEq] using stackEq
+  · simpa only [payloadLength] using sizeEq
+  · intro key value member
+    have indexed : (adjustNames key,value) ∈ indexList (payload.take frameSize) k :=
+      Compiler.Backend.WordToStack.filterBitmapMem bits (indexList (payload.take frameSize) k)
+        (gc.map (fun p => (adjustNames p.1,p.2))) (adjustNames key,value) filtered
+        (List.mem_map.mpr ⟨(key,value),member,rfl⟩)
+    have position := memIndexListEl
+      (payload.take frameSize) (adjustNames key) value k indexed
+    have keys : adjustNames key ∈ (indexList (payload.take frameSize) k).map Prod.fst :=
+      List.mem_map.mpr ⟨(adjustNames key,value),indexed,rfl⟩
+    rw [mapFstIndexList] at keys
+    simp only [List.mem_reverse,List.mem_map,List.mem_range] at keys
+    obtain ⟨index,indexBound,indexEq⟩ := keys
+    have keyBound : k ≤ adjustNames key ∧ adjustNames key < k + frameSize := by
+      rw [payloadLength] at indexBound
+      omega
+    refine ⟨keyBound.1,keyBound.2,?_⟩
+    have slotBound : frameSize - (adjustNames key-k+1) < (payload.take frameSize).length := by
+      rw [payloadLength]
+      omega
+    rw [List.getElem?_eq_getElem slotBound]
+    simpa only [payloadLength] using congrArg some position
+
+/-- Actual SOME-handler source pop/set_vars lookup precedence at every key.
+Return entries precede restored GC entries and saved non-GC values, including
+all duplicate and missing-key behavior. The optional saved size and handler
+are retained; no lookup outcome or target relation is assumed. Flapjack
+source factoring for the original caller-local reconstruction. -/
+theorem restoredHandlerCallerLookup {width : Nat} [NeZero width] {C F : Type}
+    (bodyPost : WordSemStateFiniteExact width C F) (size : Option Nat)
+    (nonGc : Spt (WordLocW width)) (gc : List (Nat × WordLocW width))
+    (savedHandler h1 h2 : Nat) (rest : List (WordSemStackFrame width))
+    (values : List Nat) (returned : List (WordLocW width)) (key : Nat)
+    (frame : bodyPost.stack =
+      .stackFrame size (sptToAList nonGc) gc (some (savedHandler,h1,h2)) :: rest) :
+    ∃ popped, WordSemStateFiniteExact.popEnv bodyPost = some popped ∧
+      popped.handler = savedHandler ∧ popped.localsSize = size ∧
+      sptLookup key (WordSemStateFiniteExact.setVars values returned popped).locals =
+        match holAlookup (values.zip returned) key with
+        | some value => some value
+        | none => match sptAListLookup key gc with
+          | some value => some value
+          | none => sptLookup key nonGc := by
+  refine ⟨{bodyPost with
+    locals := sptUnion (sptFromAList gc) (sptFromAList (sptToAList nonGc)),
+    stack := rest, localsSize := size, handler := savedHandler},?_,rfl,rfl,?_⟩
+  · simp only [WordSemStateFiniteExact.popEnv,frame]
+  · have savedLookup : sptAListLookup key (sptToAList nonGc) = sptLookup key nonGc := by
+      rw [← sptLookup_sptFromAList,sptLookup_sptFromAList_sptToAList]
+    simp only [WordSemStateFiniteExact.setVars,lookup_alist_insert_any,
+      sptLookup_sptUnion,sptLookup_sptFromAList,savedLookup]
+    cases holAlookup (values.zip returned) key <;> cases sptAListLookup key gc <;> rfl
+
+/-- Recover a saved non-GC caller value at its actual bounded optional
+payload slot. The original full SOME stack relation supplies the index-list
+lookup; both bounds, including the lower bound, are proved from that lookup.
+No target slot or range is assumed. Flapjack caller-local proof factoring. -/
+theorem savedHandlerCallerNonGcSlot {width : Nat} [NeZero width]
+    (k currentHandler : Nat) (size : Option Nat)
+    (nonGc gc : List (Nat × WordLocW width)) (savedHandler h1 h2 : Nat)
+    (rest : List (WordSemStackFrame width)) (handler : Option (WordLocW width))
+    (stack : List (WordLocW width)) (length : Nat) (bitmaps : List (BitVec width))
+    (frameSize : Nat) (lens : List Nat) (key : Nat) (value : WordLocW width)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      handler stack length bitmaps (frameSize :: lens))
+    (nonGcLookup : nonGc.lookup key = some value) (gcMissing : gc.lookup key = none) :
+    ∃ saved bitmap payload bits,
+      stack = .word 1 :: .loc h1 h2 :: saved :: bitmap :: payload ∧
+      StackSem.fullReadBitmap bitmaps bitmap = some bits ∧
+      bits.length = frameSize ∧ frameSize ≤ payload.length ∧
+      k ≤ key/2 ∧ key/2 < k + frameSize ∧
+      (payload.take frameSize)[frameSize-1-(key/2-k)]? = some value := by
+  obtain ⟨saved,bitmap,payload,bits,stackEq,read,bitsLength,frameBound,sizeEq,
+    gcSlots,nonGcSlots⟩ := savedHandlerCallerFrameSlots k currentHandler size nonGc gc
+      savedHandler h1 h2 rest handler stack length bitmaps frameSize lens relation
+  obtain ⟨keyBound,unusedBit,lookup⟩ := nonGcSlots key value nonGcLookup gcMissing
+  have payloadLength : (payload.take frameSize).length = frameSize := by
+    simp only [List.length_take,Nat.min_eq_left frameBound]
+  have upper : key/2 < k + frameSize := by
+    simpa only [adjustNames,bitsLength] using keyBound
+  have indexed := aLookupIndexList (payload.take frameSize) (key/2) k (by
+    rw [payloadLength]
+    omega)
+  rw [GcSimulation.lookup_eq_sptAListLookup] at lookup
+  rw [lookup] at indexed
+  have lower : k ≤ key/2 := by
+    by_contra below
+    have outside : (payload.take frameSize).length ≤
+        (payload.take frameSize).length + k - (key/2+1) := by omega
+    rw [List.getElem?_eq_none outside] at indexed
+    cases indexed
+  refine ⟨saved,bitmap,payload,bits,stackEq,read,bitsLength,frameBound,lower,upper,?_⟩
+  have position : (payload.take frameSize).length + k - (key/2+1) =
+      frameSize-1-(key/2-k) := by rw [payloadLength]; omega
+  rw [position] at indexed
+  exact indexed.symm
+
+/-- Construct the actual handler return-copy record and its untouched
+optional slots. Original primitive space/count guards derive every read
+bound; no copy result or target slot equality is supplied. The returned
+record preserves all fields except stack/registers, providing the concrete
+state needed for full caller-local restoration. Flapjack case factoring. -/
+theorem copyHandlerCallerFrame {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (k frameSize count : Nat)
+    (enabled : target.useStack = true)
+    (room : frameSize + 4 ≤ target.stack.length - (target.stackSpace + count))
+    (countBound : count ≤ frameSize) :
+    ∃ (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+      StackSemEvaluate.evaluate (copyRetAuxNative k (frameSize + 4) count,target) =
+        (none,{target with stack := stack,regs := regs}) ∧
+      stack.length = target.stack.length ∧
+      stack.drop (target.stackSpace + count + frameSize + 4) =
+        target.stack.drop (target.stackSpace + count + frameSize + 4) ∧
+      (∀ position, position < frameSize + 4 - count →
+        stack[target.stackSpace + count + position]? =
+          target.stack[target.stackSpace + count + position]?) ∧
+      (∀ index, index < count →
+        holEl (index + frameSize + 4) (stack.drop target.stackSpace) =
+          holEl index (target.stack.drop target.stackSpace)) ∧
+      (∀ register, register ≠ k → regs.lookup register = target.regs.lookup register) := by
+  obtain ⟨copied,execution,stack,regs,state,length,space,tail,registers,untouched,values⟩ :=
+    CallReturnEval.evaluateCopyRetAux k (frameSize + 4) count target ⟨enabled,by omega,room⟩
+  subst copied
+  refine ⟨stack,regs,execution,length,?_,?_,?_,?_⟩
+  · simpa only [Nat.add_assoc,Nat.add_comm,Nat.add_left_comm] using tail
+  · intro position positionBound
+    have preserved := untouched position positionBound
+    have oldBound : target.stackSpace + count + position < target.stack.length := by omega
+    have newBound : target.stackSpace + count + position < stack.length := by omega
+    change holEl position (stack.drop (count + target.stackSpace)) =
+      holEl position (target.stack.drop (count + target.stackSpace)) at preserved
+    rw [holElDrop,holElDrop,
+      holEl_eq_getElem (count + target.stackSpace + position) stack (by omega),
+      holEl_eq_getElem (count + target.stackSpace + position) target.stack (by omega)] at preserved
+    rw [List.getElem?_eq_getElem newBound,List.getElem?_eq_getElem oldBound]
+    simpa only [Nat.add_comm,Nat.add_left_comm,Nat.add_assoc] using congrArg some preserved
+  · intro index indexBound
+    simpa only [Nat.add_assoc] using values index indexBound
+  · intro register distinct
+    exact registers register distinct
+
+/-- Preserve a saved non-GC caller value through actual return copying.
+Its original slot and both bounds come from the full SOME relation; the
+source key's position after the returned registers puts it in the proved
+untouched copy prefix. No original/post target slot value is supplied.
+Flapjack composition for the original caller-local reconstruction. -/
+theorem copyHandlerCallerNonGcSlot {width : Nat} [NeZero width] {C F : Type}
+    (target : StackSemStateFiniteExact width C F) (k currentHandler : Nat)
+    (size : Option Nat) (nonGc gc : List (Nat × WordLocW width))
+    (savedHandler h1 h2 frameSize count : Nat)
+    (rest : List (WordSemStackFrame width)) (lens : List Nat)
+    (key : Nat) (value : WordLocW width)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      (target.store.lookup .handler) (target.stack.drop (target.stackSpace + count))
+      target.stack.length target.bitmaps (frameSize :: lens))
+    (enabled : target.useStack = true) (countBound : count ≤ frameSize)
+    (afterReturned : k + count ≤ key/2)
+    (nonGcLookup : nonGc.lookup key = some value) (gcMissing : gc.lookup key = none) :
+    ∃ (stack : List (WordLocW width)) (regs : HolFiniteMapExact Nat (WordLocW width)),
+      StackSemEvaluate.evaluate (copyRetAuxNative k (frameSize + 4) count,target) =
+        (none,{target with stack := stack,regs := regs}) ∧
+      stack[target.stackSpace + count + 4 + (frameSize-1-(key/2-k))]? = some value ∧
+      stack.length = target.stack.length ∧
+      (∀ register, register ≠ k → regs.lookup register = target.regs.lookup register) := by
+  obtain ⟨saved,bitmap,payload,bits,decoded,read,bitsLength,frameBound,lower,upper,slot⟩ :=
+    savedHandlerCallerNonGcSlot k currentHandler size nonGc gc savedHandler h1 h2 rest
+      (target.store.lookup .handler) (target.stack.drop (target.stackSpace + count))
+      target.stack.length target.bitmaps frameSize lens key value relation nonGcLookup gcMissing
+  have room := stackRelConsLenSome k currentHandler size nonGc gc savedHandler h1 h2 rest
+    (target.store.lookup .handler) (target.stack.drop (target.stackSpace + count))
+    target.stack.length target.bitmaps frameSize lens relation
+  simp only [List.length_drop] at room
+  obtain ⟨stack,regs,execution,length,tail,unchanged,returned,registers⟩ :=
+    copyHandlerCallerFrame target k frameSize count enabled room countBound
+  let index := frameSize-1-(key/2-k)
+  have indexBound : index < frameSize := by dsimp [index]; omega
+  have payloadSlot : payload[index]? = some value := by
+    change (payload.take frameSize)[index]? = some value at slot
+    simpa only [List.getElem?_take,if_pos indexBound] using slot
+  have originalSlot : target.stack[target.stackSpace + count + 4 + index]? = some value := by
+    have observation := congrArg (fun xs => xs[4+index]?) decoded
+    simp only [show 4+index = index+4 by omega,List.getElem?_drop,List.getElem?_cons_succ] at observation
+    rw [show target.stackSpace + count + (index+4) = target.stackSpace + count + 4 + index by omega]
+      at observation
+    exact observation.trans payloadSlot
+  have prefixBound : 4+index < frameSize+4-count := by dsimp [index]; omega
+  have preserved := unchanged (4+index) prefixBound
+  refine ⟨stack,regs,execution,?_,length,registers⟩
+  simpa only [Nat.add_assoc] using preserved.trans
+    (by simpa only [Nat.add_assoc] using originalSlot)
 
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
