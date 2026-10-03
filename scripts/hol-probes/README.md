@@ -7987,3 +7987,21 @@ counter, and reversed outside-domain observation.
 independent word/configuration/FFI carrier. Regenerate with
 `HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
 composes all six reviewed pass paths; production routing remains separate.
+
+### Complete native Const control and register post-state
+
+`CorrectnessEncoding/ConstPost.lean` proves that each of the seven literal
+native register `Run` clauses commutes with current-core PC/Skip updates under
+original `riscv_ok`. It lifts the equation to arbitrary instruction lists,
+including the unchanged empty-list state. For nonempty lists the complete
+native step fold is the original register `Run` fold with Skip4 and PC advanced
+by four times the list length. The full Const specialization uses original
+`asm_ok` and `riscv_ok` only and retains the accepted wide-constant scratch31
+write. No target execution or post-state relation is assumed.
+
+These are untagged composition lemmas, not separately named HOL declarations.
+Source comparison uses the literal seven register clauses and Const lowering
+at `riscv_targetScript.sml:103-126`; the full original Const constructor at
+`riscv_targetProofScript.sml:533-545` remains open until its intermediate and
+final source-state assertions are assembled. Existing oracle captures retain
+their original scope; this addition does not claim a new full-Next oracle.
