@@ -69575,5 +69575,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-stack-io-events-mono): full stackPropsScript.sml454-475 original !program source result post. evaluate(program,source)=(result,post) implies source.ffi.io_events prefix post.ffi.io_events. Native evaluate, arbitrary original carriers/quantifiers, all result outcomes and sole source-run equation retained; HOL IS_PREFIX is List.IsPrefix. Full clock-first evaluator induction covers all34constructors; successful instructions/alloc/constant stores preserve FFI, external FFI and all8shared-memory operations use the checked exact callFFIHOL return append law. Seq/Loop/call return/exception prefixes are composed from actual recursive source runs; original fixClock/decClock preserve FFI and supply genuine measure decreases. No target-run, desired trace, clock/simulation, oracle-extension, non-Error, domain or success premise added. Canonical owning native StackSemStateFiniteExact regs/fpRegs/store finite maps and positive type-indexed BitVec/FFI Type carriers use reviewed combined qualifiers with a genuine imported-state broad/exact roundtrip witness. Code remains Spt, not named as finite map. Inherits reviewed reals_as_rational_cuts through evaluator FP closure (SOUNDNESS item8); event monotonicity is independent of numeric FP result and does not claim numerical parity. Complete unchanged original HOL proof replay produces a closed theorem with two fresh statement/proved rows. This is the single-run law, not the extra-clock theorem or full StackRemove observational semantics."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/RawCall.lean",
+    "lean_name": "compCorrectRawCall",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original382-407/full135-149: genuine RawCall case preserves both compTop/comp existential results and original source evaluation/nonError/stateRel premises. Actual fixed-source callee IH is guarded only by original Seq code lookup and nonzero source clock; unused compTop motive component omitted. Target lookup and per-entry info derived from literal stateRel; compTop Seq preserves compiled first/body. Timeout derives emptyEnv relation and equal clocks. Nonzero case derives actual decClock target run from callee IH, original bad_fun_return dispatch from source nonError, and decClock additive-clock identity. Outer postframe stateOk derived using full evaluateMono and subsptLookup, not supplied as premise. Original stackSpace guard retained unchanged. Canonical actual owning regs/fpRegs/store roundtrip witness; code native Spt, stacks native List, positive type-indexed words and Type0 configuration/FFI; inherited reals_as_rational_cuts SOUNDNESS8. No target-run/postrelation/success assumption or individual hold release."
   }
 ]

@@ -110,6 +110,9 @@ run_probe() {
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_rawcall_case_probeScript.sml stack_rawcall_rawcall_case_probe.out \
+  rawcall_full_statement rawcall_full_hypotheses rawcall_case_statement rawcall_evaluate_ind_obligation \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe stack_rawcall_loop_case_probeScript.sml stack_rawcall_loop_case_probe.out \
   loop_full_statement loop_full_hypotheses loop_case_statement loop_evaluate_ind_obligation \
   "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
