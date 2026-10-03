@@ -2000,6 +2000,12 @@
       "sha256": "8529a95e2b964f082d5ce9f123dd41787fc414e5f93103d67681df57a24a6386"
     },
     {
+      "bytes": 334,
+      "out": "lab_filter_section_end_probe.out",
+      "rows": 4,
+      "sha256": "44b7cb1fe35fd9dea94d6855647b7f955d06849ebede1481e12e0e5863a22fd6"
+    },
+    {
       "bytes": 383,
       "out": "lab_filter_semantics_probe.out",
       "rows": 4,
@@ -2406,6 +2412,12 @@
       "out": "lab_to_target_machine_sem_eq_sem_probe.out",
       "rows": 4,
       "sha256": "2197f4c15e8775fcd574215fa61e50ce71da9e867f2466f0d3661c2c3f7e8b7c"
+    },
+    {
+      "bytes": 1173,
+      "out": "lab_to_target_make_init_filter_probe.out",
+      "rows": 4,
+      "sha256": "1c3fdcc271c1d019666d5a73cf0000502991258a0d3b0a8ffbd50172fba3f0b6"
     },
     {
       "bytes": 2085,
@@ -4812,6 +4824,12 @@
       "out": "pan_structs_exp_var_faithful_probe.out",
       "rows": 4,
       "sha256": "13a093f192c867994eb660357b493e06b0dcc5a5390d3a609b1f0726cf13843b"
+    },
+    {
+      "bytes": 158,
+      "out": "pan_structs_flatten_conversion_probe.out",
+      "rows": 4,
+      "sha256": "2876138350d93f552f09dbdcf888a895fa70f108947846133516a0b3dd57273e"
     },
     {
       "bytes": 3155,

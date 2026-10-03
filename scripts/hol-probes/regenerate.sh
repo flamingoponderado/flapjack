@@ -6808,6 +6808,7 @@ run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tic
 run_probe pan_structs_value_shape_conversion_probeScript.sml pan_structs_value_shape_conversion_probe.out \
   shape_of_convert_v_statement shape_of_convert_v_types shape_of_convert_v_hypotheses shape_of_convert_v_proved shape_of_convert_v_ind_statement shape_of_convert_v_ind_types shape_of_convert_v_ind_proved shape_of_convert_v_rev_statement shape_of_convert_v_rev_types shape_of_convert_v_rev_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe lab_filter_semantics_probeScript.sml lab_filter_semantics_probe.out \
   state_rel_IMP_sem_EQ_sem state_rel_IMP_sem_EQ_sem_types state_rel_IMP_sem_EQ_sem_hypotheses state_rel_IMP_sem_EQ_sem_proved \
   "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6830,6 +6831,17 @@ run_probe pan_structs_structs_code_invariant_probeScript.sml pan_structs_structs
 
 run_probe pan_structs_program_seq_if_probeScript.sml pan_structs_program_seq_if_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_seq_statement compile_correct_seq_proved compile_correct_if_statement compile_correct_if_proved compile_correct_full_types compile_correct_seq_types compile_correct_if_types evaluate_ind_statement evaluate_ind_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_to_target_make_init_filter_probeScript.sml lab_to_target_make_init_filter_probe.out \
+  make_init_filter_skip make_init_filter_skip_types make_init_filter_skip_hypotheses make_init_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_filter_section_end_probeScript.sml lab_filter_section_end_probe.out \
+  sec_ends_with_label_filter_skip sec_ends_with_label_filter_skip_types sec_ends_with_label_filter_skip_hypotheses sec_ends_with_label_filter_skip_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_flatten_conversion_probeScript.sml pan_structs_flatten_conversion_probe.out \
+  flatten_convert_v_statement flatten_convert_v_types flatten_convert_v_hypotheses flatten_convert_v_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe stack_remove_word_list_memory_probeScript.sml stack_remove_word_list_memory_probe.out \

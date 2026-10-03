@@ -1,0 +1,6 @@
+sec_ends_with_label_filter_skip=∀(code :α sec list).
+  EVERY (sec_ends_with_label :α sec -> bool) code ⇒
+  EVERY (sec_ends_with_label :α sec -> bool) (filter_skip code)
+sec_ends_with_label_filter_skip_types=(code :α sec list)::α sec list;
+sec_ends_with_label_filter_skip_hypotheses=0
+sec_ends_with_label_filter_skip_proved=T
