@@ -8924,6 +8924,12 @@
       "sha256": "5a1b0fcd6b4c96ff2e36ad807142f65ea2a0250ae0848eb9e42297a95883f96b"
     },
     {
+      "out": "wordsem_alloc_const_probe.out",
+      "bytes": 402,
+      "rows": 3,
+      "sha256": "bf1d9991a783c4b5c14b719db78df835174fe15469bcece33ef5717230aa52c0"
+    },
+    {
       "out": "wordsem_gc_const_probe.out",
       "bytes": 451,
       "rows": 3,

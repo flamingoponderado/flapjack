@@ -6580,3 +6580,6 @@ regressions; fullRun/Next/pass correctness remains open.
 
 
 `wordsem_jump_exc_const_probe.out` freshly replays the unchanged full original wordProps jump_exc_const proof before generalization. The closed theorem retains the sole successful-jump premise, arbitrary state/label pair and all fourteen field equalities; replay=T and hypotheses=0. No valid-handler or frame-shape premise is supplied. Full evaluator resource induction remains open.
+
+
+`wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.

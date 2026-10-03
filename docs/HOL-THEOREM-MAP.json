@@ -70205,5 +70205,18 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.6 wordProps943-963: complete original arbitrary native source/post and returned Nat#Nat label, sole jump_exc=SOME premise, all14 conclusions in original order be/gcFun/mdomain/shMdomain/code/codeBuffer/dataBuffer/compile/compileOracle/clock/ffi/stackLimit/stackMax/stackSize. Actual jumpExc565-576 retains original handler<stacklength/LASTN(handler+1)/stackframe-with-handler dispatch and only restores handler/locals/localsSize/stack; all success fields preserved, failure contradicts sole premise. No extra handler validity/frame shape/safety/target-run premise. Imported actual positive-width state C/F:Type, exact Spt fields and canonical fpRegs/store owner/genuine same-module codec; Bool equivalence as Bool equality. No evaluator or numericFP assertion. Original Raise max4335 and limit4415 use this invariant. Fresh unchanged full original proof replay before GEN_ALL and generalized conclusion check; fullresource/Seq/pass unfinished."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/AllocConst.lean",
+    "lean_name": "allocConst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "alloc_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 resource4.2.4 wordProps649-666: complete original arbitrary allocation word/cutsets/native source/result/post, sole allocation=(result,post) premise, all10 conjuncts in order clock/ffi/code/be/codeBuffer/dataBuffer/compile/compileOracle/stackLimit/stackSize. Native alloc671-698 preserves original cutEnv/pushEnv/setStore/gc/popEnv/getStore/hasSpace dispatch and every failure/Error/NotEnoughSpace/flush/success outcome. Complete gcConst/popEnvConst contracts supply fields; explicit equality chains show original field preservation, no callback law/targetrun/successful-allocation/resource-safety premise. Imported actual positivewidth state C/F:Type, exact Spt fields, canonical fpRegs/store and genuine same-module witness; Bool equivalence as Bool equality. No evaluator or numericFP assertion. Original limit4415 requires alloc_const, full resource/Seq/pass remains open. Fresh unchanged literal full original proof before GEN_ALL/generalized statement check."
   }
 ]
