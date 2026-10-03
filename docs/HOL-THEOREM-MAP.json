@@ -86605,5 +86605,98 @@
     "hol_name": "default_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison 2026-10-03 (bead flapjack-backend-from-word.1.3.2): original backend_commonScript136-155 and bvl_to_bviScript537-549 full declarations captured in bvl_to_bvi_default_probe.out. Literal Nat stub chain data_num_stubs+9+1, four namespaces and unconditional MOD equality; complete ten-field Config initializer 10/1000/T/bvl_num_stubs+1/+2/+3/T/T/LN/LN with actual distinct Bvl.Exp/Bvi.Exp Spt inline trees. HOL local num_stubs denotes backend_common bvl_num_stubs, reused directly through the checked shared dataNumStubs. No generic expression placeholder, fixed word carrier change, omitted field, added hypothesis or runtime-policy change. Original values72/4/73/74/75 independently queried."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "reg_bound_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "regBoundComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:872-890: ∀i p. (reg_bound (comp i p) s ⇔ reg_bound p s) ∧ (reg_bound (comp_top i p) s ⇔ reg_bound p s), free s implicit, bool equality as ↔, over the reviewed StackRawCall.comp/compTop and stackProps regBound; proof follows the source comp_seq_neq_IMP split."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_rawcall_reg_bound",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "stackRawcallRegBound",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:892-898: EVERY (λp. reg_bound p sp) (MAP SND (compile prog1)) ⇔ EVERY (λp. reg_bound p sp) (MAP SND prog1), free sp prog1 implicit, EVERY as membership."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "call_args_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "callArgsComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:900-918: ∀i p. both call_args equivalences for comp and comp_top with free r1..r5 implicit; bool equality as ↔."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "stack_alloc_call_args",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "stackRawcallCallArgs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:920-926 (stack_rawcallProof's own stack_alloc_call_args): EVERY (λp. call_args p 1 2 3 4 0) (MAP SND (compile prog1)) ⇔ the same for prog1, over stack_rawcall compile."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "MAP_FST_compile",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "mapFstCompile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:928-934: MAP FST (compile code) = MAP FST code over stack_rawcall compile."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "call_arg_comp",
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/Conventions.lean",
+    "lean_name": "callArgComp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_rawcallProofScript.sml:936-952: ∀i p. (alloc_arg (comp i p) ⇔ alloc_arg p) ∧ (alloc_arg (comp_top i p) ⇔ alloc_arg p) over stackProps allocArg."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "stack_remove_call_args",
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CallArgs.lean",
+    "lean_name": "stackRemoveCallArgs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_removeProofScript.sml:4320-4349: compile jump off gen_gc n k pos p = p' ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p) ⇒ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p'), free variables implicit in order, over StackRemove.compileHOL (argument order jump off gen_gc max_heap pointer start). Proof: init stubs (init_code, halt_inst) and comp-preservation via untagged helper lemmas mirroring the source EVAL/completeInduct steps."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_semantics",
+    "hol_line": 3365,
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FullMakeInitSemantics.lean",
+    "lean_name": "fullMakeInitSemantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3365-3615 (replayed in the probe with its source proof, together with the SML val make_init_semantics and the local lemmas it uses). The Abbrev marker around the conclusion is the identity. Free stack_conf data_conf max_heap sp offset bitmaps code t save_regs data_sp coracle s opt implicit. All twenty-two premises in source order: full_make_init ... = (s,opt) (reviewed fullMakeInit), good_dimindex, t.code = stack_to_lab$compile ... (reviewed StackToLab.compile), t.compile_oracle = (λn. let (c,p,b) = coracle n in (c, compile_no_stubs reg_names jump offset sp p)) (let tuple by projections), ¬t.failed, memory_assumption reg_names bitmaps data_sp t (reviewed memoryAssumption), max_stack_alloc ≤ max_heap, t.link_reg ∉ save_regs, t.pc = 0, io_regs/cc_regs NONE on save_regs, both domain alignments, good_code sp code, ∀n. good_code sp (FST (SND (coracle n))), 10 ≤ sp, EVERY (λr. find_name reg_names (r+sp-2) ∈ save_regs) [2;3;4] (membership quantifier), the five find_name register equations, BIJ (find_name reg_names) UNIV UNIV (Function.Bijective). Conclusion opt ≠ NONE ∧ (stackSem semantics InitGlobals_location s ≠ Fail ⇒ labSem semantics t = stackSem semantics InitGlobals_location s). No target run, relation or success premise. Proof composes the ported stack_to_lab make_init_semantics/state_rel_make_init/halt_assum_lemma, stack_names make_init_semantics, stack_remove make_init_semantics (discharge_these/propagate_these established from the premises), stack_alloc make_init_semantics and stack_rawcall compile_semantics, as in HOL. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml",
+    "hol_name": "full_make_init_semantics",
+    "hol_line": 3617,
+    "lean_path": "Flapjack/Compiler/Backend/StackToLab/Proofs/FullMakeInitSemantics.lean",
+    "lean_name": "fullMakeInitSemantics'",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03: original stack_to_labProofScript.sml:3617-3618 [allow_rebind]: the line-3365 theorem with Abbrev_def rewritten away (probe captures the rebound DB theorem). Free stack_conf data_conf max_heap sp offset bitmaps code t save_regs data_sp coracle s opt implicit. All twenty-two premises in source order: full_make_init ... = (s,opt) (reviewed fullMakeInit), good_dimindex, t.code = stack_to_lab$compile ... (reviewed StackToLab.compile), t.compile_oracle = (λn. let (c,p,b) = coracle n in (c, compile_no_stubs reg_names jump offset sp p)) (let tuple by projections), ¬t.failed, memory_assumption reg_names bitmaps data_sp t (reviewed memoryAssumption), max_stack_alloc ≤ max_heap, t.link_reg ∉ save_regs, t.pc = 0, io_regs/cc_regs NONE on save_regs, both domain alignments, good_code sp code, ∀n. good_code sp (FST (SND (coracle n))), 10 ≤ sp, EVERY (λr. find_name reg_names (r+sp-2) ∈ save_regs) [2;3;4] (membership quantifier), the five find_name register equations, BIJ (find_name reg_names) UNIV UNIV (Function.Bijective). Conclusion opt ≠ NONE ∧ (stackSem semantics InitGlobals_location s ≠ Fail ⇒ labSem semantics t = stackSem semantics InitGlobals_location s). No target run, relation or success premise. Proof composes the ported stack_to_lab make_init_semantics/state_rel_make_init/halt_assum_lemma, stack_names make_init_semantics, stack_remove make_init_semantics (discharge_these/propagate_these established from the premises), stack_alloc make_init_semantics and stack_rawcall compile_semantics, as in HOL. Canonical regs/fpRegs via the imported StackSemStateFiniteExact owner and same-module relation witness; positive BitVec width with NeZero. Axioms propext, Classical.choice, Quot.sound. Inherits the reals_as_rational_cuts assumption through the evaluate closure (SOUNDNESS item 8); this marker does not review untagged dependencies."
   }
 ]

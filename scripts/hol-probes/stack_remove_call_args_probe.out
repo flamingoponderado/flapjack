@@ -1,0 +1,1 @@
+stack_remove_call_args_statement=compile jump off gen_gc n k pos p = p' ∧ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p) ⇒ EVERY (λp. call_args p 1 2 3 4 0) (MAP SND p')
