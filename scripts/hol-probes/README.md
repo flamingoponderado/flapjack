@@ -7176,6 +7176,16 @@ preservation of memory/domain/byte order, using only the original child IH.
 Load32 specialization and eval_ind. Native case retains all seven hypotheses
 and three conclusions with only the original child IH, deriving the32-bit load
 through actual memory/domain/byte-order preservation.
+`lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
+and both direct definitions, full native word-indexed line/section binder types,
+zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
+proof's map prerequisite without specializing arbitrary generic Line carriers.
+The derived Lean append law is Flapjack infrastructure, not another HOL claim.
+
+`pan_structs_exp_bytes_in_word_faithful_probe` captures the original full theorem,
+BytesInWord specialization and eval_ind. The faithful native case retains all
+seven hypotheses and three conclusions, including the actual converted target
+evaluation, at every positive word width without an extra byte-size condition.
 
 ## Complete native Encode
 
@@ -7193,6 +7203,12 @@ original HOL model route. Finite fixtures and literal rendering drift checks
 are regression/transcription evidence, not a universal HOL-to-Lean proof.
 The native executed encoder configuration and final encoder correctness are
 separate downstream beads; this batch does not replace the compiler route.
+`pansem_eval_ind_probe` captures the original generated faithful expression
+induction theorem with its predicate type, closed hypotheses and kernel proof.
+The reference checker recognizes only this exact source path and the reviewed
+complete terminating `eval_def` block; its hash pin prevents unrelated source
+changes from silently authorizing the generated name. This is provenance
+checking, while the native theorem still requires independent statement review.
 
 ## Native target assembler lowering and bytes
 

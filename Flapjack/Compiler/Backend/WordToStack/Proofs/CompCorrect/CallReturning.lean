@@ -2304,4 +2304,97 @@ theorem copyReturnPreservesPoppedLocals {width : Nat} [NeZero width] {C F : Type
   rw [Nat.add_comm target.stackSpace count] at slot
   simpa only [Nat.add_comm] using preserved.trans slot
 
+/-- Recover the actual returned value's position from first-match lookup
+in canonical return names. The source Return length test supplies lengthEq;
+no target placement or index bound is assumed. This is case-local source
+lookup infrastructure for the returned-value caller-local branch. -/
+theorem returnedCallerLookupIndex {width : Nat} [NeZero width]
+    (values : List Nat) (returned : List (WordLocW width)) (key : Nat) (value : WordLocW width)
+    (canonical : values = (List.range values.length).map (fun index => 2 * (index + 1)))
+    (lengthEq : returned.length = values.length)
+    (lookup : holAlookup (values.zip returned) key = some value) :
+    ∃ index, index < returned.length ∧ key = 2 * (index + 1) ∧ returned[index]? = some value := by
+  have membership : ∀ entries : List (Nat × WordLocW width),
+      holAlookup entries key = some value → (key, value) ∈ entries := by
+    intro entries
+    induction entries with
+    | nil => simp [holAlookup]
+    | cons entry entries ih =>
+      obtain ⟨name, item⟩ := entry
+      simp only [holAlookup]
+      by_cases same : name = key
+      · subst name
+        simp only [if_true, Option.some.injEq]
+        intro equality
+        subst item
+        exact List.mem_cons_self
+      · rw [if_neg same]
+        exact fun found => List.mem_cons_of_mem _ (ih found)
+  obtain ⟨index, indexBound, pair⟩ := List.mem_iff_getElem.mp (membership _ lookup)
+  have namesBound : index < values.length := by
+    rw [List.length_zip] at indexBound; omega
+  have returnedBound : index < returned.length := by omega
+  rw [List.getElem_zip] at pair
+  have name := congrArg Prod.fst pair
+  have item := congrArg Prod.snd pair
+  simp only at name item
+  have nameOption : values[index]? = some key :=
+    List.getElem?_eq_some_iff.mpr ⟨namesBound, name⟩
+  rw [canonical] at nameOption
+  simp only [List.getElem?_map, List.getElem?_range namesBound, Option.map_some,
+    Option.some.injEq] at nameOption
+  exact ⟨index, returnedBound, nameOption.symm,
+    List.getElem?_eq_some_iff.mpr ⟨returnedBound, item⟩⟩
+
+/-- Factor the unchanged fields of the full caller relation after actual
+pop/setVars and return-copy updates. The existing full relation supplies every
+cold field, code/oracle obligation and dimension constraint. The conclusion
+keeps all changed frame/local/stack obligations explicit on the right of an
+iff; it does not assume the restored relation or prove it from weakened
+semantics. Target store is unchanged here, so handler-store restoration needs
+its own proof. Case-local infrastructure, with no separate HOL declaration. -/
+theorem callerStateRelUpdates {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k oldSize oldFrame : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (oldLens : List Nat) (oldExtra : Nat)
+    (locals : Spt (WordLocW width)) (sourceStack : List (WordSemStackFrame width))
+    (localsSize : Option Nat) (handler : Nat) (stack : List (WordLocW width))
+    (regs : HolFiniteMapExact Nat (WordLocW width)) (space f frame : Nat)
+    (lens : List Nat) (extra : Nat)
+    (related : stateRel ac k oldSize oldFrame source target oldLens oldExtra)
+    (length : stack.length = target.stack.length) :
+    stateRel ac k f frame
+      {source with locals := locals, stack := sourceStack, localsSize := localsSize, handler := handler}
+      {target with stack := stack, regs := regs, stackSpace := space} lens extra ↔
+      space + f ≤ stack.length ∧
+      (if frame = 0 then f = 0 else f = frame + 1) ∧ sptWf locals = true ∧
+      stackSizeRel f localsSize source.stackLimit source.stackMax sourceStack stack space extra ∧
+      (let active := stack.drop (space + extra)
+       let currentFrame := active.take f
+       let restOfStack := active.drop f
+       stackRel k handler sourceStack (target.store.lookup .handler) restOfStack
+         stack.length target.bitmaps lens ∧
+       ∀ name value, sptLookup name locals = some value →
+         name % 2 = 0 ∧
+         if name / 2 < k then regs.lookup (name / 2) = some value
+         else currentFrame[f - 1 - (name / 2 - k)]? = some value ∧ name / 2 < k + frame) := by
+  unfold stateRel at related
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16,
+    h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31,
+    h32, _, h34, _, _, _, _⟩ := related
+  simp only [stateRel, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14,
+    h15, h18, h19, h20, h21, h22, h23, h24, h26, h27, h28, h29,
+    h30, h31, h32, length, h34, true_and]
+  constructor
+  · rintro ⟨_, _, _, residual⟩
+    exact residual
+  · intro residual
+    refine ⟨h17, ?_, h25, residual⟩
+    intro n zero
+    have oracle := h23 n
+    change (source.compileOracle n).1.1 = target.bitmaps.length
+    generalize source.compileOracle n = call at oracle ⊢
+    obtain ⟨⟨bm, cfg⟩, progs⟩ := call
+    exact oracle.2.2.2.2 zero
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturning
