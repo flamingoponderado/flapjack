@@ -13448,4 +13448,3 @@ example (s : riscv_state) : «dfn'FMV_D_X» (7,1) (fixture s 3 18442240474082181
  unfold «dfn'FMV_D_X»
  simp [GPR, gpr, fixture]
  all_goals exact congrArg (fun v => writeFPRD (7, v) (fixture s 3 18442240474082181186 18446744073709551615)) numeric
-

@@ -1,4 +1,5 @@
 import Flapjack.RiscV.L3.Defs.DecodeImmediates
+import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.RiscV.L3.Defs.FPMemory
 import Flapjack.RiscV.L3.Defs.ControlFetch
 import Flapjack.RiscV.L3.Defs.FPBits
@@ -30,6 +31,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodePre
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitReduce
 import Flapjack.Compiler.Backend.StackRemove.Proofs.StackHeapLimitOk
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimitsDouble
+import Flapjack.Compiler.Backend.StackRemove.Proofs.InitModOrder
 import Flapjack.Compiler.Backend.WordUnreach.ProductionEncoderDomain
 import Flapjack.Compiler.Backend.StackProps.EvaluateAddClockIoEventsMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateIoEventsMono
@@ -366,6 +368,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.SemanticsHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Results
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Control
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Seq
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Raise
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Clock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Flat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Alloc
@@ -663,6 +666,9 @@ import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Asm
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Cbw
 import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.ShareMem
 import Flapjack.Compiler.Backend.LabToTarget.FfiBytearray
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.CallFfi
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Install
+import Flapjack.Compiler.Backend.LabToTarget.CompileCorrect.Assembly
 import Flapjack.Compiler.Backend.LabToTarget.SectionNavigation
 import Flapjack.Pancake.WordConvs.ExpressionMonotonicity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.MaxVarExp
@@ -1069,6 +1075,7 @@ import Flapjack.Compiler.Backend.StackProps.RemoveNames
 import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
+import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
