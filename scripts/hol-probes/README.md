@@ -6688,13 +6688,44 @@ No extra successful lookup, overflow bound, exclusion premise or arbitrary
 EL/default policy is used. ISR16 and the full initializer remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
 
+### Full initializer shared-memory code domain
+
+`lab_to_target_initializer_domain_probeScript.sml` captures the complete
+original initializer theorem/types0hyp and original fullguard state relation
+conjunct51 (ISR16), with zero hypotheses and kernel proof T. The original
+pre-Suspend proof replay in the basic-cases probe confirms its case mapping.
+Native proof retains all fourteen guards and derives actual full FFI search,
+name, MMIO descriptor and complete nonshared-byte exclusion from the reviewed
+extraction/offset/word-search/prefix-exclusion dependencies. All bounds and
+no-wrap facts follow from original guards; no default/EL policy is changed.
+Native fullguard consumers observe valid FFI index/descriptor and all fetched
+nonshared byte exclusions. Full initializer assembly remains open.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_domain_probeScript.sml`.
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
+
+`word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
+
+### Complete original initializer state relation
+
+`lab_to_target_initializer_full_relation_probeScript.sml` captures the whole
+original local `IMP_state_rel_make_init` after Finalise, every variable type,
+zero hypotheses and kernel proof T. It also captures the complete original
+`state_rel_def`, its variable types, zero hypotheses and all53conjunct count.
+Native `makeInit_stateRel` retains all14 original guards/all binders and proves
+the complete actual initialized relation by internally applying all17 checked
+source cases plus original direct configuration/initial-state/removal facts.
+No case proof, target relation or new success/bound/output premise is passed
+by the caller. A native fullguard consumer derives actual compile equality
+and aligned target-memory bytes through the complete relation.
+Machine/compile semantics and end-to-end correctness remain open; inherited
+real-rendering assurance and totalHD/EL holds are unchanged.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScript.sml`.
+
 `word_to_stack_inter_union_left_probeScript.sml` replays the literal original
 `inter_union_left` proof (word_to_stackProof2678–2685), preserving its essential
 `wf s` premise and arbitrary Spt payload carrier. Statement, proved=T, and zero
 hypotheses are captured; this is original HOL evidence, not a cross-assistant
 equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
-
-`word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
 
 `word_to_stack_abs_stack_prefix_drop_probe` replays the full original local
 suffix theorem and its unexported local prerequisites using unchanged source
@@ -6703,3 +6734,4 @@ ABBREV. Five rows record the entire theorem, proof=T, zero hypotheses, and both
 inferred stack carrier types. Native StackAbstractionSuffix retains all four
 premises and both conclusions; this does not establish full Raise correctness
 or HOL-to-Lean equivalence.
+

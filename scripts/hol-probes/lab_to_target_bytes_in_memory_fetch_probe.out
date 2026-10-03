@@ -1,0 +1,391 @@
+prog_to_bytes_lemma=∀code2 code1 pc i pos.
+  code_similar code1 code2 ∧
+  all_enc_ok mc_conf.target.config labs ffi_names pos code2 ∧
+  asm_fetch_aux pc code1 = SOME i ⇒
+  ∃bs j bs2.
+    prog_to_bytes code2 = bs ++ line_bytes j ++ bs2 ∧
+    LENGTH bs + pos = pos_val pc pos code2 ∧
+    LENGTH bs + pos + LENGTH (line_bytes j) = pos_val (pc + 1) pos code2 ∧
+    line_similar i j ∧
+    line_ok mc_conf.target.config labs ffi_names (pos_val pc pos code2) j
+prog_to_bytes_lemma_types=∀(code2 :α sec list) (code1 :α sec list) (pc :num) (i :α line) (pos :num).
+  code_similar code1 code2 ∧
+  all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+    (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list) pos
+    code2 ∧ asm_fetch_aux pc code1 = SOME i ⇒
+  ∃(bs :word8 list) (j :α line) (bs2 :word8 list).
+    prog_to_bytes code2 = bs ++ line_bytes j ++ bs2 ∧
+    LENGTH bs + pos = pos_val pc pos code2 ∧
+    LENGTH bs + pos + LENGTH (line_bytes j) =
+    pos_val (pc + (1 :num)) pos code2 ∧ line_similar i j ∧
+    line_ok mc_conf.target.config labs ffi_names (pos_val pc pos code2) j
+IMP_bytes_in_memory=code_similar code1 code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+asm_fetch_aux pc code1 = SOME i ∧
+bytes_in_mem p (prog_to_bytes code2) m dm dm1 ⇒
+∃j. bytes_in_mem (p + n2w (pos_val pc 0 code2)) (line_bytes j) m dm dm1 ∧
+    line_ok mc_conf.target.config labs ffi_names (pos_val pc 0 code2) j ∧
+    pos_val (pc + 1) 0 code2 = pos_val pc 0 code2 + LENGTH (line_bytes j) ∧
+    line_similar i j
+IMP_bytes_in_memory_types=code_similar (code1 :α sec list) (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧ asm_fetch_aux (pc :num) code1 = SOME (i :α line) ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (m :α word -> word8)
+  (dm :α word -> bool) (dm1 :α word -> bool) ⇒
+∃(j :α line).
+  bytes_in_mem (p + (n2w (pos_val pc (0 :num) code2) :α word)) (line_bytes j)
+    m dm dm1 ∧
+  line_ok mc_conf.target.config labs ffi_names (pos_val pc (0 :num) code2) j ∧
+  pos_val (pc + (1 :num)) (0 :num) code2 =
+  pos_val pc (0 :num) code2 + LENGTH (line_bytes j) ∧ line_similar i j
+IMP_bytes_in_memory_JumpReg=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (Asm (Asmi (JumpReg r1)) l n) ⇒
+bytes_in_memory (p + n2w (pos_val s1.pc 0 code2))
+  (mc_conf.target.config.encode (JumpReg r1)) t1.mem t1.mem_domain ∧
+asm_ok (JumpReg r1) mc_conf.target.config
+IMP_bytes_in_memory_JumpReg_types=code_similar (s1 :(α, γ, δ) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME (Asm (Asmi (JumpReg (r1 :num) :α asm)) (l :word8 list) (n :num)) ⇒
+bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word))
+  (mc_conf.target.config.encode (JumpReg r1 :α asm)) t1.mem t1.mem_domain ∧
+asm_ok (JumpReg r1 :α asm) mc_conf.target.config
+IMP_bytes_in_memory_Jump=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm (Jump jtarget) l bytes n) ⇒
+∃tt enc.
+  tt = n2w (find_pos jtarget labs) − n2w (pos_val s1.pc 0 code2) ∧
+  enc = mc_conf.target.config.encode (Jump tt) ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) enc t1.mem t1.mem_domain ∧
+  asm_ok (Jump tt) mc_conf.target.config
+IMP_bytes_in_memory_Jump_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (LabAsm (Jump (jtarget :lab) :α asm_with_lab) (l :α word)
+     (bytes :word8 list) (n :num)) ⇒
+∃(tt :α word) (enc :word8 list).
+  tt =
+  (n2w (find_pos jtarget labs) :α word) −
+  (n2w (pos_val s1.pc (0 :num) code2) :α word) ∧
+  enc = mc_conf.target.config.encode (Jump tt :α asm) ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) enc
+    t1.mem t1.mem_domain ∧ asm_ok (Jump tt :α asm) mc_conf.target.config
+IMP_bytes_in_memory_JumpCmp=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm (JumpCmp cmp rr ri jtarget) l bytes n) ⇒
+∃tt enc.
+  tt = n2w (find_pos jtarget labs) − n2w (pos_val s1.pc 0 code2) ∧
+  enc = mc_conf.target.config.encode (JumpCmp cmp rr ri tt) ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) enc t1.mem t1.mem_domain ∧
+  asm_ok (JumpCmp cmp rr ri tt) mc_conf.target.config
+IMP_bytes_in_memory_JumpCmp_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (LabAsm
+     (JumpCmp (cmp :cmp) (rr :num) (ri :α reg_imm) (jtarget :lab) :
+      α asm_with_lab) (l :α word) (bytes :word8 list) (n :num)) ⇒
+∃(tt :α word) (enc :word8 list).
+  tt =
+  (n2w (find_pos jtarget labs) :α word) −
+  (n2w (pos_val s1.pc (0 :num) code2) :α word) ∧
+  enc = mc_conf.target.config.encode (JumpCmp cmp rr ri tt :α asm) ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) enc
+    t1.mem t1.mem_domain ∧
+  asm_ok (JumpCmp cmp rr ri tt :α asm) mc_conf.target.config
+IMP_bytes_in_memory_JumpCmp_1=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm (JumpCmp cmp rr ri jtarget) l bytes n) ⇒
+∃tt bytes.
+  tt = n2w (find_pos jtarget labs) − n2w (pos_val s1.pc 0 code2) ∧
+  enc_with_nop mc_conf.target.config.encode (JumpCmp cmp rr ri tt) bytes ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem
+    t1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes ∧
+  asm_ok (JumpCmp cmp rr ri tt) mc_conf.target.config
+IMP_bytes_in_memory_JumpCmp_1_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (LabAsm
+     (JumpCmp (cmp :cmp) (rr :num) (ri :α reg_imm) (jtarget :lab) :
+      α asm_with_lab) (l :α word) (bytes :word8 list) (n :num)) ⇒
+∃(tt :α word) (bytes :word8 list).
+  tt =
+  (n2w (find_pos jtarget labs) :α word) −
+  (n2w (pos_val s1.pc (0 :num) code2) :α word) ∧
+  enc_with_nop mc_conf.target.config.encode (JumpCmp cmp rr ri tt :α asm)
+    bytes ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  pos_val s1.pc (0 :num) code2 + LENGTH bytes ∧
+  asm_ok (JumpCmp cmp rr ri tt :α asm) mc_conf.target.config
+IMP_bytes_in_memory_Call=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm (Call ww) l bytes n) ⇒
+F
+IMP_bytes_in_memory_Call_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (LabAsm (Call (ww :lab) :α asm_with_lab) (l :α word) (bytes :word8 list)
+     (n :num)) ⇒
+F
+IMP_bytes_in_memory_LocValue=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm (LocValue reg (Lab l1 l2)) l bytes n) ⇒
+∃tt bytes.
+  tt = n2w (find_pos (Lab l1 l2) labs) − n2w (pos_val s1.pc 0 code2) ∧
+  enc_with_nop mc_conf.target.config.encode (Loc reg tt) bytes ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem
+    t1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes ∧
+  asm_ok (Loc reg tt) mc_conf.target.config
+IMP_bytes_in_memory_LocValue_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (LabAsm (LocValue (reg :num) (Lab (l1 :num) (l2 :num)) :α asm_with_lab)
+     (l :α word) (bytes :word8 list) (n :num)) ⇒
+∃(tt :α word) (bytes :word8 list).
+  tt =
+  (n2w (find_pos (Lab l1 l2) labs) :α word) −
+  (n2w (pos_val s1.pc (0 :num) code2) :α word) ∧
+  enc_with_nop mc_conf.target.config.encode (Loc reg tt :α asm) bytes ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  pos_val s1.pc (0 :num) code2 + LENGTH bytes ∧
+  asm_ok (Loc reg tt :α asm) mc_conf.target.config
+IMP_bytes_in_memory_Inst=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (Asm (Asmi (Inst i)) bytes len) ⇒
+∃bytes.
+  enc_with_nop mc_conf.target.config.encode (Inst i) bytes ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem
+    t1.mem_domain ∧
+  bytes_in_mem (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem t1.mem_domain
+    s1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes ∧
+  asm_ok (Inst i) mc_conf.target.config
+IMP_bytes_in_memory_Inst_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME (Asm (Asmi (Inst (i :α inst) :α asm)) (bytes :word8 list) (len :num)) ⇒
+∃(bytes :word8 list).
+  enc_with_nop mc_conf.target.config.encode (Inst i :α asm) bytes ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain ∧
+  bytes_in_mem (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain s1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  pos_val s1.pc (0 :num) code2 + LENGTH bytes ∧
+  asm_ok (Inst i :α asm) mc_conf.target.config
+IMP_bytes_in_memory_Cbw=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (Asm (Cbw r1 r2) bytes len) ⇒
+∃bytes.
+  enc_with_nop mc_conf.target.config.encode
+    (Inst (Mem Store8 r2 (Addr r1 0w))) bytes ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem
+    t1.mem_domain ∧
+  bytes_in_mem (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem t1.mem_domain
+    s1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes ∧
+  asm_ok (Inst (Mem Store8 r2 (Addr r1 0w))) mc_conf.target.config
+IMP_bytes_in_memory_Cbw_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (Asm (Cbw (r1 :num) (r2 :num) :α asm_or_cbw) (bytes :word8 list) (len :num)) ⇒
+∃(bytes :word8 list).
+  enc_with_nop mc_conf.target.config.encode
+    (Inst (Mem Store8 r2 (Addr r1 (0w :α word))) :α asm) bytes ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain ∧
+  bytes_in_mem (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain s1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  pos_val s1.pc (0 :num) code2 + LENGTH bytes ∧
+  asm_ok (Inst (Mem Store8 r2 (Addr r1 (0w :α word))) :α asm)
+    mc_conf.target.config
+IMP_bytes_in_memory_CallFFI=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm (CallFFI name) l bytes n) ⇒
+∃tt enc.
+  tt =
+  0w −
+  n2w
+    (pos_val s1.pc 0 code2 +
+     (3 + get_ffi_index ffi_names (ExtCall name)) * ffi_offset) ∧
+  enc = mc_conf.target.config.encode (Jump tt) ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) enc t1.mem t1.mem_domain ∧
+  asm_ok (Jump tt) mc_conf.target.config
+IMP_bytes_in_memory_CallFFI_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME
+  (LabAsm (CallFFI (name :mlstring) :α asm_with_lab) (l :α word)
+     (bytes :word8 list) (n :num)) ⇒
+∃(tt :α word) (enc :word8 list).
+  tt =
+  (0w :α word) −
+  (n2w
+     (pos_val s1.pc (0 :num) code2 +
+      ((3 :num) + get_ffi_index ffi_names (ExtCall name)) * ffi_offset) :
+   α word) ∧ enc = mc_conf.target.config.encode (Jump tt :α asm) ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) enc
+    t1.mem t1.mem_domain ∧ asm_ok (Jump tt :α asm) mc_conf.target.config
+IMP_bytes_in_memory_Halt=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm Halt l bytes n) ⇒
+∃tt enc.
+  tt = 0w − n2w (pos_val s1.pc 0 code2 + ffi_offset) ∧
+  enc = mc_conf.target.config.encode (Jump tt) ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) enc t1.mem t1.mem_domain ∧
+  asm_ok (Jump tt) mc_conf.target.config
+IMP_bytes_in_memory_Halt_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME (LabAsm (Halt :α asm_with_lab) (l :α word) (bytes :word8 list) (n :num)) ⇒
+∃(tt :α word) (enc :word8 list).
+  tt =
+  (0w :α word) − (n2w (pos_val s1.pc (0 :num) code2 + ffi_offset) :α word) ∧
+  enc = mc_conf.target.config.encode (Jump tt :α asm) ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) enc
+    t1.mem t1.mem_domain ∧ asm_ok (Jump tt :α asm) mc_conf.target.config
+IMP_bytes_in_memory_Install=code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 = SOME (LabAsm Install c l n) ⇒
+∃tt enc.
+  tt = 0w − n2w (pos_val s1.pc 0 code2 + 2 * ffi_offset) ∧
+  enc = mc_conf.target.config.encode (Jump tt) ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) enc t1.mem t1.mem_domain ∧
+  asm_ok (Jump tt) mc_conf.target.config
+IMP_bytes_in_memory_Install_types=code_similar (s1 :(α, config, 'ffi) labSem$state).code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ∧
+asm_fetch s1 =
+SOME (LabAsm (Install :α asm_with_lab) (c :α word) (l :word8 list) (n :num)) ⇒
+∃(tt :α word) (enc :word8 list).
+  tt =
+  (0w :α word) −
+  (n2w (pos_val s1.pc (0 :num) code2 + (2 :num) * ffi_offset) :α word) ∧
+  enc = mc_conf.target.config.encode (Jump tt :α asm) ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) enc
+    t1.mem t1.mem_domain ∧ asm_ok (Jump tt :α asm) mc_conf.target.config
+bytes_in_mem_IMP_memory=∀xs a.
+  (∀a. a ∉ dm1 ⇒ m a = m1 a) ⇒
+  bytes_in_mem a xs m dm dm1 ⇒
+  bytes_in_memory a xs m1 dm
+bytes_in_mem_IMP_memory_types=∀(xs :word8 list) (a :α word).
+  (∀(a :α word).
+     a ∉ (dm1 :α word -> bool) ⇒
+     (m :α word -> word8) a = (m1 :α word -> word8) a) ⇒
+  bytes_in_mem a xs m (dm :α word -> bool) dm1 ⇒
+  bytes_in_memory a xs m1 dm
+asm_fetch_aux_pos_val_LENGTH_EQ=∀pc n code2 line.
+  asm_fetch_aux pc code2 = SOME line ∧
+  all_enc_ok conf labs ffi_names n code2 ∧
+  pos_val (pc + 1) n code2 = LENGTH bytes' + pos_val pc n code2 ⇒
+  LENGTH (line_bytes line) = LENGTH bytes'
+asm_fetch_aux_pos_val_LENGTH_EQ_types=∀(pc :num) (n :num) (code2 :α sec list) (line :α line).
+  asm_fetch_aux pc code2 = SOME line ∧
+  all_enc_ok (conf :α asm_config) (labs :num sptree$num_map sptree$num_map)
+    (ffi_names :ffiname list) n code2 ∧
+  pos_val (pc + (1 :num)) n code2 =
+  LENGTH (bytes' :word8 list) + pos_val pc n code2 ⇒
+  LENGTH (line_bytes line) = LENGTH bytes'
+IMP_bytes_in_memory_ShareMem=asm_fetch_aux s1.pc s1.code = SOME (Asm (ShareMem mop r ad) l n) ∧
+code_similar s1.code code2 ∧
+all_enc_ok mc_conf.target.config labs ffi_names 0 code2 ∧
+bytes_in_mem p (prog_to_bytes code2) t1.mem t1.mem_domain s1.mem_domain ⇒
+∃bytes.
+  asm_fetch_aux s1.pc code2 =
+  SOME (Asm (ShareMem mop r ad) bytes (LENGTH bytes)) ∧
+  enc_with_nop mc_conf.target.config.encode (Inst (Mem mop r ad)) bytes ∧
+  bytes_in_memory (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem
+    t1.mem_domain ∧
+  bytes_in_mem (p + n2w (pos_val s1.pc 0 code2)) bytes t1.mem t1.mem_domain
+    s1.mem_domain ∧
+  pos_val (s1.pc + 1) 0 code2 = pos_val s1.pc 0 code2 + LENGTH bytes ∧
+  asm_ok (Inst (Mem mop r ad)) mc_conf.target.config
+IMP_bytes_in_memory_ShareMem_types=asm_fetch_aux (s1 :(α, config, 'ffi) labSem$state).pc s1.code =
+SOME
+  (Asm (ShareMem (mop :memop) (r :num) (ad :α addr)) (l :word8 list) (n :num)) ∧
+code_similar s1.code (code2 :α sec list) ∧
+all_enc_ok (mc_conf :(α, 'state, β) machine_config).target.config
+  (labs :num sptree$num_map sptree$num_map) (ffi_names :ffiname list)
+  (0 :num) code2 ∧
+bytes_in_mem (p :α word) (prog_to_bytes code2) (t1 :α asm_state).mem
+  t1.mem_domain s1.mem_domain ⇒
+∃(bytes :word8 list).
+  asm_fetch_aux s1.pc code2 =
+  SOME (Asm (ShareMem mop r ad) bytes (LENGTH bytes)) ∧
+  enc_with_nop mc_conf.target.config.encode (Inst (Mem mop r ad) :α asm)
+    bytes ∧
+  bytes_in_memory (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain ∧
+  bytes_in_mem (p + (n2w (pos_val s1.pc (0 :num) code2) :α word)) bytes
+    t1.mem t1.mem_domain s1.mem_domain ∧
+  pos_val (s1.pc + (1 :num)) (0 :num) code2 =
+  pos_val s1.pc (0 :num) code2 + LENGTH bytes ∧
+  asm_ok (Inst (Mem mop r ad) :α asm) mc_conf.target.config
