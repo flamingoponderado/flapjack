@@ -1796,10 +1796,10 @@
       "sha256": "f074c186c4835a90214f1e905db72d1c3ac1628326a17e94ccf3e9ca7d758a00"
     },
     {
-      "bytes": 368,
+      "bytes": 897,
       "out": "lab_to_target_code_safety_transport_probe.out",
-      "rows": 5,
-      "sha256": "d188292d36c455b3ff9490e07b6328a3910ab4bb52ba1d2c6ce117be0c3db0bb"
+      "rows": 11,
+      "sha256": "9739ace986f91078ab865c8180b6d029e43e3e28f33203a12ece283dac44e6c9"
     },
     {
       "bytes": 1060,

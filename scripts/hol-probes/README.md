@@ -6534,3 +6534,14 @@ rejection of instruction changes. Target safety follows from the full original
 fetched-line relation and source safety, without target safety assumptions or
 default/HD/EL use. The full initializer remains open. Selector:
 `HOL_PROBE_ONLY=lab_to_target_code_safety_transport_probeScript.sml`.
+
+The same code-safety transport group now captures full
+`code_similar_IMP_both_no_install_or_no_share_mem` at7380 and every free-variable
+carrier. Actual original theorem instances discharge their complete source
+premises for Install with external-only FFI names and changed word positions,
+bytes and lengths, and for Skip with a shared-memory FFI name. Install with that
+shared name fails the original safety predicate. Native generic consumers cover
+both branches, arbitrary annotation payloads and unchanged exact HolFfiName
+lists. Neither alternative is strengthened or discarded, and no target safety
+premise/default/HD/EL dependency is introduced. The single original capture is
+regenerated in full; prior shared-memory transport rows remain unchanged.

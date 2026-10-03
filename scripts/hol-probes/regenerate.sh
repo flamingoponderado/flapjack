@@ -6143,5 +6143,7 @@ run_probe word_to_stack_comp_clock_probeScript.sml word_to_stack_comp_clock_prob
 
 run_probe lab_to_target_code_safety_transport_probeScript.sml lab_to_target_code_safety_transport_probe.out \
   code_similar_IMP_both_no_share_mem code_similar_IMP_both_no_share_mem_types code_similar_IMP_both_no_share_mem_hypotheses \
+  code_similar_IMP_both_no_install_or_no_share_mem code_similar_IMP_both_no_install_or_no_share_mem_types code_similar_IMP_both_no_install_or_no_share_mem_hypotheses \
   changed_bytes_length_safe instruction_change_rejected \
+  install_external_branch skip_shared_name_branch install_shared_name_rejected \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
