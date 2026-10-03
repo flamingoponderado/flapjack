@@ -85136,5 +85136,14 @@
     "hol_name": "default_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: clos_to_bvlScript687-705 literal seven-field config retains Nat next_loc/start/max_app, Bool do_mti/do_call, Option actual ClosKnown.Config and call_state num_set # (num,num # ClosLang.Exp) alist. NumSet=Spt Unit, alist=List(Nat x (Nat x Exp)); no raw finite-map or generic syntax parameter. Exact default next_loc0/start1/do_mtiT/known_conf SOME(clos_known default_config10)/do_callT/call_state(LN,[])/max_app10. Full source/default types captured; no omitted unused fields, extra defaults or executed production-adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WellFormedData.lean",
+    "lean_name": "wfData",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-wf-data): word_cseProof25-54 all eleven conjuncts retained in source order: canonical self/odd facts; latest canonical-domain membership; instruction holder canonical self; arbitrary arith key implies in_names_set and can_mem_arith; CurrHeap key implies canonical source self; ordered store ALOOKUP implies canonical holder self; distinct store keys; full instruction-tree invariant; load holder self; arbitrary memop/address/word-offset load key implies canonical address self; full load-tree invariant. Nat ODD is modulo-two equality one, Bool can_mem_arith is equality true, source ALL_DISTINCT(MAP FST) is List.Nodup after Prod.fst, and exact sparse-tree domain membership uses sptDomain. Both fact maps retain literal balanced-tree cached sizes/order/balance, store facts retain original list first lookup and fixed-five-bit Temp store names. The original type-itself word dimension is width:Nat/NeZero width, appearing only in internally quantified full HolArith width and BitVec width offset; the reviewed internal-predicate qualifier route records these actual binder types without a dummy signature word, narrowed operation/offset quantifier, flatness, successful run or desired invariant premise. No executed-state correspondence or full comp_correct port is claimed."
   }
 ]
