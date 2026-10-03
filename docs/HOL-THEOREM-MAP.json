@@ -26467,6 +26467,20 @@
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.2): HOL pair_map_I (word_removeProofScript.sml:254-260). HOL local, polymorphic: (λ(k,v). (k,f v)) = (I ## f) ∧ (λ(k,v). (f k,v)) = (f ## I) with one f : β → γ used in both conjuncts as HOL type inference forces; PAIR_MAP is Prod.map and I is id. No state or word carrier, so unqualified. Kernel-checked; no extra hypothesis."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordRemove/Proofs/Correct.lean",
+    "lean_name": "word_remove_correct",
+    "hol_path": "cakeml/compiler/backend/proofs/word_removeProofScript.sml",
+    "hol_name": "word_remove_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.43.3): HOL word_remove_correct (word_removeProofScript.sml:262-430, including the resumed Loop case): ∀prog st res rst. evaluate (prog,st) = (res,rst) ∧ st.compile = (λcfg. c cfg o (MAP (I ## I ## remove_must_terminate))) ∧ res ≠ SOME Error ⇒ ∃clk. evaluate (remove_must_terminate prog, compile_state clk c st) = (res, compile_state 0 c rst). HOL's free c is the outermost explicit binder (exact compile-field type WordCompileFn); prog st res rst in HOL order; the three-way conjunctive premise is literal (I ## I ## f as fun t => (t.1, t.2.1, f t.2.2), o as Function.comp, MAP as List.map); the existential conclusion is exactly HOL's over the tagged exact wordSem evaluate, the tagged removeMustTerminate and the tagged compileState. No target-run, simulation, clock or termdep premise. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordRemoveCorrectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Proof follows HOL's recInduct evaluate_ind: untagged word_remove_correct_aux recurses on HOL's measure (termdep, clock, size); MustTerminate uses the tagged evaluate_dec_clock then evaluate_add_clock with clk + MustTerminate_limit - s1.clock as HOL; Seq/Loop/returning Call combine clocks with the tagged evaluate_add_clock_compile_state; Install uses the compile premise with the tagged sptree map_union/map_fromAList; the remaining constant statements commute with compile_state via the tagged commutation group. Kernel-checked; standard axioms. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
     "hol_name": "strong_locals_rel_set_vars_dom",
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/Updates.lean",
@@ -51520,6 +51534,38 @@
     "lean_name": "sptLookup_sptMap",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus2 source comparison 2026-10-02 (bead flapjack-pxn.18.5.11.5.11.14): pinned HOL submodule a390cbabd3a4521bab4ee20281e3e42933a8a3ae: sptreeScript.sml:1565-1569 ∀s x. lookup x (map f s) = OPTION_MAP f (lookup x s), f free in HOL (explicit Lean parameter); over the reviewed Spt carrier with the tagged sptMap/sptLookup, OPTION_MAP as Option.map. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "domain_map",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptDomain_sptMap",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1561-1563 ∀s. domain (map f s) = domain s, f free (explicit Lean parameter); domain as the reviewed sptDomain predicate (lookup isSome), set equality as function equality over the tagged sptMap. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "map_insert",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptMap_sptInsert",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1586-1602 ∀f x y z. map f (insert x y z) = insert x (f y) (map f z), binders in HOL order over the tagged sptMap/sptInsert. Kernel-checked by strong induction on the key as HOL; no premise (no wf assumption)."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "map_fromAList",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptMap_sptFromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1604-1610 map f (fromAList ls) = fromAList (MAP (λ(k,v). (k, f v)) ls), f ls free (explicit Lean parameters), the paired lambda as a pattern-matching function, MAP as List.map, over the tagged sptMap/sptFromAList. Kernel-checked; no premise."
+  },
+  {
+    "hol_path": "HOL/src/finite_maps/sptreeScript.sml",
+    "hol_name": "map_union",
+    "lean_path": "Flapjack/Misc/Sptree/Map.lean",
+    "lean_name": "sptMap_sptUnion",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-03 (bead flapjack-pxn.18.5.15.2.43.3 prerequisite): pinned HOL submodule, sptreeScript.sml:1786-1791 ∀t1 t2. map f (union t1 t2) = union (map f t1) (map f t2), f free, over the tagged sptMap/sptUnion. Kernel-checked; no premise."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
