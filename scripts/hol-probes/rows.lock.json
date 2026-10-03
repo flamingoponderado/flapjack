@@ -4532,6 +4532,12 @@
       "sha256": "708dacc3619cc46ad86d4235939dd5b298634a2bc3671437474baf80ed0d9a80"
     },
     {
+      "bytes": 3520,
+      "out": "pan_simp_semantics_statement_probe.out",
+      "rows": 11,
+      "sha256": "0ff7532c92695be4ddc283e20ed413e86a457c726925ebd5a23872134782b9d9"
+    },
+    {
       "bytes": 285,
       "out": "pan_store32_endian_probe.out",
       "rows": 7,
