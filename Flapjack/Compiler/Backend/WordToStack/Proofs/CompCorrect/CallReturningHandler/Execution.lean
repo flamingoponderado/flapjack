@@ -280,4 +280,168 @@ theorem exceptionHandlerCallFromCallee {width : Nat} [NeZero width] {C F : Type}
       destination calleeCode continuationTarget compiled targetResult found movedNonzero exceptionRun
       handlerRun,conclusion⟩
 
+/-- Compose the actual SOME destination/save/Push/argument prelude and
+enclosing native Call into the literal full compiled programme. Compiler
+equations identify both continuations and all prefixes; unconditional clock
+transport derives moved.clock = target.clock, retaining every Call outcome.
+The local prelude and Call executions are constructed by the guarded case
+components; no full compiled evaluation is assumed. Flapjack composition
+inside the still-unassembled original returning-handler correctness case. -/
+theorem completeHandlerCallFromPrelude {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k frame payload : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width))
+    (l1 l2 handlerVar h1 h2 : Nat) (dest : Option Nat) (args : List Nat)
+    (bs savedBs retBs handlerBs : AppList (BitVec width))
+    (n savedIndex retIndex handlerIndex : Nat)
+    (destinationCode savedCode returnCode handlerTarget compiled : HolProg width)
+    (destination : Sum Nat Nat)
+    (target moved targetPost : StackSemStateFiniteExact width C F)
+    (extra : Nat) (result : Option (StackSemResult width))
+    (destinationCompile : callDestNative dest args (k,frame,payload) = (destinationCode,destination))
+    (savedCompile : wLiveNative names (bs,n) (k,frame,payload) = (savedCode,(savedBs,savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBs,savedIndex) (k,frame,payload) =
+      (returnCode,(retBs,retIndex)))
+    (handlerCompile : compNative ac false handlerCode (retBs,retIndex) (k,frame,payload) =
+      (handlerTarget,(handlerBs,handlerIndex)))
+    (compilation : compNative ac false
+      (.call (some (values,names,retCode,l1,l2)) dest args
+        (some (handlerVar,handlerCode,h1,h2))) (bs,n) (k,frame,payload) =
+      (compiled,(handlerBs,handlerIndex)))
+    (preludeRun : StackSemEvaluate.evaluate
+      (.seq destinationCode (.seq savedCode (.seq (pushHandlerNative false h1 h2 (k,frame,payload))
+        (stackHandlerArgsNative false destination (args.length+1) (k,frame,payload)))),target) =
+      (none,moved))
+    (callRun : StackSemEvaluate.evaluate
+      (.call (some (.seq .skip (copyRetNative false true (k,frame,payload) values
+        (popHandlerNative false (k,frame,payload) returnCode)),0,l1,l2))
+        destination (some (handlerTarget,h1,h2)),{moved with clock := moved.clock+extra}) =
+      (result,targetPost)) :
+    StackSemEvaluate.evaluate (compiled,{target with clock := target.clock+extra}) =
+      (result,targetPost) := by
+  have free := completeHandlerPreludeClockFree (C := C) (F := F) k frame payload h1 h2 dest args names
+    (bs,n) (savedBs,savedIndex) destinationCode savedCode destination destinationCompile savedCompile
+  have fixed := free target target.clock
+  change StackSemEvaluate.evaluate
+    (.seq destinationCode (.seq savedCode (.seq (pushHandlerNative false h1 h2 (k,frame,payload))
+      (stackHandlerArgsNative false destination (args.length+1) (k,frame,payload)))),target) =
+    (Prod.map id (fun state => {state with clock := target.clock}))
+      (StackSemEvaluate.evaluate
+        (.seq destinationCode (.seq savedCode (.seq (pushHandlerNative false h1 h2 (k,frame,payload))
+          (stackHandlerArgsNative false destination (args.length+1) (k,frame,payload)))),target)) at fixed
+  rw [preludeRun] at fixed
+  have clockEq : moved.clock = target.clock := congrArg (fun state => state.clock) (Prod.mk.inj fixed).2
+  have shifted := free target (target.clock+extra)
+  rw [preludeRun] at shifted
+  simp only [Prod.map,id_eq] at shifted
+  have outputClock : {moved with clock := target.clock+extra} =
+      {moved with clock := moved.clock+extra} := by rw [clockEq]
+  rw [outputClock] at shifted
+  rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
+    Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc] at shifted
+  simp only [compNative,destinationCompile,savedCompile,returnCompile,handlerCompile,
+    Bool.false_eq_true,if_false,Prod.mk.injEq] at compilation
+  obtain ⟨rfl,_⟩ := compilation
+  rw [Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
+    Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc,
+    Compiler.Backend.StackRemove.CopyLoopProof.sequenceAssoc]
+  rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,shifted]
+  simp only
+  rw [StackSemEvaluate.evaluate_seq,StackSemEvaluateClock.fixClockEvaluate,
+    StackSemEvaluate.evaluate_skip]
+  exact callRun
+
+/-- Actual enclosing native SOME Call for the terminal callee branches. The
+callee execution is the original IH output; dispatch derives the whole Call
+run, retaining Timeout, Halt and FinalFFI and their exact native post-states.
+This is case-local execution composition, not a full HOL correctness port. -/
+theorem returningHandlerCallTerminalRun {width : Nat} [NeZero width] {C F : Type}
+    (target targetPost : StackSemStateFiniteExact width C F)
+    (l1 l2 h1 h2 extra : Nat) (destination : Sum Nat Nat)
+    (body continuation handler : HolProg width) (result : Option (StackSemResult width))
+    (found : StackSemControl.findCode destination (target.regs.eraseEq 0) target.code = some body)
+    (nonzero : target.clock ≠ 0)
+    (bodyRun : StackSemEvaluate.evaluate
+      (body, {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock target) with
+        clock := (StackSemStateOps.decClock target).clock + extra}) = (result, targetPost))
+    (terminal : result = some .timeOut ∨ (∃ value, result = some (.halt value)) ∨
+      ∃ event, result = some (.finalFFI event)) :
+    StackSemEvaluate.evaluate
+      (.call (some (continuation, 0, l1, l2)) destination (some (handler,h1,h2)),
+        {target with clock := target.clock + extra}) = (result, targetPost) := by
+  rw [returningCallDispatchClock target 0 l1 l2 extra
+    destination body continuation (some (handler,h1,h2)) found nonzero]
+  change (match StackSemEvaluate.evaluate
+    (body, {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock target) with
+      clock := (StackSemStateOps.decClock target).clock + extra}) with
+    | (some (.result location), post) =>
+        if location ≠ WordLocW.loc l1 l2 then (some StackSemResult.error, post)
+        else StackSemEvaluate.evaluate (continuation, post)
+    | (some (.exception location), post) =>
+        if location ≠ WordLocW.loc h1 h2 then (some StackSemResult.error,post)
+        else StackSemEvaluate.evaluate (handler,post)
+    | (none, post) => (some StackSemResult.error, post)
+    | (some (.break _), post) => (some StackSemResult.error, post)
+    | (some (.continue _), post) => (some StackSemResult.error, post)
+    | (result, post) => (result, post)) = _
+  rw [bodyRun]
+  rcases terminal with rfl | ⟨value, rfl⟩ | ⟨event, rfl⟩ <;> rfl
+
+
+/-- Connect the actual terminal native Call execution with the full original
+caller contract. The callee run and contract are outputs of the original
+callee IH. Matching terminal results use exact source propagation; unmatched
+results use the full trace/resource branch and all source outcomes remain
+available. No enclosing target Call run is assumed. This is a case-local
+assembly component; the full guarded theorem remains open. -/
+theorem terminalHandlerCallFromCallee {width : Nat} [NeZero width] {C F : Type}
+    (ac : Compiler.Encoders.Asm.AsmConfigExact width)
+    (k callerSize callerFrame calleeSize calleeFrame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode handlerCode : WordLangProgHOL (BitVec width)) (l1 l2 handlerVar h1 h2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (source sourcePost bodyPost : WordSemStateFiniteExact width (Nat × C) F)
+    (result bodyResult : Option (WordSemResult width))
+    (initial moved targetPost : StackSemStateFiniteExact width C F)
+    (targetResult : Option (StackSemResult width)) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (extra : Nat) (destination : Sum Nat Nat) (body continuation handlerTarget : HolProg width)
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source xs args1 prog ss envs)
+    (callerRelation : stateRel ac k callerSize callerFrame source initial lens 0)
+    (nonzero : source.clock ≠ 0)
+    (execution : WordSemStateFiniteExact.evaluate
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar,handlerCode,h1,h2))) source = (result, sourcePost))
+    (bodyRun : WordSemStateFiniteExact.evaluate prog
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source))) =
+      (bodyResult, bodyPost))
+    (found : StackSemControl.findCode destination (moved.regs.eraseEq 0) moved.code = some body)
+    (movedNonzero : moved.clock ≠ 0)
+    (calleeRun : StackSemEvaluate.evaluate
+      (body, {StackSemStateOps.setVar 0 (.loc l1 l2) (StackSemStateOps.decClock moved) with
+        clock := (StackSemStateOps.decClock moved).clock + extra}) = (targetResult, targetPost))
+    (bodyConclusion : compCorrectResult ac k calleeSize calleeFrame
+      (WordSemStateFiniteExact.callEnv args1 ss
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) (WordSemStateFiniteExact.decClock source)))
+      bodyPost targetPost bodyResult targetResult (callerFrame :: lens))
+    (terminal : targetResult = some .timeOut ∨ (∃ value, targetResult = some (.halt value)) ∨
+      ∃ event, targetResult = some (.finalFFI event)) :
+    StackSemEvaluate.evaluate
+      (.call (some (continuation, 0, l1, l2)) destination (some (handlerTarget,h1,h2)),
+        {moved with clock := moved.clock + extra}) = (targetResult, targetPost) ∧
+    compCorrectResult ac k callerSize callerFrame source sourcePost targetPost result targetResult lens := by
+  constructor
+  · exact returningHandlerCallTerminalRun moved targetPost l1 l2 h1 h2 extra destination body continuation handlerTarget
+      targetResult found movedNonzero calleeRun terminal
+  · by_cases matching : bodyResult.map compileResult = targetResult
+    · exact handlerBodyTerminalResult ac k callerSize callerFrame calleeSize calleeFrame values names
+        retCode handlerCode l1 l2 handlerVar h1 h2 dest args source sourcePost bodyPost result bodyResult targetPost targetResult
+        lens xs args1 prog ss envs guards nonzero execution bodyRun
+        (CallReturning.matchingTerminalSource bodyResult targetResult matching terminal) bodyConclusion matching
+    · exact handlerBodyMismatchResult ac k callerSize callerFrame calleeSize calleeFrame values names
+        retCode handlerCode l1 l2 handlerVar h1 h2 dest args source sourcePost bodyPost result bodyResult initial targetPost
+        targetResult lens xs args1 prog ss envs guards callerRelation nonzero execution bodyRun
+        bodyConclusion matching
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
