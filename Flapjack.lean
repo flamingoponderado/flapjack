@@ -2097,6 +2097,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.WordAllocCorrect
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.InstructionConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.AllocationConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.Primitives
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions
