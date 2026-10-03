@@ -6984,4 +6984,6 @@ run_probe lab_props_alignment_operations_probeScript.sml lab_props_alignment_ope
   "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 run_probe word_to_stack_register_update_probeScript.sml word_to_stack_register_update_probe.out \
   register_update_full register_update_hypotheses register_update_proved \
+run_probe word_to_stack_const_instruction_probeScript.sml word_to_stack_const_instruction_probe.out \
+  const_full_transport const_full_clock const_transport_closed const_clock_closed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

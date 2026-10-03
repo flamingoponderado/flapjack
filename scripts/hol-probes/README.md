@@ -7434,3 +7434,14 @@ HOL-to-Lean equivalence from a finite fixture.
 `word_to_stack_register_update_probeScript.sml` replays the unchanged original
 state_rel_set_var statement and literal proof2930–2951, with closed hypothesis
 and proved sentinels. This is regression evidence, not cross-language equivalence.
+
+### Full constant-instruction laws
+
+`word_to_stack_const_instruction_probe.out` freshly replays the unchanged
+original local proofs at word_to_stackProofScript.sml6743–6765. The local
+4470 stack-load clock rewrite is replayed first because HOL does not export it.
+Both full polymorphic statements have no open kernel hypotheses; EQT_INTRO
+records their proved equivalence to T. Transport retains arbitrary extra and
+all six conclusions. Clock transport retains the whole evaluation pair.
+This is source statement/proof evidence, not a cross-assistant equivalence
+theorem or completion of the full compiler proof.

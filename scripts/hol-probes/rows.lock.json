@@ -9338,6 +9338,12 @@
       "sha256": "740e2fcafb35a167c191552c017f1199ad48c113dfbc99cbd590dabf6afc2a6d"
     },
     {
+      "bytes": 866,
+      "out": "word_to_stack_const_instruction_probe.out",
+      "rows": 4,
+      "sha256": "edefb482b7ffdb91050425731352c713f5cd04bd43b68492501c77afca70ad57"
+    },
+    {
       "bytes": 988740,
       "out": "word_to_stack_const_memory_append_probe.out",
       "rows": 254,
