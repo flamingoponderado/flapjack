@@ -7371,3 +7371,12 @@ native enclosing constructor assembles checked tail/NONE/SOME cases with every
 original quantifier and result/resource conclusion. These captures are statement
 evidence via the original full theorem, not a replay of the local case proof or
 a HOL-to-Lean equivalence proof. Whole-pass assembly remains open.
+
+`word_to_stack_load_register_two_probe.out` replays the unchanged original
+local evaluate_wStackLoad_wReg2 proof4478–4510, records its whole statement,
+closed hypotheses=0/proved=T and original wReg2 definition. The native helper
+preserves every execution, clock, bitmap, full state relation, stack, register,
+additive expression and exact value conjunct with only the four original
+premises. Bounds and spilled values are derived from actual source lookup and
+state relation. This is transcription/regression evidence, not a cross-language
+equivalence proof or full instruction/If/compiler correctness claim.
