@@ -82043,5 +82043,53 @@
     "lean_name": "invalidateRegs",
     "hol_name": "invalidate_regs_def",
     "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-knowledge), word_cseScript.sml lines102-105: exact equations data/[] returns data; data/(r::rs) recurses on invalidate_data data r then rs, left to right for arbitrary lists. No early-exit rewrite or source restriction. Native port only; actual executed knowledge correspondence/full CSE correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "registerRead",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "register_read_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:110-115: negated EVEN is register%2!=0; conjunction with exact keepData chooses precisely the original update inserting register↦register in toCanonical alone, otherwise unchanged full Knowledge. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "registerReads",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "register_reads_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:117-120: empty list returns data; cons recurses on registerRead data head then tail, in source left-to-right order, for arbitrary data and lists. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "canonicalRegs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalRegs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:124-127: source lookup_any r data.to_canonical r is exact sptLookup r data.toCanonical followed by getD r; missing values return the input register. No canonical/wellformed premise. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "canonicalRegs'",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalRegs'_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:129-133: exact let-bound canonicalRegs lookup, equality to arbitrary avoid register, original register returned on equality and canonical lookup result otherwise. No additional guard. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "canonicalMultRegs",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "canonicalMultRegs_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:145-147: original MAP canonicalRegs over arbitrary register list preserves order and multiplicity. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/RegisterData.lean",
+    "lean_name": "mapInsert",
+    "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
+    "hol_name": "map_insert_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-a source/carrier comparison (2026-10-03; flapjack-sola-cse-native-register-data), word_cseScript.sml:149-154: exact empty and pair-cons equations; tail processed first then sparse insert of head key/value. Arbitrary Spt Nat retained, including malformed trees; duplicate head bindings win as in source. Exact Knowledge fields and constructor-for-constructor Spt Nat carriers; no word/array/fmap translation or altered premise. Actual production transition/routing correspondence and full CSE remain separately open."
   }
 ]
