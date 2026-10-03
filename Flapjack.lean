@@ -21,6 +21,7 @@ import Flapjack.Compiler.Backend.LabProps.DomainAlignmentOperations
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentPrimitives
 import Flapjack.Compiler.Backend.LabProps.DomainAlignment
 import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompile
+import Flapjack.Compiler.Backend.LabToTarget.SemanticsCompileFinal
 import Flapjack.Compiler.Backend.LabToTarget.ImplementsIntro
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkipSafety
 import Flapjack.Compiler.Backend.LabToTarget.ListSubset

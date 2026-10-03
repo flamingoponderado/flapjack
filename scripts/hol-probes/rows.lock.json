@@ -2816,6 +2816,12 @@
       "sha256": "756a35331f2d70e3a600d5d3704f0962fffd1f9cfcedc874d8e1abae6e422c85"
     },
     {
+      "bytes": 2451,
+      "out": "lab_to_target_semantics_compile_final_probe.out",
+      "rows": 4,
+      "sha256": "5f8ef044d74dfe572d717bfb090acf3095ad91d4273d295ac1931af387913e51"
+    },
+    {
       "bytes": 5113,
       "out": "lab_to_target_semantics_compile_probe.out",
       "rows": 8,

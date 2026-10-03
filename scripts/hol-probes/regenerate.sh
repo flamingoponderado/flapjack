@@ -7113,3 +7113,7 @@ run_probe lab_props_alignment_dm_evaluate_probeScript.sml lab_props_alignment_dm
 run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_probe.out \
   inst_correct_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_semantics_compile_final_probeScript.sml lab_to_target_semantics_compile_final_probe.out \
+  semantics_compile semantics_compile_types semantics_compile_hypotheses semantics_compile_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
