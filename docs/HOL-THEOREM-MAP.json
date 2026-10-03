@@ -69959,5 +69959,69 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 original7364-7378 and fresh original theorem/fulltype0hyp: complete two free source program variables at alpha sec list, arbitrary positive word dimension, actual reviewed line/section/ASM/memory operation/address/mlstring/fixedword8 byte carriers retained. Sole original conjunctive premise codeSimilar code secList and noShareMemInst code proves complete noShareMemInst secList with all six position/instruction-payload binders; no target safety/success callback or extra bounds. Accepted native codeSimilar_asmFetchAux gives complete Option.Rel lineSimilar at each original PC; successful target shared-memory constructor forces same source constructor/operands, contradicting actual source exclusion at its original encoded bytes/length. No default/HD/EL consumption or hold change. Original full theorem/type0hyp plus actual width8 Skip encoding bytes/length change with source guard kernel-discharged and instruction-change rejection allT; native arbitrary-width full forward/reverse consumers, arbitrary-byte/length Skip transport and generic instruction-change rejection. True full151 ISR4 prerequisite only; whole initializer/machine/compiler/end-to-end remain open, no HOL-to-Lean equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateAddClockIoEventsMono.lean",
+    "lean_name": "evaluateAddClockIoEventsMono",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_add_clock_io_events_mono",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-sol-stack-add-clock-io-events-mono): full original stackPropsScript.sml542-638 arbitrary extra/program/source, source-run SND ffi.io_events prefix boosted-clock-run SND ffi.io_events, with no hypotheses. Explicit extra universally closes HOL free variable. Exact native evaluate, all34constructors and every result including Error/TimeOut; List.IsPrefix models original IS_PREFIX. Clock-free native clauses preserve events, positive-clock shared-memory updates commute with clock, source-clock-zero cases use accepted single-run evaluate_io_events_mono. Seq/Loop/returning Call timeouts compose genuine recursive callee/body prefix with actual boosted-run suffix; non-timeouts use accepted native evaluate_add_clock and genuine recursive continuation hypotheses. RawCall/TailCall/JumpLower preserve every callee event regardless bad_fun_return; exception handler and locator/error branches retained. Full clock-first evaluator induction derives all source-guarded recursive premises, including actual fixClock bounds; no supplied clock/trace/simulation/target run/oracle-extension/success/non-Error premise. Canonical imported native StackSemStateFiniteExact owns regs/fpRegs/store finite-support maps, with genuine broad/exact roundtrip witness; code remains Spt. Positive type-indexed words and FFI Type carriers use reviewed combined qualifiers. Inherits reviewed reals_as_rational_cuts through evaluator FP closure (SOUNDNESS item8); no FP numerical parity claim. Complete unchanged original HOL proof freshly replayed after reproving its non-exported local sh_mem_op_with_const simplifier helper, then universally closed, two statement/proved rows. This supplies the real StackRemove compile_semantics dependency, not the full compiler correctness theorem."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/CodeSimilar/CodeSafety.lean",
+    "lean_name": "codeSimilar_noInstallOrNoShareMem",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "code_similar_IMP_both_no_install_or_no_share_mem",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 complete original7380-7413 and fresh full theorem/free-variable types0hyp: both programs at alpha sec list and full ffiname list, arbitrary positive source word dimension, complete native section/line/ASM/memory/address/fixedword8/MlString/HolFfiName carriers retained. Original sole codeSimilar/source-noInstallOrNoShareMem conjunctive premise implies full target disjunction with unchanged FFI-name list. Shared-memory alternative retains every external-name witness and uses proven native full177 exclusion; independent Install alternative uses complete fetched-line Option.Rel, forcing actual source Install while preserving its arbitrary word position/bytes/length, then contradicts source noInstall. No dropped alternative, successful compiler/desired target safety/callback/extra encoding/bounds premise, default or HD/EL use. Fresh original fullstatement/types0hyp plus full actual width8 source guards kernel-discharged for Install with empty external-only FFI names and changed positions/bytes/length, Skip with shared-memory FFI name, and rejection of Install with shared-memory name allT. Native generic forward/reverse consumers, both branch consumers with arbitrary annotation payloads/names and negative safety check. Full151 ISR17 prerequisite only; no full initializer/machine/compiler/end-to-end or HOL-to-Lean equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRawCall/Proofs/CompCorrect/JumpLower.lean",
+    "lean_name": "compCorrectJumpLower",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_rawcallProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03 original356-380/full135-149: genuine JumpLower paired compTop/comp simulations, original actual source evaluation/nonError/stateRel premises only plus actual fixed-source selected-callee IH. Native two word operand reads, original unsigned Lower comparison, source code lookup and nonzero source clock guard that IH; uses compTop component since target code contains entire compTop entry, unused comp component omitted. Target operand reads/callee entry/per-entry frame info/decClock relation derived from literal stateRel, not assumed. Nonselected comparison derives identical source/result and target no-op. Zero clock derives emptyEnv timeout. Recursive callee nonError/badFunReturn false derived from source dispatch; added-clock decClock identity proves actual target run. Outer postframe stateOk derived from accepted full evaluateMono and original subsptLookup, no postrelation premise. Exact original existential clock/target/stackSpace/exceptional-result guard retained. Native Spt code and List stack unchanged; canonical actual regs/fpRegs/store owner with local genuine roundtrip, arbitrary positive type-indexed word width and Type0 configuration/FFI. Fresh original full statement/zero-hyp/JumpLower specialization/evaluate_ind obligation plus six independent unsigned comparisons, kernel/runtime replay and five full arbitrary/1/8/64/80 consumers. Inherits reals_as_rational_cuts SOUNDNESS8, no numerical FP agreement/HOL-Lean equivalence/individual HOLD/default/production change or full pass completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LocationLabels.lean",
+    "lean_name": "stateRelCodeDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_code_domain",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.4.1: fresh complete original statements/literal unchanged proofs T/hyp0/closed9rows. Original5586-5591 full arbitrary state/frame/lens/extra relation implies entire source.code domain subset target.code domain. Extracts actual complete relation code-domain union with both original stubs and source domain. Source configuration Nat#C/target C, shared F:Type retained. No extra code-domain inclusion or target execution supplied. Actual imported owners for all5 canonical fmap fields, genuine same-module broad/finite witnesses, while both code trees remain exact Spt. Positive type-indexed alpha words use width/NeZero. No executable compiler/evaluator changes, simulation assumption or numerical FP assertion; no full pass completion claim.",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ]
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/LocationLabels.lean",
+    "lean_name": "locCheckSubset",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "loc_check_SUBSET",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .27.1.1.4.1: fresh complete original statements/literal unchanged proofs T/hyp0/closed9rows. Original5601-5607 arbitrary actual source/target code trees and full location-set inclusion. Sole original subspt premise; native lookup/domain characterization preserves both domain/zero-offset and successful lookup/get_labels existential branches. No wf/success/membership/targetrun extra premise; no raw-map/TreeMap substitute. Entire imported HolProg/getLabelsExact/locCheckExact carrier compared, exact Spt and propositional sets retained. Positive type-indexed alpha words use width/NeZero. No executable compiler/evaluator changes, simulation assumption or numerical FP assertion; no full pass completion claim."
   }
 ]
