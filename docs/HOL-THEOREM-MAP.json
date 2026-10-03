@@ -79054,5 +79054,53 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.7): Full original filter_correct669 Install branch982-1033 against native labSem Evaluate Install. Retains source s1/t1/res/s2 evaluate/stateRel/nonfailed, literal native fetch guard, full existential target execution/result/extra clock/FFI conclusion, all positive-width word/configuration/FFI carriers and fixed byte widths. All three register patterns, buffer flush and locator NONE/SOME, compiler failure, empty/nonempty program, and both actual bytes/next-configuration consistency outcomes are covered without success narrowing or added configuration equality instances. IH only simulates the literal successful installed source successor under existentially packaged actual source register/flush/locator/oracle/compiler/nonempty/consistency choices; no desired target evaluation, compiler result or postrelation premise. Private installReturnState names exactly original inline record update with appended code, shifted compile oracle and cc registers, ptr/register/FP/buffer/PC/clock updates, with no separate HOL declaration. Full target compile output derives from original stateRel compiler clause; full installed successor relation derives from accepted filter_skip_MAP/append and loc_to_pc_adjust_pc_append. Target skip execution, recursive run, result/clock/FFI derive from source IH and actual guards. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. Full filter_correct assembly and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "compileCorrectTick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Tick leaf: all ten source hypotheses and seven conclusions retained, no recursive IH. Actual faithful evaluateHOLFiniteState/compileProgExact/convertStateExact/result carriers. Tick treats original zero-clock TimeOut/emptyLocals and nonzero decrement branches; converter preserves clock and commutes with empty locals and decrement, canonical empty-map mapping by definitional equality. Annot ignores faithful MlS tag/text and preserves original NONE/source state. Post FEVERY and global/conditional-local shape maps follow from unchanged fields or empty locals; both original result EVERY predicates hold on empty result-value list. No additional clock, bounds, resource, adapter, compatibility or target-run premise. Imported canonical owner/full state roundtrip, explicit four-map/positive-word Type0 qualifiers only. Original whole theorem and case kernel captures reviewed. Whole program/declaration/compiler remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "compileCorrectAnnot",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Annot leaf: all ten source hypotheses and seven conclusions retained, no recursive IH. Actual faithful evaluateHOLFiniteState/compileProgExact/convertStateExact/result carriers. Tick treats original zero-clock TimeOut/emptyLocals and nonzero decrement branches; converter preserves clock and commutes with empty locals and decrement, canonical empty-map mapping by definitional equality. Annot ignores faithful MlS tag/text and preserves original NONE/source state. Post FEVERY and global/conditional-local shape maps follow from unchanged fields or empty locals; both original result EVERY predicates hold on empty result-value list. No additional clock, bounds, resource, adapter, compatibility or target-run premise. Imported canonical owner/full state roundtrip, explicit four-map/positive-word Type0 qualifiers only. Original whole theorem and case kernel captures reviewed. Whole program/declaration/compiler remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/FilterCorrect.lean",
+    "lean_name": "filterCorrect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6): Full original filter_correct669, forall s1 t1 res s2, original conjunction evaluate s1=(res,s2), state_rel s1 t1, not t1.failed implies exists extra t2, evaluate target with source.clock+extra=(res,t2) and s2.ffi=t2.ffi. All four independent state/result binders, arbitrary native configuration and FFI carriers, positive-width HOL word dimension and fixed bytes retained. All native evaluator outcomes included: zero clock, absent fetch, label, ordinary Inst including failure, JumpReg Loc/Word, four plain-ASM default errors, buffer write, shared memory NONE/final/ret, every labAsm Jump/JumpCmp/Call/LocValue/Halt/Install/CallFFI branch. Case IHs are entirely discharged internally by strong induction on native source clock, using exact asmInstConsts and shareMemOp_ret_clock; this is a proof organization change from original evaluate induction, not an external simulation or successful-pass premise. Reviewed ordinary Inst IH source.failed=false guard retained; compiler/oracle/flush/locator/register/nonempty/consistency choices remain actual helper path guards. Target execution/result/extra clock and final FFI equality are derived for every branch, with no desired target result or postrelation hypothesis. Positive-width words_as_type_indexed_bitvec is sole carrier translation. Fresh original full669 statement/type/hyp0/kernel replay byte-identical. evaluate inherits reals_as_rational_cuts, SOUNDNESS item8 unchanged. This completes original evaluator simulation only; state_rel_IMP_sem_EQ_sem, filter_skip_semantics and end-to-end correctness remain open."
   }
 ]
