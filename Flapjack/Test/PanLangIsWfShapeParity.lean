@@ -1,7 +1,7 @@
 import Flapjack.Pancake.PanLang.Decl
 
 /-! Direct HOL-oracle parity for the exact `is_wf_shape`/`is_wf_flds`/`is_wf_ctxt`
-ports (`scripts/hol-probes/pan_lang_is_wf_shape_probe.out`, nine rows).  The
+ports (`scripts/hol-probes/pan_lang_is_wf_shape_probe.out`, fifteen rows). The
 contexts are the exact MlString-keyed `StructContextExact`. -/
 
 namespace Flapjack.Test.PanLangIsWfShapeParity
