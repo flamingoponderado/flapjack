@@ -1514,6 +1514,12 @@
       "sha256": "9c6277d4596ccd4107db7c9c19b84f4ad480407bff2fa6b29133689cf6cb36df"
     },
     {
+      "bytes": 6614,
+      "out": "l3_conditional_branch_probe.out",
+      "rows": 162,
+      "sha256": "9923328b83b9d07de0985da09a40955e4168ec46852ce8e92eae505296d259eb"
+    },
+    {
       "bytes": 17276,
       "out": "l3_csr_access_probe.out",
       "rows": 317,
@@ -1578,6 +1584,12 @@
       "out": "l3_fpcsr_codec_probe.out",
       "rows": 80,
       "sha256": "75d37e258cceb89acb73dd0775ff0d185c39e03d43a72da128700d9f4c68ffe4"
+    },
+    {
+      "bytes": 2970,
+      "out": "l3_immediate_alu_probe.out",
+      "rows": 120,
+      "sha256": "0aad7d683153417a2632ea1538b72729dd3282ba56c70e46cfae353adf14ca56"
     },
     {
       "bytes": 913,
@@ -1676,6 +1688,12 @@
       "sha256": "6181faf5e9a5922047c91178514f4638d35b95d29ffccb387afe875cc1b00c3c"
     },
     {
+      "bytes": 3648,
+      "out": "l3_register_alu_probe.out",
+      "rows": 160,
+      "sha256": "5c2d1e1e8bd31473882164bb38f64f1cc23277a1dc29f81dd41fac68a26c4045"
+    },
+    {
       "bytes": 1132,
       "out": "l3_reservation_probe.out",
       "rows": 14,
@@ -1752,6 +1770,12 @@
       "out": "l3_scw_probe.out",
       "rows": 21,
       "sha256": "e203ae296995a60a7037a6d9c2185412b38958be0f72693edc82cbd9692ebd7f"
+    },
+    {
+      "bytes": 9658,
+      "out": "l3_set_less_probe.out",
+      "rows": 436,
+      "sha256": "5314604e00a91739b302f7d35e6f72a66e0c2cf0ad5cf9d2a41bb2dc472898b0"
     },
     {
       "bytes": 304,
@@ -1986,6 +2010,12 @@
       "out": "lab_to_target_initializer_interference_probe.out",
       "rows": 16,
       "sha256": "d3df4bf7537c9ae6e027859d4d9be10bb2cc7195cbe115b3084f38c62903492f"
+    },
+    {
+      "bytes": 8203,
+      "out": "lab_to_target_initializer_memory_separation_probe.out",
+      "rows": 10,
+      "sha256": "97be4f38ca69c8bd19d4457e5ed41d8adefbfa1f0ad53850a965f2bd0c3e1622"
     },
     {
       "bytes": 1110,
@@ -6020,6 +6050,12 @@
       "sha256": "6a12b22c110cb82870cdb808f94ca89e433e533ad08042cd17d5af1fd083991e"
     },
     {
+      "bytes": 1965,
+      "out": "stack_rawcall_allocation_store_probe.out",
+      "rows": 6,
+      "sha256": "f90b93d64dbffef8fc6bfd61147bb3b452b436dd9beb23d888e351c1146f98de"
+    },
+    {
       "bytes": 3809,
       "out": "stack_rawcall_basic_cases_probe.out",
       "rows": 8,
@@ -8318,6 +8354,18 @@
       "sha256": "ccad70f3042fde9b248da94ea847bb8e9c517464fd84d67cac0dd18fcf1f88db"
     },
     {
+      "bytes": 9979,
+      "out": "word_to_stack_comp_seq_full_probe.out",
+      "rows": 6,
+      "sha256": "bc585f75aa9f15d9e07507c9ad4c3c5c605ff672250ee000d77dd60654a8acdf"
+    },
+    {
+      "bytes": 10011,
+      "out": "word_to_stack_comp_seq_non_none_probe.out",
+      "rows": 6,
+      "sha256": "4bcaf539cae0dc4bb522e62c95c42beae0a1f00e40d3689973625694f73797be"
+    },
+    {
       "bytes": 89,
       "out": "word_to_stack_compile_keys_probe.out",
       "rows": 7,
@@ -8990,6 +9038,18 @@
       "sha256": "bf1d9991a783c4b5c14b719db78df835174fe15469bcece33ef5717230aa52c0"
     },
     {
+      "bytes": 1187,
+      "out": "wordsem_evaluate_consts_probe.out",
+      "rows": 6,
+      "sha256": "5e3e417abea37bebca00ebeb998b838b259db4e37147507e0302c2fdac9b9a06"
+    },
+    {
+      "bytes": 2197,
+      "out": "wordsem_evaluate_stack_max_probe.out",
+      "rows": 21,
+      "sha256": "efdd71ae05e34b8d74c876081a09f8c239506987e5713f1bfa65f02f57edac3e"
+    },
+    {
       "bytes": 451,
       "out": "wordsem_gc_const_probe.out",
       "rows": 3,
@@ -9014,10 +9074,22 @@
       "sha256": "487ce3607c0663f5f9892d76fd0bfb7a13e23930d69021ccf115ef091e9f1121"
     },
     {
+      "bytes": 814,
+      "out": "wordsem_no_install_code_probe.out",
+      "rows": 8,
+      "sha256": "4b6e08568782f16bba6708eb5eba31aa6ebdb4b924657f29f31e14e509408e4f"
+    },
+    {
       "bytes": 617,
       "out": "wordsem_pop_env_const_probe.out",
       "rows": 3,
       "sha256": "0bb9553a915ca459f5d986a7a4aee20f17d9249de93fb02c6f13ff1d7801b1a3"
+    },
+    {
+      "bytes": 4967,
+      "out": "wordsem_state_laws_probe.out",
+      "rows": 20,
+      "sha256": "0b385cc73030b1cedace843a139a6d2150785c9ca34e8a364cab4dbf5a5e48c4"
     },
     {
       "bytes": 106,
