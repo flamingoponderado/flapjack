@@ -2599,4 +2599,84 @@ theorem restoredHandlerStoreFacts {width : Nat} [NeZero width] {C F : Type}
   · exact prior.trans (poppedStoreErase target register saved).symm
   · simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
 
+/-- Handler-store-specific factoring of the original full relation. The old
+relation supplies every unchanged compiler, memory, oracle and resource field;
+the residual is exactly its original frame, size, stack and local clauses.
+This is Flapjack case infrastructure, not the assembled HOL simulation. -/
+theorem handlerCallerStateRelUpdates {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k oldFrame oldPayload : Nat)
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (oldLens : List Nat) (oldExtra : Nat)
+    (prior : stateRel ac k oldFrame oldPayload source target oldLens oldExtra)
+    (locals : Spt (WordLocW width)) (sourceStack : List (WordSemStackFrame width))
+    (size : Option Nat) (handler : Nat) (stack : List (WordLocW width))
+    (regs : HolFiniteMapExact Nat (WordLocW width)) (space frame payload : Nat)
+    (lens : List Nat) (saved : WordLocW width)
+    (length : stack.length = target.stack.length) :
+    stateRel ac k frame payload
+      {source with locals := locals, stack := sourceStack, localsSize := size, handler := handler}
+      {target with stack := stack, regs := regs, stackSpace := space,
+                   store := target.store.updateEq (.handler,saved)} lens 0 ↔
+    space + frame ≤ stack.length ∧
+    (if payload = 0 then frame = 0 else frame = payload + 1) ∧
+    sptWf locals = true ∧
+    stackSizeRel frame size source.stackLimit source.stackMax sourceStack stack space 0 ∧
+    stackRel k handler sourceStack (some saved) (stack.drop (space + frame))
+      stack.length target.bitmaps lens ∧
+    (∀ n v, sptLookup n locals = some v → n % 2 = 0 ∧
+      if n / 2 < k then regs.lookup (n / 2) = some v
+      else (stack.drop space |>.take frame)[frame - 1 - (n / 2 - k)]? = some v ∧
+        n / 2 < k + payload) := by
+  have erase : (target.store.updateEq (.handler,saved)).eraseEq .handler =
+      target.store.eraseEq .handler := poppedStoreErase target k saved
+  have lookup : (target.store.updateEq (.handler,saved)).lookup .handler = some saved := by
+    simp [HolFiniteMapExact.lookup_updateEq, FUPDATE_HOL]
+  simp only [stateRel] at prior ⊢
+  rcases prior with ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15, h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31, h32, h33, h34, h35, h36, h37, h38⟩
+  simp only [Nat.add_zero, List.drop_drop, lookup]
+  constructor
+  · intro updated
+    rcases updated with ⟨_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, u33, _, u35, u36, u37, u38⟩
+    exact ⟨u33,u35,u36,u37,u38⟩
+  · rintro ⟨bound,shape,wf,sizeRel,tail,localRel⟩
+    exact ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, by simpa only [erase] using h12, h13, h14, h15, h16, by simp, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31, h32, bound, by simpa only [length] using h34, shape, wf, sizeRel, ⟨tail,localRel⟩⟩
+
+/-- The original saved SOME-handler frame and callee resource relation
+establish the caller resource relation after freeing the return words and
+three handler words. Option sizes and absent maxima retain their original
+branches; no caller size identity or postrelation is assumed. Flapjack
+normal-return resource factoring with no standalone HOL declaration. -/
+theorem handlerCallerStackSizeAfterPop {width : Nat} [NeZero width]
+    (k currentHandler : Nat) (size calleeSize maximum : Option Nat)
+    (nonGc gc : List (Nat × WordLocW width)) (savedHandler h1 h2 : Nat)
+    (rest : List (WordSemStackFrame width)) (handler : Option (WordLocW width))
+    (stack : List (WordLocW width)) (bitmaps : List (BitVec width))
+    (frameSize : Nat) (lens : List Nat) (space count limit : Nat)
+    (relation : stackRel k currentHandler
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      handler (stack.drop (space+count)) stack.length bitmaps (frameSize::lens))
+    (resource : stackSizeRel 0 calleeSize limit maximum
+      (.stackFrame size nonGc gc (some (savedHandler,h1,h2)) :: rest)
+      stack space count) :
+    stackSizeRel (frameSize+1) size limit maximum rest stack (space+count+3) 0 := by
+  obtain ⟨saved,bitmap,payload,bits,shape,read,bitsLength,bound,sizeEq,gcSlots,nonGcSlots⟩ :=
+    savedHandlerCallerFrameSlots k currentHandler size nonGc gc savedHandler h1 h2
+      rest handler (stack.drop (space+count)) stack.length bitmaps frameSize lens relation
+  rcases resource with ⟨_,limitEq,maximumBound⟩
+  refine ⟨fun _ => sizeEq,limitEq,?_⟩
+  intro max maxEq
+  obtain ⟨upper,_,total,totalEq,totalSize⟩ := maximumBound max maxEq
+  have consSize : wordSemOptionAdd (size.map (fun n => 3+n))
+      (wordSemStackSize rest) = some total := totalEq
+  cases size with
+  | none => simp [wordSemOptionAdd] at consSize
+  | some n =>
+    have frameEq : n = frameSize+1 := by simpa using sizeEq
+    cases tailEq : wordSemStackSize rest with
+    | none => simp [wordSemOptionAdd,tailEq] at consSize
+    | some tailSize =>
+      simp only [Option.map_some,tailEq,wordSemOptionAdd,Option.some.injEq] at consSize
+      refine ⟨by omega,by simp,tailSize,rfl,?_⟩
+      omega
+
 end Flapjack.WordToStackProofs.CompCorrect.CallReturningHandler
