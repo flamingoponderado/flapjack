@@ -1,7 +1,7 @@
 import Flapjack.RiscV.L3.Support
 import Flapjack.Misc.BinaryIeeeRound
-import Flapjack.Misc.BinaryIeeeConvert
-import Flapjack.Misc.BinaryIeeeArith
+import Flapjack.Misc.MachineIeee.ConvertInt
+import Flapjack.Misc.MachineIeee.Arith
 import Flapjack.Misc.BinaryIeeeSqrt
 import Flapjack.Misc.MachineIeee.Convert
 

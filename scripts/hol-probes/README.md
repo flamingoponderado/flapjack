@@ -2385,7 +2385,7 @@ operand. FPFromInt covers the 64-bit low-32-bit read (`0x0000000000000003` ->
 missing-operand failure. `Flapjack/Test/StackSemFpRegisterInstParity.lean`
 kernel-replays every row: the FPSqrt row uses `holFp64Sqrt_rte` from
 `Flapjack/Misc/BinaryIeeeSqrtFp64.lean`, the FPFromInt rows use
-`holIntToFp64_rte` from `Flapjack/Misc/BinaryIeeeConvert.lean`, and the FPToInt
+`holIntToFp64_rte` from `Flapjack/Misc/MachineIeee/ConvertInt.lean`, and the FPToInt
 rows use the computable `holFp64ToInt`. The untagged partial case helper
 `Flapjack/Compiler/Backend/Semantics/StackSem/FpRegisterInstructions.lean` is
 not the whole HOL `inst_def`. Regenerate read-only using
@@ -7307,6 +7307,10 @@ unconditional flatten conversion derive the identical target memory operation.
 
 `stack_remove_init_any_probeScript.sml` replays the unchanged local originals `MOD_EQ_IMP_MULT`, `star_move_lemma` and `memory_addresses` (with its local `IN_addresses` prerequisite; stack_removeProofScript.sml:2727-2803) and prints the stored `make_init_any_bitmaps`, `make_init_any_use_stack`, `make_init_any_use_store`, `make_init_any_use_alloc`, `make_init_any_code`, `make_init_any_stack_limit` and `make_init_any_compile_oracle` theorems (4100-4157). All statements are closed with zero hypotheses; `memory_addresses` keeps its `'a word_loc` memory codomain.
 
+`pan_structs_fupdate_neutral_probe` replays original local `fupdate_elim2`
+with its unchanged source proof, closed binder types, zero hypotheses and
+kernel proof. Native update neutrality keeps arbitrary key/value types and
+uses canonical finite-support maps with HOL equality and no comparison premise.
 ## Native RISC-V inline-helper relations
 
 `riscv_target_helper_links_probeScript.sml` proves three universal equations
@@ -7322,8 +7326,4 @@ named source declarations. The existing full native configuration probe checks
 all source field values and every immediate-policy operator boundary. These
 captures and kernel proofs remain evidence for source review, not a proof of
 HOL-to-Lean equivalence or full target execution correctness.
-
-`pan_structs_fupdate_neutral_probe` replays original local `fupdate_elim2`
-with its unchanged source proof, closed binder types, zero hypotheses and
-kernel proof. Native update neutrality keeps arbitrary key/value types and
-uses canonical finite-support maps with HOL equality and no comparison premise.
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.

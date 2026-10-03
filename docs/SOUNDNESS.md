@@ -101,7 +101,8 @@ The following are open review or verification obligations:
 
    `Misc/BinaryIeeeSqrt/RealAgreement.lean` now kernel-checks the rational-cut
    comparisons against Mathlib's `Real.sqrt`, including distance comparisons,
-   and `Misc/BinaryIeeeSqrt/RealCarrier.lean` kernel-checks that the executed
+   and `Misc/BinaryIeeeSqrt/RealCarrier.lean` (with `Misc/MachineIeee/SqrtReal.lean`
+   for `fp64_sqrt`) kernel-checks that the executed
    cut `float_sqrt`/`fp64_sqrt` equal literal transcriptions of HOL `round`,
    `float_round`, `float_round_with_flags` and `float_sqrt` over Mathlib `ℝ`
    (with `Real.sqrt`, HOL `abs` and all flag tests kept), for every rounding

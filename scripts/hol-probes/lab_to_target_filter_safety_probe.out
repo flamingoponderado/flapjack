@@ -1,0 +1,5 @@
+no_install_or_no_share_mem_filter_skip=no_install_or_no_share_mem (code :α sec list) (ffi_names :ffiname list) ⇒
+no_install_or_no_share_mem (filter_skip code) ffi_names
+no_install_or_no_share_mem_filter_skip_types=(ffi_names :ffiname list)::ffiname list;(code :α sec list)::α sec list;
+no_install_or_no_share_mem_filter_skip_hypotheses=0
+no_install_or_no_share_mem_filter_skip_proved=T
