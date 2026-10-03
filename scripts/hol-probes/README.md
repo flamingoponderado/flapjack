@@ -7755,3 +7755,11 @@ formula. No supplied LUB or chain premise is required. Standard choice
 translation leaves independently unspecified selections outside the
 cross-language agreement claim. Wrapper equality and PanSem correspondence
 remain separately tracked proof obligations.
+
+`pan_props_semantics_wrapper_eq_probe` captures the complete original wrapper
+equality theorem, quantified function types and closed kernel truth. The Lean
+port retains both arbitrary functions and all six source premises, including
+both clock-stability and Incomplete event-prefix hypotheses. Prefix chains and
+same-model wrapper choice equality are proved internally; no supplied chain,
+LUB or target-semantics premise is added. It uses the distinct PanProps result
+datatype. Faithful evaluator wrapper correspondence remains separate.

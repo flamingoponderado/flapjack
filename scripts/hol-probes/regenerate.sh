@@ -7381,6 +7381,18 @@ run_probe pan_structs_decls_decl_probeScript.sml pan_structs_decls_decl_probe.ou
 run_probe pan_structs_compiled_shapes_wf_probeScript.sml pan_structs_compiled_shapes_wf_probe.out \
   is_wf_shape_compile_shape_statement is_wf_shape_compile_shape_proved is_wf_shape_compile_shape_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_decls_function_exn_probeScript.sml pan_structs_decls_function_exn_probe.out \
+  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_function_statement compile_decls_correct_function_proved compile_decls_correct_function_types compile_decls_correct_exn_statement compile_decls_correct_exn_proved compile_decls_correct_exn_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_decls_correct_probeScript.sml pan_structs_decls_correct_probe.out \
+  compile_decls_correct_statement compile_decls_correct_proved compile_decls_correct_types \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrapper_probe.out \
+  semantics_wrapper_def_statement semantics_wrapper_def_proved semantics_wrapper_def_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 run_probe word_to_stack_move_aux_probeScript.sml word_to_stack_move_aux_probe.out \
   wMoveAux_statement wMoveAux_proved wMoveAux_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7395,22 +7407,16 @@ run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
-run_probe pan_structs_decls_function_exn_probeScript.sml pan_structs_decls_function_exn_probe.out \
-  compile_decls_correct_full_statement compile_decls_correct_full_proved compile_decls_correct_full_types compile_decls_correct_function_statement compile_decls_correct_function_proved compile_decls_correct_function_types compile_decls_correct_exn_statement compile_decls_correct_exn_proved compile_decls_correct_exn_types evaluate_decls_ind_statement evaluate_decls_ind_proved evaluate_decls_ind_types \
-  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
-run_probe pan_structs_decls_correct_probeScript.sml pan_structs_decls_correct_probe.out \
-  compile_decls_correct_statement compile_decls_correct_proved compile_decls_correct_types \
-  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_seqsem_probe.out \
   moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
   "$cake_dir/compiler/backend/proofs"
-run_probe pan_props_semantics_wrapper_probeScript.sml pan_props_semantics_wrapper_probe.out \
-  semantics_wrapper_def_statement semantics_wrapper_def_proved semantics_wrapper_def_types \
-  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
 
 run_probe bvl_to_bvi_default_probeScript.sml bvl_to_bvi_default_probe.out \
   bvl_num_stubs_def bvl_to_bvi_namespaces_def bvl_num_stub_MOD bvl_num_stub_MOD_hypotheses default_config_def default_config_type bvl_stub_count_value bvl_namespace_count_value default_next_name1 default_next_name2 default_next_name3 \
   "$cake_dir/compiler/backend/bvl_to_bviScript.sml" "$cake_dir/compiler/backend"
+run_probe pan_props_semantics_wrapper_eq_probeScript.sml pan_props_semantics_wrapper_eq_probe.out \
+  semantics_wrapper_eq_statement semantics_wrapper_eq_proved semantics_wrapper_eq_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
