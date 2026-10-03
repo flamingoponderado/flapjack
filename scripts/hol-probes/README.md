@@ -7753,3 +7753,11 @@ remain separately tracked proof obligations.
 `riscv_upper_decode_probeScript.sml` captures eight original HOL LUI/AUIPC Encode/Decode boundary EVALs (zero, all ones, sign bit, positive maximum). All are `T`; these finite oracles supplement the unconditional Lean proofs over every intrinsic register/immediate bitvector, and do not constitute a universal HOL proof.
 
 `riscv_target_loc_probeScript.sml` specializes the proved original encoder theorem only to unrestricted `Loc r c`, retaining native types, zero stored hypotheses, and the full original assertion conclusion. `Loc.lean` proves the complete two-step constructor case using literal native AUIPC/ADDI execution and original interference projection transport. The statement guard pins the public type and original capture; it supplements kernel checking and manual source comparison. The inherited native real-state representation assumption remains as documented in SOUNDNESS item 8.
+
+`pan_props_semantics_wrapper_eq_probe` captures the complete original wrapper
+equality theorem, quantified function types and closed kernel truth. The Lean
+port retains both arbitrary functions and all six source premises, including
+both clock-stability and Incomplete event-prefix hypotheses. Prefix chains and
+same-model wrapper choice equality are proved internally; no supplied chain,
+LUB or target-semantics premise is added. It uses the distinct PanProps result
+datatype. Faithful evaluator wrapper correspondence remains separate.

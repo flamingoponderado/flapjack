@@ -59,14 +59,16 @@ the same stability for abstract observations; and, separately for abstract
 and concrete observations, if the result at `k + k'` is `(Incomplete, ev)`,
 there are `r'` and `ev'` with the result at `k` equal to `(r', ev')` and
 `IS_PREFIX ev ev'`. These premises imply equality of the two
-`semantics_wrapper` results. The closest Flapjack API,
+`semantics_wrapper` results. The older hook API,
 `PanObservationalSemantics.panSemantics`, specializes the functions to a
 `PanSemanticsHooks` evaluator over `Option PanValueFfiClockResult`, and takes a
 caller-supplied prefix chain/LUB. It has neither the arbitrary result carrier
 nor the generic wrapper equality statement, so it is not a port and receives
-no HOL tag. The faithful theorem port is tracked by
-`flapjack-4ac.4.106.1`, depending on the exact wrapper/LUB carrier work in
-`flapjack-4ac.4.105.1`. -/
+no HOL tag. The faithful theorem is provided by
+`PanProps/SemanticsWrapperEquality.lean`'s `panPropsSemanticsWrapper_eq` over
+`panPropsSemanticsWrapper`, retaining all six premises and deriving both
+prefix chains internally. The separately tracked evaluator-wrapper theorem
+must supply the source-specific connection to PanSem observations. -/
 
 /-! Source review for HOL `semantics_decls_has_main`
 (`panPropsScript.sml:1611-1626`): this theorem has the same source premise and
