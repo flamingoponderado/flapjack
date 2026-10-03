@@ -1158,6 +1158,8 @@ import Flapjack.Test.AsmPropsEncoderCorrectParity
 import Flapjack.Test.MachineIeeeCrossFormatParity
 import Flapjack.Test.L3RiscvCrossFormatParity
 import Flapjack.Test.WordGcFunOkParity
+import Flapjack.Test.WordSimpCompileExpParity
+import Flapjack.Test.WordInstSelectExactParity
 
 
 
