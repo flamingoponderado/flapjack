@@ -77321,5 +77321,60 @@
     "hol_name": "compile_shape_no_name",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !ctxt n sh. is_wf_shape_nil (compile_shape_n ctxt n sh) over the pan_structsProof compileShapeNHOL; statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "sizeOfCompileShapeN",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "size_of_compile_shape_n",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78): (local in HOL, compared against the source text 480-486) for the free ctxt: !sh_ctxt n sh. sh_ctxt = MAP (\\(nm,info). (nm,info.fields)) ctxt /\\ is_wf_shape (DROP n ctxt) sh /\\ struct_infos_ok ctxt ==> size_of_sh_with_ctxt [] (compile_shape_n sh_ctxt n sh) = size_of_sh_with_ctxt ctxt sh."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "sizeOfCompileShape",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "size_of_compile_shape",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78): is_wf_shape ctxt sh /\\ struct_infos_ok ctxt ==> size_of_sh_with_ctxt [] (compile_shape (MAP (\\(nm,info). (nm,info.fields)) ctxt) sh) = size_of_sh_with_ctxt ctxt sh; free ctxt sh bound explicitly. Statement captured with types by pan_structs_leaves_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "sizeOfShapeCompilePassEq",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "size_of_shape_compile_pass_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.3.78): struct_infos_ok s.structs /\\ is_wf_shape s.structs shape /\\ str_ctxt = MAP (\\(nm,info). (nm,info.fields)) s.structs ==> size_of_shape (compile_shape str_ctxt shape) = size_of_sh_with_ctxt s.structs shape over the exact PanSemStateFiniteExact; free s shape str_ctxt bound explicitly. Statement captured with types by pan_structs_leaves_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "structContextLookupHOL_eq_lookup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: structContextLookupHOL is List.lookup; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "lookup_of_mem_nodup",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: with distinct keys a member's key looks up its value; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileShapeN.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for size_of_shape_compile_pass_eq's qualifier; no separately named HOL original."
   }
 ]

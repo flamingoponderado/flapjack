@@ -20,6 +20,12 @@ compile_shape_n_eq=∀(sctxt :(mlstring # (α # shape) list) list) (n :num) (sh 
   compile_shape_n sctxt n sh = compile_shape (DROP n sctxt) sh
 compile_shape_no_name=∀(ctxt :(mlstring # (α # shape) list) list) (sh :shape).
   is_wf_shape_nil (compile_shape ctxt sh)
+size_of_compile_shape=is_wf_shape (ctxt :(mlstring # struct_info) list) (sh :shape) ∧
+struct_infos_ok ctxt ⇒
+size_of_sh_with_ctxt ([] :(mlstring # struct_info) list)
+  (compile_shape
+     (MAP (λ((nm :mlstring),(info :struct_info)). (nm,info.fields)) ctxt) sh) =
+size_of_sh_with_ctxt ctxt sh
 decs_stcnames_to_get_names=∀(acc :(mlstring # struct_info) list) (code :α decl list)
     (res :(mlstring # struct_info) list) (ctxt :context).
   decs_stcnames acc code = SOME res ∧
