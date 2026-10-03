@@ -77116,6 +77116,496 @@
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original DataBufferWrite constructor case. Same source every_var register bound, is_alloc_var, ssa_map_ok and full_inst_ok_less configuration hypotheses; complete same-config instruction validity of actual literal compiler output. Arbitrary native source fields retained; no target-run or output convention premise. Native positive-width AsmConfigExact/WordLang/Spt/List carriers reviewed; words_as_type_indexed_bitvec records only positive HOL word dimension. Remaining recursive assembly and other constructor families tracked separately."
   },
   {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCmpShift.lean",
+    "lean_name": "compileExpCorrectCmp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: genuine full Cmp case of original686-791 compile_exp_correct. All seven source hypotheses/three conclusions retained; only original full child IHs for both operands. Actual source evaluation supplies two Val Word operands and result; child IHs derive actual converted operand evaluations. Original operation (including Option shift failure) is preserved, producing word result/shape/field validity. No target run, compatibility, range, index or memory-adapter premise. Actual canonical state owner with local full roundtrip, four map fields and positive word/Type0 translation only. Original full theorem/case/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCmpShift.lean",
+    "lean_name": "compileExpCorrectShift",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03: genuine full Shift case of original686-791 compile_exp_correct. All seven source hypotheses/three conclusions retained; only original full child IHs for both operands. Actual source evaluation supplies two Val Word operands and result; child IHs derive actual converted operand evaluations. Original operation (including Option shift failure) is preserved, producing word result/shape/field validity. No target run, compatibility, range, index or memory-adapter premise. Actual canonical state owner with local full roundtrip, four map fields and positive word/Type0 translation only. Original full theorem/case/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpCmpShift.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: genuine actual imported canonical state two-way roundtrip, no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Evaluation.lean",
+    "lean_name": "nextRISCV",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript59-68: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion nxt PC+Skip and unchanged whole nxt. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Evaluation.lean",
+    "lean_name": "nextRISCV_branch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV_branch",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript70-83: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion target a and full nxt record with function update clearing only NextFetch. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/Evaluation.lean",
+    "lean_name": "nextRISCV_cond_branch",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "NextRISCV_cond_branch",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c complete source statement comparison2026-10-03 riscv_stepScript85-99: all original variables at full native riscv_state/rawInstType/instruction, word64 target and Bool condition where present. Same conjunction Fetch(s)=(w,fetched), DecodeAny(w)=i, Run(i,fetched)=nxt, NoException and original c_NextFetch condition; complete conclusion Boolean b chooses a or nxt PC+Skip; the whole record still clears NextFetch on both branches. No additional Next evaluation/pass-simulation, mode/opcode/core-bound or restricted-state premise. These are the original step evaluation hypotheses, not a substitute compilation-correctness statement. Conditional false path derives UPDATE identity from the original empty-control premise, as source UPDATE_APPLY_IMP_ID. Full Run/Next inherit reals_as_rational_cuts through IEEE handlers, SOUNDNESS item8. Fresh original universal theorem/binder/hyp0/proof capture and Lean kernel theorem checked."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/PanToWord.lean",
+    "lean_name": "panToWordCompileProgHOL",
+    "hol_path": "cakeml/pancake/pan_to_wordScript.sml",
+    "hol_name": "compile_prog_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordScript.sml:10-18: compile_prog arch prog = loop_to_word$compile (crep_to_loop$compile_prog arch (pan_to_crep$compile_prog (pan_globals$compile_top (pan_structs$compile_top (pan_simp$compile_prog prog)) «main»))); each stage is the reviewed exact port (panSimpDeclsHOL, PanStructs compileTopExact, compileTopExactHOL with ofString \"main\", compileProgDeclsHOLW, compileProgHOLExact, loopToWordCompileHOL); arch is AsmArchitecture as in compileProgHOLExact. Proof-side; the executed route remains Pipeline.lean. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "crepStateHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "crep_state_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "CrepSemHOLState.locals",
+      "CrepSemHOLState.globals",
+      "CrepSemHOLState.code"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:14-27 field for field: locals/globals FEMPTY, code alist_to_fmap (pan_to_crep$compile_prog pan_code) rendered as empty.updateList of the reversed compileProgDeclsHOLW list, memory mem, memaddrs/sh_memaddrs/clock/be/ffi/top_addr/base_addr from the Pan state. Only the three Crep |-> fields are translated. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "wlocWlabHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "wloc_wlab_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:29-31: wloc_wlab (Word w) = Word w; the Loc case, absent in HOL, is the shared unspecified holArb. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "noLabelsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "no_labels_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:39-41: no_labels mem dom = (!a. a IN dom ==> ?w. mem a = Word w); the word set dom is a predicate as in the tagged addresses. Types follow the elaborated constant captured by pan_to_word_definitions_probe: address type arbitrary α, word width independent."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "loopStateHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "loop_state_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:43-56 field for field: locals LN (Spt.ln), globals FEMPTY, memory mem, mdomain s.memaddrs, sh_mdomain s.sh_memaddrs, code fromAList (crep_to_loop$compile_prog c crep_code) (sptFromAList, compileProgHOLExact), clock ck, be/ffi/top_addr/base_addr from s. The reviewed Loop carrier renders word sets as Bool predicates, so Crep Prop membership is decided classically (same set). Only LoopSemStateFiniteExact.globals is a |-> field. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "distinctParamsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "distinct_params_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:58-61: distinct_params prog <=> EVERY (\\(name,params,body). ALL_DISTINCT params) prog over a polymorphic triple list, rendered with type parameters α β γ, EVERY as membership quantification and ALL_DISTINCT as List.Nodup. HOL statement captured by pan_to_word_definitions_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "globalsAllocatableHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "globals_allocatable_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.1): pan_to_wordProofScript.sml:228-239: same let-bound dec_shs/struct_ctxt/sz; THE is holThe; conjuncts struct_ctxt <> NONE, DISJOINT s.memaddrs (addresses s.top_addr sz) as no common member, s.top_addr + bytes_in_word * n2w sz NOTIN s.memaddrs, sz * w2n bytes_in_word < dimword(:a) = 2^width; bytes_in_word is StackRemove.bytesInWord (n2w (dimindex DIV 8)). Types follow the elaborated constant captured by pan_to_word_definitions_probe: pan_code word width width' independent of the state width."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_CrepSemHOLState",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_LoopSemStateFiniteExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical finite-state roundtrip re-exported for the qualifiers of this module; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "wlocWlabWlabWlocHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "wloc_wlab_wlab_wloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: wloc_wlab (wlab_wloc w) = w for w : word_lab, with wlab_wloc the accepted wlabWlocExact."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "loopStateSimpsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "loop_state_simps",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "LoopSemStateFiniteExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: all eleven conjuncts in order over the same binders s c crep_code ck mem. The Loop carrier's Bool word-set domains are compared by membership predicate (accepted crep_to_loop convention), and isEmpty is sptIsEmpty."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "panToWordFirstCompileProgAllDistinctHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "first_compile_prog_all_distinct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: !prog. ALL_DISTINCT (MAP FST (functions prog)) ==> ALL_DISTINCT (MAP FST (compile_prog c prog)), with free c bound first."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "decShapesCompileProgHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "dec_shapes_compile_prog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: !pan_code. dec_shapes (pan_simp$compile_prog pan_code) = dec_shapes pan_code."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionNamesCompileProgHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "function_names_compile_prog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: !pan_code. MAP FST (functions (pan_simp$compile_prog pan_code)) = MAP FST (functions pan_code)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "noNamesCompileProgHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "no_names_compile_prog",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: EVERY (is_function d \\/ is_decl d \\/ is_exn_decl d) preserved by pan_simp$compile_prog; EVERY rendered as membership quantification over the Bool classifiers; pan_code free and bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "semanticsDeclsHasMainPanToWordHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "semantics_decls_has_main'",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_structural_probe: s.code = FEMPTY /\\ ALL_DISTINCT (MAP FST (functions code)) /\\ semantics_decls s start code <> Fail ==> ?body rshape. ALOOKUP (functions code) start = SOME ([],body,rshape); ALOOKUP is List.lookup, and the free s start code are bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "mapMap2FstLemmaHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "map_map2_fst_lemma",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !xs ys. MAP FST (MAP2 (\\x y. (x,y)) xs ys) = TAKE (MIN (LENGTH xs) (LENGTH ys)) xs over polymorphic α β; MAP2 is List.zipWith (both truncate)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsNestedSeqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_nested_seq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ps. exp_ids (nested_seq ps) = FLAT (MAP exp_ids ps)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsCompileGlobalsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_compile_globals",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ctxt p. exp_ids (pan_globals$compile ctxt p) = exp_ids p over compileProgExactHOL, by compile_ind (Lean functional induction). Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsFpermHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_fperm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !f g p. exp_ids (fperm f g p) = exp_ids p."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "compileDecsExpIdsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "compile_decs_exp_ids",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ctxt pan_code. MAP (exp_ids o FST o SND o SND) (functions (FST (SND (compile_decs ctxt pan_code)))) = MAP (...) (functions pan_code); the composite projection of (name,params,body,rshape) is the body, written fun e => expIdsHOL e.2.2.1. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fpermExpIdsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "fperm_exp_ids",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !f g pan_code. MAP (exp_ids o FST o SND o SND) (functions (fperm_decs f g pan_code)) = MAP (...) (functions pan_code), with the same projection rendering."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "compileDecsNoExpIdsMainHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "compile_decs_no_exp_ids_main",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: !ctxt prog. EVERY (\\x. exp_ids x = []) (FST (compile_decs ctxt prog)); EVERY rendered as membership quantification. Only the pan_globals context globals |-> field is translated."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionsResortDeclsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "functions_resort_decls",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2) against the HOL statement captured with types by pan_to_word_exp_ids_probe: functions (resort_decls xs) = functions xs, with the free xs bound explicitly."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "holFmapAsFiniteSupportRelationWitness_PanGlobalsContextExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Imported-owner canonical pan_globals context roundtrip, re-exported for the fmap_as_finite_support_relation [PanGlobalsContextExact.globals] qualifier; no separately named HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "expIdsStructsCompileHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "exp_ids_structs_compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !ctxt prog. exp_ids (pan_structs$compile ctxt prog) = exp_ids prog over compileProgExact, by compile_ind (Lean functional induction over context and program). [local] in HOL, so not exported to the theory database; compared against the source text (pan_to_wordProofScript.sml)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionNamesStructsCompileDecsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "function_names_structs_compile_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !ctxt pan_code. MAP FST (functions (FST (pan_structs$compile_decs ctxt pan_code))) = MAP FST (functions pan_code) over compileDeclsExact. [local] in HOL, so not exported to the theory database; compared against the source text (pan_to_wordProofScript.sml)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionNamesStructsCompileTopHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "function_names_structs_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !pan_code. MAP FST (functions (pan_structs$compile_top pan_code)) = MAP FST (functions pan_code). Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionsFilterNilHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "functions_FILTER_nil",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): functions (FILTER is_exn_decl xs) = [] with the free xs bound explicitly. Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "semanticsDeclsDeclStructsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "semantics_decls_decl_structs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): semantics_decls s start pan_code <> Fail ==> ?s_ctxt. decs_stcnames [] pan_code = SOME s_ctxt; the free s start pan_code are bound explicitly. Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "functionsCompileDecsExnsHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "functions_compile_decs_exns",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "PanGlobalsContextExact.globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): functions (FST (SND (SND (compile_decs ctxt prog)))) = [], with the free ctxt prog bound explicitly; only the pan_globals context globals |-> field is translated. Statement captured with types by pan_to_word_structs_names_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "getEidsPanSimpCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "get_eids_pan_simp_compile_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !prog. FDOM (get_eids_from_decls prog) = FDOM (get_eids_from_decls (pan_simp$compile_prog prog)). FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fdomGetEidsPanGlobalsCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_pan_globals_compile_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): !pan_code main args body rshape. ALOOKUP (functions pan_code) main = SOME (args,body,rshape) ==> FDOM (get_eids_from_decls (compile_top pan_code main)) = FDOM (get_eids_from_decls pan_code); ALOOKUP is List.lookup. FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fdomGetEidsStructsCompileDecsEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_structs_compile_decs_eq",
+    "hol_line": 273,
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): (line 273) !ctxt prog. FDOM (get_eids_from_decls prog) = FDOM (get_eids_from_decls (FST (pan_structs$compile_decs ctxt prog))). FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "fdomGetEidsStructsCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_structs_compile_eq",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "Flapjack.getEidsFromDeclsHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): FDOM (get_eids_from_decls (pan_structs$compile_top prog)) = FDOM (get_eids_from_decls prog), free prog bound explicitly. FDOM equality is rendered as pointwise definedness of the canonical lookups of the reviewed getEidsFromDeclsHOL producer (as in the accepted pan_to_crep state_rel_imp_semantics_to_crep). [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeOfEidsStructsCompileDecsEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "FDOM_get_eids_structs_compile_decs_eq",
+    "hol_line": 293,
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): (line 293, the second HOL declaration of this name) !ctxt prog. size_of_eids prog = size_of_eids (FST (pan_structs$compile_decs ctxt prog)). [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeOfEidsStructsCompileEqHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "size_of_eids_structs_compile_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): size_of_eids (pan_structs$compile_top prog) = size_of_eids prog, free prog bound explicitly. [local] in HOL, so not in the theory database; compared against the source text."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "sizeOfEidsCompileTopHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "size_of_eids_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): ALOOKUP (functions pan_code) main = SOME (args,body,rshape) ==> size_of_eids (compile_top pan_code main) = size_of_eids pan_code; free variables bound explicitly, ALOOKUP is List.lookup. Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "getEidsEntriesHOL_congr",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: the get_eids association list depends only on exception names (size_of_eids is their count); no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "exceptionsHOL_panSimpDeclsHOL",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: pan_simp compile_prog leaves exceptions unchanged; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "exceptionNames_compileDeclsExact",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: pan_structs compile_decs keeps exception names in order; no HOL original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "lookupFirstNameCompileProgMainHOL",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "lookup_first_name_compile_prog_main",
+    "statement_status": "reviewed_fmap_as_finite_support_result_observations",
+    "fmap_as_finite_support_result_observations": [
+      "crepToLoopMakeFuncsExactHOL"
+    ],
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-pxn.18.5.19.2): FLOOKUP (make_funcs crep_code) «main» = SOME (first_name,0) ==> ?prog. lookup first_name (fromAList (crep_to_loop$compile_prog c crep_code)) = SOME ([],prog). make_funcs is the reviewed crepToLoopMakeFuncsExactHOL producer, first_name is firstLoopName, fromAList/lookup are sptFromAList/sptLookup, «main» is ofString \"main\", and the free c and crep_code are bound explicitly. Statement captured with types by pan_to_word_get_eids_probe."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/ShareInstructionValidity.lean",
     "lean_name": "ssaCcTrans_fullInstShareInst",
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -77150,6 +77640,119 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source review word_allocProofScript.sml:11012-11152, original FFI constructor case. Same every_var bounds/is_alloc_var/ssa_map_ok/full_inst_ok_less source hypotheses and complete same-config actual SSA output validity. Literal native renaming producers and Move/Alloc/Install/FFI sequences establish the entire conclusion; no output assumption or narrowed evaluator. Native WordLang/Spt/List and original FFI Basis.Pure.MlString.MlString carriers retained. words_as_type_indexed_bitvec records only positive HOL word dimension. Whole recursive theorem remains open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectLocValue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: LocValue: missing label and successful register-write/fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectCall",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: Call: missing target, missing return label, actual link write and target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpCmpTrue",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp taken: missing target and actual target jump. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpCmpNone",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: comparison NONE failure. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",
+    "hol_name": "filter_correct",
+    "lean_path": "Flapjack/Compiler/Backend/LabFilter/Proofs/ControlCases.lean",
+    "lean_name": "filterCorrectJumpCmpFalse",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.6.3 complete control family): Genuine original669 branch865-954: JumpCmp: false comparison fall-through. Retains full s1/t1/res/s2 evaluation/stateRel/nonfailed hypotheses and existential actual target execution/result/extra clock/FFI conclusions plus exactly concrete native source branch guards. Recursive IH applies only to actual source successor, guarded by actual locator/return/operand choices where required; no extra target execution, desired postrelation, successful result or narrowed outcome premise. Target PC/count from native NONE/SOME/fetch alignment helpers, return equality derived from full independent get_lab_after_adjust and link/register/PC successor stateRel proved through literal updates. All five original control instructions covered by eight case declarations across this module; prior3 rows describe initial Jump/JumpReg checkpoint. Full original669 capture/type/hyp0/kernel reproof refreshed. Positive-width words translation only; inherits reals_as_rational_cuts via evaluate, SOUNDNESS item8 unchanged. Full evaluator assembler and semantic lift remain open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/DecoderTransport.lean",
+    "lean_name": "decode_imp_decodeAny",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "Decode_IMP_DecodeAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original step541-551: arbitrary word32 and full native instruction i, exactly original Decode equality premise and DecodeAny(Word) equality conclusion; literal fixed-width source carrier and complete source-reviewed decoder, no opcode restrictions or extra hypotheses. Fresh universal original proof capture includes all binder types and zero open proof assumptions; Lean proof is direct definitional selector reduction using precisely the original premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/DecoderTransport.lean",
+    "lean_name": "decodeRVC_imp_decodeAny",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DecodeRVC_IMP_DecodeAny",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison2026-10-03 original step541-551: arbitrary word16 and full native instruction i, exactly original DecodeRVC equality premise and DecodeAny(Half) equality conclusion; literal fixed-width source carrier and complete source-reviewed decoder, no opcode restrictions or extra hypotheses. Fresh universal original proof capture includes all binder types and zero open proof assumptions; Lean proof is direct definitional selector reduction using precisely the original premise."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "compileExpCorrectNStruct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original686-791 NStruct case: all seven original source hypotheses and three conclusions. Only full child IH guarded by actual source structure lookup, matching field-name lists and membership in field expressions, exactly original eval_ind after UNZIP normalization. Source success supplies original shape zip/all check and evaluated fields; successful field evaluation preserves names/length, so zip check gives whole shape equality. Child IH list induction derives all field validity and actual converted expression-list evaluation. Original distinctness comes from source structInfosOk; accepted full faithful fields_in_order_reorder_noop discharges actual compiler reordering. No new target evaluation, compatibility, memory adapter, distinctness or bounds premise. Actual canonical state owner/local roundtrip and four map/positive-width Type0 qualifiers. Original full theorem/NStruct specialization/eval_ind kernel captured. Whole expression assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "evalFields_names",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "shapes_zip_eq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "evalFields_converted",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpNStruct.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack faithful list/shape/canonical state infrastructure with no independent HOL declaration. Source success and original child IH discharge premises within NStruct; none is an added final case hypothesis."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordAlloc/Proofs/SSAConventions/ControlInstructionValidity.lean",

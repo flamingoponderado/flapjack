@@ -1,0 +1,13 @@
+load "bossLib";
+load "preamble";
+load "pan_to_wordProofTheory";
+open bossLib HolKernel Parse preamble pan_to_wordProofTheory;
+val _ = show_types := true;
+fun capture label th = (print(label ^ "=");print_term(concl th);print "\n");
+val _ = capture "wloc_wlab_wlab_wloc" (DB.fetch "pan_to_wordProof" "wloc_wlab_wlab_wloc");
+val _ = capture "loop_state_simps" (DB.fetch "pan_to_wordProof" "loop_state_simps");
+val _ = capture "first_compile_prog_all_distinct" (DB.fetch "pan_to_wordProof" "first_compile_prog_all_distinct");
+val _ = capture "dec_shapes_compile_prog" (DB.fetch "pan_to_wordProof" "dec_shapes_compile_prog");
+val _ = capture "function_names_compile_prog" (DB.fetch "pan_to_wordProof" "function_names_compile_prog");
+val _ = capture "semantics_decls_has_main'" (DB.fetch "pan_to_wordProof" "semantics_decls_has_main'");
+val _ = capture "no_names_compile_prog" (DB.fetch "pan_to_wordProof" "no_names_compile_prog");

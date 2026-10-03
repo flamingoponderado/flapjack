@@ -5,7 +5,7 @@ import unittest
 ROOT=Path(__file__).resolve().parents[2]
 class Captures(unittest.TestCase):
     def test_exact_and_mutated_captures(self):
-        for family in ("write-pc", "decode-any", "update-pc", "next-step"):
+        for family in ("write-pc", "decode-any", "update-pc", "next-step", "next-evaluation", "decode-transport"):
             path=ROOT / f"scripts/hol-probes/check-l3-{family}.py"
             spec=importlib.util.spec_from_file_location(family,path)
             module=importlib.util.module_from_spec(spec)
@@ -17,5 +17,7 @@ class Captures(unittest.TestCase):
                        [x.replace("∀","∀restricted_") for x in rows],
                        [x.replace(" -> "," -> restricted_") for x in rows]]
             for mutation in mutations:
+                if mutation == rows:
+                    continue  # This family has no function-arrow type row.
                 with self.subTest(family=family,mutation=mutation):
                     with self.assertRaises(ValueError): module.check("\n".join(mutation))
