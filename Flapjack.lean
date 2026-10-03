@@ -1,3 +1,10 @@
+import Flapjack.RiscV.L3.Step.FetchTheorems
+import Flapjack.RiscV.L3.Defs.Encode
+import Flapjack.Test.L3EncodeParity
+import Flapjack.Compiler.Encoders.RiscV.Target
+import Flapjack.Test.RiscVNativeTargetParity
+import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+import Flapjack.Test.RiscVNativeConfigParity
 import Flapjack.RiscV.L3.Step.BitRewrites
 import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
@@ -614,6 +621,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenameMovePreserve
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAOptionLookupSubset
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
+import Flapjack.Misc.BinaryIeeeSqrtExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
@@ -1116,6 +1124,14 @@ import Flapjack.Pancake.Proofs.WordConvs.SmartSeqLabels
 import Flapjack.Pancake.Proofs.WordConvs.RemoveDead
 import Flapjack.Pancake.Proofs.WordConvs.ApplyColour
 import Flapjack.Pancake.Proofs.WordConvs.WordAlloc
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatHelpers
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatInst
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatProgram
+import Flapjack.Pancake.Proofs.WordConvs.SSAFlatFull
+import Flapjack.Pancake.Proofs.WordConvs.SSALabelHelpers
+import Flapjack.Pancake.Proofs.WordConvs.SSALabelFull
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
+import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.DataToWord.Config
 import Flapjack.Compiler.Backend.WordGcFunctions
@@ -1219,6 +1235,12 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileDeclsStructs
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesCompileDecls
 import Flapjack.Pancake.Proofs.PanStructs.DecsStcnamesNames
 import Flapjack.Pancake.Proofs.PanStructs.CompileShapeN
+import Flapjack.Pancake.Proofs.PanStructs.MemLoadConversion
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpCorrectExact
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectAtomic
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectTickAnnot
+import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
 import Flapjack.Pancake.Proofs.PanStructs.ConvertEshapes
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCode
 import Flapjack.Pancake.Proofs.PanStructs.ConvertState
@@ -1233,6 +1255,9 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpCmpShift
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpNStruct
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpMmapHelper
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpOperators
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoadByte
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpLoad32
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpBytesInWord
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
@@ -1411,6 +1436,7 @@ import Flapjack.Pancake.Semantics.PanSem.TotalSteps
 import Flapjack.Pancake.Semantics.PanSem.ValueHOL
 import Flapjack.Pancake.Semantics.PanSem.StateExact
 import Flapjack.Pancake.Semantics.PanSem.StateExactFiniteMap
+import Flapjack.Pancake.Semantics.PanSem.EvalInd
 import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalBridge
 import Flapjack.Pancake.Semantics.PanSem.TotalEvalExpBridge
@@ -1591,6 +1617,8 @@ import Flapjack.Pancake.Proofs.PanGlobals.FpermEvaluate.While
 import Flapjack.Pancake.Proofs.PanGlobals.DeclListLemmas
 import Flapjack.Pancake.Proofs.PanGlobals.StateRelationExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileDecsStructural
+import Flapjack.Pancake.Proofs.PanGlobals.CompileTopNames
+import Flapjack.Pancake.Proofs.PanGlobals.CompileLocalised
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopShapeWf
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsExact
 import Flapjack.Pancake.Proofs.PanGlobals.CompileTopSemanticsDecls
@@ -2137,7 +2165,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.PrimitiveInstru
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ShareInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.AllocationInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ControlInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.InstInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.CallInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.ProgramInstructionValidity
+import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAConventions.FullInstructionValidity
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.ClashOccurrences
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.OracleConventions
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CallArgumentConventions

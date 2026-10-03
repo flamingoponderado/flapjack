@@ -7163,3 +7163,103 @@ Op/Panop specializations and eval_ind. Both native cases retain all seven
 hypotheses and three conclusions, using only original per-member IHs. Source
 success supplies the word guard, discharging conversion identity before the
 original operation is evaluated on the converted list.
+
+`pan_structs_exp_load_byte_faithful_probe` captures the full original theorem,
+LoadByte specialization and eval_ind. Native case retains all seven hypotheses
+and three conclusions, deriving the byte load from source success and actual
+preservation of memory/domain/byte order, using only the original child IH.
+## Original complete native Fetch16 and Fetch32 theorems
+
+`l3_fetch_theorems_probeScript.sml` proves universally quantified copies of both complete original theorems, preserving the full native state, bool list, all16/32 Boolean binders, bare-VM and each memory-byte premise, low-bit selector and entire Skip-update result. Typed captures record all binders, word8/16/32 list carriers, statements, zero proof assumptions and proof markers. Lean derives translation and raw-read outcomes from these exact original premises, with generic bit extensionality assembling the little-endian bytes; no additional successful fetch/translation, alignment or core bound is assumed. The original symbolic step fetch route consumes these results; full encoder/compiler correctness remains further work.
+
+`pan_structs_exp_load32_faithful_probe` captures the full original theorem,
+Load32 specialization and eval_ind. Native case retains all seven hypotheses
+and three conclusions with only the original child IH, deriving the32-bit load
+through actual memory/domain/byte-order preservation.
+
+`lab_filter_map_probeScript.sml` captures the original complete filter_skip_MAP21
+and both direct definitions, full native word-indexed line/section binder types,
+zero hypotheses and kernel reproofs (12 rows). It confirms the actual Install
+proof's map prerequisite without specializing arbitrary generic Line carriers.
+The derived Lean append law is Flapjack infrastructure, not another HOL claim.
+
+`pan_structs_exp_bytes_in_word_faithful_probe` captures the original full theorem,
+BytesInWord specialization and eval_ind. The faithful native case retains all
+seven hypotheses and three conclusions, including the actual converted target
+evaluation, at every positive word width without an extra byte-size condition.
+
+## Complete native Encode
+
+`l3_encode_probeScript.sml` captures the original full `Encode` and nine
+fixed-width format helper types with zero assumptions. It evaluates all 163
+accepted instruction constructors: zero, maximal, nonuniform and sign-bit
+payloads (one observation for nullary constructors), for 634 fully reduced
+word32 results. The probe registers the complete original definitions and
+rejects nonnumeric residual terms. `scripts/l3/check-encode-fixtures.py`
+checks exact labels, types, result range, complete AST payload widths and the
+Lean kernel replay fixture. `check-l3-encode.py` joins the central native gate.
+
+Regenerate with `HOL_PROBE_ONLY=l3_encode_probeScript.sml` using the pinned
+original HOL model route. Finite fixtures and literal rendering drift checks
+are regression/transcription evidence, not a universal HOL-to-Lean proof.
+The native executed encoder configuration and final encoder correctness are
+separate downstream beads; this batch does not replace the compiler route.
+
+`pansem_eval_ind_probe` captures the original generated faithful expression
+induction theorem with its predicate type, closed hypotheses and kernel proof.
+The reference checker recognizes only this exact source path and the reviewed
+complete terminating `eval_def` block; its hash pin prevents unrelated source
+changes from silently authorizing the generated name. This is provenance
+checking, while the native theorem still requires independent statement review.
+
+`pan_structs_exp_correct_full_probe` captures the whole original expression
+correctness theorem, binder types, closed hypotheses and kernel proof. Native
+assembly preserves all seven hypotheses and three conclusions across all sixteen
+constructors through the original guarded evaluator induction principle.
+## Native target assembler lowering and bytes
+
+`l3_target_encoder_probeScript.sml` regenerates from the pinned original
+CakeML `compiler/encoders/riscv` directory. It records all ten encoder-section
+types and zero-assumption definition theorems; the partial helper conjunctions
+are retained exactly, and missing Sub/Ror cases intentionally remain unreduced.
+The executable full AST lowering never executes these unspecified cases.
+
+300 inputs cover the source constructors and branching/range boundaries,
+including register truncation, all comparison polarities in register/immediate
+and short/far modes, constant sign-extension/build choices, rotations above64,
+memory widths and unsupported FP/LongDiv. Every observation includes the complete
+native instruction list and original encoded byte list; all600 results are
+replayed by the Lean kernel in `RiscVNativeTargetParity.lean`. The checker rejects
+nonconcrete AST payloads, wrong carriers, unreduced bytes and capture drift.
+These finite checks do not establish universal cross-language equivalence.
+The executed compiler configuration replacement remains a separate dependency.
+
+`pan_structs_program_atomic_probe` captures the complete original program
+correctness theorem and Skip/Break/Continue specializations, all closed and
+kernel-proved. Native cases preserve all ten premises and seven conclusions,
+including actual compiled evaluation, state invariants and result validity.
+
+`pan_structs_program_tick_annot_probe` captures the full original program
+correctness theorem and Tick/Annot specializations as closed kernel theorems.
+Native Tick retains both zero-clock timeout and decrement branches without
+extra premises; both cases retain all ten hypotheses and seven conclusions.
+
+`pan_structs_value_shape_conversion_probe` captures whole, source-local
+induction and exactly simplified reversed shape-conversion theorems, binder
+types and closed kernel proofs. Local statements and original unchanged proof
+text are replayed. The whole unused binder is polymorphic; induction n is num.
+Native proofs retain original guards and derive named lookup/field shapes.
+`lab_filter_semantics_probe.out` mechanically replays the literal original local `state_rel_IMP_sem_EQ_sem` proof from source1039-1152, with native quantified state types, zero hypotheses and kernel reproof. It does not assume local theorems are exported by HOL. The native Lean lift derives failure and terminating-choice predicate equivalences and whole divergence LUB equality from full evaluator simulation and original clock/prefix laws; no target run or semantic equality is supplied as a premise. This is source-review evidence, not HOL-to-Lean equivalence.
+## Full native RISC-V configuration
+
+`l3_native_config_probeScript.sml` captures the complete original record,
+all scalar fields, its fixed64 ASM/word8 encode type, and a generic zero-assumption
+proof that its encode field is the complete `riscv_enc` function. It also captures
+78 immediate-policy observations: every binop/comparison class at both signed
+bounds and surrounding values. The Lean default build checks native record
+projections, full encoder-field equality and all policy observations.
+The legacy production/check configuration stays explicitly untagged; actual
+emitted-byte routing remains a separate blocking bead. These finite regressions
+and source-reviewed record equations are not universal HOL-to-Lean equivalence.
+
+`lab_filter_skip_semantics_probe.out` captures the full original1154 theorem, both nonfailed guards, existential compiler/oracle transformation, native quantified state types, zero hypotheses and kernel reproof. The native Lean statement keeps the complete source shape and derives semantics equality from the full local semantics lift and zero-PC adjustment.

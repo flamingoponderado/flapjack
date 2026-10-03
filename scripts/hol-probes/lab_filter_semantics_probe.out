@@ -1,0 +1,5 @@
+state_rel_IMP_sem_EQ_sem=∀(s :(α, β, γ) labSem$state) (t :(α, β, γ) labSem$state).
+  state_rel s t ⇒ (semantics s :behaviour) = (semantics t :behaviour)
+state_rel_IMP_sem_EQ_sem_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(t :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+state_rel_IMP_sem_EQ_sem_hypotheses=0
+state_rel_IMP_sem_EQ_sem_proved=T
