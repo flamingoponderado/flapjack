@@ -1916,6 +1916,12 @@
       "sha256": "0b0f291f19dabc107ea6573d2765b0415cf327fd649ab84096a3725e76ba6532"
     },
     {
+      "bytes": 999,
+      "out": "lab_filter_return_labels_probe.out",
+      "rows": 12,
+      "sha256": "8529a95e2b964f082d5ce9f123dd41787fc414e5f93103d67681df57a24a6386"
+    },
+    {
       "bytes": 1495,
       "out": "lab_filter_shared_return_probe.out",
       "rows": 4,
@@ -1962,6 +1968,12 @@
       "out": "lab_props_sec_ends_label_probe.out",
       "rows": 5,
       "sha256": "152d6742e65b67592b63a097593a4a131602feb98553eba932290ab7156f521b"
+    },
+    {
+      "bytes": 2084,
+      "out": "lab_sem_independent_navigation_probe.out",
+      "rows": 12,
+      "sha256": "d8959c09791d87460c845b1c3faa1a6286a27cabafa013b22e3ae992596b710b"
     },
     {
       "bytes": 2421,

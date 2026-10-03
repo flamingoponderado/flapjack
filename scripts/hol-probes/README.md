@@ -7101,3 +7101,6 @@ CI runs `python3 scripts/l3/check-native-model.py`: every `check-l3-*.py` captur
 `pan_structs_exp_var_faithful_probe` captures the whole original expression theorem
 and its genuine generic Var specialization, including both Local and Global kinds.
 All seven hypotheses and three conclusions remain intact, with zero open assumptions.
+`lab_filter_return_labels_probeScript.sml` replays unchanged original local proofs416/425/468 with original simplifier setup. Twelve rows capture complete next-label and guarded skipped-run return-label equalities, full binder types, zero hypotheses and kernel reproofs.
+
+`lab_sem_independent_navigation_probeScript.sml` captures full original next-label, after-label and return-location definitions, including independent code/state and result word dimensions, zero hypotheses and kernel reproofs. Native navigation binds both positive widths independently.

@@ -6655,3 +6655,14 @@ run_probe l3_update_pc_probeScript.sml l3_update_pc_probe.out \
 run_probe pan_structs_exp_var_faithful_probeScript.sml pan_structs_exp_var_faithful_probe.out \
   compile_exp_correct_full_statement compile_exp_correct_full_hypotheses compile_exp_correct_var_statement compile_exp_correct_var_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe lab_filter_return_labels_probeScript.sml lab_filter_return_labels_probe.out \
+  next_label_filter_skip next_label_filter_skip_types next_label_filter_skip_hypotheses next_label_filter_skip_proved \
+  all_skips_get_lab_after all_skips_get_lab_after_types all_skips_get_lab_after_hypotheses all_skips_get_lab_after_proved \
+  get_lab_after_adjust get_lab_after_adjust_types get_lab_after_adjust_hypotheses get_lab_after_adjust_proved \
+  "$cake_dir/compiler/backend/proofs/lab_filterProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_sem_independent_navigation_probeScript.sml lab_sem_independent_navigation_probe.out \
+  next_label_def next_label_def_types next_label_def_hypotheses next_label_def_proved \
+  get_lab_after_def get_lab_after_def_types get_lab_after_def_hypotheses get_lab_after_def_proved \
+  get_ret_Loc_def get_ret_Loc_def_types get_ret_Loc_def_hypotheses get_ret_Loc_def_proved \
+  "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
