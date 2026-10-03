@@ -80462,5 +80462,16 @@
     "hol_name": "star_move_lemma",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original2733-2737 (local): p0 * p1 * p1' * p2 * p3 * p4 = p2 * (p1 * p1' * STAR p3 (p4 * p0)) for arbitrary assertions over an arbitrary heap-element type, HOL * as left-associated accepted SetSep.star; proof by AC from accepted STAR_ASSOC/STAR_COMM ports. Original statement captured with zero hypotheses in scripts/hol-probes/stack_remove_init_any_probe.out. Proof-only initializer lemma; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/FupdateElim2.lean",
+    "lean_name": "fupdateElim2",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "fupdate_elim2",
+    "statement_status": "reviewed_fmap_as_finite_support_relation",
+    "fmap_as_finite_support_relation": [
+      "fm"
+    ],
+    "reviewer": "flapjack-sol source comparison2026-10-03 original local fupdate_elim2: arbitrary polymorphic finite map/key/value, sole FLOOKUP fm x=SOME y premise, exact FUPDATE fm(x,y)=fm conclusion. Canonical finite-support fm is the only representation translation, named standalone relation parameter; no state carrier/witness needed for a bare map entry. Actual updateEq uses Classical HOL equality internally with no public BEq/LawfulBEq/DecidableEq compatibility premise. Native map constructor proof irrelevance and pointwise key equality case split establish whole canonical map equality, not merely selected-key equality. No width/state/shape/wf restriction. Fresh original local statement and unchanged FUPDATE_ELIM/TO_FLOOKUP proof replay, closed types/hyp0/kernelT reviewed. Assign and whole compiler correctness remain separate."
   }
 ]

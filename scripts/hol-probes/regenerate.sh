@@ -6882,3 +6882,7 @@ run_probe lab_filter_clock_ih_probeScript.sml lab_filter_clock_ih_probe.out \
   evaluate_ind evaluate_ind_types evaluate_ind_hypotheses evaluate_ind_proved \
   filter_correct filter_correct_types filter_correct_hypotheses filter_correct_proved \
   "$cake_dir/compiler/backend/semantics/labSemScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_structs_fupdate_neutral_probeScript.sml pan_structs_fupdate_neutral_probe.out \
+  fupdate_elim2_statement fupdate_elim2_types fupdate_elim2_hypotheses fupdate_elim2_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
