@@ -23,7 +23,7 @@ theorem holFmapAsFiniteSupportWitness {width : Nat} [NeZero width] {C F : Type} 
 FFI state replaces the output FFI state and leaves the result unchanged. -/
 @[hol "cakeml/compiler/backend/proofs/stack_removeProofScript.sml" "evaluate_init_code_ffi"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem evaluateInitCodeFfi {width : Nat} [NeZero width] {C F : Type}
+theorem evaluateInitCodeFfi {width : Nat} [NeZero width] {C : Type} {F : Type}
     (generateGc : Bool) (maxHeap pointer : Nat) (s t : StackSemStateFiniteExact width C F)
     (result : Option (StackSemResult width)) (c : HolFfiState F)
     (run : StackSemEvaluate.evaluate (initCode generateGc maxHeap pointer, s) = (result, t)) :
