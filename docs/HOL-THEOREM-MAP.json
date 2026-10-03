@@ -79942,5 +79942,105 @@
     "statement_status": "reviewed_fmap_as_finite_support_equality",
     "fmap_as_finite_support_equality": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3041-3046 fmap_as_finite_support_equality: forall g x y z over num-keyed maps with arbitrary value Type, g |+ (0,x) |+ (5,y) |+ (0,z) = g |+ (0,z) |+ (5,y). HOL |+ is HolFiniteMapExact.updateEq (HOL key equality via DecidableEq); single map equality witnessed at the lookup level by holFmapAsFiniteSupportEqualityWitness_fmapSimpLemma1, whose two sides are exactly the theorem sides applied to the same universally bound key. Captured HOL statement prints updates latest-first. Original HOL statement captured with proved=T and zero hypotheses in scripts/hol-probes/stack_remove_word_list_memory_probe.out. Proof-only initializer prerequisite; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimits.lean",
+    "lean_name": "getStackHeapLimitPrime",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_stack_heap_limit'_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3053-3068, captured type num -> 'b word -> 'c word -> 'a word -> num # num: p2 and p3 have independent positive widths (width2/width3 with own NeZero) read only through w2n; p4, bytes_in_word, dimindex DIV 8, shift (:'a) = word_shift (wordShiftAmount width), max_heap_w guarded product or -1w, unsigned <+ comparison and reg3 = n2w ptr2 + (((...) >>> (shift+1)) <<< (shift+1)) all at the p4 width, as the captured typed RHS shows; result via accepted get_stack_heap_limit'' port. 8 EVAL rows (incl. mixed 32/16/64 and 64/32 widths, overflow -1w branch, wrapped order) kernel-replayed by Flapjack.Test.StackRemoveInitLimits. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimits.lean",
+    "lean_name": "getStackHeapLimit",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "get_stack_heap_limit_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3070-3077, type num -> 'a word # 'a word # 'a word -> num # num: tupled pointer argument; middle = ptr2 + (((-1w*ptr2+ptr4) >>> (shift+1)) <<< shift), adj_ptr2/adj_ptr4 with bytes_in_word * n2w max_stack_alloc, unsigned <=+ margins select ptr3 or middle, then get_stack_heap_limit' at one width. 5 EVAL rows (in-margin, midpoint, wrapped base, 32-bit) kernel-replayed. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitLimits.lean",
+    "lean_name": "readPointers",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "read_pointers_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3079-3083: triple theWord (THE (FLOOKUP s.regs i)) for i = 2,3,4 using accepted holThe (opaque THE NONE) and wordSemTheWord (shared ARB on Loc); no register presence or word-valuedness premise. Only regs is traversed. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "makeInitOpt",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_opt_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3839-3847: arguments in original order gen_gc max_heap bitmaps data_sp coracle jump off k code s; native stackSem evaluate of actual initCode; (SOME _,t) gives NONE, (NONE,t) gives SOME (init_reduce ... t) iff init_prop gen_gc max_heap data_sp (get_stack_heap_limit max_heap (read_pointers s)) (init_reduce ... t), using accepted initCode/initProp/initReduce ports and the new limit/pointer ports; classical decision of the Prop guard only. No successful-run premise. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "initPre",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "init_pre_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original3849-3854: lookup 0 s.code = SOME (Seq (init_code gen_gc max_heap k) (Call NONE (INL start) NONE)) and accepted init_code_pre k bitmaps data_sp s and max_stack_alloc <= max_heap; argument order gen_gc max_heap bitmaps data_sp k start s. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "makeInitAny",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "make_init_any_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4007-4027: SOME t gives t; NONE gives literal record update of s with all fifteen fields: regs FEMPTY |+ (0, Loc 1 0) (updateEq), fp_regs FEMPTY, mdomain EMPTY, bitmaps [4w], use_stack T, use_store T, use_alloc F, stack [Word 0w], stack_space 0, compile via MAP (prog_comp jump off k), compile_oracle coracle, empty data/code buffers at 0w, code, store FEMPTY |++ MAP (x, Word 0w) (CurrHeap::store_list) via updateListEq and the accepted storeOfSyntax key translation used by initReduce. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "dischargeThese",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "discharge_these_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4029-4039: EVERY (λ(n,p). reg_bound p k ∧ stack_num_stubs <= n+1) code as membership quantifier; universal oracle MEM bound; s2.compile_oracle = (I ## MAP (prog_comp jump off k) ## I) o coracle as the same pointwise triple rendering used by accepted state_rel; s2.code = fromAList (compile jump off gen_gc max_heap k start code) with sptFromAList and accepted compileHOL; 8 <= k, 1 IN domain, {k;k+1;k+2} SUBSET ffi_save_regs, three disabled flags, max_stack_alloc <= max_heap. State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/InitMake.lean",
+    "lean_name": "propagateThese",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "propagate_these_def",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-03 original4041-4067: good_dimindex and four existential words with every conjunct in original order: three register lookups, five header loads, empty code buffer, unsigned ptr2 <=+ ptr4, three byte alignments, 1024w * bytes_in_word <=+ ptr4 - ptr2 (unsigned toNat), and the left-associated STAR of word_list bitmap_ptr (MAP Word bitmaps), word_list_exists data space and word_list_exists ptr2 (w2n (-1w * ptr2 + ptr4) DIV w2n bytes_in_word), literally -1w*ptr2+ptr4 unlike init_code_pre's ptr4 - ptr2, over fun2set (s.memory, s.mdomain). State carrier is the imported StackSemStateFiniteExact (regs/fpRegs/store canonical HolFiniteMapExact) with same-module re-exported holFmapAsFiniteSupportWitness; code is native Spt; mdomain/ffi_save_regs are native Bool characteristic functions used through their membership predicates. Full original equation and constant type captured in scripts/hol-probes/stack_remove_init_make_probe.out. Proof-only initializer definition; no executed compiler change. Coordinator acceptance tracked on bead."
   }
 ]

@@ -1,0 +1,30 @@
+get_stack_heap_limit_prime_def_statement=∀max_heap p2 p3 p4. get_stack_heap_limit' max_heap p2 p3 p4 = (let ptr2 = w2n p2; ptr3 = w2n p3; ptr4 = w2n p4; d = dimindex (:α) DIV 8; max_heap_w = if max_heap * w2n bytes_in_word < dimword (:α) then bytes_in_word * n2w max_heap else -1w; reg3 = n2w ptr2 + (-1w * n2w ptr2 + if max_heap_w <₊ -1w * n2w ptr2 + n2w ptr3 then max_heap_w + n2w ptr2 else n2w ptr3) ⋙ (shift (:α) + 1) ≪ (shift (:α) + 1) in get_stack_heap_limit'' (ptr2 DIV d) (w2n reg3 DIV d) (ptr4 DIV d))
+get_stack_heap_limit_prime_def_type=:num -> α word -> β word -> γ word -> num # num
+get_stack_heap_limit_def_statement=∀max_heap ptr2 ptr3 ptr4. get_stack_heap_limit max_heap (ptr2,ptr3,ptr4) = (let middle = ptr2 + (-1w * ptr2 + ptr4) ⋙ (shift (:α) + 1) ≪ shift (:α); adj_ptr2 = ptr2 + bytes_in_word * n2w max_stack_alloc; adj_ptr4 = ptr4 − bytes_in_word * n2w max_stack_alloc; adj_ptr3 = if adj_ptr2 ≤₊ ptr3 ∧ ptr3 ≤₊ adj_ptr4 then ptr3 else middle in get_stack_heap_limit' max_heap ptr2 adj_ptr3 ptr4)
+get_stack_heap_limit_def_type=:num -> α word # α word # α word -> num # num
+read_pointers_def_statement=∀s. read_pointers s = (theWord (THE (FLOOKUP s.regs 2)),theWord (THE (FLOOKUP s.regs 3)),theWord (THE (FLOOKUP s.regs 4)))
+read_pointers_def_type=:(α, β, γ) stackSem$state -> α word # α word # α word
+make_init_opt_def_statement=∀gen_gc max_heap bitmaps data_sp coracle jump off k code s. make_init_opt gen_gc max_heap bitmaps data_sp coracle jump off k code s = case evaluate (init_code gen_gc max_heap k,s) of (NONE,t) => if init_prop gen_gc max_heap data_sp (get_stack_heap_limit max_heap (read_pointers s)) (init_reduce gen_gc jump off k code bitmaps data_sp coracle t) then SOME (init_reduce gen_gc jump off k code bitmaps data_sp coracle t) else NONE | (SOME v2,t) => NONE
+make_init_opt_def_type=:bool -> num -> α word list -> num -> (num -> β # (num # α stackLang$prog) list # α word list) -> bool -> α word # α word -> num -> α stackLang$prog sptree$num_map -> (α, β, γ) stackSem$state -> (α, β, γ) stackSem$state option
+init_pre_def_statement=∀gen_gc max_heap bitmaps data_sp k start s. init_pre gen_gc max_heap bitmaps data_sp k start s ⇔ lookup 0 s.code = SOME (Seq (init_code gen_gc max_heap k) (Call NONE (INL start) NONE)) ∧ init_code_pre k bitmaps data_sp s ∧ max_stack_alloc ≤ max_heap
+init_pre_def_type=:bool -> num -> α word list -> num -> num -> num -> (α, β, γ) stackSem$state -> bool
+make_init_any_def_statement=∀gen_gc max_heap bitmaps data_sp coracle jump off k code s. make_init_any gen_gc max_heap bitmaps data_sp coracle jump off k code s = case make_init_opt gen_gc max_heap bitmaps data_sp coracle jump off k code s of NONE => s with <|regs := FEMPTY⟨0 ↦ Loc 1 0⟩; fp_regs := FEMPTY; mdomain := ∅; bitmaps := [4w]; use_stack := T; use_store := T; use_alloc := F; stack := [Word 0w]; stack_space := 0; compile := (λc p. s.compile c (MAP (prog_comp jump off k) p)); compile_oracle := coracle; data_buffer := <|buffer := []; position := 0w; space_left := 0|>; code_buffer := <|buffer := []; position := 0w; space_left := 0|>; code := code; store := FEMPTY |++ MAP (λx. (x,Word 0w)) (CurrHeap::store_list)|> | SOME t => t
+make_init_any_def_type=:bool -> num -> α word list -> num -> (num -> β # (num # α stackLang$prog) list # α word list) -> bool -> α word # α word -> num -> α stackLang$prog sptree$num_map -> (α, β, γ) stackSem$state -> (α, β, γ) stackSem$state
+discharge_these_def_statement=∀jump off gen_gc max_heap k start coracle code s2. discharge_these jump off gen_gc max_heap k start coracle code s2 ⇔ EVERY (λ(n,p). reg_bound p k ∧ stack_num_stubs ≤ n + 1) code ∧ (∀n i p. MEM (i,p) (FST (SND (coracle n))) ⇒ reg_bound p k ∧ stack_num_stubs ≤ i + 1) ∧ s2.compile_oracle = (I ## MAP (prog_comp jump off k) ## I) ∘ coracle ∧ s2.code = fromAList (compile jump off gen_gc max_heap k start code) ∧ 8 ≤ k ∧ 1 ∈ domain s2.code ∧ {k; k + 1; k + 2} ⊆ s2.ffi_save_regs ∧ ¬s2.use_stack ∧ ¬s2.use_store ∧ ¬s2.use_alloc ∧ max_stack_alloc ≤ max_heap
+discharge_these_def_type=:bool -> α word # α word -> bool -> num -> num -> num -> (num -> β # (num # α stackLang$prog) list # α word list) -> (num # α stackLang$prog) list -> (α, β, γ) stackSem$state -> bool
+propagate_these_def_statement=∀s bitmaps data_sp. propagate_these s bitmaps data_sp ⇔ good_dimindex (:α) ∧ ∃ptr2 ptr3 ptr4 bitmap_ptr. FLOOKUP s.regs 2 = SOME (Word ptr2) ∧ FLOOKUP s.regs 3 = SOME (Word ptr3) ∧ FLOOKUP s.regs 4 = SOME (Word ptr4) ∧ s.memory ptr2 = Word bitmap_ptr ∧ s.memory (ptr2 + bytes_in_word) = Word (bitmap_ptr + bytes_in_word * n2w (LENGTH bitmaps)) ∧ s.memory (ptr2 + 2w * bytes_in_word) = Word (bitmap_ptr + bytes_in_word * n2w (LENGTH bitmaps) + bytes_in_word * n2w data_sp) ∧ s.memory (ptr2 + 3w * bytes_in_word) = Word s.code_buffer.position ∧ s.memory (ptr2 + 4w * bytes_in_word) = Word (s.code_buffer.position + n2w s.code_buffer.space_left) ∧ s.code_buffer.buffer = [] ∧ ptr2 ≤₊ ptr4 ∧ byte_aligned ptr2 ∧ byte_aligned ptr4 ∧ byte_aligned bitmap_ptr ∧ 1024w * bytes_in_word ≤₊ ptr4 − ptr2 ∧ (word_list bitmap_ptr (MAP Word bitmaps) * word_list_exists (bitmap_ptr + bytes_in_word * n2w (LENGTH bitmaps)) data_sp * word_list_exists ptr2 (w2n (-1w * ptr2 + ptr4) DIV w2n bytes_in_word)) (fun2set (s.memory,s.mdomain))
+propagate_these_def_type=:(α, β, γ) stackSem$state -> α word list -> num -> bool
+limit_prime_64_a=(3048,500)
+limit_prime_64_b=(2000,1024)
+limit_prime_64_c=(4046,1)
+limit_prime_64_d=(0,500)
+limit_prime_32_a=(1836,50)
+limit_prime_32_b=(1424,256)
+limit_prime_mixed_a=(3048,500)
+limit_prime_mixed_b=(0,1)
+get_stack_heap_limit_prime_arg_types=:num, :β word, :γ word, :α word
+limit_64_a=(3048,500)
+limit_64_b=(3048,500)
+limit_64_c=(0,3)
+limit_32_a=(1950,25)
+limit_32_b=(6096,512)
