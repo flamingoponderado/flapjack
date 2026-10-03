@@ -118,4 +118,3 @@ theorem treeMapMergeWith_lookup {β : Type} (f : Nat → β → β → β)
   rw [mergeFold_lookup f right.toList unique left key, assocLookupTreeMap]
 
 end Flapjack.WordAlloc
-
