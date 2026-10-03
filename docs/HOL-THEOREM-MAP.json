@@ -26481,6 +26481,61 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/InstSelect.lean",
+    "lean_name": "inst_select_exp_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "inst_select_exp_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.2): HOL local inst_select_exp_thm (word_instProofScript.sml:430-712): ∀c tar temp exp s w loc. binary_branch_exp exp ∧ every_var_exp (λx. x < temp) exp ∧ locals_rel temp s.locals loc ∧ word_exp s exp = SOME w ⇒ ∃loc'. evaluate (inst_select_exp c tar temp exp, s with locals := loc) = (NONE, s with locals := loc') ∧ ∀x. if x = tar then lookup x loc' = SOME w else if x < temp then lookup x loc' = lookup x s.locals else T. Binders in HOL order (c : AsmConfigExact), the four conjunctive premises over the tagged binaryBranchExp, everyVarExpHOL with Boolean decide (x < temp), wordLocalsRel and wordExp; the conclusion literal over the tagged instSelectExp and exact evaluate, the nested if as Lean if-then-else with True for T. Proved by recursion on the expression (HOL completeInduct_on exp_size), every Const/Var/Lookup/Load/Op/Shift branch of inst_select_exp including the CurrHeap, immediate, negated-subtract and register-temporary paths. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstSelectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/InstSelect.lean",
+    "lean_name": "locals_rm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "locals_rm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.2): HOL local locals_rm (word_instProofScript.sml:714-718): D with locals := D.locals = D, free D an explicit binder. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstSelectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/InstSelect.lean",
+    "lean_name": "inst_select_Loop_helper",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "inst_select_Loop_helper",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.2): HOL inst_select_Loop_helper (word_instProofScript.sml:1066-1131): binders s names prog exit_names res rst c temp loc in HOL order; the single conjunctive premise keeps HOL's universally quantified body hypothesis (evaluate, res ≠ Error, locals_rel ⇒ ∃loc' with the four-arm case), the Loop evaluation, res ≠ Error, every_var prog, every_name (names,LN), every_name (exit_names,LN) and locals_rel; the case conclusion is a Lean match with the same four arms; LN is Spt.ln. The every_var prog premise is retained although the proof does not use it. Proved by strong induction on s.clock as HOL's completeInduct_on s.clock. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstSelectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordInst/Proofs/InstSelect.lean",
+    "lean_name": "inst_select_thm",
+    "hol_path": "cakeml/compiler/backend/proofs/word_instProofScript.sml",
+    "hol_name": "inst_select_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; bead flapjack-pxn.18.5.15.2.42.2): HOL inst_select_thm (word_instProofScript.sml:724-749, with resumed Assign, Set, Store, Seq, MustTerminate, ShareInst, If, Call and Loop cases): ∀c temp prog st res rst loc. evaluate (prog,st) = (res,rst) ∧ every_var (λx. x < temp) prog ∧ res ≠ SOME Error ∧ locals_rel temp st.locals loc ⇒ ∃loc'. evaluate (inst_select c temp prog, st with locals := loc) = (res, rst with locals := loc') ∧ case res of NONE | SOME (Break _) | SOME (Continue _) ⇒ locals_rel temp rst.locals loc' | SOME _ ⇒ rst.locals = loc'. Binders and premise order as HOL over the tagged instSelect, everyVarHOL and exact evaluate; the case as a Lean match with the same arms. Unchanged statements use the tagged locals_rel_evaluate_thm machinery, as HOL's inst_select_def,locals_rel_evaluate_thm simp step; Loop uses inst_select_Loop_helper as HOL. Over WordSemStateFiniteExact (fmap_as_finite_support [fpRegs, store], same-module witness WordInstSelectSupport.holFmapAsFiniteSupportWitness; words_as_type_indexed_bitvec). Kernel-checked; standard axioms; no extra hypothesis. Inherited assumption (PR #1179 review, bead flapjack-qfld): this declaration's statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through the evaluator, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/LocalsRel.lean",
     "lean_name": "wordLocalsRel",
     "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",

@@ -8936,6 +8936,12 @@
       "sha256": "64def3712489e37f43d55a0370f63b527cfff6d049b4f2360c94536a0174fa0b"
     },
     {
+      "bytes": 11121,
+      "out": "word_inst_locals_rel_group_probe.out",
+      "rows": 45,
+      "sha256": "4ba7c504363f64dbddb5dbd2bea47e31ab1e81dfc2fc9d1358169250e6127668"
+    },
+    {
       "bytes": 2328,
       "out": "word_inst_probe.out",
       "rows": 36,
