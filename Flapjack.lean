@@ -36,6 +36,7 @@ import Flapjack.RiscV.L3.Defs.IntegerLoad
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.StackAccess
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.MemoryFfi
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.AllocationStore
+import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.Install
 import Flapjack.Compiler.Backend.StackRawCall.Proofs.CompCorrect.RawCall
 import Flapjack.Compiler.Backend.StackProps.EvaluateMono
 import Flapjack.Compiler.Backend.StackProps.EvaluateNeutral
