@@ -7067,3 +7067,7 @@ run_probe stack_to_lab_code_installed_probeScript.sml stack_to_lab_code_installe
 run_probe stack_to_lab_state_rel_probeScript.sml stack_to_lab_state_rel_probe.out \
   state_rel_def_statement loc_check_IMP_loc_to_pc_statement state_rel_dec_clock_statement state_rel_with_pc_statement state_rel_with_clock_statement set_var_upd_reg_statement set_var_Word_upd_reg_statement set_fp_var_upd_fp_reg_statement mem_store_upd_mem_statement state_rel_read_reg_FLOOKUP_regs_statement state_rel_read_fp_reg_FLOOKUP_fp_regs_statement state_rel_get_var_imm_statement \
   "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_to_lab_inst_correct_probeScript.sml stack_to_lab_inst_correct_probe.out \
+  inst_correct_statement \
+  "$cake_dir/compiler/backend/proofs/stack_to_labProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -7754,6 +7754,12 @@
       "sha256": "a5dc135f132df456bda5526be0ef4a0f9c0c72c36ca97062a6a9e31a9858d48a"
     },
     {
+      "bytes": 111,
+      "out": "stack_to_lab_inst_correct_probe.out",
+      "rows": 1,
+      "sha256": "ee0034c1d72ca0ccbd1a65120490d1f888c719f9e6ca557152414552a2479ac7"
+    },
+    {
       "bytes": 7335,
       "out": "stack_to_lab_native_probe.out",
       "rows": 46,
