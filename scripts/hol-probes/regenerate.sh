@@ -6077,3 +6077,8 @@ run_probe lab_to_target_mc_conf_ok_probeScript.sml lab_to_target_mc_conf_ok_prob
   mc_conf_ok_def mc_conf_ok_def_types mc_conf_ok_def_hypotheses \
   full_contract encoder_correct target_ok dimension8_rejected dimension128_rejected \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe target_start_pc_ok_probeScript.sml target_start_pc_ok_probe.out \
+  start_pc_ok_def start_pc_ok_def_types start_pc_ok_def_hypotheses \
+  lengths entry_bound halt_cache \
+  "$cake_dir/compiler/backend/semantics/targetSemScript.sml" "$cake_dir/compiler/backend/semantics"

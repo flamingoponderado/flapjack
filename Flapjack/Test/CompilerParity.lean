@@ -1,3 +1,4 @@
+import Flapjack.Test.TargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationContractsParity
 import Flapjack.Test.LabToTargetInitializationParity
 import Flapjack.Test.LabToTargetFfiEntryExclusionParity

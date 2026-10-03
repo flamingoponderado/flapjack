@@ -6461,3 +6461,13 @@ the original dimension guard separately from intrinsic word positivity. The
 encoder relation inherits the existing FP real-rendering assumption in
 SOUNDNESS item8; no initializer or machine simulation closure is inferred.
 Selector: `HOL_PROBE_ONLY=lab_to_target_mc_conf_ok_probeScript.sml`.
+
+The target start-PC contract probe captures the complete original
+`start_pc_ok_def` at279, both typed inputs and zero hypotheses, with original
+kernel projections for lengths, entry-PC bounds and halt/cache constraints.
+Native generic consumers derive the shared-suffix ordinary list lookup from
+those original bounds and reject unequal FFI-name/entry-PC lengths. No extra
+bound or past-end default is introduced; the individual total-HD/EL hold stays
+unchanged. This contract is a prerequisite of still-open target initialization
+and compiler correctness, not their completion. Selector:
+`HOL_PROBE_ONLY=target_start_pc_ok_probeScript.sml`.
