@@ -6460,3 +6460,6 @@ run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
 run_probe stack_remove_init_limits_double_probeScript.sml stack_remove_init_limits_double_probe.out \
   init_limits_double_definition init_limits_double_type init_limits_double_hypotheses init_limits_double_store_count \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe stack_rawcall_call_return_probeScript.sml stack_rawcall_call_return_probe.out \
+  call_return_full_statement call_return_full_hypotheses call_return_case64 call_return_case80 call_return_evaluate_ind_obligation call_return_whole_case64 call_return_direct64 call_return_handler64 call_return_link_erased64 call_return_other_link64 call_return_whole_case80 call_return_direct80 call_return_handler80 call_return_link_erased80 call_return_other_link80 \
+  "$cake_dir/compiler/backend/proofs/stack_rawcallProofScript.sml" "$cake_dir/compiler/backend/proofs"
