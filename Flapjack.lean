@@ -1211,6 +1211,7 @@ import Flapjack.Pancake.Proofs.PanStructs.ConvertState
 import Flapjack.Pancake.Proofs.PanStructs.ShapeMap
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction

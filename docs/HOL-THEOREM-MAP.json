@@ -41171,7 +41171,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open. Coordinator review pending."
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_allocProofScript.sml",
@@ -41185,7 +41185,7 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
-    "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open. Coordinator review pending."
+    "reviewer": "flapjack-luna-c source comparison 2026-10-01 child25.4: literal Inst Skip and full FP constructor, HOL Inst1374-1391 plus wordSem inst_def FP821-938. Same original st/cst/f/live/lt binders, three colouring_ok/state-equality/live-scoped-locals premises, full existential applyColourPost, no IH/success/NaN/register-distinctness premise. Full FP theorem case-splits all16 WordLangFp constructors and unfolds actual reviewed inst/evaluate; identical FP reads follow state-equality, common set_fp_var frame preserves actual fixed64 map and all other fields. FP comparisons derive integer-write scoped injectivity. FPMovToReg keeps64 single update vs non64 low first/high second with actual width extracts and alias overwrite, derives both insert obligations from writes-union-live. FPMovFromReg transports original integer reads (one at64, two otherwise), preserving Loc/missing failures, high concatenated before low and fixed64 result. FPToInt keeps actual RTE/none/range guards, fixed signed word32 check, source failure without write, old FP half insertion at indexDIV2/ODD; FPFromInt uses signed word32 at64 and actual polymorphic width otherwise. FMA accumulator/source order unchanged, arithmetic and NaN values are the identical imported primitive computation, not recalculated approximations. Canonical imported state map roundtrip; words qualifier translates positive dimension. Inherited reals_as_rational_cuts assumption via wordSem evaluate/inst, SOUNDNESS item8; no direct rendering call or new cross-prover agreement claim. Whole Inst assembly remains open."
   },
   {
     "hol_path": "cakeml/compiler/backend/word_to_stackScript.sml",
@@ -75955,5 +75955,36 @@
     "lean_name": "holFmapAsFiniteSupportWitness",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack first-match/canonical carrier representation infrastructure for the faithful Var case, not an independent CakeML declaration. Unconditional lookup laws or genuine imported state roundtrip; helper lawful-equality typeclasses are discharged at exact MlS and are not public HOL-case assumptions."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_exp_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpRField.lean",
+    "lean_name": "compileExpCorrectRField",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_structsProofScript.sml686-791 full compile_exp_correct RField constructor case. All seven original hypotheses and all three conclusions retained. Only recursive hypothesis is the same full original statement for the child expression at the current source/context, universally quantified over its result; original eval_ind recursion permits that specialization. Source success forces an RStruct child and a successful list index. Child IH supplies shape/field validity/actual converted evaluation; List indexing commutes with shapeOf and convertV maps. No index bounds, target evaluation, compatibility, memory adapter, or rangedness assumption is added. Four finite maps use the actual imported canonical state owner and a complete local roundtrip witness. Positive width/FFI translation is explicit. Original full theorem, RField specialization, and eval_ind captured independently; assembly remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpRField.lean",
+    "lean_name": "valuesFldsOk_getElem",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: Boolean list validity under successful indexing; no new premise enters the HOL case."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileExpRField.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure: Local re-export of the actual imported state canonical finite-map two-way roundtrip; no HOL original."
   }
 ]

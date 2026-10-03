@@ -7077,3 +7077,8 @@ The parent whole expression/declaration/pass proofs remain open.
 `pan_structs_exp_var_faithful_probe` captures the whole original expression theorem
 and its genuine generic Var specialization, including both Local and Global kinds.
 All seven hypotheses and three conclusions remain intact, with zero open assumptions.
+
+`pan_structs_exp_rfield_faithful_probe` captures the whole original expression
+theorem, its RField specialization, and the original evaluator induction theorem.
+The native case retains all seven hypotheses and three conclusions, with only
+the recursive child induction hypothesis; source success supplies the index lookup.
