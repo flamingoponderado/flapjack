@@ -6995,3 +6995,6 @@ inherit the documented SOUNDNESS item 8 real-rendering assumption.
 
 Regenerate with `HOL_PROBE_ONLY=l3_run_dispatch_probeScript.sml` through
 `regenerate.sh`, then run the strict checker.
+### Full native fromList2 domain evenness
+
+`misc_even_from_list2_probeScript.sml` fetches the original Misc `EVEN_fromList2` kernel theorem (miscScript.sml367-375), capturing the full arbitrary-list/key membership-to-evenness statement, proved=T and zero hypotheses. Lean derives that full statement from the checked literal even-key domain generator, without a WF, index bound, payload restriction or execution premise. Original returning-call entry consumers are8503/9340. This is source comparison and original theorem evidence, not cross-language equivalence.

@@ -75516,5 +75516,13 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c 2026-10-03 complete source comparison riscvScript10755: full exact instruction/riscv_state function; every original nested constructor dispatches its complete unchanged payload to same named dfn handler; FENCE/FENCE_I/WFI identity, UnknownInstruction original handler. Full carrier constructors/payload widths reviewed. Arbitrary payload/state clause checks cover all163 constructors. Calls real-dependent FP handlers, inherits reals_as_rational_cuts external SOUNDNESS item 8 assumption through those handlers; no extra premise on Run, no direct real-rendering call. Source dependency group review remains separately tracked."
+  },
+  {
+    "lean_path": "Flapjack/Misc/Sptree/FromList2.lean",
+    "lean_name": "sptEvenFromList2",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "EVEN_fromList2",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-b source comparison2026-10-03 child9.4.2.3: miscScript.sml367-375 forall arbitrary payload list l and natural n, n in domain(fromList2 l) implies EVEN n. Lean retains both quantified arguments, List and exact native Spt/fromList2/domain; sole premise is original membership. Natural Even means exists index key=index+index, HOL EVEN_EXISTS equivalently2*index; no WF, bounds, payload or target-run hypothesis. Checked source-ready exact domain_fromList2 supplies actual GENLIST range index and equality2*index=key, deriving Even by arithmetic. Original exported Misc kernel theorem DB.fetch capture closed, proved=T hypotheses0; no cross-language equivalence claim. Both returning-call entry consumers8503/9340 recorded."
   }
 ]
