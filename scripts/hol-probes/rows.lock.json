@@ -2750,6 +2750,12 @@
       "sha256": "756a35331f2d70e3a600d5d3704f0962fffd1f9cfcedc874d8e1abae6e422c85"
     },
     {
+      "bytes": 5113,
+      "out": "lab_to_target_semantics_compile_probe.out",
+      "rows": 8,
+      "sha256": "d153aaf7657c774878573d91dba6a8d3d2d75e5e97718dd04f2272fac9b7b13d"
+    },
+    {
       "bytes": 3324,
       "out": "lab_to_target_semantics_make_init_probe.out",
       "rows": 4,
