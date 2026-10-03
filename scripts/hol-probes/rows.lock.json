@@ -7010,6 +7010,12 @@
       "sha256": "0ac8fe0bb58030b5d9e8a7e5e4c647968e2d728be7a062c1d8a75dc090f21102"
     },
     {
+      "bytes": 78,
+      "out": "word_alloc_instruction_producer_probe.out",
+      "rows": 4,
+      "sha256": "9bbec9ba0043b50481cd0fc788366f66f1ee0da724aabb3c08fd2878807dbe3d"
+    },
+    {
       "bytes": 77,
       "out": "word_alloc_key_map_probe.out",
       "rows": 3,

@@ -6304,3 +6304,9 @@ skipping translation, literal Data/Read on read-only pages, eight-byte stores,
 zero registers, core255/totalCore1, RV128, Sv32 faults and returned Sv39 state.
 Complete unaffected frames and other-core reservations are retained. This is
 source-clause regression evidence, not whole atomic/runtime/compiler correctness.
+`word_alloc_instruction_producer_probe.out` captures four original
+`get_delta_inst` 16-bit memory catchall equations at widths 8/64 and zero/255
+offsets. `WordAllocInstructionProducerParity` kernel-replays their empty native
+and executed deltas; the complete accepted-instruction producer relation uses
+the real instruction encoder, retaining every ordered operand. No whole
+allocator or source-program producer correctness is claimed.
