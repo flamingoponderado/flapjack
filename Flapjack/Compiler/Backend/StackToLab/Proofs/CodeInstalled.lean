@@ -13,7 +13,7 @@ import Flapjack.Pancake.Semantics.LoopProps.NestedSeqSyntaxExact
 
 namespace Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Backend.LabSem
-open Flapjack.Compiler.Encoders.Asm
+open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend.StackLang
 
 /-- Complete original installation predicate: labels resolve to the current
 position, other lines are fetched there. -/
@@ -682,5 +682,90 @@ theorem labelsOkLabsCorrect {width : Nat} [NeZero width] :
           (fun p mp => by
             have := ((every s (List.mem_cons_of_mem _ m)).1 p mp).1
             rw [this]; exact sne) recur
+
+/-- The section produced for `(n, p)`: the flattened body followed by the
+final label. Local factoring of the `prog_to_section` lemmas. -/
+theorem progToSection_eq {width : Nat} [NeZero width] (n : Nat) (p : HolProg width) :
+    progToSectionHOL (n, p) =
+      ⟨n, appListAppend (flattenHOL true p n (Compiler.Backend.StackAlloc.nextLab p 2) [] []).1 ++
+        [.label n (if isSeqHOL p then
+          (flattenHOL true p n (Compiler.Backend.StackAlloc.nextLab p 2) [] []).2.2 else 1) 0]⟩ := by
+  simp only [progToSectionHOL, (appListAppend_thm _ _ []).1, (appListAppend_thm .nil .nil _).2.1]
+
+/-- Complete original section-name law of the section compiler. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_FST"
+  (words_as_type_indexed_bitvec)]
+theorem mapProgToSectionFst {width : Nat} [NeZero width] (prog : List (Nat × HolProg width)) :
+    (prog.map progToSectionHOL).map (fun s => s.sectionId) = prog.map Prod.fst := by
+  induction prog with
+  | nil => rfl
+  | cons e es ih =>
+    obtain ⟨n, p⟩ := e
+    simp only [List.map_cons, progToSection_eq, ih]
+
+/-- Complete original section-number law of the section compiler. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "MAP_prog_to_section_Section_num"
+  (words_as_type_indexed_bitvec)]
+theorem mapProgToSectionSectionNum {width : Nat} [NeZero width] (prog : List (Nat × HolProg width)) :
+    (prog.map progToSectionHOL).map (·.sectionId) = prog.map Prod.fst :=
+  mapProgToSectionFst prog
+
+/-- Complete original installation of a compiled section body (without
+label positions) at its section entry. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
+  "code_installed_prog_to_section_lemma" (words_as_type_indexed_bitvec)]
+theorem codeInstalledProgToSectionLemma {width : Nat} [NeZero width] :
+    ∀ (prog4 : List (Nat × HolProg width)) (n : Nat) (prog3 : HolProg width),
+      holAlookup prog4 n = some prog3 →
+      ∃ pc, codeInstalled' pc
+          (appListAppend (flattenHOL true prog3 n (Compiler.Backend.StackAlloc.nextLab prog3 2)
+            [] []).1) (prog4.map progToSectionHOL) ∧
+        locToPc n 0 (prog4.map progToSectionHOL) = some pc := by
+  intro prog4
+  induction prog4 with
+  | nil => intro n prog3 h; simp [holAlookup] at h
+  | cons e es ih =>
+    obtain ⟨k, p⟩ := e
+    intro n prog3 h
+    simp only [holAlookup] at h
+    split at h
+    · rename_i hk
+      cases h; subst hk
+      refine ⟨0, ?_, ?_⟩
+      · rw [List.map_cons, progToSection_eq]; exact codeInstalled'Simp _ _ _ _
+      · rw [List.map_cons, progToSection_eq]; exact locToPcSelf _ _ _
+    · rename_i hk
+      obtain ⟨pc, installed, found⟩ := ih n prog3 h
+      rw [List.map_cons, progToSection_eq]
+      refine ⟨pc + _, codeInstalledCons _ _ _ k pc installed, ?_⟩
+      rw [locToPcSkipSection n k _ _ (fun h => hk h.symm), found]
+
+theorem holAlookup_mem {α β : Type} [DecidableEq α] :
+    ∀ (ls : List (α × β)) (n : α) (v : β), holAlookup ls n = some v → (n, v) ∈ ls := by
+  intro ls n v h
+  obtain ⟨ls1, ls2, rfl, _⟩ := alookupPartition ls n v h
+  simp
+
+/-- Complete original installation of a compiled section body at its entry,
+from label well-formedness of the compiled program. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
+  "code_installed_prog_to_section" (words_as_type_indexed_bitvec)]
+theorem codeInstalledProgToSection {width : Nat} [NeZero width] :
+    ∀ (prog4 : List (Nat × HolProg width)) (n : Nat) (prog3 : HolProg width),
+      labelsOk (prog4.map progToSectionHOL) ∧ holAlookup prog4 n = some prog3 →
+      ∃ pc, codeInstalled pc
+          (appListAppend (flattenHOL true prog3 n (Compiler.Backend.StackAlloc.nextLab prog3 2)
+            [] []).1) (prog4.map progToSectionHOL) ∧
+        locToPc n 0 (prog4.map progToSectionHOL) = some pc := by
+  rintro prog4 n prog3 ⟨ok, found⟩
+  obtain ⟨pc, installed, entry⟩ := codeInstalledProgToSectionLemma prog4 n prog3 found
+  refine ⟨pc, (codeInstalledEq pc _ _).mpr ⟨installed, ?_⟩, entry⟩
+  have member : progToSectionHOL (n, prog3) ∈ prog4.map progToSectionHOL :=
+    List.mem_map_of_mem (holAlookup_mem _ _ _ found)
+  have correct := labelsOkLabsCorrect _ ok _ member
+  rw [progToSection_eq] at correct
+  simp only at correct
+  rw [entry] at correct
+  exact labsCorrectAppend _ _ _ pc correct
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
