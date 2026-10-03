@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Step.Next
 import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
@@ -1221,6 +1222,7 @@ import Flapjack.Pancake.Proofs.PanStructs.CompileExpAtomic
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpVar
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpRField
 import Flapjack.Pancake.Proofs.PanStructs.CompileExpRStruct
+import Flapjack.Pancake.Proofs.PanStructs.CompileExpNField
 import Flapjack.Test.PanStructsShapeMapParity
 import Flapjack.Pancake.PanStructs.CompileDeclsCorrespondence
 import Flapjack.Pancake.PanStructs.CompileTopProduction
