@@ -1,0 +1,16 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "stack_access_full_statement="; print_term(concl comp_correct));
+val _ = print("stack_access_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "stack_access_locValue" (ISPEC ``stackLang$LocValue rawRegister rawLabelFirst rawLabelSecond:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackAlloc" (ISPEC ``stackLang$StackAlloc n:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackFree" (ISPEC ``stackLang$StackFree n:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackLoad" (ISPEC ``stackLang$StackLoad r n:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackLoadAny" (ISPEC ``stackLang$StackLoadAny r rn:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackStore" (ISPEC ``stackLang$StackStore r n:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackStoreAny" (ISPEC ``stackLang$StackStoreAny r rn:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackGetSize" (ISPEC ``stackLang$StackGetSize r:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_stackSetSize" (ISPEC ``stackLang$StackSetSize r:64 stackLang$prog`` comp_correct);
+val _ = row "stack_access_bitmapLoad" (ISPEC ``stackLang$BitmapLoad r v:64 stackLang$prog`` comp_correct);

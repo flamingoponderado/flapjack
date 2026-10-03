@@ -1,0 +1,18 @@
+mc_conf_ok_def=∀(mc_conf :(α, β, γ) machine_config).
+  mc_conf_ok mc_conf ⇔
+  good_dimindex (:α) ∧ encoder_correct mc_conf.target ∧
+  reg_ok mc_conf.ptr_reg mc_conf.target.config ∧
+  reg_ok mc_conf.len_reg mc_conf.target.config ∧
+  reg_ok mc_conf.ptr2_reg mc_conf.target.config ∧
+  reg_ok mc_conf.len2_reg mc_conf.target.config ∧
+  reg_ok
+    (case mc_conf.target.config.link_reg of
+       (NONE :num option) => (0 :num)
+     | SOME n => n) mc_conf.target.config ∧ enc_ok mc_conf.target.config
+mc_conf_ok_def_types=(mc_conf :(α, β, γ) machine_config)::(α, β, γ) machine_config;
+mc_conf_ok_def_hypotheses=0
+full_contract=T
+encoder_correct=T
+target_ok=T
+dimension8_rejected=T
+dimension128_rejected=T

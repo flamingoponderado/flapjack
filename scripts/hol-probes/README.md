@@ -6447,6 +6447,19 @@ codec definitions and 490 observations over every single-bit basis vector,
 zero, all ones, alternating bits and mixed patterns. Independent calculations
 check both packed words and every decoded field, including discontiguous
 reserved-bit segments. Full CSR transitions and Run/Next remain open.
+`word_to_stack_state_rel_probe.out` captures the complete original state_rel equation, zero hypotheses and full polymorphic type. The Lean relation preserves all compiler/oracle/code-domain/stub/resource/stack/local conjuncts and the source num×config vs target config callback carriers. Canonical source/target map codec witnesses cover only named finite-map fields; sptrees remain native. This definition does not prove simulation or full compiler correctness.
+`stack_remove_comp_correct_full_probeScript.sml` replays the entire unchanged original StackRemove `comp_correct` proof (1481–2426), including its original evaluator induction and every constructor case. Its 28 original local helper proofs are replayed in source order; their free-variable form is preserved because the original RawCall branch specializes `find_code_lemma` before generalizing it. The original `write_fun2set2` proof transformation and local stub overload are retained. Two rows record the full closed statement and kernel proof success. Lean assembles the complete native pass theorem using the same clock-first evaluator measure, with exactly the original four premises and no supplied target execution or simulation. Downstream semantics/initialization and whole compiler correctness remain separate goals.
+
+`stack_evaluate_mono_probeScript.sml` replays the literal full original
+`evaluate_mono` proof (stackPropsScript.sml:442–452), checking its fully
+generalized statement and original proof success. Four independent original
+observations cover left-biased union at an overlapping and a fresh key, a bitmap
+prefix extension and a rejected truncation. Native kernel/runtime replays and
+five generic theorem consumers include Error, TimeOut and successful results,
+and preservation of a source code lookup. The theorem retains its sole source
+execution premise and both original conclusions. These captures are regression
+evidence, not cross-language equivalence or whole compiler correctness.
+`word_to_stack_initial_state_rel_probe.out` captures full init_state_ok equation/type and freshly replays the literal complete original init_state_ok_IMP_state_rel proof. Full statements have zero hypotheses/free variables. The Lean family preserves the two stub/code-entry/domain/full-contract premises and derives the complete native initial state relation at frame0/lens[]/extra0. Frame-map and stack arithmetic are proved internally; no post-relation or extra success premise is supplied. This is initialization relation correctness, not whole pass/semantics correctness.
 
 `l3_supervisor_csr_probe.out` captures all 15 complete original supervisor CSR
 codec/lift/lower definitions and 862 independently calculated observations:
@@ -6455,6 +6468,58 @@ interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
 
+The LabToTarget compiler-oracle contract probe captures the full original
+`compiler_oracle_ok_def` at9588, every quantified carrier and zero hypotheses.
+Four original HOL kernel consumers check the complete iff, both invariants at
+all indices, and all three zero-index configuration equalities. Native generic
+consumers retain the same arbitrary positive word dimension, concrete Config,
+actual oracle, label trees and FFI names. This proof-script contract neither
+replaces an executable compiler nor establishes initializer simulation or
+HOL-to-Lean equivalence. Selector:
+`HOL_PROBE_ONLY=lab_to_target_compiler_oracle_ok_probeScript.sml`.
+`stack_props_evaluate_io_events_mono_probeScript.sml` replays the complete unchanged original StackProps `evaluate_io_events_mono` proof (454–475), including evaluator induction and both external/shared-memory FFI cases. Two rows record the full closed statement and kernel proof success. The native Lean theorem keeps the sole source-run premise and every original result. This single-run prefix law does not claim extra-clock monotonicity, FP numerical parity or whole compiler correctness.
+
+`stack_rawcall_rawcall_case_probe` freshly captures the original full paired `comp_correct`, zero external hypotheses, width64 RawCall specialization and original evaluate_ind RawCall obligation. The Lean case retains arbitrary positive width and only the actual callee IH; this is source-statement evidence, not a HOL-to-Lean equivalence proof.
+
+The machine-configuration initializer contract probe captures the full original
+`mc_conf_ok_def` at9602, its independent state/projection carriers and zero
+hypotheses. Five kernel observations check all eight clauses, actual encoder
+and target validity projections, and rejection of arbitrary configurations at
+positive but unsupported dimensions8 and128. Native generic consumers retain
+the original dimension guard separately from intrinsic word positivity. The
+encoder relation inherits the existing FP real-rendering assumption in
+SOUNDNESS item8; no initializer or machine simulation closure is inferred.
+Selector: `HOL_PROBE_ONLY=lab_to_target_mc_conf_ok_probeScript.sml`.
+
+The target start-PC contract probe captures the complete original
+`start_pc_ok_def` at279, both typed inputs and zero hypotheses, with original
+kernel projections for lengths, entry-PC bounds and halt/cache constraints.
+Native generic consumers derive the shared-suffix ordinary list lookup from
+those original bounds and reject unequal FFI-name/entry-PC lengths. No extra
+bound or past-end default is introduced; the individual total-HD/EL hold stays
+unchanged. This contract is a prerequisite of still-open target initialization
+and compiler correctness, not their completion. Selector:
+`HOL_PROBE_ONLY=target_start_pc_ok_probeScript.sml`.
+
+
+`word_to_stack_semantics_helpers_probe.out` freshly replays the complete original synchronized-clock and WordSem/StackSem tail-call result exclusion proofs (10116–10151). All three full universally closed statements have zero hypotheses and prove T. Lean retains arbitrary native states, destinations, arguments and handlers, with only the original relation or execution premise. These helpers do not establish the full pass simulation.
+
+
+`word_to_stack_comp_results_probe.out` captures complete original `compile_result_def` and `push_locals_def` equations and polymorphic types, and freshly replays the unchanged full `Halt_EQ_compile_result` proof. All three declarations are closed with zero hypotheses. The Lean family preserves all eight results, unconditional Word1 equivalence, good-dimension-guarded Word2 exclusion, and all original pushed-local frame updates. This is a prerequisite of the full native `comp_correct` simulation, not an assembly of that theorem.
+`stack_rawcall_stack_access_probe` freshly captures original full comp_correct/zero hypotheses and all ten LocValue/stack/bitmap constructor statements (original562-581). Twenty full Lean consumers retain both existential simulations at arbitrary positive and 1/8/64/80 widths. LocValue checking is derived through actual code labels, not arbitrary code transport. Statement evidence does not prove cross-language equivalence.
+
+`word_to_stack_comp_control_probe.out` freshly replays the unchanged original `comp_correct` Skip/Break/Continue case proofs against the complete constructor-specialized original goal (5719–5751). All premises, the target clock/run existential and every resource/result branch remain in all three captured statements; proof=T and hypotheses=0 with no free variables. The Lean cases prove the complete conclusion factored in `compCorrectResult`, rather than only successful-state preservation. These three cases do not assemble the full pass simulation.
+The target initial-state contract probe captures the complete original
+`good_init_state_def` at434, all eight typed inputs and zero hypotheses.
+Four original kernel observations extract word-valued aligned memory, the
+source FFI entry-PC bound, code-buffer size, and overflow rejection. Native
+consumers exclude labels in actual aligned memory and recover bounded ordinary
+entry-PC lookup. Boolean data/shared domains retain their source types; checked
+pointwise truth codecs connect them to reviewed proposition-backed ASM/machine
+sets without restricting sets or membership. Every original clause remains;
+small-width LOG2(0) and the individual total-HD/EL hold are unchanged. This
+predicate does not prove initializer simulation or machine/compiler correctness.
+Selector: `HOL_PROBE_ONLY=target_good_init_state_probeScript.sml`.
 
 The l3_csr_dispatch/read_value/direct_write/special_write/unknown/counter probes
 cover the complete native CSR read/write section. All66 read clauses and41 write

@@ -1,0 +1,9 @@
+state_rel_with_clock_statement=∀t s lens k extra ac a. state_rel ac a 0 0 s t lens extra ⇒ state_rel ac a 0 0 (s with clock := k) (t with clock := k) lens extra
+state_rel_with_clock_proved=T
+state_rel_with_clock_hypotheses=0
+word_Call_NONE_not_Break_Continue_statement=∀s' s res handler dest args. evaluate (Call NONE dest args handler,s) = (res,s') ⇒ (∀n. res ≠ SOME (Break n)) ∧ ∀n. res ≠ SOME (Continue n)
+word_Call_NONE_not_Break_Continue_proved=T
+word_Call_NONE_not_Break_Continue_hypotheses=0
+stack_Call_NONE_not_Break_Continue_statement=∀s' s res handler dest. evaluate (Call NONE dest handler,s) = (res,s') ⇒ (∀n. res ≠ SOME (Break n)) ∧ ∀n. res ≠ SOME (Continue n)
+stack_Call_NONE_not_Break_Continue_proved=T
+stack_Call_NONE_not_Break_Continue_hypotheses=0

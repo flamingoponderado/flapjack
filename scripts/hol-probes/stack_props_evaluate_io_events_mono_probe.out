@@ -1,0 +1,2 @@
+single_run_events_statement=∀exps s1 res s2. evaluate (exps,s1) = (res,s2) ⇒ s1.ffi.io_events ≼ s2.ffi.io_events
+single_run_events_proved=T
