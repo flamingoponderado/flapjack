@@ -7517,3 +7517,9 @@ literal local-case proof replay or cross-language equivalence.
 `word_to_stack_comp_locvalue_probeScript.sml` captures the full original
 LocValue induction obligation and arbitrary full specialization, hyp0/T.
 Statement regression evidence, not literal local proof replay or equivalence.
+
+`pan_structs_program_shmem_load_probe` captures full original `compile_correct`
+and its ShMemLoad specialization, quantified types and closed kernel truth.
+The Lean case preserves all ten premises/seven conclusions, derives the actual
+mapped-read FFI and returned-word assignment internally, and adds no IH or
+oracle agreement premise. Full compiler correctness remains open.

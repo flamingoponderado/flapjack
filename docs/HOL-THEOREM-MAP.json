@@ -81866,5 +81866,28 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison labProps1023-1063 and fresh original fulltypes/hyp0/kernelT capture lab_props_alignment_sdm_navigation_probe.out: complete unconditional clock/PC/label/return-location/bytearray observation laws over original generic positive-width C/FFI state. get_ret_Loc retains independent output word dimension. Explicit forall bytearray length/bytes then address and all native memory/domain/endian arguments retained. Canonical shared-domain projection leaves ordinary memory domain unchanged, no dimension/success/result premise or LOG2zero choice. Full evaluator/refinement remains open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemLoad.lean",
+    "lean_name": "compileCorrectShMemLoad",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original compile_correct1034-1061/ShMemLoad case1267-1280 and panSem sh_mem_load510-527: full ten premises/seven conclusions, no IH. Actual source address eval and existing word lookup retained; errors excluded only by original no-Error. Full expression correctness supplies compiled address; converted existing word lookup follows canonical map2. Original nb_op zero/nonzero shared-domain guards at address/byte_align address, mappedRead call_FFI configuration n2w nb and word_to_bytes address F identical under conversion. Final returns FinalFFI and clears locals; ret installs word_of_bytes F 0 returned bytes at selected local/global binding and updates FFI only. Full Assign correctness instantiated internally with literal returned word, whose validity follows source existing word, derives map commutation/all postconditions. No target run/outcome/oracle agreement/success/word-width bound premise. Canonical imported four-map owner/full roundtrip and positive type-indexed word/Type0 host translations only. Full program and executed compiler correctness remain open."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectShMemLoad.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack representation proof plumbing, no independent HOL declaration. Full canonical imported-state two-way roundtrip."
   }
 ]

@@ -5012,6 +5012,12 @@
       "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
     },
     {
+      "bytes": 2454,
+      "out": "pan_structs_program_shmem_load_probe.out",
+      "rows": 6,
+      "sha256": "08b835025babba905c44c2c10ffb12cd3dbd54531ff81e1ab0ecf9d98f64cfe3"
+    },
+    {
       "bytes": 2448,
       "out": "pan_structs_program_shmem_store_probe.out",
       "rows": 6,
