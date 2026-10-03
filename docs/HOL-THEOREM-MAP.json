@@ -69209,5 +69209,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 complete source9549 and fresh exported definition/fulltype0hyp: all12 input arguments and independent generic compile configuration beta/target state/projection/FFI hosts retained, complete23-field literal native LabSem.State constructor. Native AsmState/MachineConfig/LabSem.State/WordLocW/Spt/Line/Section/Boolean domains match reviewed source carriers; positive word width, fixed word8 buffer and fixed word64 FP registers retained. Standard words_as_type_indexed_bitvec only. Total source registers wrapped in Word, same fp registers/memory/domains, pc/clock0/failedFalse, actual target endian, same FFI, four imported reviewed actual target register oracles, same code/compile/compiler oracle, all pointer/length fields, literal Option link-reg SOME n/NONE0 branch, empty code buffer with actual cbpos/cbspace. No substituted configuration/default/target eval/success premise and no hold policy change. Fresh original fullbody/type0hyp and23 generic source field equalities allT; native whole-state constructor and all23 generic field consumers preserve arbitrary C, S, Q, F. This original proof-script initializer constructs the state used by still-open151 initialization simulation, not an operational compiler algorithm; no executed compiler replacement or full initializer/machine/end-to-end closure is inferred. Source comparison/regression is not cross-language equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InitializationContracts.lean",
+    "lean_name": "compilerOracleOk",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compiler_oracle_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison9588-9598 and original complete fulltype0hyp: all five arguments retained, actual concrete word-free Config oracle and independent natural-valued nested Spt initial labels, arbitrary positive source word width, fixed word8 code bytes and exact HolFfiName list. Every index keeps good_code and no_share_mem_inst, index zero keeps labels/pos/SOME ffi-name equalities. Imported reviewed goodCode generic label-value carrier is genuinely instantiated at Nat by the original concrete Config labels, not arbitrarily specialized. Pair destructuring and unused zero code component preserved; no extra successful compiler/desired target state premise or default/hold change. Fresh original definition and four full generic kernel consumers are compared with native generic consumers. Full151 initializer simulation remains open; this source comparison does not close that theorem. This is a proof-script contract, not an executed compiler replacement or cross-language equivalence claim."
   }
 ]

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.LabToTarget.InitializationContracts
 import Flapjack.Compiler.Backend.LabToTarget.Initialization
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
