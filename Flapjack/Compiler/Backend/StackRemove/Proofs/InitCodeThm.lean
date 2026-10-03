@@ -2,6 +2,7 @@ import Flapjack.Compiler.Backend.StackRemove.Proofs.StoreListCodeThm
 import Flapjack.Compiler.Backend.StackRemove.InitCode
 import Flapjack.Misc.GoodDimindex
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+import Flapjack.Misc.Alignment
 
 /-! Native execution of the StackRemove initializer, towards
 `init_code_thm` (`stack_removeProofScript.sml` 3225-3837). The lemmas here
@@ -753,6 +754,22 @@ theorem initHeapSplit {β : Type} (P : ((BitVec width × β) → Prop) → Prop)
         (Misc.wordList (reg3 + bytesInWord width * BitVec.ofNat width storeList.length) restValues)
         (SetSep.one (p4 - bytesInWord width, last))))) by ac_rfl]
   exact listHeap
+
+/-- Byte alignment as divisibility by the byte width. -/
+theorem byteAligned_iff (good : goodDimindex width) (w : BitVec width) :
+    holByteAligned w = true ↔ w.toNat % (width / 8) = 0 := by
+  unfold holByteAligned holAligned
+  rw [holAlign_eq_div, decide_eq_true_iff]
+  have hlog : holLOG2 (width / 8) = wordShiftAmount width := by
+    rw [holLOG2_eq_log2 (by rcases good with h | h <;> subst h <;> decide)]
+    unfold wordShiftAmount
+    rcases good with h | h <;> subst h <;> decide
+  rw [hlog]
+  rcases good with h | h <;> subst h <;>
+  · simp only [wordShiftAmount]; norm_num
+    constructor
+    · intro eq; have := congrArg BitVec.toNat eq; simp at this; omega
+    · intro eq; apply BitVec.eq_of_toNat_eq; simp; omega
 
 /-! ### Layout arithmetic of the computed pointers -/
 
