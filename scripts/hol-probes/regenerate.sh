@@ -7584,3 +7584,7 @@ run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_wor
 run_probe word_depth_probeScript.sml word_depth_probe.out \
   max_depth_type max_depth_def_typed leaf unknown const_leaf nested_const branch_max branch_unknown call_hit call_miss call_hit_nested deep_calls branch_call unknown_deep \
   "$cake_dir/compiler/backend/word_depthScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pan_to_target_option_lt_source_replay_probeScript.sml pan_to_target_option_lt_source_replay_probe.out \
+  option_lt_local_replay_type option_lt_local_replay_def_typed none_none some_none none_some less equal greater \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" /tmp
