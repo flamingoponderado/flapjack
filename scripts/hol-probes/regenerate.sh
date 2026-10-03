@@ -7545,3 +7545,7 @@ run_probe pan_structs_compile_top_semantics_decls_probeScript.sml pan_structs_co
 run_probe binary_ieee_two_dimensions_probeScript.sml binary_ieee_two_dimensions_probe.out \
   largest_type largest_def_typed threshold_type threshold_def_typed \
   "$hol_dir/src/floating-point/binary_ieeeScript.sml" "$hol_dir/src/floating-point"
+
+run_probe loop_to_word_state_word_witness_probeScript.sml loop_to_word_state_word_witness_probe.out \
+  state_rel_type state_rel_def_typed state_rel_intro_typed state_rel_IMP_typed_replay state_rel_with_clock_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
