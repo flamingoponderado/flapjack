@@ -6080,6 +6080,12 @@
       "sha256": "fa403052b834c53ba29faebf6e14d67abf7df6cf3400aecfbf1d22158e2bf023"
     },
     {
+      "bytes": 749,
+      "out": "stack_remove_comp_storeconsts_probe.out",
+      "rows": 2,
+      "sha256": "e2fea9fbdbffdf9a53dccc1568bba4d2e385f10e82e3ca4850081803051e402b"
+    },
+    {
       "bytes": 267881,
       "out": "stack_remove_compile_native_probe.out",
       "rows": 104,
