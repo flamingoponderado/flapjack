@@ -6202,3 +6202,11 @@ run_probe lab_to_target_initializer_basic_cases_probeScript.sml lab_to_target_in
   ISR14_statement ISR14_hypotheses ISR14_proved \
   ISR17_statement ISR17_hypotheses ISR17_proved \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_initializer_interference_probeScript.sml lab_to_target_initializer_interference_probe.out \
+  IMP_state_rel_make_init IMP_state_rel_make_init_types IMP_state_rel_make_init_hypotheses state_rel_conjuncts \
+  ISR2_statement ISR2_hypotheses ISR2_proved \
+  ISR3_statement ISR3_hypotheses ISR3_proved \
+  ISR8_statement ISR8_hypotheses ISR8_proved \
+  ISR15_statement ISR15_hypotheses ISR15_proved \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

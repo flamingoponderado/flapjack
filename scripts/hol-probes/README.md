@@ -6577,3 +6577,16 @@ CSR3 replaces fullword32 although its read exposes low8. These are model-section
 regressions; fullRun/Next/pass correctness remains open.
 
 `word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
+
+### Full initializer interference cases
+
+`lab_to_target_initializer_interference_probeScript.sml` freshly captures the
+complete original local initializer theorem/types/zero hypotheses and genuine
+state relation conjuncts16/17/24/50: original ISR2 normal FFI, ISR3 cache clear,
+ISR8 name/search layout and ISR15 shared-memory interference. Every projection
+retains the full fourteen source guards, has zero hypotheses and is kernel
+checked. Native proofs derive return-byte length, empty-name identity and full
+post-state facts, with all bounds obtained from original boundary/length
+guards. The native consumer observes the actual target cache-return PC.
+No arbitrary EL/default policy or full initializer completion is claimed.
+Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_interference_probeScript.sml`.

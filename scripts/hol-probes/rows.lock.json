@@ -1970,6 +1970,12 @@
       "sha256": "9b3924d255bf3067bb250fac6fe158a336b0242ee496df0dacf0ff4fe67b8138"
     },
     {
+      "bytes": 16358,
+      "out": "lab_to_target_initializer_interference_probe.out",
+      "rows": 16,
+      "sha256": "d3df4bf7537c9ae6e027859d4d9be10bb2cc7195cbe115b3084f38c62903492f"
+    },
+    {
       "bytes": 1110,
       "out": "lab_to_target_label_existence_domain_probe.out",
       "rows": 16,
