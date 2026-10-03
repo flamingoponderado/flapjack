@@ -1,5 +1,6 @@
 import Flapjack.Compiler.Backend.LabToTarget.MachineSemantics
 import Flapjack.Compiler.Backend.LabFilter.Proofs
+import Flapjack.RiscV.L3.Defs.DecodeImmediates
 import Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 import Flapjack.RiscV.L3.Defs.FPMemory
 import Flapjack.RiscV.L3.Defs.ControlFetch

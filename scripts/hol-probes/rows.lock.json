@@ -1514,6 +1514,12 @@
       "sha256": "9c6277d4596ccd4107db7c9c19b84f4ad480407bff2fa6b29133689cf6cb36df"
     },
     {
+      "bytes": 1490,
+      "out": "l3_boolify_provenance_probe.out",
+      "rows": 12,
+      "sha256": "2890787ddf1745e72e045ec07f77e532f6b31caa039f87f270b675be3a228415"
+    },
+    {
       "bytes": 6614,
       "out": "l3_conditional_branch_probe.out",
       "rows": 162,
@@ -1572,6 +1578,12 @@
       "out": "l3_csr_unknown_probe.out",
       "rows": 20,
       "sha256": "8737543b10817e4e943f9513435f52668109c1a2b38e5a14c0b8e9fcc2a5ab1e"
+    },
+    {
+      "bytes": 2471,
+      "out": "l3_decode_immediates_probe.out",
+      "rows": 103,
+      "sha256": "324ebd6fd7d95133d64c284804bed6c58c922438fc76088834b1ad4368c73de6"
     },
     {
       "bytes": 29680,
