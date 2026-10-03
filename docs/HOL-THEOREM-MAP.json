@@ -75525,7 +75525,7 @@
     "lean_name": "asmFetchNotSkipAdjustPc",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2): Original125 full arbitrary pc/code and universal no-Skip bytes/length guard imply complete fetch equality. Unused original inst:beta binder is vacuous, confirmed fresh fulltype and documented beside declaration; omitted only this irrelevant binder. Count from actual asmFetchAuxEq is proved zero from real allSkips predecessor exclusion, not supplied. Positive-width type-indexed word representation qualified, constructor/byte/config/FFI carriers unchanged. Fresh original complete statements/types/zero-hypotheses/kernel reproof captures; local original proofs replayed unchanged."
+    "reviewer": "flapjack-sol3 source comparison (2026-10-03; .187.2 and coordinator followup .187.2.1): original lab_filterProofScript.sml125 full pc/code/inst binder order retained. Explicit unused inst has independent arbitrary carrier I : Type u, matching original unconstrained beta; no concrete instruction or other carrier specialization. Entire universal no-Skip bytes/length guard and complete actual fetch equality preserved. Count from actual asmFetchAuxEq is proved zero from real allSkips predecessor exclusion, not supplied. Positive-width type-indexed word line/section representation qualified; byte payloads fixed8 and all constructors unchanged. Fresh fulltype/statement/0hyp/T capture explicitly includes inst:beta; unchanged local original proof replayed after repair. Caller audit finds no current callers to update."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/lab_filterProofScript.sml",

@@ -5,13 +5,14 @@ open Flapjack Flapjack.Compiler.Backend.LabLang Flapjack.Compiler.Encoders.Asm
 open Flapjack.Compiler.Backend.LabSem Flapjack.Compiler.Backend.LabFilter
 open Flapjack.Compiler.Backend.LabToTarget.FilterSkip
 
-/-- The original quantified inst binder is vacuous and omitted; it does not occur in any guard or conclusion. -/
+/-- The original unused inst binder is retained on an independent arbitrary carrier,
+without constraining its type or specializing it to an instruction datatype. -/
 @[hol "cakeml/compiler/backend/proofs/lab_filterProofScript.sml" "asm_fetch_not_skip_adjust_pc"
   (words_as_type_indexed_bitvec)]
-theorem asmFetchNotSkipAdjustPc {width : Nat} [NeZero width] (pc : Nat)
+theorem asmFetchNotSkipAdjustPc {width : Nat} [NeZero width] {I : Type u} (pc : Nat)
     (code : List (Section (Line (AsmOrCbw (HolAsm width) HolMemop (HolAddr width))
       (AsmWithLab HolCmp (HolRegImm width) Flapjack.Basis.Pure.MlString.MlString)
-      (BitVec width)))) :
+      (BitVec width)))) (_inst : I) :
     (∀ bytes len, asmFetchAux pc code ≠ some (.asm (.asmi (.inst .skip)) bytes len)) →
     asmFetchAux pc code = asmFetchAux (adjustPc pc code) (filterSkip code) := by
   intro hn
