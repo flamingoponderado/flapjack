@@ -1,3 +1,4 @@
+import Flapjack.RiscV.L3.Defs.ImmediateALU
 import Flapjack.RiscV.L3.Defs.RegisterALU
 import Flapjack.RiscV.L3.Defs.ConditionalBranch
 import Flapjack.RiscV.L3.Defs.UpperJump

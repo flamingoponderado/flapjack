@@ -70323,5 +70323,37 @@
     "hol_name": "dfn'XOR_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c source/carrier comparison 2026-10-03 bead .8.1.23: literal XOR at 6198, full word5 register tuple and exact native state. Both GPR sources from original prestate, full word64 modular arithmetic/bitwise operator, write GPR current-core update with zero suppression. No architecture query/truncation; arbitrary mode/prior exception preserved. No target-run/success/core premise. Independent whole-state numeric, wrap, source0, rd0, both source aliases, frame fixtures cover literal equation. Full Run remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateALU.lean",
+    "lean_name": "«dfn'ADDI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ADDI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 bead .8.1.24 literal ADDI at5713: fullword5 registers/word12 immediate/word64GPR/native state. All four operators use signExtend12to64, including logic. Full64 source before destination, currentcore GPR update with zero suppression, no mode query or truncation, prior exception/allother fields unchanged. No success/core/mode/targetrun premise. Original whole-state fixtures and kernel counterparts cover signbit2048/maxpositive2047/minus1/wrap/high32/rd0/source0/alias. FullRun remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateALU.lean",
+    "lean_name": "«dfn'ANDI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ANDI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 bead .8.1.24 literal ANDI at5797: fullword5 registers/word12 immediate/word64GPR/native state. All four operators use signExtend12to64, including logic. Full64 source before destination, currentcore GPR update with zero suppression, no mode query or truncation, prior exception/allother fields unchanged. No success/core/mode/targetrun premise. Original whole-state fixtures and kernel counterparts cover signbit2048/maxpositive2047/minus1/wrap/high32/rd0/source0/alias. FullRun remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateALU.lean",
+    "lean_name": "«dfn'ORI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'ORI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 bead .8.1.24 literal ORI at5810: fullword5 registers/word12 immediate/word64GPR/native state. All four operators use signExtend12to64, including logic. Full64 source before destination, currentcore GPR update with zero suppression, no mode query or truncation, prior exception/allother fields unchanged. No success/core/mode/targetrun premise. Original whole-state fixtures and kernel counterparts cover signbit2048/maxpositive2047/minus1/wrap/high32/rd0/source0/alias. FullRun remains open."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Defs/ImmediateALU.lean",
+    "lean_name": "«dfn'XORI»",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
+    "hol_name": "dfn'XORI_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source/carrier comparison2026-10-03 bead .8.1.24 literal XORI at5823: fullword5 registers/word12 immediate/word64GPR/native state. All four operators use signExtend12to64, including logic. Full64 source before destination, currentcore GPR update with zero suppression, no mode query or truncation, prior exception/allother fields unchanged. No success/core/mode/targetrun premise. Original whole-state fixtures and kernel counterparts cover signbit2048/maxpositive2047/minus1/wrap/high32/rd0/source0/alias. FullRun remains open."
   }
 ]
