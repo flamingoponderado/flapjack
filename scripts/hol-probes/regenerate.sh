@@ -7435,10 +7435,6 @@ run_probe riscv_target_loc_probeScript.sml riscv_target_loc_probe.out \
 
 
 
-run_probe word_to_stack_move_aux_seqsem_probeScript.sml word_to_stack_move_aux_seqsem_probe.out \
-  moveAuxSeqsem_statement moveAuxSeqsem_proved moveAuxSeqsem_hypotheses \
-  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" \
-  "$cake_dir/compiler/backend/proofs"
 
 run_probe bvl_to_bvi_default_probeScript.sml bvl_to_bvi_default_probe.out \
   bvl_num_stubs_def bvl_to_bvi_namespaces_def bvl_num_stub_MOD bvl_num_stub_MOD_hypotheses default_config_def default_config_type bvl_stub_count_value bvl_namespace_count_value default_next_name1 default_next_name2 default_next_name3 \
@@ -7465,3 +7461,15 @@ run_probe riscv_const_decode_probeScript.sml riscv_const_decode_probe.out \
 run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_reverse_probe.out \
   alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
+
+
+
+
+
+run_probe riscv_const32_value_probeScript.sml riscv_const32_value_probe.out \
+  const32_value_zero const32_value_low_positive_max const32_value_low_sign_bit \
+  const32_value_low_all_ones const32_value_high_one const32_value_positive_sign_boundary \
+  const32_value_positive_max const32_value_negative_min const32_value_negative_min_low_sign \
+  const32_value_negative_low_positive const32_value_negative_low_sign const32_value_all_ones \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

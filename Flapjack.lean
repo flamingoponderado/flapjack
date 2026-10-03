@@ -1,11 +1,12 @@
 import Flapjack.Misc.Sptree.AlistInsertReverse
+import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
+import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxReconstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAuxStep
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveAux
 import Flapjack.RiscV.CorrectnessEncoding.Loc
 import Flapjack.RiscV.CorrectnessEncoding.DecodeUpperImmediates
-import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveSingle
 import Flapjack.Compiler.Backend.WordToStack.Proofs.MoveDiv2
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CallReturningFull
