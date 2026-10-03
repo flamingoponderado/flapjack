@@ -2078,6 +2078,12 @@
       "sha256": "bdc12e7c62ef0db37f2c9bb0eb313056b6c6b85afb2b5be57f7e836c81e3b236"
     },
     {
+      "bytes": 762,
+      "out": "lab_props_alignment_word_memory_probe.out",
+      "rows": 8,
+      "sha256": "f829e3ef74554ef4be501284ca19edae711c22e16409092b98096f50513dceb5"
+    },
+    {
       "bytes": 2823,
       "out": "lab_props_domain_alignment_probe.out",
       "rows": 24,
@@ -4988,6 +4994,12 @@
       "sha256": "f25becd09f81bb204a27b34e5970d64e54e24dcba1a336724bf0b9f14293c72c"
     },
     {
+      "bytes": 2448,
+      "out": "pan_structs_program_shmem_store_probe.out",
+      "rows": 6,
+      "sha256": "77df64d13d24893a229476040f795f0a6473245bba391a90eefd75d40c3ed9b5"
+    },
+    {
       "bytes": 2392,
       "out": "pan_structs_program_store_probe.out",
       "rows": 6,
@@ -5730,6 +5742,12 @@
       "out": "riscv_target_memop_probe.out",
       "rows": 8,
       "sha256": "fa4948d83a553a010d1ba431acdbe7e635200ee73c321edcf3e47cb94b233118"
+    },
+    {
+      "bytes": 186,
+      "out": "riscv_target_slice_probe.out",
+      "rows": 4,
+      "sha256": "d9e182f66bb2e81c944562becc75c5ec0569d700210231243fd8fa31a462aab6"
     },
     {
       "bytes": 407,
@@ -9806,10 +9824,22 @@
       "sha256": "b9bb14bb79be72c5d83ae4f8b1f00a0beb7092529dd537b2fcc094f8d9bb0c78"
     },
     {
+      "bytes": 340,
+      "out": "word_to_stack_register_spill_update_probe.out",
+      "rows": 3,
+      "sha256": "bd3deca7c1ed202985358e07d8d3970ff63b68d3f53d9e81d22dc84147c3eb3c"
+    },
+    {
       "bytes": 230,
       "out": "word_to_stack_register_update_probe.out",
       "rows": 3,
       "sha256": "dab3b6be749d1bc05a24ed88ea0b7bb07b31cdc01b3549449dab81480845d248"
+    },
+    {
+      "bytes": 418,
+      "out": "word_to_stack_register_write_probe.out",
+      "rows": 3,
+      "sha256": "4a4c9ba930b95c897dd458daf107e5a4f4305951b69340853ca385280bfeac82"
     },
     {
       "bytes": 252,

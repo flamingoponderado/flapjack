@@ -1,0 +1,3 @@
+register_spill_update_full=⊢ ∀x v t st sp s lens k f' f ac. state_rel ac k f f' s t lens 0 ∧ ¬(x < k) ∧ x < f' + k ∧ st = t.stack ∧ sp = t.stack_space ⇒ state_rel ac k f f' (set_var (2 * x) v s) (t with stack := st❲sp + (f + k − (x + 1)) ↦ v❳) lens 0
+register_spill_update_hypotheses=0
+register_spill_update_proved=T

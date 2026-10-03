@@ -1,0 +1,3 @@
+register_write_full=⊢ ∀v t s m lens kont k f' f ac. state_rel ac k f f' s t lens 0 ∧ m < f' + k ∧ (∀n. n ≤ k ⇒ evaluate (kont n,t) = (NONE,set_var n v t)) ⇒ ∃t'. evaluate (wRegWrite1 kont (2 * m) (k,f,f'),t) = (NONE,t') ∧ state_rel ac k f f' (set_var (2 * m) v s) t' lens 0 ∧ LENGTH t'.stack = LENGTH t.stack ∧ t'.stack_space = t.stack_space
+register_write_hypotheses=0
+register_write_proved=T

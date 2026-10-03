@@ -1,0 +1,4 @@
+slice_statement=∀c. ((31 >< 0) c ' 11 ⇔ c ' 11) ∧ ((63 >< 32) c ' 11 ⇔ c ' 43) ∧ ((¬(63 >< 32) c) ' 11 ⇔ ¬c ' 43)
+slice_types=c : :word64
+slice_hypotheses=0
+slice_proved=T
