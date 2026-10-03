@@ -6332,3 +6332,5 @@ allocator or source-program producer correctness is claimed.
 
 `stack_code_bitmaps_alloc_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Alloc specialization. Native rejected dispatch and actual allocation/GC results derive count zero from full alloc_const, retaining all three original existential conclusions. Whole evaluator assembly remains open.
 
+
+`stack_code_bitmaps_install_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Install specialization. Native complete dispatch derives count zero on all failures and count one on actual success, retaining original oracle shift/code left-union/bitmap append conclusions. Whole evaluator assembly remains open.

@@ -68260,5 +68260,20 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.6: original evaluate_code_bitmaps421-440 Alloc case. CodeBitmaps definitionally retains literal full existential shifted oracle/code union left-fold/bitmap append flatten. Actual native evaluate equality sole premise; disabled allocation and absent/nonword register reject with source/count0. Actual allocation result including GC errors supplies full alloc_const170-189 field preservation, deriving count0 without success/field/poststate assumptions. Native useAlloc guard/getVar/alloc dispatch retained. Imported canonical regs/fpRegs/store same-module roundtrip witness; positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numerical alignment/FP equivalence or runtime rewrite. Full parent and remaining cases remain open.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Install.lean",
+    "lean_name": "evaluateCodeBitmapsInstall",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 bead .17.1: original evaluate_code_bitmaps421-440 Install case. Literal complete three-conjunct existential shifted compile_oracle/code FOLDL union of GENLIST fromALists/bitmap append FLAT retained. Actual native full evaluate equation sole premise. All failed register/nonword reads, code/data buffer flush, compiler NONE, empty progs and bytes/data/nextconfig comparison failures return source/count0; actual success updates oracle shift1/code left-accumulator union/bitmap append, deriving count1 without count/prefix/target/postfield assumptions. Original buffer/useStack/compiler/equality branches unchanged. Imported canonical regs/fpRegs/store same-module codec witness; positive BitVec/NeZero,C/F Type0, Spt code excluded. Inherited reals_as_rational_cuts assumption retained; no numeric alignment/FP equivalence claim or runtime rewrite. Full parent assembly remains open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
