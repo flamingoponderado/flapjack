@@ -6693,3 +6693,5 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_prob
 `wf s` premise and arbitrary Spt payload carrier. Statement, proved=T, and zero
 hypotheses are captured; this is original HOL evidence, not a cross-assistant
 equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
+
+`word_to_stack_stack_rel_aux_size_probe.out` replays the full unchanged original `stack_rel_aux_stack_size` proof (6581–6589), checks exact generalized statement equality, closed binders and zero hypotheses, and captures the original full relation carrier type. The original ML `fetch "-"` current-theory lookup is routed to the loaded original `word_to_stackProof` induction theorem; proof tactics are unchanged. Native Lean retains all three independent word dimensions and the complete relation/optional-size conclusion, covering both frame forms and absent sizes without a success/validity premise. This prerequisite does not establish the full Raise case or compiler theorem.
