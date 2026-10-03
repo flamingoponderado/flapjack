@@ -1,3 +1,7 @@
+import Flapjack.Test.L3CSRDispatchParity
+import Flapjack.Test.L3CSRCounterParity
+import Flapjack.Test.L3FPCSRParity
+import Flapjack.Test.L3ExtStatusParity
 import Flapjack.Test.L3SupervisorCSRParity
 import Flapjack.Test.L3MachineCSRCodecParity
 import Flapjack.Test.L3CSRAccessParity
