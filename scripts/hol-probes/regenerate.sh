@@ -6051,3 +6051,7 @@ run_probe stack_code_bitmaps_full_probeScript.sml stack_code_bitmaps_full_probe.
 run_probe stack_rel_definition_probeScript.sml stack_rel_definition_probe.out \
   stack_rel_definition stack_rel_hypotheses stack_rel_type \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_state_rel_probeScript.sml word_to_stack_state_rel_probe.out \
+  state_rel_definition state_rel_hypotheses state_rel_type \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

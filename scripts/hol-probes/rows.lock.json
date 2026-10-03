@@ -8588,6 +8588,12 @@
       "sha256": "6b8a06b9e040f3573e0718815ed12b532021e757261c59e8a2132aa9ea7d1a05"
     },
     {
+      "out": "word_to_stack_state_rel_probe.out",
+      "bytes": 2943,
+      "rows": 3,
+      "sha256": "9b00ec0c1397fb539f863cc07988721d158d6d296f641d3f06e566319289e9e9"
+    },
+    {
       "bytes": 57,
       "out": "word_to_stack_stub_probe.out",
       "rows": 6,

@@ -69098,5 +69098,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03 xza2: original846-859/full fresh equation/hyp0/type. Alpha source frames/rest/bitmaps coincide via abs_stack and stack_rel_aux; beta target handler INDEPENDENT, retained handlerWidth/own NeZero, not old narrowed one-width draft. Literal EVERY sorted_env via List.all Bool true, existential abs_stack SOME, original conjunction handler guard as equivalent curried implications, full stack_rel_aux. Accepted total holEl retains shared unspecified holArb without concrete default or extra index bound. Original LENGTH subtraction/index/n2w wrap retained; LASTN_DROP_UNCOND implements drop(length-n) including overlength. Accepted absStack and all three stackRelAux dimensions instantiated from actual fields; accepted sortedEnv adjacent strict keys/isHandlerFrame/handlerVal used unchanged. No added success/range/target-state premise. Individually source compared, no restored provisional tag inferred from old delivery. Positive word translation only; proof-side relation, no executed compiler change."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRel.lean",
+    "lean_name": "stateRel",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_def",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03 .29.4: full original895-958/equation/hyp0/type freshly captured. Source state config num#beta, target beta, shared alpha words and gamma FFI preserved width/NeZero,C,F:Type. Every conjunct retained including repeated FFI equality, clock/GC/K I permute, flags/memory/domains/Handler-erased store/gc_fun_ok/termdep/be/Handler domain/fpreg/buffers. Compile lambda uses literal generic native compile_word_to_stack ac false k with Nil,bm0, original OPTION_MAP result and updated index/config; oracle lambda/prefix guards all n/full four EVERY conventions/stub exclusions/n=0bm count. Native spt domain insert union/order, all code-entry existential bs/i/bs2/i2/frame/prog compilation, bounds/prefix/lookup/defaultthe, both exact stubs, good_dimindex/8/2^width and buffer bounds, nonempty bitmap and totalHD4w, stack bound/frame conditional/nativewf/fullstackSizeRel, dropped current/rest stack/fullstackRel and EVEN/DIV/register-or-list local placement including trailing bound only in else. Nat modulo/propositional comparison/Option/list prefix translations compared. Map qualifier lists precisely both original fp-reg maps, both store maps and target regs traversed by relation; original locals/code/stack_size remain Spt, not fmap. Same-module witnesses name actual imported owners and genuine broad/finite roundtrips with no shadow carriers. GC callback inherits accepted canonical argument4/result3 translation. Full definition, no conjunction fragment/added success/range/targetrun or postrelation premise, no numerical FP semantics assertion and no executed compiler change."
   }
 ]
