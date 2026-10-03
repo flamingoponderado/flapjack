@@ -68,10 +68,11 @@ class L3BoolifyReferences(unittest.TestCase):
                 self.assertNotIn(name, names)
 
     def test_explicit_wrong_line_reference_is_rejected(self):
-        names = DECLARATIONS(ROOT / SCRIPT, {})
+        # One shared declaration cache: the script is parsed once, not per call.
+        cache = {}
         for name, (_width, line) in EXPECTED.items():
-            self.assertIsNotNone(CHECKER["hol_ref_error"](ROOT / SCRIPT, name, line + 1, {}))
-            self.assertIsNone(CHECKER["hol_ref_error"](ROOT / SCRIPT, name, line, {}))
+            self.assertIsNotNone(CHECKER["hol_ref_error"](ROOT / SCRIPT, name, line + 1, cache))
+            self.assertIsNone(CHECKER["hol_ref_error"](ROOT / SCRIPT, name, line, cache))
 
 
 if __name__ == "__main__":

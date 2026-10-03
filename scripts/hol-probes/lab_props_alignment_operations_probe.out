@@ -1,0 +1,29 @@
+arith_upd_align_dm=arith_upd (x :α arith) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (arith_upd x s)
+arith_upd_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(x :α arith)::α arith;
+arith_upd_align_dm_hypotheses=0
+arith_upd_align_dm_proved=T
+fp_upd_align_dm=fp_upd (f :fp) (align_dm (s :(α, β, γ) labSem$state)) = align_dm (fp_upd f s)
+fp_upd_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(f :fp)::fp;
+fp_upd_align_dm_hypotheses=0
+fp_upd_align_dm_proved=T
+addr_align_dm=(addr (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) :α word option) =
+(addr a s :α word option)
+addr_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;
+addr_align_dm_hypotheses=0
+addr_align_dm_proved=T
+arith_upd_align_sdm=arith_upd (x :α arith) (align_sdm (s :(α, β, γ) labSem$state)) =
+align_sdm (arith_upd x s)
+arith_upd_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(x :α arith)::α arith;
+arith_upd_align_sdm_hypotheses=0
+arith_upd_align_sdm_proved=T
+fp_upd_align_sdm=fp_upd (f :fp) (align_sdm (s :(α, β, γ) labSem$state)) =
+align_sdm (fp_upd f s)
+fp_upd_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(f :fp)::fp;
+fp_upd_align_sdm_hypotheses=0
+fp_upd_align_sdm_proved=T
+addr_align_sdm=(addr (a :α addr) (align_sdm (s :(α, β, γ) labSem$state)) :α word option) =
+(addr a s :α word option)
+addr_align_sdm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;
+addr_align_sdm_hypotheses=0
+addr_align_sdm_proved=T

@@ -98,6 +98,10 @@ For the checked-in source-to-RISC-V artifact corpus, run
 runtime/entry/user sections without hiding byte differences, and succeeds only
 when every residual difference has an owning bead. This artifact audit
 complements the machine-execution fixture above; it does not replace it.
+`scripts/parity-cli-modes.py` checks the other two CLI modes over the same
+corpus: `--hex` must equal the original `.byte` stream and `--sections` the
+original `makesym` (base, bytes) sections, and original rejections must be
+rejected by both modes.
 
 The RV64 CLI runtime image now constructs its complete initializer through
 native `StackRemove.compileHOL` and `StackNames.compileHOL`, using Pancake's
@@ -109,12 +113,13 @@ an independent captured original prefix for regression comparison only.
 addresses, lengths and bytes against that unchanged oracle. The legacy source
 namespace is normalized to original globals (GC4, Raise5, StoreConsts6,
 source functions64 onward); exported symbol suffixes remain section ordinals.
-In that default runtime-image route the tagged native `stack_rawcall$compile`
-runs on the whole native list before native allocation, as in
-`stack_to_lab$compile_def`. Upstream broad allocation/long-div preparation
-remains a separate compiler-port frontier (and the `--sections`/bytes modes
-still use the legacy raw-call helper); the runtime boundary does not establish
-their simulation.
+That runtime-image route, used by every `flapjack-compile` mode (`--assembly`,
+`--sections` and `--hex` render the same image), passes the unallocated
+Word-to-Stack sections through the tagged native `stack_rawcall`,
+`stack_alloc`, `stack_remove` and `stack_names` compilers in
+`stack_to_lab$compile_def` order; no legacy allocation, raw-call or
+long-division preparation remains on it. The runtime boundary does not
+establish the simulation of the upstream passes.
 
 ## Differential fuzzing against `cake`
 

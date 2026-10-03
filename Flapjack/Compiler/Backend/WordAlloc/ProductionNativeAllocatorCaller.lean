@@ -37,24 +37,32 @@ theorem nativeAllocatorCaller_production {width : Nat} [NeZero width]
         (decodedSsaMemoryGuard_production parameters.length source native encoded _ produced).trans supported
       have bodyAccepted := wordFullSsaCcTransNativeWithStateFromHOL_outputCodec
         parameters.length native (state, formals, body) produced
-      let beforeDead := wordRemoveUnreachableAfterCopy (wordThreeToTwoReg
-        (wordCopyProp (wordCseProp (wordRemoveDeadProgramViaHOL body))))
-      let cleanup := wordRemoveDeadProgramViaHOL beforeDead
-      have beforeSupported : allocatorMemorySupported beforeDead = true := by
-        apply unreachMemoryGuard
+      have threeTwoSupported : allocatorMemorySupported (wordThreeToTwoReg
+          (wordCopyProp (wordCseProp (wordRemoveDeadProgramViaHOL body)))) = true := by
         rw [threeToTwoMemoryGuard, copyWrapperMemoryGuard]
         apply cseWrapperMemoryGuard
         exact routedRemoveDeadMemoryGuard body bodySupported
+      have threeTwoAccepted : (wordLangProgToHOL (wordThreeToTwoReg
+          (wordCopyProp (wordCseProp (wordRemoveDeadProgramViaHOL body))))).isSome = true := by
+        rw [wordLangProgToHOL_wordThreeToTwoReg_isSome, wordCopyProp_codecDomain,
+          wordLangProgToHOL_wordCseProp_isSome]
+        exact wordRemoveDeadProgramViaHOL_outputCodec body bodyAccepted
+      obtain ⟨beforeDead, unreachRun⟩ :=
+        Option.isSome_iff_exists.mp (wordRemoveUnreachViaHOL?_isSome _ threeTwoAccepted)
+      let cleanup := wordRemoveDeadProgramViaHOL beforeDead
+      have beforeSupported : allocatorMemorySupported beforeDead = true :=
+        wordRemoveUnreachViaHOL?_memoryGuard _ _ unreachRun threeTwoSupported
       have cleanupSupported : allocatorMemorySupported cleanup = true :=
         routedRemoveDeadMemoryGuard beforeDead beforeSupported
       have cleanupAccepted : (wordLangProgToHOL cleanup).isSome = true :=
-        nativeAllocatorStagesCodec body bodyAccepted
+        wordRemoveDeadProgramViaHOL_outputCodec beforeDead
+          (wordRemoveUnreachViaHOL?_outputCodec _ _ unreachRun)
       cases cleanupEncoded : wordLangProgToHOL cleanup with
       | none => simp [cleanupEncoded] at cleanupAccepted
       | some cleanupNative =>
           obtain ⟨colours, nativeRun, actualRun⟩ := allocatorWrapperFromCompleteActualInputs
             cleanup cleanupNative cleanupEncoded config target .IRC 3 label cakeRiscVRegisterCount
-          simp only [cakeDoRegAlloc, Algorithm.toProduction, beforeDead, cleanup] at actualRun
+          simp only [cakeDoRegAlloc, Algorithm.toProduction, cleanup] at actualRun
           change cakeDoRegAllocFromState .irc _ cakeRiscVRegisterCount
             ((wordGetHeuristics 3 label cleanup).1.map (fun move => (move.priority, (move.left, move.right))))
             _ _ = some colours at actualRun
@@ -65,7 +73,7 @@ theorem nativeAllocatorCaller_production {width : Nat} [NeZero width]
               some output := by
             simp [cakeAllocateWordFunctionAfterDeadWithColourNativeSSA,
               cakeAllocateWordFunctionAfterDeadWithColourWithSsa, encoded, supported, produced,
-              bodySupported, beforeSupported, cleanupSupported, beforeDead, cleanup, output,
+              bodySupported, unreachRun, beforeSupported, cleanupSupported, cleanup, output,
               actualRun]
           refine ⟨output, cleanupNative, allocated, cleanupEncoded, nativeRun, ?_⟩
           simpa only [output, CakeAllocationWithColour.colouredProgram, wordApplyTotalColour] using

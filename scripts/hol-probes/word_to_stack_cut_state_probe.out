@@ -1,0 +1,3 @@
+cut_state_full=⊢ ∀t s' s names lens k f' f ac. state_rel ac k f f' s t lens 0 ∧ cut_state (names,LN) s = SOME s' ⇒ state_rel ac k f f' s' t lens 0
+cut_state_hypotheses=0
+cut_state_proved=T

@@ -16,6 +16,15 @@ CHECKER = runpy.run_path(
 )
 SITES = CHECKER["hol_attribute_sites"]
 REF_ERROR = CHECKER["hol_ref_error"]
+_REPO_REALS_RENDERING_NAMES = None
+
+
+def repo_reals_rendering_names():
+    """The real tree's rendering-name scan, computed once for the module."""
+    global _REPO_REALS_RENDERING_NAMES
+    if _REPO_REALS_RENDERING_NAMES is None:
+        _REPO_REALS_RENDERING_NAMES = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
+    return _REPO_REALS_RENDERING_NAMES
 
 
 class ExternalHolSourcesTest(unittest.TestCase):
@@ -650,7 +659,7 @@ noncomputable def cmp : FpCmp -> Bool
     def test_rounding_enum_is_source_bound_and_real_free(self):
         root = CHECKER["ROOT"]
         self.assertTrue(CHECKER["source_bound_rounding_enum"](root))
-        names = CHECKER["reals_rendering_names"](root)
+        names = repo_reals_rendering_names()
         self.assertNotIn("HolRounding", names)
         check = CHECKER["reals_as_rational_cuts_errors"]
         enum = "def modes : Option HolRounding := some HolRounding.roundTiesToEven"
@@ -710,14 +719,9 @@ End
             original.unlink()
             self.assertFalse(check(root))
 
-    def test_reals_rendering_names_cover_machine_ieee(self):
-        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
-        self.assertIn("holFp64Sqrt", names)
-        self.assertIn("holFp64Add", names)
-
     def test_bit_only_ieee_forms_do_not_require_real_qualifier(self):
         root = CHECKER["ROOT"]
-        names = CHECKER["reals_rendering_names"](root)
+        names = repo_reals_rendering_names()
         forms = CHECKER["REAL_FREE_IEEE_FORMS"]
         self.assertEqual(len(CHECKER["real_free_ieee_names"](root)),
                          len(CHECKER["REAL_FREE_IEEE_FORMS"]))
@@ -725,7 +729,7 @@ End
             self.assertNotIn(name, names)
             self.assertEqual(CHECKER["reals_as_rational_cuts_errors"](form, False, names), [])
         # Rational values/rounding/sqrt still need the marker.
-        for name in ("holFloatToReal", "holFp64Add", "holFp64SqrtReal"):
+        for name in ("holFloatToReal", "holFp64Add", "holFp64Sqrt", "holFp64SqrtReal"):
             self.assertIn(name, names)
             self.assertTrue(CHECKER["reals_as_rational_cuts_errors"](
                 "def caller := " + name, False, names))
@@ -808,8 +812,9 @@ End
                 self.assertIn("holFp64Abs", CHECKER["reals_rendering_names"](root))
 
     def test_reals_rendering_names_cover_nested_sqrt_real(self):
-        names = CHECKER["reals_rendering_names"](CHECKER["ROOT"])
-        self.assertIn("holFp64SqrtReal", names)
+        # Real-tree membership is asserted by the bit-only test; nested
+        # discovery by test_reals_rendering_names_recurse_beneath_binary_ieee.
+        names = {"holFp64SqrtReal"}
         user = "noncomputable def sqrtCase : BitVec 64 -> BitVec 64 := holFp64SqrtReal .roundTiesToEven"
         check = CHECKER["reals_as_rational_cuts_errors"]
         self.assertEqual(check(user, True, names), [])
@@ -3815,6 +3820,45 @@ class PanSemGeneratedEvalIndTest(unittest.TestCase):
         self.assertIsNone(recognize(Path("other/pancake/semantics/panSemScript.sml"), source))
         block = source[source.index("Definition eval_def:"):]
         self.assertIsNone(recognize(path, source + "\n" + block))
+
+
+class NoRetCorrectFmapRegressionTest(unittest.TestCase):
+    """Protect the reviewed theorem even if tag and manifest are both weakened."""
+
+    MODULE = "Flapjack/Compiler/Backend/StackToLab/Proofs/FlattenHelpers.lean"
+
+    def test_native_state_maps_have_explicit_relation_qualifier_and_witness(self):
+        root = CHECKER["ROOT"]
+        lines = (root / self.MODULE).read_text().splitlines()
+        sites = [site for site in SITES(lines) if site[2] == "no_ret_correct"]
+        self.assertEqual(len(sites), 1)
+        site = sites[0]
+        state_lines = (root / "Flapjack/Compiler/Backend/Semantics/StackSem/State.lean").read_text().splitlines()
+        fields = CHECKER["structure_field_types"](state_lines)["StackSemStateFiniteExact"]
+        required = tuple(("StackSemStateFiniteExact", field)
+                         for field, typ in fields.items() if "HolFiniteMapExact" in typ)
+        self.assertEqual(len(required), 3)
+        self.assertEqual(site[9], required)
+        signature = CHECKER["tagged_declaration_text"](lines, site[0])
+        self.assertIn("∀ s : StackSemStateFiniteExact", signature)
+        self.assertEqual(CHECKER["fmap_as_finite_support_relation_errors"](
+            lines, required, self.MODULE, signature), [])
+
+    def test_manifest_retains_combined_qualifier_and_inherited_assumption(self):
+        import json
+        root = CHECKER["ROOT"]
+        records = json.loads((root / "docs/HOL-THEOREM-MAP.json").read_text())
+        rows = [row for row in records if row.get("lean_path") == self.MODULE
+                and row.get("lean_name") == "noRetCorrect"]
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["statement_status"],
+                         "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec")
+        self.assertEqual(row["fmap_as_finite_support_relation"],
+                         ["StackSemStateFiniteExact.regs", "StackSemStateFiniteExact.fpRegs",
+                          "StackSemStateFiniteExact.store"])
+        self.assertTrue(row["words_as_type_indexed_bitvec"])
+        self.assertTrue(row["inherits_reals_as_rational_cuts"])
 
 
 if __name__ == "__main__":

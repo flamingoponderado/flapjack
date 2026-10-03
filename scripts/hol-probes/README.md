@@ -6352,8 +6352,11 @@ do not claim full Run/Next or compiler correctness.
 `stack_code_bitmaps_if_probe.out` captures the full original code-bitmaps theorem, zero hypotheses and its If specialization. Native branch IHs follow only actual successful reads and selected comparison; every read/comparison error retains source with count zero. All three original conclusions remain intact; parent assembly is open.
 
 `l3_amo_arithmetic_probe.out` captures all eight complete original AMOADD,
-AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 observations.
-Independent byte/register expectations cover every alignment residue, all order
+AMOXOR, AMOAND and AMOOR W/D definitions/types and 176 captured observations.
+Lean kernel-replays 86 distinct observations, including each of the eight
+instructions at rd=rs2, rd=x0 and rd=rs1. Other genuinely shared-path duplicate
+rows remain captured but are not separately replayed; those retained cases
+cover the same dispatch paths. Independent byte/register expectations cover every alignment residue, all order
 bits, arithmetic overflow, overlapping and zero registers, architecture values,
 and returned-state write translations/faults. Lean replays retain arbitrary
 unrelated state. This is regression evidence, not whole Run/Next correctness.
@@ -6361,7 +6364,10 @@ unrelated state. This is regression evidence, not whole Run/Next correctness.
 `stack_code_bitmaps_loop_probe.out` captures full original evaluate_code_bitmaps, zero hypotheses and Loop specialization. Native source-path body/reentry IHs derive strict clamped-clock descent; timeout emptyEnv and exit preserve fields, reentry composes all original prefixes. Whole evaluator assembly remains open.
 
 `l3_amo_minmax_probe.out` captures eight original AMOMIN/MAX/MINU/MAXU W/D
-definitions/types and 224 state observations. Independent calculations cover
+definitions/types and 224 captured state observations. Lean kernel-replays
+134 distinct observations, including each of the eight instructions at rd=rs2,
+rd=x0 and rd=rs1. Other genuinely shared-path duplicate rows remain captured
+but are not separately replayed. Independent calculations cover
 signed extrema, unsigned ordering, equality, zero, upper source-register bits
 in W comparisons, overlapping registers, all misalignment residues/order bits,
 and returned translation states/faults. Matching Lean replays retain arbitrary
@@ -7328,6 +7334,7 @@ captures and kernel proofs remain evidence for source review, not a proof of
 HOL-to-Lean equivalence or full target execution correctness.
 `stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
 
+
 `pan_structs_program_assign_probe` captures the full original `compile_correct`
 and its `Assign vk v e` specialization, with all quantified binder types and
 closed kernel proofs. The Lean case retains all ten original premises and seven
@@ -7348,6 +7355,7 @@ and its `Primitive v pop es` specialization, with binder types and closed kernel
 proofs. The Lean case retains all ten premises and seven conclusions, executes
 the original argument mmap and AddCarry operation, and derives local validity
 and update postconditions internally from the full Assign case.
+
 `word_to_stack_load_register_probe.out` freshly replays the unchanged original
 local `evaluate_wStackLoad_wReg1` proof (4417–4445) and captures the original
 unconditional `evaluate_wStackLoad_seq` (4512–4523), plus both compiler equations.
@@ -7383,3 +7391,250 @@ types and closed kernel proofs. The Lean piece retains all ten premises/seven
 conclusions and precisely the initializer-SOME/declared-shape guarded body IH
 at the actual updated local state. Source invariants supply body preconditions;
 restoration handles both absent and shadowed caller bindings.
+`word_to_stack_comp_return_probe.out` freshly specializes the entire original
+comp_correct theorem at arbitrary Return/register/value-list/source state,
+with kernel-proved=T, no free variables and zero hypotheses. The native Return
+case retains every quantified original premise and the complete existential
+execution/result/resource contract; it derives all source reads, frame/free
+bounds, postrelation and physical returned-value placements internally.
+This constructor port does not establish full pass or runtime correctness.
+`word_to_stack_load_register_two_probe.out` replays the unchanged original
+local evaluate_wStackLoad_wReg2 proof4478–4510, records its whole statement,
+closed hypotheses=0/proved=T and original wReg2 definition. The native helper
+preserves every execution, clock, bitmap, full state relation, stack, register,
+additive expression and exact value conjunct with only the four original
+premises. Bounds and spilled values are derived from actual source lookup and
+state relation. This is transcription/regression evidence, not a cross-language
+equivalence proof or full instruction/If/compiler correctness claim.
+
+`pan_structs_program_while_probe` captures the full original program theorem,
+its `While e c1` specialization, and original `evaluate_ind`, with binder types
+and closed kernel proofs. The Lean piece retains ten premises/seven conclusions
+and all three original guarded IHs, including nonzero source clock and actual
+body outcome/evaluation guards. Original body invariants derive each recursive
+loop state's fields, well-formedness and context maps.
+## Native RISC-V encoder arithmetic prerequisites
+
+`riscv_target_arithmetic_probeScript.sml` replays the unchanged local `lem5`,
+`lem8` and `lem9` proofs from original `riscv_targetProofScript.sml:67–100`.
+The closed statements retain every free/quantified operand, the original sole
+alignment premise, the fixed word64 input and word65 carry-expression types,
+and both carry equivalences (with and without carry-in). Each replay has zero
+hypotheses and a kernel `EQT_INTRO` result `T`. The strict checker compares the
+literal replay terms/proofs to the pinned original, and rejects captured
+statement, type, hypothesis or proof-result drift. Lean ports live beneath the
+existing source counterpart in `RiscV/CorrectnessEncoding/Arithmetic.lean`;
+their generic consumers use the full statements. This source review and these
+kernel proofs do not establish cross-assistant equivalence or the full
+`riscv_encoder_correct` theorem; its target-state/step obligations remain open.
+
+`riscv_target_wide_arithmetic_probeScript.sml` replays unchanged original
+`mul_long` and `ror` proofs (`riscv_targetProofScript.sml:120–160`). Closed
+statements retain both word64 product operands, the actual word128 product and
+word64 slice, and the sole original natural rotate-amount bound `n < 64`.
+The strict checker validates complete statements/types/zero hypotheses/kernel
+`T` and the literal original term/proof replay. Lean arithmetic ports and full
+generic consumers preserve these carriers and conclusions. These two original
+rewrite prerequisites do not discharge target-state/step correctness or assert
+HOL-to-Lean equivalence from a finite fixture.
+
+`word_to_stack_register_update_probeScript.sml` replays the unchanged original
+state_rel_set_var statement and literal proof2930–2951, with closed hypothesis
+and proved sentinels. This is regression evidence, not cross-language equivalence.
+
+### Full constant-instruction laws
+
+`word_to_stack_const_instruction_probe.out` freshly replays the unchanged
+original local proofs at word_to_stackProofScript.sml6743–6765. The local
+4470 stack-load clock rewrite is replayed first because HOL does not export it.
+Both full polymorphic statements have no open kernel hypotheses; EQT_INTRO
+records their proved equivalence to T. Transport retains arbitrary extra and
+all six conclusions. Clock transport retains the whole evaluation pair.
+This is source statement/proof evidence, not a cross-assistant equivalence
+theorem or completion of the full compiler proof.
+
+`pan_structs_program_shmem_store_probe` captures the full original program
+theorem and its `ShMemStore opsz e1 e2` specialization, binder types and closed
+kernel proofs. The Lean case keeps all ten premises/seven conclusions without
+an IH, covers original byte-count/domain and MappedWrite FFI final/ret branches,
+and derives target arguments/outcomes and finite state repacking internally.
+
+`stack_remove_store_list_code_probeScript.sml` prints the stored original `store_list_code_thm` (stack_removeProofScript.sml:2636-2725) in full with zero hypotheses and its two free register variables `a`, `t : num`, which the Lean port binds as leading explicit arguments.
+
+`stack_remove_word_list_exists_add_probeScript.sml` prints the stored original `word_list_exists_ADD` (stack_removeProofScript.sml:38-47) with zero hypotheses; the Lean port keeps arbitrary payloads and modular addresses.
+
+`stack_remove_init_code_thm_probeScript.sml` prints the stored original `init_code_thm` (stack_removeProofScript.sml:3225-3837) in full with zero hypotheses. The Lean port `Flapjack.Compiler.Backend.StackRemove.Proofs.InitCodeCorrect.initCodeThm` proves the complete statement over the native stackSem evaluator by symbolically executing the actual `init_code` (InitCodeThm.lean) and establishing the original `state_rel`/`init_prop` conclusions; it adds no premise.
+`pan_structs_program_dec_probe` captures the full original program theorem, its
+`Dec v sh e c1` specialization, and the original `evaluate_ind`, with all binder
+types and closed kernel proofs. The Lean piece retains all ten premises/seven
+conclusions and precisely the initializer-SOME/declared-shape guarded body IH
+at the actual updated local state. Source invariants supply body preconditions;
+restoration handles both absent and shadowed caller bindings.
+
+## Native encoder full slice conjunction
+
+`riscv_target_slice_probeScript.sml` replays the literal original `lem6`
+term with its original `blastLib.BBLAST_PROVE` construction. The four
+rows retain the universally closed three-conjunct statement, arbitrary
+word64 binder, zero hypotheses and original kernel proof. Lean uses fixed
+BitVec64/32 carriers and proves all three equations without premises.
+This is regression evidence; it does not prove HOL-to-Lean equivalence.
+
+`word_to_stack_register_spill_update_probeScript.sml` freshly replays the full
+original state_rel_set_var2 statement and literal proof2962–2997, including
+st/sp equalities, with zero open hypotheses and proved sentinel. This is
+regression evidence rather than HOL-to-Lean equivalence.
+
+`word_to_stack_register_write_probeScript.sml` replays the unchanged full
+wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
+continuation premise and full run/relation/resources. Closed hyp0/T captures
+provide regression evidence rather than cross-language equivalence.
+
+## Full native target state definition group
+
+`riscv_target_state_probeScript.sml` captures all four original definition
+theorems (`riscv_next`, `riscv_ok`, `riscv_proj`, `riscv_target`) with complete
+statements, inferred types, zero hypotheses and kernel truth. It also reduces
+the omitted floating-register field: the result is `ARB.get_fp_reg`, not an
+arbitrary function chosen independently and not zero. Lean preserves the
+projection from the arbitrary whole target record. The local nonempty witness
+is only a carrier inhabitation proof and does not define that arbitrary record.
+The Next path inherits the native model's rational-cut assumption (SOUNDNESS8).
+These captures/regressions do not establish HOL-to-Lean equivalence.
+
+## Full native target byte-memory lemmas
+
+`riscv_target_bytes_probeScript.sml` replays both complete original local
+proofs unchanged. Eight rows capture all13/8conclusions, full binder types,
+zero hypotheses and kernel truth. The first unused `w` has arbitrary type
+α (not word64); the second offset is word64. Lean retains that distinction
+and all original premises/conclusions. Strict source/proof/Lean statement
+and full-driver guards reject drift. This does not prove cross-language
+equivalence or whole encoder correctness.
+
+`word_to_stack_register_spill_update_probeScript.sml` freshly replays the full
+original state_rel_set_var2 statement and literal proof2962–2997, including
+st/sp equalities, with zero open hypotheses and proved sentinel. This is
+regression evidence rather than HOL-to-Lean equivalence.
+
+`word_to_stack_register_write_probeScript.sml` replays the unchanged full
+wRegWrite1_thm1 statement and literal proof3722–3743, retaining its universal
+continuation premise and full run/relation/resources. Closed hyp0/T captures
+provide regression evidence rather than cross-language equivalence.
+
+The native byte probe additionally retains the complete original
+`bytes_in_memory_IMP_all_pcs_MEM8` induction proof, with arbitrary native
+environment, byte list and domain. Its four new rows preserve all old eight
+rows and labels. Domain coverage is derived through the full generic
+`bytes_in_memory_all_pcs`, rather than assumed at instruction PCs.
+
+`stack_remove_init_semantics_probeScript.sml` prints the stored `evaluate_init_code`, `init_semantics`, `make_init_opt_SOME_semantics` and `make_init_semantics` theorems (3856-4086), all closed with zero hypotheses.
+
+`stack_remove_init_ffi_probeScript.sml` prints the stored original `evaluate_init_code_ffi` and `make_init_any_ffi` (stack_removeProofScript.sml:3893-3902, 4088-4098) with zero hypotheses; the Lean ports derive them from the accepted `evaluate_ffi_neutral` and the initializer's clock-neutrality.
+### Full load-prefix clock law
+
+`word_to_stack_load_clock_probe.out` freshly replays the unchanged original
+local proof4470–4476 with all load lists and target states, including invalid
+stack use and out-of-range failures. The whole evaluation pair is retained;
+the kernel theorem has zero open hypotheses and its EQT_INTRO result is T.
+This is original-source evidence, not cross-assistant equivalence or full
+compiler correctness.
+
+## Universal native encoding contract
+
+`riscv_target_length_probeScript.sml` replays all three literal original
+proofs: native instruction length four, nonempty native instruction encoding,
+and nonempty multiple-of-four output for every ASM instruction. Twelve rows
+retain complete statements, instruction/ASM binders, zero hypotheses and
+kernel proof truth. The final source Q.prove and SIMP_RULE are unchanged.
+Lean proves full native AST nonemptiness structurally, including original
+fail encodings; no asm_ok or accepted-opcode premise is introduced.
+This is regression evidence, not whole target/encoder correctness.
+
+`pan_structs_program_extcall_probe` captures the original full `compile_correct`
+and its ExtCall specialization, all quantified types and closed kernel truth.
+The Lean case retains all ten premises/seven conclusions without an IH or
+additional FFI agreement premise; full compiler correctness remains open.
+
+`word_to_stack_comp_get_probeScript.sml` captures the complete original Get
+evaluate_ind obligation and full arbitrary Get specialization of comp_correct,
+both closed hyp0/T. These are original statement regression captures, not
+literal local-case proof replay or cross-language equivalence.
+
+`word_to_stack_comp_locvalue_probeScript.sml` captures the full original
+LocValue induction obligation and arbitrary full specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+
+`pan_structs_program_shmem_load_probe` captures full original `compile_correct`
+and its ShMemLoad specialization, quantified types and closed kernel truth.
+The Lean case preserves all ten premises/seven conclusions, derives the actual
+mapped-read FFI and returned-word assignment internally, and adds no IH or
+oracle agreement premise. Full compiler correctness remains open.
+
+### Native target validity
+
+`riscv_target_ok_probeScript.sml` replays the complete original local target validity theorem (477–498), retaining the full native target type, zero stored hypotheses and truth proof. `check-riscv-target-ok.py` checks the literal original proof, unrestricted Lean conclusion and complete regeneration registration. The proof covers all encoder offset and projection consistency obligations; it does not establish native execution simulation or whole compiler correctness.
+### Full If constructor
+
+`word_to_stack_comp_if_full_probe.out` freshly captures the complete literal
+If evaluate_ind obligation specialized to the original full comp_correct
+motive5719–5751, including both source-guarded branch IHs, and the entire
+original theorem specialized to arbitrary If operands and continuations. Both
+are closed, have zero kernel hypotheses, and EQT_INTRO proves T. This is
+original statement evidence through the proved original full theorem, not a
+replay of the local If proof or cross-assistant equivalence. The Lean proof
+executes register, accepted-immediate and constant-fallback routes, deriving
+all branch/clock/bitmap/label obligations without extra full-case premises.
+
+`word_to_stack_store_update_probeScript.sml` freshly replays the unchanged
+state_rel_set_store statement and literal proof5132–5147, closed hyp0/T.
+Regression evidence rather than cross-language equivalence.
+
+`word_to_stack_comp_set_probeScript.sml` captures the complete original Set
+induction obligation and whole arbitrary specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+`pan_structs_lookup_code_fields_probe` replays original source-local
+`lookup_code_flds_ok` and its three local helper proofs unchanged, reuses the
+original reverse shape theorem alias, and captures full closed statement,
+quantified types and kernel truth. The Lean theorem retains ten source
+hypotheses and all five conclusions, including actual target lookup and
+existential original callee parameter context. Call/DecCall remain open.
+`stack_to_lab_code_installed_probeScript.sml` prints the stored originals of `stack_to_labProofScript.sml:32-600` (word shift, `assert_T`, `dest_to_loc`, `find_code_lookup`, comparison negation, and the `code_installed`/`loc_to_pc`/`labs_correct`/`labels_ok` group) and replays the five local theorems (`code_installed_get_labels_IMP`, `asm_fetch_aux_SOME_append`, `asm_fetch_aux_SOME_isPREFIX`, the line-228 `MAP_prog_to_section_FST`, `code_installed_prog_to_section_lemma`) with their source proofs; every statement is closed with zero hypotheses.
+
+`pan_structs_convert_code_locals_probe` replays the original local
+`convert_code_locals_upd` statement and unchanged simp proof, captures its
+closed statement, quantified types and kernel truth. The Lean theorem retains
+arbitrary caller locals update and unconditional whole code-map equality.
+
+`word_to_stack_comp_codebufferwrite_probeScript.sml` freshly captures the full
+original CodeBufferWrite obligation and arbitrary whole specialization, hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+
+`word_to_stack_comp_databufferwrite_probeScript.sml` captures the full original
+DataBufferWrite obligation and arbitrary whole specialization, closed hyp0/T.
+Statement regression evidence, not literal local proof replay or equivalence.
+`stack_to_lab_state_rel_probeScript.sml` prints the stored `state_rel_def` and its state-update lemmas (`stack_to_labProofScript.sml:601-734`: `loc_check_IMP_loc_to_pc`, clock/pc/register/FP/memory updates, register and operand reads), all closed with zero hypotheses.
+
+`word_to_stack_native_stackstore_probeScript.sml` captures the original full
+wStackStore definition and empty/reverse/repeated-slot continuation cases.
+Original production script uses it only at its definition; compiler direct
+store clauses are retained. Regression evidence, not equivalence.
+`pan_structs_program_deccall_probe` captures full original `compile_correct`,
+its DecCall specialization and complete original `evaluate_ind`, quantified
+types and closed kernel truth. The Lean case retains all ten premises/seven
+conclusions and exactly two original guarded IHs; lookup, return comparisons,
+continuation preconditions and final binding restoration are derived internally.
+Full Call/whole program/compiler correctness remain open.
+`stack_to_lab_inst_correct_probeScript.sml` prints the stored `inst_correct` (`stack_to_labProofScript.sml:737-889`), closed with zero hypotheses.
+
+`stack_to_lab_flatten_helpers_probeScript.sml` prints the stored flatten helper lemmas and result views of `stack_to_labProofScript.sml:890-1206` and replays the local `NOT_bad_fun_return_IMP_SOME` and the line-1022 `next_lab_non_zero` (rebound at 3211) with their source proofs; all closed with zero hypotheses.
+
+### Signed native immediate reconstruction
+
+`riscv_target_immediate_probeScript.sml` replays full original `lem4` and `lem12b` bit-blast proofs. Both retain the complete fixed word carriers and original signed bounds; the split theorem also retains original low-two-bit extraction at result width64. Nine rows record complete universal statements, bound-variable types, zero hypotheses, proof truth and all intermediate extraction/concatenation/sign-extension result types. `check-riscv-target-immediate.py` checks source, capture, Lean signatures and whole registration. These are native stepping prerequisites, not whole encoder correctness.
+# Polymorphic CSE definition signatures
+
+`word_cse_polymorphic_probeScript.sml` captures the original equations and
+inferred types of `map_insert` and `keep_data`. Their sparse-tree value carrier
+is arbitrary, not restricted to register numbers. These signatures are review
+and regression evidence, not a HOL-to-Lean equivalence proof.

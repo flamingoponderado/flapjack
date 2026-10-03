@@ -1,0 +1,41 @@
+align_sdm_aligned=good_dimindex (:α) ⇒
+((x :α word) ∈ (s :(α, β, γ) labSem$state).shared_mem_domain ∧
+ w2n x MOD (dimindex (:α) DIV (8 :num)) = (0 :num) ⇔
+ x ∈ (align_sdm s).shared_mem_domain)
+align_sdm_aligned_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(x :α word)::α word;
+align_sdm_aligned_hypotheses=0
+align_sdm_aligned_proved=T
+share_mem_load_align_sdm=good_dimindex (:α) ⇒
+(share_mem_load (r :num) (ad :α addr) (align_sdm (s :(α, γ, β) labSem$state))
+   (n :num) = (NONE :(β ffi_result # (α, γ, β) labSem$state) option) ⇔
+ share_mem_load r ad s n =
+ (NONE :(β ffi_result # (α, γ, β) labSem$state) option)) ∧
+(share_mem_load r ad s n =
+ SOME ((res :β ffi_result),(s' :(α, γ, β) labSem$state)) ⇒
+ share_mem_load r ad (align_sdm s) n = SOME (res,align_sdm s'))
+share_mem_load_align_sdm_types=(s' :(α, γ, β) labSem$state)::(α, γ, β) labSem$state;(res :β ffi_result)::β ffi_result;(n :num)::num;(s :(α, γ, β) labSem$state)::(α, γ, β) labSem$state;(ad :α addr)::α addr;(r :num)::num;
+share_mem_load_align_sdm_hypotheses=0
+share_mem_load_align_sdm_proved=T
+share_mem_store_align_sdm=good_dimindex (:α) ⇒
+(share_mem_store (r :num) (ad :α addr)
+   (align_sdm (s :(α, γ, β) labSem$state)) (n :num) =
+ (NONE :(β ffi_result # (α, γ, β) labSem$state) option) ⇔
+ share_mem_store r ad s n =
+ (NONE :(β ffi_result # (α, γ, β) labSem$state) option)) ∧
+(share_mem_store r ad s n =
+ SOME ((res :β ffi_result),(s' :(α, γ, β) labSem$state)) ⇒
+ share_mem_store r ad (align_sdm s) n = SOME (res,align_sdm s'))
+share_mem_store_align_sdm_types=(s' :(α, γ, β) labSem$state)::(α, γ, β) labSem$state;(res :β ffi_result)::β ffi_result;(n :num)::num;(s :(α, γ, β) labSem$state)::(α, γ, β) labSem$state;(ad :α addr)::α addr;(r :num)::num;
+share_mem_store_align_sdm_hypotheses=0
+share_mem_store_align_sdm_proved=T
+share_mem_op_align_sdm_simp=good_dimindex (:α) ⇒
+(share_mem_op (m :memop) (r :num) (a :α addr) (s :(α, γ, β) labSem$state) =
+ (NONE :(β ffi_result # (α, γ, β) labSem$state) option) ⇔
+ share_mem_op m r a (align_sdm s) =
+ (NONE :(β ffi_result # (α, γ, β) labSem$state) option)) ∧
+(share_mem_op m r a s =
+ SOME ((res :β ffi_result),(s' :(α, γ, β) labSem$state)) ⇒
+ share_mem_op m r a (align_sdm s) = SOME (res,align_sdm s'))
+share_mem_op_align_sdm_simp_types=(s' :(α, γ, β) labSem$state)::(α, γ, β) labSem$state;(res :β ffi_result)::β ffi_result;(s :(α, γ, β) labSem$state)::(α, γ, β) labSem$state;(a :α addr)::α addr;(r :num)::num;(m :memop)::memop;
+share_mem_op_align_sdm_simp_hypotheses=0
+share_mem_op_align_sdm_simp_proved=T

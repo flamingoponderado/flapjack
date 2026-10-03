@@ -1,0 +1,36 @@
+mem_load32_align_dm=good_dimindex (:α) ⇒
+mem_load32 (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (mem_load32 n a s)
+mem_load32_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;
+mem_load32_align_dm_hypotheses=0
+mem_load32_align_dm_proved=T
+mem_load_byte_align_dm=good_dimindex (:α) ⇒
+mem_load_byte (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (mem_load_byte n a s)
+mem_load_byte_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;
+mem_load_byte_align_dm_hypotheses=0
+mem_load_byte_align_dm_proved=T
+mem_store32_align_dm=good_dimindex (:α) ⇒
+mem_store32 (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (mem_store32 n a s)
+mem_store32_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;
+mem_store32_align_dm_hypotheses=0
+mem_store32_align_dm_proved=T
+mem_store_byte_align_dm=good_dimindex (:α) ⇒
+mem_store_byte (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (mem_store_byte n a s)
+mem_store_byte_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;
+mem_store_byte_align_dm_hypotheses=0
+mem_store_byte_align_dm_proved=T
+mem_op_align_dm=good_dimindex (:α) ⇒
+mem_op (m :memop) (n :num) (a :α addr) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (mem_op m n a s)
+mem_op_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(a :α addr)::α addr;(n :num)::num;(m :memop)::memop;
+mem_op_align_dm_hypotheses=0
+mem_op_align_dm_proved=T
+asm_inst_align_dm=good_dimindex (:α) ⇒
+asm_inst (i :α inst) (align_dm (s :(α, β, γ) labSem$state)) =
+align_dm (asm_inst i s)
+asm_inst_align_dm_types=(s :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(i :α inst)::α inst;
+asm_inst_align_dm_hypotheses=0
+asm_inst_align_dm_proved=T
