@@ -6420,21 +6420,33 @@ actual helper execution and original `sh_mem_op_const`; no preserved field is
 assumed. The native consumer module kernel-checks all 23 generic statements.
 These captures provide source regression evidence, not cross-language equivalence
 or full evaluator/pass/compiler correctness.
+
 `stack_code_bitmaps_call_probe.out` captures the original full theorem, zero hypotheses and arbitrary-ret Call specialization. The Lean constructor case assembles actual NONE/SOME branch proofs with source-path guarded recursive IHs and all three existential conjuncts. Whole evaluator assembly is separate.
 
+`stack_code_bitmaps_full_probe.out` freshly replays the complete original evaluate_code_bitmaps proof, checks absence of hypotheses/free variables, and records full theorem/type. The Lean whole theorem retains the sole actual source execution premise and all three existential conjuncts; native clock-first induction discharges every recursive case internally. This structural preservation theorem does not establish full compiler or floating-point correspondence.
 `l3_csr_access_probe.out` captures seven complete CSR privilege/access definitions
 and types, 285 boundary observations across RV32/RV64/RV128 with eight privilege/
 access combinations each, and 18 unspecified-mode exception/frame observations.
 Original signed word12 range comparisons, unsigned privilege comparison, MPRV,
 ignored rs1 and returned states are preserved. Arbitrary architecture remains
 arbitrary. These regressions do not establish whole Run/Next/compiler correctness.
+`stack_remove_comp_storeconsts_probeScript.sml` replays the complete literal original `comp_correct` StoreConsts case (1504–1575) with its original four premises, together with the original local `state_rel_get_var` and `mem_load_lemma` proofs. Two rows record the closed specialized statement and kernel proof success. The full Lean constructor case derives the actual bitmap prefix, CopyLoop memory transition, final moves and full post-relation. This proof-only slice does not claim executed compiler parity or whole-pass completion.
 
+`stack_evaluate_clock_neutral_probeScript.sml` replays the literal original
+local `inst_clock_neutral` proof and then the full original
+`evaluate_clock_neutral` proof (stackPropsScript.sml:679–692). It captures the
+fully generalized theorem and proof success, plus seven independent neutral
+predicate observations including nested Seq/Inst/Halt and excluded Tick/Loop.
+The native theorem retains its sole source-evaluation/neutrality conjunction;
+clock commutation and unchanged post-clock are derived by structural recursion.
+Generic kernel consumers include widths 1/8/64/80 and zero replacement clocks.
+These fixtures do not prove cross-language equivalence or full initialization.
+`stack_rel_definition_probe.out` captures the complete original stack_rel equation, zero hypotheses and polymorphic type. Source frames, rest stack and bitmaps share alpha; the target handler has independent beta. Lean preserves both dimensions and all conjuncts, uses accepted total EL without a chosen default, and represents LASTN by drop(length-n). This proof-side relation is not an executed compiler change or whole pass theorem.
 `l3_machine_csr_codec_probe.out` captures all 14 original machine CSR rec/reg
 codec definitions and 490 observations over every single-bit basis vector,
 zero, all ones, alternating bits and mixed patterns. Independent calculations
 check both packed words and every decoded field, including discontiguous
 reserved-bit segments. Full CSR transitions and Run/Next remain open.
-
 
 `l3_supervisor_csr_probe.out` captures all 15 complete original supervisor CSR
 codec/lift/lower definitions and 862 independently calculated observations:
@@ -6442,3 +6454,4 @@ codec/lift/lower definitions and 862 independently calculated observations:
 interrupt lift/lower patterns. Original invalid-VM retention, dirty summary,
 reserved-bit framing and supervisor-only interrupt replacement are preserved.
 These regressions do not establish whole CSR transitions or Run/Next correctness.
+
