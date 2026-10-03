@@ -1556,6 +1556,12 @@
       "sha256": "66dce405c8d115ca1dc8cec469731b96c49a07aeb5490b829e2fbcb3fd9db490"
     },
     {
+      "bytes": 26524,
+      "out": "l3_machine_csr_codec_probe.out",
+      "rows": 504,
+      "sha256": "7e128374fbb8dc7630cccbc684dff50516da98aea65b970125282542b5e4dd98"
+    },
+    {
       "bytes": 11729,
       "out": "l3_mmu_access_probe.out",
       "rows": 288,

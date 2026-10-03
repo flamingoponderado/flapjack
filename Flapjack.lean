@@ -1,6 +1,7 @@
 import Flapjack.Compiler.Backend.LabToTarget.FfiEntryExclusion
 import Flapjack.Compiler.Backend.LabToTarget.MmioClassification
 import Flapjack.RiscV.L3.Defs.CSRAccess
+import Flapjack.RiscV.L3.Defs.MachineCSRCodec
 import Flapjack.Misc.FindIndex.SuccessfulMembership
 import Flapjack.RiscV.L3.Defs.MMU.Flush
 import Flapjack.Misc.FindIndex.Membership
@@ -753,6 +754,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnlyCache
 import Flapjack.Compiler.Backend.WordAlloc.ProductionStackOnly
 import Flapjack.Compiler.Backend.WordAlloc.ProductionPreferences
 import Flapjack.Compiler.Backend.WordAlloc.ProductionHeuristicCosts
+import Flapjack.Compiler.Backend.WordAlloc.ProductionTreeMapMerge
 import Flapjack.Compiler.Backend.RegAlloc.ProductionFixedTags
 import Flapjack.Compiler.Backend.RegAlloc.ProductionColourLookup
 import Flapjack.Compiler.Backend.WordToStack.ProductionAllocatorCodec
