@@ -1,5 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Inst
-import Flapjack.Misc.BinaryIeeeSqrt.RealCarrier
+import Flapjack.Misc.MachineIeee.SqrtReal
 
 namespace Flapjack.WordSemStateFiniteExact
 
