@@ -70590,5 +70590,101 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead 4.6 wordProps: original 4722-4757 arbitrary prog/state/result/post, conjunctive premise evaluate (prog,s) = (result,s1) /\\ no_install prog /\\ no_install_code s.code, conclusion s.code = s1.code. Proof: untagged code_evaluate recursion on HOL's measure; recursive calls get exactly HOL's IH premises (no_install of the sub-program from no_install_def or no_install_find_code, no_install_code of the intermediate code from earlier calls); no target/success premise. HOL no_alloc/no_install are the tagged Boolean noAllocSubprogsHOL/noInstallSubprogsHOL = true; find_code is the tagged wordSemFindCode; positive width only. Fresh literal original proof replay (wordsem_no_install_code probe), aconv, closed, 0 hypotheses. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemNoInstallEvaluateSupport.holFmapAsFiniteSupportWitness. Inherited assumption: statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
     "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "listRelLastN",
+    "hol_path": "HOL/src/list/src/rich_listScript.sml",
+    "hol_name": "list_rel_lastn",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: HOL library rich_list 4449-4456 !f l1 l2 n. n <= LENGTH l1 /\\ LIST_REL f l1 l2 ==> LIST_REL f (LASTN n l1) (LASTN n l2), arbitrary element types and relation. Fresh probe statement capture. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "permListRearrange",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "PERM_list_rearrange",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 51-70 !f xs. ALL_DISTINCT xs ==> PERM xs (list_rearrange f xs), both bijection and identity branches. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "allDistinctMemImpALookupSome",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "ALL_DISTINCT_MEM_IMP_ALOOKUP_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 72-81 ALL_DISTINCT (MAP FST xs) /\\ MEM (x,y) xs ==> ALOOKUP xs x = SOME y over Nat keys (all wordProps uses are num-keyed alists). Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "permFromAList",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "PERM_fromAList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 4797-4813 !l1 l2. PERM l1 l2 /\\ ALL_DISTINCT (MAP FST l1) ==> fromAList l1 = fromAList l2, tree equality via reviewed spt_eq_thm/wf_fromAList. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "stackSizePerm",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "stack_size_perm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 4815-4825 !l1 l2. LIST_REL PERM_STACK l1 l2 ==> stack_size l1 = stack_size l2. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "envToListAllDistinct",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "env_to_list_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 4665-4681 env_to_list y perm = (vs,other) ==> ALL_DISTINCT (MAP FST vs), all four HOL free vars explicit. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "envToListAllDistinctFst",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "env_to_list_ALL_DISTINCT_FST",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 4683-4688 ALL_DISTINCT (MAP FST (FST (env_to_list y perm))). Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "envToListPerm",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "env_to_list_PERM",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 4827-4842 PERM (FST (env_to_list env perm)) (FST (env_to_list env perm')) for arbitrary oracles. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Positive width only."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "permute_swap_lemma2",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "permute_swap_lemma2",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 4844-5168 full statement: forall prog st perm stack, let (res,rst) = evaluate (prog,st) in the six-conjunct premise (res <> SOME Error, no_alloc_code, no_alloc, no_install_code, no_install, LIST_REL PERM_STACK stack st.stack) implies exists perm' stack' with evaluate (prog, st with permute/stack replaced) = (res, rst with permute := perm'; stack := stack') and LIST_REL PERM_STACK stack' rst.stack. Proof: untagged swap_aux recursion on HOL's measure covering every evaluate_ind clause; recursive calls receive exactly HOL IH premises (sub-program no_alloc/no_install, no_*_code of intermediate code via no_install_evaluate_const_code, PERM_STACK stacks from push_env/pop_env/jump_exc); the Error premise is retained in the statement though the recursion does not need it. Alloc excluded by no_alloc. Original proof uses suspend/resume, so the probe captures the closed statement (0 hypotheses). HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemPermuteSwapStackSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/PermuteSwapStack.lean",
+    "lean_name": "permute_swap_lemma3",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "permute_swap_lemma3",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus5 source comparison 2026-10-03 bead .15.2.36: original 5170-5195 forall prog st perm stack (stack unused in HOL, kept as binder), premise with EVERY distinct-key frames rendered as forall fr in st.stack, conclusion evaluate (prog, st with permute := perm) = (res, rst with permute := perm'; stack := stack') /\\ LIST_REL PERM_STACK stack' rst.stack; derived from permute_swap_lemma2 as HOL does. Fresh literal original proof replay (wordsem_permute_swap_stack probe), aconv, closed, 0 hypotheses. HOL PERM is tagged holPerm, ALL_DISTINCT is List.Nodup, LIST_REL is List.Forall2, ALOOKUP is sptAListLookup, LASTN is wordSemLastN, PERM_STACK (an Overload, no declaration) is untagged permStack clause for clause. Native exact WordSemStateFiniteExact with canonical fpRegs/store and same-module witness WordSemPermuteSwapStackSupport.holFmapAsFiniteSupportWitness; positive width only. Inherited assumption: statement reaches the reals_as_rational_cuts-qualified inst through evaluate; docs/SOUNDNESS.md item 8 applies to FP instructions, no numerical FP claim; marker propagates the assumption only.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
