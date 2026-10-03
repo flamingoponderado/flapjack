@@ -84901,5 +84901,77 @@
     "hol_name": "exp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: full closLangScript14-146 exp datatype, all 11 constructors in source order with unchanged arity and literal carriers. Fixed word64 becomes BitVec64, native MlString names, Nat/Int/Bool and literal List/Option/products; imported exact tra, AST selectors/Shift/Opb, backend_common opw and FpSem operation enums. Recursive Const list and Letrec List(Nat x Exp) preserved. No generic syntax placeholder, omitted constructor, evaluator, additional premise or wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "ValApprox",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "val_approx",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "InliningDecision",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "inliningDecision",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "defaultInlineFactor",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "default_inline_factor_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "defaultMaxBodySize",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "default_max_body_size_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "mkConfig",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "mk_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "defaultConfig",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "default_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "decInlineFactor",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "dec_inline_factor_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/ClosKnown/Config.lean",
+    "lean_name": "resetInlineFactor",
+    "hol_path": "cakeml/compiler/backend/clos_knownScript.sml",
+    "hol_name": "reset_inline_factor_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 source comparison: clos_knownScript267-275/469-509 full val_approx six constructors with literal ClosLang.Exp bodies and recursive List ValApprox; full three-case inliningDecision, and all four Config fields with literal Spt ValApprox. Exact config equations: default factor8, (max_app+1)*factor, mk_config initializes both factors equally and tree LN, default_config composition, dec_inline_factor Nat DIV2, reset copies initial factor. Arbitrary Nat arguments retained; all untouched fields retained by record updates. No generic expression placeholder, finite-map replacement, additional premise or runtime production adoption claim."
   }
 ]

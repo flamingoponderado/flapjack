@@ -7253,3 +7253,7 @@ run_probe backend_common_operators_probeScript.sml backend_common_operators_prob
 run_probe clos_lang_syntax_probeScript.sml clos_lang_syntax_probe.out \
   const_case_def const_nchotomy const_part_case_def const_part_nchotomy int_op_case_def int_op_nchotomy word_op_case_def word_op_nchotomy block_op_case_def block_op_nchotomy glob_op_case_def glob_op_nchotomy mem_op_case_def mem_op_nchotomy op_case_def op_nchotomy exp_case_def exp_nchotomy \
   "$cake_dir/compiler/backend/closLangScript.sml" "$cake_dir/compiler/backend"
+
+run_probe clos_known_config_probeScript.sml clos_known_config_probe.out \
+  val_approx_case_def val_approx_nchotomy inliningDecision_case_def inliningDecision_nchotomy config_component_equality default_inline_factor_def default_max_body_size_def mk_config_def default_config_def dec_inline_factor_def reset_inline_factor_def inline_max_body_size_type inline_factor_type initial_inline_factor_type val_approx_spt_type \
+  "$cake_dir/compiler/backend/clos_knownScript.sml" "$cake_dir/compiler/backend"
