@@ -70344,5 +70344,247 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.2): original lab_to_targetProofScript.sml:1655-1662: forall xs a with free dm1 m m1 dm: (forall a. a notin dm1 ==> m a = m1 a) ==> bytes_in_mem a xs m dm dm1 ==> bytes_in_memory a xs m1 dm. Kept exactly (word8 values). Positive BitVec width for the HOL word dimension is the only representation translation; labSem state/asm_state/machine_config carriers are the reviewed native ones and the s1 config type follows the source (lab_to_target config where the source uses ^s1, generic otherwise), HOL sets as predicates (s1.mem_domain via its Bool truth predicate). Original statement and inferred types captured in lab_to_target_bytes_in_memory_fetch_probe.out (local theorems re-elaborated from unchanged text, not theorem replays)."
+  },
+  {
+    "lean_path": "Flapjack/Byte/GetSetByte.lean",
+    "lean_name": "getByte_setByte",
+    "hol_path": "HOL/src/n-bit/byteScript.sml",
+    "hol_name": "get_byte_set_byte",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original byteScript.sml:158-160: 8 <= dimindex(:'a) ==> get_byte a (set_byte a b w be) be = b; Lean keeps binders a b w be and the dimension premise 8 <= width over reviewed getByte/setByte. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/GetByteSetByte.lean",
+    "lean_name": "goodDimindex_getByte_setByte",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "good_dimindex_get_byte_set_byte",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original miscScript.sml:4319-4326: good_dimindex(:'a) ==> get_byte a (set_byte a b w be) be = b; same statement over reviewed goodDimindex. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/GetByteSetByte.lean",
+    "lean_name": "getByte_setByte_diff",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "get_byte_set_byte_diff",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original miscScript.sml:4364-4411: good_dimindex(:'a) /\\ a <> a' /\\ byte_align a = byte_align a' ==> get_byte a (set_byte a' b w be) be = get_byte a w be; all three premises and the conclusion kept. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "mult_add_less_mult",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "MULT_ADD_LESS_MULT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1786-1794: !m n k l j. m < l /\\ n < k /\\ j <= k ==> m * j + n < l * k over num; identical. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "aligned_imp_add_less_dimword",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "aligned_IMP_ADD_LESS_dimword",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1796-1807: aligned k x /\\ k <= dimindex(:'a) ==> w2n x + (2 ** k - 1) < dimword(:'a); dimword is 2^width. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "aligned_2_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "aligned_2_imp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1809-1819: aligned 2 x /\\ dimindex = 32 ==> byte_align x = x and byte_align (x + 1w|2w|3w) = x; all four conjuncts. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "aligned_2_not_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "aligned_2_not_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1821-1830: aligned 2 x /\\ dimindex = 32 /\\ x <> byte_align a ==> four disequalities. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "aligned_3_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "aligned_3_imp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1832-1846: aligned 3 x /\\ dimindex = 64 ==> eight byte_align equalities. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "aligned_3_not_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "aligned_3_not_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1848-1861: aligned 3 x /\\ dimindex = 64 /\\ x <> byte_align a ==> eight disequalities. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "dimword_eq_32_imp_or_bytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "dimword_eq_32_imp_or_bytes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1863-1871: dimindex = 32 ==> the four w2w-of-word8 byte slices shifted by 0/8/16/24 OR to x; HOL || is right-associative (wordsScript add_infixes 482 RIGHT) and the Lean statement parenthesizes identically. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "dimword_eq_64_imp_or_bytes",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "dimword_eq_64_imp_or_bytes",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1873-1885: dimindex = 64 ==> eight byte slices OR to x, right-associated as in HOL. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "byte_align_32_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "byte_align_32_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1887-1897: dimindex = 32 ==> byte_align a + n2w (w2n a MOD 4) = a. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "byte_align_64_eq",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "byte_align_64_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1899-1909: dimindex = 64 ==> byte_align a + n2w (w2n a MOD 8) = a. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "byte_align_32_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "byte_align_32_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1911-1929: dimindex = 32 ==> four implications from byte_align a (+ 1w/2w/3w) = a to w2n a MOD 4 = 0/1/2/3, in source order. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "mod4_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "MOD4_CASES",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1931-1938: !n. n MOD 4 in {0,1,2,3} as a four-way disjunction. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "byte_align_32_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "byte_align_32_CASES",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1940-1951: dimindex = 32 ==> byte_align a + 3w = a \\/ +2w \\/ +1w \\/ byte_align a = a, source disjunct order. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "mod8_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "MOD8_CASES",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1953-1962: !n. n MOD 8 in {0..7} as an eight-way disjunction. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "byte_align_64_cases",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "byte_align_64_CASES",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1964-1979: dimindex = 64 ==> eight-way disjunction 7w..1w then byte_align a = a, source order. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "byte_align_64_imp",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "byte_align_64_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 1981-2003: dimindex = 64 ==> eight implications in source order 7w..0. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstAlignment.lean",
+    "lean_name": "align2_not_align3_4w",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "align2_not_align3_4w",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2146-2168: ~aligned 3 x /\\ aligned 2 x /\\ dimindex = 64 ==> x = byte_align x + 4w, x+1w = .. + 5w, x+2w = .. + 6w, x+3w = .. + 7w. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "arithUpd_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "arith_upd_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2005-2056: (!r. word_loc_val p labs (read_reg r s1) = SOME (t1.regs r)) /\\ ~(arith_upd a s1).failed ==> !r. word_loc_val p labs (read_reg r (arith_upd a s1)) = SOME ((arith_upd a t1).regs r); labSem read_reg is the source overload for s.regs r, so Lean reads .regs directly; source arith_upd is reviewed native LabSem.arithUpd, target asmSem arith_upd is AsmSem.arithUpd; s1 config/ffi generic as in source. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "arithUpd_fpRegs",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "arith_upd_fp_regs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2059-2068: (arith_upd a s).fp_regs = s.fp_regs /\\ (arith_upd a t).fp_regs = t.fp_regs for labSem s and asm_state t. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "fpUpd_lemma",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "fp_upd_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2070-2096: register relation, FP register equality and ~(fp_upd f s1).failed imply FP register equality and register relation after both fp_upd; all hypotheses/conclusions kept. Declaration carries reals_as_rational_cuts (source unfolds the IEEE renderings; docs/SOUNDNESS.md item 8). Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide). Note names reals_as_rational_cuts and SOUNDNESS item 8."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "inst_shareMem_pcUpdate_helper",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "Inst_share_mem_pc_update_helper",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2098-2106: share_mem_state_rel mc_conf s1 t1 ms1 /\\ target_state_rel mc_conf.target (t1 with pc := pc') ms2 ==> share_mem_state_rel mc_conf (s1 with <|pc := s1.pc + 1; clock := s1.clock - 1|>) (t1 with pc := pc') ms2; record updates kept literally. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "inst_shareMem_regUpdate_helper",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "Inst_share_mem_reg_update_helper",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2108-2118: as pc helper with regs := (n =+ c) t1.regs and (n =+ Word c) s1.regs; HOL =+ update is the literal if-then-else function update. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "arithUpd_sharedMemDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "arith_upd_share_mem_domain_unchange",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2120-2128: (arith_upd a s1).shared_mem_domain = s1.shared_mem_domain. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/InstUpdates.lean",
+    "lean_name": "fpUpd_sharedMemDomain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "fp_upd_share_mem_domain_unchange",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-03; flapjack-native-lab-target-compile-correct.3): original 2130-2136: (fp_upd f s1).shared_mem_domain = s1.shared_mem_domain. Only the HOL word dimension translates to a positive-width BitVec (dimindex equations kept as width equations; aligned/byte_align/w2w are reviewed holAligned/holByteAlign/setWidth); no premise added or conclusion weakened. No sorry/axiom; proof uses bit-level case analysis and bv_omega (no bv_decide/native_decide). Inherits reals_as_rational_cuts and the docs/SOUNDNESS.md item 8 assumption through the reviewed LabSem.fpUpd."
   }
 ]
