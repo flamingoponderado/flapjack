@@ -1994,6 +1994,12 @@
       "sha256": "dde891b348687f4e3e6a2651eb5d837bbda4fe19684f0f03b2705ff916e286fc"
     },
     {
+      "bytes": 6395,
+      "out": "lab_to_target_ffi_bytearray_probe.out",
+      "rows": 20,
+      "sha256": "093c6f27e517535cf74275ccdc122287639370edbd268f066393318f781fdfbd"
+    },
+    {
       "bytes": 1975,
       "out": "lab_to_target_ffi_entry_exclusion_probe.out",
       "rows": 12,
@@ -2622,6 +2628,24 @@
       "out": "lab_validity_native_probe.out",
       "rows": 19,
       "sha256": "167e997a47efd3a23257f16167854374737ed1e386c949567b3877869a51b4b6"
+    },
+    {
+      "bytes": 2291,
+      "out": "labprops_clock_support_probe.out",
+      "rows": 16,
+      "sha256": "b08ff2b12b935d626f7e888959d42154f6f90b0064e17180122e11c0ab2b0fd1"
+    },
+    {
+      "bytes": 489,
+      "out": "labprops_evaluate_add_clock_io_events_mono_probe.out",
+      "rows": 4,
+      "sha256": "e674cbd1f2e1f3eca2ef3edd0ddbe9457d004f5612574211fd1bae349da73610"
+    },
+    {
+      "bytes": 484,
+      "out": "labprops_evaluate_io_events_mono_probe.out",
+      "rows": 4,
+      "sha256": "7d9a204965a0c5782fea9eb243e60344a4f0fdab41e1c292260f198492117398"
     },
     {
       "bytes": 408,

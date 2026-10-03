@@ -1,0 +1,7 @@
+evaluate_io_events_mono=∀(s1 :(α, β, γ) labSem$state) (r :machine_result)
+    (s2 :(α, β, γ) labSem$state).
+  (evaluate s1 :machine_result # (α, β, γ) labSem$state) = (r,s2) ⇒
+  s1.ffi.io_events ≼ s2.ffi.io_events
+evaluate_io_events_mono_types=(s1 :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;(r :machine_result)::machine_result;(s2 :(α, β, γ) labSem$state)::(α, β, γ) labSem$state;
+evaluate_io_events_mono_hypotheses=0
+evaluate_io_events_mono_proved=T
