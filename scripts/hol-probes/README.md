@@ -7980,3 +7980,28 @@ composes all six reviewed pass paths; production routing remains separate.
 quantified original `localised_exp_shape_val` conjuncts as a closed typed
 kernel theorem, plus both mutual shape-expression types. Regenerate with
 `HOL_PROBE_ONLY=pan_globals_shape_localised_probeScript.sml`.
+
+### Actual native Const emitted-list execution
+
+`CorrectnessEncoding/ConstExecution.lean` derives whole actual `riscvTarget.next`
+iteration from `bytesInMemoryHOL` of `flatMap riscvEncode`, original validity,
+Const-family membership/nonzero destinations, and original interference. The
+native iterator calls the faithful target Next at every transition; it is not a
+pure-effect replacement. Four fetch bytes, native validity and remaining-byte
+availability are derived internally. Full record equality to the complete-step
+interleaving, original full projection, final validity/PC/domain-memory frame,
+and the original `asserts2` outside-domain frame are kernel checked. The
+assertion counter decreases while the environment index increases, as in HOL.
+
+Source comparison: original misc `bytes_in_memory_def`/`bytes_in_memory_APPEND`,
+set_sep `fun2set_def`/`fun2set_thm`, asmProps `interference_ok_def`/`asserts2_def`,
+riscv_target `riscv_encode_def`/`riscv_proj_def`/`riscv_next_def`, and the existing
+seven original native Next clause derivations. Existing scoped original captures
+remain evidence for their own declarations; no new oracle or original named
+list theorem is invented. These composition helpers stay untagged. The full
+Const `asserts` intermediate/final source-state relation remains open.
+
+`check-riscv-const-execution.py` pins actual target iteration and the full public
+statements. Mutation tests reject a pure replacement iterator, wrong index or
+PC increment, added target-run premise, changed domain premise, wrong assertion
+counter, and reversed outside-domain observation.
