@@ -7237,3 +7237,7 @@ run_probe flat_pattern_config_probeScript.sml flat_pattern_config_probe.out \
 run_probe source_to_flat_config_probeScript.sml source_to_flat_config_probe.out \
   var_name_shape environment_shape environment_generation_store_shape environment_store_shape next_indices_shape config_shape Glob_type Local_type environment_c_type environment_v_type environment_generation_store_next_type environment_generation_store_generation_type environment_generation_store_envs_type environment_store_next_type environment_store_env_gens_type next_indices_vidx_type next_indices_tidx_type next_indices_eidx_type config_next_type config_mod_env_type config_pattern_cfg_type config_envs_type \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_to_stack_copy_words_correct_full_probeScript.sml word_to_stack_copy_words_correct_full_probe.out \
+  copy_full copy_hypotheses copy_proved \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

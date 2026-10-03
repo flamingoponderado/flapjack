@@ -84780,5 +84780,14 @@
     "hol_name": "config",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol3 source comparison: original datatype at source_to_flatScript.sml413, every constructor/field retained at literal source carrier. ast modN/conN/varN aliases are mlstring, flatLang ctor_id=num and type_group_id=(num # (num # num) list) option. Source namespaces instantiated concretely; envs/env_gens are Spt num_map trees, including nesting. Uses checked complete tra and flat_pattern$config; no generic placeholder, finite-map substitution, narrowed field set, extra premise or executable/wholecompiler completion claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CopyWordsCorrect.lean",
+    "lean_name": "copyWordsCorrect",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "copy_words_correct",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison 2026-10-03: original5994-6051 full arbitrary-length copy_words_correct. Arbitrary words/prefix/suffix/address/offset/domain/memory; retains exactly const_addresses and good_dimindex guards. Complete actual copyWordsExact on native constWordsToBitmapW words LENGTH words equals SOME modular address plus bytes_in_word*n2w total length and whole const_writes memory. No chunk-length restriction, target-run assumption or simplified evaluator. Native TAKE/DROP recursion and accepted full shortchunk/pattern/MSB and const_addresses/const_writes append laws used. Prop-domain set maps via decide to native Bool addresses; word_loc memory is total function. Only words_as_type_indexed_bitvec word translation. Kernel checked and original literal full proof replay."
   }
 ]
