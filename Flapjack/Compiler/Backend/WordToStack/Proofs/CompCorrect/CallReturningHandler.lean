@@ -157,6 +157,182 @@ theorem evaluateHandlerPrelude {width : Nat} [NeZero width] {C F : Type}
     plainConventions plainMaximum destinationCompile savedCompile returnCompile
     lengthBound bitmapBound bitmapPrefix
 
+/-- Execute the real returning-handler header after destination and saved
+frame setup, deriving its final full state relation from evaluate_PushHandler.
+The initial room and label guards are the original successful header branch;
+no intermediate target execution or final relation is assumed. This is
+Flapjack case infrastructure, not the whole comp_correct theorem. -/
+theorem evaluateHandlerHeader {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width))
+    (n savedIndex finalIndex : Nat) (destinationCode savedCode returnCode : HolProg width)
+    (destination : Sum Nat Nat)
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar, handlerCode, h1, h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar, handlerCode, h1, h2))) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, f, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length)))
+    (room : 3 ≤ target.stackSpace)
+    (location : StackSem.locCheckExact target.code (h1,h2)) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate
+        (.seq (.seq destinationCode savedCode) (pushHandlerNative false h1 h2 (k,f,frame)),
+          target) = (none, post) ∧
+      stateRel ac k 0 0
+        {WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2)) source
+          with locals := .ln, localsSize := some 0}
+        post (frame :: lens) 0 ∧
+      post.stackSpace + 3 = target.stackSpace ∧
+      post.stack.length = target.stack.length := by
+  obtain ⟨savedTarget, savedClockRun, savedRelation, _, savedLength, savedSpace⟩ :=
+    evaluateHandlerPrelude ac k f frame values names retCode l1 l2 dest args
+      (some (handlerVar,handlerCode,h1,h2)) source target lens xs args1 prog ss envs
+      bs savedBitmaps finalBitmaps n savedIndex finalIndex destinationCode savedCode
+      returnCode destination guards related conventions maximum destinationCompile
+      savedCompile returnCompile lengthBound bitmapBound bitmapPrefix
+  have savedRun : StackSemEvaluate.evaluate (.seq destinationCode savedCode, target) =
+      (none, savedTarget) := by simpa using savedClockRun 0
+  have mono := Flapjack.Compiler.Backend.StackProps.EvaluateMono.evaluateMono
+    (.seq destinationCode savedCode) target savedTarget none savedRun
+  have savedLocation := LocationLabels.locCheckSubset target.code savedTarget.code
+    mono.2 (h1,h2) location
+  obtain ⟨post, pushRun, _, _, _, postSpace, postLength, postRelation⟩ :=
+    evaluatePushHandler ac k f frame h1 h2 handlerVar handlerCode source savedTarget
+      envs lens (by rw [savedSpace]; exact room) savedRelation savedLocation
+  refine ⟨post, ?_, postRelation, postSpace.trans savedSpace, postLength.trans savedLength⟩
+  rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, savedRun]
+  exact pushRun
+
+/-- The real insufficient-header-room branch halts with word two and
+preserves the original FFI state. This proves the target resource failure from
+source-derived setup, not an assumed run; the source stack-limit consequence
+and full comp_correct resource conclusion remain separate open obligations.
+There is no separate HOL declaration for this case factoring. -/
+theorem evaluateHandlerHeaderNoRoom {width : Nat} [NeZero width] {C F : Type}
+    (ac : AsmConfigExact width) (k f frame : Nat)
+    (values : List Nat) (names : WordLangCutsetsHOL)
+    (retCode : WordLangProgHOL (BitVec width)) (l1 l2 : Nat)
+    (dest : Option Nat) (args : List Nat)
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (source : WordSemStateFiniteExact width (Nat × C) F)
+    (target : StackSemStateFiniteExact width C F) (lens : List Nat)
+    (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (ss : Option Nat) (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (bs savedBitmaps finalBitmaps : AppList (BitVec width))
+    (n savedIndex finalIndex : Nat) (destinationCode savedCode returnCode : HolProg width)
+    (destination : Sum Nat Nat)
+    (guards : CallReturning.SourceGuards values names retCode l1 l2 dest args source
+      xs args1 prog ss envs)
+    (related : stateRel ac k f frame source target lens 0)
+    (conventions : postAllocConventionsHOL k
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar, handlerCode, h1, h2))) = true)
+    (maximum : maxVarHOL
+      (.call (some (values, names, retCode, l1, l2)) dest args (some (handlerVar, handlerCode, h1, h2))) < 2 * frame + 2 * k)
+    (destinationCompile : callDestNative dest args (k, f, frame) = (destinationCode, destination))
+    (savedCompile : wLiveNative names (bs, n) (k, f, frame) =
+      (savedCode, (savedBitmaps, savedIndex)))
+    (returnCompile : compNative ac false retCode (savedBitmaps, savedIndex) (k, f, frame) =
+      (returnCode, (finalBitmaps, finalIndex)))
+    (lengthBound : (appListAppend bs).length ≤ n)
+    (bitmapBound : n - (appListAppend bs).length ≤ target.bitmaps.length)
+    (bitmapPrefix : (appListAppend finalBitmaps).IsPrefix
+      (target.bitmaps.drop (n - (appListAppend bs).length)))
+    (noRoom : target.stackSpace < 3) :
+    ∃ post : StackSemStateFiniteExact width C F,
+      StackSemEvaluate.evaluate
+        (.seq (.seq destinationCode savedCode) (pushHandlerNative false h1 h2 (k,f,frame)),
+          target) = (some (.halt (.word (BitVec.ofNat width 2))), post) ∧
+      post.ffi = source.ffi := by
+  obtain ⟨savedTarget, savedClockRun, savedRelation, _, _, savedSpace⟩ :=
+    evaluateHandlerPrelude ac k f frame values names retCode l1 l2 dest args
+      (some (handlerVar,handlerCode,h1,h2)) source target lens xs args1 prog ss envs
+      bs savedBitmaps finalBitmaps n savedIndex finalIndex destinationCode savedCode
+      returnCode destination guards related conventions maximum destinationCompile
+      savedCompile returnCompile lengthBound bitmapBound bitmapPrefix
+  have savedRun : StackSemEvaluate.evaluate (.seq destinationCode savedCode, target) =
+      (none, savedTarget) := by simpa using savedClockRun 0
+  have savedEnabled : savedTarget.useStack = true := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  have savedFfi : savedTarget.ffi = source.ffi := by
+    unfold stateRel at savedRelation
+    aesop (config := { enableSimp := false })
+  have short : savedTarget.stackSpace < 3 := by rw [savedSpace]; exact noRoom
+  refine ⟨StackSemStateOps.emptyEnv savedTarget, ?_, ?_⟩
+  · rw [StackSemEvaluate.evaluate_seq, StackSemEvaluateClock.fixClockEvaluate, savedRun]
+    simp only [pushHandlerF, StackSemEvaluate.evaluate_seq,
+      StackSemEvaluate.evaluate_stackAlloc,
+      savedEnabled, Bool.not_true, Bool.false_eq_true, if_false, short, if_true, StackSemControl.fixClock, StackSemStateOps.emptyEnv, Nat.min_self]
+  · simpa only [StackSemStateOps.emptyEnv] using savedFfi
+
+/-- Source stack-limit overflow corresponding to insufficient room for
+three handler words. The original stack_size_rel supplies the occupied size;
+no source or target outcome is assumed. This is Flapjack factoring of the
+resource argument at original lines9038+, not a separate HOL declaration. -/
+theorem handlerNoRoomSourceLimit {width : Nat} [NeZero width] {C F α : Type}
+    (source : WordSemStateFiniteExact width C F)
+    (envs : Spt (WordLocW width) × Spt (WordLocW width))
+    (handlerVar h1 h2 : Nat) (handlerCode : WordLangProgHOL (BitVec width))
+    (args : List (WordLocW width)) (size : Option Nat)
+    (frame space : Nat) (stack : List α)
+    (relation : stackSizeRel frame source.localsSize source.stackLimit source.stackMax
+      source.stack stack space 0)
+    (positive : 0 < frame) (bound : space + frame ≤ stack.length)
+    (short : space < 3) :
+    source.stackLimit <
+      (WordSemStateFiniteExact.callEnv args size
+        (WordSemStateFiniteExact.pushEnv envs (some (handlerVar,handlerCode,h1,h2))
+          source)).stackMax.getD (source.stackLimit + 1) := by
+  obtain ⟨localSize, limit, maximum⟩ := relation
+  cases oldMax : source.stackMax with
+  | none =>
+    simp [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv,
+      oldMax, wordSemOptionMax]
+  | some old =>
+    obtain ⟨_, localsSome, occupied, occupiedEq, occupiedSize⟩ := maximum old oldMax
+    cases localsEq : source.localsSize with
+    | none => simp [localsEq] at localsSome
+    | some localCount =>
+      have localFrame := localSize (by omega)
+      simp only [localsEq, Option.getD_some] at localFrame
+      have localsExact : source.localsSize = some frame := by
+        rw [localsEq, localFrame]
+      have frameSize : wordSemStackSize
+          (.stackFrame source.localsSize (sptToAList envs.1)
+            (wordSemEnvToList envs.2 source.permute).1 (some (source.handler,h1,h2)) ::
+              source.stack) = some (3 + frame + occupied) := by
+        change wordSemOptionAdd (wordSemStackSizeFrame _) (wordSemStackSize source.stack) = _
+        simp only [wordSemStackSizeFrame, localsExact, Option.map_some, occupiedEq,
+          wordSemOptionAdd]
+      cases size with
+      | none =>
+        simp [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv,
+          wordSemOptionAdd, wordSemOptionMax]
+      | some size =>
+        simp only [WordSemStateFiniteExact.callEnv, WordSemStateFiniteExact.pushEnv,
+          frameSize, oldMax,
+          wordSemOptionAdd, wordSemOptionMax, Option.getD_some]
+        omega
+
 /-- Actual native restoration state after reading the saved handler slot,
 setting the handler store and freeing precisely the three header words.
 Flapjack proof infrastructure for the original normal-return branch9495+;
