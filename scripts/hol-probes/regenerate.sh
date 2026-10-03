@@ -7481,6 +7481,9 @@ run_probe native_alist_insert_reverse_probeScript.sml native_alist_insert_revers
   alistInsertReverse_typed alistInsertReverse_proved alistInsertReverse_hypotheses \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/misc"
 
+run_probe word_to_stack_comp_move_probeScript.sml word_to_stack_comp_move_probe.out \
+  compCorrectMove_typed compCorrectMove_proved compCorrectMove_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 
 
@@ -7500,3 +7503,13 @@ run_probe backend_config_attach_bitmaps_probeScript.sml backend_config_attach_bi
 run_probe pan_structs_semantics_eq_probeScript.sml pan_structs_semantics_eq_probe.out \
   semantics_eq_statement semantics_eq_proved semantics_eq_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe pan_props_pan_sem_is_wrapper_probeScript.sml pan_props_pan_sem_is_wrapper_probe.out \
+  pan_sem_is_wrapper_statement pan_sem_is_wrapper_proved pan_sem_is_wrapper_types \
+  "$cake_dir/pancake/semantics/panPropsScript.sml" "$cake_dir/pancake/semantics"
+run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.out \
+  const_wide_value_zero const_wide_value_low_positive_max const_wide_value_low_sign_bit const_wide_value_low_all_ones const_wide_value_high_one const_wide_value_high_one_low_sign const_wide_value_positive_max const_wide_value_negative_min const_wide_value_negative_min_low_sign const_wide_value_negative_high_low_positive const_wide_value_negative_high_low_sign const_wide_value_all_ones \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
+  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
