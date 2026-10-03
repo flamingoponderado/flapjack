@@ -78770,5 +78770,43 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "compileCorrectTick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Tick leaf: all ten source hypotheses and seven conclusions retained, no recursive IH. Actual faithful evaluateHOLFiniteState/compileProgExact/convertStateExact/result carriers. Tick treats original zero-clock TimeOut/emptyLocals and nonzero decrement branches; converter preserves clock and commutes with empty locals and decrement, canonical empty-map mapping by definitional equality. Annot ignores faithful MlS tag/text and preserves original NONE/source state. Post FEVERY and global/conditional-local shape maps follow from unchanged fields or empty locals; both original result EVERY predicates hold on empty result-value list. No additional clock, bounds, resource, adapter, compatibility or target-run premise. Imported canonical owner/full state roundtrip, explicit four-map/positive-word Type0 qualifiers only. Original whole theorem and case kernel captures reviewed. Whole program/declaration/compiler remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "compileCorrectAnnot",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison2026-10-03 original1034-1061 Annot leaf: all ten source hypotheses and seven conclusions retained, no recursive IH. Actual faithful evaluateHOLFiniteState/compileProgExact/convertStateExact/result carriers. Tick treats original zero-clock TimeOut/emptyLocals and nonzero decrement branches; converter preserves clock and commutes with empty locals and decrement, canonical empty-map mapping by definitional equality. Annot ignores faithful MlS tag/text and preserves original NONE/source state. Post FEVERY and global/conditional-local shape maps follow from unchanged fields or empty locals; both original result EVERY predicates hold on empty result-value list. No additional clock, bounds, resource, adapter, compatibility or target-run premise. Imported canonical owner/full state roundtrip, explicit four-map/positive-word Type0 qualifiers only. Original whole theorem and case kernel captures reviewed. Whole program/declaration/compiler remains separate."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectTickAnnot.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack canonical imported state full two-way roundtrip infrastructure; no independent HOL declaration."
   }
 ]

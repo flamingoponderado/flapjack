@@ -7220,3 +7220,8 @@ constructors through the original guarded evaluator induction principle.
 correctness theorem and Skip/Break/Continue specializations, all closed and
 kernel-proved. Native cases preserve all ten premises and seven conclusions,
 including actual compiled evaluation, state invariants and result validity.
+
+`pan_structs_program_tick_annot_probe` captures the full original program
+correctness theorem and Tick/Annot specializations as closed kernel theorems.
+Native Tick retains both zero-clock timeout and decrement branches without
+extra premises; both cases retain all ten hypotheses and seven conclusions.

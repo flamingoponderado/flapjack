@@ -6788,3 +6788,7 @@ run_probe pan_structs_exp_correct_full_probeScript.sml pan_structs_exp_correct_f
 run_probe pan_structs_program_atomic_probeScript.sml pan_structs_program_atomic_probe.out \
   compile_correct_full_statement compile_correct_full_proved compile_correct_skip_statement compile_correct_skip_proved compile_correct_break_statement compile_correct_break_proved compile_correct_continue_statement compile_correct_continue_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_structs_program_tick_annot_probeScript.sml pan_structs_program_tick_annot_probe.out \
+  compile_correct_full_statement compile_correct_full_proved compile_correct_tick_statement compile_correct_tick_proved compile_correct_annot_statement compile_correct_annot_proved \
+  "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
