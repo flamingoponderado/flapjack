@@ -70214,5 +70214,20 @@
     "hol_name": "dfn'CSRRCI_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-c full source/carrier comparison 2026-10-03, bead flapjack-pxn.18.5.13.8.1.20: literal riscvScript.sml10501-10708 complete six instruction equations. Fixed rd/source word5, CSRword12, register/valueword64 and original full riscv_state retained. checkCSROp returned state, read/write permission selection, CSR old-value read even rd0, postread source GPR, zero-source no-write for RS/RC and immediate family, unconditional register RW write, literal CSRRWI zero Read/no-write, zeroextension immediate, bitwise OR/AND NOT, CSR/Delta before destination GPR and failed-permission signalException state all reviewed. No successful-access/mode/core or target-run premise. Fresh original96 whole-state guards and kernel equations cover zero/nonzero, rd0/alias, read-only/privilege traps, RV32/64/128 and arbitrary prior exceptions; original trap helpers separately reviewed. Full Run/Next/pass correctness remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackRemove/Proofs/CompileSemantics.lean",
+    "lean_name": "compileSemantics",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "compile_semantics",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison (2026-10-03; bead flapjack-pxn.18.5.15.6): complete original stack_removeProofScript.sml2418-2615 state_rel jump off k source target AND semantics start source != Fail implies semantics start target = semantics start source. Original arbitrary jump/bounds/pointer/start/source/target variables universally bound with exactly both premises and same equality direction. Uses native faithful StackSem semantics/evaluate and full stateRelHOL, not a clock-free or compile-execute evaluator. Actual entry comp/regBound obligations discharged for Call NONE (INL start) NONE; complete accepted compCorrect derives actual target clock/run and FFI equality for every source clock, including timeout. Source non-Fail discharges non-Error from the actual fail guard. Accepted native evaluateAddClock proves same-clock non-timeout source/target agreement, which excludes every target fail witness and establishes exact equivalence of the original termination-choice predicates. Complete native extra-clock IO prefix theorem derives each clock-family chain; both cofinal prefix directions are proved from genuine source entry simulations and actual target boosted run traces, then accepted lazy-list prefix-lub equality yields divergence equality. Neither target run, output result, desired trace/prefix, simulation, clock law, source successful-pass, target non-Fail, termination nor divergence is assumed. Choice predicates/fail guard/families are definitionally the native semantics branches. Canonical imported StackSemStateFiniteExact owns regs/fpRegs/store finite-support maps with genuine same-module broad/exact roundtrip witness; code remains Spt, not qualified as finite map. Positive type-indexed words and FFI Type carriers use combined relation/words qualifiers. Inherits reviewed reals_as_rational_cuts through native evaluator FP closure (SOUNDNESS item8); no numerical FP parity assertion. Full original HOL proof replay records universally closed statement and kernel proof success. Full StackRemove observational pass theorem, not remaining initializer/full compiler end-to-end theorem."
   }
 ]
