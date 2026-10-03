@@ -1,0 +1,10 @@
+load "preamble"; load "stack_rawcallProofTheory";
+open HolKernel Parse bossLib preamble stack_rawcallProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "allocation_store_full_statement="; print_term(concl comp_correct));
+val _ = print("allocation_store_full_hypotheses=" ^ Int.toString(length(hyp comp_correct)) ^ "\n");
+fun row label theorem = (print(label ^ "="); print_term(concl theorem));
+val _ = row "allocation_store_alloc" (ISPEC ``stackLang$Alloc rawRegister:64 stackLang$prog`` comp_correct);
+val _ = row "allocation_store_storeConsts" (ISPEC ``stackLang$StoreConsts t1 t2 stubOpt:64 stackLang$prog`` comp_correct);
+val _ = row "allocation_store_stub64" (EVAL ``stack_rawcall$comp_top LN (Seq (StoreConsts 4 5 NONE) (Return 0):64 stackLang$prog) = Seq (StoreConsts 4 5 NONE) (Return 0)``);
+val _ = row "allocation_store_stub80" (EVAL ``stack_rawcall$comp_top LN (Seq (StoreConsts 4 5 NONE) (Return 0):80 stackLang$prog) = Seq (StoreConsts 4 5 NONE) (Return 0)``);
