@@ -1,4 +1,5 @@
 import Flapjack.Compiler.Backend.Semantics.WordSem.Env
+import Flapjack.Misc.Sptree.FromList2
 import Mathlib.Data.List.Induction
 import Lean.Elab.Tactic.Omega
 
@@ -10,15 +11,11 @@ No HOL declaration is claimed for this intermediate accumulator fact. -/
 private theorem foldIndex {α : Type} (ls : List α) (start : Nat) (t : Spt α) :
     (ls.foldl (fun (acc : Nat × Spt α) a => (acc.1+2, sptInsert acc.1 a acc.2))
       (start,t)).1 = start + 2*ls.length := by
-  induction ls generalizing start t with
-  | nil => simp
-  | cons a ls ih =>
-    simp only [List.foldl_cons, ih, List.length_cons]
-    omega
+  exact sptFromList2FoldIndex ls start t
 
 /-- Flapjack infrastructure: optional observations of the native tagged fold,
 including odd keys and indices past the list. No total EL default is used. -/
-private theorem fromList2Lookup {α : Type} (ls : List α) (n : Nat) :
+theorem fromList2Lookup {α : Type} (ls : List α) (n : Nat) :
     sptLookup n (sptFromList2 ls) = if n%2=0 then ls[n/2]? else none := by
   induction ls using List.reverseRecOn with
   | nil => simp [sptFromList2]

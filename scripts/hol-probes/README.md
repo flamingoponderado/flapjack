@@ -6584,6 +6584,12 @@ regressions; fullRun/Next/pass correctness remains open.
 
 `word_to_stack_comp_flat_probe.out` replays the complete original Assign/Store cases against the full source `comp_correct` goal. Six closed statement/proof/hypothesis rows retain every simulation premise and the full target-run/resource/result conclusion. The proofs use HOL's own flat-expression convention contradiction, not an added guard or supplied target execution. The full pass assembly remains unfinished.
 
+`stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
+
+`stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
+
+`stack_remove_init_code_pre_probeScript.sml` exports the complete original kernel definition and generic type of the initializer precondition (2953–2978), with zero stored hypotheses. The native port retains all four pointer witnesses, header words, characteristic-function sets, unsigned word capacity checks and the original three separated heap factors. This is the precondition definition, not the initializer execution proof.
+
 
 
 `wordsem_inst_const_full_probe.out` replays the unchanged original wordProps inst_const_full proof against its complete generic statement. All thirteen preserved fields and the sole successful native instruction premise are retained; replay=T, hypotheses=0, no free variables. The structural invariant is not numerical floating-point correspondence or full evaluator resource-family completion.
@@ -6640,6 +6646,7 @@ supplement source review; full Run/Next correctness remains open.
 
 `wordsem_alloc_const_probe.out` freshly replays the unchanged full original wordProps alloc_const proof before generalization. The closed theorem keeps the sole allocation equation and all ten preserved field equalities, including error/GC/space-success/NotEnoughSpace outcomes; replay=T and hypotheses=0. No successful-allocation or callback-safety assumption is added. Full evaluator resource induction remains open.
 
+`stack_remove_init_reduce_probeScript.sml` exports the complete original state-construction definition/type and replays the full unchanged local stack-space invariant proof (2873–2904). The native port retains opaque out-of-domain/Loc selectors, all twelve state updates, exact compiler/oracle callbacks and ordered canonical finite-map stores; its resource bound follows unconditionally from the actual stack read. Full initializer evaluation and semantics remain separate obligations.
 `stack_remove_init_clock_probeScript.sml` replays the complete unchanged original store-list neutrality and local initializer clock proofs (3874–3891), capturing both generalized statements, zero stored hypotheses and successful proof sentinels. The native theorem retains the sole actual source-evaluation premise and derives replacement-clock execution.
 
 `stack_remove_init_code_relation_probeScript.sml` replays the complete unchanged original local `IMP_code_rel` proof (3988–4010), including the original compiled association-list table and both code-relation clauses. It captures the generalized statement, zero stored hypotheses and successful proof sentinel.
@@ -6688,6 +6695,7 @@ No extra successful lookup, overflow bound, exclusion premise or arbitrary
 EL/default policy is used. ISR16 and the full initializer remain open.
 Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_memory_separation_probeScript.sml`.
 
+`stack_remove_stack_heap_limit_probeScript.sml` exports the complete original paired stack/heap limit predicate, generic type and zero stored hypotheses (2906–2911). The native definition preserves the store word, natural byte-capacity comparison and actual stack length as separate original conjuncts; it supplies a prerequisite of the full initializer property.
 ### Full initializer shared-memory code domain
 
 `lab_to_target_initializer_domain_probeScript.sml` captures the complete
@@ -6730,6 +6738,7 @@ Regenerate with `HOL_PROBE_ONLY=lab_to_target_initializer_full_relation_probeScr
 hypotheses are captured; this is original HOL evidence, not a cross-assistant
 equivalence theorem. Native counterpart: WordToStack/Proofs/InterUnionLeft.lean.
 
+`list_last_probeScript.sml` captures the complete original `LAST_DEF`, its generic type and zero hypotheses, replays the complete `LAST_CONS` proof, and checks the total case equation retaining the original unspecified `LAST []`. The primitive-recursive specification constrains cons lists only; the single shared `holLast` in `Flapjack/Misc/ListEl.lean` uses a dedicated opaque residual value, without asserting an equality to `HD []` or `ARB` or choosing a concrete missing value. This accessor is a prerequisite of the full StackRemove initializer state predicate.
 ### Original initializer semantic entry contracts
 
 `lab_to_target_initial_entry_contracts_probeScript.sml` freshly captures all
@@ -6755,3 +6764,169 @@ their existential witnesses. This independently supplies the lazy-list image
 chain used by original machine_sem_EQ_sem; full compiler simulation and machine
 semantics remain open. Regenerate with
 `HOL_PROBE_ONLY=lprefix_lub_finite_prefix_chain_probeScript.sml`.
+
+`stack_remove_init_limits_double_probeScript.sml` captures the complete original word-free numeric initializer limit definition, its curried natural input/product output type, zero hypotheses, and the actual store-list length. The native counterpart retains left-associated truncated natural subtraction and total division by two; it adds no address bound or word-dimension premise.
+`list_last_probeScript.sml` captures the complete original `LAST_DEF`, its generic type and zero hypotheses, replays the complete `LAST_CONS` proof, and checks the total case equation retaining the original unspecified `LAST []`. The primitive-recursive specification constrains cons lists only; the single shared `holLast` in `Flapjack/Misc/ListEl.lean` uses a dedicated opaque residual value, without asserting an equality to `HD []` or `ARB` or choosing a concrete missing value. This accessor is a prerequisite of the full StackRemove initializer state predicate.
+
+
+### Full native Lab evaluator event monotonicity
+
+`labprops_evaluate_io_events_mono_probeScript.sml` freshly captures the complete
+original `evaluate_io_events_mono` statement, full variable types, zero
+hypotheses and kernel proof T. The native proof follows all36 evaluator
+branches, including all eight shared-memory operators, Install validity/failure,
+and final/returning external FFI paths, with arbitrary compiler configuration
+and FFI host. Existing full `labsem_evaluate_probeScript.sml` execution fixtures
+are independently replayed against original HOL. FP dependencies retain the
+inherited real-rendering assumption (SOUNDNESS item8); full clock extension,
+compiler simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_io_events_mono_probeScript.sml`.
+
+### Full native Lab instruction and shared-memory clock laws
+
+`labprops_clock_support_probeScript.sml` freshly captures all four original
+reg_imm/asm_inst/addr/shared-op clock declarations, complete generic types,
+zero hypotheses and kernel proof T (sixteen rows). Native proofs retain all
+arbitrary compiler configurations and FFI hosts, all instruction constructors
+and all eight shared operators. The shared law keeps all three NONE/return/final
+conjuncts and each original nonzero-clock guard. Instruction FP dependencies
+retain inherited real-rendering assurance (SOUNDNESS item8); these laws supply
+actual prerequisites of clock-event monotonicity, not a machine simulation.
+Regenerate with `HOL_PROBE_ONLY=labprops_clock_support_probeScript.sml`.
+
+### Full native Lab clock-extension event theorem
+
+`labprops_evaluate_add_clock_io_events_mono_probeScript.sml` freshly captures
+original whole statement, complete arbitrary state/extra types, zero hypotheses
+and kernel proof T. Native functional induction retains all36 evaluator
+branches with unconditional event-prefix conclusion, including zero-clock,
+Install and all shared/FFI outcomes. The derived native two-clock comparability
+consequence supplies actual observational trace-chain inputs. This retains
+inherited real rendering (SOUNDNESS item8); whole machine/compile simulation
+and end-to-end correctness remain open. Regenerate with
+`HOL_PROBE_ONLY=labprops_evaluate_add_clock_io_events_mono_probeScript.sml`.
+
+`stack_remove_init_prop_probeScript.sml` captures the complete original initialized-state predicate, generic word/configuration/FFI type and zero hypotheses. Its kernel body has four existential witnesses and 32 conjuncts, including all seventeen store lookups, exact pair limits, buffers/flags/register zero, natural and modular word resource clauses, symbolic `LAST`, and the two-heap separated memory/domain assertion. `Proofs/InitProp.lean` retains this entire body on the reviewed native canonical state, using the single independent-nil `holLast`; its local inhabitedness witness chooses no undefined value.
+
+`stack_rawcall_seq_standard_probe` captures the original full comp_correct, zero hypotheses, and full Seq specializations at64/80 plus standard Skip/Skip compiler observations. Five native standard-composition consumers cover arbitrary positive and1/8/64/80 widths; a generic kernel compiler observation and two executable guards replay the concrete rows. The source-local helper retains the actual fixed-source first and NONE-run guarded second induction hypotheses, derives intermediate stackspace equality, and composes added clocks. It has no separate HOL declaration/tag: optimized equal/less/greater frame branches and full Seq assembly remain open. Captures are regression/statement evidence, not cross-language equivalence.
+
+`stack_rawcall_seq_probe` freshly captures the complete original comp_correct, zero hypotheses, full Seq64/80 specializations and the exact closed Seq evaluate_ind obligation, plus all three optimized compiler forms at64/80. Five full paired theorem consumers cover arbitrary positive and1/8/64/80 widths. Three generic kernel compiler fixtures and six axiom-free executable guards independently replay the optimized forms. The full theorem retains only actual first and NONE-run guarded second IH, derives target Call execution, and covers equal/less/greater sizes, zero clock, allocation failure and every body outcome. EmptyEnv retains stackspace; original timeout/HaltWord2 exceptions remain. Greater failure uses no extra clock, successful body execution one extra Tick. Captures are regression evidence, not cross-language equivalence.
+
+`stack_rawcall_call_tail_probe` freshly captures original comp_correct, zero hypotheses, full NONE-return Call64/80 specializations, the closed complete Call evaluate_ind clause and four direct/indirect compiler trees. Five full paired case consumers cover arbitrary positive and1/8/64/80 widths. The tail callee IH is guarded by handler NONE, actual findCode and nonzero clock; target compTop execution is derived from that IH, and outer frames from actual evaluation monotonicity. All bad-return/timeout outcomes and original stackspace exceptions remain. The NONE-return compiler leaves even an invalid optional handler unchanged. Returning Call and whole pass remain open; captures are regression evidence, not cross-language equivalence.
+
+`stack_remove_init_limits_double_probeScript.sml` captures the complete original word-free numeric initializer limit definition, its curried natural input/product output type, zero hypotheses, and the actual store-list length. The native counterpart retains left-associated truncated natural subtraction and total division by two; it adds no address bound or word-dimension premise.
+`stack_rawcall_call_return_probe` freshly captures original comp_correct, zero hypotheses, full returning and arbitrary Call64/80 specializations, the closed actual Call induction clause, four complete compiled returning/handler trees and four erased-link lookup observations. Ten full returning/assembled theorem consumers cover arbitrary positive and1/8/64/80 widths. Lookup after link erasure and exact Result/Exception location guards remain; callee/continuation target runs are derived from original IHs and native clock composition. Terminal outcomes retain original stackspace exceptions. This completes the Call constructor family, not whole-pass assembly or cross-language equivalence.
+
+`word_to_stack_abs_stack_prefix_drop_probe` replays the full original local
+suffix theorem and its unexported local prerequisites using unchanged source
+statements/proofs. The original context disables NORMEQ_CONV and diminishes
+ABBREV. Five rows record the entire theorem, proof=T, zero hypotheses, and both
+inferred stack carrier types. Native StackAbstractionSuffix retains all four
+premises and both conclusions; this does not establish full Raise correctness
+or HOL-to-Lean equivalence.
+
+`word_to_stack_env_identity_probe` replays the full original local
+`env_to_list_K_I_IMP`, reconstructing the unchanged local comparator SORTS and
+identity rearrangement proofs. It captures the complete statement, proved=T,
+and zero hypotheses. Native EnvironmentIdentity derives all three conclusions
+from the actual output equation; it supplies neither desired sorting nor
+permutation as a premise. Full handler/Raise correctness remains separate.
+
+`word_to_stack_handler_transition_probe` replays the full original local
+`stack_rel_raise` proof with unchanged statements and source-local prerequisite
+proofs. It captures all six premises and the complete existential handler
+header, saved-handler, cleared relation and decoder conclusions, proved=T,
+and zero hypotheses. Local theorem lookup is restored after constituent probe
+opens to resolve the original induction theorem in word_to_stackProof. Native
+HandlerTransition retains the original positive word dimension and total EL;
+this slice does not establish full comp_correct Raise or HOL-to-Lean equivalence.
+
+`word_to_stack_raise_stub_false_probe` replays the literal original
+`raise_stub_F` syntax equality and proof (word_to_stackProof74–86). The complete
+eight-command non-instrumented sequence, proved=T, and zero hypotheses are
+captured. Native Proofs/Stubs uses the actual native stub and keeps all commands,
+registers and order; this equation neither assumes nor proves target execution
+or full Raise correctness.
+
+### Native skip-filter observations
+
+`lab_to_target_filter_skip_probeScript.sml` freshly captures nine complete
+original declarations from lab_to_targetProofScript10555–10723, their full
+word-indexed variable types, zero hypotheses and kernel proof T (36 rows).
+The native compiler executes this same skip filter. Label sets, extracted
+labels, section ids and FFI ordering are preserved; both fetch implications
+construct actual PCs, and preserve full fetched shared-memory exclusion.
+These supply observational prerequisites of semantics_compile; the whole
+machine/compiler simulation remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_filter_skip_probeScript.sml`.
+### Native supervisor transfer and fetch exceptions
+
+`l3_control_fetch_probeScript.sml` and `L3ControlFetchParity` compare 39
+whole-state equations against independent direct record-update expected states.
+Three current cores (0/7/255), arbitrary prior state, zero/sign/high/full address
+and PC boundaries cover full writeSCSR, ordered MRTS cause/address/PC transfer,
+Supervisor MPRV and Mrts NextFetch, and both fetch exception trap/address fields.
+`check-l3-control-fetch.py` requires all unique labels and every original row T.
+These finite regressions supplement source comparison, not a cross-language
+transition equivalence theorem. Full Run and Next remain open.
+
+`word_to_stack_comp_raise_full_probeScript.sml` captures the complete original evaluate_ind Raise obligation of comp_correct, including the entire clock/resource/result motive, by specialization of the original complete theorem. Closed statement/proved/hypothesis rows are statement evidence; this is not literal Raise proof replay or a HOL-to-Lean equivalence proof. Read-only original backend/proofs theory; proof-only Lean case.
+
+`stack_remove_init_mod_order_probeScript.sml` replays local original `MOD_LESS_EQ_MOD_IMP` (stack_removeProofScript.sml:2805-2809) with its unchanged complete natural-number conjunction implication and `rw []`/`fs []` proof. Full closed statement, proved=T and zero-hypothesis rows are captured against the read-only original backend proof theory; no extra positive-divisor premise.
+
+### Native FP memory instructions
+
+`l3_fp_memory_probeScript.sml` and `L3FPMemoryParity` compare 256 whole-state
+FLW/FLD/FSW/FSD equations with independently calculated addresses and payloads.
+Eight inputs cover signed offsets, wrapping/misaligned addresses, sourcezero,
+raw upper32 bits and zero/high/all-one byte memory; four FP registers include
+zero and aliases, on cores7/255. Both Mbare bypass and Mbb/User fault routes
+retain arbitrary prior exception/unrelated state. Expected success routes use
+reviewed raw memory/direct FPR writers, not arithmetic Dirty wrappers.
+The complete definitions additionally preserve arbitrary translation outcomes,
+TLB/pagewalk updates and invalid-mode ARB; these are outside this finite sample.
+`check-l3-fp-memory.py` requires every unique label and original value T.
+This regression evidence supplements source review, not full equivalence.
+`stack_rawcall_compile_code_info_probe` captures all three full original code-domain, lookup-collection and collected-frame theorems, zero hypotheses, 64/80 specializations, ten concrete original compiler-key/lookup observations and two actual closed original frame-theorem applications. Fifteen full arbitrary positive/1/8/64/80 consumers and independent executable guards cover duplicate compiler keys, absent/rest lookups, ignored bare allocations, zero frames and a70-bit frame size. Domain preservation is unconditional; lookup/frame laws retain the original distinct-key guard and arbitrary rest tree. This is native proof support for compile_semantics, not production replacement, full-pass completion or cross-language equivalence.
+
+`stack_remove_init_read_memory_probeScript.sml` replays the complete original local `word_list_IMP_read_mem` proof with upstream `helperLib.SEP_R_TAC`. The captured theorem is fully generalized over memory, domain, values, base and frame and has zero hypotheses. The native proof derives head reads from actual separated graph membership and inducts on the original list; it introduces no no-wrap, good-dimension or desired-output premise.
+
+`stack_remove_word_list_reverse_probeScript.sml` replays the unchanged full original `word_list_EQ_rev` statement and SNOC induction proof (stack_removeProofScript.sml:2817-2825), with the original simplifier context. Captures complete predicate equality, proved=T and zero hypotheses; preserves arbitrary payloads and modular addresses without no-wrap assumptions.
+
+`stack_remove_word_list_inj_probeScript.sml` replays the unchanged full original `word_list_inj` statement and induction/DIFF partition proof (stack_removeProofScript.sml:3089-3098) using the original simplifier context. Captures arbitrary-heap uniqueness, proved=T and zero hypotheses; no numeric, finiteness or no-wrap premise.
+
+### Native skip-run alignment and execution
+
+`lab_filter_skip_runs_probeScript.sml` freshly captures six original
+lab_filterProof declarations, full variable types, zero hypotheses and kernel
+proof T (24 rows). Non-exported local statements and proofs are replayed
+unchanged from original source. Native alignment constructs the skip count,
+all actual fetched Skip witnesses and stopping-position exclusion, retaining
+empty/label/beyond-end behavior. The native full evaluator equality retains
+its original not-failed guard and arbitrary count/state/extra clock binders.
+Evaluator FP closure retains inherited real rendering (SOUNDNESS item8).
+Whole filtering simulation and machine semantics remain open. Regenerate with
+`HOL_PROBE_ONLY=lab_filter_skip_runs_probeScript.sml`.
+
+### Full native source-to-machine behavior equality
+
+`lab_to_target_machine_sem_eq_sem_probeScript.sml` freshly captures original
+machine_sem_EQ_sem9364, its complete generic machine/source types, zero
+hypotheses and kernel proof T. Native proof retains the three original guards
+and exact singleton behavior conclusion. Actual compileCorrect derives every
+clock-indexed matching target run; completed clock stability preserves halt
+outcomes and excludes errors, and cofinal all-clock source/target prefix chains
+give the exact infinite divergence trace LUB. No simulation/run/trace premise
+is supplied. Existing total EL/HD and inherited FP real-rendering assurance
+(SOUNDNESS item8) remain unchanged. Full initializer/final-pass composition
+remains open. Regenerate with
+`HOL_PROBE_ONLY=lab_to_target_machine_sem_eq_sem_probeScript.sml`.
+`word_to_stack_stack_move_clock_probeScript.sml` replays the unchanged local `evaluate_stack_move_clock` Q.prove statement/proof and SIMP_RULE (word_to_stackProofScript.sml:5349-5359), with original simplifier context. GEN_ALL explicitly closes original free replacement clock. Captures unconditional whole evaluator result/poststate equality, proved=T and zero hypotheses, including failures rather than a successful-stack-move specialization.
+
+`word_simp_generic_carriers_probeScript.sml` captures the original seven generic
+lookup/move/name declarations with `Globals.show_types := true`, plus zero HOL
+hypothesis counts (14 rows). It exposes arbitrary association keys/value types,
+the independently typed unused NONE binder, arbitrary second move components
+and arbitrary Spt payloads. Full Lean consumers cover generic and String/Bool
+instances. These source captures are regression evidence, not cross-language
+equivalence or a new representation exception.

@@ -1,0 +1,3 @@
+word_list_reverse_statement=∀xs a. word_list a xs = word_list_rev (a + n2w (LENGTH xs) * bytes_in_word) (REVERSE xs)
+word_list_reverse_proved=T
+word_list_reverse_hypotheses=0
