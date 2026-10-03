@@ -84617,5 +84617,14 @@
     "hol_name": "invariant_bm_inter_eq",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-intersection-invariant): word_cseProof611-619 quantifies arbitrary two balanced maps and assumes exactly their native listCmp invariants, concluding the invariant of bm_inter_eq. Lean retains the generic payload alpha (not Nat), both original input invariants, original numeral-list key comparator, cached-size/native tree carrier and full output invariant. DecidableEq alpha implements HOL payload equality for the reviewed literal intersection; no additional proposition or run, lookup, output-relation assumption is imposed. The private invariant-only structural induction traverses right then left and uses original insertThm; it is not tagged as bm_inter_eq_acc_thm, whose arbitrary semantic-key lookup conclusion remains open. Native invariants preserve all original cached-size, ordering, balance and recursive conjuncts."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordCse/Proofs/WellFormedData.lean",
+    "lean_name": "wfData",
+    "hol_path": "cakeml/compiler/backend/proofs/word_cseProofScript.sml",
+    "hol_name": "wf_data_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-a source comparison (2026-10-03; flapjack-sola-cse-wf-data): word_cseProof25-54 all eleven conjuncts retained in source order: canonical self/odd facts; latest canonical-domain membership; instruction holder canonical self; arbitrary arith key implies in_names_set and can_mem_arith; CurrHeap key implies canonical source self; ordered store ALOOKUP implies canonical holder self; distinct store keys; full instruction-tree invariant; load holder self; arbitrary memop/address/word-offset load key implies canonical address self; full load-tree invariant. Nat ODD is modulo-two equality one, Bool can_mem_arith is equality true, source ALL_DISTINCT(MAP FST) is List.Nodup after Prod.fst, and exact sparse-tree domain membership uses sptDomain. Both fact maps retain literal balanced-tree cached sizes/order/balance, store facts retain original list first lookup and fixed-five-bit Temp store names. The original type-itself word dimension is width:Nat/NeZero width, appearing only in internally quantified full HolArith width and BitVec width offset; the reviewed internal-predicate qualifier route records these actual binder types without a dummy signature word, narrowed operation/offset quantifier, flatness, successful run or desired invariant premise. No executed-state correspondence or full comp_correct port is claimed."
   }
 ]
