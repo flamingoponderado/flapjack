@@ -5879,3 +5879,7 @@ run_probe word_props_gc_fun_ok_probeScript.sml word_props_gc_fun_ok_probe.out \
 run_probe stack_remove_copy_each_probeScript.sml stack_remove_copy_each_probe.out \
   copy_each_statement copy_each_proved \
   "$cake_dir/compiler/backend/proofs/stack_removeProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe stack_code_bitmaps_inst_probeScript.sml stack_code_bitmaps_inst_probe.out \
+  code_bitmaps_full_statement code_bitmaps_full_hypotheses code_bitmaps_inst_statement \
+  "$cake_dir/compiler/backend/semantics/stackPropsScript.sml" "$cake_dir/compiler/backend/proofs"

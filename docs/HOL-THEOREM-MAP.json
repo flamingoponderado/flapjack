@@ -68069,5 +68069,20 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-b source comparison 2026-10-03; bead flapjack-sol-remove-databuffer: original comp_correct DataBufferWrite case2035-2080, original four premises evaluate/nonError/full state_rel/reg_bound and native existential target clock/poststate with full result branch retained. Operand words and buffer-write success follow from native source evaluation and nonError; target register lookups from original bounds/state relation, target domain from next existential word-list cell. Clock0 native compiled store uses second register as value and first as address with zero offset. Complete postrelation retains all 25 unchanged conjuncts; full separated memory/bitmap-buffer/remaining/store/stack heap updated via singleton functional-graph store, consuming one remaining cell and appending value, all modular addresses derived from native success and state relation. No target execution/domain/postheap premises. Imported canonical regs/fpRegs/store use genuine same-module codec roundtrip witness; tree-map code excluded. Positive width BitVec/NeZero and C/F Type0 retained. Entire evaluator closure inherits reals_as_rational_cuts explicitly; no independent floating-point correspondence claim. Other cases and parent assembly remain open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/StackProps/EvaluateCodeBitmaps/Inst.lean",
+    "lean_name": "evaluateCodeBitmapsInst",
+    "hol_path": "cakeml/compiler/backend/semantics/stackPropsScript.sml",
+    "hol_name": "evaluate_code_bitmaps",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "regs",
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol-b source comparison 2026-10-03; bead flapjack-pxn.18.5.15.4.17.5: original evaluate_code_bitmaps421-440 Inst constructor case, literal full three-conjunct existential compile_oracle shift/code FOLDL union/bitmap append FLAT retained. Sole premise actual native evaluate equality; primitive success is derived internally and full original inst_const323-345 supplies code/bitmap/oracle preservation; failure returns source state. Both derive count0 without exposed success/field-invariant/target-run hypotheses. Minimal EvaluateDef/InstructionConstants imports avoid incomplete sibling cases. Canonical imported regs/fpRegs/store roundtrip witness; positive BitVec/NeZero and C/F Type0; Spt code not claimed finite-map translation. Inherited reals_as_rational_cuts explicitly retained. Byte-alignment dependency assessed by closed flapjack-wordsem-byte-align-total: this preservation proof is independent of alignment result and does not assert cross-language numeric LOG2-zero equivalence or alter runtime. Parent whole evaluator and other cases remain open.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
