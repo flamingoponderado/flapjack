@@ -1,0 +1,15 @@
+next_n_oracle=∀(n :num) (col :num sptree$num_map option list).
+  next_n_oracle n col =
+  if n ≤ LENGTH col then (TAKE n col,DROP n col)
+  else
+    (REPLICATE n (NONE :num sptree$num_map option),
+     ([] :num sptree$num_map option list))
+next_n_oracle_types=(n :num)::num;(col :num sptree$num_map option list)::num sptree$num_map option list;
+next_n_oracle_hypotheses=0
+next_n_oracle_proved=T
+config_reg_alg_type=:config -> num
+config_col_oracle_type=:config -> num sptree$num_map option list
+oracle_zero=([],[SOME ⦕ 7 ↦ 9 ⦖; NONE])
+oracle_equal=([SOME ⦕ 7 ↦ 9 ⦖; NONE],[])
+oracle_short=([NONE; NONE; NONE],[])
+oracle_long=([SOME ⦕ 7 ↦ 9 ⦖],[NONE])

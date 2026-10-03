@@ -83799,6 +83799,22 @@
     "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Internal updated-map validity."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
+    "lean_name": "Config",
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Config.lean",
+    "lean_name": "nextNOracle",
+    "hol_path": "cakeml/compiler/backend/word_to_wordScript.sml",
+    "hol_name": "next_n_oracle_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol3 complete source comparison word_to_wordScript15-19/43-49: Config retains exactly reg_alg:num and col_oracle:(num sptree$num_map) option list, represented by Nat and literal List(Option(Spt Nat)); num_map is the accepted constructor-for-constructor sptree, not a HOL finite map or generic carrier. next_n_oracle retains both explicit Nat/list binders, inclusive n<=length guard, exact TAKE/DROP pair and insufficient-oracle REPLICATE n NONE plus empty remainder. No prefix padding/substitution, fallback encoder or scope change. Inline source convention proof uses returned prefix length; untagged helper proves it independently for all n/lists, no target premise. Fresh original full typed definition/hyp0/kernelT and concrete field projection types plus zero/equal/short/long oracle observations captured. Native whole pipeline/production/compiler composition remains open."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/ProductionSet.lean",
     "lean_name": "destVar",
     "hol_path": "cakeml/compiler/backend/word_cseScript.sml",
@@ -83806,6 +83822,29 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol-a source comparison 2026-10-03: dest_Var_def481-485 returns SOME v exactly for Var v and NONE for every other exp constructor. Original wordLang exp15-20 has Const word, Var num, Lookup store_name, Load exp, Op binop list exp, Shift shift exp exp; imported WordLangExpHOL matches all six and full WordStoreHOL retains fixed5bit Temp and all named stores. Positive-width BitVec width records only standard word translation. No added success/evaluation hypothesis; full Set/CSE definition and semantics remain separate open work."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectExact.lean",
+    "lean_name": "compileCorrectExact",
+    "hol_path": "cakeml/pancake/proofs/pan_structsProofScript.sml",
+    "hol_name": "compile_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "locals",
+      "globals",
+      "code",
+      "eshapes"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol original compile_correct1034-1061 source review: arbitrary program/source/result/post/context, all10 hypotheses and7 conclusions retained. Complete faithful21-minor evaluate_ind instantiates fixed full property using original cases, including precisely original guarded IHs internally. No public IH/predicate/target-run/postmap premise. Canonical imported PanSemStateFiniteExact locals/globals/code/eshapes owning carrier, genuine same-module broad-state roundtrip; positive indexed BitVec width and Type0 FFI host only. Original full theorem/types and complete evaluate_ind/closed kernel T captured in pan_structs_program_call_probe.out. Production compiler routing remains separate open inventory."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanStructs/CompileCorrectExact.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof plumbing, no independent HOL declaration. Full imported canonical-state two-way roundtrip."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordCse/FactProducers.lean",

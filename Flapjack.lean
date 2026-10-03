@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmEvaluate
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentDmControl
@@ -1342,6 +1343,7 @@ import Flapjack.Pancake.Proofs.PanStructs.LookupCodeFields
 import Flapjack.Pancake.Proofs.PanStructs.ConvertCodeLocals
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectDecCall
 import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectCall
+import Flapjack.Pancake.Proofs.PanStructs.CompileCorrectExact
 import Flapjack.Pancake.Proofs.PanStructs.FupdateElim2
 import Flapjack.Pancake.Proofs.PanStructs.MapRestoration
 import Flapjack.Pancake.Proofs.PanStructs.ValueShapeConversion
