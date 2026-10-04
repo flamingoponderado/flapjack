@@ -7812,3 +7812,6 @@ run_probe pan_to_target_compile_prog_eq_probeScript.sml pan_to_target_compile_pr
 run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.out \
   instSkip_typed instSkip_proved instSkip_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
+  pull_sub_empty pull_sub_unary_var pull_sub_unary_const norm_sub_empty norm_sub_unary_var pull_sub_binary_const norm_sub_binary_const \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
