@@ -8171,3 +8171,12 @@ they are source review evidence, not a cross-assistant equivalence proof.
 closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
 opcode, retaining every guard and the full target existential. This is source
 statement evidence, not cross-assistant equivalence.
+`word_cse_production_join_probe.out` captures the full original five-field
+merge_data definition, knowledge-to-knowledge type, full typed wf_data and
+whole-program preservation theorem. Original EVAL observes all five joined
+fields at equal/conflicting/missing keys, latest reset and empty join.
+The duplicate-store fixture deliberately lies outside wf_data: filtering
+reveals a later value hidden by first-match lookup. The executed map drops
+that conflicting key. ProductionJoin derives the actual If knowledge join
+from arm induction hypotheses and original well-formedness preservation;
+it does not establish whole-pass production adoption or HOL/Lean equivalence.
