@@ -98854,5 +98854,14 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c2026-10-04 source comparison: original unconditional riscv_targetProof512 encoder_correct riscv_target and complete asmProps encoder_correct_def117-133 equal the reviewed native target/encoderCorrect contract. Exhaustive six outer asm constructors, five Inst constructors, eight Arith constructors and Addr destructuring cover17 leaf groups. targetOk proved; no extra simulation, target-run/result, postrelation or successful-pass premise. Complete existential n/all interference environments/code bytes/PC predicate/final relation/outside-source-domain asserts2 retained through exact definition. All kernel-checked native constructor proofs consumed; no finite-fixture universality claim. Inherits reals_as_rational_cuts native model assurance limit SOUNDNESS8. Whole production compiler routing and final Pancake-to-RISC-V theorem remain separate open obligations."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "riscv_machine_config_ok",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "riscvMachineConfigOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-jybcz): riscv_configProofScript 54-66 against the typed literal replay riscv_config_proof_replay (re-proved there with HOL's own proof over the built lab_to_targetProof/riscv_targetProof theories, 0 hypotheses): is_riscv_machine_config mc => mc_conf_ok mc, mc at (64, riscv_state, projection) machine_config, over the tagged isRiscvMachineConfig and mcConfOk. Lean proof: good_dimindex by 64, encoder_correct from the assembled tagged TargetProof.riscv_encoder_correct (peer sol-c a49949bc3), the four heap registers 10/11/12/13 and link register reg_ok by decide, enc_ok from target_ok, as HOL's metis step. No extra premises; no native_decide. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
+    "inherits_reals_as_rational_cuts": true
   }
 ]
