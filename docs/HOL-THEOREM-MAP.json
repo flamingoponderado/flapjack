@@ -98520,5 +98520,29 @@
     "lean_name": "panToTargetCompileSemantics",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Proof of the untagged statement interface PanToTargetCompileSemanticsStatement (hypotheses and conclusion of pan_to_targetProofScript.sml:1257-1300 pan_to_target_compile_semantics over the reviewed carriers; the interface records the pan_installed memory-domain decide carrier gap). Assembly: compileProgMax_some, pan_installed unpacking, pan_to_word_every_inst_ok_less, panToTargetMachineLab (lab_to_target semantics_compile), panToTargetLabSemanticsResource. Kernel-checked, standard axioms only. Tag decision pending statement review."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabOfGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components; good_code mc.target.config LN lprog (stage A2's conclusion) is a stage-local premise discharged by the source-level A2 stage, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineSemExtend",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition step of pan_to_target_compile_semantics (HOL proof line 1316, SUBSET_TRANS with implements' and extend_with_resource_limit' unfolded): implements' T machine {lab} and lab IN extend_with_resource_limit' prec {w} with w <> Fail give every machine behaviour in extend_with_resource_limit' prec {w}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
   }
 ]
