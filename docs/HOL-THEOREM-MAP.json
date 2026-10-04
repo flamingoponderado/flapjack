@@ -98317,5 +98317,13 @@
     "lean_name": "panToTargetLabSemanticsResource",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Lab chain with stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1440-2506): lab semantics of the initial lab state in extend_with_resource_limit' (option_lt stack_max (SOME (FST (read_limits ...)))) of semantics_decls, from the top hypotheses, pan_installed components and compile_prog_max results only; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTopResource.lean",
+    "lean_name": "panToTargetInitStage",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E of the single HOL proof of pan_to_target_compile_semantics over the top theorem's inputs (pan_to_targetProofScript.sml 1737-1929): full_make_init returns SOME and init_code runs on its stack-names state with init_code_thm's register facts; intermediate proof step, not a HOL theorem."
   }
 ]

@@ -17,6 +17,89 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Pancake.PanLang Flapjack.Basis.Pure.MlString
 
 open Classical StackToLab.Proofs.FullMakeInitSemantics LabToTarget in
+/-- Stage E over the top theorem's inputs (HOL lines 1737-1929): for the initial lab
+state of `pan_installed`'s components and the `compile_prog_max` results,
+`full_make_init` succeeds and `init_code` runs on its stack-names state without a
+result, with `init_code_thm`'s facts on the lab `len`/`ptr2`/`len2` register words. -/
+theorem panToTargetInitStage {width : Nat} [NeZero width] {S Q F C : Type}
+    (c : Backend.Config) (mc : MachineConfig width S Q) (ffi : HolFfiState F)
+    (t : AsmState width) (m : BitVec width → WordLocW width)
+    (bitmapPtr : BitVec width) (bitmapsDm sdm : BitVec width → Bool) (ms : S)
+    (comp : C → LabSem.LabProgHOL width → Option (List (BitVec 8) × C))
+    (bytes : List (BitVec 8)) (cbspace : Nat) (ltc : C)
+    (panCode : List (DeclHOL width)) (col : List (Option (Spt Nat)))
+    (wprog : List (Nat × Nat × WordLangProgHOL (BitVec width))) (bitmaps : List (BitVec width))
+    (c'' : WordToStack.Native.Config) (fs : List Nat) (p : List (Nat × StackLang.HolProg width))
+    (dataSp : Nat)
+    (hcfg : BackendProof.backendConfigOk mc.target.config c) (hmc : mcConfOk mc)
+    (hinit : BackendProof.mcInitOk mc.target.config c mc) (hisa : mc.target.config.isa ≠ .ag32)
+    (hwtw : WordToWord.compile c.wordToWordConf mc.target.config
+      (panToWordCompileProgHOL mc.target.config.isa panCode) = (col, wprog))
+    (hwts : WordToStack.Native.compileNative mc.target.config false wprog =
+      (bitmaps, c'', fs, p))
+    (hnodup : ((functionsHOL panCode).map Prod.fst).Nodup)
+    (hpi :
+      let regNames := c.stackConf.regNames
+      let r1 := StackNames.findNameSpt regNames 2
+      let r2 := StackNames.findNameSpt regNames 4
+      let biw := StackRemove.bytesInWord width
+      let heapStackDm : BitVec width → Bool := fun w => decide (t.regs r1 ≤ w ∧ w < t.regs r2)
+      holByteAligned (t.regs r1) = true ∧ holByteAligned (t.regs r2) = true ∧
+      holByteAligned bitmapPtr = true ∧ t.regs r1 ≤ t.regs r2 ∧
+      1024 * biw ≤ t.regs r2 - t.regs r1 ∧
+      (∀ w, ¬ (heapStackDm w = true ∧ bitmapsDm w = true)) ∧
+      m (t.regs r1) = .word bitmapPtr ∧
+      m (t.regs r1 + biw) = .word (bitmapPtr + biw * BitVec.ofNat width bitmaps.length) ∧
+      m (t.regs r1 + 2 * biw) = .word (bitmapPtr + biw * BitVec.ofNat width dataSp +
+        biw * BitVec.ofNat width bitmaps.length) ∧
+      m (t.regs r1 + 3 * biw) = .word (mc.target.getPc ms + BitVec.ofNat width bytes.length) ∧
+      m (t.regs r1 + 4 * biw) =
+        .word (mc.target.getPc ms + BitVec.ofNat width cbspace + BitVec.ofNat width bytes.length) ∧
+      SetSep.star (Misc.wordList bitmapPtr (bitmaps.map WordLocW.word))
+        (Misc.wordListExists (bitmapPtr + biw * BitVec.ofNat width bitmaps.length) dataSp)
+        (SetSep.fun2Set (m, fun a => holByteAligned a = true ∧ bitmapsDm a = true))) :
+    let regNames := c.stackConf.regNames
+    let r1 := StackNames.findNameSpt regNames 2
+    let r2 := StackNames.findNameSpt regNames 4
+    let heapStackDm : BitVec width → Bool := fun w => decide (t.regs r1 ≤ w ∧ w < t.regs r2)
+    let sp := mc.target.config.regCount - (mc.target.config.avoidRegs.length + 3)
+    let maxHeap := 2 * DataToWord.maxHeapLimit width c.dataConf - 1
+    let labst := LabToTarget.makeInit (C := C) mc ffi t m
+      (fun a => (heapStackDm a || bitmapsDm a) && holByteAligned a)
+      (fun a => sdm a && holByteAligned a) ms
+      (StackToLab.compile c.stackConf c.dataConf maxHeap sp mc.target.config.addrOffset p) comp
+      (mc.target.getPc ms + BitVec.ofNat width bytes.length) cbspace
+      (fun _ => (ltc, StackToLab.compileNoStubs regNames c.stackConf.jump
+        mc.target.config.addrOffset sp []))
+    let saveRegs := fun k => decide (k ∈ mc.calleeSavedRegs)
+    let sst := (StackToLab.Proofs.FullMakeInit.fullMakeInit c.stackConf c.dataConf maxHeap sp
+      mc.target.config.addrOffset bitmaps p labst saveRegs dataSp (fun _ => (ltc, [], []))).1
+    (∃ x, StackToLab.Proofs.FullMakeInit.fullMakeInit c.stackConf c.dataConf maxHeap sp
+      mc.target.config.addrOffset bitmaps p labst saveRegs dataSp (fun _ => (ltc, [], [])) =
+        (sst, some x)) ∧
+    ∃ (t' : StackSemStateFiniteExact width C F) (w2 w3 w4 : BitVec width),
+      StackSemEvaluate.evaluate
+          (StackRemove.initCode (StackToLab.isGenGc c.dataConf.gcKind) maxHeap sp,
+            s2 c.stackConf c.dataConf maxHeap sp mc.target.config.addrOffset p labst saveRegs
+              (fun _ => (ltc, [], []))) = (none, t') ∧
+      labst.regs labst.lenReg = .word w2 ∧ labst.regs labst.ptr2Reg = .word w3 ∧
+      labst.regs labst.len2Reg = .word w4 ∧
+      holByteAligned w2 = true ∧ holByteAligned w4 = true ∧ w2 < w4 := by
+  intro regNames r1 r2 heapStackDm sp maxHeap labst saveRegs sst
+  have hA := panToTargetFullMakeInitAssumptions (C := C) c mc ffi t m bitmapPtr bitmapsDm sdm ms
+    comp bytes cbspace ltc panCode col wprog bitmaps c'' fs p dataSp hcfg hmc hinit hisa hwtw hwts
+    hnodup hpi
+  refine ⟨?_, ?_⟩
+  · rcases hfm : StackToLab.Proofs.FullMakeInit.fullMakeInit c.stackConf c.dataConf maxHeap sp
+      mc.target.config.addrOffset bitmaps p labst saveRegs dataSp (fun _ => (ltc, [], []))
+      with ⟨s', opt⟩
+    obtain ⟨hopt, -⟩ := fullMakeInitSemantics (s := s') (opt := opt) ⟨hfm, hA⟩
+    obtain ⟨x, rfl⟩ := Option.ne_none_iff_exists'.mp hopt
+    exact ⟨x, by simp only [sst, hfm]⟩
+  · obtain ⟨t', w2, w3, w4, hev, g2, g3, g4, a2, a4, lt, -⟩ := panToTargetInitCodeRun hA
+    exact ⟨t', w2, w3, w4, hev, g2, g3, g4, a2, a4, lt⟩
+
+open Classical StackToLab.Proofs.FullMakeInitSemantics LabToTarget in
 /-- Lab chain with stage G (HOL lines 1440-2506): under the hypotheses of
 `panToTargetLabSemantics` and `stack_max` of `compile_prog_max`, the lab semantics
 of the initial lab state is in `extend_with_resource_limit'` of the Pancake
