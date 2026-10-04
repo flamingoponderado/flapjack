@@ -8,6 +8,7 @@ import Flapjack.Compiler.Backend.LabFilter
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.LabToTarget.Labels
 import Flapjack.Compiler.Encoders.RiscV.Target
+import Flapjack.Compiler.Backend.RiscVConfig.Executable
 
 /-! Executed runtime initialization infrastructure, with no standalone HOL
 original. This uses the reviewed whole StackRemove/native naming/section
@@ -16,14 +17,18 @@ legacy fixed runtime table is not a source for this linker.
 -/
 namespace Flapjack.RiscV
 
-/-- Literal data component of original riscv_configScript.sml:51, an SML
-quotation used by riscv_backend_config_def, with the actual Pancake no-GC
-override from compilerScript.sml:744–747. This is its data-field projection,
-not a tagged port of the whole backend configuration update. -/
+/-- Executed data projection of the complete reviewed Pancake/RISC-V backend
+configuration. Its original Pancake update retains every field and sets GC=None;
+the whole-record executable realization is kernel checked. No separate HOL name. -/
 def initializedRuntimeDataConfig : Flapjack.Compiler.Backend.DataToWord.Config :=
-  { tagBits := 4, lenBits := 4, padBits := 2, lenSize := 32,
-    hasDiv := true, hasLongdiv := false, hasFpOps := false, hasFpTern := false,
-    be := false, callEmptyFfi := false, gcKind := .none }
+  Flapjack.Compiler.Backend.RiscVConfig.pancakeRiscVBackendConfig.dataConf
+
+/-- All prior runtime data defaults are preserved, including Pancake's GC=None.
+This is a Flapjack adoption check, not a separately named HOL theorem. -/
+theorem initializedRuntimeDataConfig_defaults : initializedRuntimeDataConfig =
+    { tagBits := 4, lenBits := 4, padBits := 2, lenSize := 32,
+      hasDiv := true, hasLongdiv := false, hasFpOps := false, hasFpTern := false,
+      be := false, callEmptyFfi := false, gcKind := .none } := rfl
 
 /-- RV64 Pancake runtime composition, including the original three entry stubs.
 The source bodies are the Word-to-Stack function sections, before any stack

@@ -8446,6 +8446,10 @@ run_probe lab_to_target_ffi_distinct_probeScript.sml lab_to_target_ffi_distinct_
   find_ffi_names_ALL_DISTINCT_statement_typed find_ffi_names_ALL_DISTINCT_hyp_count find_ffi_names_definition_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe lab_to_target_ffi_read_interference_probeScript.sml lab_to_target_ffi_read_interference_probe.out \
+  read_ffi_bytearrays_with_next_interfer_statement_typed read_ffi_bytearrays_with_next_interfer_hyp_count read_ffi_bytearrays_shift_interfer_statement_typed read_ffi_bytearrays_shift_interfer_hyp_count read_ffi_bytearrays_ffi_interfer_statement_typed read_ffi_bytearrays_ffi_interfer_hyp_count \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_comparison_nop_probe.out \
   slti_nop_statement slti_nop_types slti_nop_source_hypotheses slti_nop_proved sltiu_nop_statement sltiu_nop_types sltiu_nop_source_hypotheses sltiu_nop_proved \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
