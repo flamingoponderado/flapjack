@@ -923,6 +923,7 @@
     {"bytes": 1162, "out": "pan_to_target_compile_prog_max_source_replay_probe.out", "rows": 2, "sha256": "0c7eff257ed8c68cc82f9e5e0053f0edbf7c936137c7375b695e6c919d9a65f6"},
     {"bytes": 6140, "out": "pan_to_target_const_memory_probe.out", "rows": 23, "sha256": "bf358ada651578372f6c46ddb6264657c8ed0942dc83321fb17360b959be9a25"},
     {"bytes": 3181, "out": "pan_to_target_init_helpers_source_replay_probe.out", "rows": 27, "sha256": "9b3ee52cc1780680e69cca29c9daa3be5b356693147ae3fa878f32576b503f1b"},
+    {"bytes": 6371, "out": "pan_to_target_labels_chain_source_replay_probe.out", "rows": 10, "sha256": "e565d127b5eb3ed63a51a8e71a7dc8148b5e65a855262e04734d3ed2bdd3191a"},
     {"bytes": 1645, "out": "pan_to_target_memory_swap_probe.out", "rows": 3, "sha256": "2abd434d8662049a9c28e2d9e8b532d36b187cff017bd880aebf77639174e81e"},
     {"bytes": 342, "out": "pan_to_target_option_lt_source_replay_probe.out", "rows": 8, "sha256": "d10116024921e6aae21956305d26cd321d5e4619e4977f2082fbd639a113a6e9"},
     {"bytes": 5123, "out": "pan_to_target_pan_installed_source_replay_probe.out", "rows": 6, "sha256": "a853c20e8806b5ba3f4a9ee4bd3e0e8177a1c601bce36f11567054fec5117e5e"},

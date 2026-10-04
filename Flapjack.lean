@@ -41,6 +41,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
+import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap

@@ -95422,5 +95422,58 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_stack_first_ALL_DISTINCT",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_stack_first_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_stack_compile_lab_pres",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_stack_compile_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_lab_labels_ok",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_lab_labels_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_to_stack_good_code_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "word_to_stack_good_code_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "from_pan_to_lab_no_install",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "from_pan_to_lab_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "labels_of_labelsRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_stack_compile_lab_pres: per-row label facts carried across wordConvs labels_rel between programs with equal names (HOL's inline EVERY2/EL_ZIP step); no independent HOL declaration."
   }
 ]
