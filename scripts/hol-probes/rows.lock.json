@@ -6446,6 +6446,12 @@
       "sha256": "0ffced4507d08d5da5e12db1d79b529af9d9596a5d2f9e2b039bb1386f63b97c"
     },
     {
+      "bytes": 2749,
+      "out": "riscv_backend_config_probe.out",
+      "rows": 3,
+      "sha256": "8d012aa0683ce4ea4e2654e4f59aee269913cf82aa682d44f85f2184077b5a3e"
+    },
+    {
       "bytes": 1549,
       "out": "riscv_binop_decode_probe.out",
       "rows": 32,
@@ -6474,6 +6480,12 @@
       "out": "riscv_config_probe.out",
       "rows": 19,
       "sha256": "a2f077766405c3dbc59675c90d87a607af763e7c4a62e67455b298f2ad1361ba"
+    },
+    {
+      "bytes": 682,
+      "out": "riscv_config_proof_replay_probe.out",
+      "rows": 3,
+      "sha256": "2162aac4f0852a69d25b17209ac75f3bae27005665c2d7cad8c43a0055e5e823"
     },
     {
       "bytes": 995,

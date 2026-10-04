@@ -1581,6 +1581,8 @@ import Flapjack.Compiler.Backend.StackProps.AddressNames
 import Flapjack.Compiler.Backend.StackProps.InstructionNames
 import Flapjack.Compiler.Backend.StackProps.ArithmeticNames
 import Flapjack.Compiler.Backend.RiscVConfig.RegisterNames
+import Flapjack.Compiler.Backend.RiscVConfig.BackendConfig
+import Flapjack.Compiler.Backend.RiscVConfig.Proofs
 import Flapjack.Compiler.Backend.StackNames.CallLinkProjection
 import Flapjack.Compiler.Backend.StackNames.ProgramNames
 import Flapjack.Compiler.Backend.StackNames.InstructionNames

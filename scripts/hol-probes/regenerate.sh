@@ -8242,6 +8242,14 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   riscv_encoder_correct_addoverflow_statement riscv_encoder_correct_addoverflow_types riscv_encoder_correct_addoverflow_hypotheses riscv_encoder_correct_addoverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe riscv_config_proof_replay_probeScript.sml riscv_config_proof_replay_probe.out \
+  is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
+  "$cake_dir/compiler/backend/riscv/proofs/riscv_configProofScript.sml" \
+  "$cake_dir/compiler/backend/riscv/proofs"
+run_probe riscv_backend_config_probeScript.sml riscv_backend_config_probe.out \
+  riscv_backend_config_def_statement riscv_backend_config_def_typed riscv_backend_config_def_hypotheses \
+  "$cake_dir/compiler/backend/riscv/riscv_configScript.sml" \
+  "$cake_dir/compiler/backend/riscv"
 run_probe riscv_target_suboverflow_probeScript.sml riscv_target_suboverflow_probe.out \
   riscv_encoder_correct_suboverflow_statement riscv_encoder_correct_suboverflow_types riscv_encoder_correct_suboverflow_hypotheses riscv_encoder_correct_suboverflow_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
