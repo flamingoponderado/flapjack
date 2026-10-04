@@ -95941,5 +95941,61 @@
     "lean_name": "riscvAsmOkRewrites",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol: compared generated asmLib.target_asm_rwts theorem at riscv_targetScript333-337 and original asmScript asm_ok/inst_ok/arith_ok/fp_ok/reg_imm_ok/offset_ok with fresh fully typed GEN_ALL original theorem capture: 41 conjuncts,17 binder carriers,hyp0/provedT. Full original source order: Skip,Const,Binop Reg/Imm,combined Shift reg_imm,Div/LongMul/LongDiv/AddCarry/AddOverflow/SubOverflow,eight memory forms,sixteen FP forms all false,Jump,JumpCmp Reg/Imm,Call,JumpReg,Loc. All numeric and fixed word64 variables retained; original word-valued r renamed callTarget, GEN_ALL numeric r-prime renamed r. Exact HolAsm/HolInst/HolArith/HolRegImm and reviewed BinOp/Shift/Cmp/FP carriers, current canonical riscvConfig and asmOkExact; no duplicate config/source evaluator. All visible bounds and avoid0/2/3/4/31 explicit, original aliases only; source signed word comparisons represented by toInt at exact word64 constants, strict Sub lower bound and XOR -1 exception, zero-shift restriction, memory/jump/cjump endpoints and code alignment retained. No new premises or subset; private Sum reductions are kernel-proved untagged local canonical-equality compositions. Parent16-field generated config delivery remains separate."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "AstT",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "ast_t",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original ast_t: Atvar tvarN | Atfun | Attup (ast_t list) | Atapp (ast_t list) ((modN,typeN) id); id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Pat",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat: seven constructors, Pcon over ((modN,conN) id) option; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original exp: 14 constructors in order including Handle/Mat (pat # exp) list, Letrec (varN # varN # exp) list, Lannot exp locs; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "TypeDef",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "type_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original type_def: Type abbreviation (tvarN list # typeN # (conN # ast_t list) list) list; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Dec",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "dec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original dec: eight constructors Dlet..Denv with locs payloads; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "patBindings",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pat_bindings clauses (mutual pats_bindings is patsBindings); id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "patsBindings",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pats_bindings clauses of the same mutual definition: [] and pats_bindings ps ++ pat_bindings p; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
   }
 ]

@@ -21,6 +21,7 @@
     {"bytes": 740, "out": "asmsem_fp_updates_probe.out", "rows": 34, "sha256": "68e07e4909950a079b51a7856287746c2b27e57c44e375358ce9fb270a4bb200"},
     {"bytes": 1421, "out": "ast_backend_operators_probe.out", "rows": 8, "sha256": "afe7bd2c4731d513374e0468a8833455e6ec00b05d1076092d4c4f424bcb4d31"},
     {"bytes": 39770, "out": "ast_lit_op_probe.out", "rows": 17, "sha256": "49cf999a9d68463bd9fb6ef3b2a2d98311053ea9e61c4d66cc287d9cd074a815"},
+    {"bytes": 15189, "out": "ast_syntax_probe.out", "rows": 6, "sha256": "2d3bafc4e1c52c02aad1ae26a4b73b1f534e5c018dd40a1047eaa9593710a9c2"},
     {"bytes": 784, "out": "backend_common_operators_probe.out", "rows": 2, "sha256": "5fd56c2f8dffc18281e56f14321721bfbc65b953fc2973338c5680c15c1f92bd"},
     {"bytes": 1297, "out": "backend_common_trace_probe.out", "rows": 16, "sha256": "edfff0bafa1715ee3c86aafe98266edd2598dd3e5a122ff123502be1be6e1449"},
     {"bytes": 47, "out": "backend_common_word_shift_probe.out", "rows": 7, "sha256": "dbfa8ad0165adfd7bcad992839f37f39c4b4b51bbb0bc9805a40e24529197422"},
