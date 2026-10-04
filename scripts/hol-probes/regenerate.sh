@@ -7441,6 +7441,10 @@ run_probe source_to_flat_compile_probeScript.sml source_to_flat_compile_probe.ou
   compile_exp_def_typed compile_decs_def_typed empty_config_def_typed prim_src_config_eq \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
 
+run_probe backend_prim_src_config_probeScript.sml backend_prim_src_config_probe.out \
+  prim_src_config_def_typed prim_src_config_eq_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"

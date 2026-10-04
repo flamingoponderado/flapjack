@@ -96343,5 +96343,21 @@
     "hol_name": "empty_config_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 421-428: next 0/0/0, mod_env empty_env, pattern_cfg init_config 0, envs next 0 env_gens LN. Typed capture source_to_flat_compile probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean",
+    "lean_name": "primSrcConfig",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "prim_src_config_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendScript 196-201: let (_,next,env,_,_) = compile_decs [] 1 empty_config.next empty_env ARB prim_types_program in empty_config with <|next; mod_env := env|>; HOL ARB is the shared opaque holArb at environment_generation_store. Typed capture backend_prim_src_config probe."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean",
+    "lean_name": "primSrcConfig_eq",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "prim_src_config_eq",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendScript 203 EVAL closed form: next vidx 0 tidx 2 eidx 4, mod_env c the eight constructor bindings in order, v Bind [] [], pattern_cfg pat_heuristic 0, envs next 0 env_gens LN; kernel-proved by unfolding compile_decs. Typed capture backend_prim_src_config probe."
   }
 ]

@@ -51,7 +51,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/proofs/word_simpProofScript.sml` | `Flapjack/Compiler/Backend/WordSimp/Proofs/` (`GcWordConst.lean` `is_gc_word_const`) |
 | `compiler/backend/proofs/wordConvsProofScript.sml` | `Flapjack/Pancake/Proofs/WordConvs/` |
 | `compiler/backend/wordLangScript.sml` | `Flapjack/Pancake/WordLang.lean` |
-| `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean` |
+| `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean`, `Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean` (`prim_src_config_def`, `prim_src_config_eq`) |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` and its `BackendCommon/BvlStubs.lean` submodule (`BackendCommon/BoolTags.lean`: `false_tag`, `true_tag`, `bool_to_tag`) |
 | `compiler/backend/flatLangScript.sml` | `Flapjack/Compiler/Backend/FlatLang.lean` (`op`, `ctor_id`, `type_id`, `type_group_id`, `pat`, `pat_bindings_def`, `exp`, `bool_id_def`, `Bool_def`, `SmartIf_def`; the script has no `dec` datatype) |
 | `compiler/backend/source_to_flatScript.sml` | `Flapjack/Compiler/Backend/SourceToFlat/Config.lean` (carriers `var_name`, `environment`, stores, `next_indices`, `config`), `SourceToFlat/Helpers.lean` (`compile_var` .. `simple_dlet`, lines 46-340 except `compile_exp`), `SourceToFlat/CompileExp.lean` (mutual `compile_exp_def`), `SourceToFlat/CompileDecs.lean` (`compile_decs_def`, `empty_config_def`) |
