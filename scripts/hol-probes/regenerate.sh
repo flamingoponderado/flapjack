@@ -8424,6 +8424,11 @@ run_probe riscv_target_mem_probeScript.sml riscv_target_mem_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_target_bit_rewrites_probeScript.sml riscv_target_bit_rewrites_probe.out \
+  word_bit_0_add4_statement word_bit_0_add4_types word_bit_0_add4_hypotheses word_bit_0_add4_proved word_bit_0_lemmas_statement word_bit_0_lemmas_types word_bit_0_lemmas_hypotheses word_bit_0_lemmas_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe riscv_target_complete_probeScript.sml riscv_target_complete_probe.out \
   riscv_encoder_correct_statement riscv_encoder_correct_expanded riscv_encoder_correct_hypotheses riscv_encoder_correct_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \

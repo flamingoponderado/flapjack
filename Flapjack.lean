@@ -1,5 +1,10 @@
+import Flapjack.RiscV.CorrectnessEncoding.BitRewrites
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
 import Flapjack.RiscV.CorrectnessEncoding.Complete
 import Flapjack.RiscV.CorrectnessEncoding.MemoryAssertions
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
+import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
+import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
