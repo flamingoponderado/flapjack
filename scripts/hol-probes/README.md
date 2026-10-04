@@ -8821,3 +8821,15 @@ encoder correctness theorem to arbitrary JumpCmp operands and comparison.
 Four fresh typed rows retain the complete statement, carrier annotations,
 zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
 The statement/evidence guard detects drift but does not replace source review.
+
+### Full native Mem correctness case
+
+`riscv_target_mem_probeScript.sml` specializes the original full encoder theorem
+to `Inst (Mem m r (Addr base w))` with arbitrary original registers, word64
+offset and all eight memory operations. It captures the complete assertion
+conclusion, inferred types, zero open hypotheses and the original proved result.
+The matching Lean theorem is in `CorrectnessEncoding/MemoryAssertions.lean`;
+its source-step/initial-relation premise derives actual native Next and both
+original all-environment assertions. The local guard pins the complete public
+statement and original evidence; it is a regression check, not an equivalence
+proof or acceptance of the whole encoder.

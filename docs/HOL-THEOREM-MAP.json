@@ -98786,5 +98786,14 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: source-compared JumpCmp original riscv_targetProof690-720 and riscv_target176-257, asmStep/word_cmp/asm_ok and encoder_correct_def. Full Reg/Imm/all8 comparisons/nearfar, only original source step and initial relation, complete existential/allenv/bothasserts/codebytes/PC/finalrelation/frame. Native bytes derive Fetch/Decode/Run/Next internally. Original scratch31 AND/ANDI/ORI and inverse branches preserved, source registers exclude scratch, full native projection preserves its value across interference; operand aliasing permitted. Actual arithmetic shift/truncate/subtract/sign-extension offsets corrected by prefix4/8 under original global/near/alignment guards; JAL target alignment derived. False paths skip JAL with source full encoding-length fallthrough. No target-run/result/postrelation premise or successful-pass assumption. Local same-counterpart helpers untagged. Inherits reals_as_rational_cuts assurance limit SOUNDNESS8; no full compiler or production-route completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/MemoryAssertions.lean",
+    "lean_name": "riscv_encoder_correct_mem",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: full original Mem case661-669, riscv_target Mem emitter178-181 and all8 literal asmSem mem_op clauses. Fresh typed riscv_target_mem_probe specialization has0 hypotheses and proved T. Original word64 offset, independent Nat source register/base, native riscv_state and all8 memop constructors retained. Lean premise is only original asmStep plus initial targetStateRel; conclusion retains existential n, every original projection-preserving environment, code/PC/state intermediate predicate, complete final targetStateRel and asserts2 outside original source domain. Witness0 comes from actual singleton encoder, never narrows conclusion. Actual native Next derives from source encoded bytes, Decode/Run and validity. Accepted pure postrelation plus unconditional source postdomain frame and original targetOk transport prove final environment relation; actual memory Run frame yields original outside-domain assertion. No target execution/result, extra alignment/address/register/domain or successful-pass premise. Native target closure inherits reals_as_rational_cuts rational-cut rendering assurance limitation SOUNDNESS8. No executed compiler change."
   }
 ]
