@@ -8316,10 +8316,6 @@ run_probe riscv_target_call_probeScript.sml riscv_target_call_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
-run_probe riscv_conditional_next_probeScript.sml riscv_conditional_next_probe.out \
-  beq_next_zero beq_next_alias_sign beq_next_odd_taken beq_next_odd_reverse beq_next_signed_boundary bne_next_zero bne_next_alias_sign bne_next_odd_taken bne_next_odd_reverse bne_next_signed_boundary blt_next_zero blt_next_alias_sign blt_next_odd_taken blt_next_odd_reverse blt_next_signed_boundary bltu_next_zero bltu_next_alias_sign bltu_next_odd_taken bltu_next_odd_reverse bltu_next_signed_boundary bge_next_zero bge_next_alias_sign bge_next_odd_taken bge_next_odd_reverse bge_next_signed_boundary bgeu_next_zero bgeu_next_alias_sign bgeu_next_odd_taken bgeu_next_odd_reverse bgeu_next_signed_boundary beq_source beq_hypotheses beq_typed_source bne_source bne_hypotheses bne_typed_source blt_source blt_hypotheses blt_typed_source bltu_source bltu_hypotheses bltu_typed_source bge_source bge_hypotheses bge_typed_source bgeu_source bgeu_hypotheses bgeu_typed_source next_source next_hypotheses next_typed_source \
-  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
-  "$cake_dir/compiler/encoders/riscv/proofs"
 
 run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_probe.out \
   store1_zero store1_wrap store2_zero store2_wrap store4_zero store4_wrap store8_zero store8_wrap source_failure_writes source_narrow_value source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
@@ -8327,6 +8323,27 @@ run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_prob
 
 run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_table_validity_probe.out \
   every_inst_w_inline \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_compile_validity_probeScript.sml pan_to_crep_compile_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile compile_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_inputs_probeScript.sml riscv_memory_inputs_probe.out \
+  load_endpoints load_registers load_offsets load8_endpoints load8_registers load8_offsets load16_endpoints load16_registers load16_offsets load32_endpoints load32_registers load32_offsets store_endpoints store_registers store_offsets store8_endpoints store8_registers store8_offsets store16_endpoints store16_registers store16_offsets store32_endpoints store32_registers store32_offsets alias_wrap source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_conditional_next_probeScript.sml riscv_conditional_next_probe.out \
+  beq_next_zero beq_next_alias_sign beq_next_odd_taken beq_next_odd_reverse beq_next_signed_boundary bne_next_zero bne_next_alias_sign bne_next_odd_taken bne_next_odd_reverse bne_next_signed_boundary blt_next_zero blt_next_alias_sign blt_next_odd_taken blt_next_odd_reverse blt_next_signed_boundary bltu_next_zero bltu_next_alias_sign bltu_next_odd_taken bltu_next_odd_reverse bltu_next_signed_boundary bge_next_zero bge_next_alias_sign bge_next_odd_taken bge_next_odd_reverse bge_next_signed_boundary bgeu_next_zero bgeu_next_alias_sign bgeu_next_odd_taken bgeu_next_odd_reverse bgeu_next_signed_boundary beq_source beq_hypotheses beq_typed_source bne_source bne_hypotheses bne_typed_source blt_source blt_hypotheses blt_typed_source bltu_source bltu_hypotheses bltu_typed_source bge_source bge_hypotheses bge_typed_source bgeu_source bgeu_hypotheses bgeu_typed_source next_source next_hypotheses next_typed_source \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_crep_table_validity_probeScript.sml pan_to_crep_table_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_to_crep \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_program_validity_probeScript.sml pan_to_crep_program_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_prog \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe riscv_target_rejected_probeScript.sml riscv_target_rejected_probe.out \
@@ -8338,3 +8355,7 @@ run_probe riscv_jumpcmp_offsets_probeScript.sml riscv_jumpcmp_offsets_probe.out 
   near0_statement near0_types near0_hypotheses near0_proved near0_boundary0 near0_boundary1 near0_boundary2 near0_boundary3 near0_boundary4 near4_statement near4_types near4_hypotheses near4_proved near4_boundary0 near4_boundary1 near4_boundary2 near4_boundary3 near4_boundary4 far4_statement far4_types far4_hypotheses far4_proved far4_boundary0 far4_boundary1 far4_boundary2 far4_boundary3 far4_boundary4 far8_statement far8_types far8_hypotheses far8_proved far8_boundary0 far8_boundary1 far8_boundary2 far8_boundary3 far8_boundary4 pc_bias_statement pc_bias_hypotheses pc_bias_proved reg_equal_source reg_equal_hypotheses reg_test_source reg_test_hypotheses imm_equal_source imm_equal_hypotheses imm_test_source imm_test_hypotheses \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
+  pan_to_word_every_inst_ok_less \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
