@@ -8694,3 +8694,13 @@ source register/address extraction, native interference, complete postrelation
 and assertion assembly.
 
 `pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.
+
+### Independent `add_ret_loc` metadata (PR1213 carrier repair)
+
+`word_sem_add_ret_loc_carriers_probeScript.sml` captures the original generic
+`wordSem$add_ret_loc_def` principal type and zero hypotheses. Its first three
+metadata fields are independent arbitrary types, separate from the argument
+word dimension. The concrete SOME/NONE rows use Boolean, numeric-pair and
+32-bit-word metadata with an 8-bit `word_loc` argument list.
+Capture regenerated from the pinned original source; it is regression evidence,
+not a HOL-to-Lean equivalence proof.

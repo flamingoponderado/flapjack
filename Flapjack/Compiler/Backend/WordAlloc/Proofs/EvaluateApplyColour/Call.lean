@@ -488,7 +488,7 @@ theorem evaluateApplyColour_Call {width : Nat} [NeZero width] {C F : Type}
       rw [if_neg hbad] at he
       split at he <;> exact absurd rfl he
     | none =>
-    cases hfc : wordSemFindCode dest (wordSemAddRetLoc none xv) st.code st.stackSize with
+    cases hfc : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xv) st.code st.stackSize with
     | none =>
       apply applyColourPost_self
       intro he

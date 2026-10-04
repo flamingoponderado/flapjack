@@ -466,7 +466,7 @@ theorem three_to_two_reg_correct {width : Nat} [NeZero width] {C : Type} {F : Ty
         by_cases hbad : wordSemBadDestArgs dest args = true
         · simp only [hbad, if_true, Prod.mk.injEq] at he; exact herr he.1.symm
         simp only [hbad, Bool.false_eq_true, if_false] at he
-        rcases hf : wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize with
+        rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
           _ | ⟨a1, pr, ss⟩ <;> simp only [hf, Prod.mk.injEq] at he <;> exact herr he.1.symm
   | .call (some (n, names, retHandler, l1, l2)) dest args handler, s, res, s', ⟨hd, he, herr⟩ =>
       ttr_call_some n names retHandler l1 l2 dest args handler s res s' hd he herr
