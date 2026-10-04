@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemorySource
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
 import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
@@ -63,9 +64,13 @@ import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Compiler.Backend.WordDepthProof.Helpers
+import Flapjack.Compiler.Backend.WordDepthProof.CallGraph
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord.LabPres
+import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess
+import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
+import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
@@ -939,6 +944,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
 import Flapjack.Pancake.LoopToWord.Proofs.LabPres
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyAllocation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAOutputCodec
 import Flapjack.Pancake.LoopToWord.CompFuncCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
@@ -2070,7 +2076,11 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
+import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState

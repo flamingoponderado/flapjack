@@ -43,7 +43,8 @@ theorem retainedAllocator_programCodec {width : Nat} [NeZero width]
   unfold cakeAllocateWordFunctionAfterDeadWithColour
     cakeAllocateWordFunctionAfterDeadWithColourFromLimit
     cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at allocated
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at allocated
   simp only [Option.bind_some] at allocated
   repeat' (split at allocated <;> simp_all)
   all_goals rcases allocated with ⟨_, _, _, rfl⟩

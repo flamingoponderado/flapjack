@@ -16,7 +16,8 @@ theorem allocatorWithSsa_spillState {α : Type} [OfNat α 0] [WordCseHash α] [B
     (produced : cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead unreach ssa label parameters source = some output) :
     output.allocation = cakeColourWordSpillState cakeRiscVRegisterCount
       parameters output.program output.colouring := by
-  unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa at produced
+  unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at produced
   split at produced <;> simp_all
   cases ssaResult : ssa parameters.length source with
   | none => simp [ssaResult] at produced
