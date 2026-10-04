@@ -8227,3 +8227,5 @@ and the original selected native table invariant, retaining unrelated fields.
 Successful input codec conversion is an explicit representation boundary;
 unsupported native program carriers and whole-pass adoption remain separate.
 No tagged original theorem is narrowed or cross-language equivalence claimed.
+
+`word_to_stack_comp_correct_full_probeScript.sml` captures the closed original whole `comp_correct` theorem, its full typed statement and zero hypotheses. It is stored-theorem regression evidence, not a replay of the giant local proof or a HOL-to-Lean equivalence proof. The Lean assembly retains all original guards and result branches.
