@@ -8433,3 +8433,7 @@ run_probe riscv_target_complete_probeScript.sml riscv_target_complete_probe.out 
   riscv_encoder_correct_statement riscv_encoder_correct_expanded riscv_encoder_correct_hypotheses riscv_encoder_correct_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe lab_to_target_outer_domain_probeScript.sml lab_to_target_outer_domain_probe.out \
+  compute_labels_alt_domain_labs_statement_typed compute_labels_alt_domain_labs_hyp_count remove_labels_loop_domain_labs_statement_typed remove_labels_loop_domain_labs_hyp_count remove_labels_domain_labs_statement_typed remove_labels_domain_labs_hyp_count \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"

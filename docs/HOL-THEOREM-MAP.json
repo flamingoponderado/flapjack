@@ -98894,5 +98894,32 @@
     "lean_name": "smartSeqLeftSeq_production",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
+    "lean_name": "computeLabelsAlt_domain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compute_labels_alt_domain_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6217-6267 and freshly loaded full HOL types/hyp0 in lab_to_target_outer_domain_probe.out. Full original positive word-dimension sec/asm_config carrier translated to NeZero BitVec width; HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, fixed byte8, HolFfiName and nested numeric Spt maps retained. Original sptDomain = IMAGE FST getCodeLabels union initial sptDomain conclusion. All original binders and successful-operation observation retained; computed theorem unconditional. No uniqueness/freshness/clock bound/target evaluation/output codec premise. Actual loop recursion and accepted encoding/update similarity derive domain preservation. Probes provide original statement regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
+    "lean_name": "removeLabelsLoop_domain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_loop_domain_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6217-6267 and freshly loaded full HOL types/hyp0 in lab_to_target_outer_domain_probe.out. Full original positive word-dimension sec/asm_config carrier translated to NeZero BitVec width; HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, fixed byte8, HolFfiName and nested numeric Spt maps retained. Original sptDomain = IMAGE FST getCodeLabels union initial sptDomain conclusion. All original binders and successful-operation observation retained; computed theorem unconditional. No uniqueness/freshness/clock bound/target evaluation/output codec premise. Actual loop recursion and accepted encoding/update similarity derive domain preservation. Probes provide original statement regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
+    "lean_name": "removeLabels_domain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_domain_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6217-6267 and freshly loaded full HOL types/hyp0 in lab_to_target_outer_domain_probe.out. Full original positive word-dimension sec/asm_config carrier translated to NeZero BitVec width; HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, fixed byte8, HolFfiName and nested numeric Spt maps retained. Original sptDomain = IMAGE FST getCodeLabels union initial sptDomain conclusion. All original binders and successful-operation observation retained; computed theorem unconditional. No uniqueness/freshness/clock bound/target evaluation/output codec premise. Actual loop recursion and accepted encoding/update similarity derive domain preservation. Probes provide original statement regression evidence, not cross-language equivalence or whole compiler completion."
   }
 ]
