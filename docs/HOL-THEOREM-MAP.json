@@ -98355,5 +98355,21 @@
     ],
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-compile-validity: original1057-1105 and regenerated full typed theorem+compile_def capture. Fulltype binds ctxt alpha-context/body alpha-program and e beta; e occurs nowhere else and only this source-vacuous binder is documented omitted. Context/body/output retain original shared positive word dimension (unlike compile_exp independent context/expression dimensions). Sole original EVERY binary-Panop source expression traversal guard, full EVERY binary-Crepop expression traversal on actual native compile output; membership EVERY and shared native literal Crep predicate, existing exact Pan Boolean traversal. Canonical imported PanToCrepContextExact vars/funcs/eids with same-module nonvacuous toBroad/ofBroad roundtrip witness; only these finite maps and word dimension translated. Native compileProgExactHOLW induction has32 equation cases, all original constructors, shape/list/lookup fallbacks and Call no-return/initialized/result-wrapped/missing-or-found-EID branches; Dec/DecCall and handler bodies proved in all actual constructed contexts. Accepted full compile_exp, nested_seq, stores/store_globals, load_globals_alt helpers reused. Original fixed global word5 retained. No source byte/default/context specialization/output/successful-target or post-state premise; no held HD/EL dependency introduced. Full declaration-table/program/source composition remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCode.lean",
+    "lean_name": "twoRegInst_eq_exact",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Bridge between the wordLang and exact-asm spellings of wordConvs two_reg_inst; Flapjack infrastructure, no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyGoodCode.lean",
+    "lean_name": "panToTargetGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage A2 of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1376-1428): good_code mc.target.config LN lprog via pan_to_lab_good_code_lemma, pan_to_lab_labels_ok and the all_enc_ok_pre chain; premise hinst is the conclusion of pan_to_word_every_inst_ok_less (stage .20); intermediate proof step, not a HOL theorem."
   }
 ]
