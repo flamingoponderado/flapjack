@@ -8465,3 +8465,10 @@ entries and an intervening exception declaration. The anonymous operation is
 not tagged as a port of the whole compiler. Regenerate with
 `HOL_PROBE_ONLY=pan_target_entry_first_match_probeScript.sml`.
 `riscv_target_shift_probe.out` freshly specializes the full original theorem to all Shift operators and Reg/Imm forms, retaining unrestricted Nat registers, word64 states, source step/initial relation, all environments and both assertions. Capture is regression evidence, not equivalence. Eight full kernel cases supply the assembly; SOUNDNESS8 and other encoder constructors remain tracked.
+
+`pan_native_frontend_prefix_probeScript.sml` evaluates the complete source
+prefix (original first LET, pan_simp, pan_structs, pan_globals), raw Pan-to-Crep
+metadata payload and original Crep-to-Loop rows for a forward source call.
+It preserves original generated names and row labels; no generic Crep
+simplification or relabel bridge is inserted. This is regression evidence,
+not a whole-CLI execution-equivalence proof.
