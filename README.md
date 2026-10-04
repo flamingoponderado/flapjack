@@ -8,7 +8,7 @@ compiler; the original HOL sources are in the [`cakeml/pancake`](cakeml/pancake)
 submodule. It has an executable RV64I compiler path for a growing subset of
 Pancake, but is not yet a complete replacement and does not yet prove
 whole-compiler correctness. See
-[`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) for assurance limits and
+[`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) for limitations and
 [`docs/PARITY-TESTING.md`](docs/PARITY-TESTING.md) for reference comparisons.
 
 ## Usage
@@ -78,7 +78,7 @@ The evolving HOL-to-Lean source layout is recorded in
 The RISC-V compiler port and its correctness proof
 are still in progress. [GitHub issues](https://github.com/pirapira/flapjack/issues)
 track work and claims; [`PLAN.md`](PLAN.md) gives the staged direction.
-[`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) describes assurance limits, external
+[`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) describes limitations, external
 assumptions, and out-of-scope gaps.
 Start with the porting and verification rules in [`AGENTS.md`](AGENTS.md).
 
