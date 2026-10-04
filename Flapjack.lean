@@ -2077,6 +2077,7 @@ import Flapjack.Pancake.Proofs.PanToWord
 import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline

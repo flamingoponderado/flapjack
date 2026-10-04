@@ -8277,3 +8277,7 @@ run_probe riscv_memory_source_probeScript.sml riscv_memory_source_probe.out \
 run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_decs_provenance_probe.out \
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_compile_exp_validity_probeScript.sml pan_to_crep_compile_exp_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_exp compile_exp_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
