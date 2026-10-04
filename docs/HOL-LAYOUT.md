@@ -154,7 +154,7 @@ the cited name occurs in one of the two syntactic forms.
 | `semantics/proofs/evaluatePropsScript.sml` | `Flapjack/EvaluateProps.lean` |
 | `semantics/proofs/semanticsPropsScript.sml` | `Flapjack/SemanticsProps.lean` (structural behavior and `implements'` analogue; HOL `llist` representation bridge remains open) |
 | `proofs/pan_simpProofScript.sml` | `Flapjack/Pancake/Proofs/PanSimp.lean`, `PanSimp/Evaluate.lean` |
-| `proofs/pan_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/PanToWord.lean` (`PanToWord/EveryInstOkLess/PanGlobals.lean`: the pan_globals `every_inst_ok_less` group, lines 1299-1409) |
+| `proofs/pan_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/PanToWord.lean` (`PanToWord/EveryInstOkLess/PanGlobals.lean`: the pan_globals `every_inst_ok_less` group, lines 1299-1409; `PanToWord/EveryInstOkLess/PanStructs.lean`: the pan_structs group, lines 1237-1298) |
 | `proofs/pan_to_targetProofScript.sml` | `Flapjack/Pancake/Proofs/PanToTarget.lean` |
 
 Placement under `Proofs` does not imply that a whole pass correctness theorem
