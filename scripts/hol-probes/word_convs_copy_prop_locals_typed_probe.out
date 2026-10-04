@@ -1,0 +1,12 @@
+copy_prop_not_created_subprogs_source_statement_typed=not_created_subprogs (P :α prog -> bool) (prog :α prog) ⇒ not_created_subprogs P (copy_prop prog)
+copy_prop_prog_not_alloc_var_source_statement_typed=∀(p :α prog) (cs :copy_state). (∀(x :num). ¬is_alloc_var x ⇒ (lookup x cs.to_eq :num option) = (NONE :num option)) ⇒ ∀(x :num). ¬is_alloc_var x ⇒ (lookup x (SND (copy_prop_prog p cs)).to_eq :num option) = (NONE :num option)
+copy_prop_prog_not_alloc_var_aux1_source_statement_typed=(∀(x :num). ¬is_alloc_var x ⇒ (lookup x (cs :copy_state).to_eq :num option) = (NONE :num option)) ⇒ ¬is_alloc_var (x :num) ⇒ (lookup x (remove_eq cs (y :num)).to_eq :num option) = (NONE :num option)
+copy_prop_prog_not_alloc_var_aux2_source_statement_typed=∀(cs :copy_state). (∀(x :num). ¬is_alloc_var x ⇒ (lookup x cs.to_eq :num option) = (NONE :num option)) ⇒ ¬is_alloc_var (x :num) ⇒ (lookup x (remove_eqs cs (yy :num list)).to_eq :num option) = (NONE :num option)
+every_inst_distinct_tar_reg_copy_prop_aux_source_statement_typed=∀(p :α prog) (cs :copy_state). every_inst (distinct_tar_reg :α inst -> bool) p ⇒ every_inst (distinct_tar_reg :α inst -> bool) (FST (copy_prop_prog p cs))
+extract_labels_copy_prop_aux_source_statement_typed=∀(p :α prog) (cs :copy_state). extract_labels (FST (copy_prop_prog p cs)) = extract_labels p
+flat_exp_conventions_copy_prop_aux_source_statement_typed=∀(p :α prog) (cs :copy_state). flat_exp_conventions p ⇒ flat_exp_conventions (FST (copy_prop_prog p cs))
+full_inst_ok_less_copy_prop_aux_source_statement_typed=∀(p :α prog) (cs :copy_state). full_inst_ok_less (ac :α asm_config) p ⇒ full_inst_ok_less ac (FST (copy_prop_prog p cs))
+pre_alloc_conventions_copy_prop_aux_source_statement_typed=∀(p :α prog) (cs :copy_state). (∀(x :num). ¬is_alloc_var x ⇒ (lookup x cs.to_eq :num option) = (NONE :num option)) ⇒ pre_alloc_conventions p ⇒ pre_alloc_conventions (FST (copy_prop_prog p cs))
+wf_cutsets_copy_prop_aux_source_statement_typed=∀(p :α prog) (cs :copy_state). wf_cutsets p ⇒ wf_cutsets (FST (copy_prop_prog p cs))
+word_get_code_labels_copy_prop_source_statement_typed=word_get_code_labels (copy_prop (ps :α prog)) = word_get_code_labels ps
+word_good_handlers_copy_prop_source_statement_typed=word_good_handlers (n :num) (copy_prop (ps :α prog)) ⇔ word_good_handlers n ps

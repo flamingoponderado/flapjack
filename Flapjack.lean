@@ -1,6 +1,8 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryAssertions
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFetch
 import Flapjack.RiscV.CorrectnessEncoding.MemoryFrame
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRelation
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
 import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.Rejected
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
@@ -1201,6 +1203,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionColourDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionProgramMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
+import Flapjack.Compiler.Backend.WordToStack.ProductionFrameCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
 import Flapjack.Compiler.Backend.WordToStack.ProductionConfiguration
 import Flapjack.Compiler.Backend.WordToStack.ProductionScheduler
@@ -1266,6 +1269,7 @@ import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadFallbackMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionDeadNativeMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCseMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyMemoryGuard
+import Flapjack.Compiler.Backend.WordAlloc.ProductionNativeCopyMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoMemoryGuard
 import Flapjack.Compiler.Backend.WordAlloc.ProductionThreeToTwoIdentity
 import Flapjack.Compiler.Backend.WordAlloc.ProductionUnreachMemoryGuard

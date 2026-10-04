@@ -106,7 +106,7 @@ theorem maxDepthCallNONE {width : Nat} [NeZero width] {C F : Type}
   · simp only [hg, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
   have hbad : ¬ wordSemBadDestArgs (some dest) args = true := by simp [wordSemBadDestArgs]
   simp only [hg, hbad, Bool.false_eq_true, if_false] at hev
-  rcases hf : wordSemFindCode (some dest) (wordSemAddRetLoc none xs) s.code s.stackSize with
+  rcases hf : wordSemFindCode (some dest) (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp only [hf, Prod.mk.injEq] at hev; exact absurd hev.1.symm herr
   obtain ⟨⟨a', hcd⟩, hss, -⟩ := findCode_some_dest hf
