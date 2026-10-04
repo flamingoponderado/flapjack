@@ -1731,6 +1731,27 @@ def fmap_as_finite_support_result_errors(
     return errors
 
 
+def lean_namespace_prefix(lines: list[str], upto: int) -> str:
+    """Namespace prefix in effect at line index `upto` (exclusive).
+
+    Tracks nested `namespace`, `section`, and `mutual` scopes so that a bare
+    `end` closing a section or `mutual` block is not mistaken for the end of
+    the enclosing namespace. Carrier-owner resolution performs the same
+    structural walk for `structure`/`inductive` declarations.
+    """
+    namespaces: list[str | None] = []
+    for line in strip_lean_comments("\n".join(lines[:upto])).splitlines():
+        ns = re.match(r"^\s*namespace\s+([A-Za-z0-9_'.]+)\s*$", line)
+        end = re.match(r"^\s*end(?:\s+[A-Za-z0-9_'.]+)?\s*$", line)
+        if ns:
+            namespaces.append(ns.group(1))
+        elif re.match(r"^\s*(?:section(?:\s+\S+)?|mutual)\s*$", line):
+            namespaces.append(None)
+        elif end and namespaces:
+            namespaces.pop()
+    return ".".join(part for part in namespaces if part is not None)
+
+
 def fmap_result_observation_errors(
     lines: list[str], module: str, declaration_text: str,
     producers: tuple[str, ...], records: list[dict], root: Path = ROOT,
@@ -1764,17 +1785,9 @@ def fmap_result_observation_errors(
             name = find_lean_decl(info.lines, number - 1)
             # Resolve namespace ownership from source, never from a producer's
             # spelling alone. Ambiguous imported short names are rejected.
-            namespaces: list[str | None] = []
-            for line in strip_lean_comments("\n".join(info.lines[:number])).splitlines():
-                ns = re.match(r"^\s*namespace\s+([A-Za-z0-9_'.]+)\s*$", line)
-                end = re.match(r"^\s*end(?:\s+([A-Za-z0-9_'.]+))?\s*$", line)
-                if ns:
-                    namespaces.append(ns.group(1))
-                elif re.match(r"^\s*section(?:\s+\S+)?\s*$", line):
-                    namespaces.append(None)
-                elif end and namespaces:
-                    namespaces.pop()
-            full_name = ".".join([part for part in namespaces if part is not None] + [name])
+            full_name = ".".join(
+                part for part in (lean_namespace_prefix(info.lines, number), name)
+                if part)
             candidate = (imported, name, info.lines,
                          tagged_declaration_source(info.lines, number), bool(site[8]))
             for alias in set((name, full_name)):

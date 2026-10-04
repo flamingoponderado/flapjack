@@ -8007,25 +8007,14 @@ set_sep `fun2set_def`/`fun2set_thm`, asmProps `interference_ok_def`/`asserts2_de
 riscv_target `riscv_encode_def`/`riscv_proj_def`/`riscv_next_def`, and the existing
 seven original native Next clause derivations. Existing scoped original captures
 remain evidence for their own declarations; no new oracle or original named
-list theorem is invented. These composition helpers stay untagged. The full
-Const `asserts` intermediate/final source-state relation remains open.
+list theorem is invented. These composition helpers stay untagged and support
+the full Const constructor documented below.
 
 `check-riscv-const-execution.py` pins actual target iteration and the full public
 statements. Mutation tests reject a pure replacement iterator, wrong index or
 PC increment, added target-run premise, changed domain premise, wrong assertion
 counter, and reversed outside-domain observation.
 
-`pan_to_target_source_probeScript.sml` captures the full typed original
-exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
-and the original compiler definition's extracted first LET argument. Eight
-kernel observations cover empty/default/already-first/later main, first-only
-relocation with duplicate names, and exported flags/duplicates. Regenerate with
-`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
-
-The `backend_lower_pipeline` probe also captures the complete original closed
-`from_word_0_def` and its inferred type, including the actual WordToWord tuple
-and oracle update before `from_word`. This is definition evidence, not an
-executed-route or complete compiler-correctness result.
 `pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
 `pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
 independent word/configuration/FFI carrier. Regenerate with
@@ -8046,8 +8035,8 @@ write. No target execution or post-state relation is assumed.
 These are untagged composition lemmas, not separately named HOL declarations.
 Source comparison uses the literal seven register clauses and Const lowering
 at `riscv_targetScript.sml:103-126`; the full original Const constructor at
-`riscv_targetProofScript.sml:533-545` remains open until its intermediate and
-final source-state assertions are assembled. Existing oracle captures retain
+`riscv_targetProofScript.sml:533-545` is assembled in `ConstAssertions.lean`
+using these intermediate and final source-state facts. Existing oracle captures retain
 their original scope; this addition does not claim a new full-Next oracle.
 
 `CorrectnessEncoding/ConstRelation.lean` derives the literal source Const
@@ -8057,8 +8046,8 @@ assumes only original `asmStep` and the initial `targetStateRel`. Register
 bounds and nonzero destination follow from `asm_ok`; scratch31 is retained in
 the native post-state and excluded from source observations by the original
 `avoidRegs`. The memory domain and exact PC increment are preserved. These
-untagged composition lemmas have no separately named HOL original; the full
-original interference/assertions constructor remains open.
+untagged composition lemmas have no separately named HOL original; they are
+used by the full original interference/assertions constructor documented below.
 
 ## Full typed Word-to-Stack proof captures
 
@@ -8097,8 +8086,72 @@ not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
 
+
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+
+### Universal native Binop decode prerequisites
+
+`CorrectnessEncoding/DecodeBinop.lean` proves unrestricted ADD/SUB/AND/ANDI
+Encode/DecodeAny roundtrips over original word5 register and word12 immediate
+carriers. These are untagged local compositions with no separately named HOL
+original. Original opcode, function bits, and every reconstructed field are
+source-reviewed; no target-run premise or extra input bound is introduced.
+Full Binop execution and encoder assertions remain open on linked beads.
+
+Fresh `riscv_binop_decode_probe.out` contains sixteen original boundary EVALs,
+plus four source-derived arbitrary Encode clauses with zero stored hypotheses,
+original inferred register/immediate types, and explicitly labeled symbolic
+replay queries. The replay queries are printed statements, not claimed original
+proved theorems. Boundary oracles supplement the universal kernel proofs and
+source comparison; they do not establish cross-language equivalence.
+
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+
+### Full Binop source and native register Run compositions
+
+`CorrectnessEncoding/BinopRun.lean` derives the full source post-state from
+original asm_step for every operator and Reg/Imm operand, and proves all five
+native register Run equations over arbitrary registers and the entire state.
+The untagged local compositions retain original zero-register and alias behavior
+and have no target-run premise. Fresh `riscv_binop_run_probe.out` captures five
+complete original source definitions and five arbitrary native Run compositions,
+all with zero stored hypotheses and original inferred carrier types. The
+capture supplements kernel checking and source review; it is not cross-language
+equivalence evidence. The full encoder assertion case remains open.
+
+### Full original register Binop encoder case
+
+`CorrectnessEncoding/BinopRegister.lean` ports the original Reg operand case
+for all five Binop operators, with the original sole asmStep/initial state
+relation premise and complete existential/every-environment/asserts/asserts2
+conclusion. Native Fetch/Decode/Run/Next follows the actual emitted bytes;
+register guards and alias behavior follow the source. Fresh typed original
+`riscv_target_binop_register_probe.out` specializes the full source theorem
+only to this constructor, with zero stored hypotheses and proved T. It is
+regression evidence, not cross-language equivalence. The full parent still
+requires the separate immediate case; native Run's SOUNDNESS8 boundary remains.
+
+The `backend_lower_pipeline` probe also captures the complete original closed
+`from_word_0_def` and its inferred type, including the actual WordToWord tuple
+and oracle update before `from_word`. This is definition evidence, not an
+executed-route or complete compiler-correctness result.
 The `word_to_word_install` probe captures the complete original closed typed
 `compile_single_correct` theorem and its original kernel-proved Install
 specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
+
+`word_to_stack_fp_conversions_probeScript.sml` captures closed, kernel-proved,
+fully typed specializations of original `evaluate_wInst` to FPToInt and
+FPFromInt. These retain the original guards and full target existential;
+they are source review evidence, not a cross-assistant equivalence proof.
