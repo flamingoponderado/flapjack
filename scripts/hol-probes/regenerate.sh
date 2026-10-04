@@ -4616,6 +4616,9 @@ run_probe word_cse_wf_data_preservation_probeScript.sml word_cse_wf_data_preserv
   wf_add_to_load_aux_statement wf_add_to_load_aux_hypotheses wf_data_merge_statement wf_data_merge_hypotheses wf_canonicalMoveRegs_statement \
   wf_canonicalMoveRegs_hypotheses wf_add_to_data_aux_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_production_assign_probeScript.sml word_cse_production_assign_probe.out \
+  assign_source_type assign_source_definition assign_empty_load assign_even_load assign_alias_load assign_seeded_load assign_large_load assign_const assign_var assign_lookup assign_op assign_shift assign_nested_load \
+  "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_cse_production_heap_loc_probeScript.sml word_cse_production_heap_loc_probe.out \
   heap_loc_source_type heap_loc_source_definition heap_loc_inst_caller_clause heap_loc_wf_definition heap_loc_0 heap_loc_1 heap_loc_2 heap_loc_3 heap_loc_4 heap_loc_5 heap_loc_6 heap_loc_7 heap_loc_8 heap_loc_9 heap_loc_10 heap_loc_11 heap_loc_12 heap_loc_13 heap_loc_14 heap_loc_15 heap_loc_16 heap_loc_17 heap_loc_18 heap_loc_19 heap_loc_20 heap_loc_21 heap_loc_22 heap_loc_23 heap_loc_24 heap_loc_25 heap_loc_26 heap_loc_27 heap_loc_28 heap_loc_29 heap_loc_30 heap_loc_31 heap_loc_32 heap_loc_33 heap_loc_34 heap_loc_35 heap_loc_36 heap_loc_37 heap_loc_38 heap_loc_39 heap_loc_40 heap_loc_41 heap_loc_42 heap_loc_43 heap_loc_44 heap_loc_45 heap_loc_46 heap_loc_47 heap_loc_48 heap_loc_49 heap_loc_50 heap_loc_51 \
   "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend/proofs"

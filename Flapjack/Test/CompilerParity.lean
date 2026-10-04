@@ -303,6 +303,7 @@ import Flapjack.Test.WordCseProductionFactAuxParity
 import Flapjack.Test.WordCseProductionMemoryParity
 import Flapjack.Test.WordCseProductionArithmeticParity
 import Flapjack.Test.WordCseProductionHeapLocParity
+import Flapjack.Test.WordCseProductionAssignParity
 import Flapjack.Test.BalancedMapCore
 import Flapjack.Test.BalancedMapRotations
 import Flapjack.Test.BalancedMapInsert
@@ -2049,6 +2050,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordCseProductionMemoryParity.runChecks,
     Flapjack.Test.WordCseProductionArithmeticParity.runChecks,
     Flapjack.Test.WordCseProductionHeapLocParity.runChecks,
+    Flapjack.Test.WordCseProductionAssignParity.runChecks,
     Flapjack.Test.BalancedMapCore.runChecks,
     Flapjack.Test.BalancedMapRotations.runChecks,
     Flapjack.Test.BalancedMapInsert.runChecks,
