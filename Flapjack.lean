@@ -1927,6 +1927,7 @@ import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelUpdates
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelLookups
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelAllDistinct
 import Flapjack.Pancake.Proofs.LoopToWord.FindVar
+import Flapjack.Pancake.Proofs.LoopToWord.EveryInstOkLess
 import Flapjack.Pancake.Proofs.LoopToWord.LocalsRelIntro
 import Flapjack.Pancake.Proofs.LoopToWord.CutsetDomain
 import Flapjack.Pancake.Proofs.LoopToWord.LastNAddCons

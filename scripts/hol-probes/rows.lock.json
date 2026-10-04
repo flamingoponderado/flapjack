@@ -630,6 +630,7 @@
     {"bytes": 286, "out": "loop_to_word_comp_recursive_probe.out", "rows": 4, "sha256": "8cecee53e2cb0302b3fc24e66a4c0eab06279c07b1a2dfc2526379358ea8999d"},
     {"bytes": 33701, "out": "loop_to_word_compile_correct_cases_probe.out", "rows": 13, "sha256": "1ad609ccb70833580626d526a26c8f543a764593cf69e4283e2c46586cbb70f3"},
     {"bytes": 292, "out": "loop_to_word_defs_probe.out", "rows": 11, "sha256": "ca162c2b05564fa86d1661ef1655ad666a43ea40ab22d8eab67ada534aa48d33"},
+    {"bytes": 3857, "out": "loop_to_word_every_inst_ok_less_probe.out", "rows": 5, "sha256": "76dd2718026c1b7cc27698eb047cf7c01b2218afdcee4c8244134feddba47edd"},
     {"bytes": 104, "out": "loop_to_word_globals_rel_probe.out", "rows": 4, "sha256": "6c3fb11670fa203bc59e317290e0208273d0748683367479a96cc8fc02bdd293"},
     {"bytes": 2145, "out": "loop_to_word_label_handlers_probe.out", "rows": 23, "sha256": "4af430af43b6442e06718cb49bcfbfa165f8a6cec90e90df09b83d46f6604d82"},
     {"bytes": 768, "out": "loop_to_word_locals_rel_probe.out", "rows": 15, "sha256": "f43b60ed12a17e2d89f7908716aef541f875a88c81efbe33ca23755ba3e63564"},

@@ -96478,5 +96478,74 @@
     "hol_name": "option_le_SOME",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_wordProofScript 1779-1783: option_le x (SOME n) <=> ?m. x = SOME m /\\ m <= n over num option, with the reviewed BackendProps.optionLe; free x n explicit. Typed capture data_to_word_option_le probe (literal replay)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopInstOk",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_inst_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2285-2292 all clauses: LDiv ISA in {ARMv8;MIPS;RISC_V} as disjunction, LLongMul both register implications, LLongDiv x86_64, otherwise T; independent asm_config/prog word dimensions kept as separate width binders. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2294-2302: forall ctxt prog l with conjunct order byte, addr, every_prog, domain(acc_vars prog LN) subset domain ctxt (pointwise sptDomain), INJ find_var on domain ctxt (pairwise injectivity on sptDomain as in locals_rel_def), lookup values nonzero and EVEN (m % 2 = 0); conclusion on FST (comp ctxt prog l). every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompFuncEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_func_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2337-2341: comp_func n params body = p, every_prog, addr, byte (order kept). every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompileProgEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_prog_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2355-2360: compile_prog lprog = wprog0, byte, addr, EVERY over lprog bodies; conclusion EVERY over wprog0 as membership quantification. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2372-2376: compile lprog = wprog0, byte, addr, EVERY; same conclusion. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "findVarHOL_ne_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: find_var of an in-domain variable differs from that of any other variable (HOL INJ_DEF/lookup_NONE_domain case split inside loop_to_word_comp_every_inst_ok_less)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "accVarsHOL_dom_left",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: domain(acc_vars p LN) is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "accVarsHOL_dom_right",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: domain l is contained in domain(acc_vars p l), from acc_vars_acc."
   }
 ]

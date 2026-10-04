@@ -131,6 +131,7 @@ the cited name occurs in one of the two syntactic forms.
 | `proofs/loop_callProofScript.sml` | `Flapjack/Pancake/Proofs/LoopCall/CompileCorrect.lean` (`labels_in_def`, `compile_correct`) |
 | `loop_liveScript.sml` | `Flapjack/Pancake/LoopLive.lean`, `LoopLive/Fixedpoint.lean` |
 | `proofs/loop_liveProofScript.sml` | `Flapjack/Pancake/Proofs/LoopLive/CompileCorrect.lean` (`compile_correct` and its case pieces), `LoopLive/Optimise.lean` (`mark_correct`, `comp_correct`, `optimise_correct`) |
+| `proofs/loop_to_wordProofScript.sml` | `Flapjack/Pancake/Proofs/LoopToWord/` (`EveryInstOkLess.lean`: `loop_inst_ok_def` and the `every_inst_ok_less` section, lines 2285-2380; other sections in sibling modules) |
 | `loop_to_wordScript.sml` | `Flapjack/Pancake/LoopToWord.lean` |
 | `semantics/panSemScript.sml` | `Flapjack/PanBst.lean`, `Flapjack/PanValueFfiClockSemantics.lean`, `Flapjack/Pancake/Semantics/PanSem.lean`, `PanSem/Primop.lean`, `PanSem/ValueHOL.lean`, `PanSem/MemLoadHOL.lean`, `PanSemStateEval.lean`, `PanSem/Semantics.lean` (exact `semantics_def` over `evaluateHOLFiniteState`) |
 | `semantics/pan_commonPropsScript.sml` | `Flapjack/Pancake/Semantics/PanCommonProps.lean` |

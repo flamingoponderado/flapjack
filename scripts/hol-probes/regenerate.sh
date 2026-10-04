@@ -7461,6 +7461,10 @@ run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.ou
   option_le_SOME_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe loop_to_word_every_inst_ok_less_probeScript.sml loop_to_word_every_inst_ok_less_probe.out \
+  loop_inst_ok_def_typed loop_to_word_comp_every_inst_ok_less_typed loop_to_word_comp_func_every_inst_ok_less_typed loop_to_word_compile_prog_every_inst_ok_less_typed loop_to_word_every_inst_ok_less_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
