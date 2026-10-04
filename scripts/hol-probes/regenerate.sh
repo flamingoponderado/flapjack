@@ -4652,6 +4652,9 @@ run_probe word_alloc_distinct_tar_reg_probeScript.sml word_alloc_distinct_tar_re
 run_probe word_to_word_code_rel_probeScript.sml word_to_word_code_rel_probe.out \
   code_rel_def_statement code_rel_def_hypotheses code_rel_def_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_compile_thm_probeScript.sml word_to_word_compile_thm_probe.out \
+  compile_word_to_word_thm_statement compile_word_to_word_thm_hypotheses compile_word_to_word_thm_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_single_probeScript.sml word_to_word_compile_single_probe.out \
   FST_compile_single_statement FST_compile_single_hypotheses FST_compile_single_typed \
   compile_single_lem_statement compile_single_lem_hypotheses compile_single_lem_typed \
@@ -7743,3 +7746,6 @@ run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
 run_probe pan_to_target_compile_prog_eq_probeScript.sml pan_to_target_compile_prog_eq_probe.out \
   compile_prog_eq_statement compile_prog_eq_hypotheses compile_prog_eq_proved \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+run_probe word_to_word_install_probeScript.sml word_to_word_install_probe.out \
+  compile_single_correct_typed compile_single_correct_install_typed compile_single_correct_install_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"

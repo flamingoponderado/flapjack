@@ -10994,6 +10994,12 @@
       "sha256": "6d33c873ea9d86a4b31f05750f732bb62ac2c9c4e01cff6ee19e0c49613f0906"
     },
     {
+      "bytes": 2267,
+      "out": "word_to_word_compile_thm_probe.out",
+      "rows": 3,
+      "sha256": "f8406869c8b95ac75ca0bbd22c47747f0e5f84418f248e1cc095194e09e35044"
+    },
+    {
       "bytes": 671,
       "out": "word_to_word_config_probe.out",
       "rows": 10,
@@ -11004,6 +11010,12 @@
       "out": "word_to_word_executable_probe.out",
       "rows": 18,
       "sha256": "1a740db44b1dd27cf437dd669fed6a2c63c76b7cf22cfecf42e8f80179b5568e"
+    },
+    {
+      "bytes": 3039,
+      "out": "word_to_word_install_probe.out",
+      "rows": 3,
+      "sha256": "576a969a74819345b87b5d6c1cfc187520233230b08e7e7210dd531c2d470a0d"
     },
     {
       "bytes": 827,

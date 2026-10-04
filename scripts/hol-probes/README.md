@@ -36,6 +36,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_comp_correct_probe.out` captures the full zero-hypothesis statements of word_cseProof `comp_correct` (also typed) and `word_common_subexp_elim_correct`. Statement evidence for source review only.
 `word_cse_conventions_probe.out` captures the full zero-hypothesis statements of the seven word_cseProof syntactic-convention theorems in `WordCse/Proofs/Conventions.lean` (also typed `word_cse_full_inst_ok_less`). Statement evidence for source review only.
 `word_to_word_code_rel_probe.out` captures the zero-hypothesis `code_rel_def` of word_to_wordProof (also typed) for `WordToWord/Proofs/CodeRel.lean`; its `[local]` helpers are compared against the script. Statement evidence for source review only.
+`word_to_word_compile_thm_probe.out` captures the zero-hypothesis `compile_word_to_word_thm` of word_to_wordProof (also typed) for `WordToWord/Proofs/CompileWordToWord.lean`; `compile_single_correct` is `[local]` and compared against the script. Statement evidence for source review only.
 `word_to_word_compile_single_probe.out` captures the zero-hypothesis `FST_compile_single` and `compile_single_lem` of word_to_wordProof, each also fully typed, for `WordToWord/Proofs/CompileSingle.lean`. Statement evidence for source review only.
 `word_to_word_compile_probe.out` captures the zero-hypothesis `compile_single_def`, `full_compile_single_def` and `compile_def` of `word_to_wordScript.sml`, each also fully typed, for `WordToWord/Compile.lean`. Statement evidence for source review only.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
@@ -8111,3 +8112,8 @@ The `backend_lower_pipeline` probe also captures the complete original closed
 `from_word_0_def` and its inferred type, including the actual WordToWord tuple
 and oracle update before `from_word`. This is definition evidence, not an
 executed-route or complete compiler-correctness result.
+The `word_to_word_install` probe captures the complete original closed typed
+`compile_single_correct` theorem and its original kernel-proved Install
+specialization. `GEN_ALL` closes every binder; the specialization has zero
+hypotheses. These are original-theory captures, not a local replay or an
+independent cross-language equivalence proof.
