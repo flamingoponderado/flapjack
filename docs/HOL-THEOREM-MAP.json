@@ -92900,5 +92900,120 @@
     "hol_name": "word_to_word_compile_semantics",
     "lean_name": "word_to_word_compile_semantics",
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.56): HOL word_to_word_compile_semantics (word_to_wordProofScript.sml:2267-2489), compared with the typed capture word_to_word_compile_semantics. Full statement kept: free wconf acomf wprog0 col wprog s start t explicit in order of appearance; all 14 conjunctive premises in HOL order (compile = tagged compile_def; fromAList = sptFromAList; ALL_DISTINCT (MAP FST) = List.Nodup of map Prod.fst; lookup 0 t.locals = SOME (Loc 1 0); t = s with code := t.code; semantics s start ≠ Fail with the tagged wordSem semantics_def); HOL's commented-out start/EL premises are absent as in HOL; s and t share the carrier types (α, β, 'ffi). Conclusion semantics s start = semantics t start. Proof route differs from HOL's clock-by-clock case analysis with evaluate_add_clock: every clocked start-call run that does not fail agrees on result and FFI state (panLang_compile_word_to_word_thm + permute_swap_lemma3, as in each HOL case), and an untagged congruence lemma shows semantics reads runs only through these (semantics_eq_body is rfl against semantics_def). code_rel/domain from code_rel_ext_word_to_word, no_mt_code_rel_ext and the key-preservation of full_compile_single. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_not_created",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_to_word_comp_not_created",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_func_not_created",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_to_word_comp_func_not_created",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_not_created",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_to_word_compile_not_created",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_compile_no_install_code",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_compile_no_install_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_compile_no_alloc_code",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_compile_no_alloc_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_compile_no_mt_code",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_compile_no_mt_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_not_created_MEM",
+    "lean_path": "Flapjack/Pancake/LoopToWord/Proofs/NoInstallCode.lean",
+    "lean_name": "loop_to_word_compile_not_created_MEM",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture (none: HOL [local], compared against the source script); HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_compile_prog_no_install_code",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/NoInstallCode.lean",
+    "lean_name": "pan_to_word_compile_prog_no_install_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_compile_prog_no_alloc_code",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/NoInstallCode.lean",
+    "lean_name": "pan_to_word_compile_prog_no_alloc_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_compile_prog_no_mt_code",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/NoInstallCode.lean",
+    "lean_name": "pan_to_word_compile_prog_no_mt_code",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_word_no_install_code; HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_to_word_compile_no_install_no_alloc",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/WordToWordNoInstall.lean",
+    "lean_name": "word_to_word_compile_no_install_no_alloc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.3): no_install/no_alloc/no_mt code lemmas discharging the word_to_word_compile_semantics premises of pan_to_target_compile_semantics. Statement compared with the capture pan_to_target_word_to_word_no_install_source_replay (literal-source replay re-proved with HOL's tactic; pan_to_targetProofTheory is unbuilt); HOL's free variables are explicit binders in order of appearance (the predicate P leads where free), HOL's side condition (case x of ShareInst _ _ _ => T | Call _ _ _ _ => T | LocValue _ _ => T | _ => F) ⇒ P x is the Boolean match (= true) over the same three constructors, not_created_subprogs/no_*_subprogs/no_*_code are the tagged notCreatedSubprogsHOL/no*SubprogsHOL/WordProps.no*Code, comp/comp_func/compile_prog/compile are the tagged compHOL/loopToWordCompFuncHOL/loopToWordCompileProgHOL/loopToWordCompileHOL, pan_to_word compile_prog is the tagged panToWordCompileProgHOL, fromAList is sptFromAList, EVERY is ∀ x ∈ l, MEM is ∈, ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst. Positive HOL word dimension is the sole carrier translation. Lean proof route: code_rel via code_rel_ext_word_to_word and no_mt_code_rel_ext, then no_install/no_alloc transfer along code_rel with the same domain; the ALL_DISTINCT premise is retained but unused on this route."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/WordToWordNoInstall.lean",
+    "lean_name": "noAllocCode_of_codeRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_to_word_compile_no_install_no_alloc: transfer of no_alloc_code along code_rel with equal domains, or domain preservation of word_to_word$compile (HOL's inline domain_fromAList/MAP_ZIP step); no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/WordToWordNoInstall.lean",
+    "lean_name": "compile_sptDomain",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_to_word_compile_no_install_no_alloc: transfer of no_alloc_code along code_rel with equal domains, or domain preservation of word_to_word$compile (HOL's inline domain_fromAList/MAP_ZIP step); no independent HOL declaration."
   }
 ]

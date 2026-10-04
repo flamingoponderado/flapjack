@@ -18,9 +18,11 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmeti
 import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
+import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
+import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
 import Flapjack.RiscV.CorrectnessEncoding.ConstNext
@@ -842,6 +844,7 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSARenamePropertyWrappers
 import Flapjack.Misc.BinaryIeeeArithExec
 import Flapjack.Misc.BinaryIeeeSqrtExec
 import Flapjack.Pancake.LoopToWord.Proofs.ProgramNames
+import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAOutputCodec
