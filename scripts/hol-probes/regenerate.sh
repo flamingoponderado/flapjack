@@ -7761,3 +7761,7 @@ run_probe word_to_stack_inst_memory_load_probeScript.sml word_to_stack_inst_memo
 run_probe word_to_stack_inst_memory_store_probeScript.sml word_to_stack_inst_memory_store_probe.out \
   memoryStore_typed memoryStore_proved memoryStore_hypotheses memoryStore8_typed memoryStore8_proved memoryStore8_hypotheses memoryStore32_typed memoryStore32_proved memoryStore32_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_memory_probeScript.sml word_to_stack_inst_memory_probe.out \
+  memoryWhole_typed memoryWhole_proved memoryWhole_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"

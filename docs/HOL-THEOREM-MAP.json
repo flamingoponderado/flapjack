@@ -91701,5 +91701,23 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c author source comparison2026-10-04: original riscv_encoder_correct512, Binop Reg operand case550-559 and encoder_correct_def117-133. Genuine original operand case retains all5operators/unrestricted natural registers/fixed originalword64/full native state. Sole original asmStep+initialtargetStateRel premise; full existential n/everyenvironment/interference/asserts and asserts2 conclusion. Native Next derived internally from all4actual emitted bytes, arbitrary word5 Encode/Decode and literal Run. Original asmOk alone supplies register validity/zero exclusion, including aliases; initial reads precede destination write. Witness n0 retains full final relation/validity/modularPC/memory/unobservedregisters and outside-domain memory frame; original targetOk transports through exactly original interference condition. No target-run/final relation/range/nonalias premise. Inherited reals_as_rational_cuts from full native state/Run closure retains SOUNDNESS8 boundary. Fresh original typed full theorem specialized only to Reg Binop captures original carriers/hyp0/provedT; this is regression evidence, not HOL-to-Lean equivalence. Immediate operand case remains separate open fullBinop frontier."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation/Memory.lean",
+    "lean_name": "evaluateWInstMemory",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst whole Mem4919-5024, arbitrary opcode, retains all five guards and full existential actual native run/stateRel/stack resources. Six successful Load/Store cases reuse full reviewed case statements; Load16/Store16 contradict original source-success guard, matching HOL source case exclusion. No target-run/postrelation assumptions or supported-opcode restriction. Same canonical five fmap fields and positive-width word/host/FFI carriers as constituent cases; inherits_reals_as_rational_cuts from faithful evaluators, no new arithmetic agreement. Fresh word_to_stack_inst_memory_probe.out is full typed original kernel specialization, T/hypotheses0, not literal local proof replay or cross-language equivalence.",
+    "hol_line": 4688
   }
 ]
