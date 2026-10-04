@@ -4686,6 +4686,9 @@ run_probe word_to_word_syntactic_probeScript.sml word_to_word_syntactic_probe.ou
 run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no_install_compile_single_probe.out \
   no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
+  gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe pan_to_word_no_install_code_probeScript.sml pan_to_word_no_install_code_probe.out \
   loop_to_word_comp_not_created_statement pan_to_word_compile_prog_no_mt_code_typed \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

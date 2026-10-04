@@ -93559,5 +93559,14 @@
     "hol_name": "SB",
     "statement_status": "reviewed_exact",
     "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.6): original riscv_stepScript.sml:908-915 memory-store plain `class (rs1,rs2,offs)` saved theorem over the native store definition. Original hypothesis: mstatus.VM = 0w (no alignment condition). Native word5/word5/word12/native-state equation with the expanded original MEM8 update, stated as the definitionally-equal rawWriteData form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-store.py."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "gc_fun_const_ok_word_gc_fun",
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcFunConstOk.lean",
+    "lean_name": "gcFunConstOkWordGcFun",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.8): original data_to_word_gcProofScript.sml:6409-6417, captured by the data_to_word_gc_fun_const_ok probe: gc_fun_const_ok (word_gc_fun c) with c : data_to_word$config implicit, over the reviewed word_simpProof gc_fun_const_ok (WordSimp.gcFunConstOk) and word_gcFunctions word_gc_fun (wordGcFun); the type ascription on wordGcFun only fixes the word width. Proof follows HOL: word_gc_IMP_EVERY2 then LIST_REL_mono (ListRel to List.Forall₂). No added premise."
   }
 ]
