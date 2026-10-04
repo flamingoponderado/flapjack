@@ -54,7 +54,9 @@ but kernel-checked wrapper theorems do not resolve this translation assumption.
 
 The following are open review or verification obligations:
 
-1. Compiler-correctness theorem porting is in progress.
+1. The source-to-RISC-V theorem chain and its connection to the default compiler
+   have been ported. Their statements, assumptions, and implications still
+   require independent review.
 2. The RISC-V semantics in Flapjack have not been proven equivalent to a Lean
    extraction of the authoritative Sail RISC-V model.
 3. Compiler behavior has not been tested extensively against the original
@@ -69,9 +71,9 @@ The following are open review or verification obligations:
    complete runtime/ELF artifacts as CakeML. The current command emits a
    Pancake-shaped checked RV64I assembly image for its supported source subset;
    `--hex` is the raw-byte compatibility view.
-5. Proof work remains for the full source-to-target simulation, runtime image,
-   collector/frame-machine behavior, calls and FFI in all configurations, and
-   the complete Pancake correctness theorem.
+5. The ported correctness results retain explicit source, machine, installation,
+   FFI, and resource premises. They do not establish correctness of every driver
+   mode, parser behavior, runtime installation, or configuration.
 6. Passing `lake build`, `lake test`, or CI proves only the checked repository
    state and selected regressions. It does not review the mathematical
    adequacy of the specifications or prove untested source programs compile
