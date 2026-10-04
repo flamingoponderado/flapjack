@@ -8697,6 +8697,51 @@ and assertion assembly.
 
 `pan_to_crep_compile_validity_probe.out` captures the complete original typed body-compiler validity and compile_def. The context/body dimensions coincide, while the unrelated quantified e binder is explicitly vacuous. Native proof covers all32 compiler induction cases, every Call fallback/handler branch and changed Dec/DecCall contexts, retaining only the original source guard. This supplies body validity, not complete declaration/program validity or end-to-end compiler correctness.
 
+### Source-to-native memory instruction inputs
+
+`riscv_memory_inputs_probeScript.sml` replays all eight original memory
+constructors at both signed12 endpoints; architectural exclusions and register
+overflow are rejected on both register positions, and both just-outside offsets
+are rejected. A matched source/native alias fixture wraps the address to word64
+minus one. Original literal `inst_ok` and `riscv_ast` equations retain their
+free-variable types and zero hypothesis counts. These are regression evidence,
+not a cross-language equivalence proof.
+
+`CorrectnessEncoding/MemoryInputs.lean` source-compares `asmScript.sml:286–299`,
+`riscv_targetScript.sml:165–168`, `asmSem$addr/read_reg`, native `GPR`, and the
+original Mem constructor at `riscv_targetProofScript.sml:661–669`. All eight
+constructors derive their register and signed-offset guards from actual
+`asmOkExact`; the initial target relation discharges native register values,
+including architectural zero exclusion. Original aliases are admitted. The
+actual emitted instruction's Run is derived under the initial relation, with
+source address and store-value inputs; emitted-AST membership selects the
+instruction and assumes no target execution/result. These local compositions
+have no separately named HOL originals and remain untagged. Full Mem still
+needs interference, complete postrelation and assertion assembly.
+
+### Full byte-driven native conditional branch transitions
+
+`riscv_conditional_next_probeScript.sml` evaluates the original full
+`NextRISCV` against independently computed complete post-records for all six
+conditional instructions. Its 30 observations exercise zero registers,
+maximum aliased registers, negative and odd halfword payloads, both operand
+orders, and the signed/unsigned 64-bit boundary. Taken paths clear the
+pending branch transfer and update PC; fallthrough advances by four bytes.
+Both paths retain every other field apart from the fetched instruction size.
+The probe proves the redundant update of a constant function before comparing
+records, so a taken branch returning `NONE` has the same full map as the
+initial constant `NONE` map. The capture also records complete original
+primitive equations and `NextRISCV_def`, their actual hypothesis counts,
+and typed statements, rather than relying on the fixture names alone.
+
+`Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Native.lean` proves the unrestricted
+byte-driven transitions for every intrinsic word5 register and word12
+halfword payload from `riscvOk` and four actual emitted bytes. It is untagged
+local composition infrastructure; full `JumpCmp` correctness is a dependent
+task. `check-riscv-conditional-next.py` and its mutation tests guard the
+statement, complete evidence and registration; source comparison and kernel
+checking remain required.
+
 `pan_to_crep_table_validity_probe.out` captures the complete original typed declaration-list compiler validity theorem. The native proof preserves its sole good_panops input guard and derives each projected function body guard internally before applying the full body compiler theorem. Names and parameters are unrestricted; no target-run, byte-range or desired-output premise is added. This is table validity, not full compiler correctness.
 
 `pan_to_crep_program_validity_probe.out` captures the complete original typed compile_prog arity invariant. The native proof composes full table validity with full actual inlining validity under the sole original good_panops declaration-list guard. This supplies the source-validity prerequisite, not full compiler correctness.
