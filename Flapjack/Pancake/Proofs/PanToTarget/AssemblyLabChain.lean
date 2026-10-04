@@ -124,7 +124,12 @@ theorem panToTargetLabSemantics {width : Nat} [NeZero width] {S Q C σ : Type}
     SemanticsPropsHOL.extendWithResourceLimitPrimeHOL
       (decide (WordSemStateFiniteExact.wordLangSafeForSpace wst BvlToBvi.initGlobalsLocation))
       (fun b => b = PanSemStateFiniteExact.semanticsDecls s start panCode)
-      (LabSem.semantics labst) := by
+      (LabSem.semantics labst) ∧
+    WordSemStateFiniteExact.semantics wst BvlToBvi.initGlobalsLocation =
+      PanSemStateFiniteExact.semanticsDecls s start panCode ∧
+    ∃ x, StackToLab.Proofs.FullMakeInit.fullMakeInit c.stackConf c.dataConf maxHeap sp
+      mc.target.config.addrOffset bitmaps p labst (fun k => decide (k ∈ mc.calleeSavedRegs))
+      dataSp (fun _ => (ltc, [], [])) = (sst, some x) := by
   intro regNames r1 r2 heapStackDm sp maxHeap labst sst wst
   have good : goodDimindex width := hmc.1
   have hA := panToTargetFullMakeInitAssumptions (C := C) c mc ffi t m bitmapPtr bitmapsDm sdm ms
@@ -180,6 +185,27 @@ theorem panToTargetLabSemantics {width : Nat} [NeZero width] {S Q C σ : Type}
   have hstack := hchain (by rw [hstage]; exact hfail)
   rw [hstage] at hstack
   have key := (panToTargetLabStackLink _ _ hfail ⟨hfm, hA⟩ hstack).2
-  simpa only [wst, e] using key
+  -- the word_to_word equality of the HOL proof (lines 1716-1736)
+  have hww : WordSemStateFiniteExact.semantics
+      { WordToStack.Native.Initialization.makeInit mc.target.config k sst' (sptFromAList wprog)
+          worac with code := sptFromAList (panToWordCompileProgHOL mc.target.config.isa panCode) }
+        BvlToBvi.initGlobalsLocation =
+      WordSemStateFiniteExact.semantics
+        (WordToStack.Native.Initialization.makeInit mc.target.config k sst' (sptFromAList wprog)
+          worac) BvlToBvi.initGlobalsLocation :=
+    WordToWord.word_to_word_compile_semantics c.wordToWordConf mc.target.config
+      (panToWordCompileProgHOL mc.target.config.isa panCode) col wprog _ _ _
+      ⟨hwtw, hgc, PanToWord.pan_to_word_compile_prog_no_install_code _ panCode _ rfl,
+        PanToWord.pan_to_word_compile_prog_no_alloc_code _ panCode _ rfl,
+        PanToWord.pan_to_word_compile_prog_no_install_code _ panCode _ rfl,
+        PanToWord.pan_to_word_compile_prog_no_alloc_code _ panCode _ rfl,
+        PanToWord.pan_to_word_compile_prog_no_mt_code _ panCode _ rfl,
+        Flapjack.panToWordFirstCompileProgAllDistinctHOL _ panCode hnodup, rfl, rfl,
+        by simp [WordToStack.Native.Initialization.makeInit]; rfl, rfl, rfl,
+        by rw [hstage]; exact hfail⟩
+  refine ⟨by simpa only [wst, e] using key, ?_, ⟨x, by rw [e]⟩⟩
+  simp only [wst, e]
+  rw [← hww]
+  exact hstage
 
 end Flapjack.Pancake.Proofs.PanToTarget
