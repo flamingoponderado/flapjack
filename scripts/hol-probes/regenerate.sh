@@ -4711,6 +4711,9 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
   gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_to_target_init_helpers_source_replay_probeScript.sml pan_to_target_init_helpers_source_replay_probe.out \
+  word_to_stack_compile_FST_replay_statement InitGlobals_location_eq_first_name_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_target_stack_size_source_replay_probeScript.sml pan_to_target_stack_size_source_replay_probe.out \
   no_alloc_word_evaluate_replay_statement option_lt_SOME_replay_typed \
   "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
