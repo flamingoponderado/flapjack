@@ -8408,3 +8408,22 @@ proofs. Target closures retain inherited reals_as_rational_cuts (SOUNDNESS8).
 Both Ror sequences remain open.
 
 `riscv_ror_step_probe.out` captures full original SRLI/SLL/SRL/SUB Run clauses, all inferred word/state types and zero open hypotheses, plus eight ground low-two-bit instruction-width observations. RorStep derives actual Next, complete native frames/validity and full original projection congruence, including scratch register31. It is untagged case-local infrastructure; the probe is regression evidence, not an equivalence proof. Full Ror immediate/register encoder traces and assertions remain open.
+
+## Original-label whole Crep-to-Loop production producer
+
+`crep_to_loop_original_names_program_probe.out` freshly evaluates the complete
+original two-function program, including all rows, parameters, body constructors
+and direct Call65 under original row names64/65. The production fixture matches
+that complete result and tests rejection of unsupported top-level, nested Call
+and ExtCall names. Latin-1 byte255 remains supported. These are original output
+regression observations, not HOL-to-Lean equivalence or runtime code-table proof.
+
+`ProductionCompileProg.compileProgFromProduction?` calls native compile_prog
+on the entire supported source list and returns native Loop rows unchanged.
+Kernel proofs derive all name/body support conditions, preserve the entire
+original input payload on roundtrip, and retain arbitrary original row names
+64+n. It introduces no target-run/output/context callback or legacy rebasing.
+The return-shape metadata is consumed before this stage and is not an original
+compile_prog input. This producer slice does not yet connect the CLI: native
+WordToStack entry/stub/config consumers and the whole executed route remain
+separate open dependencies coordinated with Sol2.

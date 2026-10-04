@@ -8062,3 +8062,7 @@ run_probe riscv_ror_step_probeScript.sml riscv_ror_step_probe.out \
   ror_run_srli_clause ror_run_srli_types ror_run_srli_hypotheses ror_run_sll_clause ror_run_sll_types ror_run_sll_hypotheses ror_run_srl_clause ror_run_srl_types ror_run_srl_hypotheses ror_run_sub_clause ror_run_sub_types ror_run_sub_hypotheses ror_next_srli_zero ror_next_srli_all_ones ror_next_sll_zero ror_next_sll_all_ones ror_next_srl_zero ror_next_srl_all_ones ror_next_sub_zero ror_next_sub_all_ones \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_original_names_program_probeScript.sml crep_to_loop_original_names_program_probe.out \
+  full_program row_names parameters done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
