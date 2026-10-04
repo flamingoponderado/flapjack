@@ -1,3 +1,5 @@
+import Flapjack.RiscV.RuntimeImageBackendOutput
+import Flapjack.RiscV.NativeBackendOutput
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.RiscV.CorrectnessEncoding.BitRewrites
 import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
@@ -92,6 +94,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTopResource
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyGoodCodeSource
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyTop
 import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstance
+import Flapjack.Pancake.Proofs.PanToTarget.RiscVInstanceExecutable
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -1219,6 +1222,8 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionFrame
 import Flapjack.Compiler.Backend.WordToStack.ProductionFrameCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Instructions
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.TopStubs
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.SourceDomain
+import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.RemoveMustTerminate
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.MoveHelpers
 import Flapjack.Compiler.Backend.WordToStack.ProductionBodyImage.Traversal
 import Flapjack.Compiler.Backend.WordToStack.ProductionLocations
