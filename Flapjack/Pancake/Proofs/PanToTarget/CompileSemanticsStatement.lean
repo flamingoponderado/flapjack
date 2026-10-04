@@ -18,10 +18,9 @@ The full hypothesis list and conclusion of
 untagged proposition so that the final assembly can be developed against a fixed
 interface. It is not a port of the theorem and carries no `@[hol]` tag.
 
-Known carrier gap: HOL `pan_installed` receives `s.memaddrs` and `s.sh_memaddrs`
-(both `'a word set`) directly, but the reviewed `panInstalled` takes its two memory
-domains as `BitVec width → Bool` while `PanSemStateFiniteExact` stores them as
-`RiscV.Word width → Prop`; the statement bridges them with classical `decide`.
+As in HOL, `pan_installed` receives `s.memaddrs` and `s.sh_memaddrs` directly: the
+reviewed `panInstalled` takes its two `'a word set` parameters on the same predicate
+carrier as `PanSemStateFiniteExact`'s `memaddrs`/`shMemaddrs`.
 -/
 
 namespace Flapjack.Pancake.Proofs.PanToTarget
@@ -30,7 +29,6 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.BackendProof Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang Flapjack.SemanticsPropsHOL
 
-open Classical in
 /-- The hypotheses and conclusion of `pan_to_target_compile_semantics`, in HOL order. -/
 def PanToTargetCompileSemanticsStatement {width : Nat} [NeZero width] {S Q σ : Type}
     (c : Backend.Config) (mc : MachineConfig width S Q) (pan_code : List (DeclHOL width))
@@ -80,8 +78,7 @@ def PanToTargetCompileSemanticsStatement {width : Nat} [NeZero width] {S Q σ : 
     | some l => ∀ x ∈ l, ∃ s, x = HolFfiName.extCall s) ∧
   panInstalled bytes cbspace bitmaps data_sp c'.labConf.ffiNames
     (heapRegs c.stackConf.regNames) mc c'.labConf.shmemExtra ms
-    (wlabWlocExact ∘ s.memory) (fun a => decide (s.memaddrs a))
-    (fun a => decide (s.shMemaddrs a)) ∧
+    (wlabWlocExact ∘ s.memory) s.memaddrs s.shMemaddrs ∧
   start = ofString "main" ∧
   PanSemStateFiniteExact.semanticsDecls s start pan_code ≠ HolBehaviour.fail →
   ∀ b, machineSemHOL mc ffi ms b →
