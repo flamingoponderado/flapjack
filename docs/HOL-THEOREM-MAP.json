@@ -98104,6 +98104,22 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetFullMakeInitAssumptions",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-1550): all hypotheses of full_make_init_semantics for labst = lab_to_target make_init mc ffi t m ((heap_stack_dm UNION bitmaps_dm) INTER byte_aligned) (sdm INTER byte_aligned) ms lprog ... with HOL's constant oracles, from stage A3a (panToTargetLabstFacts), stage A3b (panToTargetMemoryAssumption over pan_installed's components) and backend_config_ok's max_stack_alloc bound."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabChain.lean",
+    "lean_name": "panToTargetLabSemantics",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-2284): composition of full_make_init_semantics (Assumptions from panToTargetFullMakeInitAssumptions, opt <> NONE), word_to_stack compile_semantics and word_to_word_compile_semantics (premises from full_make_init, compile_to_word_conventions2, pan_to_word no_install/no_alloc/no_mt and first_compile_prog_all_distinct), and the pan_to_word stage (panToTargetPanToWordStageLab): for labst over pan_installed's components, LabSem semantics labst is in extend_with_resource_limit' (safe_for_space wst InitGlobals_location) {semantics_decls s start pan_code} when the latter is not Fail. Hypotheses are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses in original form."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
     "lean_name": "heapLengthShift",
     "statement_status": "no_hol_reference_pending_classification",
