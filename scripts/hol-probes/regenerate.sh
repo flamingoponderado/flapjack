@@ -8254,3 +8254,7 @@ run_probe riscv_branch_decode_probeScript.sml riscv_branch_decode_probe.out \
 run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_helpers_probe.out \
   exps_of_nested_seq every_inst_ok_nested_decs every_inst_ok_less_pan_to_crep_comp_field every_inst_ok_less_pan_to_crep_load_shape every_inst_ok_less_pan_to_crep_cexp_heads every_inst_ok_less_stores every_inst_ok_less_store_globals \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_source_probeScript.sml riscv_memory_source_probe.out \
+  le0_wrap le1_wrap le1_missing le2_wrap le2_missing le4_wrap le4_missing le8_wrap le8_missing le12_wrap le12_missing be0_wrap be1_wrap be1_missing be2_wrap be2_missing be4_wrap be4_missing be8_wrap be8_missing be12_wrap be12_missing previous_failure_zero read_clause read_hypotheses read_types write_clause write_hypotheses write_types load_clause load_hypotheses load_types store_clause store_hypotheses store_types \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"

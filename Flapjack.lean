@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemorySource
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
 import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
