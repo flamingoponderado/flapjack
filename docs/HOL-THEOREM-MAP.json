@@ -97988,5 +97988,54 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-inline-table-validity: original full1135-1152 implication and regenerated fully typed original capture. Original source declaration list, sole EVERY binary-Crepop validity premise on actual compile_to_crep, full EVERY body-expression validity conclusion on actual compile_prog. Shared native crepEveryExpHOL literal Prop predicate and membership EVERY, exact MlString/ListNat/CrepProgHOL table carriers. Source compileProgDeclsHOLW selects original inlinable function names and actual compileToCrepExactHOLW table. Canonical compileInlTopHOLExact_eq_compileInlProgHOLExact unconditional wrapper equality and accepted crepInline_everyInstCrepInline used. Original SUBMAP derived internally by name-filtered association-list lookup; all duplicate names admitted, first-binding source behavior preserved. Only word dimension translated; no finite map in final signature or added source byte/distinctness/SUBMAP/output/target-run premise. Full body/declaration guard-to-table assembly remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetSafeForSpaceOfDepth",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G depth half of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2292-2312: max_depth_Call_NONE + evaluate_stack_size_limit_const_panLang); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetStackSizeEqFrameSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G frame-size identification (pan_to_targetProofScript.sml 2336-2365: compile_word_to_stack_sfs_aux, mapi_Alist, map_fromAList); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetSafeForSpaceOfLimit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G over the word make_init state (pan_to_targetProofScript.sml 2285-2365): option_lt stack_max (SOME lim) with lim <= LENGTH sst.stack implies word_lang_safe_for_space; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetStackLimitLeLength",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G limit arithmetic (pan_to_targetProofScript.sml 2311-2335, 2366-2506): FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= stack length read by init_reduce from the init_code_thm pointer facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "sptAListLookup_map_snd",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Call.lean",
+    "lean_name": "riscv_encoder_correct_call",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
   }
 ]

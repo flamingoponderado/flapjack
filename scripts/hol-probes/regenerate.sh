@@ -8310,3 +8310,8 @@ run_probe riscv_memory_read_value_probeScript.sml riscv_memory_read_value_probe.
 run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_table_validity_probe.out \
   every_inst_w_inline \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_call_probeScript.sml riscv_target_call_probe.out \
+  riscv_encoder_correct_call_statement riscv_encoder_correct_call_types riscv_encoder_correct_call_hypotheses riscv_encoder_correct_call_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
