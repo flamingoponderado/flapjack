@@ -252,7 +252,8 @@ theorem interleaved_projection (d : BitVec 64 → Prop)
 
 /-- Complete pure-list native frame and total PC increment, for arbitrary
 length and every intrinsic operand. The emitted-byte execution connection is
-proved per instruction above; full encoded-list assertions remain open. -/
+proved per instruction above; full encoded-list assertions are assembled in the
+parent AddCarry counterpart module. -/
 theorem step_list_frame (is : List instruction)
     (kinds : ∀ i ∈ is, Family i) (ms : riscv_state)
     (ok : riscvOk ms = true) :
@@ -338,7 +339,8 @@ theorem execute_projection (d : BitVec 64 → Prop) (is : List instruction)
 exactly four per instruction, and preserves every byte in the original domain.
 The environment may change processor identity or memory outside that domain;
 no stronger preservation premise is introduced. Untagged composition
-infrastructure; original full encoder assertions remain separate open work. -/
+infrastructure; original full encoder assertions are assembled separately in
+the parent AddCarry counterpart module. -/
 theorem execute_frame (d : BitVec 64 → Prop) (is : List instruction)
     (kinds : ∀ i ∈ is, Family i)
     (nonzero : ∀ i ∈ is, destination i ≠ 0#5)
