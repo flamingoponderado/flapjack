@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset

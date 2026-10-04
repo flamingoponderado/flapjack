@@ -92872,5 +92872,14 @@
     "hol_name": "labels_rel_append_imp",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol2 source comparison: complete original local labels_rel_append_imp in sequence/materialized-constant label section175-240. Literal native SmartSeq/Seq_assoc/drop_consts over arbitrary programs, accumulators, both optional handler families and arbitrary Spt positive-width word knowledge/register list; preserves actual whole label-list equality without output or desired label premise. Recursive equality derived from actual native algorithms. Last list-only append permutation implication is generic beta List with no word-program binder, original source guard retained. First five use reviewed common positive-width BitVec translation, native Spt carriers unchanged. Fresh unchanged literal original statement/proof replays in word_convs_simp_sequence_labels_probe.out, full typed symbolic kernel T/hyp0; no HOL-to-Lean equivalence or full compile conventions claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Div.lean",
+    "lean_name": "riscv_encoder_correct_div",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared full original Div constructor621-628, riscv_ast138-139 and encoder_correct_def. Arbitrary natural registers and full original asmStep plus initial targetStateRel premise retained with complete existential all-env asserts/asserts2 conclusion. Nonzero divisor derived solely from original source failed=false guard; literal signed MulDiv DIV native emitted instruction, all four fetched bytes and actual Encode/DecodeAny/Run/Next, original register config guards, aliases and whole final state relation retained. No target-run, range, divisor or post-state premise added. Source word quotient is signed words word_quot, matching reviewed BitVec.sdiv. Fresh complete typed original specialization hyp0/provedT is regression evidence, not cross-assistant equivalence. Full target/Run closure inherits reals_as_rational_cuts, SOUNDNESS item8."
   }
 ]

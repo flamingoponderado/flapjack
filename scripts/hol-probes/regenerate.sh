@@ -7871,3 +7871,8 @@ run_probe riscv_div_decode_probeScript.sml riscv_div_decode_probe.out \
   div_decode_zero div_decode_all_ones div_decode_mixed div_encode_source_clause div_encode_source_hypotheses div_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
+  riscv_encoder_correct_div_statement riscv_encoder_correct_div_types riscv_encoder_correct_div_hypotheses riscv_encoder_correct_div_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

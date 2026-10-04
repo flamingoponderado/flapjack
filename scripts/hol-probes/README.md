@@ -8235,3 +8235,14 @@ with opcode0110011, funct3=100 and funct7=1. This local composition has no
 separately named HOL theorem and remains untagged infrastructure. Original
 zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
 evidence; they do not establish whole encoder correctness or cross-language equivalence.
+
+## Full original native Div encoder case
+
+`CorrectnessEncoding/Div.lean` retains the full original sole asmStep/initial
+relation premise and existential interference/assertion result. It derives
+source divisor nonzero from the original failure guard and uses literal signed
+MulDiv DIV, preserving aliases, register restrictions, fetched bytes and full
+native state. The original typed theorem specialization is captured in
+`riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
+cross-assistant equivalence proof. The full target closure retains inherited
+reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
