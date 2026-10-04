@@ -1,0 +1,16 @@
+jal_decode_universal=∀(rd :word5) (imm :word20). DecodeAny (Word (Encode (Branch (JAL (rd,imm))))) = Branch (JAL (rd,imm))
+jal_decode_hypotheses=0
+jalr_decode_universal=∀(rd :word5) (rs :word5) (imm :word12). DecodeAny (Word (Encode (Branch (JALR (rd,rs,imm))))) = Branch (JALR (rd,rs,imm))
+jalr_decode_hypotheses=0
+jal_zero=T
+jal_all_ones=T
+jal_link_sign=T
+jal_scattered_bits=T
+jalr_zero=T
+jalr_all_ones=T
+jalr_link_alias=T
+jalr_mixed=T
+jal_source_clause=Encode (Branch (JAL ((rdv :word5),(immv :word20)))) = UJtype (opc (27w :word8),rdv,immv)
+jal_carrier_types=(immv :word20) : :word20, (rdv :word5) : :word5
+jalr_source_clause=Encode (Branch (JALR ((rdv :word5),(rsv :word5),(immv :word12)))) = Itype (opc (25w :word8),(0w :word3),rdv,rsv,immv)
+jalr_carrier_types=(immv :word12) : :word12, (rsv :word5) : :word5, (rdv :word5) : :word5

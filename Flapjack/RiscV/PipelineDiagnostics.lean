@@ -4,6 +4,7 @@ import Flapjack.Parser
 import Flapjack.Parser.ParseTopDecsByteRanged
 import Flapjack.RiscV.Encoding
 import Flapjack.RiscV.LabDiagnostics
+import Flapjack.RiscV.LabToTargetRoute
 import Flapjack.RiscV.WordDiagnostics
 import Flapjack.RiscV.CakeRegAlloc
 import Flapjack.RiscV.WordFuseConditions
@@ -12,7 +13,7 @@ import Flapjack.Compiler.Backend.WordRemove.Production
 import Flapjack.RiscV.WordInstSelect
 import Flapjack.RiscV.WordSimp
 import Flapjack.RiscV.WordUnreach
-import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyAllocation
 
 /-!
 # Checked pipeline Word-to-Stack diagnostics
@@ -205,7 +206,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaChecked [NeZero width] :
          doing it here changes the fresh-name bound used by SSA. -/
       let unallocatedBody :=
         wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc label parameters body)
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, renamedParameters, renamedProgram, allocation) =>
@@ -269,7 +270,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsCheckedAux
       let wordParameters := wordSsaAbiParameters parameters.length
       let unallocatedBody :=
           wordBeforeSsaAllocatorBody (LoopToWord.loopToWordCompFunc label parameters body)
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, renamedParameters, renamedProgram, allocation) =>
@@ -342,7 +343,7 @@ def pipelineWordFunctionsAllocatedWithSpillsAndFullSsaAndBitmapsFromWordCheckedA
       let wordParameters := wordSsaAbiParameters arity
       let unallocatedBody :=
         wordBeforeSsaAllocatorBody body
-      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSA
+      match RiscV.CakeRegAlloc.cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
           label wordParameters unallocatedBody with
       | none => .error (.allocationFailure label)
       | some (_, _renamedParameters, allocatedProgram, allocation) =>
@@ -697,19 +698,21 @@ def compileFlapjackRiscVSourceRuntimeImageChecked [NeZero width]
                     pipeline.crepe error)
               | .ok (functions, bitmaps) =>
                   let initialLabel := fullSsaInitialLabLabel functions
-                  match RiscV.compileStackProgramNatListLinkedWithSimpleGcAndStoreConstsToRiscVCakeChecked
+                  -- At RV64 the bytes come from the reviewed `lab_to_target$compile`
+                  -- (`RiscV.labProgramToRiscVSections`).
+                  match RiscV.compileStackProgramNatListToRiscVSectionsCakeChecked
                       { services := services } removeConfig
                       { gcStubLocation := stackGcStubLocation, returnLabel := 0,
                         firstFreshLabel := stackFunctionFirstLabel }
                       { } stackStoreConstsStubLocation RiscV.CakeRegAlloc.cakeRiscVRegisterCount
                       0 initialLabel
-                      (functions.map (fun (label, _, body) => (label, body))) with
+                      (functions.map (fun (label, _, body) => (label, body)))
+                      (some discoveredNames) with
                   | .error error =>
                       .error (sourceRiscVImageErrorOfLowering stackFunctionFirstLabel
                         pipeline.crepe (.labToRiscV error))
                   | .ok sections =>
-                      .ok { crepe := pipeline.crepe, bitmaps,
-                            sections := RiscV.encodeLinkedSections sections,
+                      .ok { crepe := pipeline.crepe, bitmaps, sections,
                             warnings, ffiNames := discoveredNames }
 
 end Flapjack

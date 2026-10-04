@@ -75,7 +75,8 @@ theorem nativeSsaRetainedAllocator_programCodec {width : Nat} [NeZero width]
   | none => simp [encoded] at allocated
   | some native =>
       simp only [encoded, Option.bind_some] at allocated
-      unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa at allocated
+      unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+        cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at allocated
       split at allocated
       · simp_all
       · cases produced : wordFullSsaCcTransNativeWithStateFromHOL parameters.length native with

@@ -1205,14 +1205,16 @@ def wordStackLiveBitmap (registerCount frameSlots wordBits : Nat)
 /- Location-derived mirror of the original `write_bitmap`: one membership bit
     per frame slot for the live cut-set variables that the allocator actually
     placed on the stack.  Use Cake's `bits_to_word` implementation and its
-    explicit terminator rather than the legacy base-1 helper above.  These
+    explicit terminator rather than the legacy base-1 helper above. Physical
+    stack slot zero holds the bitmap pointer; source GC bits index spill slots
+    from zero, so physical spill slot one corresponds to bitmap bit zero.  These
     encodings agree for a single bitmap word, but differ at a chunk boundary
     because the legacy helper adds an implicit terminator to every chunk. -/
 def wordStackLiveBitmapFromLocations (config : WordStackConfig)
     (frameSlots wordBits : Nat) (live : List Nat) : List Nat :=
   let slots := live.filterMap (fun name =>
     match wordStackLocation config name with
-    | some (.stack slot) => some slot
+    | some (.stack slot) => some (slot - 1)
     | _ => none)
   let bits := (List.range frameSlots).map (fun slot => slots.contains slot)
   CakeAlloc.frameBitmapWords (wordBits - 1) (bits ++ [true])
@@ -1231,7 +1233,10 @@ def wordStackBitmapWriteWithBuilder (config : WordStackConfig)
   else
     let bitmap := bitmapBuilder live
     let (newState, index) := wordStackInsertBitmap state bitmap
-    (.seq (.const bitmapRegister (index + 1))
+    /- The original wLive emits an instruction word constant. Keep the index
+       in the word-payload carrier so the executed Nat-to-word boundary wraps
+       it at the target width, rather than treating it as an unbounded macro. -/
+    (.seq (.inst (.const bitmapRegister (index + 1)))
         (.stackStore bitmapRegister (wordStackOffset config 0)), newState)
 
 def wordStackAllocWithBitmapBuilder (config : WordStackConfig)

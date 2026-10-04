@@ -1,3 +1,8 @@
+import Flapjack.Test.PanToWordGoodCodeParity
+import Flapjack.Test.CompileProgMaxExecutableParity
+import Flapjack.Test.WordToWordExecutableParity
+import Flapjack.Test.PanToTargetOptionLtParity
+import Flapjack.Test.WordDepthParity
 import Flapjack.Test.WordFindCodeGenericCarriers
 import Flapjack.Test.BackendConfigAttachBitmaps
 import Flapjack.Test.L3DecodeImmediatesParity
@@ -6,12 +11,16 @@ import Flapjack.Test.L3FPMemoryParity
 import Flapjack.Test.L3ControlFetchParity
 import Flapjack.Test.L3FPBitsParity
 import Flapjack.Test.L3DivideParity
+import Flapjack.Test.RiscVModelDivParity
+import Flapjack.Test.GcSharedRefsParity
+import Flapjack.Test.RiscVNativeInstructionParity
 import Flapjack.Test.L3MultiplyParity
 import Flapjack.Test.L3WordArithmeticParity
 import Flapjack.Test.L3ImmediateShiftParity
 import Flapjack.Test.StackRawCallCompileSemanticsParity
 import Flapjack.Test.WordToStackCallReturnHandlerParity
 import Flapjack.Test.StackRawCallCompCorrectParity
+import Flapjack.Test.FrameFfiNames
 import Flapjack.Test.LabToTargetInitializerFullStateRelParity
 import Flapjack.Test.LabToTargetInitializerDomainParity
 import Flapjack.Test.L3RegisterShiftParity
@@ -280,6 +289,7 @@ import Flapjack.Test.LabToTargetPaddingParity
 import Flapjack.Test.LabToTargetRemoveLabelsParity
 import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
+import Flapjack.Test.SourceToFlatPrimConfigParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
@@ -291,6 +301,13 @@ import Flapjack.Test.ProductionMoves
 import Flapjack.Test.RegAllocProductionFixedTags
 import Flapjack.Test.RegAllocProductionColourLookup
 import Flapjack.Test.WordCseProductionScalarKeys
+import Flapjack.Test.WordCseProductionJoinParity
+import Flapjack.Test.WordCseProductionFactAuxParity
+import Flapjack.Test.WordCseProductionMemoryParity
+import Flapjack.Test.WordCseProductionArithmeticParity
+import Flapjack.Test.WordCseProductionHeapLocParity
+import Flapjack.Test.WordCseProductionAssignParity
+import Flapjack.Test.WordCseProductionProgramParity
 import Flapjack.Test.BalancedMapCore
 import Flapjack.Test.BalancedMapRotations
 import Flapjack.Test.BalancedMapInsert
@@ -308,6 +325,7 @@ import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity
 import Flapjack.Test.WordToStackSortedKeysParity
 import Flapjack.Test.WordToStackBitmapWriteParity
+import Flapjack.Test.WordToStackBitmapIndexParity
 import Flapjack.Test.WordToStackBitmapInsertParity
 import Flapjack.Test.WordToStackBitmapDecodeParity
 import Flapjack.Test.WordToStackKeyValueOrderParity
@@ -1076,6 +1094,12 @@ import Flapjack.Test.CrepArithStoreByteParity
 import Flapjack.Test.CrepArithExtCallParity
 import Flapjack.Test.CrepArithIfParity
 import Flapjack.Test.CrepToLoopCompileProgParity
+import Flapjack.Test.CrepToLoopOriginalNamesProductionParity
+import Flapjack.Test.PanSourceEntryParity
+import Flapjack.Test.PanNativeWordPrefixParity
+import Flapjack.Test.PanNativeFrontendPrefixParity
+import Flapjack.Test.PanTargetEntryParity
+import Flapjack.Test.CrepToLoopNativeDeclarationsParity
 import Flapjack.Test.LoopCallEnvParity
 import Flapjack.Test.InstructionTransfer
 import Flapjack.Test.ArtifactFormat
@@ -1175,6 +1199,8 @@ import Flapjack.Test.L3RiscvCrossFormatParity
 import Flapjack.Test.WordGcFunOkParity
 import Flapjack.Test.WordSimpCompileExpParity
 import Flapjack.Test.WordInstSelectExactParity
+import Flapjack.Test.WordInstPullExpExecutableParity
+import Flapjack.Test.WordInstSelectorExecutableParity
 
 
 
@@ -1558,6 +1584,7 @@ def main : IO Unit := do
     Flapjack.Test.LabToTargetRemoveLabelsParity.runChecks,
     Flapjack.Test.LabToTargetShmemInfoParity.runChecks,
     Flapjack.Test.LabToTargetCompileParity.runChecks,
+    Flapjack.Test.SourceToFlatPrimConfigParity.runChecks,
     Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks,
 
     checkEq "Cake return 0 generated words"
@@ -1921,6 +1948,12 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepToLoopCompFuncParity.runChecks,
     Flapjack.Test.CrepArithExactParity.runChecks,
     Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
+    Flapjack.Test.CrepToLoopOriginalNamesProductionParity.runChecks,
+    Flapjack.Test.PanSourceEntryParity.runChecks,
+    Flapjack.Test.PanNativeWordPrefixParity.runChecks,
+    Flapjack.Test.PanNativeFrontendPrefixParity.runChecks,
+    Flapjack.Test.PanTargetEntryParity.runChecks,
+    Flapjack.Test.CrepToLoopNativeDeclarationsParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
     Flapjack.Test.CakeStackReseatParity.runChecks,
     Flapjack.Test.RiscVMemOpParity.runChecks,
@@ -1935,6 +1968,10 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.WordStackCallParity.runChecks,
     Flapjack.Test.RiscVMemOpParity.runChecks,
     Flapjack.Test.WordInstNormalizeParity.runChecks,
+    Flapjack.Test.WordInstPullExpExecutableParity.runChecks,
+    Flapjack.Test.WordInstSelectorExecutableParity.runChecks,
+    Flapjack.Test.WordToWordExecutableParity.runChecks,
+    Flapjack.Test.CompileProgMaxExecutableParity.runChecks,
     Flapjack.Test.CakeForcedParity.runChecks,
     Flapjack.Test.CakeMkBijParity.runChecks,
     Flapjack.Test.CakeSsaSetupParity.runChecks,
@@ -2026,6 +2063,13 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.RegAllocProductionFixedTags.runChecks,
     Flapjack.Test.RegAllocProductionColourLookup.runChecks,
     Flapjack.Test.WordCseProductionScalarKeys.runChecks,
+    Flapjack.Test.WordCseProductionJoinParity.runChecks,
+    Flapjack.Test.WordCseProductionFactAuxParity.runChecks,
+    Flapjack.Test.WordCseProductionMemoryParity.runChecks,
+    Flapjack.Test.WordCseProductionArithmeticParity.runChecks,
+    Flapjack.Test.WordCseProductionHeapLocParity.runChecks,
+    Flapjack.Test.WordCseProductionAssignParity.runChecks,
+    Flapjack.Test.WordCseProductionProgramParity.runChecks,
     Flapjack.Test.BalancedMapCore.runChecks,
     Flapjack.Test.BalancedMapRotations.runChecks,
     Flapjack.Test.BalancedMapInsert.runChecks,
@@ -2121,7 +2165,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackRawCallJumpLowerParity.runChecks,
     Flapjack.Test.StackEvaluateMonoParity.runChecks,
     Flapjack.Test.BytesInMemoryDomainParity.runChecks,
-    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
+    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
+    Flapjack.Test.PanToWordGoodCodeParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1

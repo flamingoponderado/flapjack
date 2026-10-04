@@ -439,6 +439,14 @@ DEFINITION_RE = re.compile(
     r"(?:def|abbrev|opaque|theorem|lemma)\s+([^\s:({\[]+)"
 )
 DOCUMENTED_MISMATCHES = {
+    ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Labels.lean", "compileNamesLabels"): (
+        "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml", "compile_to_word_conventions",
+        "PR1213 source review: only names/labels conjuncts; the full theorem is separately tagged in CompileConventions.Output. This helper must remain untagged."
+    ),
+    ("Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean", "compileOutputConventions"): (
+        "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml", "compile_to_word_conventions",
+        "PR1213 source review: only output-convention conjuncts; the full theorem follows separately. This helper must remain untagged."
+    ),
     ("Flapjack/Pancake/Proofs/CrepInline/UnreachElimProgSize.lean", "unreachElimProgSize"): (
         "cakeml/pancake/proofs/crep_inlineProofScript.sml", "unreach_elim_prog_size",
         "flapjack-ds10 (source comparison, 2026-09-30; bead flapjack-pxn.18.5.5.50; documented_mismatch). HOL unreach_elim_prog_size (crep_inlineProofScript.sml:1730-1733), elaborated type in scripts/hol-probes/crep_inline_prog_size_type_probe.out, is forall (p q : 'a crepLang$prog) (r : early_exit option) (f : 'a -> num). unreach_elim p = (q,r) ==> prog_size f q <= prog_size f p, where 'a is the same bare HOL type index that indexes 'a word. The untagged Lean declaration quantifies an independent {alpha : Type} (f : alpha -> Nat), an extra type quantifier: it is implied by each HOL instance only because prog_size never applies f, which does not license replacing the bare index carrier. A BitVec-width-domain rendering was attempted and rejected by coordinator review (words_as_type_indexed_bitvec licenses HOL word values, not arbitrary bare alpha; checker-green is not review acceptance). Faithful translation/review of the bare index carrier, or a reviewed size-family translation removing the irrelevant function uniformly, remains open."
@@ -1735,6 +1743,40 @@ DOCUMENTED_MISMATCHES = {
 # Proofs/ and are inventoried automatically; counterpart-side witnesses and
 # induction helpers belong beside their semantic definitions instead.
 INFRASTRUCTURE_THEOREMS = {
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeFormals.lean", "allocatorWithSsaAndCopy_metadata"):
+        "Actual copy/SSA consumer retains its observed producer state and formal list; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeSpillState.lean", "allocatorWithSsaAndCopy_spillState"):
+        "Actual copy/SSA consumer constructs its observed spill state from final program and colouring; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyInstructionMemoryGuard"):
+        "Flapjack runtime memory-domain invariant of native copy instructions; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyProgramMemoryGuard"):
+        "Flapjack runtime memory-domain invariant of full native copy propagation; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyWrapperMemoryGuard"):
+        "Unconditional executed native-copy memory-guard transport including rejected-input fallback; no separate HOL declaration.",
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean', 'filter_lookup'): 'Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean', 'inline_top_valid'): 'Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim.',
+
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'holFmapAsFiniteSupportWitness'): 'Flapjack-specific canonical imported context toBroad/ofBroad roundtrip witness for the finite-support qualifier of the full original theorem in the same module; no separate HOL declaration.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'compileList_length'): 'Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'heads_length'): 'Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileExpValidity.lean', 'compile_valid'): 'Flapjack-specific internal list-length or mutual-induction proof factoring for the separately tagged full original expression compiler validity theorem in the same module; no standalone HOL declaration or completed port claim.',
+
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'everyInstOk_nestedDecsCodec'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'everyInstOkLess_storeGlobalsCodec'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'everyInstOkLess_storesCodec'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'everyInstOkLess_loadShapeCodec'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'everyInstOkLess_cexpHeadsCodec'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'everyInstOkLess_compFieldCodec'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'binaryExpNative_iff'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'binaryListNative_iff'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean', 'binaryProgNative_iff'): 'Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises.',
+
+    ('Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean', 'binary_append'): 'Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean', 'binary_seqCallRet'): 'Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean', 'binary_smartSeq'): 'Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean', 'panBinary_retToTail_eq'): 'Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises.',
+    ('Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean', 'panBinary_seqAssoc_eq'): 'Flapjack-specific Boolean factoring for the four original PanSimp validity theorem ports in this module; no independent HOL declaration. List append fold, smart-sequence/tail-call support and Bool equality recursion assemble the separately tagged full original iff/implication results without additional premises.',
+
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningRefreshArguments'): ('Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningPrepareArguments'): ('Flapjack-specific returning Call preparation factoring of original8298-8410, no standalone HOL declaration. Actual source getVars/paired-cut guards and original SSA/map/frame derive first native rename NONE/new SSA/frame plus argument reads through original SSA map (the actual compiler uses original map), then convention Move2*(i+1), rereads, preserved new stack SSA/frame and mapped paired-cut image domains/scoped relations/injections. No target-run or desired post-relation premise. Existing original-lookup preservation, physical ignore updates, get/set and cut lemmas discharge obligations. Full returning Call/callee/stack/return/exception-handler and fullSSA remain open on flapjack-sola-callreturn.'),
     ('Flapjack/Compiler/Backend/WordAlloc/Proofs/SSASemanticCallReturn.lean', 'returningCalleeTransport'): ('Flapjack-specific inline factoring of original returning Call8422-8477, no standalone HOL declaration. Actual mapped paired-cut domains/injections, second-cut value relation and matching handler labels derive a source root permutation, complete callee-entry state equality after stack replacement and value-equal stacks; existing total evaluateStackSwap supplies result-sensitive body transport. No target evaluation or desired callee equality premise. Full returning Call return/exception restoration and full SSA remain open on flapjack-sola-callreturn.'),
@@ -1857,6 +1899,7 @@ VALID_STATUSES = {
     "reviewed_fmap_as_finite_support_equality_words_as_type_indexed_bitvec",
     "reviewed_words_as_type_indexed_bitvec",
     "reviewed_word_dimension_as_width",
+    "reviewed_word_dimensions_as_widths",
     "reviewed_reals_as_rational_cuts",
     "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
     "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
@@ -2017,7 +2060,7 @@ def tagged_declarations(
              fmap_parameters, fmap_existentials, dimension_width,
              fmap_function_positions,
              fmap_heterogeneous_function_positions, reals_cuts,
-             fmap_equality, result_observations) in HOL_ATTRIBUTE_SITES(
+             fmap_equality, result_observations, dimension_widths) in HOL_ATTRIBUTE_SITES(
                  lines, include_fmap_existentials=True,
                  include_word_dimension_width=True,
                  include_fmap_function=True,
@@ -2025,6 +2068,7 @@ def tagged_declarations(
                  include_reals_as_rational_cuts=True,
                  include_fmap_as_finite_support_equality=True,
                  include_result_observations=True,
+                 include_word_dimensions_widths=True,
              ):
             lean_name = FIND_LEAN_DECL(lines, line - 1)
             key = (rel, lean_name)
@@ -2035,7 +2079,7 @@ def tagged_declarations(
                      boundary_fields, fmap_fields, fmap_result, fmap_relation,
                      fmap_equalities, words_bitvec, fmap_parameters,
                      fmap_existentials, dimension_width, fmap_function_positions,
-                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations)
+                     fmap_heterogeneous_function_positions, reals_cuts, fmap_equality, result_observations, dimension_widths)
             if key in tagged and tagged[key] != value:
                 raise ValueError(f"conflicting @[hol] references for {rel}:{lean_name}")
             tagged[key] = value
@@ -2051,7 +2095,7 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
         fmap_result, fmap_relation, fmap_equalities, words_bitvec, fmap_parameters,
         fmap_existentials, dimension_width,
         fmap_function_positions, fmap_heterogeneous_function_positions, reals_cuts,
-        fmap_equality, result_observations,
+        fmap_equality, result_observations, dimension_widths,
     ) in tagged.items():
         entry = {
             "hol_path": hol_path,
@@ -2092,6 +2136,8 @@ def build_inventory(root: Path = ROOT) -> list[dict[str, Any]]:
             entry["fmap_as_finite_support_equalities"] = True
         if words_bitvec:
             entry["words_as_type_indexed_bitvec"] = True
+        if dimension_widths:
+            entry["word_dimensions_as_widths"] = list(dimension_widths)
         if dimension_width:
             entry["word_dimension_as_width"] = dimension_width
         if reals_cuts:
@@ -2404,6 +2450,7 @@ def validate_inventory(
         reals_cuts = bool(tag[15]) if tag is not None and len(tag) > 15 else False
         fmap_equality = bool(tag[16]) if tag is not None and len(tag) > 16 else False
         result_observations = tag[17] if tag is not None and len(tag) > 17 else ()
+        dimension_widths = tag[18] if tag is not None and len(tag) > 18 else ()
         manifest_observations = tuple(record.get("fmap_as_finite_support_result_observations", ()))
         observation_status = "reviewed_fmap_as_finite_support_result_observations"
         if manifest_observations != result_observations:
@@ -2560,6 +2607,24 @@ def validate_inventory(
             errors.append(
                 f"{key[0]}:{key[1]}: reviewed_word_dimension_as_width needs a matching @[hol] qualifier"
             )
+        manifest_dimensions = tuple(record.get("word_dimensions_as_widths", ()))
+        if manifest_dimensions != dimension_widths:
+            errors.append(f"{key[0]}:{key[1]}: manifest word_dimensions_as_widths does not match its @[hol] tag")
+        if dimension_widths:
+            if len(dimension_widths) != 2 or len(set(dimension_widths)) != 2:
+                errors.append(f"{key[0]}:{key[1]}: word_dimensions_as_widths requires exactly two distinct dimensions")
+            if (dimension_width or words_bitvec or list_fields or names_fields or boundary_fields
+                    or fmap_fields or fmap_result or fmap_relation or fmap_equalities or fmap_equality
+                    or fmap_parameters or fmap_existentials or fmap_function_positions
+                    or fmap_heterogeneous_function_positions or result_observations):
+                errors.append(f"{key[0]}:{key[1]}: word_dimensions_as_widths conflicts with other representation qualifiers except reals_as_rational_cuts")
+            if status != "reviewed_word_dimensions_as_widths":
+                errors.append(f"{key[0]}:{key[1]}: word_dimensions_as_widths needs reviewed_word_dimensions_as_widths status, never reviewed_exact")
+            note = reviewer.lower() if isinstance(reviewer, str) else ""
+            if "source" not in note or "word_dimensions_as_widths" not in note or any(name.lower() not in note for name in dimension_widths):
+                errors.append(f"{key[0]}:{key[1]}: word_dimensions_as_widths requires a source-comparison note naming both dimensions")
+        elif status == "reviewed_word_dimensions_as_widths":
+            errors.append(f"{key[0]}:{key[1]}: reviewed_word_dimensions_as_widths needs a matching @[hol] qualifier")
         if bool(record.get("reals_as_rational_cuts", False)) != reals_cuts:
             errors.append(
                 f"{key[0]}:{key[1]}: manifest reals_as_rational_cuts does not match its @[hol] tag"
@@ -2567,7 +2632,7 @@ def validate_inventory(
         other_qualified = bool(
             list_fields or names_fields or boundary_fields or fmap_fields or fmap_result
             or fmap_relation or fmap_equalities or words_bitvec or fmap_parameters
-            or fmap_existentials or dimension_width or fmap_function_positions
+            or fmap_existentials or dimension_width or dimension_widths or fmap_function_positions
         )
         if reals_cuts:
             if status == "reviewed_exact":

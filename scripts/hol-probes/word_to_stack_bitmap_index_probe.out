@@ -1,0 +1,10 @@
+index_width1_wrap=(Seq (const_inst (22 :num) (2w :word1))
+   (StackStore (22 :num) (0 :num) :unit stackLang$prog),
+ Append (List [(4w :word1)]) (List [(0w :word1)]),(2 :num))
+index_width8_wrap=(Seq (const_inst (22 :num) (256w :word8))
+   (StackStore (22 :num) (0 :num) :8 stackLang$prog),
+ Append (List [(4w :word8)]) (List [(2w :word8)]),(256 :num))
+index_width8_below=(Seq (const_inst (22 :num) (255w :word8))
+   (StackStore (22 :num) (0 :num) :8 stackLang$prog),
+ Append (List [(4w :word8)]) (List [(2w :word8)]),(255 :num))
+index_empty_frame=((Skip :8 stackLang$prog),List [(4w :word8)],(255 :num))

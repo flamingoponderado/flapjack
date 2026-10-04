@@ -26,17 +26,19 @@ The port keeps Cake's structure; its only deviations are about the carrier:
   through a constructor-for-constructor immediate codec; shared arithmetic
   keys also execute native `arithToNumList` through the positional codec,
   and load-offset keys execute native `loadToNumList`;
-* the two `num_map`s, the `store_name` alist and the two balanced maps are
-  represented by association lists (`lookupNatInfo` is Cake's `lookup_any`,
-  a first-match lookup, and `wordCseInsert` is a replacement insert);
+* the two native sparse register maps, store-name association list and two
+  native balanced fact maps use `Std.TreeMap` in the executed knowledge;
+  complete five-field and program correspondence is kernel-checked on the
+  source image, with a measured exception in
+  `docs/benchmarks/cse-production/README.md`;
 * the fact tables pass the reviewed native `listCmp` directly to TreeMap;
   this comparator agrees unconditionally with the previous Lean list ordering;
-* `WordMemOp` has no immediate address offset, so the address offset in
-  `loadToNumList` is always `0`;
-* Cake's `fpWrites`/FP rows and the `AddOverflow`/`SubOverflow` carriers do
-  not exist in the port, and the port's five-register `.addCarry` has no
-  Cake counterpart, so it is never CSE'd (Cake's `can_mem_arith` catch-all is
-  `F` as well).
+* zero-offset memory uses `.mem`, while nonzero offsets use `.memOffset`;
+  the native decoder canonicalizes the redundant `.memOffset ... 0` form;
+* native Skip/FP instruction forms remain outside the executed instruction
+  carrier. Overflow operations and native four-position AddCarry are covered;
+  the separate five-register `.addCarry` has no Cake counterpart and cannot
+  be shared or silently converted.
 -/
 
 namespace Flapjack.RiscV
@@ -125,18 +127,15 @@ def wordCseIsCurrHeap : WordStore α → Bool
   | .currHeap => true
   | _ => false
 
-/-! Cake's `knowledge` keeps `to_canonical`, `to_latest` and `gets_mem` in
-`num_map`s and `instrs_mem`/`loads_mem` in balanced maps keyed by numeral
-lists (`word_cseScript.sml`), so every insert and lookup is logarithmic.
-Holding them as association lists made each insert rebuild the whole list and
-each lookup scan it, and `word_common_subexp_elim` was the largest
-non-allocator cost on the real guest: 1785 ms of a 1930 ms preprocess chain
-on its biggest function.
+/-! Native knowledge uses two sparse register trees, a store-name association
+list and two balanced fact trees. The executed representation uses TreeMap
+for all five fields and the reviewed native list comparator for both fact maps.
 
-Every key in these maps is unique -- the list form removed the old binding
-before consing the new one -- and they are only ever read back by key, so
-replacing the lists with trees changes no value the pass computes.  The
-whole-program byte comparison in the commit message is the evidence. -/
+`ProductionProgram` proves complete five-field and returned-program transport,
+and `ProductionAllocatorInput` derives the source image at the actual native
+SSA/first-cleanup boundary. The measured performance exception for retaining
+these executed trees is recorded in `docs/benchmarks/cse-production/README.md`.
+The broader diagnostic instruction extension is outside that source-image claim. -/
 abbrev WordCseRegMap := Std.TreeMap Nat Nat
 abbrev WordCseFactMap :=
   Std.TreeMap (List Nat) Nat Compiler.Backend.WordCse.listCmp
@@ -667,23 +666,10 @@ def wordCseProg [WordCseHash α] : WordCseKnowledge → WordProg α → WordProg
         (fun data register => wordCseRecordInst data register [48, source])
   | data, .store address value =>
       (.store address value, { data with loadsMem := ∅ })
-  | data, .assign name value =>
-      /- Instruction selection leaves a load whose address does not fit
-         `WordInst.mem` as this carrier.  `word_cse` used to pass it through
-         untouched, so a repeated load was never shared: reading one global
-         twice emitted the global-table load twice where Cake emits it once.
-         Treat the carrier exactly as the `.mem` load case does. -/
-      match value with
-      | .load (.op .add [.var address, .const offset]) =>
-          let data := wordCseInvalidate data name
-          if name % 2 == 0 || address % 2 == 0 || address = name then
-            (.assign name value, data)
-          else
-            let canonicalAddress := wordCseCanonicalRegs' name data address
-            wordCseAddToLoad (wordCseRegisterRead data canonicalAddress) name
-              (wordCseLoadOffsetToNumList .load canonicalAddress offset)
-              (.assign name value)
-      | _ => (.assign name value, data)
+  /- Original word_cse Assign is unconditional identity. Instruction selection
+     emits memory loads as mem/memOffset before CSE; an unselected load
+     expression must retain its original knowledge and program as well. -/
+  | data, .assign name value => (.assign name value, data)
   | data, .raise exception => (.raise exception, data)
   | data, .return label values => (.return label values, data)
   | data, .tick => (.tick, data)
@@ -709,7 +695,12 @@ def wordCseProg [WordCseHash α] : WordCseKnowledge → WordProg α → WordProg
 termination_by _ program => sizeOf program
 decreasing_by all_goals decreasing_trivial
 
-/-- Cake's `word_common_subexp_elim`. -/
+/-- Optimized executed CSE wrapper. Complete source-image correspondence is
+proved by `ProductionProgram.wordCommonSubexpElim_production_transport`; the
+actual allocator input image is derived by `ProductionAllocatorInput`. The
+measured TreeMap exception is in `docs/benchmarks/cse-production/README.md`.
+This untagged executable API does not claim the rejected native instruction
+carriers or establish the original HOL compiler correctness theorem. -/
 def wordCseProp [WordCseHash α] (program : WordProg α) : WordProg α :=
   (wordCseProg wordCseEmpty program).1
 

@@ -1,0 +1,48 @@
+beq_decode_universal=∀(rs1 :word5) (rs2 :word5) (imm :word12). DecodeAny (Word (Encode (Branch (BEQ (rs1,rs2,imm))))) = Branch (BEQ (rs1,rs2,imm))
+beq_decode_hypotheses=0
+beq_zero=T
+beq_all_ones=T
+beq_alias_sign=T
+beq_mixed=T
+beq_source_clause=Encode (Branch (BEQ ((rs1v :word5),(rs2v :word5),(immv :word12)))) = SBtype (opc (24w :word8),(0w :word3),rs1v,rs2v,immv)
+beq_carrier_types=(immv :word12) : :word12, (rs2v :word5) : :word5, (rs1v :word5) : :word5
+bne_decode_universal=∀(rs1 :word5) (rs2 :word5) (imm :word12). DecodeAny (Word (Encode (Branch (BNE (rs1,rs2,imm))))) = Branch (BNE (rs1,rs2,imm))
+bne_decode_hypotheses=0
+bne_zero=T
+bne_all_ones=T
+bne_alias_sign=T
+bne_mixed=T
+bne_source_clause=Encode (Branch (BNE ((rs1v :word5),(rs2v :word5),(immv :word12)))) = SBtype (opc (24w :word8),(1w :word3),rs1v,rs2v,immv)
+bne_carrier_types=(immv :word12) : :word12, (rs2v :word5) : :word5, (rs1v :word5) : :word5
+blt_decode_universal=∀(rs1 :word5) (rs2 :word5) (imm :word12). DecodeAny (Word (Encode (Branch (BLT (rs1,rs2,imm))))) = Branch (BLT (rs1,rs2,imm))
+blt_decode_hypotheses=0
+blt_zero=T
+blt_all_ones=T
+blt_alias_sign=T
+blt_mixed=T
+blt_source_clause=Encode (Branch (BLT ((rs1v :word5),(rs2v :word5),(immv :word12)))) = SBtype (opc (24w :word8),(4w :word3),rs1v,rs2v,immv)
+blt_carrier_types=(immv :word12) : :word12, (rs2v :word5) : :word5, (rs1v :word5) : :word5
+bltu_decode_universal=∀(rs1 :word5) (rs2 :word5) (imm :word12). DecodeAny (Word (Encode (Branch (BLTU (rs1,rs2,imm))))) = Branch (BLTU (rs1,rs2,imm))
+bltu_decode_hypotheses=0
+bltu_zero=T
+bltu_all_ones=T
+bltu_alias_sign=T
+bltu_mixed=T
+bltu_source_clause=Encode (Branch (BLTU ((rs1v :word5),(rs2v :word5),(immv :word12)))) = SBtype (opc (24w :word8),(6w :word3),rs1v,rs2v,immv)
+bltu_carrier_types=(immv :word12) : :word12, (rs2v :word5) : :word5, (rs1v :word5) : :word5
+bge_decode_universal=∀(rs1 :word5) (rs2 :word5) (imm :word12). DecodeAny (Word (Encode (Branch (BGE (rs1,rs2,imm))))) = Branch (BGE (rs1,rs2,imm))
+bge_decode_hypotheses=0
+bge_zero=T
+bge_all_ones=T
+bge_alias_sign=T
+bge_mixed=T
+bge_source_clause=Encode (Branch (BGE ((rs1v :word5),(rs2v :word5),(immv :word12)))) = SBtype (opc (24w :word8),(5w :word3),rs1v,rs2v,immv)
+bge_carrier_types=(immv :word12) : :word12, (rs2v :word5) : :word5, (rs1v :word5) : :word5
+bgeu_decode_universal=∀(rs1 :word5) (rs2 :word5) (imm :word12). DecodeAny (Word (Encode (Branch (BGEU (rs1,rs2,imm))))) = Branch (BGEU (rs1,rs2,imm))
+bgeu_decode_hypotheses=0
+bgeu_zero=T
+bgeu_all_ones=T
+bgeu_alias_sign=T
+bgeu_mixed=T
+bgeu_source_clause=Encode (Branch (BGEU ((rs1v :word5),(rs2v :word5),(immv :word12)))) = SBtype (opc (24w :word8),(7w :word3),rs1v,rs2v,immv)
+bgeu_carrier_types=(immv :word12) : :word12, (rs2v :word5) : :word5, (rs1v :word5) : :word5

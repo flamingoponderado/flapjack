@@ -158,6 +158,19 @@ TYPED_CAPTURE_CONTRACTS = {
     'stack_to_lab_compile_lab_pres_probe.out': (
         ('MAP_FST_compile_compile_statement', 'next_lab_non_zero_3211_statement', 'MAP_prog_to_section_FST_3272_statement', 'extract_label_store_list_code_statement', 'stack_to_lab_compile_lab_pres_statement'),
         ()),
+    # PR1213 word_cse family (review 5978345241 should-fix 7).
+    'word_cse_comp_correct_probe.out': (
+        ('comp_correct_statement', 'word_common_subexp_elim_correct_statement'),
+        ()),
+    'word_cse_moves_probe.out': (
+        ('lookup_map_insert0_statement', 'get_set_vars_lemma_statement', 'MEM_FST_reduc_statement', 'canonicalMoveRegs_lemma_statement', 'data_inv_clock_statement'),
+        ()),
+    'word_cse_move_locals_typed_probe.out': (
+        ('MAP_FST_lemma_source_statement_typed', 'MAP_SND_lemma_source_statement_typed', 'get_set_vars_not_in_source_statement_typed', 'get_set_vars_in_source_statement_typed', 'get_set_vars_in_2_source_statement_typed', 'lookup_set_vars_not_in_source_statement_typed', 'list_insert_insert_source_statement_typed', 'data_inv_insert_canonical_pair_source_statement_typed', 'data_inv_insert_pair_source_statement_typed', 'data_inv_move_pairs_source_statement_typed', 'if_eq_rw_source_statement_typed', 'evaluate_arith_clock_source_statement_typed', 'evaluate_load_clock_source_statement_typed'),
+        ()),
+    'word_cse_conventions_probe.out': (
+        ('word_cse_full_inst_ok_less_statement', 'word_cse_pre_alloc_conventions_statement', 'word_cse_every_inst_distinct_tar_reg_statement', 'word_cse_every_inst_two_reg_statement', 'every_inst_distinct_tar_reg_word_common_subexp_elim_statement', 'pre_alloc_conventions_word_common_subexp_elim_statement', 'full_inst_ok_less_word_common_subexp_elim_statement'),
+        ()),
 }
 
 
