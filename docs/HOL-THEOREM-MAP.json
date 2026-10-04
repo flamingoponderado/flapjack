@@ -95413,5 +95413,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for the wordConvsProof word_good_handlers group: a Boolean-equation form of a cited HOL ⇔ lemma, an auxiliary-pass or SSA-state fact factored out of the HOL proofs, or the per-element full_compile_single step of word_good_handlers_word_to_word_incr_helper; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Proofs/WordConventions.lean",
+    "lean_name": "compileToWordConventions2",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_to_word_conventions2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
   }
 ]
