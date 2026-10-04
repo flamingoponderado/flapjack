@@ -8629,3 +8629,44 @@ missing original evidence. These syntactic checks supplement source review and
 Lean kernel checking; full encoder assembly and whole compiler correctness
 remain separate open work. No executed compiler path changes here.
 `pan_to_crep_compile_exp_validity_probe.out` captures the complete original typed expression compiler validity theorem (974–1007), retaining context/expression/output-list/shape binders, source binary-Panop guard and actual compile pair equation. The native proof covers every expression and mutual list constructor and uses the shared Prop-valued Crep predicate. Captures support source review, not cross-language equivalence.
+### Source/native load value correspondence
+
+`riscv_memory_read_value_probeScript.sml` checks eight matched original
+`read_mem_word`/`rawReadData` values at counts 1, 2, 4 and 8, at zero and
+end-of-address-space aligned positions. Both memories use the byte function
+`w2w (p + 128w)`; every source and native truncated value is checked against
+the same constant, also kernel-checked in `CorrectnessEncoding/MemoryRead.lean`.
+The probe captures both original clauses, free-variable types and zero hypotheses.
+
+The generic source value recursion retains independent positive word widths,
+arbitrary counts, both endian modes and value extraction on assertion failure.
+The native RV64 correspondence derives selected bytes from initial target state
+relation and source success. The memLoad wrapper derives its domain and LOG2
+alignment guards; no target-run or desired postrelation premise is added. These
+untagged compositions have no separately named HOL originals. Full Mem encoder
+assertions, interference and store post-state correspondence remain open.
+
+`load_globals_alt_probe.out` captures the complete original typed arbitrary-address/count GENLIST equality. The address is fixed word5; native expression dimension remains independently quantified. This prerequisite supports Call-handler compiler validity, not full source-pass or compiler correctness.
+
+### Full original native Call encoder case
+
+`CorrectnessEncoding/Call.lean` assembles the original riscv_target258–263
+near JALrd1 and far AUIPCrd1/JALRrd1=rs1 paths, preserving the complete
+riscv_targetProof723–730 conclusion. Source asmStep supplies lr=1 and the
+original offset/alignment guards. Near witness0 returns PC+4; far witness1
+returns PC+8 with intermediate PC4 and env0/env1. Actual four/eight encoded
+bytes derive full native Fetch/Decode/Run/Next. The aliased JALR target uses
+old register1 before its link write; no non-alias or target-run premise is added.
+All environments, both assertions, code-byte preservation, PC membership,
+source-domain memory frames and the complete final state relation remain.
+Native Run retains the reviewed reals_as_rational_cuts limit (SOUNDNESS item8).
+
+`riscv_target_call_probeScript.sml` specializes the full original theorem only
+to Call, capturing the complete typed statement, carrier binders, zero proof
+hypotheses and kernel marker. `check-riscv-target-call.py` pins the reviewed
+statement and actual paths/evidence; twelve mutation checks cover added range
+or post-state premises, lost universal environments/assertions, changed AUIPC,
+source/link alias, arithmetic shift, return-link value and original evidence.
+These regression checks supplement source review and Lean kernel checking;
+full encoder assembly and compiler correctness remain separate open work.
+No executed compiler definition changes in this delivery.
