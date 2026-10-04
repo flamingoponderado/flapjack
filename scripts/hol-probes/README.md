@@ -8105,3 +8105,15 @@ and the original compiler definition's extracted first LET argument. Eight
 kernel observations cover empty/default/already-first/later main, first-only
 relocation with duplicate names, and exported flags/duplicates. Regenerate with
 `HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+
+### Full Binop source and native register Run compositions
+
+`CorrectnessEncoding/BinopRun.lean` derives the full source post-state from
+original asm_step for every operator and Reg/Imm operand, and proves all five
+native register Run equations over arbitrary registers and the entire state.
+The untagged local compositions retain original zero-register and alias behavior
+and have no target-run premise. Fresh `riscv_binop_run_probe.out` captures five
+complete original source definitions and five arbitrary native Run compositions,
+all with zero stored hypotheses and original inferred carrier types. The
+capture supplements kernel checking and source review; it is not cross-language
+equivalence evidence. The full encoder assertion case remains open.

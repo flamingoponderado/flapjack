@@ -7710,3 +7710,8 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_binop_run_probeScript.sml riscv_binop_run_probe.out \
+  source_reg_imm_clause source_reg_imm_hypotheses source_reg_imm_types source_binop_upd_clause source_binop_upd_hypotheses source_binop_upd_types source_arith_upd_clause source_arith_upd_hypotheses source_arith_upd_types source_asm_step_clause source_asm_step_hypotheses source_asm_step_types source_bop_r_clause source_bop_r_hypotheses source_bop_r_types native_add_clause native_add_hypotheses native_add_types native_sub_clause native_sub_hypotheses native_sub_types native_and_clause native_and_hypotheses native_and_types native_or_clause native_or_hypotheses native_or_types native_xor_clause native_xor_hypotheses native_xor_types \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
