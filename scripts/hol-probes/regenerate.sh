@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_convs_simp_const_fp_labels_probeScript.sml word_convs_simp_const_fp_labels_probe.out \
+  extract_labels_const_fp_loop_typed extract_labels_const_fp_loop_proved extract_labels_const_fp_loop_hypotheses extract_labels_const_fp_typed extract_labels_const_fp_proved extract_labels_const_fp_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_convs_simp_instructions_probeScript.sml word_convs_simp_instructions_probe.out \
   dest_Seq_no_inst_typed dest_Seq_no_inst_proved dest_Seq_no_inst_hypotheses Seq_assoc_no_inst_typed Seq_assoc_no_inst_proved Seq_assoc_no_inst_hypotheses every_inst_SmartSeq_typed every_inst_SmartSeq_proved every_inst_SmartSeq_hypotheses every_inst_drop_consts_typed every_inst_drop_consts_proved every_inst_drop_consts_hypotheses every_inst_const_fp_typed every_inst_const_fp_proved every_inst_const_fp_hypotheses try_if_hoist2_no_inst_typed try_if_hoist2_no_inst_proved try_if_hoist2_no_inst_hypotheses simp_duplicate_if_no_inst_typed simp_duplicate_if_no_inst_proved simp_duplicate_if_no_inst_hypotheses simp_push_out_if_no_inst_typed simp_push_out_if_no_inst_proved simp_push_out_if_no_inst_hypotheses compile_exp_no_inst_typed compile_exp_no_inst_proved compile_exp_no_inst_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -4695,6 +4698,12 @@ run_probe word_to_word_syntactic_probeScript.sml word_to_word_syntactic_probe.ou
 run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no_install_compile_single_probe.out \
   no_install_no_alloc_compile_single_correct_statement no_install_no_alloc_compile_single_correct_typed \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
+  gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe pan_to_target_stack_size_source_replay_probeScript.sml pan_to_target_stack_size_source_replay_probe.out \
+  no_alloc_word_evaluate_replay_statement option_lt_SOME_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe pan_to_word_no_install_code_probeScript.sml pan_to_word_no_install_code_probe.out \
   loop_to_word_comp_not_created_statement pan_to_word_compile_prog_no_mt_code_typed \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
@@ -7028,7 +7037,13 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
   run_probe l3_step_store_probeScript.sml l3_step_store_probe.out \
     sd_hypotheses sd_statement sw_hypotheses sw_statement sh_hypotheses sh_statement sb_hypotheses sb_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
- run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
+  run_probe l3_step_muldiv_probeScript.sml l3_step_muldiv_probe.out \
+    mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_warith_probeScript.sml l3_step_warith_probe.out \
+    skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
 
@@ -7922,3 +7937,12 @@ run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
 run_probe word_convs_push_out_labels_probeScript.sml word_convs_push_out_labels_probe.out \
   pushOutLabelsHelper_typed pushOutLabelsHelper_proved pushOutLabelsHelper_hypotheses pushOutLabels_typed pushOutLabels_proved pushOutLabels_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_hoist_prerequisites_probeScript.sml word_convs_hoist_prerequisites_probe.out \
+  hoistPrerequisite1_typed hoistPrerequisite1_proved hoistPrerequisite1_hypotheses hoistPrerequisite2_typed hoistPrerequisite2_proved hoistPrerequisite2_hypotheses hoistPrerequisite3_typed hoistPrerequisite3_proved hoistPrerequisite3_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_shift_decode_probeScript.sml riscv_shift_decode_probe.out \
+  sll_decode_zero sll_decode_all_ones sll_decode_high_bit sll_decode_alias sll_encode_source_clause sll_carrier_types sll_symbolic_query sll_source_hypotheses srl_decode_zero srl_decode_all_ones srl_decode_high_bit srl_decode_alias srl_encode_source_clause srl_carrier_types srl_symbolic_query srl_source_hypotheses sra_decode_zero sra_decode_all_ones sra_decode_high_bit sra_decode_alias sra_encode_source_clause sra_carrier_types sra_symbolic_query sra_source_hypotheses srli_decode_zero srli_decode_all_ones srli_decode_high_bit srli_decode_alias srli_encode_source_clause srli_carrier_types srli_symbolic_query srli_source_hypotheses srai_decode_zero srai_decode_all_ones srai_decode_high_bit srai_decode_alias srai_encode_source_clause srai_carrier_types srai_symbolic_query srai_source_hypotheses \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
