@@ -45015,7 +45015,7 @@
     "inherits_reals_as_rational_cuts": true,
     "hol_name": "panLang_compile_word_to_word_thm",
     "lean_name": "panLang_compile_word_to_word_thm",
-    "reviewer": "PR1213 source comparison: original word_to_wordProofScript.sml:2219 and word_to_word_compile_semantics_probe.out typed row quantify unused existential clk : beta. Erased this vacuous existential uniformly under the documented inhabited HOL type convention, not specialized to Nat. All actual quantified state/code/FFI carriers, six guards and full semantic conclusion unchanged."
+    "reviewer": "PR1213 source comparison: original word_to_wordProofScript.sml:2219 and word_to_word_compile_semantics_probe.out typed row quantify unused existential clk : beta. Erased this vacuous existential uniformly under the documented inhabited HOL type convention, not specialized to Nat. All actual quantified state/code/FFI carriers, six guards and full semantic conclusion unchanged. The existing inherited reals_as_rational_cuts assumption remains: WordSem IEEE operations use the documented rational-cut rendering, not a new assurance claim."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
