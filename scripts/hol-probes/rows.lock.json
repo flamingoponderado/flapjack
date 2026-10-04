@@ -10448,6 +10448,12 @@
       "rows": 6
     },
     {
+      "out": "word_to_stack_inst_skip_probe.out",
+      "sha256": "445849e3132e27e13c1983c237214e7807fba11d3d83cf7004f17498a74d12e6",
+      "bytes": 745,
+      "rows": 3
+    },
+    {
       "bytes": 167,
       "out": "word_to_stack_instruction_maximum_probe.out",
       "rows": 14,
