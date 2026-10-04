@@ -53,7 +53,7 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/wordLangScript.sml` | `Flapjack/Pancake/WordLang.lean` |
 | `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean`, `Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean` (`prim_src_config_def`, `prim_src_config_eq`) |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` and its `BackendCommon/BvlStubs.lean` submodule (`BackendCommon/BoolTags.lean`: `false_tag`, `true_tag`, `bool_to_tag`) |
-| `compiler/backend/proofs/word_depthProofScript.sml` | `Flapjack/Compiler/Backend/WordDepthProof/` (`Helpers.lean` lines 12-146 helper lemmas) |
+| `compiler/backend/proofs/word_depthProofScript.sml` | `Flapjack/Compiler/Backend/WordDepthProof/` (`Helpers.lean` lines 12-146 helper lemmas; `CallGraphLemma.lean` `max_depth_call_graph_lemma` assembled from the per-case `CallGraphLemma/*` pieces; `CallGraph.lean` `max_depth_call_graph`, `max_depth_Call_NONE`) |
 | `compiler/backend/flatLangScript.sml` | `Flapjack/Compiler/Backend/FlatLang.lean` (`op`, `ctor_id`, `type_id`, `type_group_id`, `pat`, `pat_bindings_def`, `exp`, `bool_id_def`, `Bool_def`, `SmartIf_def`; the script has no `dec` datatype) |
 | `compiler/backend/source_to_flatScript.sml` | `Flapjack/Compiler/Backend/SourceToFlat/Config.lean` (carriers `var_name`, `environment`, stores, `next_indices`, `config`), `SourceToFlat/Helpers.lean` (`compile_var` .. `simple_dlet`, lines 46-340 except `compile_exp`), `SourceToFlat/CompileExp.lean` (mutual `compile_exp_def`), `SourceToFlat/CompileDecs.lean` (`compile_decs_def`, `empty_config_def`) |
 | `compiler/backend/bvl_to_bviScript.sml` | `Flapjack/Compiler/Backend/BvlToBvi.lean` and its `BvlToBvi/Config.lean` submodule |

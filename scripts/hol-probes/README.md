@@ -8534,3 +8534,50 @@ slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
 caller and whole-body production correspondence remain open. Pancake's
 LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
 corpus does not distinguish this nonempty-GC regression.
+
+`pan_simp_validity_probe.out` captures all four fully quantified original PanSimp binary-Panop validity theorems (ret_to_tail, seq_assoc, compile, compile_prog) with show_types enabled and no open hypotheses/free variables. Lean retains the original equivalences/implications over exact positive-width syntax. These captures are source-review evidence, not a cross-language equivalence proof.
+
+### Universal native JAL and JALR decoder prerequisites
+
+`CorrectnessEncoding/DecodeControl.lean` proves unconditional compositions of
+actual `Encode` and `Step.DecodeAny` for all JAL word5 destinations and word20
+logical halfword offsets, and all JALR word5 destinations/sources and word12
+byte offsets. The original model has the same carriers and layouts:
+`riscvScript.sml` UJtype lines 19025–19033 and Encode clauses 19099/19107.
+The scattered JAL immediate reconstructs all twenty bits; JALR retains aliased
+link/source registers. These untagged local composition lemmas have no separately
+named original theorem and introduce no decoder or target-execution premise.
+
+`riscv_control_decode_probeScript.sml` proves both universally quantified
+compositions in the original HOL kernel with zero hypotheses. Eight boundary
+EVALs include zero, all ones, sign bits, scattered offsets, and rd=rs1; captured
+source clauses and carrier types supplement the universal proofs. These are
+prerequisites for Jump, Call and far JumpCmp, not full encoder correctness.
+
+### Native memory Next composition
+
+`riscv_memory_step_probeScript.sml` evaluates actual original NextRISCV for all
+eight emitted memory families, with signed-offset and zero-register fixtures.
+It also captures the literal original Next and PC-update equations, zero open
+hypotheses, and their carrier types. These finite observations accompany the
+unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
+they do not establish full Mem encoder correctness or discharge its original
+source/initial-relation, environment, memory-domain and assertion obligations.
+
+### Universal native conditional-branch decoder prerequisites
+
+`CorrectnessEncoding/DecodeBranches.lean` proves the six actual BEQ/BNE/BLT/
+BLTU/BGE/BGEU Encode/DecodeAny compositions for every word5 source register
+and word12 logical halfword offset. Original SBtype (riscvScript.sml
+19012–19020) stores imm11/imm9..4/rs2/rs1/funct3/imm3..0/imm10/opcode;
+asImm12 reconstructs all twelve offset bits. Register zero, all aliases and
+negative offsets remain admitted. The local lemmas are untagged infrastructure
+because there are no separately named original composition theorems.
+
+`riscv_branch_decode_probeScript.sml` proves all six universal identities in
+the original HOL kernel, captures their typed statements and zero hypotheses,
+and checks zero, all-ones, aliased sign-bit and mixed-input boundaries for each.
+The original Encode clauses and word5/word12 carriers are also captured.
+These decoder prerequisites do not prove the full JumpCmp case or compiler
+correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
+run `check-riscv-branch-decode.py` to detect source/evidence drift.

@@ -1,5 +1,6 @@
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
 import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
+import Flapjack.RiscV.CorrectnessEncoding.MemoryStep
 import Flapjack.RiscV.CorrectnessEncoding.DecodeMemory
 import Flapjack.RiscV.CorrectnessEncoding.Shift
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
@@ -29,6 +30,8 @@ import Flapjack.Compiler.Encoders.RiscV.Target.AsmOkRewrites
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
 import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
+import Flapjack.RiscV.CorrectnessEncoding.DecodeControl
+import Flapjack.RiscV.CorrectnessEncoding.DecodeBranches
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
@@ -60,6 +63,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Compiler.Backend.WordDepthProof.Helpers
+import Flapjack.Compiler.Backend.WordDepthProof.CallGraph
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord.LabPres
@@ -937,6 +941,7 @@ import Flapjack.Pancake.LoopToWord.Proofs.NoInstallCode
 import Flapjack.Pancake.LoopToWord.Proofs.LabPres
 import Flapjack.Compiler.Backend.WordAlloc.ProductionAllocationLimit
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAAllocation
+import Flapjack.Compiler.Backend.WordAlloc.ProductionCopyAllocation
 import Flapjack.Compiler.Backend.WordAlloc.ProductionFullSSAOutputCodec
 import Flapjack.Pancake.LoopToWord.CompFuncCodecDomain
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.SSAMergeMoveLookups
@@ -2068,6 +2073,7 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState
@@ -2663,3 +2669,4 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
+

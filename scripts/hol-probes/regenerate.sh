@@ -7421,6 +7421,10 @@ run_probe word_props_code_grows_probeScript.sml word_props_code_grows_probe.out 
   evaluate_code_only_grows_typed evaluate_NONE_stack_size_const_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe word_depth_call_graph_probeScript.sml word_depth_call_graph_probe.out \
+  max_depth_call_graph_lemma_typed max_depth_call_graph_typed max_depth_Call_NONE_typed \
+  "$cake_dir/compiler/backend/proofs/word_depthProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe pan_target_root_leaves_probeScript.sml pan_target_root_leaves_probe.out \
   UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed DIV_LESS_DIV_typed WORD_LS_IMP_typed lsr_lsl_typed byte_aligned_mult_typed compile_word_to_stack_sfs_aux_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -8213,6 +8217,11 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_control_decode_probeScript.sml riscv_control_decode_probe.out \
+  jal_decode_universal jal_decode_hypotheses jalr_decode_universal jalr_decode_hypotheses jal_zero jal_all_ones jal_link_sign jal_scattered_bits jalr_zero jalr_all_ones jalr_link_alias jalr_mixed jal_source_clause jal_carrier_types jalr_source_clause jalr_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe riscv_memory_decode_probeScript.sml riscv_memory_decode_probe.out \
   ld_decode_zero ld_decode_all_ones ld_decode_mixed_sign ld_encode_source_clause ld_encode_source_hypotheses ld_carrier_types lwu_decode_zero lwu_decode_all_ones lwu_decode_mixed_sign lwu_encode_source_clause lwu_encode_source_hypotheses lwu_carrier_types lhu_decode_zero lhu_decode_all_ones lhu_decode_mixed_sign lhu_encode_source_clause lhu_encode_source_hypotheses lhu_carrier_types lbu_decode_zero lbu_decode_all_ones lbu_decode_mixed_sign lbu_encode_source_clause lbu_encode_source_hypotheses lbu_carrier_types sd_decode_zero sd_decode_all_ones sd_decode_mixed_sign sd_encode_source_clause sd_encode_source_hypotheses sd_carrier_types sw_decode_zero sw_decode_all_ones sw_decode_mixed_sign sw_encode_source_clause sw_encode_source_hypotheses sw_carrier_types sh_decode_zero sh_decode_all_ones sh_decode_mixed_sign sh_encode_source_clause sh_encode_source_hypotheses sh_carrier_types sb_decode_zero sb_decode_all_ones sb_decode_mixed_sign sb_encode_source_clause sb_encode_source_hypotheses sb_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
@@ -8236,3 +8245,16 @@ run_probe pan_source_entry_word_probeScript.sml pan_source_entry_word_probe.out 
 run_probe riscv_memory_bytes_probeScript.sml riscv_memory_bytes_probe.out \
   read_offset0 read_offset1 read_offset2 read_offset3 read_offset4 read_offset5 read_offset6 read_offset7 read_wrap_last read_wrap_cross write1_zero write1_edge write1_wrap write1_cross write2_zero write2_edge write2_wrap write2_cross write4_zero write4_edge write4_wrap write4_cross write8_zero write8_edge write8_wrap write8_cross read_source_clause read_source_hypotheses read_carrier_types write_source_clause write_source_hypotheses write_carrier_types word_read_source_clause word_read_source_hypotheses word_read_carrier_types word_write_source_clause word_write_source_hypotheses word_write_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
+  every_inst_ok_less_ret_to_tail every_inst_ok_less_seq_assoc every_inst_ok_less_pan_simp_compile every_inst_ok_less_pan_simp_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
+  ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_branch_decode_probeScript.sml riscv_branch_decode_probe.out \
+  beq_decode_universal beq_decode_hypotheses beq_zero beq_all_ones beq_alias_sign beq_mixed beq_source_clause beq_carrier_types bne_decode_universal bne_decode_hypotheses bne_zero bne_all_ones bne_alias_sign bne_mixed bne_source_clause bne_carrier_types blt_decode_universal blt_decode_hypotheses blt_zero blt_all_ones blt_alias_sign blt_mixed blt_source_clause blt_carrier_types bltu_decode_universal bltu_decode_hypotheses bltu_zero bltu_all_ones bltu_alias_sign bltu_mixed bltu_source_clause bltu_carrier_types bge_decode_universal bge_decode_hypotheses bge_zero bge_all_ones bge_alias_sign bge_mixed bge_source_clause bge_carrier_types bgeu_decode_universal bgeu_decode_hypotheses bgeu_zero bgeu_all_ones bgeu_alias_sign bgeu_mixed bgeu_source_clause bgeu_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
