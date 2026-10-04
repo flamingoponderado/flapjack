@@ -95484,5 +95484,13 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: compared complete original AddCarry constructor and riscv_targetScript144-149 six-instruction SLTU31/ADD/SLTU/ADD/SLTU31/OR lowering, original arithUpd/arith_ok and encoder_correct_def. Only original asmStep+initial targetStateRel premise; complete existential n/all-env/interference/asserts/asserts2/code-byte/PC/final relation conclusion. All six actual fetch/decode/Run/Next transitions derived from emitted bytes and accepted native definitions; n=5, original env indices0..5. Destination/source guards only original r1!=r3 and r1!=r4, r1=r2 and other allowed aliases retained; visible zero/scratch31 exclusions derive asm_ok, original full-current-GPR projection preserves scratch without extra premise. Two additions and two overflow flags kernel-proved equal exact source natural sum and carry, final PC24. Both assertion predicates retained, raw Next preserves outside-domain memory. Same-counterpart AddCarry submodules are untagged composition infrastructure with no separate HOL original. Broad native Run/target closure inherits reals_as_rational_cuts SOUNDNESS8; no full compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_asm_ok",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean",
+    "lean_name": "riscvAsmOkRewrites",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared generated asmLib.target_asm_rwts theorem at riscv_targetScript333-337 and original asmScript asm_ok/inst_ok/arith_ok/fp_ok/reg_imm_ok/offset_ok with fresh fully typed GEN_ALL original theorem capture: 41 conjuncts,17 binder carriers,hyp0/provedT. Full original source order: Skip,Const,Binop Reg/Imm,combined Shift reg_imm,Div/LongMul/LongDiv/AddCarry/AddOverflow/SubOverflow,eight memory forms,sixteen FP forms all false,Jump,JumpCmp Reg/Imm,Call,JumpReg,Loc. All numeric and fixed word64 variables retained; original word-valued r renamed callTarget, GEN_ALL numeric r-prime renamed r. Exact HolAsm/HolInst/HolArith/HolRegImm and reviewed BinOp/Shift/Cmp/FP carriers, current canonical riscvConfig and asmOkExact; no duplicate config/source evaluator. All visible bounds and avoid0/2/3/4/31 explicit, original aliases only; source signed word comparisons represented by toInt at exact word64 constants, strict Sub lower bound and XOR -1 exception, zero-shift restriction, memory/jump/cjump endpoints and code alignment retained. No new premises or subset; private Sum reductions are kernel-proved untagged local canonical-equality compositions. Parent16-field generated config delivery remains separate."
   }
 ]
