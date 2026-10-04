@@ -8236,3 +8236,4 @@ with opcode0110011, funct3=100 and funct7=1. This local composition has no
 separately named HOL theorem and remains untagged infrastructure. Original
 zero/all-ones/mixed EVAL cases and the full typed Encode clause are regression
 evidence; they do not establish whole encoder correctness or cross-language equivalence.
+`word_to_stack_comp_correct_full_probeScript.sml` captures the closed original whole `comp_correct` theorem, its full typed statement and zero hypotheses. It is stored-theorem regression evidence, not a replay of the giant local proof or a HOL-to-Lean equivalence proof. The Lean assembly retains all original guards and result branches.
