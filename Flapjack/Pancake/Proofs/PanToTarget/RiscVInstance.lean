@@ -9,7 +9,8 @@ configuration Pancake actually compiles with: `pancake_backend_conf riscv_backen
 (`compilerScript.sml:744-747`, `gc_kind := None`) and a machine configuration satisfying
 `is_riscv_machine_config`. The configuration premises `backend_config_ok`, `mc_conf_ok` and
 `mc_init_ok` are discharged by `riscvPancakeBackendConfigOk`, the tagged
-`riscv_machine_config_ok` and `riscvPancakeInitOk`; the ISA and FFI-name premises are decided
+`riscv_machine_config_ok` and `riscvPancakeInitOk`; the ISA, FFI-name and configuration-only
+heap-bound (`riscvPancakeHeapLimit_lt`) premises are decided
 by the concrete configuration. Every other premise of the top theorem is kept unchanged.
 
 Untagged: HOL has no Pancake RISC-V instantiation (its `riscv_compile_correct` instantiates
@@ -25,6 +26,17 @@ open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Backend
 open Flapjack.Compiler.Backend.BackendProof Flapjack.Basis.Pure.MlString
 open Flapjack.Pancake.PanLang Flapjack.SemanticsPropsHOL
 open Flapjack.Compiler.Backend.RiscVConfig Flapjack.Compiler.Encoders.RiscV.Target
+
+/-- The top theorem's configuration-only heap bound `bytes_in_word * (2 * max_heap_limit
+(:64) c.data_conf - 1) < dimword (:64)`, decided for Pancake's RISC-V configuration
+(Flapjack-specific; no HOL original). -/
+theorem riscvPancakeHeapLimit_lt :
+    (wordSemBytesInWord : BitVec 64).toNat *
+        (2 * DataToWord.maxHeapLimit 64
+          (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig).dataConf - 1) < 2 ^ 64 := by
+  simp only [DataToWord.maxHeapLimit, DataToWord.shiftLength, riscvBackendConfig,
+    Flapjack.wordShiftAmount, wordSemBytesInWord]
+  decide
 
 /-- `pan_to_target_compile_semantics` for RISC-V with `pancake_backend_conf
 riscv_backend_config` and `is_riscv_machine_config mc`: the configuration premises are
@@ -72,10 +84,6 @@ theorem panToTargetCompileSemanticsRiscV {σ : Type}
       (wordSemBytesInWord : BitVec 64).toNat *
         (2 * DataToWord.maxHeapLimit 64
           (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig).dataConf - 1) ∧
-    (wordSemBytesInWord : BitVec 64).toNat *
-        (2 * DataToWord.maxHeapLimit 64
-          (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig).dataConf - 1) <
-      2 ^ 64 ∧
     s.ffi = ffi ∧ mc.target.config.bigEndian = s.be ∧
     panInstalled bytes cbspace bitmaps data_sp c'.labConf.ffiNames
       (heapRegs (Flapjack.Compiler.pancakeBackendConf riscvBackendConfig).stackConf.regNames)
@@ -89,7 +97,7 @@ theorem panToTargetCompileSemanticsRiscV {σ : Type}
         (fun b' => b' = PanSemStateFiniteExact.semanticsDecls s start pan_code) b := by
   intro hmc ⟨hcomp, hgood, hparams, hnodup, hcode, hlocals, hglobals, heids, heshapes, hpos,
     hsize, hlt, hbase, halloc, hheapLen, htop, hglobLe, hmemaddrs, halign, hadj2, hadj4, hlo,
-    hhi, hheap, hheapLt, hffi, hbe, hinst, hstart, hfail⟩
+    hhi, hheap, hffi, hbe, hinst, hstart, hfail⟩
   have hconfig : mc.target.config = riscvConfig := by rw [hmc.1]; rfl
   have hcfg := riscvPancakeBackendConfigOk
   rw [← hconfig] at hcfg
@@ -99,7 +107,7 @@ theorem panToTargetCompileSemanticsRiscV {σ : Type}
     heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start
     ⟨hcomp, hgood, hparams, hnodup, hcode, hlocals, hglobals, heids, heshapes, hcfg,
       riscvMachineConfigOk mc hmc, hinit, by rw [hconfig]; decide, hpos, hsize, hlt, hbase,
-      halloc, hheapLen, htop, hglobLe, hmemaddrs, halign, hadj2, hadj4, hlo, hhi, hheap, hheapLt,
-      hffi, hbe, trivial, hinst, hstart, hfail⟩
+      halloc, hheapLen, htop, hglobLe, hmemaddrs, halign, hadj2, hadj4, hlo, hhi, hheap,
+      riscvPancakeHeapLimit_lt, hffi, hbe, trivial, hinst, hstart, hfail⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget
