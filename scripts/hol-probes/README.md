@@ -8520,8 +8520,65 @@ field in the five source-preparation observations already captured by
 uses the existing native `mainFirstHOL`, with no distinct-name or target-run
 premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
 
-`riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
+`riscv_memory_bytes_probe.out` freshly evaluates ten varied-byte raw reads and sixteen raw stores at zero, word-edge, wrapping and cross-word addresses, including selected bytes, nearby untouched bytes and complete non-memory state frames. Twelve additional rows capture the four literal original memory clauses, zero hypotheses and full carriers. These finite observations are regression evidence, not universal equivalence. `MemoryBytes.lean` kernel-proves the byte read/write and complete outside-written-region frame needed by all four original aligned source access sizes; alignment-to-region bounds are derived from original alignment. It also proves unrestricted raw low-byte/LBU correspondence. No helper is tagged as a separately named HOL theorem, and full Mem fetch/Next/source-state/assertion assembly remains open.
+
+### Production physical spill bitmap index
+
+The `word_stack_frame_probe` rows `one_spill_physical_slot=1` and
+`one_spill_bitmap=[3w]` directly evaluate original `wReg1 44 (22,2,1)`
+and `write_bitmap` at k22/fprime1. `CakeFramePolicy` checks the executed
+location-derived builder with physical slot1 against the original bitmap3,
+including the existing source goldens8/12/14 with actual physical input slots.
+`ProductionBitmapTransport` kernel checks initial/insertion/packing, physical
+slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
+caller and whole-body production correspondence remain open. Pancake's
+LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
+corpus does not distinguish this nonempty-GC regression.
 
 `pan_simp_validity_probe.out` captures all four fully quantified original PanSimp binary-Panop validity theorems (ret_to_tail, seq_assoc, compile, compile_prog) with show_types enabled and no open hypotheses/free variables. Lean retains the original equivalences/implications over exact positive-width syntax. These captures are source-review evidence, not a cross-language equivalence proof.
 
 `pan_to_crep_validity_helpers_probe.out` captures seven complete original typed list/field/head/store/load validity statements from pan_to_wordProofScript. Guards retain matched declaration lengths, actual pair/Option results, and the stores nonempty conditional; global addresses remain word5. Native kernel proofs retain the original equivalences/implications. Full arithmetic/compiler/inlining validity remains separate; captures support source review, not cross-language equivalence.
+### Universal native JAL and JALR decoder prerequisites
+
+`CorrectnessEncoding/DecodeControl.lean` proves unconditional compositions of
+actual `Encode` and `Step.DecodeAny` for all JAL word5 destinations and word20
+logical halfword offsets, and all JALR word5 destinations/sources and word12
+byte offsets. The original model has the same carriers and layouts:
+`riscvScript.sml` UJtype lines 19025–19033 and Encode clauses 19099/19107.
+The scattered JAL immediate reconstructs all twenty bits; JALR retains aliased
+link/source registers. These untagged local composition lemmas have no separately
+named original theorem and introduce no decoder or target-execution premise.
+
+`riscv_control_decode_probeScript.sml` proves both universally quantified
+compositions in the original HOL kernel with zero hypotheses. Eight boundary
+EVALs include zero, all ones, sign bits, scattered offsets, and rd=rs1; captured
+source clauses and carrier types supplement the universal proofs. These are
+prerequisites for Jump, Call and far JumpCmp, not full encoder correctness.
+
+### Native memory Next composition
+
+`riscv_memory_step_probeScript.sml` evaluates actual original NextRISCV for all
+eight emitted memory families, with signed-offset and zero-register fixtures.
+It also captures the literal original Next and PC-update equations, zero open
+hypotheses, and their carrier types. These finite observations accompany the
+unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
+they do not establish full Mem encoder correctness or discharge its original
+source/initial-relation, environment, memory-domain and assertion obligations.
+
+### Universal native conditional-branch decoder prerequisites
+
+`CorrectnessEncoding/DecodeBranches.lean` proves the six actual BEQ/BNE/BLT/
+BLTU/BGE/BGEU Encode/DecodeAny compositions for every word5 source register
+and word12 logical halfword offset. Original SBtype (riscvScript.sml
+19012–19020) stores imm11/imm9..4/rs2/rs1/funct3/imm3..0/imm10/opcode;
+asImm12 reconstructs all twelve offset bits. Register zero, all aliases and
+negative offsets remain admitted. The local lemmas are untagged infrastructure
+because there are no separately named original composition theorems.
+
+`riscv_branch_decode_probeScript.sml` proves all six universal identities in
+the original HOL kernel, captures their typed statements and zero hypotheses,
+and checks zero, all-ones, aliased sign-bit and mixed-input boundaries for each.
+The original Encode clauses and word5/word12 carriers are also captured.
+These decoder prerequisites do not prove the full JumpCmp case or compiler
+correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
+run `check-riscv-branch-decode.py` to detect source/evidence drift.

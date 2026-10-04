@@ -1,0 +1,38 @@
+read_offset0=T
+read_offset1=T
+read_offset2=T
+read_offset3=T
+read_offset4=T
+read_offset5=T
+read_offset6=T
+read_offset7=T
+read_wrap_last=T
+read_wrap_cross=T
+write1_zero=T
+write1_edge=T
+write1_wrap=T
+write1_cross=T
+write2_zero=T
+write2_edge=T
+write2_wrap=T
+write2_cross=T
+write4_zero=T
+write4_edge=T
+write4_wrap=T
+write4_cross=T
+write8_zero=T
+write8_edge=T
+write8_wrap=T
+write8_cross=T
+read_source_clause=rawReadData p ms = (let pAddrIdx = (63 >< 3) p; align = w2n ((2 >< 0) p) in if align = 0 then MEM pAddrIdx ms else (63 >< 0) (MEM (pAddrIdx + 1w) ms @@ MEM pAddrIdx ms ≫ (align * 8)))
+read_source_hypotheses=0
+read_carrier_types=ms : :riscv_state, p : :word64
+write_source_clause=rawWriteData (p,v,n) ms = (let mask = 1w ≪ (n * 8) + -1w; pAddrIdx = (63 >< 3) p; align = w2n ((2 >< 0) p); v' = MEM pAddrIdx ms in if align = 0 then write'MEM (mask && v ‖ v' && ¬mask,pAddrIdx) ms else if align + n ≤ 8 then write'MEM (v' && ¬(mask ≪ (align * 8)) ‖ mask ≪ (align * 8) && v ≪ (align * 8),pAddrIdx) ms else (let dw_mask = w2w mask ≪ (align * 8); dw_new = dw_mask && w2w v ≪ (align * 8) ‖ ¬dw_mask && MEM (pAddrIdx + 1w) ms @@ v' in write'MEM ((63 >< 0) dw_new,pAddrIdx) (write'MEM ((127 >< 64) dw_new,pAddrIdx + 1w) ms)))
+write_source_hypotheses=0
+write_carrier_types=ms : :riscv_state, n : :num, v : :word64, p : :word64
+word_read_source_clause=MEM idx ms = (let b = w2w idx ≪ 3 in ms.MEM8 (b + 7w) @@ ms.MEM8 (b + 6w) @@ ms.MEM8 (b + 5w) @@ ms.MEM8 (b + 4w) @@ ms.MEM8 (b + 3w) @@ ms.MEM8 (b + 2w) @@ ms.MEM8 (b + 1w) @@ ms.MEM8 b)
+word_read_source_hypotheses=0
+word_read_carrier_types=ms : :riscv_state, idx : :61 word
+word_write_source_clause=write'MEM (v,idx) ms = (let b = w2w idx ≪ 3; s = ms with MEM8 := ms.MEM8⦇b + 7w ↦ (63 >< 56) v⦈; s = s with MEM8 := s.MEM8⦇b + 6w ↦ (55 >< 48) v⦈; s = s with MEM8 := s.MEM8⦇b + 5w ↦ (47 >< 40) v⦈; s = s with MEM8 := s.MEM8⦇b + 4w ↦ (39 >< 32) v⦈; s = s with MEM8 := s.MEM8⦇b + 3w ↦ (31 >< 24) v⦈; s = s with MEM8 := s.MEM8⦇b + 2w ↦ (23 >< 16) v⦈; s = s with MEM8 := s.MEM8⦇b + 1w ↦ (15 >< 8) v⦈ in s with MEM8 := s.MEM8⦇b ↦ (7 >< 0) v⦈)
+word_write_source_hypotheses=0
+word_write_carrier_types=ms : :riscv_state, idx : :61 word, v : :word64

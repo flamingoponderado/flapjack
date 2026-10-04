@@ -1,0 +1,22 @@
+ld_next_sign=T
+ld_next_zero=T
+lwu_next_sign=T
+lwu_next_zero=T
+lhu_next_sign=T
+lhu_next_zero=T
+lbu_next_sign=T
+lbu_next_zero=T
+sd_next_sign=T
+sd_next_zero=T
+sw_next_sign=T
+sw_next_zero=T
+sh_next_sign=T
+sh_next_zero=T
+sb_next_sign=T
+sb_next_zero=T
+next_source_clause=NextRISCV ms = (let (f,s) = Fetch ms; s = Run (DecodeAny f) s in if s.exception ≠ NoException then NONE else (let pc = PC s in case NextFetch s of NONE => update_pc (pc + Skip s) s | SOME (BranchTo a) => update_pc a (write'NextFetch NONE s) | SOME Ereturn => NONE | SOME Mrts => NONE | SOME (Trap v5) => NONE))
+next_source_hypotheses=0
+next_carrier_types=ms : :riscv_state
+pc_source_clause=update_pc v ms = SOME (write'PC v ms)
+pc_source_hypotheses=0
+pc_carrier_types=ms : :riscv_state, v : :word64

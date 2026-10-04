@@ -14,7 +14,8 @@ theorem allocatorWithSsa_metadata {α : Type} [OfNat α 0] [WordCseHash α] [BEq
     (output : CakeAllocationWithColour α)
     (produced : cakeAllocateWordFunctionAfterDeadWithColourWithSsa dead unreach ssa label parameters source = some output) :
     ∃ body, ssa parameters.length source = some (output.ssaState, output.parameters, body) := by
-  unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa at produced
+  unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at produced
   split at produced <;> simp_all
   cases ssaResult : ssa parameters.length source with
   | none => simp [ssaResult] at produced

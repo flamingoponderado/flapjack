@@ -96472,6 +96472,218 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendProofScript 2871-2878: read_limits asm_conf c mc ms = get_stack_heap_limit (2 * max_heap_limit (:a) c.data_conf - 1) (get_reg (find_name reg_names 2), ... 3, ... 4); asm_conf retained though unused; independent machine state/projection types as (a,b,c) machine_config. Typed capture backend_read_limits probe (literal replay)."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionLe_max",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_le_max",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: option_le (OPTION_MAP2 MAX n m) x ⇔ option_le n x ∧ option_le m x. OPTION_MAP2 f is Option.map₂ f over num option (SOME iff both SOME). Typed capture backend_props_option_max probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionLe_eq_eqns",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_le_eq_eqns",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: all four conjuncts in source order, each a biconditional with the NONE disjunct. OPTION_MAP2 f is Option.map₂ f over num option (SOME iff both SOME). Typed capture backend_props_option_max probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionMap2_max_add",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "option_map2_max_add",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: both distribution conjuncts (left and right addend). OPTION_MAP2 f is Option.map₂ f over num option (SOME iff both SOME). Typed capture backend_props_option_max probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionMap2_max_comm",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "OPTION_MAP2_MAX_COMM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: OPTION_MAP2 MAX x y = OPTION_MAP2 MAX y x. OPTION_MAP2 f is Option.map₂ f over num option (SOME iff both SOME). Typed capture backend_props_option_max probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProps.lean",
+    "lean_name": "optionMap2_max_assoc",
+    "hol_path": "cakeml/compiler/backend/semantics/backendPropsScript.sml",
+    "hol_name": "OPTION_MAP2_MAX_ASSOC",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: OPTION_MAP2 MAX x (OPTION_MAP2 MAX y z) = OPTION_MAP2 MAX (OPTION_MAP2 MAX x y) z. OPTION_MAP2 f is Option.map₂ f over num option (SOME iff both SOME). Typed capture backend_props_option_max probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "optionLe_X_MAX_X",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "option_le_X_MAX_X",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: both conjuncts over num option. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "optionMap2_max_idempot",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "OPTION_MAP2_MAX_IDEMPOT",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: OPTION_MAP2 MAX x x = x over num option. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "optionMap2_some_0",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "OPTION_MAP2_SOME_0",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: both conjuncts ($+ and MAX with SOME 0). OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "maxDepth_mkBranch",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "max_depth_mk_Branch",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀t1 t2. max_depth s (mk_Branch t1 t2) = max_depth s (Branch t1 t2), free s bound. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "mem_maxDepthGraphs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "MEM_max_depth_graphs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ns name y. MEM name ns ∧ lookup name code = SOME y ⇒ option_le (max_depth_graphs ss [name] xs funs code) (max_depth_graphs ss ns xs funs code); code metadata alpha is the independent Metadata type, funs metadata num, free ss xs funs code bound. Word translation only: alpha prog is WordLangProgHOL (BitVec width) with [NeZero width]. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "optionLe_maxDepth_graph",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "option_le_max_depth_graph",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀funs h ns1 t x1 ns2. set ns2 ⊆ set ns1 ∧ LENGTH ns2 ≤ LENGTH ns1 ⇒ option_le (max_depth ss (call_graph funs h ns1 t x1)) (max_depth ss (call_graph funs h ns2 t x1)); set inclusion as membership implication. Word translation only: alpha prog is WordLangProgHOL (BitVec width) with [NeZero width]. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "optionLe_maxDepthGraphs",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "option_le_max_depth_graphs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ns ns1 ns2. set ns2 ⊆ set ns1 ∧ LENGTH ns2 ≤ LENGTH ns1 ⇒ option_le (max_depth_graphs ss ns ns1 funs funs2) (max_depth_graphs ss ns ns2 funs funs2); funs2 metadata independent. Word translation only: alpha prog is WordLangProgHOL (BitVec width) with [NeZero width]. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordDepthProof/Helpers.lean",
+    "lean_name": "length_less_size",
+    "hol_path": "cakeml/compiler/backend/proofs/word_depthProofScript.sml",
+    "hol_name": "LENGTH_LESS_size",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀name ns funs y. ¬MEM name ns ∧ set ns ⊆ domain funs ∧ ALL_DISTINCT ns ∧ lookup name funs = SOME y ⇒ LENGTH ns < size funs over polymorphic alpha num_map (Spt); domain membership is a successful lookup, ALL_DISTINCT is List.Nodup. OPTION_MAP2 is WordDepth.optionMap₂, option_le is BackendProps.optionLe. Typed capture word_depth_helpers probe (show_types, no hypotheses; [local] lemmas by literal source replay with the original tactics)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/CodeOnlyGrows.lean",
+    "lean_name": "evaluate_code_only_grows",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_code_only_grows",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4589-4626, all four binders !p s r t; evaluate (p,s) = (r,t) ⇒ subspt s.code t.code (sptSubspt); proved as in HOL by evaluate_ind over the 26 clauses with alloc/inst/mem_store/jump_exc/share_inst/cut_state/pop_env const lemmas, Install by subspt-union. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Props/CodeOnlyGrows.lean",
+    "lean_name": "evaluate_NONE_stack_size_const",
+    "hol_path": "cakeml/compiler/backend/semantics/wordPropsScript.sml",
+    "hol_name": "evaluate_NONE_stack_size_const",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 4628-4634, binders !p s t; evaluate (p,s) = (NONE,t) ⇒ stack_size t.stack = stack_size s.stack; from evaluate_stack_swap and s_key_eq_stack_size as in HOL. State carrier WordSemStateFiniteExact width C F (alpha word width, independent beta/gamma as C/F) with the reviewed fmap_as_finite_support [fpRegs, store] and words qualifiers. Inherits the reals_as_rational_cuts assumption (SOUNDNESS item 8) through evaluate/inst. Typed capture word_props_code_grows probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/OptionLe.lean",
+    "lean_name": "optionLe_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "option_le_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_wordProofScript 1779-1783: option_le x (SOME n) <=> ?m. x = SOME m /\\ m <= n over num option, with the reviewed BackendProps.optionLe; free x n explicit. Typed capture data_to_word_option_le probe (literal replay)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopInstOk",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_inst_ok_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2285-2292 all clauses: LDiv ISA in {ARMv8;MIPS;RISC_V} as disjunction, LLongMul both register implications, LLongDiv x86_64, otherwise T; independent asm_config/prog word dimensions kept as separate width binders. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2294-2302: forall ctxt prog l with conjunct order byte, addr, every_prog, domain(acc_vars prog LN) subset domain ctxt (pointwise sptDomain), INJ find_var on domain ctxt (pairwise injectivity on sptDomain as in locals_rel_def), lookup values nonzero and EVEN (m % 2 = 0); conclusion on FST (comp ctxt prog l). every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompFuncEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_comp_func_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2337-2341: comp_func n params body = p, every_prog, addr, byte (order kept). every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordCompileProgEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_compile_prog_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2355-2360: compile_prog lprog = wprog0, byte, addr, EVERY over lprog bodies; conclusion EVERY over wprog0 as membership quantification. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "loopToWordEveryInstOkLess",
+    "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
+    "hol_name": "loop_to_word_every_inst_ok_less",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original loop_to_wordProofScript 2372-2376: compile lprog = wprog0, byte, addr, EVERY; same conclusion. every_inst (inst_ok_less c) is everyInst over instOkLessExact c . HolInst.ofWordLangInst (as reviewed compile_to_word_conventions2); addr/byte_offset_ok 0w are asm*OffsetOkExact c 0. Typed capture loop_to_word_every_inst_ok_less probe."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "findVarHOL_ne_of_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: find_var of an in-domain variable differs from that of any other variable (HOL INJ_DEF/lookup_NONE_domain case split inside loop_to_word_comp_every_inst_ok_less)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "accVarsHOL_dom_left",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: domain(acc_vars p LN) is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/EveryInstOkLess.lean",
+    "lean_name": "accVarsHOL_dom_right",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: domain l is contained in domain(acc_vars p l), from acc_vars_acc."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
     "hol_name": "every_inst_ok_less_ret_to_tail",
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanSimpValidity.lean",

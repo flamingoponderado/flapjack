@@ -1,0 +1,5 @@
+option_le_max_typed=option_le (OPTION_MAP2 MAX (n :num option) (m :num option)) (x :num option) ⇔ option_le n x ∧ option_le m x
+option_le_eq_eqns_typed=(option_le (OPTION_MAP2 $+ (n :num option) (m :num option)) (OPTION_MAP2 $+ n (p :num option)) ⇔ n = (NONE :num option) ∨ option_le m p) ∧ (option_le (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ p n) ⇔ n = (NONE :num option) ∨ option_le m p) ∧ (option_le (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ p m) ⇔ m = (NONE :num option) ∨ option_le n p) ∧ (option_le (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ m p) ⇔ m = (NONE :num option) ∨ option_le n p)
+option_map2_max_add_typed=OPTION_MAP2 $+ (n :num option) (OPTION_MAP2 MAX (m :num option) (p :num option)) = OPTION_MAP2 MAX (OPTION_MAP2 $+ n m) (OPTION_MAP2 $+ n p) ∧ OPTION_MAP2 $+ (OPTION_MAP2 MAX m p) n = OPTION_MAP2 MAX (OPTION_MAP2 $+ m n) (OPTION_MAP2 $+ p n)
+OPTION_MAP2_MAX_COMM_typed=OPTION_MAP2 MAX (x :num option) (y :num option) = OPTION_MAP2 MAX y x
+OPTION_MAP2_MAX_ASSOC_typed=OPTION_MAP2 MAX (x :num option) (OPTION_MAP2 MAX (y :num option) (z :num option)) = OPTION_MAP2 MAX (OPTION_MAP2 MAX x y) z

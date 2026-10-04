@@ -1,0 +1,13 @@
+load "loop_to_wordProofTheory";
+open HolKernel Parse boolLib bossLib loop_to_wordProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = if null (hyp (loop_inst_ok_def)) then () else raise Fail "hypotheses: loop_inst_ok_def";
+val _ = (print "loop_inst_ok_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (loop_inst_ok_def)); print "\n");
+val _ = if null (hyp (loop_to_word_comp_every_inst_ok_less)) then () else raise Fail "hypotheses: loop_to_word_comp_every_inst_ok_less";
+val _ = (print "loop_to_word_comp_every_inst_ok_less_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (loop_to_word_comp_every_inst_ok_less)); print "\n");
+val _ = if null (hyp (loop_to_word_comp_func_every_inst_ok_less)) then () else raise Fail "hypotheses: loop_to_word_comp_func_every_inst_ok_less";
+val _ = (print "loop_to_word_comp_func_every_inst_ok_less_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (loop_to_word_comp_func_every_inst_ok_less)); print "\n");
+val _ = if null (hyp (loop_to_word_compile_prog_every_inst_ok_less)) then () else raise Fail "hypotheses: loop_to_word_compile_prog_every_inst_ok_less";
+val _ = (print "loop_to_word_compile_prog_every_inst_ok_less_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (loop_to_word_compile_prog_every_inst_ok_less)); print "\n");
+val _ = if null (hyp (loop_to_word_every_inst_ok_less)) then () else raise Fail "hypotheses: loop_to_word_every_inst_ok_less";
+val _ = (print "loop_to_word_every_inst_ok_less_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (loop_to_word_every_inst_ok_less)); print "\n");
