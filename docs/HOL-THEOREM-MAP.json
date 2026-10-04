@@ -95877,5 +95877,61 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source compared original Shift560-620, all four operators and Reg/Imm forms, sole source-step/initial target relation, complete original existential allenv/asserts/asserts2. Assembled eight full kernel cases without extra premises. Fresh full typed original specialization hyp0/provedT. Inherits reals_as_rational_cuts through full native target closure, SOUNDNESS item8."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml:881 DIVU = arithr [] over dfn'DIVU_def. Actual Thm.hyp captured in scripts/hol-probes/check-l3-step-divu.py are ArchBase <> 1w and rd <> 0w; the unconditional RV32 low-32 widening normal form and the explicit zero-divisor all-ones branch are preserved; no added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml:881 DIVU with the rd = 0w companion DIVU_NOP; actual hyp capture ArchBase <> 1w, rd = 0w; conclusion dfn'DIVU (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnMULNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MUL_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml MUL = arithr [] over dfn'MUL_def with the rd = 0w companion MUL_NOP; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-muldiv.py is exactly rd = 0w; conclusion identity dfn'MUL (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIV_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml DIV = arithr [] over dfn'DIV_def with the rd = 0w companion DIV_NOP; actual hyp rd = 0w; conclusion dfn'DIV (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REM_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml REM = arithr [] over dfn'REM_def with the rd = 0w companion REM_NOP; actual hyp rd = 0w; conclusion dfn'REM (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml REMU = arithr [] over dfn'REMU_def with the rd = 0w companion REMU_NOP; actual hyp rd = 0w; conclusion dfn'REMU (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/ConfigurationRewrites.lean",
+    "lean_name": "riscvConfigRewrites",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Generated HOL riscv_config (asmLib.target_asm_rwts, riscv_targetScript.sml:331): full source field bundle in original order -- ISA RISC_V, encode riscv_enc, big_endian F, code_alignment 2, link_reg SOME 1, avoid_regs [0;2;3;4;31], reg_count 32, fp_reg_count 0, two_reg_arith F, the signed Sub-lower-bound valid_imm lambda, and every offset pair with original endpoints. Reuses the existing native riscvConfig/riscvEnc defs (no duplicate variants). Typed capture: scripts/hol-probes/check-riscv-target-config.py."
   }
 ]

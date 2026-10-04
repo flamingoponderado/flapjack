@@ -7072,7 +7072,11 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     sd_hypotheses sd_statement sw_hypotheses sw_statement sh_hypotheses sh_statement sb_hypotheses sb_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_muldiv_probeScript.sml l3_step_muldiv_probe.out \
-    mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement source \
+    mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement \
+    mul_nop_hypotheses mul_nop_statement div_nop_hypotheses div_nop_statement rem_nop_hypotheses rem_nop_statement remu_nop_hypotheses remu_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_divu_probeScript.sml l3_step_divu_probe.out \
+    divu_hypotheses divu_statement divu_nop_hypotheses divu_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_warith_probeScript.sml l3_step_warith_probe.out \
     skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement \
@@ -7309,6 +7313,10 @@ run_probe riscv_target_slice_probeScript.sml riscv_target_slice_probe.out \
 
 run_probe riscv_target_state_probeScript.sml riscv_target_state_probe.out \
   riscv_next_statement riscv_next_hypotheses riscv_next_proved riscv_next_type riscv_ok_statement riscv_ok_hypotheses riscv_ok_proved riscv_ok_type riscv_proj_statement riscv_proj_hypotheses riscv_proj_proved riscv_proj_type riscv_target_statement riscv_target_hypotheses riscv_target_proved riscv_target_type riscv_target_fp_field riscv_target_fp_type \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+
+run_probe riscv_target_config_probeScript.sml riscv_target_config_probe.out \
+  riscv_config_statement riscv_config_hypotheses riscv_asm_ok_statement riscv_asm_ok_hypotheses source \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
 
 run_probe riscv_target_bytes_probeScript.sml riscv_target_bytes_probe.out \
