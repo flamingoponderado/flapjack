@@ -1,3 +1,4 @@
+import Flapjack.RiscV.NativeSource
 import Flapjack.RiscV.SourceRuntimeBackendOutput
 import Flapjack.RiscV.RuntimeImageBackendOutput
 import Flapjack.RiscV.NativeBackendOutput
@@ -2768,4 +2769,3 @@ front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
 
-import Flapjack.RiscV.NativeSource
