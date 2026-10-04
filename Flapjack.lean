@@ -28,6 +28,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
 import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
 import Flapjack.RiscV.CorrectnessEncoding.DecodeControl
+import Flapjack.RiscV.CorrectnessEncoding.DecodeBranches
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterOffset
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory

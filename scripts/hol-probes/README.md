@@ -8528,3 +8528,21 @@ compositions in the original HOL kernel with zero hypotheses. Eight boundary
 EVALs include zero, all ones, sign bits, scattered offsets, and rd=rs1; captured
 source clauses and carrier types supplement the universal proofs. These are
 prerequisites for Jump, Call and far JumpCmp, not full encoder correctness.
+
+### Universal native conditional-branch decoder prerequisites
+
+`CorrectnessEncoding/DecodeBranches.lean` proves the six actual BEQ/BNE/BLT/
+BLTU/BGE/BGEU Encode/DecodeAny compositions for every word5 source register
+and word12 logical halfword offset. Original SBtype (riscvScript.sml
+19012–19020) stores imm11/imm9..4/rs2/rs1/funct3/imm3..0/imm10/opcode;
+asImm12 reconstructs all twelve offset bits. Register zero, all aliases and
+negative offsets remain admitted. The local lemmas are untagged infrastructure
+because there are no separately named original composition theorems.
+
+`riscv_branch_decode_probeScript.sml` proves all six universal identities in
+the original HOL kernel, captures their typed statements and zero hypotheses,
+and checks zero, all-ones, aliased sign-bit and mixed-input boundaries for each.
+The original Encode clauses and word5/word12 carriers are also captured.
+These decoder prerequisites do not prove the full JumpCmp case or compiler
+correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
+run `check-riscv-branch-decode.py` to detect source/evidence drift.
