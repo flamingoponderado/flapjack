@@ -101,4 +101,54 @@ theorem optionLe_max_right (x n m : Option Nat) :
   rcases x with _ | _ <;> rcases n with _ | _ <;> rcases m with _ | _ <;>
     simp [optionLe]
 
+/-- Full original `option_le_max`:
+`option_le (OPTION_MAP2 MAX n m) x ⇔ option_le n x /\ option_le m x`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_le_max"]
+theorem optionLe_max (n m x : Option Nat) :
+    optionLe (Option.map₂ max n m) x ↔ optionLe n x ∧ optionLe m x := by
+  rcases x with _ | _ <;> rcases n with _ | _ <;> rcases m with _ | _ <;>
+    simp [optionLe]
+
+/-- Full original `option_le_eq_eqns`: the four cancellation laws of
+`option_le` under `OPTION_MAP2 $+` (`Option.map₂ (· + ·)`). -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_le_eq_eqns"]
+theorem optionLe_eq_eqns (n m p : Option Nat) :
+    (optionLe (Option.map₂ (· + ·) n m) (Option.map₂ (· + ·) n p) ↔
+      n = none ∨ optionLe m p) ∧
+    (optionLe (Option.map₂ (· + ·) n m) (Option.map₂ (· + ·) p n) ↔
+      n = none ∨ optionLe m p) ∧
+    (optionLe (Option.map₂ (· + ·) n m) (Option.map₂ (· + ·) p m) ↔
+      m = none ∨ optionLe n p) ∧
+    (optionLe (Option.map₂ (· + ·) n m) (Option.map₂ (· + ·) m p) ↔
+      m = none ∨ optionLe n p) := by
+  rcases n with _ | _ <;> rcases m with _ | _ <;> rcases p with _ | _ <;>
+    simp [optionLe]
+  omega
+
+/-- Full original `option_map2_max_add`: `OPTION_MAP2 $+` distributes over
+`OPTION_MAP2 MAX` on either side. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "option_map2_max_add"]
+theorem optionMap2_max_add (n m p : Option Nat) :
+    Option.map₂ (· + ·) n (Option.map₂ max m p) =
+        Option.map₂ max (Option.map₂ (· + ·) n m) (Option.map₂ (· + ·) n p) ∧
+    Option.map₂ (· + ·) (Option.map₂ max m p) n =
+        Option.map₂ max (Option.map₂ (· + ·) m n) (Option.map₂ (· + ·) p n) := by
+  rcases n with _ | _ <;> rcases m with _ | _ <;> rcases p with _ | _ <;>
+    simp [Nat.add_max_add_left, Nat.add_max_add_right]
+
+/-- Full original `OPTION_MAP2_MAX_COMM`:
+`OPTION_MAP2 MAX x y = OPTION_MAP2 MAX y x`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "OPTION_MAP2_MAX_COMM"]
+theorem optionMap2_max_comm (x y : Option Nat) :
+    Option.map₂ max x y = Option.map₂ max y x := by
+  rcases x with _ | _ <;> rcases y with _ | _ <;> simp [Nat.max_comm]
+
+/-- Full original `OPTION_MAP2_MAX_ASSOC`:
+`OPTION_MAP2 MAX x (OPTION_MAP2 MAX y z) = OPTION_MAP2 MAX (OPTION_MAP2 MAX x y) z`. -/
+@[hol "cakeml/compiler/backend/semantics/backendPropsScript.sml" "OPTION_MAP2_MAX_ASSOC"]
+theorem optionMap2_max_assoc (x y z : Option Nat) :
+    Option.map₂ max x (Option.map₂ max y z) = Option.map₂ max (Option.map₂ max x y) z := by
+  rcases x with _ | _ <;> rcases y with _ | _ <;> rcases z with _ | _ <;>
+    simp [Nat.max_assoc]
+
 end Flapjack.Compiler.Backend.BackendProps

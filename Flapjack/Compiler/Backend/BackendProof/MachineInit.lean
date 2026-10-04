@@ -73,6 +73,26 @@ theorem byteAlignedMOD {width : Nat} [NeZero width] (good : goodDimindex width) 
   rw [Nat.mod_eq_of_lt (Nat.lt_of_le_of_lt hle x.isLt)] at ht
   rw [← hp, ← ht, Nat.mul_mod_left]
 
+/-- Full original byte_aligned_mult (`backendProofScript.sml:29-37`):
+`good_dimindex (:'a) ==> byte_aligned (a + bytes_in_word * n2w i) = byte_aligned a`.
+The `bytes_in_word` overload is `n2w (dimindex (:'a) DIV 8)`. -/
+@[hol "cakeml/compiler/backend/proofs/backendProofScript.sml" "byte_aligned_mult"
+  (words_as_type_indexed_bitvec)]
+theorem byteAlignedMult {width : Nat} [NeZero width] (good : goodDimindex width)
+    (a : BitVec width) (i : Nat) :
+    holByteAligned (a + BitVec.ofNat width (width / 8) * BitVec.ofNat width i) =
+      holByteAligned a := by
+  unfold holByteAligned
+  refine (alignedAddSub _ a _ ?_).1
+  rw [holAligned_iff, BitVec.toNat_mul, BitVec.toNat_ofNat, BitVec.toNat_ofNat]
+  rcases good with h | h <;> subst h
+  · rw [holLOG2_eq_log2 (by decide), show Nat.log2 (32 / 8) = 2 by decide,
+      Nat.mod_mod_of_dvd _ (by decide : 2 ^ 2 ∣ 2 ^ 32)]
+    exact Nat.mod_eq_zero_of_dvd (Nat.dvd_mul_right_of_dvd (by decide) _)
+  · rw [holLOG2_eq_log2 (by decide), show Nat.log2 (64 / 8) = 3 by decide,
+      Nat.mod_mod_of_dvd _ (by decide : 2 ^ 3 ∣ 2 ^ 64)]
+    exact Nat.mod_eq_zero_of_dvd (Nat.dvd_mul_right_of_dvd (by decide) _)
+
 /-- Full original word_list_exists_imp (`backendProofScript.sml:300-306`):
 an address-range domain with the original size bound and good dimension
 carries a word list over any memory function. -/

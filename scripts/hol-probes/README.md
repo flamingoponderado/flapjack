@@ -8512,6 +8512,16 @@ byte ranges; actual downstream CLI/WordToStack routing remains separate.
 
 `riscv_memory_run_probe.out` records actual original RV64/bare Run observations for all four unsigned/full loads and four stores: zero-register no-op, aliases, signed offsets, unaligned addresses permitted by the literal model, full register/core frames and whole-state memory-update frames. Literal original Run clauses and full word5/word12/native-state carriers are also captured with zero source hypotheses. These are finite regression observations, not equivalence. Lean proves each arbitrary-field Run equation using only original riscvOk; full Mem source obligations, fetch/Next, interference and assertions remain open.
 
+`pan_source_entry_word_probeScript.sml` evaluates the original extracted first
+LET and full PanToWord compiler for empty and missing-main source input.
+`PanSourceEntryParity` checks complete native Word rows and every declaration
+field in the five source-preparation observations already captured by
+`pan_target_entry_first_match_probe.out`. The general source-entry codec theorem
+uses the existing native `mainFirstHOL`, with no distinct-name or target-run
+premise. Parsing/static errors and downstream whole-CLI wiring stay separate.
+
+`riscv_memory_bytes_probe.out` freshly evaluates ten varied-byte raw reads and sixteen raw stores at zero, word-edge, wrapping and cross-word addresses, including selected bytes, nearby untouched bytes and complete non-memory state frames. Twelve additional rows capture the four literal original memory clauses, zero hypotheses and full carriers. These finite observations are regression evidence, not universal equivalence. `MemoryBytes.lean` kernel-proves the byte read/write and complete outside-written-region frame needed by all four original aligned source access sizes; alignment-to-region bounds are derived from original alignment. It also proves unrestricted raw low-byte/LBU correspondence. No helper is tagged as a separately named HOL theorem, and full Mem fetch/Next/source-state/assertion assembly remains open.
+
 ### Production physical spill bitmap index
 
 The `word_stack_frame_probe` rows `one_spill_physical_slot=1` and
@@ -8524,3 +8534,32 @@ slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
 caller and whole-body production correspondence remain open. Pancake's
 LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
 corpus does not distinguish this nonempty-GC regression.
+
+`pan_simp_validity_probe.out` captures all four fully quantified original PanSimp binary-Panop validity theorems (ret_to_tail, seq_assoc, compile, compile_prog) with show_types enabled and no open hypotheses/free variables. Lean retains the original equivalences/implications over exact positive-width syntax. These captures are source-review evidence, not a cross-language equivalence proof.
+
+### Universal native JAL and JALR decoder prerequisites
+
+`CorrectnessEncoding/DecodeControl.lean` proves unconditional compositions of
+actual `Encode` and `Step.DecodeAny` for all JAL word5 destinations and word20
+logical halfword offsets, and all JALR word5 destinations/sources and word12
+byte offsets. The original model has the same carriers and layouts:
+`riscvScript.sml` UJtype lines 19025–19033 and Encode clauses 19099/19107.
+The scattered JAL immediate reconstructs all twenty bits; JALR retains aliased
+link/source registers. These untagged local composition lemmas have no separately
+named original theorem and introduce no decoder or target-execution premise.
+
+`riscv_control_decode_probeScript.sml` proves both universally quantified
+compositions in the original HOL kernel with zero hypotheses. Eight boundary
+EVALs include zero, all ones, sign bits, scattered offsets, and rd=rs1; captured
+source clauses and carrier types supplement the universal proofs. These are
+prerequisites for Jump, Call and far JumpCmp, not full encoder correctness.
+
+### Native memory Next composition
+
+`riscv_memory_step_probeScript.sml` evaluates actual original NextRISCV for all
+eight emitted memory families, with signed-offset and zero-register fixtures.
+It also captures the literal original Next and PC-update equations, zero open
+hypotheses, and their carrier types. These finite observations accompany the
+unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
+they do not establish full Mem encoder correctness or discharge its original
+source/initial-relation, environment, memory-domain and assertion obligations.

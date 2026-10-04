@@ -1,0 +1,13 @@
+load "backendPropsTheory";
+open HolKernel Parse boolLib bossLib backendPropsTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = if null (hyp (option_le_max)) then () else raise Fail "hypotheses: option_le_max";
+val _ = (print "option_le_max_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (option_le_max)); print "\n");
+val _ = if null (hyp (option_le_eq_eqns)) then () else raise Fail "hypotheses: option_le_eq_eqns";
+val _ = (print "option_le_eq_eqns_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (option_le_eq_eqns)); print "\n");
+val _ = if null (hyp (option_map2_max_add)) then () else raise Fail "hypotheses: option_map2_max_add";
+val _ = (print "option_map2_max_add_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (option_map2_max_add)); print "\n");
+val _ = if null (hyp (OPTION_MAP2_MAX_COMM)) then () else raise Fail "hypotheses: OPTION_MAP2_MAX_COMM";
+val _ = (print "OPTION_MAP2_MAX_COMM_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (OPTION_MAP2_MAX_COMM)); print "\n");
+val _ = if null (hyp (OPTION_MAP2_MAX_ASSOC)) then () else raise Fail "hypotheses: OPTION_MAP2_MAX_ASSOC";
+val _ = (print "OPTION_MAP2_MAX_ASSOC_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (OPTION_MAP2_MAX_ASSOC)); print "\n");
