@@ -1,0 +1,20 @@
+id_datatype_typed=(∀(a :ξ) (f :ξ -> α) (f1 :ν -> (ν, ξ) id -> α). (id_CASE (Short a :(ν, ξ) id) f f1 :α) = f a) ∧ ∀(a0 :ν) (a1 :(ν, ξ) id) (f :ξ -> α) (f1 :ν -> (ν, ξ) id -> α). (id_CASE (Long a0 a1) f f1 :α) = f1 a0 a1
+mk_id_def_typed=(∀(n :β). mk_id ([] :α list) n = (Short n :(α, β) id)) ∧ ∀(mn :α) (mns :α list) (n :β). mk_id (mn::mns) n = Long mn (mk_id mns n)
+id_to_n_def_typed=(∀(n :α). id_to_n (Short n :(β, α) id) = n) ∧ ∀(v0 :β) (id :(β, α) id). id_to_n (Long v0 id) = id_to_n id
+id_to_mods_def_typed=(∀(v0 :β). id_to_mods (Short v0 :(α, β) id) = ([] :α list)) ∧ ∀(mn :α) (id :(α, β) id). id_to_mods (Long mn id) = mn::id_to_mods id
+nsLookup_def_typed=(∀(v :(ξ # φ) list) (n :ξ) (m :(ν # (ν, ξ, φ) namespace) list). nsLookup (Bind v m) (Short n :(ν, ξ) id) = ALOOKUP v n) ∧ ∀(v :(ξ # φ) list) (mn :ν) (m :(ν # (ν, ξ, φ) namespace) list) (id :(ν, ξ) id). nsLookup (Bind v m) (Long mn id) = case ALOOKUP m mn of (NONE :(ν, ξ, φ) namespace option) => (NONE :φ option) | SOME env => nsLookup env id
+nsLookupMod_def_typed=(∀(e :(ν, ξ, φ) namespace). nsLookupMod e ([] :ν list) = SOME e) ∧ ∀(v :(ξ # φ) list) (path :ν list) (mn :ν) (m :(ν # (ν, ξ, φ) namespace) list). nsLookupMod (Bind v m) (mn::path) = case ALOOKUP m mn of (NONE :(ν, ξ, φ) namespace option) => (NONE :(ν, ξ, φ) namespace option) | SOME env => nsLookupMod env path
+nsEmpty_def_typed=(nsEmpty :(α, β, γ) namespace) = Bind ([] :(β # γ) list) ([] :(α # (α, β, γ) namespace) list)
+nsAppend_def_typed=nsAppend (Bind (v1 :(β # γ) list) (m1 :(α # (α, β, γ) namespace) list)) (Bind (v2 :(β # γ) list) (m2 :(α # (α, β, γ) namespace) list)) = Bind (v1 ++ v2) (m1 ++ m2)
+nsLift_def_typed=∀(mn :α) (env :(α, β, γ) namespace). nsLift mn env = Bind ([] :(β # γ) list) [(mn,env)]
+alist_to_ns_def_typed=∀(a :(β # γ) list). (alist_to_ns a :(α, β, γ) namespace) = Bind a ([] :(α # (α, β, γ) namespace) list)
+nsBind_def_typed=nsBind (k :β) (x :γ) (Bind (v :(β # γ) list) (m :(α # (α, β, γ) namespace) list)) = Bind ((k,x)::v) m
+nsBindList_def_typed=∀(l :(β # γ) list) (e :(α, β, γ) namespace). nsBindList l e = FOLDR (λ((x :β),(v :γ)) (e :(α, β, γ) namespace). nsBind x v e) e l
+nsOptBind_def_typed=∀(n :β option) (x :γ) (env :(α, β, γ) namespace). nsOptBind n x env = case n of (NONE :β option) => env | SOME n => nsBind n x env
+nsSing_def_typed=∀(n :β) (x :γ). (nsSing n x :(α, β, γ) namespace) = Bind [(n,x)] ([] :(α # (α, β, γ) namespace) list)
+nsSub_def_typed=∀(r :(α, β) id -> γ -> δ -> bool) (env1 :(α, β, γ) namespace) (env2 :(α, β, δ) namespace). nsSub r env1 env2 ⇔ (∀(id :(α, β) id) (v1 :γ). nsLookup env1 id = SOME v1 ⇒ ∃(v2 :δ). nsLookup env2 id = SOME v2 ∧ r id v1 v2) ∧ ∀(path :α list). nsLookupMod env2 path = (NONE :(α, β, δ) namespace option) ⇒ nsLookupMod env1 path = (NONE :(α, β, γ) namespace option)
+nsAll_def_typed=∀(f :(α, β) id -> γ -> bool) (env :(α, β, γ) namespace). nsAll f env ⇔ ∀(id :(α, β) id) (v :γ). nsLookup env id = SOME v ⇒ f id v
+nsAll2_def_typed=∀(r :(α, β) id -> γ -> δ -> bool) (env1 :(α, β, γ) namespace) (env2 :(α, β, δ) namespace). nsAll2 r env1 env2 ⇔ nsSub r env1 env2 ∧ nsSub (λ(x :(α, β) id) (y :δ) (z :γ). r x z y) env2 env1
+nsDom_def_typed=∀(env :(ν, ξ, φ) namespace). nsDom env = {n | (v,n) | v ∈ 𝕌(:φ) ∧ n ∈ 𝕌(:(ν, ξ) id) ∧ nsLookup env n = SOME v}
+nsDomMod_def_typed=∀(env :(ν, ξ, φ) namespace). nsDomMod env = {n | (v,n) | v ∈ 𝕌(:(ν, ξ, φ) namespace) ∧ n ∈ 𝕌(:ν list) ∧ nsLookupMod env n = SOME v}
+nsMap_def_typed=∀(v :(ξ # φ) list) (m :(ν # (ν, ξ, φ) namespace) list) (f :φ -> χ). nsMap f (Bind v m) = Bind (MAP (λ((n :ξ),(x :φ)). (n,f x)) v) (MAP (λ((mn :ν),(e :(ν, ξ, φ) namespace)). (mn,nsMap f e)) m)

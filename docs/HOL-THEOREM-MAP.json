@@ -95466,5 +95466,165 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 3500-3519: compile_lab ... = SOME (bytes,c') ∧ OPTION_ALL (EVERY (λx. ∃s. x = ExtCall s)) c.ffi_names ⇒ ∃ffi_names. c'.ffi_names = SOME ffi_names ∧ ∃x. mmio_pcs_min_index ffi_names = SOME x; OPTION_ALL rendered as the none ↦ True / some l ↦ P l match and EVERY as membership quantification. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "Ident",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id: Datatype id = Short 'n | Long 'm id with independent ('m,'n) parameters; constructor order and arity retained. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "mkId",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "mk_id_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript mk_id_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "idToN",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id_to_n_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id_to_n_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "idToMods",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "id_to_mods_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript id_to_mods_def: both clauses. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLookup",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLookup_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLookup_def: both clauses; ALOOKUP is List.lookup under DecidableEq (HOL equality); recursion on the identifier. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLookupMod",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLookupMod_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLookupMod_def: both clauses; ALOOKUP is List.lookup. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsEmpty",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsEmpty_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsEmpty_def: Bind [] []. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAppend",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAppend_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAppend_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsLift",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsLift_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsLift_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "alistToNs",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "alist_to_ns_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript alist_to_ns_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsBind",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsBind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsBind_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsBindList",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsBindList_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsBindList_def: FOLDR with paired lambda as foldr over pair projections. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsOptBind",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsOptBind_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsOptBind_def: option case. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsSing",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsSing_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsSing_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsSub",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsSub_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsSub_def: both conjuncts, independent value types γ δ. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAll",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAll_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAll_def: single clause. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsAll2",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsAll2_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsAll2_def: both nsSub conjuncts with flipped relation. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsDom",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsDom_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsDom_def: HOL set {n | ∃v. nsLookup env n = SOME v} (universe conjuncts trivial) as membership predicate. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsDomMod",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsDomMod_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsDomMod_def: HOL set {n | ∃v. nsLookupMod env n = SOME v} as membership predicate. Typed capture namespace_ops probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/NamespaceHOL.lean",
+    "lean_name": "nsMap",
+    "hol_path": "cakeml/semantics/namespaceScript.sml",
+    "hol_name": "nsMap_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original namespaceScript nsMap_def: single clause, nested MAP; well-founded on the nested carrier. Typed capture namespace_ops probe (show_types, no hypotheses)."
   }
 ]
