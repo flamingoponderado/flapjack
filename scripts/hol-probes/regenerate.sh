@@ -4616,6 +4616,9 @@ run_probe word_cse_wf_data_preservation_probeScript.sml word_cse_wf_data_preserv
   wf_add_to_load_aux_statement wf_add_to_load_aux_hypotheses wf_data_merge_statement wf_data_merge_hypotheses wf_canonicalMoveRegs_statement \
   wf_canonicalMoveRegs_hypotheses wf_add_to_data_aux_typed \
   "$cake_dir/compiler/backend/proofs/word_cseProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_cse_production_program_probeScript.sml word_cse_production_program_probe.out \
+  program_source_type program_source_definition program_wrapper_type program_wrapper_definition program_seq state_seq program_must state_must program_if_same state_if_same program_if_different state_if_different program_loop state_loop program_move state_move program_memory state_memory program_heap state_heap program_assign state_assign program_get_set state_get_set program_call_0_0 state_call_0_0 program_call_0_1 state_call_0_1 program_call_1_0 state_call_1_0 program_call_1_1 state_call_1_1 program_flat_controls state_flat_controls \
+  "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_cse_production_assign_probeScript.sml word_cse_production_assign_probe.out \
   assign_source_type assign_source_definition assign_empty_load assign_even_load assign_alias_load assign_seeded_load assign_large_load assign_const assign_var assign_lookup assign_op assign_shift assign_nested_load \
   "$cake_dir/compiler/backend/word_cseScript.sml" "$cake_dir/compiler/backend/proofs"
