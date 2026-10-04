@@ -1,0 +1,2 @@
+compile_lab_LENGTH_typed=compile_lab (asm_conf :α asm_config) (c :config) (secs :α sec list) = SOME ((bytes :word8 list),(c' :config)) ⇒ c'.pos = LENGTH bytes + c.pos
+compile_lab_IMP_mmio_pcs_min_index_typed=compile_lab (asm_conf :α asm_config) (c :config) (sec_list :α sec list) = SOME ((bytes :word8 list),(c' :config)) ∧ OPTION_ALL (EVERY (λ(x :ffiname). ∃(s :mlstring). x = ExtCall s)) c.ffi_names ⇒ ∃(ffi_names :ffiname list). c'.ffi_names = SOME ffi_names ∧ ∃(x :num). mmio_pcs_min_index ffi_names = SOME x

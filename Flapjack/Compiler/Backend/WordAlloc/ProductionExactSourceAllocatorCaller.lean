@@ -4,7 +4,10 @@ import Flapjack.Pancake.LoopToWord.ProductionAllocatorMemoryImage
 namespace Flapjack.WordAlloc
 open RiscV RiscV.CakeRegAlloc RegAlloc Flapjack.Compiler.Encoders.Asm
 
-/-- Every exact Loop-to-Word function image obtains the actual routed allocator
+/-- This witness uses the executed native-copy (`wordCopyPropViaHOL`) cleanup
+consumer. It does not describe the legacy copy-propagation route.
+
+ Every exact Loop-to-Word function image obtains the actual routed allocator
 result and a matching native IRC colouring/coloured encoder. All decoder,
 encoder, memory-domain, SSA and allocator availability facts are source-derived;
 no desired target execution, output support or allocator success is assumed.
@@ -19,7 +22,7 @@ theorem exactSourceAllocatorCaller_production {width : Nat} [NeZero width]
         (output : CakeAllocationWithColour (BitVec width))
         (nativeOutput : WordLangProgHOL (BitVec width)),
       wordLangProgFromHOL (loopToWordCompFuncHOL name parameters source) = some compiled ∧
-      cakeAllocateWordFunctionAfterDeadRoutedSSA name allocatorParameters compiled = some output.toLegacy ∧
+      cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name allocatorParameters compiled = some output.toLegacy ∧
       wordLangProgToHOL output.program = some nativeOutput ∧
       regAlloc .IRC (getHeuristics 3 name nativeOutput).2 cakeRiscVRegisterCount
         (getHeuristics 3 name nativeOutput).1 (getClashTree nativeOutput [])
@@ -34,10 +37,13 @@ theorem exactSourceAllocatorCaller_production {width : Nat} [NeZero width]
   | some native =>
       obtain ⟨output, nativeOutput, allocated, outputEncoded, nativeRun, colouredEncoded⟩ :=
         nativeAllocatorCaller_production name allocatorParameters compiled native encoded supported config target
-      have routed : cakeAllocateWordFunctionAfterDeadRoutedSSA name allocatorParameters compiled =
+      have routed : cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy name allocatorParameters compiled =
           some output.toLegacy := by
-        rw [cakeAllocateWordFunctionAfterDeadRoutedSSA_native name allocatorParameters compiled accepted]
-        simp [cakeAllocateWordFunctionAfterDeadNativeSSA, allocated]
+        unfold cakeAllocateWordFunctionAfterDeadRoutedSSAWithNativeCopy
+        simp only [encoded]
+        simpa [cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy,
+          wordFullSsaCcTransNativeWithState, encoded] using
+          congrArg (Option.map CakeAllocationWithColour.toLegacy) allocated
       exact ⟨compiled, output, nativeOutput, decoded, routed, outputEncoded, nativeRun, colouredEncoded⟩
 
 end Flapjack.WordAlloc

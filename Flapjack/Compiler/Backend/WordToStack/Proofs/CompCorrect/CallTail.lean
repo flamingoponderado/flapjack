@@ -97,7 +97,7 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
         (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat),
       WordSemStateFiniteExact.getVars args source = some xs ∧
         ¬ wordSemBadDestArgs dest args = true ∧
-        wordSemFindCode dest (wordSemAddRetLoc none xs) source.code source.stackSize =
+        wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) source.code source.stackSize =
           some (args1, prog, ss) ∧
         handler = none ∧ source.clock ≠ 0 →
       Seq.Simulation ac prog
@@ -142,7 +142,7 @@ theorem compCorrectCallTail {width : Nat} [NeZero width] {C F : Type}
   · simp only [hbad, if_true, Prod.mk.injEq] at execution
     exact absurd execution.1.symm notError
   simp only [hbad, Bool.false_eq_true, if_false] at execution
-  rcases hfc : wordSemFindCode dest (wordSemAddRetLoc none xs) source.code source.stackSize with
+  rcases hfc : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) source.code source.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp only [hfc, Prod.mk.injEq] at execution; exact absurd execution.1.symm notError
   simp only [hfc] at execution

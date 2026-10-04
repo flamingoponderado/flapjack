@@ -1,0 +1,3 @@
+every_inst_ok_loop_call_typed=∀(l :num sptree$num_map) (prog :α loopLang$prog). every_prog (loop_inst_ok (c :β asm_config) :α loopLang$prog -> bool) prog ⇒ every_prog (loop_inst_ok c :α loopLang$prog -> bool) (FST (comp l prog :α loopLang$prog # num sptree$num_map))
+every_inst_ok_loop_live_typed=∀(prog :α loopLang$prog). every_prog (loop_inst_ok (c :β asm_config) :α loopLang$prog -> bool) prog ⇒ every_prog (loop_inst_ok c :α loopLang$prog -> bool) (comp prog :α loopLang$prog)
+every_inst_ok_less_optimise_typed=every_prog (loop_inst_ok (c :β asm_config) :α loopLang$prog -> bool) (prog :α loopLang$prog) ⇒ every_prog (loop_inst_ok c :α loopLang$prog -> bool) (optimise prog)

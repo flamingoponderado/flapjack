@@ -32,7 +32,8 @@ example : cakeAllocateWordFunctionAfterDeadWithColourNativeLimit 0 []
     (.inst (.mem .load16 4 8) : WordProg (BitVec 64)) = none := by
   simp [cakeAllocateWordFunctionAfterDeadWithColourNativeLimit,
     cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith,
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa, RiscV.allocatorMemorySupported]
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa,
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy, RiscV.allocatorMemorySupported]
 
 example {width : Nat} [NeZero width] (count : Nat) (program : WordProg (BitVec width)) :
     wordFullSsaCcTransNativeLimit count program =
@@ -59,6 +60,7 @@ example : cakeAllocateWordFunctionAfterDeadRoutedLimit 0 []
     (.inst (.mem .load16 4 8) : WordProg (BitVec 64)) = none := by
   simp [cakeAllocateWordFunctionAfterDeadRoutedLimit, wordLangProgToHOL, wordLangInstToHOL,
     cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith,
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa, RiscV.allocatorMemorySupported]
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa,
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy, RiscV.allocatorMemorySupported]
 
 end Flapjack.Test.ProductionAllocationLimit

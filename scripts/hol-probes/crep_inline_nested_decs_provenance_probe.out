@@ -1,0 +1,1 @@
+nested_decs_provenance=∀(e :α crepLang$exp) (vs :num list) (es :α crepLang$exp list) (p :α crepLang$prog). MEM e (exps_of (nested_decs vs es p) :α crepLang$exp list) ⇒ MEM e es ∨ MEM e (exps_of p :α crepLang$exp list)
