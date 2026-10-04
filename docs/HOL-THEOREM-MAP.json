@@ -91676,5 +91676,14 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source-reviewed against word_to_stackProofScript.sml evaluate_wInst FPFromInt case5100-5125: all original five guards, actual wInst/evaluate existential, complete state_rel, stack length and space; arbitrary positive width, width64 and all non64 odd/even packed branches, original partial conversion/range guards and roundTiesToEven. Target reads/updates derived by full state relation. Canonical source fpRegs/store and target regs/fpRegs/store codecs are genuine; locals/code retain native Spt. Both faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item 8); no numeric agreement or target-run hypothesis.",
     "hol_line": 4688
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BinopRegister.lean",
+    "lean_name": "riscv_encoder_correct_binopRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c author source comparison2026-10-04: original riscv_encoder_correct512, Binop Reg operand case550-559 and encoder_correct_def117-133. Genuine original operand case retains all5operators/unrestricted natural registers/fixed originalword64/full native state. Sole original asmStep+initialtargetStateRel premise; full existential n/everyenvironment/interference/asserts and asserts2 conclusion. Native Next derived internally from all4actual emitted bytes, arbitrary word5 Encode/Decode and literal Run. Original asmOk alone supplies register validity/zero exclusion, including aliases; initial reads precede destination write. Witness n0 retains full final relation/validity/modularPC/memory/unobservedregisters and outside-domain memory frame; original targetOk transports through exactly original interference condition. No target-run/final relation/range/nonalias premise. Inherited reals_as_rational_cuts from full native state/Run closure retains SOUNDNESS8 boundary. Fresh original typed full theorem specialized only to Reg Binop captures original carriers/hyp0/provedT; this is regression evidence, not HOL-to-Lean equivalence. Immediate operand case remains separate open fullBinop frontier."
   }
 ]

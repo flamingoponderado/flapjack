@@ -7711,6 +7711,12 @@ run_probe riscv_target_const_probeScript.sml riscv_target_const_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
+  andi_decode_zero andi_decode_all_ones andi_decode_sign_bit andi_decode_positive_max add_decode_zero add_decode_all_ones add_decode_sign_bit add_decode_positive_max sub_decode_zero sub_decode_all_ones sub_decode_sign_bit sub_decode_positive_max and_decode_zero and_decode_all_ones and_decode_sign_bit and_decode_positive_max andi_encode_source_clause andi_encode_source_hypotheses andi_carrier_types andi_symbolic_replay_query add_encode_source_clause add_encode_source_hypotheses add_carrier_types add_symbolic_replay_query sub_encode_source_clause sub_encode_source_hypotheses sub_carrier_types sub_symbolic_replay_query and_encode_source_clause and_encode_source_hypotheses and_carrier_types and_symbolic_replay_query \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+
 run_probe word_to_stack_memory_relations_probeScript.sml word_to_stack_memory_relations_probe.out \
   stateRelMemStore_typed stateRelMemStore_proved stateRelMemStore_hypotheses stateRelWithMemory_typed stateRelWithMemory_proved stateRelWithMemory_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7723,6 +7729,15 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_binop_run_probeScript.sml riscv_binop_run_probe.out \
+  source_reg_imm_clause source_reg_imm_hypotheses source_reg_imm_types source_binop_upd_clause source_binop_upd_hypotheses source_binop_upd_types source_arith_upd_clause source_arith_upd_hypotheses source_arith_upd_types source_asm_step_clause source_asm_step_hypotheses source_asm_step_types source_bop_r_clause source_bop_r_hypotheses source_bop_r_types native_add_clause native_add_hypotheses native_add_types native_sub_clause native_sub_hypotheses native_sub_types native_and_clause native_and_hypotheses native_and_types native_or_clause native_or_hypotheses native_or_types native_xor_clause native_xor_hypotheses native_xor_types \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_binop_register_probeScript.sml riscv_target_binop_register_probe.out \
+  riscv_encoder_correct_binop_register_statement riscv_encoder_correct_binop_register_types riscv_encoder_correct_binop_register_hypotheses riscv_encoder_correct_binop_register_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
 
 run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
   fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
