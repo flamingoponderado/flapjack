@@ -96470,5 +96470,13 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendProofScript 2871-2878: read_limits asm_conf c mc ms = get_stack_heap_limit (2 * max_heap_limit (:a) c.data_conf - 1) (get_reg (find_name reg_names 2), ... 3, ... 4); asm_conf retained though unused; independent machine state/projection types as (a,b,c) machine_config. Typed capture backend_read_limits probe (literal replay)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/OptionLe.lean",
+    "lean_name": "optionLe_SOME",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_wordProofScript.sml",
+    "hol_name": "option_le_SOME",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original data_to_wordProofScript 1779-1783: option_le x (SOME n) <=> ?m. x = SOME m /\\ m <= n over num option, with the reviewed BackendProps.optionLe; free x n explicit. Typed capture data_to_word_option_le probe (literal replay)."
   }
 ]
