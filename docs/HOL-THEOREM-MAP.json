@@ -739,7 +739,7 @@
     "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
     "hol_name": "heap_address",
     "statement_status": "reviewed_exact",
-    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_address (gc_sharedScript.sml:12-13) is exactly Pointer num 'a | Data 'a. Lean HeapAddress (α : Type) has the same two constructors with one-for-one payloads: pointer carries (index : Nat) (addr : α) (HOL num is Nat) and data carries (addr : α). No constructor was added or dropped, no payload type or arity changed, and the datatype has the single type parameter 'a. The carrier is polymorphic, so no word-dimension translation applies."
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_address (gc_sharedScript.sml:12-13) is exactly Pointer num 'a | Data 'a. Lean HeapAddress (α : Type) has the same two constructors with one-for-one payloads: pointer carries (index : Nat) (addr : α) (HOL num is Nat) and data carries (addr : α). No constructor was added or dropped, no payload type or arity changed, and the datatype has the single type parameter 'a. The carrier is polymorphic, so no word-dimension translation applies. Typed capture: heap_address_Pointer_type/heap_address_Data_type in backend_heap_typed_probe.out (constructor types num -> α -> α heap_address, α -> α heap_address), matching HeapAddress α. (PR1213 review should-fix 7.)"
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
@@ -747,7 +747,7 @@
     "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
     "hol_name": "heap_element",
     "statement_status": "reviewed_exact",
-    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_element (gc_sharedScript.sml:15-18) is exactly Unused num | ForwardPointer num 'a num | DataElement (('a heap_address) list) num 'b. Lean HeapElement (α β : Type) has the same three constructors with one-for-one payloads: unused (Nat) (HOL num), forwardPointer (Nat) (α) (Nat), dataElement (List (HeapAddress α)) (Nat) (β); HOL list is Lean List and 'a heap_address is the tagged Lean HeapAddress α. No constructor or payload change; the two type parameters 'a and 'b are retained. Polymorphic carrier, no word-dimension translation."
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_element (gc_sharedScript.sml:15-18) is exactly Unused num | ForwardPointer num 'a num | DataElement (('a heap_address) list) num 'b. Lean HeapElement (α β : Type) has the same three constructors with one-for-one payloads: unused (Nat) (HOL num), forwardPointer (Nat) (α) (Nat), dataElement (List (HeapAddress α)) (Nat) (β); HOL list is Lean List and 'a heap_address is the tagged Lean HeapAddress α. No constructor or payload change; the two type parameters 'a and 'b are retained. Polymorphic carrier, no word-dimension translation. Typed capture: heap_element_Unused_type/ForwardPointer_type/DataElement_type in backend_heap_typed_probe.out ((α,β) heap_element with α heap_address list payload), matching HeapElement α β. (PR1213 review should-fix 7.)"
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/LabFilter.lean",
@@ -35936,7 +35936,7 @@
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
     "hol_name": "refs_to_addresses_def",
     "statement_status": "reviewed_exact",
-    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL refs_to_addresses_def (word_gcFunctionsScript.sml:244-251) is the three equations refs_to_addresses [] = []; refs_to_addresses (DataElement ptrs _ _ :: refs) = ptrs ++ refs_to_addresses refs; refs_to_addresses (_ :: refs) = refs_to_addresses refs, returning ('a heap_address) list from ('a,'b) heap_element list. Lean refs_to_addresses {α β : Type} has the same three clauses one for one over the tagged HeapElement α β and HeapAddress α carriers, HOL list as Lean List, HOL ++ as List.append, and the same wildcard clause for every non-DataElement head. No branch was restricted and no success or well-formedness premise was added. Original value oracle rows gc_refs_to_addresses_empty/basic/skip are captured in scripts/hol-probes/word_gc_functions_probeScript.sml and locked in scripts/hol-probes/rows.lock.json."
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL refs_to_addresses_def (word_gcFunctionsScript.sml:244-251) is the three equations refs_to_addresses [] = []; refs_to_addresses (DataElement ptrs _ _ :: refs) = ptrs ++ refs_to_addresses refs; refs_to_addresses (_ :: refs) = refs_to_addresses refs, returning ('a heap_address) list from ('a,'b) heap_element list. Lean refs_to_addresses {α β : Type} has the same three clauses one for one over the tagged HeapElement α β and HeapAddress α carriers, HOL list as Lean List, HOL ++ as List.append, and the same wildcard clause for every non-DataElement head. No branch was restricted and no success or well-formedness premise was added. Original value oracle rows gc_refs_to_addresses_empty/basic/skip are captured in scripts/hol-probes/word_gc_functions_probeScript.sml and locked in scripts/hol-probes/rows.lock.json. Typed capture: refs_to_addresses_def_statement in backend_heap_typed_probe.out ((α,β) heap_element list -> α heap_address list), matching the generic Lean α β. (PR1213 review should-fix 7.)"
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
@@ -45531,7 +45531,7 @@
     "lean_name": "cond16bit_inst_select_exp'",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.54): word_to_wordProof syntactic group. HOL statement compared clause by clause against the probe word_to_word_syntactic (statement/hypotheses/typed); HOL's free variables are explicit leading binders in source order, HOL bool predicates as Lean Bool = true, no_share_inst/no_mt/no_alloc/no_install as the tagged noShareInstSubprogsHOL/noMtSubprogsHOL/noAllocSubprogsHOL/noInstallSubprogsHOL, find_code as tagged wordSemFindCode, code_rel as tagged codeRel, fromAList/ALOOKUP as sptFromAList/sptAListLookup, ALL_DISTINCT as List.Nodup, ZIP on equal-length lists as List.zip. Positive HOL word dimension is the sole carrier translation. c.ISA ≠ Ag32 is AsmConfigExact.isa ≠ .ag32."
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.54): word_to_wordProof syntactic group. HOL statement compared clause by clause against the probe word_to_word_syntactic (statement/hypotheses/typed); HOL's free variables are explicit leading binders in source order, HOL bool predicates as Lean Bool = true, no_share_inst/no_mt/no_alloc/no_install as the tagged noShareInstSubprogsHOL/noMtSubprogsHOL/noAllocSubprogsHOL/noInstallSubprogsHOL, find_code as tagged wordSemFindCode, code_rel as tagged codeRel, fromAList/ALOOKUP as sptFromAList/sptAListLookup, ALL_DISTINCT as List.Nodup, ZIP on equal-length lists as List.zip. Positive HOL word dimension is the sole carrier translation. c.ISA ≠ Ag32 is AsmConfigExact.isa ≠ .ag32. Typed capture: cond16bit_inst_select_exp_prime_statement in backend_heap_typed_probe.out (exported, show_types): prog, asm_config and exp share one α, matching. (PR1213 review should-fix 7.)"
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
@@ -95418,7 +95418,7 @@
     "hol_name": "compile_to_word_conventions2",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
+    "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only. backendProofTheory is unbuilt: typed source parse compile_to_word_conventions2_source_statement_typed in backend_heap_typed_probe.out (literal source statement parsed with show_types in the loaded word_to_wordProofTheory context; compile resolves to word_to_word$compile per compile_to_word_conventions2_compile_constant; not re-proved): one α for asm_config and prog, matching the single Lean width. (PR1213 review should-fix 7.)"
   },
   {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",

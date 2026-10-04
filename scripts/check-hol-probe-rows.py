@@ -182,6 +182,10 @@ TYPED_CAPTURE_CONTRACTS = {
     'word_convs_copy_prop_locals_typed_probe.out': (
         ('copy_prop_not_created_subprogs_source_statement_typed', 'copy_prop_prog_not_alloc_var_source_statement_typed', 'copy_prop_prog_not_alloc_var_aux1_source_statement_typed', 'copy_prop_prog_not_alloc_var_aux2_source_statement_typed', 'every_inst_distinct_tar_reg_copy_prop_aux_source_statement_typed', 'extract_labels_copy_prop_aux_source_statement_typed', 'flat_exp_conventions_copy_prop_aux_source_statement_typed', 'full_inst_ok_less_copy_prop_aux_source_statement_typed', 'pre_alloc_conventions_copy_prop_aux_source_statement_typed', 'wf_cutsets_copy_prop_aux_source_statement_typed', 'word_get_code_labels_copy_prop_source_statement_typed', 'word_good_handlers_copy_prop_source_statement_typed'),
         ()),
+    # PR1213 heap/refs/conventions2/cond16bit rows (review 5978345241 should-fix 7).
+    'backend_heap_typed_probe.out': (
+        ('refs_to_addresses_def_statement', 'compile_to_word_conventions2_source_statement_typed', 'cond16bit_inst_select_exp_prime_statement'),
+        ('heap_address_Pointer_type', 'heap_address_Data_type', 'heap_element_Unused_type', 'heap_element_ForwardPointer_type', 'heap_element_DataElement_type')),
 }
 
 

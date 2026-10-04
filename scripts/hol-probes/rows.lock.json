@@ -29,6 +29,7 @@
     {"bytes": 532, "out": "backend_compile_lab_probe.out", "rows": 2, "sha256": "225e4790e8be0913be8a489a488f26dde599fa5bcaeb539af4098b5f71b104e1"},
     {"bytes": 1518, "out": "backend_config_attach_bitmaps_probe.out", "rows": 14, "sha256": "9e7a6e3bab7cd7bd395f9888d3047b1f46d58bd1bfc9d5c903c7aeb7d392ad5f"},
     {"bytes": 1888, "out": "backend_config_ok_probe.out", "rows": 1, "sha256": "9437e3cbbe4f13a9d6842a07719ef8dd932cb23fbdc60b9458de99c0f8541a12"},
+    {"bytes": 2473, "out": "backend_heap_typed_probe.out", "rows": 9, "sha256": "4eb0bafb5020f8dcf68de2a6dd8950db371688abb7bd47207911e58ac17b8e9d"},
     {"bytes": 2404, "out": "backend_lower_pipeline_probe.out", "rows": 8, "sha256": "7a930fdeef3bc4785296eafea38528275a5ac756869e40d67089ff1563e69673"},
     {"bytes": 1802, "out": "backend_machine_init_probe.out", "rows": 4, "sha256": "1285fe813b5352f7808a5b8b8cc45b55f6d93988eb2b8941139c0164f2245aaf"},
     {"bytes": 1473, "out": "backend_prim_src_config_probe.out", "rows": 2, "sha256": "1e78745de866afe3264b1e17e50c62edaf1ffe1c43ff32065e788be256beea2d"},
