@@ -57,6 +57,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Pancake.Proofs.PanToTarget.MemorySwap
 import Flapjack.Compiler.Backend.WordDepth
+import Flapjack.Compiler.Backend.WordDepthProof.Helpers
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord.LabPres
@@ -1569,6 +1570,7 @@ import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.If
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Loop
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap.Call
 import Flapjack.Compiler.Backend.Semantics.WordSem.Props.EvaluateStackSwap
+import Flapjack.Compiler.Backend.Semantics.WordSem.Props.CodeOnlyGrows
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.CutNames
 import Flapjack.Compiler.Backend.WordAlloc.Proofs.KeyRemap
 import Flapjack.Pancake.PanStructs.CompileDeclsExact
