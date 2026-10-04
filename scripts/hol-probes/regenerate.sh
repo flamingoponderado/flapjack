@@ -2143,6 +2143,10 @@ run_probe word_sem_call_helpers_probeScript.sml word_sem_call_helpers_probe.out 
   "$cake_dir/compiler/backend/semantics"
 
 # Frozen PR1213 carrier repair: independent ignored add_ret_loc metadata.
+run_probe word_to_word_find_code_carriers_probeScript.sml word_to_word_find_code_carriers_probe.out \
+  find_code_independent_carriers_typed find_code_independent_carriers_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" \
+  "$cake_dir/compiler/backend/proofs"
 run_probe word_sem_add_ret_loc_carriers_probeScript.sml word_sem_add_ret_loc_carriers_probe.out \
   add_ret_loc_independent_metadata_typed add_ret_loc_independent_metadata_hypotheses \
   add_ret_loc_independent_metadata_some add_ret_loc_independent_metadata_none \
