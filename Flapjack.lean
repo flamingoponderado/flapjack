@@ -68,6 +68,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
 
 import Flapjack.Test.PanToTargetSourceParity
 import Flapjack.Pancake.PanToTarget
+import Flapjack.Pancake.PanToTarget.MainFirstSemantics
 import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
