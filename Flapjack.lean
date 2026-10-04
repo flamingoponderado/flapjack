@@ -135,6 +135,7 @@ import Flapjack.RiscV.L3.Step.MulDivStep
 import Flapjack.RiscV.L3.Step.WordArithmeticStep
 import Flapjack.RiscV.L3.Step.ConditionalBranchStep
 import Flapjack.RiscV.L3.Step.WMulDivStep
+import Flapjack.RiscV.L3.Step.MulHStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
