@@ -147,9 +147,9 @@ with `P` the two-argument `Panop` predicate. -/
 @[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_less_shape_val"
   (words_as_type_indexed_bitvec)]
 theorem every_inst_ok_less_shape_val {width : Nat} [NeZero width] :
-    (∀ e : ShapeHOL, everyExpHOL panopArityTwoHOL (shapeValHOL (width := width) e) = true) ∧
+    (∀ e : ShapeHOL, everyExpHOL panopArityTwoHOL (shapeValHOL e : ExpHOL width) = true) ∧
       (∀ es : List ShapeHOL,
-        everyExpListHOL panopArityTwoHOL (shapeValsHOL (width := width) es) = true) :=
+        everyExpListHOL panopArityTwoHOL (shapeValsHOL es : List (ExpHOL width)) = true) :=
   ⟨shapeVal_every, shapeVals_every⟩
 
 /-- Full original `every_inst_ok_less_pan_globals_compile`:

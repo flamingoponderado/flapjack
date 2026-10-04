@@ -97164,5 +97164,161 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 857-880: free dest args s res s1 funs bound explicitly; premise evaluate (Call NONE (SOME dest) args NONE, s) = (res,s1) /\\ res <> SOME Error /\\ subspt funs s.code; conclusion over full_call_graph dest funs; via max_depth_call_graph on the callee as in HOL. State carrier WordSemStateFiniteExact width C F with fmap_as_finite_support [fpRegs, store] and words qualifiers; OPTION_MAP2 is WordDepth.optionMap2, set ns SUBSET domain funs2 is successful lookup for each element, ALL_DISTINCT is Nodup. Inherits reals_as_rational_cuts (SOUNDNESS item 8) through evaluate/inst. Typed capture word_depth_call_graph probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_exp",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders ctxt e; premise every_exp P e; conclusion every_exp P (compile_exp ctxt e). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_shape_val",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_shape_val",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: both conjuncts: every_exp P (shape_val e) and EVERY (every_exp P) (shape_vals es). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders ctxt code; EVERY (every_exp P) (exps_of code) ⇒ same for exps_of (compile ctxt code); by compile_ind. every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_decs",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_decs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: EVERY good_panops pan_code ⇒ EVERY good_panops (FST (SND (compile_decs ctxt pan_code))). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_decs_init",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_decs_init",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: EVERY good_panops pan_code ⇒ EVERY (EVERY (every_exp P)) (MAP exps_of (FST (compile_decs ctxt pan_code))). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_fperm",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_fperm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders f g code (mlstring names); EVERY (every_exp P) (exps_of code) ⇒ same for fperm f g code. every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_fperm_decs",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_fperm_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: EVERY good_panops pan_code ⇒ EVERY good_panops (fperm_decs f g pan_code). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_top",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders pan_code main; EVERY good_panops pan_code ⇒ EVERY good_panops (compile_top pan_code main). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical witness re-exporting the reviewed PanGlobalsContextExact roundtrip for the fmap_as_finite_support [globals] qualifier; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "everyExpListHOL_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack list-append factoring of EVERY (every_exp P) used by the tagged every_inst_ok_less ports in this module; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "compileExp_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual single-expression half of the tagged every_inst_ok_less_pan_globals_compile_exp (with compileExpList_every); no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "compileExpList_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "MAP (compile_exp ctxt) half of the mutual induction behind every_inst_ok_less_pan_globals_compile_exp, also recording length preservation for the Panop arity; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "shapeVal_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual shape_val half assembled into the tagged every_inst_ok_less_shape_val; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "shapeVals_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual shape_vals half assembled into the tagged every_inst_ok_less_shape_val; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "everyExpListHOL_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack FLAT factoring of EVERY (every_exp P) used by the tagged every_inst_ok_less_pan_globals_compile_top; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "resortDecls_all_good",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "resort_decls (four FILTERs) preserves EVERY good_panops; Flapjack support for the tagged every_inst_ok_less_pan_globals_compile_top, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "params_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Parameter variables (MAP (Var Local o FST)) satisfy the Panop arity predicate; Flapjack support for the tagged every_inst_ok_less_pan_globals_compile_top, no independent HOL declaration."
   }
 ]
