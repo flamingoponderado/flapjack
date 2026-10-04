@@ -98078,6 +98078,22 @@
   {
     "hol_path": null,
     "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "addressesSplitGlobals",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only arithmetic step of pan_to_target_compile_semantics (HOL proof lines 2161-2216, SET_EQ with addresses_thm and word_arith_lemma2): addresses a n = addresses a (n - g) UNION addresses (a + bytes_in_word * n2w n - n2w (g * dimindex DIV 8)) g when g <= n under good_dimindex."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyPanToWord.lean",
+    "lean_name": "fullMakeInit_fields",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only projection step of pan_to_target_compile_semantics (HOL proof lines 1756-1797, unfolding full_make_init and stack_alloc make_init): when full_make_init returns (sst, SOME x), sst has x's memory, mdomain, sh_mdomain, store, be and ffi."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
     "lean_name": "panToTargetInitCodeRun",
     "statement_status": "no_hol_reference_pending_classification",

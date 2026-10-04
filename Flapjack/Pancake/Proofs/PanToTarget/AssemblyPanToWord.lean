@@ -2,6 +2,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Compiler.Backend.WordToStack.Proofs.Initialization
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
 
 /-!
 # `pan_to_target_compile_semantics` assembly, pan_to_word stage
@@ -87,5 +88,64 @@ theorem panToTargetPanToWordStage {width : Nat} [NeZero width] {C σ : Type}
       htop, hnodup, halign, halloc, hcode, rfl, hglobals, hlocals, heids, heshapes,
       by simp [wst0, wst, WordToStack.Native.Initialization.makeInit, sptLookup],
       good, hfail⟩
+
+/-- The memory-domain split of the HOL proof (lines 2161-2216): the `n` heap words
+from `a` are the first `n - g` words together with the `g` words ending at
+`a + bytes_in_word * n2w n` (the globals area below the top of the heap). -/
+theorem addressesSplitGlobals {width : Nat} [NeZero width] (good : goodDimindex width)
+    (a : BitVec width) (n g : Nat) (hg : g ≤ n) :
+    (fun x => StackRemove.addresses a (n - g) x ∨
+      StackRemove.addresses (a + StackRemove.bytesInWord width * BitVec.ofNat width n -
+        BitVec.ofNat width (g * width / 8)) g x) = StackRemove.addresses a n := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + g := ⟨n - g, by omega⟩
+  have hsub : m + g - g = m := by omega
+  have htop : BitVec.ofNat width (g * width / 8) =
+      BitVec.ofNat width g * StackRemove.bytesInWord width := by
+    rw [good_dimindex_div_mul width g good, StackRemove.bytesInWord, BitVec.ofNat_mul]
+  have key : ∀ j : Nat, a + StackRemove.bytesInWord width * BitVec.ofNat width (m + g) -
+      BitVec.ofNat width (g * width / 8) + BitVec.ofNat width j * StackRemove.bytesInWord width =
+      a + BitVec.ofNat width (m + j) * StackRemove.bytesInWord width := by
+    intro j
+    rw [htop, BitVec.ofNat_add, BitVec.ofNat_add]
+    generalize StackRemove.bytesInWord width = b
+    generalize BitVec.ofNat width m = mm
+    generalize BitVec.ofNat width g = gg
+    generalize BitVec.ofNat width j = jj
+    rw [BitVec.mul_comm b, BitVec.add_mul, BitVec.add_mul]; abel
+  funext x
+  apply propext
+  simp only [StackRemove.mem_addresses, hsub]
+  constructor
+  · rintro (⟨i, hi, rfl⟩ | ⟨j, hj, rfl⟩)
+    · exact ⟨i, by omega, rfl⟩
+    · exact ⟨m + j, by omega, key j⟩
+  · rintro ⟨i, hi, rfl⟩
+    by_cases him : i < m
+    · exact .inl ⟨i, him, rfl⟩
+    · refine .inr ⟨i - m, by omega, ?_⟩
+      rw [key, show m + (i - m) = i by omega]
+
+/-- The stack state returned by a successful `full_make_init` (`opt = SOME x`) shares
+`x`'s memory, memory domains, store, endianness and FFI state: `stack_alloc`'s
+`make_init` only replaces code, flags, GC function and compiler fields. -/
+theorem fullMakeInit_fields {width : Nat} [NeZero width] {C F : Type}
+    {stackConf : StackToLab.Config} {dataConf : DataToWord.Config} {maxHeap sp : Nat}
+    {offset : BitVec width × BitVec width} {bitmaps : List (BitVec width)}
+    {code : List (Nat × StackLang.HolProg width)} {t : LabSem.State width C F}
+    {saveRegs : Nat → Bool} {dataSp : Nat}
+    {coracle : Nat → C × List (Nat × StackLang.HolProg width) × List (BitVec width)}
+    {sst x : StackSemStateFiniteExact width C F}
+    (hfmi : StackToLab.Proofs.FullMakeInit.fullMakeInit stackConf dataConf maxHeap sp offset
+      bitmaps code t saveRegs dataSp coracle = (sst, some x)) :
+    sst.memory = x.memory ∧ sst.mdomain = x.mdomain ∧ sst.shMdomain = x.shMdomain ∧
+      sst.store = x.store ∧ sst.be = x.be ∧ sst.ffi = x.ffi := by
+  rw [StackToLab.Proofs.FullMakeInitSemantics.fullMakeInit_eq] at hfmi
+  simp only [Prod.mk.injEq] at hfmi
+  obtain ⟨hs, hopt⟩ := hfmi
+  rw [← hs]
+  simp only [StackAlloc.makeInit, StackRemove.Proofs.InitMake.makeInitAny]
+  unfold StackRemove.Proofs.InitMake.makeInitOpt at hopt ⊢
+  rw [hopt]
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Flapjack.Pancake.Proofs.PanToTarget
