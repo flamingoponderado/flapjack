@@ -8,6 +8,7 @@ import Flapjack.Pancake.PanToTarget
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Arithmetic
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
@@ -39,6 +40,7 @@ import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
 import Flapjack.RiscV.CorrectnessEncoding.BinopRegister
 import Flapjack.RiscV.CorrectnessEncoding.BinopImmediate
+import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.RiscV.CorrectnessEncoding.ConstWide
@@ -107,6 +109,7 @@ import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
@@ -144,6 +147,8 @@ import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
+import Flapjack.RiscV.L3.Step.ImmediateComparison
+import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
@@ -762,6 +767,8 @@ import Flapjack.Compiler.Backend.WordCse.ProductionStoreFacts
 import Flapjack.Compiler.Backend.WordCse.ProductionStoreErase
 import Flapjack.Compiler.Backend.WordCse.ProductionGet
 import Flapjack.Compiler.Backend.WordCse.ProductionSet
+import Flapjack.Compiler.Backend.WordCse.ProductionJoin
+import Flapjack.Compiler.Backend.WordCse.ProductionFactAux
 import Flapjack.Compiler.Backend.WordCse.FactProducers
 import Flapjack.Compiler.Backend.WordCse.Join
 import Flapjack.Compiler.Backend.WordCse.Proofs.InNamesSet
@@ -1052,6 +1059,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
@@ -1351,6 +1359,7 @@ import Flapjack.Pancake.Proofs.WordConvs.InstSelectExp
 import Flapjack.Pancake.Proofs.WordConvs.InstSelectProgram
 import Flapjack.Pancake.Proofs.WordConvs.ThreeToTwo
 import Flapjack.Pancake.Proofs.WordConvs.Unreach
+import Flapjack.Pancake.Proofs.WordConvs.UnreachLabels
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets

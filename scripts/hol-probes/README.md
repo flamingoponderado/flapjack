@@ -8174,3 +8174,56 @@ they are source review evidence, not a cross-assistant equivalence proof.
 closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
 opcode, retaining every guard and the full target existential. This is source
 statement evidence, not cross-assistant equivalence.
+`word_cse_production_join_probe.out` captures the full original five-field
+merge_data definition, knowledge-to-knowledge type, full typed wf_data and
+whole-program preservation theorem. Original EVAL observes all five joined
+fields at equal/conflicting/missing keys, latest reset and empty join.
+The duplicate-store fixture deliberately lies outside wf_data: filtering
+reveals a later value hidden by first-match lookup. The executed map drops
+that conflicting key. ProductionJoin derives the actual If knowledge join
+from arm induction hypotheses and original well-formedness preservation;
+it does not establish whole-pass production adoption or HOL/Lean equivalence.
+
+`word_to_stack_inst_full_probeScript.sml` captures the original complete
+`evaluate_wInst` and its whole FP-family specialization, with full types,
+closed quantification, zero hypotheses and kernel-proved statements. Source
+review evidence covers the original guards and complete target existential;
+it does not assert cross-assistant equivalence or whole compiler correctness.
+
+## Evaluated SLTI and SLTIU original hypotheses
+
+`Step/ImmediateComparison.lean` completes the original six-case immediate ALU
+group with SLTI and SLTIU. The fresh complete typed theorem captures in
+`l3_step_immediate_comparison_probe.out` discharge and quantify BOTH original
+hypotheses: destination nonzero and ArchBase unequal to1. The latter propagates
+from source `not1` into the `in32BitMode` evaluator. These are original guards,
+not new port assumptions. Both equations preserve the full native record and
+RV32 sign extension of low32 source bits, including literal SLTIU asymmetry.
+The proof uses the actual reviewed definitions and kernel-checked finite-word
+case analysis. Captures are regression evidence, not cross-language equivalence.
+The elaborated declaration closure contains no inherited real-cut operation.
+
+## Full native Binop constructor assembly
+
+`CorrectnessEncoding/Binop.lean` assembles the accepted Reg and Imm equations
+into the full original constructor at source550-559. All five operators and
+both operand forms retain the sole original asmStep/initial relation premise
+and full existential/interference/assertion conclusion.
+`riscv_target_binop_full_probe.out` captures the unrestricted original theorem,
+including typed word64 RegImm and natural registers, zero source hypotheses
+and provedT. These captures are regression evidence; the accepted case proofs
+and kernel-checked source case assembly establish the result. The full target
+closure retains inherited reals_as_rational_cuts (SOUNDNESS item8). Other
+encoder constructors and the encompassing compiler theorem remain open.
+
+`word_cse_production_fact_aux_probe.out` captures both full original typed
+add_to_data_aux/add_to_load_aux definitions and inferred types, with twelve
+complete output observations. Instruction and load producers each cover
+lookup miss/hit, even/odd destinations, latest-holder presence and missing
+holder fallback. All five returned knowledge fields and the complete
+Move/Tick program are replayed by kernel fixtures and actual executed runtime
+checks. ProductionFactAux derives these transitions from input representation
+and the original selected native table invariant, retaining unrelated fields.
+Successful input codec conversion is an explicit representation boundary;
+unsupported native program carriers and whole-pass adoption remain separate.
+No tagged original theorem is narrowed or cross-language equivalence claimed.

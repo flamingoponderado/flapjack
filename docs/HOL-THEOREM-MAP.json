@@ -25347,6 +25347,20 @@
     "inherits_reals_as_rational_cuts": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/WordSem/Semantics.lean",
+    "lean_name": "wordLangSafeForSpace",
+    "hol_path": "cakeml/compiler/backend/semantics/wordSemScript.sml",
+    "hol_name": "word_lang_safe_for_space_def",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original wordSemScript.sml 1403-1408. Typed capture word_sem_safe_for_space probe (show_types, hypotheses=0): for (s:('a,'c,'ffi) state) start, with prog = Call NONE (SOME start) [0] NONE, ∀k res t. evaluate (prog, s with clock := k) = (res,t) ⇒ ∃max. t.stack_max = SOME max ∧ max ≤ t.stack_limit. Lean: same let-bound entry call over the reviewed exact WordSem evaluate, clock-updated state, stackMax : Option Nat and stackLimit : Nat; binder order k res t retained. Canonical fpRegs/store carrier and positive type-indexed word width qualified; evaluator closure inherits reals_as_rational_cuts (SOUNDNESS item 8)."
+  },
+  {
     "lean_path": "Flapjack/Pancake/Proofs/LoopToWord/TickUnfold.lean",
     "lean_name": "evaluate_tick_unfold",
     "hol_path": "cakeml/pancake/proofs/loop_to_wordProofScript.sml",
@@ -43792,6 +43806,15 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:5663-5680 compared with compileWordToStackImpLength. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileBitmaps.lean",
+    "lean_name": "compileWordToStackBitmaps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_bitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 5682-5689 compile_word_to_stack_bitmaps (used by backendProof and pan_to_targetProof). Typed capture word_to_stack_compile_bitmaps probe (show_types): compile (c:'a asm_config) F (p:(num # num # 'a prog) list) = (bitmaps,c2,prog1) ⇒ (case bitmaps of [] => F | h::v1 => 4w = h) ∧ c2.bitmaps_length = LENGTH bitmaps. Lean: the reviewed native compile_def (compileNative) at perf = false with the same nested result tuple (word list, config, num list × (num × stackLang prog) list); the case split is a non-generalizing match on bitmaps with the F/4w = h branches; bitmapsLength is the config field. Proof as HOL via compile_word_to_stack_isPREFIX (initial [4w] prefix) and compile_word_to_stack_IMP_LENGTH (zero gap). Only positive type-indexed word width qualified; no added premise."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
@@ -70136,6 +70159,24 @@
     "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-install), full original comp_correct Install1932-1997. Retains arbitrary five source registers including the unused return register, both native states, source result/poststate, jump/bounds/register bound parameters and exactly the original source evaluate/non-Error/state_rel/reg_bound premises. Derives the same existential target clock and actual native comp evaluation with the identical result and complete original result-dispatch postrelation. No target evaluation, compiler success, post code_rel, callback law, narrowed register alias/word width or post-state premise. Full source branch analysis retains failures, actual four word reads, code/data buffer flush, compileOracle head and shift, compiler output equality, nonempty program list and all original output/config checks. Source relation supplies target reads, compiler and oracle mapping; native target skips the data flush because its original useStack=false is derived. Successful source data flush proves the new bitmap list plus remaining data-buffer payload is exactly the old combined payload and proves the updated bitmap position. Whole separated heap and every unchanged carrier/field retained. Actual left-biased Spt code union respects first-match duplicate names, full domain equality and original stackNumStubs=5 oracle entry bound preserving error/init stubs; no finite-map qualifier applied to Spt code. Saved-register restriction is transported on all registers below the bound, and the three special registers survive because the original source relation supplies their mask membership. Local actual imported StackSemStateFiniteExact roundtrip witness has no shadow owner. Relation qualifier names only its canonical regs/fpRegs/store maps; word qualifier records original positive type-indexed BitVec and FFI Type carriers. Native evaluator closure inherits reviewed reals_as_rational_cuts FP carrier (SOUNDNESS item 8), though Install executes no FP instruction. No native_decide, whole-pass correctness or executed compiler parity claim."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Inst.lean",
+    "lean_name": "compCorrectInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "hol_line": 5756,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original Inst case 6315-6326 of comp_correct5756/motive5719-5751, captured with inferred types by the word_to_stack_comp_inst probe (case obligation and whole specialization, full_proved=T, hypotheses=0; i:'a inst, source config num # 'c, target 'c, shared 'a word/'ffi). Full Seq.Simulation over arbitrary instruction/source; all original hypotheses and the full existential target-run/resource/result conclusion retained. As in HOL: the source Inst run succeeds with NONE (the NONE inst result is the excluded Error), post_alloc_conventions gives every_var_inst is_phy_var and call_arg_convention = inst_arg_convention (transported to the exact HolInst carrier through the reviewed codec), max_var (Inst i) = max_var_inst i, and the full original evaluate_wInst (flapjack-sol da79ec9f3) gives the target run with ck = 0 and the NONE-branch state_rel. No added premise. Five canonical finite-map fields/positive words qualified; inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
     "lean_name": "signalEnvCall",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
@@ -92378,6 +92419,129 @@
     "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
   },
   {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "extractLabelsSimpSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_SimpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original extract_labels_SimpSeq in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "extractLabelsSeqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original extract_labels_Seq_assoc_right_lemma in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "extractLabelsRemoveUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original extract_labels_remove_unreach in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "memExtractLabelsSeqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "MEM_extract_labels_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original MEM_extract_labels_Seq_assoc_right_lemma in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "distinctExtractLabelsSeqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "distinctExtractLabelsRemoveUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ALL_DISTINCT_extract_labels_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original ALL_DISTINCT_extract_labels_remove_unreach in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsRelRemoveUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "labels_rel_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original labels_rel_remove_unreach in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsOfDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsSublistSimpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsSublistSeqAssocRight",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation.lean",
+    "lean_name": "evaluateWInstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 complete statement specialized to the whole arbitrary FP family16constructors. All original five guards (actual source inst success/every_var_inst/max_var_inst/inst_arg_convention/full state_rel), generic positive word width and independent C/F hosts, actual compiled wInst target evaluation existential, entire state relation and stack length/space retained. Source instruction codec is reviewed constructor-for-constructor HolInst.toWordLangInst (HolArith/HolRegImm/HolAddr payload codecs), no changed carrier fields or opcode/width restriction. Internal exhaustive native constructor dispatch consumes full source cases, retaining aliases/spills, arithmetic guards, unsupported16 memory contradiction from actual source success, FP partial/numeric/range guards, width64 and non64 packed/transfer odd-even branches and fixed FP64. No source-case simulation, target execution/result, numeric oracle or postrelation premise. Same-module genuine source/target canonical roundtrip witnesses; source fpRegs/store and target regs/fpRegs/store only, locals/code remain native Spt. Standard words/Type0 host representation only; faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). Original full generic theorem and whole FP typed specialization kernel captured with GEN_ALL/hyp0/T. comp_correct/WordToStack semantics/final compiler composition remain open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation.lean",
+    "lean_name": "evaluateWInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 complete statement over every native asm instruction, all five top constructors. All original five guards (actual source inst success/every_var_inst/max_var_inst/inst_arg_convention/full state_rel), generic positive word width and independent C/F hosts, actual compiled wInst target evaluation existential, entire state relation and stack length/space retained. Source instruction codec is reviewed constructor-for-constructor HolInst.toWordLangInst (HolArith/HolRegImm/HolAddr payload codecs), no changed carrier fields or opcode/width restriction. Internal exhaustive native constructor dispatch consumes full source cases, retaining aliases/spills, arithmetic guards, unsupported16 memory contradiction from actual source success, FP partial/numeric/range guards, width64 and non64 packed/transfer odd-even branches and fixed FP64. No source-case simulation, target execution/result, numeric oracle or postrelation premise. Same-module genuine source/target canonical roundtrip witnesses; source fpRegs/store and target regs/fpRegs/store only, locals/code remain native Spt. Standard words/Type0 host representation only; faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). Original full generic theorem and whole FP typed specialization kernel captured with GEN_ALL/hyp0/T. comp_correct/WordToStack semantics/final compiler composition remain open.",
+    "hol_line": 4688
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "cond16bit_inst_select_exp'",
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/Syntactic.lean",
@@ -92512,6 +92676,135 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.54): word_to_wordProof syntactic group. HOL statement compared clause by clause against the probe word_to_word_syntactic (statement/hypotheses/typed); HOL's free variables are explicit leading binders in source order, HOL bool predicates as Lean Bool = true, no_share_inst/no_mt/no_alloc/no_install as the tagged noShareInstSubprogsHOL/noMtSubprogsHOL/noAllocSubprogsHOL/noInstallSubprogsHOL, find_code as tagged wordSemFindCode, code_rel as tagged codeRel, fromAList/ALOOKUP as sptFromAList/sptAListLookup, ALL_DISTINCT as List.Nodup, ZIP on equal-length lists as List.zip. Positive HOL word dimension is the sole carrier translation. Definition over Spt lookup as in no_install_code_def."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTI",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparison.lean",
+    "lean_name": "dfnSltI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared evaluated SLTI at line839 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTIU",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparison.lean",
+    "lean_name": "dfnSltIU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared evaluated SLTIU at line840 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnLui",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LUI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:853 `val LUI = arithi \"LUI\"` (the two-argument `class_rd0` arithi over `(rd, imm)`), the saved `LUI` theorem produced by the riscv_step `class` evaluator over dfn'LUI_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> sw2sw ((imm @@ 0w:word12):word32):word64, no source-register read. Native word5/word20/word64/native-state equation retained; no extra hypothesis, no state narrowing, no success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-upper.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnAuiPC",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "AUIPC",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:854 `val AUIPC = arithi \"AUIPC\"` (the two-argument `class_rd0` arithi over `(rd, imm)`), the saved `AUIPC` theorem produced by the riscv_step `class` evaluator over dfn'AUIPC_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> c_PC procID + sw2sw ((imm @@ 0w:word12):word32):word64 (PC read preceding the destination write, same addend order as the source). Native word5/word20/word64/native-state equation retained; no extra hypothesis, no state narrowing, no success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-upper.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnAddNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADD_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:858 `val ADD = arithr [] \"ADD\"`; the `class_rd0` factory calls `utilsLib.save_thms` a second time with `[rd0]` in the avoidance list, producing the exported companion `ADD_NOP` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ADD ((rd,rs1,rs2)) s = s, i.e. the unchanged state. Exact native word5/word64 equation over the same dfn'ADD_def; no extra hypothesis and no state/lookup premise. The companion's name is generated rather than written as a literal `val`, so the reference checker registers the riscv_step `class_rd0` family narrowly (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnSubNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SUB_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:860 `val SUB = arithr [] \"SUB\"`; companion `SUB_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'SUB ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnAndNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "AND_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:864 `val AND = arithr [] \"AND\"`; companion `AND_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'AND ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnOrNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "OR_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:865 `val OR = arithr [] \"OR\"`; companion `OR_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'OR ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnXorNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "XOR_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:866 `val XOR = arithr [] \"XOR\"`; companion `XOR_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'XOR ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnAddINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADDI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:837 `val ADDI = arithi [] \"ADDI\"`; companion `ADDI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ADDI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnAndINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ANDI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:841 `val ANDI = arithi [] \"ANDI\"`; companion `ANDI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ANDI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnOrINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ORI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:842 `val ORI = arithi [] \"ORI\"`; companion `ORI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ORI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnXorINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "XORI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:843 `val XORI = arithi [] \"XORI\"`; companion `XORI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'XORI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnLuiNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LUI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:853 `val LUI = arithi \"LUI\"`; companion `LUI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'LUI ((rd,imm)) s = s. Exact native word5/word20/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnAuiPCNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "AUIPC_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:854 `val AUIPC = arithi \"AUIPC\"`; companion `AUIPC_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'AUIPC ((rd,imm)) s = s. Exact native word5/word20/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Binop.lean",
+    "lean_name": "riscv_encoder_correct_binop",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared full Binop branch550-559 and original encoder_correct_def: every BinOp and both original RegImm constructors, same sole asmStep plus initialtargetStateRel premise and full existential/all-env/asserts/asserts2 conclusion. Accepted full Reg/Imm proofs assembled along literal source case split, no target-run/range/finalrelation premise. Fresh full typed original source theorem capture retains unrestricted num registers, word64 RegImm and full native state, hypotheses0/provedT. Inherited reals_as_rational_cuts assumption on full native target/Run closure, SOUNDNESS item8, retained."
   },
   {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
