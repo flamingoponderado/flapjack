@@ -1044,6 +1044,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum

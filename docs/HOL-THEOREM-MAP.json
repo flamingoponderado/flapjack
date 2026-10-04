@@ -43794,6 +43794,15 @@
     "reviewer": "flapjack-sol2 source comparison (2026-10-01; bead flapjack-pxn.18.5.15.3.26.7): original word_to_stackProofScript.sml:5663-5680 compared with compileWordToStackImpLength. The native compileProgNative/compileWordToStackNative definitions use the reviewed WordLangProgHOL, HolProg, AsmConfigExact and AppList carriers. All source inputs and output components are retained, including argument/register counts, perf, frame outputs and arbitrary independent identifier type for rows. The only carrier translation is positive HOL word dimension to BitVec width with [NeZero width], recorded by words_as_type_indexed_bitvec. Prefix statements retain the sole actual compiler output equation and initial flattened list as prefix of final flattened list. Length statements retain exactly the output equation and initial flattened-length bound, proving both final bound and equality of count-minus-length gaps. No frame convention, identifier uniqueness, output invariant, target execution or pass-success premise is added. Single-program proofs project the actual compNative output and use reviewed compImpIsPrefix/compImpLength; list proofs induct over the original left-to-right compiler traversal and compose prefix/gap results. Production routing remains separately open on .25.17; this proof does not establish source-to-RISC-V correctness."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompileBitmaps.lean",
+    "lean_name": "compileWordToStackBitmaps",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "compile_word_to_stack_bitmaps",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 5682-5689 compile_word_to_stack_bitmaps (used by backendProof and pan_to_targetProof). Typed capture word_to_stack_compile_bitmaps probe (show_types): compile (c:'a asm_config) F (p:(num # num # 'a prog) list) = (bitmaps,c2,prog1) ⇒ (case bitmaps of [] => F | h::v1 => 4w = h) ∧ c2.bitmaps_length = LENGTH bitmaps. Lean: the reviewed native compile_def (compileNative) at perf = false with the same nested result tuple (word list, config, num list × (num × stackLang prog) list); the case split is a non-generalizing match on bitmaps with the F/4w = h branches; bitmapsLength is the config field. Proof as HOL via compile_word_to_stack_isPREFIX (initial [4w] prefix) and compile_word_to_stack_IMP_LENGTH (zero gap). Only positive type-indexed word width qualified; no added premise."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/RegAlloc/SortMoves.lean",
     "lean_name": "sortMoves",
     "hol_path": "cakeml/compiler/backend/reg_alloc/reg_allocScript.sml",
