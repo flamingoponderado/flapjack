@@ -1,3 +1,4 @@
+import Flapjack.Test.PanToWordGoodCodeParity
 import Flapjack.Test.CompileProgMaxExecutableParity
 import Flapjack.Test.WordToWordExecutableParity
 import Flapjack.Test.PanToTargetOptionLtParity
@@ -2158,7 +2159,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackRawCallJumpLowerParity.runChecks,
     Flapjack.Test.StackEvaluateMonoParity.runChecks,
     Flapjack.Test.BytesInMemoryDomainParity.runChecks,
-    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
+    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
+    Flapjack.Test.PanToWordGoodCodeParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1
