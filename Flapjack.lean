@@ -2099,6 +2099,7 @@ import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileExpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepCompileValidity
+import Flapjack.Pancake.Proofs.PanToWord.PanToCrepTableValidity
 import Flapjack.Pancake.Proofs.PanToWord.LoadGlobalsValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepInlineTableValidity
 import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
