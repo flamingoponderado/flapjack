@@ -53,10 +53,20 @@ def bitmapEncodingExact : Bool :=
    `bitmap_slot2=12w`, and `bitmap_slots1_2=14w` exercise the
    location-derived `write_bitmap` mirror directly. -/
 def frameLocationConfig : WordStackConfig :=
-  { locations := [(1, .stack 1), (2, .stack 2)]
+  { locations := [(1, .stack 2), (2, .stack 3)]
     scratch := 31
     stackBase := 10
     specialScratch := 28 }
+
+/- Physical frame slots include the bitmap-pointer word at slot zero. The
+original bitmap slot2 observation therefore uses physical slot3. -/
+def oneSpillLocationBitmapExact : Bool :=
+  let config : WordStackConfig :=
+    { locations := [(3, .stack 1)], scratch := 22, stackBase := 0 }
+  wordStackLiveBitmapFromLocations config 1 64 [3] == [3] &&
+    writeBitmap [44] 22 1 64 == [3]
+
+#guard oneSpillLocationBitmapExact
 
 def locationBitmapExact : Bool :=
   wordStackLiveBitmapFromLocations frameLocationConfig 3 64 [] == [8] &&
