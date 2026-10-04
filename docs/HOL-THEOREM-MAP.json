@@ -97954,5 +97954,45 @@
     "lean_name": "crepInline_instInlineCore_exps",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Generalisation of exps_of_inst_inline to the support-certified core inlineProgHOLCoreExact, proved by its functional induction; assembled into the tagged crepInline_expsOfInstInline."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetSafeForSpaceOfDepth",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G depth half of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2292-2312: max_depth_Call_NONE + evaluate_stack_size_limit_const_panLang); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetStackSizeEqFrameSize",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G frame-size identification (pan_to_targetProofScript.sml 2336-2365: compile_word_to_stack_sfs_aux, mapi_Alist, map_fromAList); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetSafeForSpaceOfLimit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G over the word make_init state (pan_to_targetProofScript.sml 2285-2365): option_lt stack_max (SOME lim) with lim <= LENGTH sst.stack implies word_lang_safe_for_space; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "panToTargetStackLimitLeLength",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G limit arithmetic (pan_to_targetProofScript.sml 2311-2335, 2366-2506): FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= stack length read by init_reduce from the init_code_thm pointer facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceLimit.lean",
+    "lean_name": "sptAListLookup_map_snd",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
   }
 ]
