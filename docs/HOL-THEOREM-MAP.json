@@ -92463,5 +92463,41 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation.lean",
+    "lean_name": "evaluateWInstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 complete statement specialized to the whole arbitrary FP family16constructors. All original five guards (actual source inst success/every_var_inst/max_var_inst/inst_arg_convention/full state_rel), generic positive word width and independent C/F hosts, actual compiled wInst target evaluation existential, entire state relation and stack length/space retained. Source instruction codec is reviewed constructor-for-constructor HolInst.toWordLangInst (HolArith/HolRegImm/HolAddr payload codecs), no changed carrier fields or opcode/width restriction. Internal exhaustive native constructor dispatch consumes full source cases, retaining aliases/spills, arithmetic guards, unsupported16 memory contradiction from actual source success, FP partial/numeric/range guards, width64 and non64 packed/transfer odd-even branches and fixed FP64. No source-case simulation, target execution/result, numeric oracle or postrelation premise. Same-module genuine source/target canonical roundtrip witnesses; source fpRegs/store and target regs/fpRegs/store only, locals/code remain native Spt. Standard words/Type0 host representation only; faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). Original full generic theorem and whole FP typed specialization kernel captured with GEN_ALL/hyp0/T. comp_correct/WordToStack semantics/final compiler composition remain open.",
+    "hol_line": 4688
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/InstSimulation.lean",
+    "lean_name": "evaluateWInst",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wInst",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 complete statement over every native asm instruction, all five top constructors. All original five guards (actual source inst success/every_var_inst/max_var_inst/inst_arg_convention/full state_rel), generic positive word width and independent C/F hosts, actual compiled wInst target evaluation existential, entire state relation and stack length/space retained. Source instruction codec is reviewed constructor-for-constructor HolInst.toWordLangInst (HolArith/HolRegImm/HolAddr payload codecs), no changed carrier fields or opcode/width restriction. Internal exhaustive native constructor dispatch consumes full source cases, retaining aliases/spills, arithmetic guards, unsupported16 memory contradiction from actual source success, FP partial/numeric/range guards, width64 and non64 packed/transfer odd-even branches and fixed FP64. No source-case simulation, target execution/result, numeric oracle or postrelation premise. Same-module genuine source/target canonical roundtrip witnesses; source fpRegs/store and target regs/fpRegs/store only, locals/code remain native Spt. Standard words/Type0 host representation only; faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). Original full generic theorem and whole FP typed specialization kernel captured with GEN_ALL/hyp0/T. comp_correct/WordToStack semantics/final compiler composition remain open.",
+    "hol_line": 4688
   }
 ]
