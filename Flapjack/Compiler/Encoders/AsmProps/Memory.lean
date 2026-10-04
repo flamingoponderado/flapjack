@@ -51,8 +51,8 @@ theorem writeMemWordConsts {width : Nat} [NeZero width] {valueWidth : Nat} [NeZe
   | zero => simp [writeMemWord]
   | succ n ih =>
       rw [writeMemWord_succ]
-      generalize hr : writeMemWord (valueWidth := valueWidth) (if s.be then a - 1 else a + 1) n (w >>> 8) s = s0
-      have ih1 := ih (if s.be then a - 1 else a + 1) (w >>> 8) s
+      generalize hr : writeMemWord (valueWidth := valueWidth) (if s.be then a - 1 else a + 1) n (w >>> (8 : Nat)) s = s0
+      have ih1 := ih (if s.be then a - 1 else a + 1) (w >>> (8 : Nat)) s
       rw [hr] at ih1
       simpa using ih1
 
@@ -74,8 +74,8 @@ theorem writeMemWord_mem_domain {width : Nat} [NeZero width] {valueWidth : Nat} 
   | zero => simp [writeMemWord]
   | succ n ih =>
       rw [writeMemWord_succ]
-      generalize hr : writeMemWord (valueWidth := valueWidth) (if s.be then b - 1 else b + 1) n (a >>> 8) s = s0
-      have ih1 := ih (if s.be then b - 1 else b + 1) (a >>> 8) s
+      generalize hr : writeMemWord (valueWidth := valueWidth) (if s.be then b - 1 else b + 1) n (a >>> (8 : Nat)) s = s0
+      have ih1 := ih (if s.be then b - 1 else b + 1) (a >>> (8 : Nat)) s
       rw [hr] at ih1
       simpa using ih1
 
@@ -88,20 +88,20 @@ theorem writeMemWord_mem_eq {width : Nat} [NeZero width] {valueWidth : Nat} [NeZ
   induction k generalizing b a s with
   | zero => simp [writeMemWord]
   | succ n ih =>
-      generalize hr : writeMemWord (valueWidth := valueWidth) (if s.be then b - 1 else b + 1) n (a >>> 8) s = s0
+      generalize hr : writeMemWord (valueWidth := valueWidth) (if s.be then b - 1 else b + 1) n (a >>> (8 : Nat)) s = s0
       rw [writeMemWord_succ, hr] at h ⊢
       simp only [assertState_mem]
       obtain ⟨hc, hf⟩ := not_failed_assertState h
       have hdom : s0.memDomain = s.memDomain := by
         rw [← hr]
-        simpa using writeMemWord_mem_domain (valueWidth := valueWidth) n (if s.be then b - 1 else b + 1) (a >>> 8) s
+        exact writeMemWord_mem_domain (valueWidth := valueWidth) n (if s.be then b - 1 else b + 1) (a >>> (8 : Nat)) s
       have hcs : decide (s.memDomain b) = true := by rw [← hdom]; exact hc
       have hb : s.memDomain b := of_decide_eq_true hcs
       rw [updMem_mem]
       by_cases hxb : x = b
       · subst hxb; exact absurd hb hx
       · rw [if_neg hxb]
-        have ih1 := ih (if s.be then b - 1 else b + 1) (a >>> 8) s (by rw [hr]; simpa using hf) hx
+        have ih1 := ih (if s.be then b - 1 else b + 1) (a >>> (8 : Nat)) s (by rw [hr]; simpa using hf) hx
         rw [hr] at ih1
         exact ih1
 
