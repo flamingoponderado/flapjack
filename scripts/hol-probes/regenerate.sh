@@ -7421,6 +7421,10 @@ run_probe word_props_code_grows_probeScript.sml word_props_code_grows_probe.out 
   evaluate_code_only_grows_typed evaluate_NONE_stack_size_const_typed \
   "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
+run_probe word_depth_call_graph_probeScript.sml word_depth_call_graph_probe.out \
+  max_depth_call_graph_lemma_typed max_depth_call_graph_typed max_depth_Call_NONE_typed \
+  "$cake_dir/compiler/backend/proofs/word_depthProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe pan_target_root_leaves_probeScript.sml pan_target_root_leaves_probe.out \
   UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed DIV_LESS_DIV_typed WORD_LS_IMP_typed lsr_lsl_typed byte_aligned_mult_typed compile_word_to_stack_sfs_aux_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7472,6 +7476,18 @@ run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
 run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
   option_le_SOME_typed \
   "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_to_word_crep_inst_ok_probeScript.sml pan_to_word_crep_inst_ok_probe.out \
+  crep_every_exp_def_typed every_inst_ok_less_crep_to_loop_compile_exp_typed every_prog_loop_inst_ok_nested_seq_typed every_inst_ok_less_crep_to_loop_compile_typed every_inst_ok_less_comp_func_typed \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_word_arith_simp_inst_ok_probeScript.sml pan_to_word_arith_simp_inst_ok_probe.out \
+  every_inst_ok_arith_simp_exp_typed every_inst_ok_arith_simp_prog_typed every_inst_ok_less_crep_to_loop_compile_prog_typed \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_word_loop_inst_ok_probeScript.sml pan_to_word_loop_inst_ok_probe.out \
+  every_inst_ok_loop_call_typed every_inst_ok_loop_live_typed every_inst_ok_less_optimise_typed \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe loop_to_word_every_inst_ok_less_probeScript.sml loop_to_word_every_inst_ok_less_probe.out \
   loop_inst_ok_def_typed loop_to_word_comp_every_inst_ok_less_typed loop_to_word_comp_func_every_inst_ok_less_typed loop_to_word_compile_prog_every_inst_ok_less_typed loop_to_word_every_inst_ok_less_typed \
@@ -8253,3 +8269,10 @@ run_probe riscv_branch_decode_probeScript.sml riscv_branch_decode_probe.out \
 
 run_probe asm_memory_shift_probeScript.sml asm_memory_shift_probe.out read_width_1 write_width_1 read_width_2 write_width_2 read_width_3 write_width_3 read_width_64 write_width_64 \
   "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/asm"
+run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_helpers_probe.out \
+  exps_of_nested_seq every_inst_ok_nested_decs every_inst_ok_less_pan_to_crep_comp_field every_inst_ok_less_pan_to_crep_load_shape every_inst_ok_less_pan_to_crep_cexp_heads every_inst_ok_less_stores every_inst_ok_less_store_globals \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_decs_provenance_probe.out \
+  nested_decs_provenance \
+  "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
