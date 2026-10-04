@@ -8887,3 +8887,5 @@ remain finite regression evidence, not a universal equivalence proof. Missing
 constructors, mode omissions, source/Lean carrier drift and probe-input drift
 have negative tests. Lake, original capture regeneration and manual source
 comparison remain separate required gates.
+
+`lab_to_target_ffi_distinct_probe.out` captures the full original unconditional FFI-name distinctness theorem, hypothesis count and actual collector definition with full carriers. Lean proves List.Nodup through original fresh insertion. Captures provide source-review evidence, not HOL-to-Lean equivalence or whole compiler completion.

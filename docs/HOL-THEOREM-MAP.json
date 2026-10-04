@@ -98966,5 +98966,14 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 original source6382-6410 and freshly loaded typed original theorem/direct loc_to_pc, sec_labels_ok, extract_labels definitions in lab_to_target_extracted_label_navigation_probe.out. Retains all l1/l2/code binders, original EVERY section validity and MEM pair in FLAT MAP extract_labels Section_lines conjunction, and existential Nat actual locToPc result. Lean flatMap is literal FLAT MAP. Native alpha sec/line alias retains HolAsm/AsmOrCbw/HolMemop/HolAddr/AsmWithLab/HolCmp/HolRegImm/MlString and fixed word8 byte payloads; sole positive word-dimension translation NeZero BitVec width. No stronger validity, label uniqueness, result/search/target execution/codec premise. Nested code/line induction derives actual search and all nonlabel PC increments; label-zero rejection derived from original secLabelOk. Captures are source-review regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiNameDistinctness.lean",
+    "lean_name": "findFfiNames_nodup",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "find_ffi_names_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source10627-10635 and fresh loaded fulltyped theorem hyp0/direct find_ffi_names definition in lab_to_target_ffi_distinct_probe.out. Full forall native code alpha sec and unconditional ALL_DISTINCT conclusion translated to List.Nodup. Sole positive word-dimension NeZero BitVec width translation; canonical HolAsm/AsmOrCbw/HolMemop/HolAddr/AsmWithLab/HolCmp/HolRegImm/MlString/HolFfiName and fixed word8 bytes retained. Actual collector recursion and reviewed listAddIfFresh derive full result; no name range, input validity, encoding success, target execution or output premise. Original capture is regression/source-review evidence, not cross-language equivalence or whole compiler completion."
   }
 ]
