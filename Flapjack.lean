@@ -33,6 +33,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelMemory
 
 import Flapjack.Test.PanToTargetSourceParity
 import Flapjack.Pancake.PanToTarget
+import Flapjack.Pancake.PanToTarget.ProductionSourceEntry
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
@@ -75,6 +76,10 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.MoveSourceState
 import Flapjack.Misc.Sptree.AlistInsertReverse
 import Flapjack.Misc.Address
 import Flapjack.Misc.Fun2SetUnion
+import Flapjack.Misc.UpdateList
+import Flapjack.Misc.DivModLemmas
+import Flapjack.Misc.DisjointInter
+import Flapjack.Misc.WordLsImp
 import Flapjack.RiscV.CorrectnessEncoding.DecodeConst
 import Flapjack.RiscV.CorrectnessEncoding.DecodeBinop
 import Flapjack.RiscV.CorrectnessEncoding.BinopRun
@@ -84,6 +89,7 @@ import Flapjack.RiscV.CorrectnessEncoding.Binop
 import Flapjack.RiscV.CorrectnessEncoding.Const32
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.BackendProof.MachineInit
+import Flapjack.Compiler.Backend.BackendProof.WordToStackSfs
 import Flapjack.Compiler.Backend.BackendProof.CompileLab
 import Flapjack.Compiler.Backend.BackendProof.ConfigOk
 import Flapjack.Compiler.Backend.BackendProof.ReadLimits
@@ -1467,6 +1473,7 @@ import Flapjack.Compiler.Backend.WordGcFunctions
 import Flapjack.Compiler.Backend.WordGcFunctions.Roots
 import Flapjack.Compiler.Backend.WordGcFunctions.HasFpOps
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.WordLemmas
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunConstOk
 import Flapjack.Compiler.Backend.WordSimp.Proofs.GcWordConst

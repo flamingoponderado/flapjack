@@ -96370,6 +96370,90 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original backendScript 203 EVAL closed form: next vidx 0 tidx 2 eidx 4, mod_env c the eight constructor bindings in order, v Bind [] [], pattern_cfg pat_heuristic 0, envs next 0 env_gens LN; kernel-proved by unfolding compile_decs. Typed capture backend_prim_src_config probe."
   },
   {
+    "lean_path": "Flapjack/Misc/UpdateList.lean",
+    "lean_name": "updateList",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "UPDATE_LIST_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: FOLDL (flip (UNCURRY UPDATE)) with UPDATE a b f = (λx. if a = x then b else f x) written inline; polymorphic alpha/beta, decidable key equality renders HOL equality. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/UpdateList.lean",
+    "lean_name": "applyUpdateListALookup",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "APPLY_UPDATE_LIST_ALOOKUP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ls f x. (f =++ ls) x = case ALOOKUP (REVERSE ls) x of NONE => f x | SOME y => y; ALOOKUP is List.lookup. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DivModLemmas.lean",
+    "lean_name": "modSubLemma",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "MOD_SUB_LEMMA",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: num hypotheses n MOD k = 0 ∧ m MOD k = 0 ∧ 0 < k, conclusion (n − m) MOD k = 0 with truncated subtraction. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DisjointInter.lean",
+    "lean_name": "disjointInter",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "DISJOINT_INTER",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: DISJOINT b c ⇒ DISJOINT (a ∩ b) (a ∩ c) over alpha -> bool sets as predicates, DISJOINT as pointwise non-overlap (set_sep convention). Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DivModLemmas.lean",
+    "lean_name": "impMultDivLess",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "IMP_MULT_DIV_LESS",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: m ≠ 0 ∧ d < k ⇒ m * (d DIV m) < k. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/DivModLemmas.lean",
+    "lean_name": "divLessDiv",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "DIV_LESS_DIV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: n MOD k = 0 ∧ m MOD k = 0 ∧ n < m ∧ 0 < k ⇒ n DIV k < m DIV k. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/WordLsImp.lean",
+    "lean_name": "wordLsImp",
+    "hol_path": "cakeml/misc/miscScript.sml",
+    "hol_name": "WORD_LS_IMP",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: a ≤₊ b ⇒ ∃k. Abbrev (b = a + n2w k) ∧ w2n (b − a) = k ∧ ∀w. a ≤₊ w ∧ w <₊ b ⇔ ∃i. w = a + n2w i ∧ i < k; ≤₊/<₊ are BitVec ≤/< (toNat order), Abbrev is the logical identity marker. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/WordLemmas.lean",
+    "lean_name": "lsrLsl",
+    "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
+    "hol_name": "lsr_lsl",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀w n. aligned n w ⇒ w >>> n << n = w with BitVec logical shifts. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/MachineInit.lean",
+    "lean_name": "byteAlignedMult",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "byte_aligned_mult",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: good_dimindex (:a) ⇒ (byte_aligned (a + bytes_in_word * n2w i) ⇔ byte_aligned a); bytes_in_word is n2w (dimindex DIV 8); literal-source replay (backendProofTheory unbuilt) proves it with the original tactic. Word translation only: HOL alpha word is BitVec width with [NeZero width]; no other difference. Typed capture pan_target_root_leaves probe (show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/WordToStackSfs.lean",
+    "lean_name": "compileWordToStackSfsAux",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_word_to_stack_sfs_aux",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: original 2788-2809, all eight binders; premise compile_word_to_stack ac perf k p bm = (progs',fs',bitmaps) ∧ perf = F; conclusion fromAList of per-program FST (SND (compile_prog ... (Nil,0))) equals fromAList (MAP (λ((i,_),n).(i,n)) (ZIP (progs',fs'))); identifiers num as HOL infers; fromAList is the external-library sptFromAList rendering, Nil is AppList.nil. Word translation only: alpha word is BitVec width with [NeZero width]. Typed capture pan_target_root_leaves probe (literal source replay with the original tactic; backendProofTheory not built in probe env)."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/BackendProof/ConfigOk.lean",
     "lean_name": "backendConfigOk",
     "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
