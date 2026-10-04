@@ -95217,5 +95217,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original alignmentScript 182-196: ∀p a b. aligned p b ⇒ (aligned p (a + b) ⇔ aligned p a) ∧ (aligned p (a − b) ⇔ aligned p a), for every p including p ≥ dimindex; Bool aligned with ⇔ as Bool equality. Typed capture pan_to_target_library_lemmas probe (show_types, no hypotheses). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",
+    "lean_name": "compileLabLENGTH",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_lab_LENGTH",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 1215-1221: compile_lab asm_conf c secs = SOME (bytes,c') ⇒ c'.pos = LENGTH bytes + c.pos, all variables universally quantified as explicit binders. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/BackendProof/CompileLab.lean",
+    "lean_name": "compileLabIMPMmioPcsMinIndex",
+    "hol_path": "cakeml/compiler/backend/proofs/backendProofScript.sml",
+    "hol_name": "compile_lab_IMP_mmio_pcs_min_index",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 3500-3519: compile_lab ... = SOME (bytes,c') ∧ OPTION_ALL (EVERY (λx. ∃s. x = ExtCall s)) c.ffi_names ⇒ ∃ffi_names. c'.ffi_names = SOME ffi_names ∧ ∃x. mmio_pcs_min_index ffi_names = SOME x; OPTION_ALL rendered as the none ↦ True / some l ↦ P l match and EVERY as membership quantification. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
   }
 ]

@@ -7392,6 +7392,10 @@ run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lem
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
+  compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe backend_machine_init_probeScript.sml backend_machine_init_probe.out \
   mc_init_ok_def_typed heap_regs_def_typed byte_aligned_MOD_typed word_list_exists_imp_typed \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
