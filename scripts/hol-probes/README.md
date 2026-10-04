@@ -8238,6 +8238,51 @@ Successful input codec conversion is an explicit representation boundary;
 unsupported native program carriers and whole-pass adoption remain separate.
 No tagged original theorem is narrowed or cross-language equivalence claimed.
 
+`word_cse_production_memory_probe.out` captures the complete original typed
+word_cseInst definition/type, exact word_cse Inst caller clause and wf_data
+definition, plus 256 fully evaluated memory transition observations. Every memory opcode is covered with source
+store invalidation, fresh/shared loads, even destination/address guards,
+destination/address alias invalidation, and canonical-address hit/miss.
+Widths1/8/64/80 and zero/maximal offsets retain the full offset and original
+emitted address. Kernel and actual executed fixtures run both full program
+Inst callers and check all five knowledge fields and complete Mem/Move
+payloads against the original numeric tuples;
+residual oracle terms are rejected when transcribing fixtures.
+ProductionMemory derives the full native memory constructor correspondence
+from input KnowledgeRel and original wfData only, using original invariant
+preservation and the checked producer transport. Actual constructor choice is
+the existing wordLangInstFromHOL codec: zero offset projects to mem, nonzero
+to memOffset. Identity for a redundant raw memOffset0 input is not claimed.
+This representation infrastructure does not narrow a tagged HOL theorem,
+prove cross-language equivalence, or complete whole-pass production adoption.
+
+`word_cse_production_arithmetic_probe.out` captures the complete typed source
+instruction definition, original Inst caller and wf_data, plus 240 numeric
+arithmetic observations freshly evaluated from original HOL. All eight native
+constructors, register/immediate Binop and Shift, widths1/8/64/80, fresh/shared
+facts, destination parity, written-register alias invalidation and canonical
+read hit/miss are covered. Kernel and executed Inst-caller fixtures compare all
+five knowledge fields and returned arithmetic keys/writes/reads (which jointly
+retain each native opcode, operand, immediate and destination), or the full
+replacement Move payload. Residual oracle syntax is rejected in transcription.
+ProductionArithmetic derives the full program codec equality and all five
+knowledge fields from input KnowledgeRel and original wfData, using existing
+invalidation, canonicalization and producer proofs. Its total positional codec
+covers all eight source constructors; the distinct five-register executed
+AddCarry extension is outside that source carrier. No tagged declaration is
+narrowed, no target run is assumed, and whole-pass adoption and cross-language
+equivalence remain separate.
+
+`word_cse_production_heap_loc_probe.out` captures the full typed word_cse
+definition/type, original Inst caller and wf_data, plus 52 fresh fully numeric
+OpCurrHeap/LocValue transitions. All five BinOps, source-even and alias guards,
+canonical-key hit/miss, even-destination producer hit/miss, and large Nat
+destinations/locations are covered. Kernel and actual executed fixtures compare
+all five knowledge fields and complete original operation or replacement Move
+payloads. ProductionHeapLoc derives complete knowledge/program correspondence
+from input KnowledgeRel and original wfData, preserving raw emitted source
+registers and using existing invariant/producer proofs. These are representation
+theorems, not narrowed tagged HOL ports or whole-pass adoption/equivalence claims.
 ## Native signed DIV decoding prerequisite
 
 `DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
@@ -8258,23 +8303,7 @@ native state. The original typed theorem specialization is captured in
 `riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
 cross-assistant equivalence proof. The full target closure retains inherited
 reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
-`word_cse_production_memory_probe.out` captures the complete original typed
-word_cseInst definition/type, exact word_cse Inst caller clause and wf_data
-definition, plus 256 fully evaluated memory transition observations. Every memory opcode is covered with source
-store invalidation, fresh/shared loads, even destination/address guards,
-destination/address alias invalidation, and canonical-address hit/miss.
-Widths1/8/64/80 and zero/maximal offsets retain the full offset and original
-emitted address. Kernel and actual executed fixtures run both full program
-Inst callers and check all five knowledge fields and complete Mem/Move
-payloads against the original numeric tuples;
-residual oracle terms are rejected when transcribing fixtures.
-ProductionMemory derives the full native memory constructor correspondence
-from input KnowledgeRel and original wfData only, using original invariant
-preservation and the checked producer transport. Actual constructor choice is
-the existing wordLangInstFromHOL codec: zero offset projects to mem, nonzero
-to memOffset. Identity for a redundant raw memOffset0 input is not claimed.
-This representation infrastructure does not narrow a tagged HOL theorem,
-prove cross-language equivalence, or complete whole-pass production adoption.
+
 
 ## Complete native Shift decoding prerequisites
 
