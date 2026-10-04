@@ -45,7 +45,16 @@ theorem panToTargetInitCodeRun {width : Nat} [NeZero width] {C F : Type}
         t'.regs.lookup (sp + 1) =
           some (.word ((((w3 + -1 * w2) >>> (wordShiftAmount width + 1)) <<<
             (wordShiftAmount width + 1)) + w2 +
-            bytesInWord width * BitVec.ofNat width storeList.length))) := by
+            bytesInWord width * BitVec.ofNat width storeList.length))) ∧
+      t'.ffi = (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).ffi ∧
+      (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).mdomain = t'.mdomain ∧
+      (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).shMdomain =
+        t'.shMdomain ∧
+      (let t0 := InitReduce.initReduce (StackToLab.isGenGc dataConf.gcKind) stackConf.jump
+          offset sp (sptFromAList (code1 dataConf code)) bitmaps dataSp (coracle1 coracle) t'
+       SetSep.fun2Set ((s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).memory,
+           fun a => t0.mdomain a = true) =
+         SetSep.fun2Set (t'.memory, fun a => t0.mdomain a = true)) := by
   have hd := dischargeThese_s2 hA
   have hp := propagateThese_s2 (bitmaps := bitmaps) (dataSp := dataSp) hA
   obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, h4, h3, h2, -, -, hbij⟩ := id hA
@@ -70,7 +79,8 @@ theorem panToTargetInitCodeRun {width : Nat} [NeZero width] {C F : Type}
   revert main
   rcases hev : StackSemEvaluate.evaluate (initCode (StackToLab.isGenGc dataConf.gcKind) maxHeap
       sp, s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle) with ⟨_ | _, t'⟩
-  · rintro ⟨⟨w2, w3, w4, s2r2, a2, t2, s2r4, a4, lt, tsp, bound, s2r3⟩, -⟩
+  · rintro ⟨⟨w2, w3, w4, s2r2, a2, t2, s2r4, a4, lt, tsp, bound, s2r3⟩, -, hffi, -, hmd,
+      hsmd, hmem⟩
     have lk : ∀ i, (i = 2 ∨ i = 3 ∨ i = 4) →
         (s2 stackConf dataConf maxHeap sp offset code t saveRegs coracle).regs.lookup i =
           some (t.regs (StackNames.findNameSpt stackConf.regNames i)) :=
@@ -79,7 +89,7 @@ theorem panToTargetInitCodeRun {width : Nat} [NeZero width] {C F : Type}
     rw [lk 3 (.inr (.inl rfl)), h3] at s2r3
     rw [lk 4 (.inr (.inr rfl)), h4] at s2r4
     exact ⟨t', w2, w3, w4, rfl, Option.some.inj s2r2, Option.some.inj s2r3,
-      Option.some.inj s2r4, a2, a4, lt, t2, tsp, bound⟩
+      Option.some.inj s2r4, a2, a4, lt, t2, tsp, bound, hffi, hmd, hsmd, hmem⟩
   · simp
 
 /-- A successful `full_make_init` (`opt = SOME x`, as `full_make_init_semantics`
@@ -140,7 +150,7 @@ theorem panToTargetStackLimitLeInitStack {width : Nat} [NeZero width] {C F : Typ
     (hheapLt : (bytesInWord width).toNat * maxHeap < 2 ^ width)
     (halign : holAligned (wordShiftAmount width + 1) (w3 + -1 * w2) = true) :
     (InitLimits.getStackHeapLimit maxHeap (w2, w3, w4)).1 ≤ sst.stack.length := by
-  obtain ⟨t', v2, v3, v4, hev, g2, g3, g4, a2, a4, -, tsp2, tsp, tsp1⟩ :=
+  obtain ⟨t', v2, v3, v4, hev, g2, g3, g4, a2, a4, -, tsp2, tsp, tsp1, -⟩ :=
     panToTargetInitCodeRun hA
   rw [h2] at g2; rw [h3] at g3; rw [h4] at g4
   cases g2; cases g3; cases g4

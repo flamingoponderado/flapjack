@@ -21,7 +21,7 @@ example :
       (.ite .equal 0 (.imm 0)
         (.alloc 9 ([], [2])) .skip : WordProg Nat) =
       some (.ite .equal 4 (.imm 0)
-          (.seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1)) .skip,
+          (.seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1)) .skip,
         { data := [4, 7]
           length := 2 }) := by
   apply wordToStackProgNatWithBitmapBuilder_ite
@@ -36,7 +36,7 @@ example :
     (elseBranch := (.skip : WordProg Nat))
     (conditionPrelude := .skip) (conditionRegister := 4)
     (rightOperand := .imm 0)
-    (thenCode := .seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1))
+    (thenCode := .seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1))
     (elseCode := .skip)
   · simp [statefulIteConfig, wordStackConditionOperands,
       wordStackReadRegister, wordStackLocation, lookupNatInfo,

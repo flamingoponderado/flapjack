@@ -8292,14 +8292,15 @@ run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe word_to_stack_bitmap_index_probeScript.sml word_to_stack_bitmap_index_probe.out \
+  index_width1_wrap index_width8_wrap index_width8_below index_empty_frame \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe riscv_target_jump_probeScript.sml riscv_target_jump_probe.out \
   riscv_encoder_correct_jump_statement riscv_encoder_correct_jump_types riscv_encoder_correct_jump_hypotheses riscv_encoder_correct_jump_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
-run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_probe.out \
-  store1_zero store1_wrap store2_zero store2_wrap store4_zero store4_wrap store8_zero store8_wrap source_failure_writes source_narrow_value source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
-  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe pan_to_crep_compile_exp_validity_probeScript.sml pan_to_crep_compile_exp_validity_probe.out \
   every_inst_ok_less_pan_to_crep_compile_exp compile_exp_def \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
@@ -8319,3 +8320,11 @@ run_probe riscv_target_call_probeScript.sml riscv_target_call_probe.out \
 run_probe riscv_memory_inputs_probeScript.sml riscv_memory_inputs_probe.out \
   load_endpoints load_registers load_offsets load8_endpoints load8_registers load8_offsets load16_endpoints load16_registers load16_offsets load32_endpoints load32_registers load32_offsets store_endpoints store_registers store_offsets store8_endpoints store8_registers store8_offsets store16_endpoints store16_registers store16_offsets store32_endpoints store32_registers store32_offsets alias_wrap source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_probe.out \
+  store1_zero store1_wrap store2_zero store2_wrap store4_zero store4_wrap store8_zero store8_wrap source_failure_writes source_narrow_value source_clause source_hypotheses source_types native_clause native_hypotheses native_types \
+  "$cake_dir/compiler/encoders/asm/asmSemScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_table_validity_probe.out \
+  every_inst_w_inline \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

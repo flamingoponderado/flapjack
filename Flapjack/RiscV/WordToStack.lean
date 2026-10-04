@@ -1233,7 +1233,10 @@ def wordStackBitmapWriteWithBuilder (config : WordStackConfig)
   else
     let bitmap := bitmapBuilder live
     let (newState, index) := wordStackInsertBitmap state bitmap
-    (.seq (.const bitmapRegister (index + 1))
+    /- The original wLive emits an instruction word constant. Keep the index
+       in the word-payload carrier so the executed Nat-to-word boundary wraps
+       it at the target width, rather than treating it as an unbounded macro. -/
+    (.seq (.inst (.const bitmapRegister (index + 1)))
         (.stackStore bitmapRegister (wordStackOffset config 0)), newState)
 
 def wordStackAllocWithBitmapBuilder (config : WordStackConfig)
