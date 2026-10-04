@@ -92105,5 +92105,276 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "Source compared riscv_targetProofScript.sml:550-559 Imm branch and full encoder_correct_def: all five operators; sole asmStep and initial targetStateRel premise; complete existential/interference/asserts/asserts2 conclusion. Original signed12 guard and Xor -1 exception retained, Sub strict -2048 lower bound derives exact negation. Native Next derived from four emitted bytes, universal decode and literal Run. Full original typed specialization captured. Native state/Run inherits SOUNDNESS item 8 real-cut representation. Inherited reals_as_rational_cuts assumption on the full native state/Run closure is retained."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_SmartSeq",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_smartSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_Seq_assoc",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_seqAssoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_drop_consts",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_smartSeq_dropConsts",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_const_fp_loop",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_constFpLoop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_const_fp",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_constFp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_hoist2",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_hoist2",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_simp_duplicate_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_simpDuplicateIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "not_created_subprogs_push_out_if",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_pushOutIf",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "compile_exp_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_compileExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_exp_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_instSelectExp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "inst_select_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_instSelect",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_inst_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_ssaCcTransInst",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_moves_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_fakeMoves",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "fake_seq_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_fakeSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "loop_setup_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_loopSetup",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ssa_cc_trans_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_ssaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "setup_ssa_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_setupSSA",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "full_ssa_cc_trans_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_fullSsaCcTrans",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "three_to_two_reg_prog_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedTail.lean",
+    "lean_name": "notCreated_threeToTwoRegProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "SimpSeq_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedTail.lean",
+    "lean_name": "notCreated_simpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "Seq_assoc_right_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedTail.lean",
+    "lean_name": "notCreated_seqAssocRight",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "remove_unreach_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedTail.lean",
+    "lean_name": "notCreated_removeUnreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. HOL [local]: not exported, compared against the script."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "compile_single_not_created_subprogs",
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedTail.lean",
+    "lean_name": "compile_single_not_created_subprogs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.53): wordConvsProof not_created_subprogs preservation through the word_to_word passes. Statement kept with HOL's free predicate P (and other free variables) as leading binders, HOL bool = / ∧ on not_created_subprogs as Lean Bool = / &&, over the tagged pass definitions (word_simp SmartSeq/Seq_assoc/drop_consts/const_fp_loop/const_fp/try_if_hoist2/simp_duplicate_if/push_out_if/compile_exp, inst_select_exp/inst_select, ssa_cc_trans_inst/fake_moves/loop_setup/ssa_cc_trans/setup_ssa/full_ssa_cc_trans, three_to_two_reg_prog, SimpSeq/Seq_assoc_right/remove_unreach, compile_single) and the tagged not_created_subprogs_def (notCreatedSubprogsHOL, HOL ARB as holArbMemOp). Producer equations are kept as premises where HOL states them (const_fp_loop, ssa_cc_trans_inst, fake_moves, loop_setup, ssa_cc_trans, setup_ssa, try_if_hoist2). Proofs follow the definitions' recursion (fun_induction / well-founded size induction). Positive HOL word dimension is the sole carrier translation. Exported: typed capture in word_convs_compile_single_not_created."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "destIf_some",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_constFpLoop_fst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_dropConsts",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedPasses.lean",
+    "lean_name": "notCreated_pushOutIfAux",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "fixNotCreated",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "notCreated_ssaCcTrans_fst",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedSSA.lean",
+    "lean_name": "reconcileNotCreated",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/NotCreatedTail.lean",
+    "lean_name": "notCreated_ofDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
   }
 ]

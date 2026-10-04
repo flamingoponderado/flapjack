@@ -1350,6 +1350,9 @@ import Flapjack.Pancake.Proofs.WordConvs.Unreach
 import Flapjack.Pancake.Proofs.WordConvs.WordCse
 import Flapjack.Pancake.Proofs.WordConvs.CopyProp
 import Flapjack.Pancake.Proofs.WordConvs.SSAWfCutsets
+import Flapjack.Pancake.Proofs.WordConvs.NotCreatedPasses
+import Flapjack.Pancake.Proofs.WordConvs.NotCreatedSSA
+import Flapjack.Pancake.Proofs.WordConvs.NotCreatedTail
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
