@@ -70161,16 +70161,19 @@
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Inst.lean",
     "lean_name": "compCorrectInst",
-    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
     "hol_name": "comp_correct",
     "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
     "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
       "StackSemStateFiniteExact.regs",
       "StackSemStateFiniteExact.fpRegs",
       "StackSemStateFiniteExact.store"
     ],
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
+    "hol_line": 5756,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original Inst case 6315-6326 of comp_correct5756/motive5719-5751, captured with inferred types by the word_to_stack_comp_inst probe (case obligation and whole specialization, full_proved=T, hypotheses=0; i:'a inst, source config num # 'c, target 'c, shared 'a word/'ffi). Full Seq.Simulation over arbitrary instruction/source; all original hypotheses and the full existential target-run/resource/result conclusion retained. As in HOL: the source Inst run succeeds with NONE (the NONE inst result is the excluded Error), post_alloc_conventions gives every_var_inst is_phy_var and call_arg_convention = inst_arg_convention (transported to the exact HolInst carrier through the reviewed codec), max_var (Inst i) = max_var_inst i, and the full original evaluate_wInst (flapjack-sol da79ec9f3) gives the target run with ck = 0 and the NONE-branch state_rel. No added premise. Five canonical finite-map fields/positive words qualified; inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
   },
   {
