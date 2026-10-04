@@ -19441,6 +19441,38 @@
     "reviewer": "flapjack-luna-b (bead flapjack-p0l9, 2026-09-28): HOL exp at panLangScript.sml:53-69 indexes Const by the target word type, but production Exp (alpha : Type u) stores an arbitrary alpha. The executed compiler specializes it to Exp (BitVec width), which does not make this generic declaration width-indexed. The exact constructor-for-constructor port is ExpHOL width in PanLang/Exp.lean (reviewed_exact); expToHOL_expOfHOL is unconditional and expOfHOL_expToHOL is proved for ExpByteRanged production values. This checked codec is the representation refinement for the width specialization; the reverse direction’s String/MlString and Shape/ShapeHOL bounds remain explicit, not silently identified. Keep production Exp untagged. Exact compiler routing and other String-backed syntax fields remain tracked by flapjack-pxn.18.3.5.8."
   },
   {
+    "hol_path": "cakeml/pancake/panLangScript.sml",
+    "hol_name": "prog",
+    "lean_path": "Flapjack/Pancake/PanLang.lean",
+    "lean_name": "Prog",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL panLangScript.sml:77-99 `prog` is indexed by `'a exp` and uses mlstring varname/eid/funname. Production Flapjack.Prog (alpha : Type u) panLang.lean:381 is generic over the expression payload and aliases StructName/VarName/FunName/ExceptionId to Lean String, so it admits width-unindexed payloads and non-byte identifiers. Exact constructor-for-constructor port is ProgHOL width in PanLang/Prog.lean (reviewed_exact), with the same Call-info carrier Option (Option (VarKind x MlS) x Option (MlS x MlS x ProgHOL width)). Keep production Prog untagged; exact-carrier routing tracked by flapjack-pxn.18.3.5.8.13 (closed) and the remaining production-migration child flapjack-pxn.18.3.5.3.1.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/panLangScript.sml",
+    "hol_name": "decl",
+    "lean_path": "Flapjack/Pancake/PanLang.lean",
+    "lean_name": "Decl",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL panLangScript.sml:111-116 `decl` uses mlstring eid/stcname/fldname and `'a fun_decl`/`'a exp`. Production Flapjack.Decl (alpha : Type u) panLang.lean:425 is generic over the payload and uses String identifiers. Exact port is DeclHOL width in PanLang/Decl.lean (reviewed_exact). Keep production Decl untagged; production routing tracked by flapjack-pxn.18.3.5.3.1.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/panLangScript.sml",
+    "hol_name": "fun_decl",
+    "lean_path": "Flapjack/Pancake/PanLang.lean",
+    "lean_name": "FunDecl",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL panLangScript.sml:102-109 `fun_decl` fields name:mlstring, inline/export:bool, params:(varname#shape) list, body:'a prog, return:shape. Production Flapjack.FunDecl (alpha : Type u) panLang.lean:411 is generic over the body payload and uses String names. Exact port is FunDeclHOL width in PanLang/Decl.lean (reviewed_exact). Keep production FunDecl untagged; production routing tracked by flapjack-pxn.18.3.5.3.1.2."
+  },
+  {
+    "hol_path": "cakeml/pancake/panLangScript.sml",
+    "hol_name": "shape",
+    "lean_path": "Flapjack/Pancake/PanLang.lean",
+    "lean_name": "Shape",
+    "statement_status": "documented_mismatch",
+    "reviewer": "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL panLangScript.sml:35-39 `shape = One | Comb (shape list) | Named stcname` with stcname = mlstring. Production Flapjack.Shape panLang.lean:71 has the same constructor arities/order and `Comb : List Shape`, but its `named` field is a Lean String (panLang.lean:16-17 StructName/FieldName), so it is not the exact mlstring-named datatype. Exact port is ShapeHOL in PanLang/Shape.lean (reviewed_exact). Keep production Shape untagged; a truthful `names_as_string` qualification of the `named` field is a candidate but requires reviewer approval and a byte-range witness, pending on bead flapjack-pxn.18.3.5."
+  },
+  {
     "hol_path": "cakeml/pancake/proofs/pan_to_crepProofScript.sml",
     "hol_name": "pc_compile_correct",
     "lean_path": "Flapjack/Pancake/Proofs/PanToCrep/PcCompileCorrect/Assembly.lean",

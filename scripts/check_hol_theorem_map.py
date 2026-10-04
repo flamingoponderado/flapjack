@@ -156,6 +156,35 @@ WITHDRAWN_HOL_DECLARATIONS = {
         "String-backed syntax fields remain tracked by "
         "flapjack-pxn.18.3.5.8."
     ),
+    ("Flapjack/Pancake/PanLang.lean", "Prog"): (
+        "cakeml/pancake/panLangScript.sml",
+        "prog",
+        "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL prog is indexed "
+        "by 'a exp and uses mlstring names; production Prog is generic and "
+        "String-named. Exact port is ProgHOL (reviewed_exact). Untagged."
+    ),
+    ("Flapjack/Pancake/PanLang.lean", "Decl"): (
+        "cakeml/pancake/panLangScript.sml",
+        "decl",
+        "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL decl uses "
+        "mlstring names; production Decl is generic and String-named. Exact "
+        "port is DeclHOL (reviewed_exact). Untagged."
+    ),
+    ("Flapjack/Pancake/PanLang.lean", "FunDecl"): (
+        "cakeml/pancake/panLangScript.sml",
+        "fun_decl",
+        "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL fun_decl uses "
+        "mlstring name/params; production FunDecl is generic and String-named. "
+        "Exact port is FunDeclHOL (reviewed_exact). Untagged."
+    ),
+    ("Flapjack/Pancake/PanLang.lean", "Shape"): (
+        "cakeml/pancake/panLangScript.sml",
+        "shape",
+        "flapjack-pxn.18.3.5 audit (flap-rv, 2026-10-04): HOL shape's Named is "
+        "mlstring; production Shape's named field is Lean String. Exact port "
+        "is ShapeHOL (reviewed_exact). Untagged; names_as_string qualification "
+        "candidate pending review."
+    ),
     ("Flapjack/Compiler/Encoders/Asm.lean", "asmRegOk"): (
         "cakeml/compiler/encoders/asm/asmScript.sml",
         "reg_ok_def",
