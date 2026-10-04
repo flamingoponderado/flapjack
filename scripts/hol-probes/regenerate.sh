@@ -7815,3 +7815,7 @@ run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.
 run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
   pull_sub_empty pull_sub_unary_var pull_sub_unary_const norm_sub_empty norm_sub_unary_var pull_sub_binary_const norm_sub_binary_const \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_convs_unreach_labels_probeScript.sml word_convs_unreach_labels_probe.out \
+  unreachLabels1_typed unreachLabels1_proved unreachLabels1_hypotheses unreachLabels2_typed unreachLabels2_proved unreachLabels2_hypotheses unreachLabels3_typed unreachLabels3_proved unreachLabels3_hypotheses unreachLabels4_typed unreachLabels4_proved unreachLabels4_hypotheses unreachLabels5_typed unreachLabels5_proved unreachLabels5_hypotheses unreachLabels6_typed unreachLabels6_proved unreachLabels6_hypotheses unreachLabels7_typed unreachLabels7_proved unreachLabels7_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -92376,5 +92376,92 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack proof infrastructure for the wordConvsProof not_created_subprogs group: an auxiliary-pass, descriptor or SSA-state lemma factored out of the cited HOL proofs; no independent HOL declaration."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "extractLabelsSimpSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_SimpSeq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original extract_labels_SimpSeq in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "extractLabelsSeqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original extract_labels_Seq_assoc_right_lemma in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "extractLabelsRemoveUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original extract_labels_remove_unreach in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "memExtractLabelsSeqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "MEM_extract_labels_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original MEM_extract_labels_Seq_assoc_right_lemma in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "distinctExtractLabelsSeqAssocRight",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original ALL_DISTINCT_extract_labels_Seq_assoc_right_lemma in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "distinctExtractLabelsRemoveUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "ALL_DISTINCT_extract_labels_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original ALL_DISTINCT_extract_labels_remove_unreach in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsRelRemoveUnreach",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "labels_rel_remove_unreach",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: full original labels_rel_remove_unreach in label subset/distinctness section2433-2589; arbitrary native WordLang programs, accumulator and Nat×Nat labels retained. HOL set inclusion translated pointwise membership implication/disjunction, ALL_DISTINCT translated List.Nodup, labels_rel retains both conjuncts. Kernel internal sublist theorem proved from actual literal native SimpSeq/Seq_assoc_right transformations, including move descriptor merges, tail-call accumulator drops, returning handlers, loops and recursive sequences; public premises/results match source, no output or desired relation assumed. Common positive-width BitVec carrier qualified, native cutsets/maps unchanged, no semantic/FP carrier claim. Fresh unchanged literal original statements/proofs replayed symbolically in word_convs_unreach_labels_probe.out, full typed kernel T/hyp0; this does not prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsOfDestSeqMove",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsSublistSimpSeq",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/UnreachLabels.lean",
+    "lean_name": "labelsSublistSeqAssocRight",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only actual transformation factoring: move-descriptor label equality or stronger list-order sublist result proved directly from literal native algorithms. No independently named HOL original; public seven theorem ports separately source compared. Not an exact HOL declaration claim."
   }
 ]
