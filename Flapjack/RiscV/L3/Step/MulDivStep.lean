@@ -112,4 +112,24 @@ theorem dfnDIVUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state)
   rcases hcases (s.c_MCSR s.procID).mcpuid.ArchBase with h | h | h | h <;>
     simp_all [in32BitMode, curArch, architecture, MCSR, beq_iff_eq, ne_eq]
 
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "MUL_NOP"]
+theorem dfnMULNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
+    «dfn'MUL» (rd, (rs1, rs2)) s = s := by
+  simp [«dfn'MUL», «write'GPR», hrd]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "DIV_NOP"]
+theorem dfnDIVNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
+    «dfn'DIV» (rd, (rs1, rs2)) s = s := by
+  simp [«dfn'DIV», «write'GPR», hrd]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REM_NOP"]
+theorem dfnREMNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
+    «dfn'REM» (rd, (rs1, rs2)) s = s := by
+  simp [«dfn'REM», «write'GPR», hrd]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "REMU_NOP"]
+theorem dfnREMUNop (rd rs1 rs2 : BitVec 5) (s : riscv_state) (hrd : rd = 0) :
+    «dfn'REMU» (rd, (rs1, rs2)) s = s := by
+  simp [«dfn'REMU», «write'GPR», hrd]
+
 end Flapjack.RiscV.L3.Step
