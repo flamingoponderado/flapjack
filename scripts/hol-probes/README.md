@@ -8715,6 +8715,28 @@ quantifiers, assertions and typed captures. Native target statements retain
 the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
 definition changes here. Whole encoder and compiler assembly remain open.
 
+### Original JumpCmp halfword payload and prefix-PC arithmetic
+
+`riscv_jumpcmp_offsets_probeScript.sml` kernel-proves the four original
+shift/narrow/subtract/sign-extend/shift equations: near word12 with zero or
+four prefix bytes, and far word20 with four or eight prefix bytes. The 47-row
+capture contains all four typed universal statements, carrier types, actual
+zero-hypothesis counts and proved status; twenty boundary observations;
+a general full word64 PC-bias cancellation proof; and four typed original
+Reg/Imm Equal/Test lowering clauses with their actual hypothesis counts.
+
+`Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Arithmetic.lean` proves the same
+payload equations and the four resulting source-PC equations. Only original
+near `[-4092,4095]` or global `[-1048568,1048579]` guards and four-byte source
+alignment occur. The lower endpoints retain correction through negative
+signed payloads; the aligned far upper endpoint is 1048576. No new offset,
+target execution, decoder or post-state assumption is introduced.
+
+These are untagged local compositions without a separately named original
+HOL theorem. `check-riscv-jumpcmp-offsets.py` and mutation tests guard the
+exact original arithmetic and evidence. Full JumpCmp encoder correctness
+remains separate dependent work; no executed compiler definition changes.
+
 ### Source/native store post-memory correspondence
 
 `riscv_memory_store_value_probeScript.sml` compares all selected bytes and
