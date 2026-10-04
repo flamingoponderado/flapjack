@@ -8117,3 +8117,15 @@ complete original source definitions and five arbitrary native Run compositions,
 all with zero stored hypotheses and original inferred carrier types. The
 capture supplements kernel checking and source review; it is not cross-language
 equivalence evidence. The full encoder assertion case remains open.
+
+### Full original register Binop encoder case
+
+`CorrectnessEncoding/BinopRegister.lean` ports the original Reg operand case
+for all five Binop operators, with the original sole asmStep/initial state
+relation premise and complete existential/every-environment/asserts/asserts2
+conclusion. Native Fetch/Decode/Run/Next follows the actual emitted bytes;
+register guards and alias behavior follow the source. Fresh typed original
+`riscv_target_binop_register_probe.out` specializes the full source theorem
+only to this constructor, with zero stored hypotheses and proved T. It is
+regression evidence, not cross-language equivalence. The full parent still
+requires the separate immediate case; native Run's SOUNDNESS8 boundary remains.
