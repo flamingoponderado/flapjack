@@ -98034,5 +98034,29 @@
     "lean_name": "sptAListLookup_map_snd",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Association-list lookup commutes with a value map; Flapjack sptree infrastructure for stage G, no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
+    "lean_name": "panToTargetInitCodeRun",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E core of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1756-1916): init_code_thm instantiated on the full_make_init stack-names state under the full_make_init_semantics hypotheses, w2/w3/w4 identified with the lab len/ptr2/len2 registers; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
+    "lean_name": "panToTargetFullMakeInitReduce",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E: full_make_init = (sst, SOME x) gives x = init_reduce of the init_code result state and sst.stack = x.stack (pan_to_targetProofScript.sml 1756-1797, 1924-1929); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
+    "lean_name": "panToTargetStackLimitLeInitStack",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stages E/G: FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= LENGTH sst.stack for the full_make_init stack state (pan_to_targetProofScript.sml 2311-2335 with init_code_thm facts); intermediate proof step, not a HOL theorem."
   }
 ]
