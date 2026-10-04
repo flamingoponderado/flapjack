@@ -896,7 +896,7 @@ theorem instSel_aux (c : AsmConfigExact width) (temp : Nat) :
           by_cases hbad : wordSemBadDestArgs dest args = true
           · simp only [hbad, if_true, Prod.mk.injEq] at he; exact herr he.1.symm
           simp only [hbad, Bool.false_eq_true, if_false] at he
-          rcases hf : wordSemFindCode dest (wordSemAddRetLoc none xs) st.code st.stackSize with
+          rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) st.code st.stackSize with
             _ | ⟨a1, pr, ss⟩ <;> simp only [hf, Prod.mk.injEq] at he <;> exact herr he.1.symm
       | some rv =>
         obtain ⟨n, names, retHandler, l1, l2⟩ := rv
