@@ -51,11 +51,11 @@ the cited name occurs in one of the two syntactic forms.
 | `compiler/backend/proofs/word_simpProofScript.sml` | `Flapjack/Compiler/Backend/WordSimp/Proofs/` (`GcWordConst.lean` `is_gc_word_const`) |
 | `compiler/backend/proofs/wordConvsProofScript.sml` | `Flapjack/Pancake/Proofs/WordConvs/` |
 | `compiler/backend/wordLangScript.sml` | `Flapjack/Pancake/WordLang.lean` |
-| `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean` |
+| `compiler/backend/backendScript.sml` | `Flapjack/Compiler/Backend/Backend.lean`, `Flapjack/Compiler/Backend/Backend/PrimSrcConfig.lean` (`prim_src_config_def`, `prim_src_config_eq`) |
 | `compiler/backend/backend_commonScript.sml` | `Flapjack/Compiler/Backend/BackendCommon.lean` and its `BackendCommon/BvlStubs.lean` submodule (`BackendCommon/BoolTags.lean`: `false_tag`, `true_tag`, `bool_to_tag`) |
 | `compiler/backend/proofs/word_depthProofScript.sml` | `Flapjack/Compiler/Backend/WordDepthProof/` (`Helpers.lean` lines 12-146 helper lemmas) |
 | `compiler/backend/flatLangScript.sml` | `Flapjack/Compiler/Backend/FlatLang.lean` (`op`, `ctor_id`, `type_id`, `type_group_id`, `pat`, `pat_bindings_def`, `exp`, `bool_id_def`, `Bool_def`, `SmartIf_def`; the script has no `dec` datatype) |
-| `compiler/backend/source_to_flatScript.sml` | `Flapjack/Compiler/Backend/SourceToFlat/Config.lean` (carriers `var_name`, `environment`, stores, `next_indices`, `config`), `SourceToFlat/Helpers.lean` (`compile_var` .. `simple_dlet`, lines 46-340 except `compile_exp`) |
+| `compiler/backend/source_to_flatScript.sml` | `Flapjack/Compiler/Backend/SourceToFlat/Config.lean` (carriers `var_name`, `environment`, stores, `next_indices`, `config`), `SourceToFlat/Helpers.lean` (`compile_var` .. `simple_dlet`, lines 46-340 except `compile_exp`), `SourceToFlat/CompileExp.lean` (mutual `compile_exp_def`), `SourceToFlat/CompileDecs.lean` (`compile_decs_def`, `empty_config_def`) |
 | `compiler/backend/bvl_to_bviScript.sml` | `Flapjack/Compiler/Backend/BvlToBvi.lean` and its `BvlToBvi/Config.lean` submodule |
 | `compiler/backend/semantics/wordConvsScript.sml` | `Flapjack/Pancake/WordConvs.lean` |
 | `compiler/backend/stackLangScript.sml` | `Flapjack/Compiler/Backend/StackLang.lean`, `Flapjack/Compiler/Encoders/Asm.lean`, `Flapjack/Compiler/Backend/StackLang/Prog.lean`, `Flapjack/Compiler/Backend/StackLang/Overloads.lean` (`While`/`move`/arithmetic overloads, `list_Seq`, `gc_stub_location`), `Flapjack/Compiler/Backend/StackCarrier.lean`, `Flapjack/Compiler/Backend/MlStringBridge.lean` |
@@ -91,7 +91,7 @@ the cited name occurs in one of the two syntactic forms.
 | `misc/miscScript.sml` (`list_subset`) | `Flapjack/Misc/ListSubset.lean` |
 | `compiler/backend/proofs/lab_filterProofScript.sml` | `Flapjack/Compiler/Backend/LabFilter/Proofs.lean` (submodules in `LabFilter/Proofs/`) |
 | `compiler/backend/proofs/lab_to_targetProofScript.sml` | `Flapjack/Compiler/Backend/LabToTarget/` (code similarity and structural preservation; `ShareMemDomain.lean` share_mem_domain_code_rel, `ShareMemState.lean` share_mem_state_rel) |
-| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean` mc_init_ok_def, heap_regs_def, byte_aligned_mult, byte_aligned_MOD, word_list_exists_imp; `WordToStackSfs.lean` compile_word_to_stack_sfs_aux; `CompileLab.lean` compile_lab_LENGTH, compile_lab_IMP_mmio_pcs_min_index) |
+| `compiler/backend/proofs/backendProofScript.sml` | `Flapjack/Compiler/Backend/BackendProof/` (`MachineInit.lean`, `WordToStackSfs.lean`, `CompileLab.lean`, and `ConfigOk.lean`) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labPropsScript.sml` | `Flapjack/Compiler/Backend/LabProps.lean` (`line_ok_pre`, `sec_ok_pre`, and `all_enc_ok_pre`; asm/config carrier bridge remains explicit) |
 | `compiler/backend/semantics/labSemScript.sml` | `Flapjack/Compiler/Backend/LabSem.lean` (`is_Label`) |

@@ -7425,6 +7425,10 @@ run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lem
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe flat_lang_probeScript.sml flat_lang_probe.out \
+  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
+  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
+
 run_probe prim_types_program_probeScript.sml prim_types_program_probe.out \
   prim_types_program_def_typed \
   "$cake_dir/semantics/primTypesScript.sml" "$cake_dir/semantics"
@@ -7441,13 +7445,21 @@ run_probe namespace_ops_probeScript.sml namespace_ops_probe.out \
   id_datatype_typed mk_id_def_typed id_to_n_def_typed id_to_mods_def_typed nsLookup_def_typed nsLookupMod_def_typed nsEmpty_def_typed nsAppend_def_typed nsLift_def_typed alist_to_ns_def_typed nsBind_def_typed nsBindList_def_typed nsOptBind_def_typed nsSing_def_typed nsSub_def_typed nsAll_def_typed nsAll2_def_typed nsDom_def_typed nsDomMod_def_typed nsMap_def_typed \
   "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
 
-run_probe flat_lang_probeScript.sml flat_lang_probe.out \
-  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
-  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
-
 run_probe source_to_flat_helpers_probeScript.sml source_to_flat_helpers_probe.out \
   compile_var_def_typed compile_pat_def_typed pat_tups_def_typed astOp_to_flatOp_def_typed type_group_id_type_def_typed str_sep_def_typed join_all_names_aux_def_typed join_all_names_def_typed om_tra_def_typed alloc_defs_def_typed make_varls_def_typed empty_env_def_typed extend_env_def_typed lift_env_def_typed lookup_inc_def_typed alloc_tags1_def_typed alloc_tags_def_typed env_id_tuple_def_typed simple_dlet_def_typed concat_def_typed \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
+run_probe source_to_flat_compile_probeScript.sml source_to_flat_compile_probe.out \
+  compile_exp_def_typed compile_decs_def_typed empty_config_def_typed prim_src_config_eq \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
+run_probe backend_prim_src_config_probeScript.sml backend_prim_src_config_probe.out \
+  prim_src_config_def_typed prim_src_config_eq_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
+run_probe backend_config_ok_probeScript.sml backend_config_ok_probe.out \
+  backend_config_ok_def_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
@@ -8192,3 +8204,7 @@ run_probe pan_native_word_prefix_probeScript.sml pan_native_word_prefix_probe.ou
 run_probe riscv_memory_run_probeScript.sml riscv_memory_run_probe.out \
   ld_run_zero ld_run_alias_sign ld_run_basezero_unaligned lwu_run_zero lwu_run_alias_sign lwu_run_basezero_unaligned lhu_run_zero lhu_run_alias_sign lhu_run_basezero_unaligned lbu_run_zero lbu_run_alias_sign lbu_run_basezero_unaligned sd_run_basezero_sign sd_run_alias sw_run_basezero_sign sw_run_alias sh_run_basezero_sign sh_run_alias sb_run_basezero_sign sb_run_alias ld_run_source_clause ld_run_source_hypotheses ld_run_carrier_types lwu_run_source_clause lwu_run_source_hypotheses lwu_run_carrier_types lhu_run_source_clause lhu_run_source_hypotheses lhu_run_carrier_types lbu_run_source_clause lbu_run_source_hypotheses lbu_run_carrier_types sd_run_source_clause sd_run_source_hypotheses sd_run_carrier_types sw_run_source_clause sw_run_source_hypotheses sw_run_carrier_types sh_run_source_clause sh_run_source_hypotheses sh_run_carrier_types sb_run_source_clause sb_run_source_hypotheses sb_run_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_source_entry_word_probeScript.sml pan_source_entry_word_probe.out \
+  empty_word missing_word \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
