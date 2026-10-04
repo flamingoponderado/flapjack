@@ -44983,18 +44983,16 @@
     "lean_name": "compileNamesLabels",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "compile_to_word_conventions",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol2 source comparison original958-1014: genuine first two CONJ_TAC sections retain original whole-list no_share_inst-or-ISA-not-Ag32 guard, arbitrary configs and full list. Native compile/fullCompileSingle eleven-stage pipeline names equality and EVERY2 labels_rel (Lean List.Forall₂) derived from actual pass output laws and equal-length oracle ZIP. Arbitrary positive-width BitVec translates HOL type-indexed word; exact native program/config/map carriers retained. Guard unused only in these structural sections and remains a premise. No assumed output relation/evaluation or extra IH. Remaining five output convention conjuncts are outside this section and not claimed; full theorem tracked separately. Fresh original section tactics replayed, with only the split for the omitted third conjunct removed; full typed closed HOL section capture is regression/source-shape evidence, not cross-language equivalence.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
     "lean_name": "compileOutputConventions",
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "hol_name": "compile_to_word_conventions",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol2 source comparison. Literal final EVERY conjunction section1014-1065: every actual output body satisfies all five output conditions. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
@@ -65068,9 +65066,8 @@
     "lean_name": "shapeValLocalised",
     "hol_path": "cakeml/pancake/proofs/pan_globalsProofScript.sml",
     "hol_name": "localised_exp_shape_val",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_globalsProofScript3207-3212 localised_exp_shape_val, both original universal conjuncts and no hypotheses, native HOL ShapeHOL/list and exact ExpHOL width with positive NeZero width. Uses reviewed mutual shapeValHOL/shapeValsHOL directly; localisedExpHOL Boolean true and List.all= true are the literal localised_exp/EVERY interpretation. Standard words_as_type_indexed_bitvec only translates original alpha word dimension; no generic production Exp substitution or added bound. Fresh closed typed original statement/proof/mutual expression types in pan_globals_shape_localised_probe.out. Existing helper is the genuine first conjunct, full localisedExpShapeValHOL proves both. Corrects the previous inaccurate no-HOL-original infrastructure classification. This row is the first genuine conjunct only.",
-    "words_as_type_indexed_bitvec": true
+    "statement_status": "documented_mismatch",
+    "reviewer": "PR1213 review repair: untagged supporting conjunct only, not the complete cited HOL theorem. Full conjunction is separately tagged in the counterpart module."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanGlobals/CompileTopNames.lean",
@@ -98512,6 +98509,184 @@
     "lean_name": "panToTargetGoodCodeSource",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific unnamed stageA2 original top-proof1376-1428: original backendConfigOk/goodDimindex/nonag32/distinctfunctionnames/pancakeGoodCodeHOL hypotheses only; computes both actual WordToWord and WordToStack intermediate tuples internally with no compileeq/hinst/targetrun/desiredgoodCode premise. Applies full source instruction validity and accepted backend admissibility/labels chain. Final top still identifies this exact lab program with fullcompile result and assembles remaining semantic/resource stages; no named HOL port or wholecompiler completion claimed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabOfGoodCode",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components; good_code mc.target.config LN lprog (stage A2's conclusion) is a stage-local premise discharged by the source-level A2 stage, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineSemExtend",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only composition step of pan_to_target_compile_semantics (HOL proof line 1316, SUBSET_TRANS with implements' and extend_with_resource_limit' unfolded): implements' T machine {lab} and lab IN extend_with_resource_limit' prec {w} with w <> Fail give every machine behaviour in extend_with_resource_limit' prec {w}."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLabSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): panToTargetMachineLabOfGoodCode with good_code from the source-level stage A2 (panToTargetGoodCodeFromSource, via pan_to_word_every_inst_ok_less and the configuration's zero offsets) over the top theorem's pancake_good_code; all premises are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "actualCaller",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "state",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/ProductionStoreConsts.lean",
+    "lean_name": "macroBoundary",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific production StoreConsts caller/nativecode/fullprojectedstate/macroboundary transport, no separate HOL declaration. Originalword_to_stack comp532-534 consumes constWordsToBitmapW(constants,LENGTH), index register1 n2w wrapping, fixedsource storeConstsStubLocation6; StackRemove203-209 reads indexreg1 and ignoresstub. Nativecode equality through actual WordPayloads includes arbitrary storedcounts/index and all original inputregisters/configurations; nativeAppList observed via flatten and fullcount retained. Actual typed fusedconsumer supplies nativeproducer; legacygenericNathelper remains separate. No manufactured bound/scratchconfiguration/targetrun/desiredoutput premise; whole WordToStack/nativeproduction remains open."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holIsIntegralR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "is_integral_def",
+    "statement_status": "reviewed_reals_as_rational_cuts",
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). is_integral r <=> ?n:num. abs r = &n over Mathlib R; no word carrier."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatIsIntegralR",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_is_integral_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). case float_value x of Float r => is_integral r | Infinity => F | NaN => F, with float_value over R (holFloatValueR)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holULP",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "ULP_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). ULP (e:'w word,(:'t)) = 2 pow (if e = 0w then 1 else w2n e) / 2 pow (INT_MAX (:'w) + dimindex (:'t)); INT_MAX is holFloatBias w, dimindex (:'t) is t (precision overload)."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holUlp",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "ulp_def",
+    "statement_status": "reviewed_word_dimensions_as_widths",
+    "word_dimensions_as_widths": [
+      "t",
+      "w"
+    ],
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). ulp (:'t # 'w) = ULP (0w:'w word,(:'t)); HOL (:'t # 'w) -> real has two independent word-free dimensions; word_dimensions_as_widths maps precision dimindex(:t) to explicit t:Nat/NeZero t and exponent dimension (:w) to independent w:Nat/NeZero w, used through holULP (t := t) (0 : BitVec w); arbitrary Mathlib Real result, no fixed dimension or added bound."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holIntegralRound",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "integral_round_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). all four modes over R: roundTiesToEven threshold bounds then closest_such (EVEN n /\\ abs (float_to_real a) = &n) float_is_integral x; other modes largest bounds with float_bottom/float_top(FLT_MAX)/infinities and closest over the float_is_integral candidate sets, as captured."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatRoundToIntegral",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_round_to_integral_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). case float_value x of Float r => integral_round mode r | Infinity => x | NaN => x."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatMulSub",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_mul_sub_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). clause for clause: NaN -> check_for_signalling, FP_MulSub; invalid (inf*0, 0*inf, infinite z with infP and signP = z.Sign) -> invalidop_flags with FP_MulAdd (literal HOL); +inf when infinite z with z.Sign = 1w or infP with signP = 0w; -inf symmetric; else float_round_with_flags mode (if r1 = 0 /\\ r2 = 0 /\\ signP <> z.Sign then signP = 1w else mode = roundTowardNegative) (r1 - r2) over the Rat rendering as in the tagged float_mul_add port."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatUnordered",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_unordered_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). float_unordered x y <=> float_compare x y = UN over the tagged holFloatCompare."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holExponentBoundary",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "exponent_boundary_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). x.Sign = y.Sign /\\ w2n x.Exponent = w2n y.Exponent + 1 /\\ x.Exponent <> 1w /\\ y.Significand = -1w /\\ x.Significand = 0w, argument order (y, x) kept."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holFloatUlp",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "float_ulp_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). float_ulp f = ULP (f.Exponent,(:'t)) via holULP."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holNextHi",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "next_hi_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). if x.Significand <+ UINT_MAXw then Significand + 1w else <|Sign; Exponent + 1w; Significand 0w|>; UINT_MAXw is BitVec.allOnes t, <+ unsigned <."
+  },
+  {
+    "lean_path": "Flapjack/Misc/BinaryIeeeRest.lean",
+    "lean_name": "holNextLo",
+    "hol_path": "HOL/src/floating-point/binary_ieeeScript.sml",
+    "hol_name": "next_lo_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison (2026-10-04; flapjack-h29l.6.2.11) against the pinned HOL source and the definition captured with types by binary_ieee_rest_probe; reals_as_rational_cuts and SOUNDNESS item 8 apply (HOL real as Mathlib R or the reviewed Rat rendering). if 0w <+ x.Significand then Significand - 1w else <|Sign; Exponent - 1w; Significand UINT_MAXw|>."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",

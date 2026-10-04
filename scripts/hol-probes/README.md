@@ -8685,6 +8685,28 @@ full encoder assembly and compiler correctness remain separate open work.
 No executed compiler definition changes in this delivery.
 
 
+### Original JumpCmp halfword payload and prefix-PC arithmetic
+
+`riscv_jumpcmp_offsets_probeScript.sml` kernel-proves the four original
+shift/narrow/subtract/sign-extend/shift equations: near word12 with zero or
+four prefix bytes, and far word20 with four or eight prefix bytes. The 47-row
+capture contains all four typed universal statements, carrier types, actual
+zero-hypothesis counts and proved status; twenty boundary observations;
+a general full word64 PC-bias cancellation proof; and four typed original
+Reg/Imm Equal/Test lowering clauses with their actual hypothesis counts.
+
+`Flapjack/RiscV/CorrectnessEncoding/JumpCmp/Arithmetic.lean` proves the same
+payload equations and the four resulting source-PC equations. Only original
+near `[-4092,4095]` or global `[-1048568,1048579]` guards and four-byte source
+alignment occur. The lower endpoints retain correction through negative
+signed payloads; the aligned far upper endpoint is 1048576. No new offset,
+target execution, decoder or post-state assumption is introduced.
+
+These are untagged local compositions without a separately named original
+HOL theorem. `check-riscv-jumpcmp-offsets.py` and mutation tests guard the
+exact original arithmetic and evidence. Full JumpCmp encoder correctness
+remains separate dependent work; no executed compiler definition changes.
+
 ### Source/native store post-memory correspondence
 
 `riscv_memory_store_value_probeScript.sml` compares all selected bytes and
@@ -8781,3 +8803,5 @@ the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
 definition changes here. Whole encoder and compiler assembly remain open.
 
 `pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
+
+`word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.

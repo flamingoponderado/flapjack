@@ -1,0 +1,106 @@
+is_integral_def=∀(r :real). is_integral r ⇔ ∃(n :num). abs r = ((&n) :real)
+float_is_integral_def=∀(x :(τ, χ) float).
+  float_is_integral x ⇔
+  case float_value x of Float r => is_integral r | Infinity => F | NaN => F
+ULP_def=ULP ((e :χ word),(:τ)) =
+(2 :real) pow (if e = (0w :χ word) then (1 :num) else w2n e) /
+(2 :real) pow (INT_MAX (:χ) + dimindex (:τ))
+ulp_def=ulp (:τ # χ) = ULP ((0w :χ word),(:τ))
+integral_round_def=∀(mode :rounding) (x :real).
+  (integral_round mode x :(τ, χ) float) =
+  case mode of
+    roundTiesToEven =>
+      (let
+         (t :real) = threshold (:τ # χ)
+       in
+         if x ≤ -t then float_minus_infinity (:τ # χ)
+         else if x ≥ t then float_plus_infinity (:τ # χ)
+         else
+           closest_such
+             (λ(a :(τ, χ) float).
+                  ∃(n :num). EVEN n ∧ abs (float_to_real a) = ((&n) :real))
+             (float_is_integral :(τ, χ) float -> bool) x)
+  | roundTowardPositive =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_bottom (:τ # χ)
+       else if x > t then float_plus_infinity (:τ # χ)
+       else closest {a | float_is_integral a ∧ float_to_real a ≥ x} x)
+  | roundTowardNegative =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_minus_infinity (:τ # χ)
+       else if x > t then FLT_MAX
+       else closest {a | float_is_integral a ∧ float_to_real a ≤ x} x)
+  | roundTowardZero =>
+    (let
+       (t :real) = largest (:τ # χ)
+     in
+       if x < -t then float_bottom (:τ # χ)
+       else if x > t then FLT_MAX
+       else
+         closest {a | float_is_integral a ∧ abs (float_to_real a) ≤ abs x} x)
+float_round_to_integral_def=∀(mode :rounding) (x :(τ, χ) float).
+  float_round_to_integral mode x =
+  case float_value x of
+    Float r => (integral_round mode r :(τ, χ) float)
+  | Infinity => x
+  | NaN => x
+float_mul_sub_def=∀(mode :rounding) (x :(τ, χ) float) (y :(τ, χ) float) (z :(τ, χ) float).
+  float_mul_sub mode x y z =
+  (let
+     (signP :word1) = x.Sign ⊕ y.Sign;
+     (infP :bool) = (float_is_infinite x ∨ float_is_infinite y)
+   in
+     if float_is_nan x ∨ float_is_nan y ∨ float_is_nan z then
+       (check_for_signalling [x; y; z],float_some_qnan (FP_MulSub mode x y z))
+     else if
+       float_is_infinite x ∧ float_is_zero y ∨
+       float_is_zero x ∧ float_is_infinite y ∨
+       float_is_infinite z ∧ infP ∧ signP = z.Sign
+     then
+       (invalidop_flags,float_some_qnan (FP_MulAdd mode x y z))
+     else if
+       float_is_infinite z ∧ z.Sign = (1w :word1) ∨
+       infP ∧ signP = (0w :word1)
+     then
+       (clear_flags,float_plus_infinity (:τ # χ))
+     else if
+       float_is_infinite z ∧ z.Sign = (0w :word1) ∨
+       infP ∧ signP = (1w :word1)
+     then
+       (clear_flags,float_minus_infinity (:τ # χ))
+     else
+       (let
+          (r1 :real) = float_to_real x * float_to_real y and
+          (r2 :real) = float_to_real z
+        in
+          (float_round_with_flags mode
+             (if r1 = (0 :real) ∧ r2 = (0 :real) ∧ signP ≠ z.Sign then
+                signP = (1w :word1)
+              else (mode = roundTowardNegative)) (r1 − r2) :
+           flags # (τ, χ) float)))
+float_unordered_def=∀(x :(τ, χ) float) (y :(τ, χ) float).
+  float_unordered x y ⇔ float_compare x y = UN
+exponent_boundary_def=∀(y :(τ, χ) float) (x :(τ, χ) float).
+  exponent_boundary y x ⇔
+  x.Sign = y.Sign ∧ w2n x.Exponent = w2n y.Exponent + (1 :num) ∧
+  x.Exponent ≠ (1w :χ word) ∧ y.Significand = -(1w :τ word) ∧
+  x.Significand = (0w :τ word)
+float_ulp_def=∀(f :(α, β) float). ulpᶠ f = ULP (f.Exponent,(:α))
+next_hi_def=∀(x :(τ, χ) float).
+  next_hi x =
+  if x.Significand <₊ (UINT_MAXw :τ word) then
+    x with Significand := x.Significand + (1w :τ word)
+  else
+    <|Sign := x.Sign; Exponent := x.Exponent + (1w :χ word);
+      Significand := (0w :τ word)|>
+next_lo_def=∀(x :(τ, χ) float).
+  next_lo x =
+  if (0w :τ word) <₊ x.Significand then
+    x with Significand := x.Significand − (1w :τ word)
+  else
+    <|Sign := x.Sign; Exponent := x.Exponent − (1w :χ word);
+      Significand := (UINT_MAXw :τ word)|>
