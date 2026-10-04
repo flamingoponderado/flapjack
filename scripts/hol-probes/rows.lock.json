@@ -154,6 +154,7 @@
     {"bytes": 393, "out": "crep_inline_code_inl_probe.out", "rows": 9, "sha256": "13c6a1013fb8ea25b9f50ed3c1b16dd5a625d2ccbc05b6cba60c4ce0358fef21"},
     {"bytes": 123, "out": "crep_inline_cont_res_probe.out", "rows": 7, "sha256": "1dadd610c1bfb837cf1bb572454be43f3ced17831d9b84de528c1d887d2cf2bc"},
     {"bytes": 231, "out": "crep_inline_eval_probe.out", "rows": 13, "sha256": "35e78457901ca13da74383bd35268cd15204ad7c8b33b3bd622f161b526000d9"},
+    {"bytes": 1245, "out": "crep_inline_exps_provenance_probe.out", "rows": 5, "sha256": "a7d3c0c9100c7cceb2943bc3cfbcbd7115fe9d1f52591672038f53a5c5abca35"},
     {"bytes": 182, "out": "crep_inline_has_return_probe.out", "rows": 9, "sha256": "df298f3062eaff1ed8424ed613516c1b12d7d2410560fcfcaad470abcece22d1"},
     {"bytes": 210, "out": "crep_inline_helper_probe.out", "rows": 11, "sha256": "c48155581da09eb8fcbe91f9c2dcb6303056a5e1d52632311ccca182d0e4b984"},
     {"bytes": 229, "out": "crep_inline_nested_decs_provenance_probe.out", "rows": 1, "sha256": "9a59add8abaddcdea0f27db0d2cf74b1c58bd54ec002d08761ff1cdb14be4742"},

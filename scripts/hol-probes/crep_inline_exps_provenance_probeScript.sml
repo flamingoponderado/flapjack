@@ -1,0 +1,14 @@
+load "preamble";
+load "crep_inlineProofTheory";
+open HolKernel Parse bossLib preamble crep_inlineProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = if null (hyp (exps_of_nested_seq_assign)) then () else raise Fail "hypotheses: exps_of_nested_seq_assign";
+val _ = (print "exps_of_nested_seq_assign_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (exps_of_nested_seq_assign)); print "\n");
+val _ = if null (hyp (exps_of_arg_load)) then () else raise Fail "hypotheses: exps_of_arg_load";
+val _ = (print "exps_of_arg_load_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (exps_of_arg_load)); print "\n");
+val _ = if null (hyp (exps_of_unreach_elim)) then () else raise Fail "hypotheses: exps_of_unreach_elim";
+val _ = (print "exps_of_unreach_elim_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (exps_of_unreach_elim)); print "\n");
+val _ = if null (hyp (exps_of_transform_eoc)) then () else raise Fail "hypotheses: exps_of_transform_eoc";
+val _ = (print "exps_of_transform_eoc_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (exps_of_transform_eoc)); print "\n");
+val _ = if null (hyp (exps_of_transform_branch)) then () else raise Fail "hypotheses: exps_of_transform_branch";
+val _ = (print "exps_of_transform_branch_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (exps_of_transform_branch)); print "\n");

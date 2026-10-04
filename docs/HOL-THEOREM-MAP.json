@@ -97718,5 +97718,58 @@
     "lean_name": "structsFields_every",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Mutual compile_fields half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_nested_seq_assign",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfNestedSeqAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-seq-assign: original 3042-3049 and typed capture crep_inline_exps_provenance (ns:num list, es: alpha exp list). ns/es/e retained; MAP2 Assign rendered as List.zipWith (.assign n v), which truncates at the shorter list exactly as HOL MAP2 (unequal lengths retained, no length premise). Sole premise MEM e (exps_of (nested_seq ...)); conclusion MEM e es. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_arg_load",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfArgLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-arg-load: original 3060-3068 and typed capture. Binders e/tmp_vars/args/args_vname/p retained at native carriers; argLoadHOLExact is the native arg_load. Full three-way disjunction retained: MEM e args OR (exists c. MEM c tmp_vars and e = Var c) OR MEM e (exps_of p). No length premise. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_unreach_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfUnreachElim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-unreach: original 3082-3091 and typed capture (r: early_exit option, rt: free type beta). Binders p q r e retained; HOL rt does not occur in the body and is retained as an unused explicit binder at a free universe-0 type beta. Premise unreach_elim p = (q,r) and MEM e (exps_of q); conclusion MEM e (exps_of p). Proved via Flapjack helper crepInline_unreachElim_exps over all unreachElimHOLExact clauses. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_transform_eoc",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfTransformEoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-eoc: original 3093-3108 and typed capture. Binders rts p e retained; native transformEocHOLExact; induction covers every transform_eoc clause. Premise MEM e (exps_of (transform_eoc rts p)); conclusion MEM e (exps_of p). Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_transform_branch",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfTransformBranch",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-branch: original 3110-3125 and typed capture. Binders ld rts p e retained; native transformBranchHOLExact; induction covers every transform_branch clause. Premise MEM e (exps_of (transform_branch ld rts p)); conclusion MEM e (exps_of p). Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_unreachElim_exps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projection form of exps_of_unreach_elim (first component of unreachElimHOLExact) used to prove the tagged crepInline_expsOfUnreachElim; no independent HOL declaration."
   }
 ]
