@@ -4714,6 +4714,12 @@ run_probe word_to_word_no_install_compile_single_probeScript.sml word_to_word_no
 run_probe data_to_word_gc_fun_const_ok_probeScript.sml data_to_word_gc_fun_const_ok_probe.out \
   gc_fun_const_ok_word_gc_fun_statement gc_fun_const_ok_word_gc_fun_typed \
   "$cake_dir/compiler/backend/proofs/data_to_word_gcProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe lab_props_every_sec_label_ok_probeScript.sml lab_props_every_sec_label_ok_probe.out \
+  EVERY_sec_label_ok_statement EVERY_sec_label_ok_typed \
+  "$cake_dir/compiler/backend/semantics/labPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+run_probe pan_to_target_labels_chain_source_replay_probeScript.sml pan_to_target_labels_chain_source_replay_probe.out \
+  pan_to_lab_good_code_lemma_replay_statement from_pan_to_lab_no_install_replay_typed \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake/proofs"
 run_probe word_convs_good_handlers_word_to_word_probeScript.sml word_convs_good_handlers_word_to_word_probe.out \
   word_good_handlers_word_to_word_incr_statement word_good_handlers_word_to_word_typed \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
