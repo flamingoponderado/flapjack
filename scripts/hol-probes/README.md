@@ -8180,3 +8180,9 @@ reveals a later value hidden by first-match lookup. The executed map drops
 that conflicting key. ProductionJoin derives the actual If knowledge join
 from arm induction hypotheses and original well-formedness preservation;
 it does not establish whole-pass production adoption or HOL/Lean equivalence.
+
+`word_to_stack_inst_full_probeScript.sml` captures the original complete
+`evaluate_wInst` and its whole FP-family specialization, with full types,
+closed quantification, zero hypotheses and kernel-proved statements. Source
+review evidence covers the original guards and complete target existential;
+it does not assert cross-assistant equivalence or whole compiler correctness.
