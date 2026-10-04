@@ -92392,5 +92392,14 @@
     "lean_name": "dfnSltIU",
     "statement_status": "reviewed_exact",
     "reviewer": "Source compared evaluated SLTIU at line840 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Binop.lean",
+    "lean_name": "riscv_encoder_correct_binop",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared full Binop branch550-559 and original encoder_correct_def: every BinOp and both original RegImm constructors, same sole asmStep plus initialtargetStateRel premise and full existential/all-env/asserts/asserts2 conclusion. Accepted full Reg/Imm proofs assembled along literal source case split, no target-run/range/finalrelation premise. Fresh full typed original source theorem capture retains unrestricted num registers, word64 RegImm and full native state, hypotheses0/provedT. Inherited reals_as_rational_cuts assumption on full native target/Run closure, SOUNDNESS item8, retained."
   }
 ]

@@ -7821,3 +7821,8 @@ run_probe l3_step_immediate_comparison_probeScript.sml l3_step_immediate_compari
 run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
   pull_sub_empty pull_sub_unary_var pull_sub_unary_const norm_sub_empty norm_sub_unary_var pull_sub_binary_const norm_sub_binary_const \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+
+run_probe riscv_target_binop_full_probeScript.sml riscv_target_binop_full_probe.out \
+  riscv_encoder_correct_binop_full_statement riscv_encoder_correct_binop_full_types riscv_encoder_correct_binop_full_hypotheses riscv_encoder_correct_binop_full_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

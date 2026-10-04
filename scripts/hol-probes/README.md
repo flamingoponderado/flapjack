@@ -8185,3 +8185,16 @@ The elaborated declaration closure contains no inherited real-cut operation.
 closed, kernel-proved `evaluate_wInst` specialization for an arbitrary Arith
 opcode, retaining every guard and the full target existential. This is source
 statement evidence, not cross-assistant equivalence.
+
+## Full native Binop constructor assembly
+
+`CorrectnessEncoding/Binop.lean` assembles the accepted Reg and Imm equations
+into the full original constructor at source550-559. All five operators and
+both operand forms retain the sole original asmStep/initial relation premise
+and full existential/interference/assertion conclusion.
+`riscv_target_binop_full_probe.out` captures the unrestricted original theorem,
+including typed word64 RegImm and natural registers, zero source hypotheses
+and provedT. These captures are regression evidence; the accepted case proofs
+and kernel-checked source case assembly establish the result. The full target
+closure retains inherited reals_as_rational_cuts (SOUNDNESS item8). Other
+encoder constructors and the encompassing compiler theorem remain open.
