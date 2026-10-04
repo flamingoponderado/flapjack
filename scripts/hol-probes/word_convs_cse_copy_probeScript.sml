@@ -1,6 +1,7 @@
 load "wordConvsProofTheory";
 open HolKernel Parse bossLib wordConvsProofTheory;
 val _ = Globals.linewidth := 1000000;
+val _ = show_types := true;
 val _ = (print "extract_labels_word_common_subexp_elim_statement="; print_term(concl extract_labels_word_common_subexp_elim));
 val _ = print("extract_labels_word_common_subexp_elim_hypotheses=" ^ Int.toString(length(hyp extract_labels_word_common_subexp_elim)) ^ "\n");
 val _ = (print "flat_exp_conventions_word_common_subexp_elim_statement="; print_term(concl flat_exp_conventions_word_common_subexp_elim));
