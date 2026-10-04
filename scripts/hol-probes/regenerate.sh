@@ -3391,6 +3391,7 @@ run_probe word_gc_functions_has_fp_ops_probeScript.sml word_gc_functions_has_fp_
 
 run_probe word_gc_functions_probeScript.sml word_gc_functions_probe.out \
   gc_ptr_to_addr gc_is_gc_word_const_odd \
+  gc_refs_to_addresses_empty gc_refs_to_addresses_basic gc_refs_to_addresses_skip \
   "$cake_dir/compiler/backend/proofs/word_gcFunctionsScript.sml" \
   "$cake_dir/compiler/backend/proofs"
 
@@ -4648,6 +4649,9 @@ run_probe word_alloc_distinct_tar_reg_probeScript.sml word_alloc_distinct_tar_re
   ssa_cc_trans_distinct_tar_reg_statement ssa_cc_trans_distinct_tar_reg_hypotheses ssa_cc_trans_distinct_tar_reg_typed \
   full_ssa_cc_trans_distinct_tar_reg_statement full_ssa_cc_trans_distinct_tar_reg_hypotheses full_ssa_cc_trans_distinct_tar_reg_typed \
   "$cake_dir/compiler/backend/proofs/word_allocProofScript.sml" "$cake_dir/compiler/backend/proofs"
+run_probe word_to_word_code_rel_probeScript.sml word_to_word_code_rel_probe.out \
+  code_rel_def_statement code_rel_def_hypotheses code_rel_def_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe word_to_word_compile_single_probeScript.sml word_to_word_compile_single_probe.out \
   FST_compile_single_statement FST_compile_single_hypotheses FST_compile_single_typed \
   compile_single_lem_statement compile_single_lem_hypotheses compile_single_lem_typed \
@@ -7621,7 +7625,7 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
-  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
+  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed from_word_0_type from_word_0_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_probe.out \
   evaluateWInstConst_typed evaluateWInstConst_proved evaluateWInstConst_hypotheses \
@@ -7713,3 +7717,16 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
+  fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_store_register2_probeScript.sml word_to_stack_store_register2_probe.out \
+  storeReg2Continuation_typed storeReg2Continuation_proved storeReg2Continuation_hypotheses writeReg2Sequence_typed writeReg2Sequence_proved writeReg2Sequence_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
+  andi_decode_zero andi_decode_all_ones andi_decode_sign_bit andi_decode_positive_max add_decode_zero add_decode_all_ones add_decode_sign_bit add_decode_positive_max sub_decode_zero sub_decode_all_ones sub_decode_sign_bit sub_decode_positive_max and_decode_zero and_decode_all_ones and_decode_sign_bit and_decode_positive_max andi_encode_source_clause andi_encode_source_hypotheses andi_carrier_types andi_symbolic_replay_query add_encode_source_clause add_encode_source_hypotheses add_carrier_types add_symbolic_replay_query sub_encode_source_clause sub_encode_source_hypotheses sub_carrier_types sub_symbolic_replay_query and_encode_source_clause and_encode_source_hypotheses and_carrier_types and_symbolic_replay_query \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

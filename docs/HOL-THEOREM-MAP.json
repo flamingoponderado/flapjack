@@ -90977,5 +90977,504 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol source comparison 2026-10-03: original pan_to_targetScript10-50 and fresh complete typed original definitions/types in pan_to_target_source_probe.out, no local replay. Positive native DeclHOL width retains the reviewed exact syntax family and native byte-backed MlString names; no String or unrestricted-map substitute. Standard word dimension/positive NeZero translation only. Full original main SPLITP three branches, including empty input staying empty and default main only for nonempty missing-main programs, Return(Const0), One, no params/inline/export. Native complement List.span mirrors actual rich_listTheory.SPLITP clauses; extracted actual original first LET captured and six kernel main observations replayed. Actual panToWordCompileProgHOL ISA and WordToWord.compile, returned col_oracle update only within wordToWordConf; native mllist sort strict Nat comparison, original prog2 labels zipped with generated_main::original prog1 function names, left-biased native Spt union of three stub lists; exports from original program, full backend fromWord with original Option/list-byte/native-word/config result and no supplied pass result/stack-bound premise. Actual listTheory.ZIP_def fresh capture has both arbitrary-list empty clauses, so native List.zip is faithful even for unequal lengths; no unsupported equal-length guard. Production main/exports and full wrapper path are separate source-audited routing work, not claimed executed here."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "rm_perm",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "rm_perm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL rm_perm (159-163): s with permute := s.permute = s over WordSemStateFiniteExact width C F; structure update; rfl. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "find_code_thm",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "find_code_thm",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL find_code_thm (167-189): free st l o1 o' x args prog locsize explicit; premise conjunction (the inline code relation on st.code with ∃t k a c col, and find_code o1 (add_ret_loc o' x) st.code st.stack_size = SOME (args,prog,locsize)); conclusion ∃t k a c col n prog' with SND (compile_single ...) = (LENGTH args, prog') and find_code over l, over the tagged wordSemFindCode/wordSemAddRetLoc/compileSingle. Only st.code/st.stackSize of the state occur. Proof: both find_code clauses, compile_single preserving the arity. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "pop_env_termdep",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "pop_env_termdep",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL pop_env_termdep (191-195): pop_env rst = SOME x ⇒ x.termdep = rst.termdep, over the tagged popEnv; proof by its clauses. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "code_rel_def",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "codeRel",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): Exact HOL code_rel_def (198-203): code_rel stc ttc ⇔ ∀n v. lookup n stc = SOME v ⇒ ∃col t k a c. lookup n ttc = SOME (SND (compile_single t k a c ((n,v),col))); (num # 'a prog) num_map as Spt (Nat × WordLangProgHOL (BitVec width)), existential binders in HOL order with c : AsmConfigExact width, over the tagged compileSingle. Typed capture in word_to_word_code_rel. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_eta",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "compile_single_eta",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL compile_single_eta (205-210): compile_single t k a c ((p,x),y) = (p, SND (compile_single t k a c ((p,x),y))); free variables explicit; rfl. HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "code_rel_union_fromAList",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CodeRel.lean",
+    "lean_name": "code_rel_union_fromAList",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.48): HOL code_rel_union_fromAList (213-233): free t k a c leading; ∀s l ls. code_rel s l ∧ domain s = domain l ⇒ code_rel (union s (fromAList ls)) (union l (fromAList (MAP (λp. compile_single t k a c (p,NONE)) ls))), domain as sptDomain, union/fromAList as sptUnion/sptFromAList. Proof via lookup_union, fromAList lookup as first-match alist lookup and compile_single preserving the key (HOL ALOOKUP_MAP_2). HOL [local]: not exported, compared against the script text. Positive HOL word dimension is the sole carrier translation."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Skip",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Skip case (word_to_wordProofScript.sml:294-296). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Skip constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Move",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Move case (word_to_wordProofScript.sml:298-301). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Move constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Inst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Inst case (word_to_wordProofScript.sml:303-306). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Inst constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Assign",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Assign case (word_to_wordProofScript.sml:308-311). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Assign constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Get",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Get case (word_to_wordProofScript.sml:313-316). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Get constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Set",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Set case (word_to_wordProofScript.sml:318-321). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Set constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Store",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Store case (word_to_wordProofScript.sml:323-326). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Store constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Alloc",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Alloc case (word_to_wordProofScript.sml:750-765). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Alloc constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_StoreConsts",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume StoreConsts case (word_to_wordProofScript.sml:767-769). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the StoreConsts constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Raise",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Raise case (word_to_wordProofScript.sml:771-773). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Raise constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Return",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Return case (word_to_wordProofScript.sml:775-777). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Return constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Break",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Break case (word_to_wordProofScript.sml:779-782). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Break constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Continue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Continue case (word_to_wordProofScript.sml:784-787). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Continue constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_Tick",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume Tick case (word_to_wordProofScript.sml:789-791). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the Tick constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_OpCurrHeap",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume OpCurrHeap case (word_to_wordProofScript.sml:793-795). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the OpCurrHeap constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_LocValue",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume LocValue case (word_to_wordProofScript.sml:797-799). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the LocValue constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_CodeBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume CodeBufferWrite case (word_to_wordProofScript.sml:824-826). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the CodeBufferWrite constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_DataBufferWrite",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume DataBufferWrite case (word_to_wordProofScript.sml:828-830). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the DataBufferWrite constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_FFI",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume FFI case (word_to_wordProofScript.sml:832-834). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the FFI constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Leaf.lean",
+    "lean_name": "compile_single_correct_ShareInst",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.49): HOL compile_single_correct, Resume ShareInst case (word_to_wordProofScript.sml:836-847). Case piece of the full statement (word_to_wordProofScript.sml:235-256) at the ShareInst constructor with arbitrary arguments and state, via CompileSingleCorrectAt: free tt kk aa co as parameters; ∀ l coracle cc; premises code_rel st.code l (tagged codeRel), domain equality, st.compile = λconf progs. cc conf (MAP (λp. compile_single tt kk aa co (p,NONE)) progs), coracle = (I ## MAP …) o st.compile_oracle (Prod.map id (List.map …) ∘), gc_fun_const_ok; conclusion ∃perm' with HOL's let-pairs, if res = SOME Error then T (classical) else res1 = res ∧ code_rel ∧ domain equality ∧ rst1 = rst with <|code; compile_oracle; compile|>, over the faithful wordSem evaluate. No induction hypothesis is needed for a leaf. Proof: identity permutation (HOL picks it via state_component_equality), and a leaf runs the same on the state with replaced code table/oracle/compile (Flapjack evaluate_tgt_frame built on the accepted InstFrame/AllocFrame/ShMemFrame lemmas, the domain equality covering LocValue). fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_MustTerminate",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume MustTerminate case (word_to_wordProofScript.sml:328-341). Case piece of the full statement (235-256) at the MustTerminate constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock induction hypothesis (CompileSingleCorrectLowerIH), used at termdep - 1. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_If",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume If case (word_to_wordProofScript.sml:644-653). Case piece of the full statement (235-256) at the If constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly the size induction hypotheses of both branches at the same termdep/clock (CompileSingleCorrectSubIH). HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_Seq",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume Seq case (word_to_wordProofScript.sml:592-642). Case piece of the full statement (235-256) at the Seq constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock hypothesis (for the second statement after a clock decrease) and the size hypotheses of both statements at the same termdep/clock. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Control.lean",
+    "lean_name": "compile_single_correct_Loop",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.50): HOL compile_single_correct, Resume Loop case (word_to_wordProofScript.sml:655-748). Case piece of the full statement (235-256) at the Loop constructor via CompileSingleCorrectAt (same premises/conclusion as the leaf pieces), with exactly HOL's outer termdep/clock hypothesis (for the next iteration at dec_clock) and the body's size hypothesis at the same termdep/clock. HOL proves the theorem by completeInduct on termdep, clock and prog_size; the size component is used here only for the immediate sub-programs, which the case structure requires. Proof follows HOL: the inner run's permutation from the hypothesis, permute_swap_lemma to restart the second statement/iteration, evaluate_clock/evaluate_consts for the clock, termdep, compile and gc_fun constancy, and cut_state reading only the locals. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelFp.lean",
+    "lean_name": "stateRelGetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_get_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4402-4407 full stateRel implies actual getFpVar equality at arbitrary register, including absent lookup. Relation fpRegs equality derived internally; no desired read premise. Positive machine width/common source-target words, independent source host Nat×C/target C and FFI F retained; FP payload remains fixed word64. Canonical source fpRegs/store and target regs/fpRegs/store qualified with genuine same-module codec witnesses, sptree locals/code unchanged. Structural relation has no numerical FP agreement claim; these structural declarations have no inherited real-arithmetic assumption, as confirmed by elaborated declaration closure. Fresh literal unchanged original local proof blocks and full typed symbolic statements replayed and reviewed: both T/hypotheses0, source/target common machine dimension with independent host/FFI and fixed word64 update payload. Regression evidence, no HOL-to-Lean equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StateRelFp.lean",
+    "lean_name": "stateRelSetFpVar",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "state_rel_set_fp_var",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4409-4415 full stateRel implies entire relation after actual simultaneous setFpVar update at arbitrary register/value/extra. All38 full relation conjuncts retained; only fpRegs conjunct changes by congruence of the same canonical map update, no desired postrelation premise. Positive machine width/common source-target words, independent source host Nat×C/target C and FFI F retained; FP payload remains fixed word64. Canonical source fpRegs/store and target regs/fpRegs/store qualified with genuine same-module codec witnesses, sptree locals/code unchanged. Structural relation has no numerical FP agreement claim; these structural declarations have no inherited real-arithmetic assumption, as confirmed by elaborated declaration closure. Fresh literal unchanged original local proof blocks and full typed symbolic statements replayed and reviewed: both T/hypotheses0, source/target common machine dimension with independent host/FFI and fixed word64 update payload. Regression evidence, no HOL-to-Lean equivalence claim."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegister2.lean",
+    "lean_name": "evaluateWRegWrite2Seq",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wRegWrite2_seq",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4672-4686 whole evaluation-pair equality for arbitrary callbacks/register/state and ALL outcomes, actual native second scratch k+1/ordered stack store. No callback run or success premise. Common positive word dimension, original source Nat×C/target C host and independent FFI F retained. Canonical maps qualified, genuine same-module codec witnesses; native sptree locals/code preserved. Evaluators inherit reals_as_rational_cuts, no independent numerical agreement or cross-language equivalence claim. Fresh literal unchanged original local store-continuation proof and whole write-sequence proof replayed and full typed statements reviewed: both T/hypotheses0, common word/program/result dimension, independent host/FFI and every original premise/result retained; regression evidence not cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/StoreRegister2.lean",
+    "lean_name": "evaluateWStackStoreWReg2New",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml",
+    "hol_name": "evaluate_wStackStore_wReg2_new",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "WordSemStateFiniteExact.fpRegs",
+      "WordSemStateFiniteExact.store",
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison: Original4603-4628 compiled wReg2/even/range and original existential continuation execution/pre-store fullrelation/stack naming equalities imply actual native Seq continuation/store run, whole source setVar relation/resources. The continuation-run premise occurs in the original HOL theorem and is not an assumed final compiled instruction run. All actual physical/spilled slots derived internally, scratchk+1, arbitrary Word/Loc value/index/aliases/continuation/resources retained. Common positive word dimension, original source Nat×C/target C host and independent FFI F retained. Canonical maps qualified, genuine same-module codec witnesses; native sptree locals/code preserved. Evaluators inherit reals_as_rational_cuts, no independent numerical agreement or cross-language equivalence claim. Fresh literal unchanged original local store-continuation proof and whole write-sequence proof replayed and full typed statements reviewed: both T/hypotheses0, common word/program/result dimension, independent host/FFI and every original premise/result retained; regression evidence not cross-language equivalence.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "fromWord0",
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "from_word_0_def",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original backendScript235-240 and actual closed typed from_word_0_def/inferred type captured in backend_lower_pipeline_probe.out. Arbitrary positive shared word dimension, native AsmConfigExact/backend Config, original byte MlString Spt names and complete (num,num,native word program) list retained. Actual WordToWord.compile consumes original wordToWordConf/asmConf/program; both returned oracle and transformed program are used, only colOracle updated inside wordToWordConf, complete native fromWord receives actual transformed output and original names. Output Option retains fixed word8 bytes, native-width bitmap words and full config; no success or supplied-pass-result premise. words_as_type_indexed_bitvec covers standard positive word-dimension translation only. Source-shaped definition is proof-side; executed routing and complete machine/compiler theorem remain independent OPEN requirements."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "HeapAddress",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_address",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_address (gc_sharedScript.sml:12-13) is exactly Pointer num 'a | Data 'a. Lean HeapAddress (α : Type) has the same two constructors with one-for-one payloads: pointer carries (index : Nat) (addr : α) (HOL num is Nat) and data carries (addr : α). No constructor was added or dropped, no payload type or arity changed, and the datatype has the single type parameter 'a. The carrier is polymorphic, so no word-dimension translation applies."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/GcShared.lean",
+    "lean_name": "HeapElement",
+    "hol_path": "cakeml/compiler/backend/gc/gc_sharedScript.sml",
+    "hol_name": "heap_element",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL Datatype heap_element (gc_sharedScript.sml:15-18) is exactly Unused num | ForwardPointer num 'a num | DataElement (('a heap_address) list) num 'b. Lean HeapElement (α β : Type) has the same three constructors with one-for-one payloads: unused (Nat) (HOL num), forwardPointer (Nat) (α) (Nat), dataElement (List (HeapAddress α)) (Nat) (β); HOL list is Lean List and 'a heap_address is the tagged Lean HeapAddress α. No constructor or payload change; the two type parameters 'a and 'b are retained. Polymorphic carrier, no word-dimension translation."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordGcFunctions.lean",
+    "lean_name": "refs_to_addresses",
+    "hol_path": "cakeml/compiler/backend/proofs/word_gcFunctionsScript.sml",
+    "hol_name": "refs_to_addresses_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; bead flapjack-pxn.18.5.15.5.11): HOL refs_to_addresses_def (word_gcFunctionsScript.sml:244-251) is the three equations refs_to_addresses [] = []; refs_to_addresses (DataElement ptrs _ _ :: refs) = ptrs ++ refs_to_addresses refs; refs_to_addresses (_ :: refs) = refs_to_addresses refs, returning ('a heap_address) list from ('a,'b) heap_element list. Lean refs_to_addresses {α β : Type} has the same three clauses one for one over the tagged HeapElement α β and HeapAddress α carriers, HOL list as Lean List, HOL ++ as List.append, and the same wildcard clause for every non-DataElement head. No branch was restricted and no success or well-formedness premise was added. Original value oracle rows gc_refs_to_addresses_empty/basic/skip are captured in scripts/hol-probes/word_gc_functions_probeScript.sml and locked in scripts/hol-probes/rows.lock.json."
   }
 ]
