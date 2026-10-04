@@ -160,6 +160,7 @@ import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.ImmediateComparison
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.JumpStep
+import Flapjack.RiscV.L3.Step.RegisterComparison
 import Flapjack.RiscV.L3.Step.ImmediateShiftStep
 import Flapjack.RiscV.L3.Step.RegisterShiftStep
 import Flapjack.RiscV.L3.Step.WShiftStep
