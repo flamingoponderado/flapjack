@@ -195,8 +195,6 @@ theorem stackRemoveCompStackAsmName {width : Nat} [NeZero width] {c : AsmConfigE
       upshift_name, downshift_name, stackFree_name,
       stackAlloc_name, asmAddrOffsetOkExact, leftShift_name, rightShift_name, copyLoop_name])
   all_goals simp_all (config := { zetaDelta := true })
-  all_goals trace_state
-  all_goals sorry
 
 theorem storeListCode_name {width : Nat} [NeZero width] {c : AsmConfigExact width}
     (hb : c.validImm (.inl .add) (wordSemBytesInWord (width := width)) = true)
