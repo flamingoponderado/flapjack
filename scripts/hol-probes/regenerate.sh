@@ -7948,3 +7948,7 @@ run_probe word_convs_hoist_labels_probeScript.sml word_convs_hoist_labels_probe.
 run_probe word_convs_compile_exp_labels_probeScript.sml word_convs_compile_exp_labels_probe.out \
   compileExpLabels_typed compileExpLabels_proved compileExpLabels_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_word_conventions_labels_probeScript.sml word_to_word_conventions_labels_probe.out \
+  namesLabelsSections_typed namesLabelsSections_proved namesLabelsSections_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"

@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileConventions.Labels
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
