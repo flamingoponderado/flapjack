@@ -2,11 +2,12 @@ import Flapjack.RiscV.L3.Defs.Multiply
 import Flapjack.RiscV.L3.Defs.Divide
 
 /-! Evaluated original `riscv_stepScript.sml` integer multiply/divide instruction
-theorems for the full-width forms (`MUL`, `DIV`, `DIVU`, `REM`, `REMU`, lines
+theorems for four full-width forms (`MUL`, `DIV`, `REM`, `REMU`, lines
 874-886) over the literal native equations and the hex-equivalent all-ones
 zero-divisor result.  Each write theorem keeps the original destination
 hypothesis `rd <> 0w`; the remainder/quotient forms preserve the explicit zero
-divisor branches and (for `DIVU`) the RV32 low-32 widening. -/
+divisor branches. The evaluated `DIVU` and word-form equations remain separate
+porting work; this module does not claim those results. -/
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 

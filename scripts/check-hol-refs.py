@@ -233,12 +233,10 @@ def l3_boolify_source_error(root: Path) -> str | None:
 # The riscv_step instruction rewrite table binds each destination-write theorem
 # through a `class`/`class_rd0` factory.  `class_rd0` calls `utilsLib.save_thms`
 # a second time with `[rd0]` in the avoidance list, producing a companion named
-# `NAME^"_NOP"` whose conclusion leaves the state unchanged.  The companion is
-# the same instruction under the zero-destination guard: it keeps the original
-# instruction guards (for example the mode/legality hypotheses of the shift and
-# word-shift families) and adds `rd = 0w`, so it does NOT generally reduce to a
-# sole `rd = 0w` hypothesis and the exact hypotheses must be captured from the
-# theory per theorem.  Only `NAME` appears as a literal `val` binding, so the
+# `NAME^"_NOP"` with `rd = 0w`, retaining any mode or legality hypotheses,
+# whose destination write is suppressed, retaining other effects (for example
+# JAL/JALR NextFetch and address exceptions). Only `NAME` appears as a literal
+# `val` binding, so the
 # companion is registered here narrowly (for the reviewed script only) so that
 # its `@[hol]` tag resolves to the generating source line.  Names bound by the
 # plain `class` factory (branches/stores) have no companion.
