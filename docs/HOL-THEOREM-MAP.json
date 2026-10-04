@@ -92096,5 +92096,14 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol source comparison 2026-10-04: original evaluate_wInst4688-4699 specialized to arbitrary asm Arith, retaining all five original guards and entire actual native wInst/evaluate existential, full state_rel, stack length/space. Exhausts every one of eight native HolArith constructors and both register/immediate forms using accepted full constituent cases, including arbitrary aliases/spills/positive widths and original operand/division/overflow guards. Source uses reviewed constructor-for-constructor HolArith.toWordLangArith codec, no narrowed arith carrier. Full source/target canonical codecs re-exported in owning module; only source fpRegs/store and target regs/fpRegs/store are finite maps, native locals/code remain Spt. Standard word/Type0 host translation only, independent C/F retained. Faithful evaluators inherit reals_as_rational_cuts (SOUNDNESS item8). No supplied target execution/result, case simulation or postrelation premise. Actual original closed generic typed Arith specialization kernel captured. Whole Inst/comp_correct/compiler composition remains open.",
     "hol_line": 4688
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/BinopImmediate.lean",
+    "lean_name": "riscv_encoder_correct_binopImmediate",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared riscv_targetProofScript.sml:550-559 Imm branch and full encoder_correct_def: all five operators; sole asmStep and initial targetStateRel premise; complete existential/interference/asserts/asserts2 conclusion. Original signed12 guard and Xor -1 exception retained, Sub strict -2048 lower bound derives exact negation. Native Next derived from four emitted bytes, universal decode and literal Run. Full original typed specialization captured. Native state/Run inherits SOUNDNESS item 8 real-cut representation. Inherited reals_as_rational_cuts assumption on the full native state/Run closure is retained."
   }
 ]
