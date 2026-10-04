@@ -10,6 +10,7 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -72,6 +73,9 @@ import Flapjack.Pancake.Proofs.PanToWord.NoInstallCode
 import Flapjack.Pancake.Proofs.PanToWord.LabPres
 import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess
 import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
 import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
@@ -136,6 +140,7 @@ import Flapjack.Compiler.Backend.BackendCommon.Operators
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CopyWordsCorrect
 import Flapjack.RiscV.CorrectnessEncoding.DecodeAddi
 import Flapjack.RiscV.CorrectnessEncoding.JumpReg
+import Flapjack.RiscV.CorrectnessEncoding.Jump
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
