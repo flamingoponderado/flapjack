@@ -98115,7 +98115,7 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyLabChain.lean",
     "lean_name": "panToTargetLabSemantics",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-2284): composition of full_make_init_semantics (Assumptions from panToTargetFullMakeInitAssumptions, opt <> NONE), word_to_stack compile_semantics and word_to_word_compile_semantics (premises from full_make_init, compile_to_word_conventions2, pan_to_word no_install/no_alloc/no_mt and first_compile_prog_all_distinct), and the pan_to_word stage (panToTargetPanToWordStageLab): for labst over pan_installed's components, LabSem semantics labst is in extend_with_resource_limit' (safe_for_space wst InitGlobals_location) {semantics_decls s start pan_code} when the latter is not Fail. Hypotheses are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses in original form."
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1440-2284): composition of full_make_init_semantics (Assumptions from panToTargetFullMakeInitAssumptions, opt <> NONE), word_to_stack compile_semantics and word_to_word_compile_semantics (premises from full_make_init, compile_to_word_conventions2, pan_to_word no_install/no_alloc/no_mt and first_compile_prog_all_distinct), and the pan_to_word stage (panToTargetPanToWordStageLab): for labst over pan_installed's components, LabSem semantics labst is in extend_with_resource_limit' (safe_for_space wst InitGlobals_location) {semantics_decls s start pan_code} when the latter is not Fail. Hypotheses are compile_prog_max results, configuration hypotheses, pan_installed components and top-theorem hypotheses in original form. Also concludes semantics wst InitGlobals_location = semantics_decls s start pan_code (word_to_word_compile_semantics with the pan_to_word stage) and that full_make_init returns (sst, SOME x)."
   },
   {
     "hol_path": null,
@@ -98447,5 +98447,46 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: compared original full FP673-677 case and complete encoder_correct_def with original asmSem asm_step seventh conjunct, asm arith_ok/fp_ok and riscv_config/asm_ok. Only original source asmStep plus initial targetStateRel; full existential n/all interference environments/both asserts/outside-domain asserts2/code bytes/PC membership/final full relation. Derives impossible original source step from actual RISC-V config, not an assumed rejection or target-output premise. Entire original sixteen-constructor HolFp carrier retained. Original riscv_config fp_reg_count=0 rejects every form, including integer move/conversion and armv7-only FMA; kernel proof cases all sixteen forms. Original theorem specialized to this exact complete source constructor in fresh typed/hyp0/proved captures. Statement inherits reals_as_rational_cuts assurance limit SOUNDNESS8 through native target carrier; no instruction executes in these contradiction proofs. No production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_every_inst_ok_less",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/CompileProgInstOkLess.lean",
+    "lean_name": "panToWordEveryInstOkLess",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source1410-1424 and regenerated full typed capture compared2026-10-04: wprog0 alpha-word-program triples, pan_code alpha-declarations and c alpha-asm_config share same dimension. Original compile_prog c.ISA pan_code=wprog0, byte_offset_ok c 0w, addr_offset_ok c 0w, EVERY good_panops pan_code retained as four hypotheses; full EVERY tuple every_inst(inst_ok_less c) output conclusion. Actual native panToWordCompileProgHOL composes PanSimp/PanStructs/PanGlobals/PanToCrep/CrepToLoop/LoopToWord once in original order. Existing Bool EVERY/membership translations and HolInst.ofWordLangInst constructor translation reused. Only positive width translates to BitVec width with NeZero. No target evaluation, desired-output, source-byte/default or extra pass-success premise; full semantic compilation theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, good_code from stage A2 (panToTargetGoodCode), mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components. hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20) is a stage-local premise to be discharged in the top theorem, not a top-theorem premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetLabRegWord",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab make_init register r holds .word (get_reg ms r) for reg_ok r under target_state_rel (pan_to_targetProofScript.sml 1956-1990); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "extendPrime_flag_mono",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "extend_with_resource_limit' is antitone in its flag (pan_to_targetProofScript.sml 1673 inline lemma); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTopResource.lean",
+    "lean_name": "panToTargetLabSemanticsResource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Lab chain with stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1440-2506): lab semantics of the initial lab state in extend_with_resource_limit' (option_lt stack_max (SOME (FST (read_limits ...)))) of semantics_decls, from the top hypotheses, pan_installed components and compile_prog_max results only; intermediate proof step, not a HOL theorem."
   }
 ]
