@@ -54,12 +54,18 @@ Proof
   \\ every_case_tac \\ fs [state_rel_def,push_locals_def,LET_DEF]
 QED
 
-fun show name th = (
-  if null (hyp th) then () else raise Fail ("hypotheses: " ^ name);
-  print (name ^ "_typed="); Lib.with_flag (Globals.show_types,true) print_term (concl th); print "\n";
-  print (name ^ "_hypotheses=" ^ Int.toString (length (hyp th)) ^ "\n"));
-val _ = show "evaluate_Seq_Skip" evaluate_Seq_Skip;
-val _ = show "comp_Call" comp_Call;
-val _ = show "state_rel_IMP_semantics" word_to_stackProofTheory.state_rel_IMP_semantics;
-val _ = show "state_rel_IMP_semantics_prime" word_to_stackProofTheory.state_rel_IMP_semantics';
-val _ = show "compile_semantics" word_to_stackProofTheory.compile_semantics;
+val _ = if null (hyp (evaluate_Seq_Skip)) then () else raise Fail "hypotheses: evaluate_Seq_Skip";
+val _ = (print "evaluate_Seq_Skip_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (evaluate_Seq_Skip)); print "\n");
+val _ = print("evaluate_Seq_Skip_hypotheses=" ^ Int.toString(length(hyp (evaluate_Seq_Skip))) ^ "\n");
+val _ = if null (hyp (comp_Call)) then () else raise Fail "hypotheses: comp_Call";
+val _ = (print "comp_Call_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (comp_Call)); print "\n");
+val _ = print("comp_Call_hypotheses=" ^ Int.toString(length(hyp (comp_Call))) ^ "\n");
+val _ = if null (hyp (word_to_stackProofTheory.state_rel_IMP_semantics)) then () else raise Fail "hypotheses: state_rel_IMP_semantics";
+val _ = (print "state_rel_IMP_semantics_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (word_to_stackProofTheory.state_rel_IMP_semantics)); print "\n");
+val _ = print("state_rel_IMP_semantics_hypotheses=" ^ Int.toString(length(hyp (word_to_stackProofTheory.state_rel_IMP_semantics))) ^ "\n");
+val _ = if null (hyp (word_to_stackProofTheory.state_rel_IMP_semantics')) then () else raise Fail "hypotheses: state_rel_IMP_semantics_prime";
+val _ = (print "state_rel_IMP_semantics_prime_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (word_to_stackProofTheory.state_rel_IMP_semantics')); print "\n");
+val _ = print("state_rel_IMP_semantics_prime_hypotheses=" ^ Int.toString(length(hyp (word_to_stackProofTheory.state_rel_IMP_semantics'))) ^ "\n");
+val _ = if null (hyp (word_to_stackProofTheory.compile_semantics)) then () else raise Fail "hypotheses: compile_semantics";
+val _ = (print "compile_semantics_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (word_to_stackProofTheory.compile_semantics)); print "\n");
+val _ = print("compile_semantics_hypotheses=" ^ Int.toString(length(hyp (word_to_stackProofTheory.compile_semantics))) ^ "\n");
