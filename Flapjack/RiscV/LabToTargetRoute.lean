@@ -26,14 +26,16 @@ namespace Flapjack.RiscV
 
 open Flapjack.Compiler.Backend
 
-/-- The literal `riscv_lab_conf` quotation of `riscv_configScript.sml:54`
-(`<|pos:=0; ffi_names:=NONE; labels:=LN; sec_pos_len:=[]; init_clock:=5;
-hash_size:=104729n; shmem_extra:=[]|>`), the `lab_conf` field of
-`riscv_backend_config_def`. An SML value, not a HOL declaration, so the
-projection is untagged. -/
+/-- Executed lab projection of the complete reviewed Pancake/RISC-V backend
+configuration, including the original riscv_lab_conf quotation. No separate HOL
+name; execution uses the checked whole-record realization. -/
 def riscvLabConf : LabToTarget.Config :=
-  { labels := .ln, secPosLen := [], pos := 0, initClock := 5, ffiNames := none,
-    shmemExtra := [], hashSize := 104729 }
+  RiscVConfig.pancakeRiscVBackendConfig.labConf
+
+/-- Every previous lab field is retained by the native configuration adoption. -/
+theorem riscvLabConf_defaults : riscvLabConf =
+    { labels := .ln, secPosLen := [], pos := 0, initClock := 5, ffiNames := none,
+      shmemExtra := [], hashSize := 104729 } := rfl
 
 /-- Split the reviewed `lab_to_target` byte image into the sections recorded by
 its `sec_pos_len` (Flapjack output adapter; no HOL original). -/
@@ -52,11 +54,15 @@ def labToTargetRiscV (program : LabProgram (Word 64)) :
   let native ← StackToLab.ExecutedCodec.programFromExecuted? program
   LabToTarget.compile Compiler.Encoders.RiscV.Target.riscvConfig riscvLabConf native
 
-/-- The literal `riscv_stack_conf` quotation of `riscv_configScript.sml:53`
-(`<|jump:=F; reg_names:=riscv_names; perf_calls:=F|>`). An SML value, not a
-HOL declaration, so the projection is untagged. -/
+/-- Executed stack projection of the complete reviewed Pancake/RISC-V backend
+configuration, including the original riscv_stack_conf quotation. No separate
+HOL name. Dynamic arguments of runtime initialization remain explicit. -/
 def riscvStackConf : StackToLab.Config :=
-  { regNames := RiscVConfig.riscvNames, jump := false, perfCalls := false }
+  RiscVConfig.pancakeRiscVBackendConfig.stackConf
+
+/-- Every previous stack field is retained by the native configuration adoption. -/
+theorem riscvStackConf_defaults : riscvStackConf =
+    { regNames := RiscVConfig.riscvNames, jump := false, perfCalls := false } := rfl
 
 /-- RV64 Stack-to-target through the reviewed passes: the native Stack sections
 (Word-to-Stack bodies with the native Raise/StoreConsts stubs, as
@@ -99,6 +105,30 @@ theorem stackToRiscV_fromStack (config : Backend.Config) (names : Spt Basis.Pure
     Backend.fromLab, hStack, hData, hLab]
   generalize LabToTarget.compile (width := 64) _ _ _ = out
   rcases out with _ | ⟨bytes, lab⟩ <;> rfl
+
+/-- The actual RV64 route uses the full reviewed Pancake backend constant.
+No field-match or successful-codec premise is needed: failed native input decoding
+is retained as none on both sides. This is Flapjack routing infrastructure, not
+an upstream compiler simulation theorem. -/
+theorem stackToRiscV_pancakeBackendConfig (names : Spt Basis.Pure.MlString.MlString)
+    {Bitmaps : Type} (bitmaps : Bitmaps)
+    (registerCount : Nat) (programs : List (Nat × StackProg Nat)) :
+    (stackToRiscV registerCount programs).map Prod.fst =
+      (StackToLab.InitializedProduction.nativeInputs? (width := 64) programs).bind
+        (fun native =>
+          (Backend.fromStack Compiler.Encoders.RiscV.Target.riscvConfig
+            (Compiler.pancakeBackendConf RiscVConfig.riscvBackendConfig) names
+            ([(Flapjack.raiseStubLocation, WordToStack.Native.raiseStubNative false registerCount),
+              (Flapjack.storeConstsStubLocation, WordToStack.Native.storeConstsStubNative registerCount)] ++
+              StackToLab.RuntimeLabels.originalInputs (native.filter (fun entry => entry.1 >= 3)))
+            bitmaps).map Prod.fst) := by
+  cases hNative : StackToLab.InitializedProduction.nativeInputs? (width := 64) programs with
+  | none => simp [stackToRiscV, hNative]
+  | some native =>
+      simp only [Option.bind_some]
+      exact stackToRiscV_fromStack
+        (Compiler.pancakeBackendConf RiscVConfig.riscvBackendConfig) names bitmaps
+        rfl rfl rfl registerCount programs native hNative
 
 /-- Executed sections of a Lab program: at width 64 the reviewed
 `labToTargetRiscV` image split by its `sec_pos_len`; at other widths the
