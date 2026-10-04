@@ -31,8 +31,8 @@ the `HolFloat t w` carrier binds HOL's positive type dimensions as
 `float_round_with_flags`, `real_to_float`, `real_to_float_with_flags` and
 `float_sqrt` renderings are source-tagged (beads `flapjack-h29l.6.2.9`,
 `flapjack-h29l.6.3.1.1`, `flapjack-h29l.6.3.2.3`); their `Rat`/cut counterparts
-stay untagged. `largest`/`threshold` stay untagged (two word-free type
-dimensions, no reviewed qualifier), and `holFloatToRealR`/`holFloatValueR`
+stay untagged. `largest`/`threshold` are tagged under
+`word_dimensions_as_widths := [t, w]` (two independent word-free type dimensions), and `holFloatToRealR`/`holFloatValueR`
 duplicate the tagged `Rat` renderings of the always-rational float values. In
 `float_sqrt` HOL `sqrt` is `Real.sqrt`; it is applied only to the value of a
 float with sign `0w`, which is nonnegative, where both are the nonnegative

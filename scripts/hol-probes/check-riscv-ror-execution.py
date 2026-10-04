@@ -5,7 +5,9 @@ Syntactic regression only; kernel proof checking and source review are separate.
 from pathlib import Path
 import hashlib
 ROOT=Path(__file__).resolve().parents[2]
-CHECKS={'Flapjack/RiscV/CorrectnessEncoding/RorExecution.lean': '5ee51e63422ca0e8a32e681707dc772ce3a806ef3f2d39a94f3021a62f44a503', 'Flapjack/RiscV/CorrectnessEncoding/ConstExecution.lean': '8ccc2e226b846fe9046546c3f7c6604bd299d8a54b1921e18bc0e336a8db3d40'}
+# Ror's pin was refreshed after the PR1213 stale-status documentation repair.
+# Only its two doc comments changed; statements and proof bodies are unchanged.
+CHECKS={'Flapjack/RiscV/CorrectnessEncoding/RorExecution.lean': '9bf5ff1b4e3803a449c81ea520d8813fe0fa151a7a6a782378b3444dd5353935', 'Flapjack/RiscV/CorrectnessEncoding/ConstExecution.lean': '8ccc2e226b846fe9046546c3f7c6604bd299d8a54b1921e18bc0e336a8db3d40'}
 def check(root=ROOT):
     for name,expected in CHECKS.items():
         if hashlib.sha256((root/name).read_bytes()).hexdigest()!=expected:

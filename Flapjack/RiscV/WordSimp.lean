@@ -31,7 +31,10 @@ open Flapjack
 
 /-! `SmartSeq` (`word_simpScript.sml:14-17`): dropping a `Skip` keeps the
     program shape flat, which matters because the following passes look at
-    the first constructor of a sequence. -/
+    the first constructor of a sequence. `WordSimp.ProductionSmartSeq` proves
+    complete encoder and fold correspondence. The constant-time executed
+    operation is retained under the measured full-codec performance exception
+    in `docs/benchmarks/smartseq-production/README.md`. -/
 def wordSimpSmartSeq (first second : WordProg α) : WordProg α :=
   match first with
   | .skip => second
