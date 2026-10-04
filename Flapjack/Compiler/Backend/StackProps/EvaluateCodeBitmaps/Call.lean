@@ -19,7 +19,12 @@ native cases. Induction hypotheses retain only actual ret/source-path guards;
 no global arbitrary-state IH, target execution or poststate field premise.
 All three original existential conjuncts remain literal CodeBitmaps.
 The evaluator closure inherits reals_as_rational_cuts; no numerical alignment
-or FP correspondence is asserted. Whole evaluator assembly remains open. -/
+or FP correspondence is asserted. Whole evaluator assembly remains open. The
+`tailIH`, `calleeIH`, `returnIH` and `exceptionIH` are the original
+`evaluate_ind` recursive hypotheses for the `none`/first-`some` and handler
+branches, each guarded by the actual `ret` shape, code lookup, nonzero clock
+and (for the continuation) the actual `decClock`/`min`-clamped intermediate
+state; no hypothesis is taken at an arbitrary state. -/
 @[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateCodeBitmapsCall {width : Nat} [NeZero width] {C F : Type}

@@ -47,7 +47,12 @@ end SeqCase
 subprogram induction hypotheses. CodeBitmaps unfolds to the three literal
 original existential conjuncts; no successful-result or clock premise.
 The native evaluator closure retains inherited reals_as_rational_cuts; this
-case asserts no numeric alignment or floating-point correspondence. -/
+case asserts no numeric alignment or floating-point correspondence. In the
+generated induction, `firstIH` is stated only at the source state and
+`secondIH` only after the actual first sub-run returns `none`, evaluated at
+the exact `fixClock`-clamped middle
+`{middle with clock := min source.clock middle.clock}`; these are the original
+`evaluate_ind` recursive hypotheses, not arbitrary-state assumptions. -/
 @[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateCodeBitmapsSeq {width : Nat} [NeZero width] {C F : Type}

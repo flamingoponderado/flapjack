@@ -17,7 +17,11 @@ end CallReturnCase
 actual code lookup, clock and native intermediate execution. No arbitrary-state
 IH or target/poststate field premise is supplied. Prefix composition retains
 all three original conjuncts. The evaluator inherits reals_as_rational_cuts;
-no numeric alignment/FP correspondence is asserted. Whole assembly is open. -/
+no numeric alignment/FP correspondence is asserted. Whole assembly is open.
+The `calleeIH`, `returnIH` and `exceptionIH` are the original recursive
+hypotheses over the erased-link lookup, nonzero clock and the native
+`decClock (setVar link (.loc l1 l2) source)`/`min`-clamped continuation
+state; no arbitrary-state hypothesis is supplied. -/
 @[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateCodeBitmapsCallReturn {width : Nat} [NeZero width] {C F : Type}

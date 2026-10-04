@@ -18,7 +18,10 @@ map, target state, machine state and code base related to it by the full
 encoder, has a target run with the same result and final FFI state. The
 original existential also binds an unused `t2`, which is omitted. The
 machine and projection carriers are parameters, as the HOL type variables
-`'state` and `'b` are fixed by the theorem. -/
+`'state` and `'b` are fixed by the theorem. Every binder, including the
+projection operand `p`, is universally quantified; each case instantiates
+the induction hypothesis at the next source state, so `p` is re-generalized
+there and is never held at a fixed value. -/
 def CompileCorrectFor {width : Nat} [NeZero width] (S Q : Type) {F : Type}
     (s1 : LabSem.State width Config F) : Prop :=
   ∀ (res : MachineResult) (mc : MachineConfig width S Q) (s2 : LabSem.State width Config F)

@@ -17,7 +17,12 @@ end LoopCase
 IHs only. Actual clamp/decrement derive clock descent; timeout emptyEnv and
 exit preserve original fields, and re-entry composes the actual prefixes.
 The native evaluator closure inherits reals_as_rational_cuts; this case makes
-no numeric alignment or floating-point correspondence claim. -/
+no numeric alignment or floating-point correspondence claim. `bodyIH` is the
+original recursive hypothesis at the source state; `loopIH` is stated only
+after the actual body run returns a `contLoop`-true result with a nonzero
+clamped clock, at the `decClock` of the `min`-clamped middle. The
+nonzero-clock premise and the strict clock decrease it uses are consequences
+of the actual clamp/decClock, not extra assumptions. -/
 @[hol "cakeml/compiler/backend/semantics/stackPropsScript.sml" "evaluate_code_bitmaps"
   (fmap_as_finite_support := [regs, fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem evaluateCodeBitmapsLoop {width : Nat} [NeZero width] {C F : Type}
