@@ -92676,5 +92676,134 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.54): word_to_wordProof syntactic group. HOL statement compared clause by clause against the probe word_to_word_syntactic (statement/hypotheses/typed); HOL's free variables are explicit leading binders in source order, HOL bool predicates as Lean Bool = true, no_share_inst/no_mt/no_alloc/no_install as the tagged noShareInstSubprogsHOL/noMtSubprogsHOL/noAllocSubprogsHOL/noInstallSubprogsHOL, find_code as tagged wordSemFindCode, code_rel as tagged codeRel, fromAList/ALOOKUP as sptFromAList/sptAListLookup, ALL_DISTINCT as List.Nodup, ZIP on equal-length lists as List.zip. Positive HOL word dimension is the sole carrier translation. Definition over Spt lookup as in no_install_code_def."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTI",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparison.lean",
+    "lean_name": "dfnSltI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared evaluated SLTI at line839 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTIU",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparison.lean",
+    "lean_name": "dfnSltIU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared evaluated SLTIU at line840 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnLui",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LUI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:853 `val LUI = arithi \"LUI\"` (the two-argument `class_rd0` arithi over `(rd, imm)`), the saved `LUI` theorem produced by the riscv_step `class` evaluator over dfn'LUI_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> sw2sw ((imm @@ 0w:word12):word32):word64, no source-register read. Native word5/word20/word64/native-state equation retained; no extra hypothesis, no state narrowing, no success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-upper.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnAuiPC",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "AUIPC",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:854 `val AUIPC = arithi \"AUIPC\"` (the two-argument `class_rd0` arithi over `(rd, imm)`), the saved `AUIPC` theorem produced by the riscv_step `class` evaluator over dfn'AUIPC_def (riscvScript.sml). Sole original hypothesis rd <> 0w; conclusion is the evaluated c_gpr update rd |-> c_PC procID + sw2sw ((imm @@ 0w:word12):word32):word64 (PC read preceding the destination write, same addend order as the source). Native word5/word20/word64/native-state equation retained; no extra hypothesis, no state narrowing, no success/alignment premise; kernel checked; original typed statement/hypothesis/type captured in scripts/hol-probes/check-l3-step-upper.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnAddNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADD_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:858 `val ADD = arithr [] \"ADD\"`; the `class_rd0` factory calls `utilsLib.save_thms` a second time with `[rd0]` in the avoidance list, producing the exported companion `ADD_NOP` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ADD ((rd,rs1,rs2)) s = s, i.e. the unchanged state. Exact native word5/word64 equation over the same dfn'ADD_def; no extra hypothesis and no state/lookup premise. The companion's name is generated rather than written as a literal `val`, so the reference checker registers the riscv_step `class_rd0` family narrowly (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnSubNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SUB_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:860 `val SUB = arithr [] \"SUB\"`; companion `SUB_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'SUB ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnAndNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "AND_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:864 `val AND = arithr [] \"AND\"`; companion `AND_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'AND ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnOrNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "OR_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:865 `val OR = arithr [] \"OR\"`; companion `OR_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'OR ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/RegisterALUStep.lean",
+    "lean_name": "dfnXorNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "XOR_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:866 `val XOR = arithr [] \"XOR\"`; companion `XOR_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'XOR ((rd,rs1,rs2)) s = s. Exact native word5/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnAddINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ADDI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:837 `val ADDI = arithi [] \"ADDI\"`; companion `ADDI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ADDI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnAndINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ANDI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:841 `val ANDI = arithi [] \"ANDI\"`; companion `ANDI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ANDI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnOrINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "ORI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:842 `val ORI = arithi [] \"ORI\"`; companion `ORI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'ORI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateALUStep.lean",
+    "lean_name": "dfnXorINop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "XORI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9): original riscv_stepScript.sml:843 `val XORI = arithi [] \"XORI\"`; companion `XORI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'XORI ((rd,rs1,imm)) s = s. Exact native word5/word12/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnLuiNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LUI_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:853 `val LUI = arithi \"LUI\"`; companion `LUI_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'LUI ((rd,imm)) s = s. Exact native word5/word20/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/UpperImmediateStep.lean",
+    "lean_name": "dfnAuiPCNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "AUIPC_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.2): original riscv_stepScript.sml:854 `val AUIPC = arithi \"AUIPC\"`; companion `AUIPC_NOP` generated by the `class_rd0` factory through `utilsLib.save_thms` (riscv_stepScript.sml:807-833). Sole original hypothesis (rd = 0w); conclusion dfn'AUIPC ((rd,imm)) s = s. Exact native word5/word20/word64 equation, no extra premise; generated-name registration is narrow (scripts/check-hol-refs.py l3_riscv_step_nop_declarations). Kernel checked; original typed statement/hypothesis captured in scripts/hol-probes/check-l3-step-nop.py."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Binop.lean",
+    "lean_name": "riscv_encoder_correct_binop",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "Source compared full Binop branch550-559 and original encoder_correct_def: every BinOp and both original RegImm constructors, same sole asmStep plus initialtargetStateRel premise and full existential/all-env/asserts/asserts2 conclusion. Accepted full Reg/Imm proofs assembled along literal source case split, no target-run/range/finalrelation premise. Fresh full typed original source theorem capture retains unrestricted num registers, word64 RegImm and full native state, hypotheses0/provedT. Inherited reals_as_rational_cuts assumption on full native target/Run closure, SOUNDNESS item8, retained."
   }
 ]
