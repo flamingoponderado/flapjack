@@ -98156,5 +98156,13 @@
     "lean_name": "panToTargetWordInitMemory",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage E2: ffi/be/sh_mdomain of the word initial state are the lab state's and its memory agrees with the lab memory on the heap domain (pan_to_targetProofScript.sml 1737-1755, 1916-2102 memory shift); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyResourceStage.lean",
+    "lean_name": "panToTargetResourceLimit",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage G of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 2285-2506): option_lt stack_max (SOME (FST (read_limits ...))) implies word_lang_safe_for_space wst InitGlobals_location; pointer premises are the top theorem's own, the rest earlier-stage facts; intermediate proof step, not a HOL theorem."
   }
 ]
