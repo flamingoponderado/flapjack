@@ -93491,5 +93491,14 @@
     "hol_name": null,
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only internal factoring for full original hoisting: actual dummy/map/label operations, conditional step and exact list permutation consequences derived without assuming desired output relation. No separate HOL declaration; not claimed as an exact port. Public original theorem alone carries reviewed tag."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/CompileExp.lean",
+    "lean_name": "extractLabelsCompileExp",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_compile_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original378-391: full arbitrary positive-width native WordLangProgHOL program, exact original full labelsRel source/output (containment and source-Nodup implies output-Nodup). Actual compileExp definition is four original stages Seq_assoc Skip, constFp, simpDuplicateIf, pushOutIf in original order; accepted/checked full stage theorems and original transitivity construct whole conclusion, no output relation premise or weakened output. Native programs, optional return/handler carriers, Spt and lists unchanged; common positive BitVec/NeZero translation only. Fresh unchanged original global theorem proof replayed with exact original local helper proofs and full inferred types/T/hyp0. Probe is regression evidence, not cross-language equivalence. Full WordToWord conventions and compiler semantics composition remain separate."
   }
 ]

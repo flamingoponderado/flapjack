@@ -7912,3 +7912,7 @@ run_probe word_convs_hoist_prerequisites_probeScript.sml word_convs_hoist_prereq
 run_probe word_convs_hoist_labels_probeScript.sml word_convs_hoist_labels_probe.out \
   hoistLabels_typed hoistLabels_proved hoistLabels_hypotheses duplicateIfLabels_typed duplicateIfLabels_proved duplicateIfLabels_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_compile_exp_labels_probeScript.sml word_convs_compile_exp_labels_probe.out \
+  compileExpLabels_typed compileExpLabels_proved compileExpLabels_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
