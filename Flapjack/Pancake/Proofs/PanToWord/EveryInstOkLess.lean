@@ -3,6 +3,7 @@ import Flapjack.Pancake.LoopCall
 import Flapjack.Pancake.LoopLive
 import Flapjack.Pancake.CrepToLoop.ContextExact
 import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
+import Flapjack.Pancake.CrepArith
 
 /-!
 # `pan_to_wordProof`: `loop_inst_ok` preservation through the loop optimisations
@@ -494,5 +495,231 @@ theorem everyInstOkLessCompFunc {width : Nat} [NeZero width] {cWidth : Nat} [NeZ
   intro h
   unfold compFuncHOLExact
   exact everyInstOkLessCrepToLoopCompile c _ _ body ⟨rfl, h⟩
+
+/-- `mul_const` preserves the two-argument `Crepop` condition (Flapjack
+infrastructure for `every_inst_ok_arith_simp_exp`'s `mul_const_def` case split). -/
+theorem crepEveryExpHOL_mulConst {width : Nat} [NeZero width] (e : CrepExpHOL width)
+    (k : BitVec width)
+    (he : crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) :
+    crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2)
+      (crepMulConstHOL e k) := by
+  unfold crepMulConstHOL
+  split
+  · simp [crepEveryExpHOL]
+  · split
+    · exact he
+    · split
+      · simp only [crepEveryExpHOL, crepEveryExpListHOL]
+        exact ⟨(by intro op es h; cases h; rfl), he, (by simp), trivial⟩
+      · simp only [crepEveryExpHOL]
+        exact ⟨(by intro op es h; cases h), he, (by simp)⟩
+
+/-- Both simplified arguments of a two-argument `Crepop` satisfy the condition
+(Flapjack infrastructure). -/
+theorem crepEveryExpHOL_simp_pair {width : Nat} [NeZero width]
+    (es : List (CrepExpHOL width)) (first second : CrepExpHOL width)
+    (hmap : es.map crepSimpExpHOL = [first, second])
+    (ih : ∀ x ∈ es,
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) x →
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) (crepSimpExpHOL x))
+    (hes : ∀ x ∈ es, crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) x) :
+    crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) first ∧
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) second := by
+  rcases es with _ | ⟨e1, _ | ⟨e2, _ | ⟨e3, es⟩⟩⟩ <;> simp at hmap
+  obtain ⟨rfl, rfl⟩ := hmap
+  exact ⟨ih e1 (by simp) (hes e1 (by simp)), ih e2 (by simp) (hes e2 (by simp))⟩
+
+/-- Full original every_inst_ok_arith_simp_exp (`pan_to_wordProofScript.sml:895-908`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_arith_simp_exp"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkArithSimpExp {width : Nat} [NeZero width] :
+    ∀ (exp : CrepExpHOL width),
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) exp →
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2)
+        (crepSimpExpHOL exp) := by
+  intro exp
+  fun_induction crepSimpExpHOL exp
+  case case1 es1 exs first second hx _ _ h2 h1 ih =>
+    intro he
+    have hmap : es1.map crepSimpExpHOL = [first, second] := by simpa [exs] using hx
+    unfold crepEveryExpHOL at he
+    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
+    obtain ⟨hf, hs⟩ := crepEveryExpHOL_simp_pair es1 first second hmap ih hes
+    simp only [hmap, h1, h2]
+    simp [crepEveryExpHOL]
+  case case2 es1 exs first second hx _ h2 h1 ih =>
+    intro he
+    have hmap : es1.map crepSimpExpHOL = [first, second] := by simpa [exs] using hx
+    unfold crepEveryExpHOL at he
+    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
+    obtain ⟨hf, hs⟩ := crepEveryExpHOL_simp_pair es1 first second hmap ih hes
+    simp only [hmap, h1, h2]
+    exact crepEveryExpHOL_mulConst _ _ hs
+  case case3 es1 exs first second hx _ h2 h1 ih =>
+    intro he
+    have hmap : es1.map crepSimpExpHOL = [first, second] := by simpa [exs] using hx
+    unfold crepEveryExpHOL at he
+    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
+    obtain ⟨hf, hs⟩ := crepEveryExpHOL_simp_pair es1 first second hmap ih hes
+    simp only [hmap, h1, h2]
+    exact crepEveryExpHOL_mulConst _ _ hf
+  case case4 es1 exs first second hx h2 h1 ih =>
+    intro he
+    have hmap : es1.map crepSimpExpHOL = [first, second] := by simpa [exs] using hx
+    unfold crepEveryExpHOL at he
+    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
+    obtain ⟨hf, hs⟩ := crepEveryExpHOL_simp_pair es1 first second hmap ih hes
+    simp only [hmap, h1, h2]
+    simp only [crepEveryExpHOL, crepEveryExpListHOL]
+    exact ⟨(by intro op es h; cases h; rfl), hf, hs, trivial⟩
+  case case5 op es1 exs hno ih =>
+    intro he
+    unfold crepEveryExpHOL at he
+    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
+    have hlen : es1.length = 2 := he.1 op es1 rfl
+    have hall : ∀ x ∈ es1.map crepSimpExpHOL,
+        crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) x := by
+      intro x hx
+      obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+      exact ih y hy (hes y hy)
+    dsimp only
+    split
+    · rename_i first second hm
+      exact absurd (by simpa [exs] using hm) (hno first second rfl)
+    · unfold crepEveryExpHOL
+      exact ⟨(fun op' es h => by cases h; simp [hlen]),
+        (crepEveryExpListHOL_iff _ _).mpr hall⟩
+  case case6 | case7 | case8 =>
+    rename_i ih
+    intro he
+    unfold crepEveryExpHOL at he ⊢
+    exact ⟨(fun op es h => by cases h), ih he.2⟩
+  case case9 op es1 ih =>
+    intro he
+    unfold crepEveryExpHOL at he ⊢
+    have hes := (crepEveryExpListHOL_iff _ _).mp he.2
+    refine ⟨(fun op es h => by cases h), (crepEveryExpListHOL_iff _ _).mpr ?_⟩
+    intro x hx
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp hx
+    exact ih y hy (hes y hy)
+  case case10 | case11 =>
+    rename_i ih2 ih1
+    intro he
+    unfold crepEveryExpHOL at he ⊢
+    exact ⟨(fun op es h => by cases h), ih2 he.2.1, ih1 he.2.2⟩
+  case case12 => exact id
+
+/-- Full original every_inst_ok_arith_simp_prog (`pan_to_wordProofScript.sml:910-925`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml" "every_inst_ok_arith_simp_prog"
+  (words_as_type_indexed_bitvec)]
+theorem everyInstOkArithSimpProg {width : Nat} [NeZero width] :
+    ∀ (prog : CrepProgHOL width),
+      (∀ e ∈ crepExpsOfHOL prog,
+        crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) →
+      ∀ e ∈ crepExpsOfHOL (crepSimpProgHOL prog),
+        crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e := by
+  intro prog
+  induction hs : sizeOf prog using Nat.strongRecOn generalizing prog with
+  | _ k ih =>
+  intro h e he
+  have hx := fun (x : CrepExpHOL width) hx => everyInstOkArithSimpExp x (h x hx)
+  have sub : ∀ (q : CrepProgHOL width), sizeOf q < k →
+      (∀ x ∈ crepExpsOfHOL q, crepEveryExpHOL
+        (fun x => ∀ op es, x = .crepOp op es → es.length = 2) x) →
+      ∀ x ∈ crepExpsOfHOL (crepSimpProgHOL q), crepEveryExpHOL
+        (fun x => ∀ op es, x = .crepOp op es → es.length = 2) x :=
+    fun q hq hqe => ih (sizeOf q) hq q rfl hqe
+  cases prog
+  all_goals unfold crepSimpProgHOL at he
+  case skip | primitive | «break» | «continue» | extCall | raise | tick =>
+    unfold crepExpsOfHOL at he; simp at he
+  case assign | storeGlob | shMem =>
+    rw [crepExpsOfHOL] at he; simp only [List.mem_singleton] at he; subst he
+    exact hx _ (by rw [crepExpsOfHOL]; simp)
+  case store | store32 | storeByte =>
+    rw [crepExpsOfHOL] at he
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at he
+    rcases he with rfl | rfl <;> exact hx _ (by rw [crepExpsOfHOL]; simp)
+  case «return» vs =>
+    rw [crepExpsOfHOL] at he
+    obtain ⟨y, hy, rfl⟩ := List.mem_map.mp he
+    exact hx y (by rw [crepExpsOfHOL]; exact hy)
+  case dec n v b =>
+    rw [crepExpsOfHOL] at he
+    rcases List.mem_cons.mp he with rfl | hb
+    · exact hx v (by rw [crepExpsOfHOL]; simp)
+    · exact sub b (by rw [← hs]; simp; omega)
+        (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e hb
+  case seq f g =>
+    rw [crepExpsOfHOL] at he
+    rcases List.mem_append.mp he with hf | hg
+    · exact sub f (by rw [← hs]; simp; omega)
+        (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e hf
+    · exact sub g (by rw [← hs]; simp; omega)
+        (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e hg
+  case ite c t f =>
+    rw [crepExpsOfHOL] at he
+    rcases List.mem_cons.mp he with rfl | he
+    · exact hx c (by rw [crepExpsOfHOL]; simp)
+    rcases List.mem_append.mp he with ht | hf
+    · exact sub t (by rw [← hs]; simp; omega)
+        (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e ht
+    · exact sub f (by rw [← hs]; simp; omega)
+        (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e hf
+  case «while» c b =>
+    rw [crepExpsOfHOL] at he
+    rcases List.mem_cons.mp he with rfl | hb
+    · exact hx c (by rw [crepExpsOfHOL]; simp)
+    · exact sub b (by rw [← hs]; simp; omega)
+        (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e hb
+  case call ri name args =>
+    rcases ri with _ | ⟨rv, _ | ⟨exn, hb⟩⟩
+    all_goals dsimp only at he
+    all_goals rw [crepExpsOfHOL] at he
+    · obtain ⟨y, hy, rfl⟩ := List.mem_map.mp he
+      exact hx y (by rw [crepExpsOfHOL]; exact hy)
+    · obtain ⟨y, hy, rfl⟩ := List.mem_map.mp he
+      exact hx y (by rw [crepExpsOfHOL]; exact hy)
+    · rcases List.mem_append.mp he with ha | hh
+      · obtain ⟨y, hy, rfl⟩ := List.mem_map.mp ha
+        exact hx y (by rw [crepExpsOfHOL]; simp [hy])
+      · exact sub hb (by rw [← hs]; simp; omega)
+          (fun x hx' => h x (by rw [crepExpsOfHOL]; simp [hx'])) e hh
+
+/-- Membership in a `zipWith` (Flapjack infrastructure). -/
+theorem mem_zipWith_exists {α β γ : Type} (g : α → β → γ) :
+    ∀ (l1 : List α) (l2 : List β) (x : γ), x ∈ List.zipWith g l1 l2 →
+      ∃ a ∈ l1, ∃ b ∈ l2, x = g a b := by
+  intro l1
+  induction l1 with
+  | nil => intro l2 x h; simp at h
+  | cons a l1 ih =>
+    intro l2 x h
+    cases l2 with
+    | nil => simp at h
+    | cons b l2 =>
+      simp only [List.zipWith_cons_cons, List.mem_cons] at h
+      rcases h with rfl | h
+      · exact ⟨a, by simp, b, by simp, rfl⟩
+      · obtain ⟨a', ha', b', hb', rfl⟩ := ih l2 x h
+        exact ⟨a', by simp [ha'], b', by simp [hb'], rfl⟩
+
+/-- Full original every_inst_ok_less_crep_to_loop_compile_prog
+(`pan_to_wordProofScript.sml:1209-1223`). -/
+@[hol "cakeml/pancake/proofs/pan_to_wordProofScript.sml"
+  "every_inst_ok_less_crep_to_loop_compile_prog" (words_as_type_indexed_bitvec)]
+theorem everyInstOkLessCrepToLoopCompileProg {width : Nat} [NeZero width]
+    {cWidth : Nat} [NeZero cWidth] (c : AsmConfigExact cWidth)
+    (crepCode : List (MlString × List Nat × CrepProgHOL width)) :
+    (∀ f ∈ crepCode, ∀ e ∈ crepExpsOfHOL f.2.2,
+      crepEveryExpHOL (fun x => ∀ op es, x = .crepOp op es → es.length = 2) e) →
+    ∀ f ∈ compileProgHOLExact c.isa crepCode, everyProgHOL (loopInstOk c) f.2.2 := by
+  intro h f hf
+  unfold compileProgHOLExact at hf
+  obtain ⟨n, -, entry, hentry, rfl⟩ := mem_zipWith_exists _ _ _ _ hf
+  apply everyInstOkLessOptimise
+  unfold compFuncHOLExact
+  exact everyInstOkLessCrepToLoopCompile c _ _ _
+    ⟨rfl, everyInstOkArithSimpProg entry.2.2 (h entry hentry)⟩
 
 end Flapjack.PanToWord

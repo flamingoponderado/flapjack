@@ -97283,5 +97283,56 @@
     "hol_name": "every_exp_def",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original crepPropsScript 1300-1312, all twelve clauses over the exact CrepExpHOL carrier (crepLang$exp); EVERY (every_exp P) es is the mutual list helper crepEveryExpListHOL (crepEveryExpListHOL_iff gives the membership form); HOL bool-valued P and result rendered as Prop. Typed capture pan_to_word_crep_inst_ok probe (crep_every_exp_def_typed)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkArithSimpExp",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_arith_simp_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 895-899: forall exp, every_exp P exp ==> every_exp P (simp_exp exp), crep_arith simp_exp is the reviewed crepSimpExpHOL. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through crepEveryExpHOL; EVERY as membership quantification. Typed capture pan_to_word_arith_simp_inst_ok probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkArithSimpProg",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_arith_simp_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 910-915: forall prog, EVERY (every_exp P) (exps_of prog) ==> EVERY (every_exp P) (exps_of (simp_prog prog)); proved by size induction since Lean cannot derive crepSimpProgHOL functional induction. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through crepEveryExpHOL; EVERY as membership quantification. Typed capture pan_to_word_arith_simp_inst_ok probe."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "everyInstOkLessCrepToLoopCompileProg",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_crep_to_loop_compile_prog",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pan_to_wordProofScript 1209-1212: EVERY over crep_code bodies ==> EVERY (λ(name,params,body). every_prog (loop_inst_ok c) body) (compile_prog c.ISA crep_code), compile_prog the reviewed compileProgHOLExact; c : 'b asm_config independent width. The HOL predicate λx. ∀op es. x = Crepop op es ⇒ LENGTH es = 2 is stated literally through crepEveryExpHOL; EVERY as membership quantification. Typed capture pan_to_word_arith_simp_inst_ok probe."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "crepEveryExpHOL_mulConst",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: mul_const preserves the two-argument Crepop condition (mul_const_def case split inside every_inst_ok_arith_simp_exp)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "crepEveryExpHOL_simp_pair",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: both simplified arguments of a two-argument Crepop satisfy the condition (MAP_EQ_CONS step of every_inst_ok_arith_simp_exp)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
+    "lean_name": "mem_zipWith_exists",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: membership in List.zipWith (HOL MAP2_MAP/EVERY_MAP step)."
   }
 ]
