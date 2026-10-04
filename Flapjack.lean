@@ -16,6 +16,7 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift
 import Flapjack.RiscV.CorrectnessEncoding.Div
 import Flapjack.RiscV.CorrectnessEncoding.LongMul
+import Flapjack.RiscV.CorrectnessEncoding.AddCarry
 import Flapjack.RiscV.CorrectnessEncoding.DecodeDiv
 import Flapjack.RiscV.CorrectnessEncoding.DecodeLongMul
 import Flapjack.RiscV.CorrectnessEncoding.DecodeSltu
@@ -2241,6 +2242,7 @@ import Flapjack.Pancake.LoopLang
 import Flapjack.NatDedup
 import Flapjack.Pancake.CrepToLoop
 import Flapjack.Pancake.CrepToLoop.ContextExact
+import Flapjack.Pancake.CrepToLoop.ProductionCompileProg
 import Flapjack.Pancake.CrepToLoop.Proofs.LocValueFree
 import Flapjack.Pancake.CrepToLoop.Proofs.AssignedVars
 import Flapjack.Pancake.CrepToLoop.Proofs.SurvivesMapiAssign

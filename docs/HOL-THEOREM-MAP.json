@@ -95479,6 +95479,15 @@
   {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
     "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/AddCarry.lean",
+    "lean_name": "riscv_encoder_correct_addcarry",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared complete original AddCarry constructor and riscv_targetScript144-149 six-instruction SLTU31/ADD/SLTU/ADD/SLTU31/OR lowering, original arithUpd/arith_ok and encoder_correct_def. Only original asmStep+initial targetStateRel premise; complete existential n/all-env/interference/asserts/asserts2/code-byte/PC/final relation conclusion. All six actual fetch/decode/Run/Next transitions derived from emitted bytes and accepted native definitions; n=5, original env indices0..5. Destination/source guards only original r1!=r3 and r1!=r4, r1=r2 and other allowed aliases retained; visible zero/scratch31 exclusions derive asm_ok, original full-current-GPR projection preserves scratch without extra premise. Two additions and two overflow flags kernel-proved equal exact source natural sum and carry, final PC24. Both assertion predicates retained, raw Next preserves outside-domain memory. Same-counterpart AddCarry submodules are untagged composition infrastructure with no separate HOL original. Broad native Run/target closure inherits reals_as_rational_cuts SOUNDNESS8; no full compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
     "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftRorRegister.lean",
     "lean_name": "riscv_encoder_correct_shiftRorRegister",
     "statement_status": "reviewed_exact",

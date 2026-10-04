@@ -8003,6 +8003,11 @@ run_probe riscv_target_longmul_probeScript.sml riscv_target_longmul_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_target_addcarry_probeScript.sml riscv_target_addcarry_probe.out \
+  riscv_encoder_correct_addcarry_statement riscv_encoder_correct_addcarry_types riscv_encoder_correct_addcarry_hypotheses riscv_encoder_correct_addcarry_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
   riscv_encoder_correct_div_statement riscv_encoder_correct_div_types riscv_encoder_correct_div_hypotheses riscv_encoder_correct_div_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
@@ -8094,3 +8099,7 @@ run_probe riscv_target_shift_ror_register_probeScript.sml riscv_target_shift_ror
   riscv_encoder_correct_shiftRorRegister_statement riscv_encoder_correct_shiftRorRegister_types riscv_encoder_correct_shiftRorRegister_hypotheses riscv_encoder_correct_shiftRorRegister_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_original_names_program_probeScript.sml crep_to_loop_original_names_program_probe.out \
+  full_program row_names parameters done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
