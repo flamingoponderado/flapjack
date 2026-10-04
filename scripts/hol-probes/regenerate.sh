@@ -107,6 +107,9 @@ run_probe() {
   done
 }
 
+run_probe word_to_stack_fp_conversions_probeScript.sml word_to_stack_fp_conversions_probe.out \
+  fpToInt_typed fpToInt_proved fpToInt_hypotheses fpFromInt_typed fpFromInt_proved fpFromInt_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 run_probe sptree_subspt_union_probeScript.sml sptree_subspt_union_probe.out \
   subspt_def_statement subspt_def_hypotheses subspt_lookup_statement subspt_lookup_hypotheses subspt_trans_statement subspt_trans_hypotheses subspt_union_statement subspt_union_hypotheses subspt_foldl_union_statement subspt_foldl_union_hypotheses \
   "$hol_dir/src/finite_maps/sptreeScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -6945,6 +6948,9 @@ run_probe pan_structs_exp_nstruct_faithful_probeScript.sml pan_structs_exp_nstru
 run_probe l3_step_bit_rewrites_probeScript.sml l3_step_bit_rewrites_probe.out \
   bit10_binders bit10_statement bit10_hypotheses bit10_proof bit0_binders bit0_statement bit0_hypotheses bit0_proof v2w0_binders v2w0_statement v2w0_hypotheses v2w0_proof bitShift_binders bitShift_statement bitShift_hypotheses bitShift_proof v2w8_type v2w5_type \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+run_probe l3_step_avoid_probeScript.sml l3_step_avoid_probe.out \
+  avoid_statement avoid_signalAddressException_type avoid_source update_pc_statement update_pc_def_type update_pc_source \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
 run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
@@ -7249,6 +7255,14 @@ run_probe stack_to_lab_code_installed_probeScript.sml stack_to_lab_code_installe
 run_probe pan_structs_convert_code_locals_probeScript.sml pan_structs_convert_code_locals_probe.out \
   convert_code_locals_upd_statement convert_code_locals_upd_proved convert_code_locals_upd_types \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
+run_probe word_to_stack_comp_shareinst_probeScript.sml word_to_stack_comp_shareinst_probe.out \
+  comp_correct_shareinst_full_statement comp_correct_shareinst_full_proved comp_correct_shareinst_full_hypotheses comp_correct_shareinst_whole_statement comp_correct_shareinst_whole_proved comp_correct_shareinst_whole_hypotheses comp_correct_shareinst_full_statement_typed state_rel_set_var_k_typed word_exp_Op_SOME_Word_typed flat_exp_conventions_ShareInst_exp_simp_typed word_exp_Op_Add_0_typed evaluate_ShareInst_Var_eq_Op_Add_typed share_load_lemma1_typed share_load_lemma2_typed share_store_lemma1_typed share_store_lemma2_typed evaluate_ShareInst_Load_typed evaluate_ShareInst_Store_typed evaluate_ShareInst_correct_lemma_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_comp_install_probeScript.sml word_to_stack_comp_install_probe.out \
+  comp_correct_install_full_statement comp_correct_install_full_proved comp_correct_install_full_hypotheses comp_correct_install_whole_statement comp_correct_install_whole_proved comp_correct_install_whole_hypotheses comp_correct_install_full_statement_typed \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe word_to_stack_comp_codebufferwrite_probeScript.sml word_to_stack_comp_codebufferwrite_probe.out \
   comp_correct_codebufferwrite_full_statement comp_correct_codebufferwrite_full_proved comp_correct_codebufferwrite_full_hypotheses comp_correct_codebufferwrite_whole_statement comp_correct_codebufferwrite_whole_proved comp_correct_codebufferwrite_whole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7700,10 +7714,6 @@ run_probe riscv_target_const_probeScript.sml riscv_target_const_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
-run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
-  andi_decode_zero andi_decode_all_ones andi_decode_sign_bit andi_decode_positive_max add_decode_zero add_decode_all_ones add_decode_sign_bit add_decode_positive_max sub_decode_zero sub_decode_all_ones sub_decode_sign_bit sub_decode_positive_max and_decode_zero and_decode_all_ones and_decode_sign_bit and_decode_positive_max andi_encode_source_clause andi_encode_source_hypotheses andi_carrier_types andi_symbolic_replay_query add_encode_source_clause add_encode_source_hypotheses add_carrier_types add_symbolic_replay_query sub_encode_source_clause sub_encode_source_hypotheses sub_carrier_types sub_symbolic_replay_query and_encode_source_clause and_encode_source_hypotheses and_carrier_types and_symbolic_replay_query \
-  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
-  "$cake_dir/compiler/encoders/riscv/proofs"
 
 
 run_probe word_to_stack_memory_relations_probeScript.sml word_to_stack_memory_relations_probe.out \
@@ -7737,11 +7747,28 @@ run_probe word_to_stack_store_register2_probeScript.sml word_to_stack_store_regi
   storeReg2Continuation_typed storeReg2Continuation_proved storeReg2Continuation_hypotheses writeReg2Sequence_typed writeReg2Sequence_proved writeReg2Sequence_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+<<<<<<< HEAD
+=======
+run_probe riscv_binop_decode_probeScript.sml riscv_binop_decode_probe.out \
+  andi_decode_zero andi_decode_all_ones andi_decode_sign_bit andi_decode_positive_max add_decode_zero add_decode_all_ones add_decode_sign_bit add_decode_positive_max sub_decode_zero sub_decode_all_ones sub_decode_sign_bit sub_decode_positive_max and_decode_zero and_decode_all_ones and_decode_sign_bit and_decode_positive_max andi_encode_source_clause andi_encode_source_hypotheses andi_carrier_types andi_symbolic_replay_query add_encode_source_clause add_encode_source_hypotheses add_carrier_types add_symbolic_replay_query sub_encode_source_clause sub_encode_source_hypotheses sub_carrier_types sub_symbolic_replay_query and_encode_source_clause and_encode_source_hypotheses and_carrier_types and_symbolic_replay_query \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+>>>>>>> origin/fleet-integration-post-1212-stack
 run_probe word_to_word_install_probeScript.sml word_to_word_install_probe.out \
   compile_single_correct_typed compile_single_correct_install_typed compile_single_correct_install_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+<<<<<<< HEAD
 run_probe riscv_target_binop_immediate_probeScript.sml riscv_target_binop_immediate_probe.out \
   riscv_encoder_correct_binop_immediate_statement riscv_encoder_correct_binop_immediate_types riscv_encoder_correct_binop_immediate_hypotheses riscv_encoder_correct_binop_immediate_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+=======
+run_probe word_to_stack_inst_memory_load_probeScript.sml word_to_stack_inst_memory_load_probe.out \
+  memoryLoad_typed memoryLoad_proved memoryLoad_hypotheses memoryLoad8_typed memoryLoad8_proved memoryLoad8_hypotheses memoryLoad32_typed memoryLoad32_proved memoryLoad32_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_to_stack_inst_memory_store_probeScript.sml word_to_stack_inst_memory_store_probe.out \
+  memoryStore_typed memoryStore_proved memoryStore_hypotheses memoryStore8_typed memoryStore8_proved memoryStore8_hypotheses memoryStore32_typed memoryStore32_proved memoryStore32_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+>>>>>>> origin/fleet-integration-post-1212-stack

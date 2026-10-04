@@ -6,6 +6,7 @@ import Flapjack.Test.PanToTargetSourceParity
 import Flapjack.Pancake.PanToTarget
 
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
@@ -96,6 +97,8 @@ import Flapjack.Compiler.Backend.LabProps.DomainAlignmentSdmMemory
 import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.LocValue
@@ -129,6 +132,7 @@ import Flapjack.RiscV.L3.Step.DecoderTransport
 import Flapjack.RiscV.L3.Step.Evaluation
 import Flapjack.RiscV.L3.Step.Next
 import Flapjack.RiscV.L3.Step.UpdatePC
+import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
@@ -2502,6 +2506,8 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionSourceFlat
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ConstantInstruction
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
 
 -- Tagged modules required by the HOL reference coverage gate.
 

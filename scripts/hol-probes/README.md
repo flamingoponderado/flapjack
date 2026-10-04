@@ -8150,6 +8150,7 @@ specialization. `GEN_ALL` closes every binder; the specialization has zero
 hypotheses. These are original-theory captures, not a local replay or an
 independent cross-language equivalence proof.
 
+<<<<<<< HEAD
 ## Full native immediate Binop constructor
 
 `CorrectnessEncoding/BinopImmediate.lean` proves the original Imm operand case
@@ -8162,3 +8163,9 @@ and literal Run. The typed original specialization in
 `riscv_target_binop_immediate_probe.out` is regression evidence; kernel checking
 and source comparison establish the port. Native state/Run inherits SOUNDNESS
 item 8. The encompassing encoder theorem remains open.
+=======
+`word_to_stack_fp_conversions_probeScript.sml` captures closed, kernel-proved,
+fully typed specializations of original `evaluate_wInst` to FPToInt and
+FPFromInt. These retain the original guards and full target existential;
+they are source review evidence, not a cross-assistant equivalence proof.
+>>>>>>> origin/fleet-integration-post-1212-stack
