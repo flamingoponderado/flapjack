@@ -98870,5 +98870,29 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c2026-10-04 source comparison: original unconditional riscv_targetProof512 encoder_correct riscv_target and complete asmProps encoder_correct_def117-133 equal the reviewed native target/encoderCorrect contract. Exhaustive six outer asm constructors, five Inst constructors, eight Arith constructors and Addr destructuring cover17 leaf groups. targetOk proved; no extra simulation, target-run/result, postrelation or successful-pass premise. Complete existential n/all interference environments/code bytes/PC predicate/final relation/outside-source-domain asserts2 retained through exact definition. All kernel-checked native constructor proofs consumed; no finite-fixture universality claim. Inherits reals_as_rational_cuts native model assurance limit SOUNDNESS8. Whole production compiler routing and final Pancake-to-RISC-V theorem remain separate open obligations."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
+    "lean_name": "smartSeq_production",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
+    "lean_name": "smartSeqFold_production",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Compiler/Backend/WordSimp/ProductionSmartSeq.lean",
+    "lean_name": "smartSeqLeftSeq_production",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack production encoder correspondence for the complete reviewed native SmartSeq and prefix folds; input carrier encodings identify the source image, output correspondence is derived. No separate HOL original or HOL-to-Lean equivalence proof. Optimized executed constructor operation retained under documented real-source measured full-codec performance exception; broader rejected instruction extension and whole WordSimp/compiler simulation remain separate."
   }
 ]
