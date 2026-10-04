@@ -99138,5 +99138,21 @@
     "lean_name": "compileProgMaxAsmFast_eq_compileProgMax",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack infrastructure (bead flapjack-48pn5): compileProgMaxAsmFast cfg mc.target.config = compile_prog_max cfg mc."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
+    "lean_name": "nativeSourceCompile_ok",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack infrastructure (bead flapjack-executed-cli-correctness): a successful NativeSource.compile run comes from a successful parse and static check and records mainFirstHOL (parsed.map declToHOL) and compileDeclarations parsed."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/NativeSourceCorrect.lean",
+    "lean_name": "nativeSourceCompile_correct",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific final driver theorem (bead flapjack-executed-cli-correctness): NativeSource.compile source = ok out with parse result parsed (having a main function), out.wholeResult = (some (bytes,bitmaps,c'), stack_max), isRiscvMachineConfig mc and the original non-configuration premises on out.declarations ⇒ every machine behaviour relates (extend_with_resource_limit') to semanticsDecls s main (parsed.map declToHOL). Via compileProgMaxAsmFast_eq, semanticsDecls_mainFirstHOL and panToTargetCompileSemantics (HOL pan_to_target_compile_semantics at RISC-V). Parse/static errors and default-main case excluded; default CLI entry point separate."
   }
 ]
