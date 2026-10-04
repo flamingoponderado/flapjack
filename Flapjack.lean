@@ -18,6 +18,8 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapConsumption
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTraversal
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
