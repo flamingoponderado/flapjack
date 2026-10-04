@@ -91719,5 +91719,22 @@
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol2 source comparison: original evaluate_wInst whole Mem4919-5024, arbitrary opcode, retains all five guards and full existential actual native run/stateRel/stack resources. Six successful Load/Store cases reuse full reviewed case statements; Load16/Store16 contradict original source-success guard, matching HOL source case exclusion. No target-run/postrelation assumptions or supported-opcode restriction. Same canonical five fmap fields and positive-width word/host/FFI carriers as constituent cases; inherits_reals_as_rational_cuts from faithful evaluators, no new arithmetic agreement. Fresh word_to_stack_inst_memory_probe.out is full typed original kernel specialization, T/hypotheses0, not literal local proof replay or cross-language equivalence.",
     "hol_line": 4688
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMax.lean",
+    "lean_name": "compileProgMaxExecutable_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "flapjack-sol3: Flapjack-only computation replacement agreement, no separately named HOL declaration. Unconditional equality of full native compiler-result/bound pair, preserving all original inputs, actual generated frames and unknown outcomes. Original tagged compileProgMax remains unchanged; this kernel equality is not HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/CompileProgEq.lean",
+    "lean_name": "compileProgEqHOL",
+    "hol_path": "cakeml/pancake/pan_to_targetScript.sml",
+    "hol_name": "compile_prog_eq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison: full original pan_to_targetScript55-90 theorem, fresh actual original closed GEN_ALL typed theorem/hyp0/EQT_INTRO T in pan_to_target_compile_prog_eq_probe.out. Arbitrary native source declaration list, complete asm configuration and backend configuration share the original word dimension, with standard positive-width BitVec/NeZero translation only. Exact existing mainFirstHOL factors the literal SPLITP three branches including empty staying empty and nonempty missing main receiving the exact zero-returning declaration. Original native PanToWord, strict native mllist sort of all function numbers, ZIP with generated_main and native original function names, complete left-biased three-stub Spt union, original-program exports update and full native fromWord0 result retained. No word-program, successful pass, target evaluation or desired result premise. Only independent LET bindings/record field updates commute, giving a kernel definitional proof. Source equation correspondence, not final compiler-machine semantics or production routing."
   }
 ]

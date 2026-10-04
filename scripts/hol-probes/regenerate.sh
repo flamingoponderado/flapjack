@@ -6694,6 +6694,14 @@ run_probe word_simp_compile_exp_probeScript.sml word_simp_compile_exp_probe.out 
   fold_chain call_drop_consts static_if push_out_if hoist_if shift_move_loop ffi_install_share inst_alloc_ret_call \
   "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
 
+run_probe word_inst_pull_exp_executable_probeScript.sml word_inst_pull_exp_executable_probe.out \
+  pull_exp_definition optimize_consts_definition word_op_definition pull_exp_type add_empty and_empty or_empty xor_empty sub_empty sub_single sub_pair sub_var_const sub_three add_constants add_mixed add_no_constants nested_add xor_cancel and_zero and_all_ones or_constants xor_constants load_nested shift_nested lookup width1_wrap width32_wrap width64_wrap \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+
+run_probe word_inst_selector_executable_probeScript.sml word_inst_selector_executable_probe.out \
+  inst_select_definition inst_select_type skip move inst_skip inst_fp assign get set store must_terminate call_none call_both seq if loop alloc store_consts raise return break continue tick curr_heap loc_value install code_write data_write ffi share_load8 store_hi store_above store_lo store_below share_load16 share_load32 share_store share_above nested_call \
+  "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
+
 run_probe word_inst_select_probeScript.sml word_inst_select_probe.out \
   add3 sub_const big_imm store_off load_off shifts curr_heap share_load8 set_and const_fold two_reg \
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
@@ -7738,6 +7746,15 @@ run_probe riscv_target_binop_register_probeScript.sml riscv_target_binop_registe
   riscv_encoder_correct_binop_register_statement riscv_encoder_correct_binop_register_types riscv_encoder_correct_binop_register_hypotheses riscv_encoder_correct_binop_register_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
 
+run_probe word_to_word_executable_probeScript.sml word_to_word_executable_probe.out \
+  compile_single_definition full_compile_single_definition compile_definition \
+  skip_alg0 skip_alg2 return_alg0 return_alg2 assign_return_alg0 assign_return_alg2 must_terminate_alg0 must_terminate_alg2 tail_call_alg0 tail_call_alg2 branch_alg0 branch_alg2 empty oracle_remainder oracle_short \
+  "$cake_dir/compiler/backend/word_to_wordScript.sml" "$cake_dir/compiler/backend"
+
+run_probe pan_compile_max_executable_probeScript.sml pan_compile_max_executable_probe.out \
+  compile_prog_max_local_replay_type compile_prog_max_local_replay_def_typed \
+  empty leaf tail_recursive recursive call_leaf branch missing call_frames \
+  "$cake_dir/pancake/proofs/pan_to_targetProofScript.sml" "$cake_dir/pancake"
 run_probe word_to_stack_fp_relations_probeScript.sml word_to_stack_fp_relations_probe.out \
   fpRelationRead_typed fpRelationRead_proved fpRelationRead_hypotheses fpRelationUpdate_typed fpRelationUpdate_proved fpRelationUpdate_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
@@ -7765,3 +7782,7 @@ run_probe word_to_stack_inst_memory_store_probeScript.sml word_to_stack_inst_mem
 run_probe word_to_stack_inst_memory_probeScript.sml word_to_stack_inst_memory_probe.out \
   memoryWhole_typed memoryWhole_proved memoryWhole_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe pan_to_target_compile_prog_eq_probeScript.sml pan_to_target_compile_prog_eq_probe.out \
+  compile_prog_eq_statement compile_prog_eq_hypotheses compile_prog_eq_proved \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
