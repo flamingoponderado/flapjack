@@ -1,9 +1,10 @@
 (* Literal source replay of riscv_configProofScript is_riscv_machine_config_def (12-19) and
    riscv_init_ok (68-75), with backendProofScript mc_init_ok_def (113-131) replayed (both proof
-   theories unbuilt); riscv_init_ok is re-proved with its own HOL tactic over the loaded theories.
+   theories unbuilt); riscv_init_ok and riscv_machine_config_ok (54-66, over the built lab_to_targetProof and
+   riscv_targetProof theories) are re-proved with their own HOL tactics over the loaded theories.
    Not an exported original-theory capture. *)
-load "preamble"; load "backendTheory"; load "stack_namesTheory"; load "riscv_configTheory"; load "riscv_targetTheory"; load "targetSemTheory"; load "stack_removeTheory"; load "stackPropsTheory"; load "data_to_wordTheory"; load "lab_to_targetTheory"; load "miscTheory"; load "blastLib";
-open HolKernel Parse bossLib preamble backendTheory stack_namesTheory riscv_configTheory riscv_targetTheory targetSemTheory stackPropsTheory blastLib;
+load "preamble"; load "backendTheory"; load "stack_namesTheory"; load "riscv_configTheory"; load "riscv_targetTheory"; load "targetSemTheory"; load "stack_removeTheory"; load "stackPropsTheory"; load "data_to_wordTheory"; load "lab_to_targetTheory"; load "miscTheory"; load "blastLib"; load "lab_to_targetProofTheory"; load "riscv_targetProofTheory";
+open HolKernel Parse bossLib preamble backendTheory stack_namesTheory riscv_configTheory riscv_targetTheory targetSemTheory stackPropsTheory blastLib riscv_targetProofTheory;
 val _ = Globals.linewidth := 1000000;
 fun read_source rel = let val cake = case OS.Process.getEnv "CAKEML" of SOME p => p | NONE => raise Fail "CAKEML is required"
   val st = TextIO.openIn (OS.Path.concat (cake, rel)) val t = TextIO.inputAll st in TextIO.closeIn st; t end;
@@ -118,9 +119,25 @@ Proof
   \\ match_mp_tac bitTheory.NOT_BIT_GT_TWOEXP
   \\ fs[]
 QED
+val _ = guard "riscv_machine_config_ok" riscv_src "Theorem riscv_machine_config_ok:\n   is_riscv_machine_config mc \226\135\146 mc_conf_ok mc\nProof\n  rw[lab_to_targetProofTheory.mc_conf_ok_def,is_riscv_machine_config_def]\n  >- EVAL_TAC\n  >- simp[riscv_targetProofTheory.riscv_encoder_correct]\n  >- EVAL_TAC\n  >- EVAL_TAC\n  >- EVAL_TAC\n  >- EVAL_TAC\n  >- EVAL_TAC\n  >- metis_tac[asmPropsTheory.encoder_correct_def,asmPropsTheory.target_ok_def,riscv_encoder_correct]\nQED";
+Theorem riscv_machine_config_ok:
+   is_riscv_machine_config mc ⇒ mc_conf_ok mc
+Proof
+  rw[lab_to_targetProofTheory.mc_conf_ok_def,is_riscv_machine_config_def]
+  >- EVAL_TAC
+  >- simp[riscv_targetProofTheory.riscv_encoder_correct]
+  >- EVAL_TAC
+  >- EVAL_TAC
+  >- EVAL_TAC
+  >- EVAL_TAC
+  >- EVAL_TAC
+  >- metis_tac[asmPropsTheory.encoder_correct_def,asmPropsTheory.target_ok_def,riscv_encoder_correct]
+QED
 val _ = (print "riscv_backend_config_ok_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl riscv_backend_config_ok); print "\n");
 val _ = print ("riscv_backend_config_ok_hypotheses=" ^ Int.toString (length (hyp riscv_backend_config_ok)) ^ "\n");
 val _ = (print "is_riscv_machine_config_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl is_riscv_machine_config_def); print "\n");
 val _ = (print "riscv_init_ok_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl riscv_init_ok); print "\n");
 val _ = print ("riscv_init_ok_hypotheses=" ^ Int.toString (length (hyp riscv_init_ok)) ^ "\n");
+val _ = (print "riscv_machine_config_ok_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl riscv_machine_config_ok); print "\n");
+val _ = print ("riscv_machine_config_ok_hypotheses=" ^ Int.toString (length (hyp riscv_machine_config_ok)) ^ "\n");
 val _ = OS.Process.exit OS.Process.success;

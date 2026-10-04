@@ -98907,6 +98907,31 @@
     "reviewer": "Flapjack-only instance form of the tagged fun2SetUpdateEq (pan_to_targetProofScript fun2set_update_eq): the same statement with the pointwise update decided by a DecidableEq instance, for concrete address types such as BitVec used by its callers; the tagged HOL form decides the update classically."
   },
   {
+    "hol_path": "cakeml/compiler/backend/riscv/proofs/riscv_configProofScript.sml",
+    "hol_name": "riscv_machine_config_ok",
+    "lean_path": "Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean",
+    "lean_name": "riscvMachineConfigOk",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-jybcz): riscv_configProofScript 54-66 against the typed literal replay riscv_config_proof_replay (re-proved there with HOL's own proof over the built lab_to_targetProof/riscv_targetProof theories, 0 hypotheses): is_riscv_machine_config mc => mc_conf_ok mc, mc at (64, riscv_state, projection) machine_config, over the tagged isRiscvMachineConfig and mcConfOk. Lean proof: good_dimindex by 64, encoder_correct from the assembled tagged TargetProof.riscv_encoder_correct (peer sol-c a49949bc3), the four heap registers 10/11/12/13 and link register reg_ok by decide, enc_ok from target_ok, as HOL's metis step. No extra premises; no native_decide. Through riscv_target (the L3 RISC-V model) the closure inherits reals_as_rational_cuts, the rational-cut assurance limit SOUNDNESS8.",
+    "inherits_reals_as_rational_cuts": true
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscV",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific RISC-V instantiation (bead flapjack-nlgac) of the tagged panToTargetCompileSemantics with c := pancakeBackendConf riscvBackendConfig (Pancake's GC-None config, compilerScript 744-747) and is_riscv_machine_config mc; backend_config_ok/mc_conf_ok/mc_init_ok discharged by riscvPancakeBackendConfigOk, riscvMachineConfigOk and riscvPancakeInitOk, ISA, ffi_names and config-only heap bound (riscvPancakeHeapLimit_lt) premises decided; all other premises unchanged. HOL has no Pancake RISC-V theorem. Inherits reals_as_rational_cuts through riscv_target (SOUNDNESS8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean",
+    "lean_name": "riscvPancakeHeapLimit_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: the top theorem's configuration-only heap bound bytes_in_word * (2 * max_heap_limit (:64) c.data_conf - 1) < dimword (:64), decided for pancakeBackendConf riscvBackendConfig (bead flapjack-nlgac)."
+  },
+  {
     "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
     "lean_name": "computeLabelsAlt_domain",
     "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
