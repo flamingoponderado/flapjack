@@ -8824,6 +8824,7 @@ encoder correctness theorem to arbitrary JumpCmp operands and comparison.
 Four fresh typed rows retain the complete statement, carrier annotations,
 zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
 The statement/evidence guard detects drift but does not replace source review.
+`word_to_stack_store_consts_caller_probe.out` captures the original full typed StoreConsts comp clause and actual native outputs below/at 8-bit wrapping, at 64-bit wrapping, at the exact chunk boundary and at width1. Three w2n observations normalize the printed word literals. The source register is1 and original stub6; native code, complete flattened bitmap state/count and unconditional macro acceptance are kernel-checked against the repaired executed word-facing producer. The generic Nat macro helper is retained separately. This does not establish full WordToStack simulation or whole compiler correctness.
 
 ### Full native Mem correctness case
 
@@ -8837,6 +8838,7 @@ original all-environment assertions. The local guard pins the complete public
 statement and original evidence; it is a regression check, not an equivalence
 proof or acceptance of the whole encoder.
 
+`riscv_target_bit_rewrites_probeScript.sml` replays the unchanged original local `word_bit_0_add4` and exported `word_bit_0_lemmas` statements with their original `BBLAST_TAC` proofs. Each complete theorem is captured with typed binders, zero hypotheses and proved `T`; this is universal theorem evidence, not selected inputs. `DecodeAny_encode` at targetProof line 162 is commented out and is not a declaration to port.
 `riscv_backend_config_probe.out` captures the exported original
 `riscv_backend_config_def` (no hypotheses) with HOL's SML quotations already
 spliced, including the evaluated `clos_to_bvl`/`bvl_to_bvi` default records.
@@ -8848,6 +8850,8 @@ cross-language proof.
 `riscv_config_proof_replay_probe.out` is a literal source replay (both
 `backendProof` and `riscv_configProof` are unbuilt here): `mc_init_ok_def` and
 `is_riscv_machine_config_def` are replayed verbatim (guarded) and `riscv_init_ok`
+is re-proved with its own HOL tactic; typed statements and the hypothesis count
+are captured for `Flapjack/Compiler/Backend/RiscVConfig/Proofs.lean`.
 is re-proved with its own HOL tactic; `backend_config_ok_def` and `names_tac` are
 likewise replayed and `riscv_backend_config_ok` re-proved with its HOL proof;
 `riscv_machine_config_ok` is re-proved with its HOL proof over the built
