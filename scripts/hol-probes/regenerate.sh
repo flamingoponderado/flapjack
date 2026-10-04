@@ -8105,3 +8105,7 @@ run_probe riscv_target_shift_ror_register_probeScript.sml riscv_target_shift_ror
   riscv_encoder_correct_shiftRorRegister_statement riscv_encoder_correct_shiftRorRegister_types riscv_encoder_correct_shiftRorRegister_hypotheses riscv_encoder_correct_shiftRorRegister_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_native_declarations_probeScript.sml crep_to_loop_native_declarations_probe.out \
+  native_crep native_loop done \
+  "$cake_dir/pancake/crep_to_loopScript.sml" "$cake_dir/pancake"

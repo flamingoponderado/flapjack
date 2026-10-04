@@ -1,0 +1,7 @@
+native_crep=[(«f»,[],Call NONE «g» []); («g»,[],Return [Const 7w])]
+native_loop=[(64,[],Mark (Seq (Mark (Call NONE (SOME 65) [] NONE)) (Mark Skip)));
+ (65,[],
+  Mark
+    (Seq (Mark (Assign 1 (Const 7w)))
+       (Mark (Seq (Mark (Return [1])) (Mark Skip)))))]
+done=T

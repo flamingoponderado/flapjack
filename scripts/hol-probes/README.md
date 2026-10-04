@@ -8439,3 +8439,21 @@ WordToStack entry/stub/config consumers and the whole executed route remain
 separate open dependencies coordinated with Sol2.
 
 `riscv_target_shift_ror_register_probe.out` freshly specializes the full original encoder theorem at Reg/Ror with unrestricted natural registers, full word64 source states, hyp0/provedT. The kernel port derives the complete ORI31/SUB31/SLL31/SRLrd/ORrd trace and original all-environment assertions from source step/initial relation alone. It preserves zero count and all allowed register aliases, derives source count/avoid guards and full scratch31 effect, and adds no target-run or postrelation premise. Capture is statement regression evidence, not cross-language equivalence. Native closure inherits SOUNDNESS8; full Shift/encoder/compiler assembly remains open.
+
+## Raw native declaration-to-Loop composition
+
+`crep_to_loop_native_declarations_probe.out` freshly evaluates the complete
+original Pan-to-Crep table and then the complete original Crep-to-Loop table
+for two declarations. The fixture matches every name, parameter, body, operand
+and direct call in both results. The declaration byte boundary is proved;
+compiler-result success is not supplied as a premise.
+
+`ProductionDeclarations` proves the complete raw native metadata payload is
+the decoded original table, derives all top/nested name support, recovers the
+original native input, and derives the complete two-pass native Loop result.
+The producer uses raw metadata before generic crepSimpFunctions: original
+compile_prog runs its own original simplification once. It preserves original
+labels and introduces no idempotence, rebasing, desired-output or target-run
+assumption. These output observations do not prove HOL-to-Lean equivalence.
+The actual CLI and native WordToStack entry/stub/config consumer route remains
+open; this checked source-premise/producer slice alone does not close it.
