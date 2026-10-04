@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRead
 import Flapjack.Compiler.Encoders.AsmSem.MemoryByteShift
 import Flapjack.RiscV.CorrectnessEncoding.MemorySource
@@ -11,6 +12,9 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWritePair
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -60,6 +64,9 @@ import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
 import Flapjack.Pancake.Proofs.PanToTarget.WordToWordNoInstall
 import Flapjack.Pancake.Proofs.PanToTarget.StackSizeConst
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceLimit
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitCode
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyInitMemory
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyResourceStage
 import Flapjack.Pancake.Proofs.PanToTarget.InitHelpers
 import Flapjack.Pancake.Proofs.PanToTarget.PanInstalled
 import Flapjack.Pancake.Proofs.PanToTarget.LabelsChain
@@ -77,6 +84,8 @@ import Flapjack.Pancake.Proofs.PanToTarget.CompileSemanticsStatement
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyLabToTarget
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyStackToLab
 import Flapjack.Pancake.Proofs.PanToTarget.AssemblyMemory
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyWordToStack
+import Flapjack.Pancake.Proofs.PanToTarget.AssemblyPanToWord
 import Flapjack.Pancake.Semantics.CrepProps.EveryExpHOL
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StoreRegisterZero
