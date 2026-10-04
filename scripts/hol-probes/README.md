@@ -1,3 +1,9 @@
+`riscv_target_longmul_probe.out` captures the fully typed original LongMul specialization of the complete `riscv_encoder_correct` theorem, with binder carriers, hypothesis count zero and kernel proof result T. The Lean port preserves only asmStep plus the initial targetStateRel as hypotheses, proves n=1 with both actual MULHU/MUL byte-fetch/decode/Run/Next steps, and retains all environments, both assertions, code-byte preservation and intermediate PC membership. Original asm_ok supplies the high-destination/source exclusions; destination equality and other permitted aliases remain. Counter order is env0 after MULHU, env1 after MUL. Native broad Run/target closure inherits SOUNDNESS item8. The local statement/evidence pin is a syntactic regression check, not an independent HOL-to-Lean equivalence proof; whole encoder/compiler assembly remains open.
+
+`riscv_longmul_decode_probe.out` freshly proves both unrestricted original MULHU/MUL DecodeAny(Word(Encode instruction)) identities for every word5 register tuple, retaining zero registers and aliases. Each universal kernel theorem has no hypotheses; typed full conclusions and source Encode clauses/carriers accompany eight explicit zero/all-ones/high-bit/alias evaluations. Lean proves the same two unrestricted compositions through actual native definitions. These are untagged evaluator-composition infrastructure for the dependency-linked full original LongMul encoder constructor; byte-fetch/Run/interference/asserts obligations remain on that consumer. The local proof/capture pin detects drift and does not independently establish cross-language correspondence.
+
+`l3_step_register_comparison_probe.out` records all four original SLT/SLTU write/NOP equations, their actual two hypotheses and typed closed forms. Destination nonzero/zero and ArchBase != 1 are retained, including both source-zero reads, arbitrary aliases, full register-bank updates and both RV32 mode queries. SLT signextends low32; SLTU zeroextends low32. These primitive equations support actual AddCarry lowering; they do not claim whole encoder/compiler correctness. The local shape/capture guard detects drift and does not establish HOL-to-Lean equivalence.
+
 `l3_step_jump_probe.out` captures all four complete original evaluated JAL/JALR write and zero-destination companion statements, each actual Thm.hyp and count, and its closed fully typed GEN_ALL(DISCH_ALL) form. The sole write guard is rd <> 0; the sole companion guard is rd = 0. Full record updates retain address-exception/NextFetch effects, original rs1-zero read, JALR mask and source PC + Skip link before destination writes. Zero-destination companions suppress the link write and still jump or trap. These are primitive step-library equations, not whole encoder/compiler correctness.
 
 `word_convs_simp_const_fp_labels_probe.out` freshly replays the two full original constant-folding label theorems from wordConvsProof221-266 and their five unchanged sequence/drop-constant prerequisites. Both closed typed statements have kernel T and zero open hypotheses. Native generic proofs derive label containment and distinctness preservation from the actual output's ordered-sublist invariant, including chosen/unresolved conditionals, state-threaded sequences, every Call/handler branch and Loop. This is the constant-folding prerequisite of the full compile_exp label relation; hoisting, push-out and whole compiler correctness remain separate.
@@ -49,6 +55,10 @@ correspondence additionally covers arbitrary partner lists.
 `word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
 `word_to_word_syntactic_probe.out` captures the statement, hypothesis count and typed form of the word_to_wordProof syntactic group (`cond16bit_inst_select_exp'` as `cond16bit_inst_select_exp_prime`, `cond16bit_inst_select`, the `no_share_inst`/`no_mt` lemmas, `code_rel_not_created_subprogs`, `code_rel_ext_def`, `code_rel_ext_word_to_word`, `no_mt_code_rel_ext`, `code_rel_no_share_inst`) and wordProps `no_mt_code_def`, for `Compiler/Backend/WordToWord/Proofs/Syntactic.lean` and `WordSem/Props/NoMtCode.lean`. The `[local]` `code_rel_no_alloc`/`code_rel_no_install` are compared against the script. Statement evidence for source review only.
 `data_to_word_gc_fun_const_ok_probe.out` captures the statement, hypothesis count and typed form of `gc_fun_const_ok_word_gc_fun` for `Compiler/Backend/DataToWord/Proofs/Gc/GcFunConstOk.lean`. Statement evidence for source review only.
+`pan_to_word_lab_pres_probe.out` captures the statement, hypothesis count and typed form of the loop_to_wordProof lab_pres section (`loop_to_word_comp_extract_labels_len` through `loop_to_word_compile_lab_min`) and of pan_to_wordProof `pan_to_word_good_handlers`, `pan_to_word_compile_lab_pres` and `pan_to_word_compile_prog_lab_min`, for `Pancake/LoopToWord/Proofs/LabPres.lean` and `Pancake/Proofs/PanToWord/LabPres.lean`. Statement evidence for source review only.
+`target_sem_installed_probe.out` captures the statement, hypothesis count and typed form of targetSem `installed_def` for `Compiler/Backend/Semantics/TargetSem/Installed.lean`. Statement evidence for source review only.
+`pan_to_target_pan_installed_source_replay_probe.out` is a literal source replay of pan_to_targetProof `pan_installed_def` and `pan_installed_imp_installed` (the original proof theory is unbuilt): literal-source guards, the definition replayed and the theorem re-proved with HOL's own tactic over the loaded original theories, for `Pancake/Proofs/PanToTarget/PanInstalled.lean`. Not an exported original-theory capture.
+`pan_to_target_init_helpers_source_replay_probe.out` is a literal source replay of the pan_to_targetProof helpers `word_to_stack_compile_FST`, `good_dimindex_0w_8w`, `full_make_init_be`, `n2w_sub_alt`, `aligned_n2w_IMP`, `good_dimindex_div_mul` and `InitGlobals_location_eq_first_name` (the original proof theory is unbuilt): literal-source guards on statements, proofs and the `word_to_stack_compile` overload, each theorem re-proved with HOL's own tactic over the loaded original theories, for `Pancake/Proofs/PanToTarget/InitHelpers.lean`. Not an exported original-theory capture.
 `pan_to_target_stack_size_source_replay_probe.out` is a literal source replay of pan_to_targetProof 909-1166 (`no_alloc_word_evaluate`, `panLang_wordSem_neq_NotEnoughSpace`, the `inst_stack_*_const_panLang` lemmas, `share_inst_modifies`, `evaluate_stack_size_limit_const_panLang` and `option_lt_SOME`; the original proof theory is unbuilt): the script fails if the pinned source text of any statement, proof, overload or `option_lt_def` changes, re-proves each theorem in source order with HOL's own tactic over the loaded original theories, and prints statements, hypothesis counts and typed forms, for `Pancake/Proofs/PanToTarget/StackSizeConst.lean`. Not an exported original-theory capture.
 `pan_to_word_no_install_code_probe.out` captures the statement, hypothesis count and typed form of the loop_to_wordProof no_install/no_alloc/no_mt section (`loop_to_word_comp_not_created` through `loop_compile_no_mt_code`; the `[local]` `loop_to_word_compile_not_created_MEM` is compared against the script) and the three `pan_to_word_compile_prog_no_*_code` lemmas, for `Pancake/LoopToWord/Proofs/NoInstallCode.lean` and `Pancake/Proofs/PanToWord/NoInstallCode.lean`. Statement evidence for source review only.
 `pan_to_target_word_to_word_no_install_source_replay_probe.out` is a literal source replay of pan_to_targetProof `word_to_word_compile_no_install_no_alloc` (the original proof theory is unbuilt): the script fails if the pinned source text changes, then re-proves the statement with HOL's own tactic over the loaded original theories and prints it, for `Pancake/Proofs/PanToTarget/WordToWordNoInstall.lean`. Not an exported original-theory capture.
@@ -8296,6 +8306,23 @@ knowledge on codec-representable unselected inputs. Kernel regressions retain
 that boundary, and 56 runtime cases compare all complete map entries and the
 full returned program rendering. These local proofs and original probes do
 not assert cross-language equivalence or complete whole-pass adoption.
+
+`word_cse_production_program_probe.out` captures the full typed original
+program/wrapper definitions and fifteen complete whole-program equality replays,
+with five-field state observations and cardinalities. The fixture key lists
+cover every stored entry, checked against the original cardinalities. Seq,
+MustTerminate, equal/unequal If facts, Loop reset/body transformation, all four
+Call return/handler combinations, Move, memory, heap, Assign, Get/Set and the
+flat memory/control family are covered. Kernel fixtures replay state tuples;
+executed program and wrapper checks compare the complete transformed program
+rendering against the expected program checked by original EVAL. ProductionProgram
+proves the complete instruction, recursive program and wrapper correspondence
+using input KnowledgeRel, original wfData and the existing input codec only.
+Every recursive output and join invariant is derived; there is no output/run
+or callback premise. The codec's rejected native Skip/FP instruction carriers
+remain an explicit representation boundary, with a kernel Skip rejection test.
+No tagged HOL compiler theorem is narrowed and no cross-language equivalence
+or entire compiler adoption claim is made.
 ## Native signed DIV decoding prerequisite
 
 `DecodeDiv.lean` proves unrestricted actual Encode/DecodeAny composition for
@@ -8316,6 +8343,7 @@ native state. The original typed theorem specialization is captured in
 `riscv_target_div_probe.out`; hyp0/provedT is regression evidence, not a
 cross-assistant equivalence proof. The full target closure retains inherited
 reals_as_rational_cuts (SOUNDNESS item8); other encoder cases remain open.
+
 
 
 ## Complete native Shift decoding prerequisites
@@ -8342,3 +8370,39 @@ The fresh 24 original clause/type/hypothesis rows retain all literal RV32/RV64
 and illegal-immediate branches. They provide source regression evidence, not
 a cross-assistant equivalence proof. Full state relation, assertions and both
 Ror instruction sequences remain on the parent bead.
+
+## Full original register Lsl encoder case
+
+`ShiftLslRegister.lean` proves the genuine original Reg/Lsl case with the
+sole source asmStep and initial targetStateRel premise and complete existential
+interference/assertion conclusion. The count bound follows from failed=false;
+actual fetched SLL Decode/Run/Next and masked-count equality are derived.
+Fresh original theorem specialization includes complete statement, typed
+quantifiers, hyp0 and provedT. These captures are regression evidence, not a
+cross-assistant equivalence proof. The full target closure retains inherited
+reals_as_rational_cuts (SOUNDNESS item8). Other Shift/Ror cases remain open.
+
+## Full original register Lsr and Asr encoder cases
+
+`ShiftLsrRegister.lean` and `ShiftAsrRegister.lean` preserve the original
+sole source-step/initial-state premise and complete existential interference
+and asserts/asserts2 conclusions. Logical SRL and signed arithmetic SRA are
+kept distinct. Source count bounds, actual native masked counts, fetched
+bytes/Decode/Run/Next and whole post-state preservation are derived. Both
+fresh complete original theorem specializations have typed quantifiers, hyp0
+and provedT. Captures are source regression evidence, not equivalence proofs.
+The target closures retain inherited reals_as_rational_cuts (SOUNDNESS item8);
+immediate shifts and both Ror routes remain open.
+
+## Full original immediate Lsl/Lsr/Asr encoder cases
+
+The three `Shift*Immediate.lean` modules retain arbitrary word64 immediate
+inputs, natural registers, the sole original source-step/initial-relation
+premise and complete existential/all-environment asserts/asserts2 conclusion.
+The six-bit native amount is derived from source validity; source zero-count
+conditions remain inside the unchanged asmStep premise (zero allowed for Lsl
+only). Actual SLLI/SRLI/SRAI bytes/Decode/Run/Next and whole post-state facts are
+proved. Fresh full original theorem specializations capture typed word64
+quantifiers, hyp0 and provedT; these are regression evidence, not equivalence
+proofs. Target closures retain inherited reals_as_rational_cuts (SOUNDNESS8).
+Both Ror sequences remain open.
