@@ -7873,3 +7873,7 @@ run_probe word_convs_simp_sequence_labels_probeScript.sml word_convs_simp_sequen
 run_probe word_to_stack_comp_correct_full_probeScript.sml word_to_stack_comp_correct_full_probe.out \
   comp_correct_full_statement comp_correct_full_proved comp_correct_full_hypotheses comp_correct_full_statement_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_convs_push_out_labels_probeScript.sml word_convs_push_out_labels_probe.out \
+  pushOutLabelsHelper_typed pushOutLabelsHelper_proved pushOutLabelsHelper_hypotheses pushOutLabels_typed pushOutLabels_proved pushOutLabels_hypotheses \
+  "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
