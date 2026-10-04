@@ -98921,6 +98921,14 @@
     "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean",
     "lean_name": "panToTargetCompileSemanticsRiscV",
     "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-specific RISC-V instantiation (bead flapjack-nlgac) of the tagged panToTargetCompileSemantics with c := pancakeBackendConf riscvBackendConfig (Pancake's GC-None config, compilerScript 744-747) and is_riscv_machine_config mc; backend_config_ok/mc_conf_ok/mc_init_ok discharged by riscvPancakeBackendConfigOk, riscvMachineConfigOk and riscvPancakeInitOk, ISA and ffi_names premises decided; all other premises unchanged. HOL has no Pancake RISC-V theorem. Inherits reals_as_rational_cuts through riscv_target (SOUNDNESS8)."
+    "reviewer": "Flapjack-specific RISC-V instantiation (bead flapjack-nlgac) of the tagged panToTargetCompileSemantics with c := pancakeBackendConf riscvBackendConfig (Pancake's GC-None config, compilerScript 744-747) and is_riscv_machine_config mc; backend_config_ok/mc_conf_ok/mc_init_ok discharged by riscvPancakeBackendConfigOk, riscvMachineConfigOk and riscvPancakeInitOk, ISA, ffi_names and config-only heap bound (riscvPancakeHeapLimit_lt) premises decided; all other premises unchanged. HOL has no Pancake RISC-V theorem. Inherits reals_as_rational_cuts through riscv_target (SOUNDNESS8)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean",
+    "lean_name": "riscvPancakeHeapLimit_lt",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific: the top theorem's configuration-only heap bound bytes_in_word * (2 * max_heap_limit (:64) c.data_conf - 1) < dimword (:64), decided for pancakeBackendConf riscvBackendConfig (bead flapjack-nlgac)."
   }
 ]
