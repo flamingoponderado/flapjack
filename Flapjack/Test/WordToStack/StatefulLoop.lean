@@ -17,7 +17,7 @@ example :
     wordToStackProgNatWithBitmapBuilder statefulLoopConfig (fun _ => [7])
       2 26 4 64 none statefulLoopInitial
       (.loop [0] (.alloc 9 ([], [2])) [0] : WordProg Nat) =
-      some (.loop (.seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1)),
+      some (.loop (.seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1)),
         { data := [4, 7]
           length := 2 }) := by
   apply wordToStackProgNatWithBitmapBuilder_loop
@@ -28,7 +28,7 @@ example :
     (finalState := { data := [4, 7], length := 2 })
     (liveIn := [0]) (liveOut := [0])
     (body := (.alloc 9 ([], [2]) : WordProg Nat))
-    (bodyCode := .seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1))
+    (bodyCode := .seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1))
   simp [wordToStackProgNatWithBitmapBuilder,
     wordStackAllocWithBitmapBuilder, wordStackBitmapWriteWithBuilder,
     wordStackInsertBitmap, wordStackJoin, wordStackOffset,

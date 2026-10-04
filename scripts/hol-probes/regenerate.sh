@@ -8284,3 +8284,7 @@ run_probe pan_to_crep_validity_helpers_probeScript.sml pan_to_crep_validity_help
 run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_decs_provenance_probe.out \
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe word_to_stack_bitmap_index_probeScript.sml word_to_stack_bitmap_index_probe.out \
+  index_width1_wrap index_width8_wrap index_width8_below index_empty_frame \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"

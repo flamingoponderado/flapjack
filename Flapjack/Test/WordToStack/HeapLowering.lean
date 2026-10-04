@@ -17,7 +17,7 @@ example :
     wordToStackProgNatWithBitmapBuilder heapLoweringConfig (fun _ => [7])
       2 26 4 64 none heapLoweringInitial
       (.alloc 9 ([], [2]) : WordProg Nat) =
-      some (.seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1),
+      some (.seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1),
         { data := [4, 7]
           length := 2 }) := by
   simpa [wordStackAllocWithBitmapBuilder, wordStackBitmapWriteWithBuilder,
@@ -53,7 +53,7 @@ example :
       10
       (wordStackAllocWithBitmapBuilder heapLoweringConfig 26 4
         heapLoweringInitial [2] (fun _ => [7])).1 =
-      (.seq (.seq (.const 26 2) (.stackStore 26 20))
+      (.seq (.seq (.inst (.const 26 2)) (.stackStore 26 20))
           (.call (some (.skip, 0, 91, 10)) (.label 90) none), 11) := by
   simpa [wordStackAllocWithBitmapBuilder, wordStackBitmapWriteWithBuilder,
     wordStackInsertBitmap, wordStackJoin, wordStackOffset,

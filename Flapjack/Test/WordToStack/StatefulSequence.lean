@@ -22,7 +22,7 @@ example :
         (.ffi "echo" 0 1 2 3 ([], [4])) : WordProg Nat) =
       some
         (.seq
-          (.seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1))
+          (.seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1))
           (.seq (.arith .or 10 4 4)
             (.seq (.stackLoad 11 22)
               (.seq (.arith .or 12 6 6)
@@ -39,7 +39,7 @@ example :
     (finalState := { data := [4, 7], length := 2 })
     (first := (.alloc 9 ([], [2]) : WordProg Nat))
     (second := (.ffi "echo" 0 1 2 3 ([], [4]) : WordProg Nat))
-    (firstCode := .seq (.seq (.const 26 2) (.stackStore 26 20)) (.alloc 1))
+    (firstCode := .seq (.seq (.inst (.const 26 2)) (.stackStore 26 20)) (.alloc 1))
     (secondCode := .seq (.arith .or 10 4 4)
       (.seq (.stackLoad 11 22)
         (.seq (.arith .or 12 6 6)

@@ -324,6 +324,7 @@ import Flapjack.Test.WordToStackAsmNameShareParity
 import Flapjack.Test.WordToStackSortedRelationsParity
 import Flapjack.Test.WordToStackSortedKeysParity
 import Flapjack.Test.WordToStackBitmapWriteParity
+import Flapjack.Test.WordToStackBitmapIndexParity
 import Flapjack.Test.WordToStackBitmapInsertParity
 import Flapjack.Test.WordToStackBitmapDecodeParity
 import Flapjack.Test.WordToStackKeyValueOrderParity
