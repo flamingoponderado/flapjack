@@ -5,7 +5,10 @@ import Flapjack.Compiler.Backend.WordAlloc.Proofs.GetForced
 namespace Flapjack.WordAlloc
 open RegAlloc RiscV RiscV.CakeRegAlloc Compiler.Encoders.Asm
 
-/-- The actual native SSA caller produces a colouring satisfying the complete
+/-- This witness uses the executed native-copy (`wordCopyPropViaHOL`) cleanup
+consumer. It does not describe the legacy copy-propagation route.
+
+ The actual native SSA caller produces a colouring satisfying the complete
 native allocator checker contract. Forced membership comes from the source
 program, and deterministic native execution identifies the allocator theorem's
 colouring with the actual returned map. No desired allocation, colouring
@@ -19,7 +22,9 @@ theorem nativeAllocator_colouringContract {width : Nat} [NeZero width]
     (config : AsmConfigExact width) (target : config.isa = .riscv) :
     ∃ (output : CakeAllocationWithColour (BitVec width))
         (nativeOutput : WordLangProgHOL (BitVec width)) (livein flivein : NumSet),
-      cakeAllocateWordFunctionAfterDeadWithColourNativeSSA label parameters source = some output ∧
+      cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy
+        wordCopyPropViaHOL wordRemoveDeadProgramViaHOL wordRemoveUnreachViaHOL?
+        wordFullSsaCcTransNativeWithState label parameters source = some output ∧
       wordLangProgToHOL output.program = some nativeOutput ∧
       wordLangProgToHOL output.colouredProgram =
         some (applyColour (totalColour (sptFromAList output.colouring)) nativeOutput) ∧
