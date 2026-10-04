@@ -41,6 +41,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_to_word_compile_probe.out` captures the zero-hypothesis `compile_single_def`, `full_compile_single_def` and `compile_def` of `word_to_wordScript.sml`, each also fully typed, for `WordToWord/Compile.lean`. Statement evidence for source review only.
 `word_alloc_distinct_tar_reg_probe.out` captures the full zero-hypothesis statements (also typed) of the exported word_allocProof `ssa_cc_trans_distinct_tar_reg` and `full_ssa_cc_trans_distinct_tar_reg` for `WordAlloc/Proofs/SSAConventions/DistinctTarReg.lean`; its `[local]` helpers are reviewed against the script. Statement evidence for source review only.
 `word_convs_compile_single_not_created_probe.out` captures the zero-hypothesis `compile_single_not_created_subprogs` of wordConvsProof (also typed) for `Pancake/Proofs/WordConvs/NotCreatedTail.lean`; the per-pass `not_created_subprogs` lemmas in `NotCreatedPasses.lean`/`NotCreatedSSA.lean` are `[local]` and compared against the script. Statement evidence for source review only.
+`word_to_word_syntactic_probe.out` captures the statement, hypothesis count and typed form of the word_to_wordProof syntactic group (`cond16bit_inst_select_exp'` as `cond16bit_inst_select_exp_prime`, `cond16bit_inst_select`, the `no_share_inst`/`no_mt` lemmas, `code_rel_not_created_subprogs`, `code_rel_ext_def`, `code_rel_ext_word_to_word`, `no_mt_code_rel_ext`, `code_rel_no_share_inst`) and wordProps `no_mt_code_def`, for `Compiler/Backend/WordToWord/Proofs/Syntactic.lean` and `WordSem/Props/NoMtCode.lean`. The `[local]` `code_rel_no_alloc`/`code_rel_no_install` are compared against the script. Statement evidence for source review only.
 `word_convs_cse_copy_probe.out` captures the full zero-hypothesis statements of the twelve exported wordConvsProof theorems of `WordCse.lean`, `CopyProp.lean`, `SSAWfCutsets.lean` and the `wf_cutsets` additions to `Unreach.lean`/`ThreeToTwo.lean` (also typed `pre_alloc_conventions_copy_prop` and `full_ssa_cc_trans_wf_cutsets`); the `[local]` theorems of those sections are not exported and are reviewed against the script. Statement evidence for source review only.
 `word_inst_three_to_two_probe.out` captures the full zero-hypothesis statements of the exported word_instProof `three_to_two_reg_Loop`, `three_to_two_reg_correct` (also fully typed) and `evaluate_three_to_two_reg_prog`; the local `locals_rel_cut_envs_local` is not exported. Statement evidence for source review only.
 
@@ -8186,3 +8187,16 @@ it does not establish whole-pass production adoption or HOL/Lean equivalence.
 closed quantification, zero hypotheses and kernel-proved statements. Source
 review evidence covers the original guards and complete target existential;
 it does not assert cross-assistant equivalence or whole compiler correctness.
+
+## Evaluated SLTI and SLTIU original hypotheses
+
+`Step/ImmediateComparison.lean` completes the original six-case immediate ALU
+group with SLTI and SLTIU. The fresh complete typed theorem captures in
+`l3_step_immediate_comparison_probe.out` discharge and quantify BOTH original
+hypotheses: destination nonzero and ArchBase unequal to1. The latter propagates
+from source `not1` into the `in32BitMode` evaluator. These are original guards,
+not new port assumptions. Both equations preserve the full native record and
+RV32 sign extension of low32 source bits, including literal SLTIU asymmetry.
+The proof uses the actual reviewed definitions and kernel-checked finite-word
+case analysis. Captures are regression evidence, not cross-language equivalence.
+The elaborated declaration closure contains no inherited real-cut operation.
