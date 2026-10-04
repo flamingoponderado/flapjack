@@ -98975,5 +98975,128 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-sol3 source10627-10635 and fresh loaded fulltyped theorem hyp0/direct find_ffi_names definition in lab_to_target_ffi_distinct_probe.out. Full forall native code alpha sec and unconditional ALL_DISTINCT conclusion translated to List.Nodup. Sole positive word-dimension NeZero BitVec width translation; canonical HolAsm/AsmOrCbw/HolMemop/HolAddr/AsmWithLab/HolCmp/HolRegImm/MlString/HolFfiName and fixed word8 bytes retained. Actual collector recursion and reviewed listAddIfFresh derive full result; no name range, input validity, encoding success, target execution or output premise. Original capture is regression/source-review evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiReadInterference.lean",
+    "lean_name": "readFfiBytearrays_withNextInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "read_ffi_bytearrays_with_next_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source6551-6570 and freshly loaded fulltyped original theorem hyp0 in lab_to_target_ffi_read_interference_probe.out. Whole original read_ffi_bytearrays function equality retained, arbitrary positive word dimension/state/projection MachineConfig and replacement next oracle Nat→state→state or FFI oracle Nat→Nat×List(BitVec8)×state→state, arbitrary Nat shift. Sole reviewed positive HOL word-dimension translation NeZero BitVec width; fixed byte8 and canonical native machine record/read function unchanged. No input validity, read success, target evaluation/result, memory relation or narrowed carrier premise. Proof unfolds actual FFI read and shift definitions; only target/addresses/register fields are read. Capture is source-review regression evidence, not HOL-to-Lean equivalence or full compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiReadInterference.lean",
+    "lean_name": "readFfiBytearrays_shiftInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "read_ffi_bytearrays_shift_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source6551-6570 and freshly loaded fulltyped original theorem hyp0 in lab_to_target_ffi_read_interference_probe.out. Whole original read_ffi_bytearrays function equality retained, arbitrary positive word dimension/state/projection MachineConfig and replacement next oracle Nat→state→state or FFI oracle Nat→Nat×List(BitVec8)×state→state, arbitrary Nat shift. Sole reviewed positive HOL word-dimension translation NeZero BitVec width; fixed byte8 and canonical native machine record/read function unchanged. No input validity, read success, target evaluation/result, memory relation or narrowed carrier premise. Proof unfolds actual FFI read and shift definitions; only target/addresses/register fields are read. Capture is source-review regression evidence, not HOL-to-Lean equivalence or full compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/FfiReadInterference.lean",
+    "lean_name": "readFfiBytearrays_withFfiInterfer",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "read_ffi_bytearrays_ffi_interfer",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source6551-6570 and freshly loaded fulltyped original theorem hyp0 in lab_to_target_ffi_read_interference_probe.out. Whole original read_ffi_bytearrays function equality retained, arbitrary positive word dimension/state/projection MachineConfig and replacement next oracle Nat→state→state or FFI oracle Nat→Nat×List(BitVec8)×state→state, arbitrary Nat shift. Sole reviewed positive HOL word-dimension translation NeZero BitVec width; fixed byte8 and canonical native machine record/read function unchanged. No input validity, read success, target evaluation/result, memory relation or narrowed carrier premise. Proof unfolds actual FFI read and shift definitions; only target/addresses/register fields are read. Capture is source-review regression evidence, not HOL-to-Lean equivalence or full compiler completion."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTI_NOP",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparisonNop.lean",
+    "lean_name": "dfnSltINop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-04, flapjack-slti-nop-pair: original class_rd0 exported companion generated at 839. Fresh GEN_ALL(DISCH_ALL) original capture retains BOTH rd=0 and ArchBase<>1, typed native riscv_state/word5/word12, entire unchanged state; arbitrary source/immediate. Lean retains exactly these hypotheses. Kernel checked; only word/register/mode closure, no rational-cut assumption. Companion source registration already supported; these unused residual exports do not block completed encoder or production routing."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTIU_NOP",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparisonNop.lean",
+    "lean_name": "dfnSltIUNop",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol-c source comparison 2026-10-04, flapjack-slti-nop-pair: original class_rd0 exported companion generated at 840. Fresh GEN_ALL(DISCH_ALL) original capture retains BOTH rd=0 and ArchBase<>1, typed native riscv_state/word5/word12, entire unchanged state; arbitrary source/immediate. Lean retains exactly these hypotheses. Kernel checked; only word/register/mode closure, no rational-cut assumption. Companion source registration already supported; these unused residual exports do not block completed encoder or production routing."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVInstanceExecutable.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscVExecutable",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary (bead flapjack-z9g67) of panToTargetCompileSemanticsRiscV with the compiler premise on the callable compileProgMaxExecutable (= compile_prog_max by compileProgMaxExecutable_eq) at pancakeBackendConf riscvBackendConfig; all other premises and the conclusion unchanged. Does not establish the CLI computes this function."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
+    "lean_name": "stackToRiscV_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
+    "lean_name": "checkedSections_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/RuntimeImageBackendOutput.lean",
+    "lean_name": "runtimeSectionsFromBackend_actual",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/NativeBackendOutput.lean",
+    "lean_name": "fromWord_runtimeImage",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific complete backend output/adapter composition infrastructure, no independent HOL declaration. Reuses tagged original fromStack/fromWord/attachBitmaps. Retains input rejection, None/guards/arbitrary bitmap payload/full config/symbol attachment without successful-output or target premise. Native path has no relabel/filter/stub injection. Source diagnostic wrapper and whole producer/body correctness remain open on z6zwp."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
+    "lean_name": "compileProgMaxExecutable_eq_asm",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack interface infrastructure (bead flapjack-qb5v7): compileProgMaxExecutable reads the machine configuration only through machine.target.config; definitional equality with the assembler-only compileProgMaxAsmExecutable."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
+    "lean_name": "compileProgMaxAsmExecutable_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack interface infrastructure (bead flapjack-qb5v7): compileProgMaxAsmExecutable cfg mc.target.config = compile_prog_max cfg mc, via compileProgMaxExecutable_eq."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/ExecutableCompileProgMaxAsm.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscVAsmExecutable",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary (bead flapjack-qb5v7) of panToTargetCompileSemanticsRiscV with compiler premise compileProgMaxAsmExecutable (pancakeBackendConf riscvBackendConfig) riscvConfig; other premises/conclusion unchanged. CLI interface; does not establish the CLI computes it."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/SourceRuntimeBackendOutput.lean",
+    "lean_name": "sourceRuntimeImage_fullBackendOutput",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific full actual RV64 source runtime diagnostic wrapper composition through checked complete backend output; no independent HOL declaration. All original parse/static/entry/allocation/codec/FFI error branches retained, with original config component equalities and no successful-output premise. Unused original service extension retained as _services; RV64 callback ignores this legacy context. Native original-label frontend adoption is separate."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/RiscVSource.lean",
+    "lean_name": "panToTargetCompileSemanticsRiscVSource",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific corollary (bead flapjack-kfgjp): RISC-V correctness for the CLI call compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig (mainFirstHOL decls); compiler-input premises on mainFirstHOL decls, semantics premise/conclusion on original decls (requires a main function; via semanticsDecls_mainFirstHOL and panToTargetCompileSemanticsRiscVAsmExecutable). Does not establish the CLI performs this call."
   }
 ]

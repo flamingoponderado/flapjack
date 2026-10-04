@@ -980,6 +980,9 @@ run_probe word_simp_seq_assoc_source_probeScript.sml word_simp_seq_assoc_source_
   assoc_middle_skip assoc_right_spine assoc_if assoc_loop assoc_must assoc_tail_handler \
   assoc_return assoc_both assoc_prefix_unchanged assoc_inst assoc_pre_ssa \
   "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_const_fp_mem_probeScript.sml word_simp_const_fp_mem_probe.out \
+  mem_store mem_store8 mem_store16 mem_store32 mem_load mem_load8 mem_load16 mem_load32 \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
 run_probe word_simp_constant_domain_probeScript.sml word_simp_constant_domain_probe.out \
   constant_program_skip constant_program_assign constant_program_selected constant_program_unknown \
   constant_program_tail constant_program_return constant_program_both constant_program_alloc \
@@ -8445,3 +8448,12 @@ run_probe lab_to_target_extracted_label_navigation_probeScript.sml lab_to_target
 run_probe lab_to_target_ffi_distinct_probeScript.sml lab_to_target_ffi_distinct_probe.out \
   find_ffi_names_ALL_DISTINCT_statement_typed find_ffi_names_ALL_DISTINCT_hyp_count find_ffi_names_definition_typed \
   "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe lab_to_target_ffi_read_interference_probeScript.sml lab_to_target_ffi_read_interference_probe.out \
+  read_ffi_bytearrays_with_next_interfer_statement_typed read_ffi_bytearrays_with_next_interfer_hyp_count read_ffi_bytearrays_shift_interfer_statement_typed read_ffi_bytearrays_shift_interfer_hyp_count read_ffi_bytearrays_ffi_interfer_statement_typed read_ffi_bytearrays_ffi_interfer_hyp_count \
+  "$cake_dir/compiler/backend/proofs/lab_to_targetProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_step_immediate_comparison_nop_probeScript.sml l3_step_immediate_comparison_nop_probe.out \
+  slti_nop_statement slti_nop_types slti_nop_source_hypotheses slti_nop_proved sltiu_nop_statement sltiu_nop_types sltiu_nop_source_hypotheses sltiu_nop_proved \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
