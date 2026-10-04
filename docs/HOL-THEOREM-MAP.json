@@ -95424,6 +95424,15 @@
     "reviewer": "Source compared whole backendProof1284-1307: actual native compile equation and input guard, all names/labels/five output conditions and nested original guards retained; positive-width word translation only."
   },
   {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftRorImmediate.lean",
+    "lean_name": "riscv_encoder_correct_shiftRorImmediate",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-04; bead flapjack-pxn.18.5.13.6.9.9): full original riscv_encoder_correct Shift Imm/Ror case560-620, full theorem specialized at Inst(Arith(Shift Ror rd rs (Imm(c:word64)))). Arbitrary Nat register indices and word64 count, sole original asmStep plus initial targetStateRel, existential count and every original interference environment, complete asserts/stateOk/emitted-byte memory/all-PC and targetStateRel result plus asserts2 outside-domain native memory frame retained. Derives rd/rs asmRegOk, c.toNat<64 and positive count from unchanged asmOk; no explicit new bound/nonzero premise. Actual literal SRLI31/SLLIrd/ORrd three-step execution derives every fetch/Decode/Run/Next from emitted bytes; complete native scratch31 effect retained, excluded from source relation only by original avoidRegs. Arbitrary rd=rs aliases retained. Source poststate PC+12 and native result derive rotateRight using original ror lemma and source-derived complementary count. Every intermediate original PC coverage/memory/validity and original environment/counter recurrence follows through RorExecution; no target run/output relation premise. Fresh original full typed specialization prints word64 and unrestricted num registers, hyp0/provedT. Native state and actual Run/Next closures inherit reals_as_rational_cuts, SOUNDNESS8; this is one full constructor case, register Ror and full encoder/compiler theorem remain open. Kernel/full delivery checks recorded on bead."
+  },
+  {
     "lean_path": "Flapjack/Misc/Fun2SetUnion.lean",
     "lean_name": "fun2SetDisjointUnion",
     "hol_path": "cakeml/misc/miscScript.sml",
@@ -95466,6 +95475,103 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original 3500-3519: compile_lab ... = SOME (bytes,c') ∧ OPTION_ALL (EVERY (λx. ∃s. x = ExtCall s)) c.ffi_names ⇒ ∃ffi_names. c'.ffi_names = SOME ffi_names ∧ ∃x. mmio_pcs_min_index ffi_names = SOME x; OPTION_ALL rendered as the none ↦ True / some l ↦ P l match and EVERY as membership quantification. Typed capture backend_compile_lab probe (literal source replay, show_types, no hypotheses); carriers are the reviewed LabToTarget.compileLab ones. No added premise."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/AddCarry.lean",
+    "lean_name": "riscv_encoder_correct_addcarry",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared complete original AddCarry constructor and riscv_targetScript144-149 six-instruction SLTU31/ADD/SLTU/ADD/SLTU31/OR lowering, original arithUpd/arith_ok and encoder_correct_def. Only original asmStep+initial targetStateRel premise; complete existential n/all-env/interference/asserts/asserts2/code-byte/PC/final relation conclusion. All six actual fetch/decode/Run/Next transitions derived from emitted bytes and accepted native definitions; n=5, original env indices0..5. Destination/source guards only original r1!=r3 and r1!=r4, r1=r2 and other allowed aliases retained; visible zero/scratch31 exclusions derive asm_ok, original full-current-GPR projection preserves scratch without extra premise. Two additions and two overflow flags kernel-proved equal exact source natural sum and carry, final PC24. Both assertion predicates retained, raw Next preserves outside-domain memory. Same-counterpart AddCarry submodules are untagged composition infrastructure with no separate HOL original. Broad native Run/target closure inherits reals_as_rational_cuts SOUNDNESS8; no full compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_stack_first_ALL_DISTINCT",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_stack_first_ALL_DISTINCT",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_stack_compile_lab_pres",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_stack_compile_lab_pres",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_lab_labels_ok",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_lab_labels_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "word_to_stack_good_code_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "word_to_stack_good_code_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "from_pan_to_lab_no_install",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "from_pan_to_lab_no_install",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "labels_of_labelsRel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_stack_compile_lab_pres: per-row label facts carried across wordConvs labels_rel between programs with equal names (HOL's inline EVERY2/EL_ZIP step); no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_to_lab_good_code_lemma",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "pan_to_lab_good_code_lemma",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): pan_to_targetProof pan_to_lab_good_code_lemma (26-77), compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free c lim1 lim2 offs stack_prog code asm_conf3 word_prog bm wc fs word_conf word_prog0 col pan_prog conf are explicit; LN : β num_map num_map (typed capture) is .ln : Spt (Spt β) with generic β; stack_to_lab$compile/word_to_stack$compile (F = false)/word_to_word$compile/pan_to_word_compile_prog are the tagged compilers; stack_to_labProof$labels_ok and lab_to_targetProof$good_code are the tagged labels_ok_def/good_code_def; all_enc_ok_pre is the tagged labProps allEncOkPreHOL; c's stack_conf/data_conf are Backend.Config fields. Proof follows HOL: sections end with labels (prog_to_section), EVERY_sec_label_ok, labels_ok, and the handler chain pan_to_word_good_handlers → word_good_handlers_word_to_word → word_to_stack_good_handler_labels → stack_to_lab_stack_good_handler_labels; the LN domain is empty. Positive word dimension via [NeZero width]."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
+    "lean_name": "stackToLab_compile_secEndsWithLabel",
+    "hol_path": null,
+    "hol_name": null,
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_lab_good_code_lemma: every section of stack_to_lab$compile ends with a label (HOL discharges this conjunct inline by unfolding compile_def/prog_to_section_def); no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
+    "hol_name": "EVERY_sec_label_ok",
+    "lean_path": "Flapjack/Compiler/Backend/LabProps/SecLabelOk.lean",
+    "lean_name": "EVERY_sec_label_ok",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): labProps EVERY_sec_label_ok (1279-1286), compared with the typed capture lab_props_every_sec_label_ok: EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) (extract_labels l) ⇔ EVERY (sec_label_ok n) l, with HOL's free n l explicit, EVERY as ∀ x ∈ l, ⇔ as ↔, extract_labels the tagged labProps LabelSets.extractLabels and sec_label_ok the tagged secLabelOk. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftRorRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftRorRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison (2026-10-04; bead flapjack-pxn.18.5.13.6.9.10): full original riscv_encoder_correct Shift Reg/Ror case560-620 specialized at Inst(Arith(Shift Ror rd rs (Reg rc))). Unrestricted Nat rd/rs/rc and arbitrary word64 source register values, sole original asmStep plus initial targetStateRel, existential counter and every original interference environment, complete asserts/stateOk/emitted-byte memory/all-PC/targetStateRel and asserts2 outside-domain frame retained. All source asmRegOk/avoid/count<64 guards follow internally from unchanged source step, with no explicit extra bound, nonzero-count or distinct-register premise. Literal ORI31/SUB31/SLL31/SRLrd/ORrd five-step trace derives every fetch/Decode/Run/Next from original emitted bytes and original RV64 validity. Full scratch31 state is retained, excluded from source register relation only by original avoidRegs. Derives masked complementary count from exact 64 minus source word; count0 remains allowed and is explicitly proved using OR idempotence/rotateRight0, nonzero case reuses original ror lemma. Arbitrary source/destination/count register aliases retained. Proves source rotateRight poststate/PC20, every intermediate PC coverage/byte memory/validity and all environment/assertion counters; no target-run/output-relation assumption. Fresh original typed full specialization has unrestricted num registers and word64 state, hyp0/provedT. Native state and actual Run/Next closure inherit reals_as_rational_cuts, SOUNDNESS8. Full Shift assembly, remaining encoder constructors and overall compiler theorem remain separate open work. Kernel/delivery checks recorded on bead."
   },
   {
     "lean_path": "Flapjack/NamespaceHOL.lean",
@@ -95764,83 +95870,77 @@
     "reviewer": "flapjack-opus4 source comparison 2026-10-04: original unknown_loc_def: Locs UNKNOWNpt UNKNOWNpt. Typed capture ast_lit_op probe (show_types; datatype case theorems)."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
-    "hol_name": "pan_to_stack_first_ALL_DISTINCT",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "pan_to_stack_first_ALL_DISTINCT",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Shift.lean",
+    "lean_name": "riscv_encoder_correct_shift",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source compared original Shift560-620, all four operators and Reg/Imm forms, sole source-step/initial target relation, complete original existential allenv/asserts/asserts2. Assembled eight full kernel cases without extra premises. Fresh full typed original specialization hyp0/provedT. Inherits reals_as_rational_cuts through full native target closure, SOUNDNESS item8."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
-    "hol_name": "pan_to_stack_compile_lab_pres",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "pan_to_stack_compile_lab_pres",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml:881 DIVU = arithr [] over dfn'DIVU_def. Actual Thm.hyp captured in scripts/hol-probes/check-l3-step-divu.py are ArchBase <> 1w and rd <> 0w; the unconditional RV32 low-32 widening normal form and the explicit zero-divisor all-ones branch are preserved; no added premise."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
-    "hol_name": "pan_to_lab_labels_ok",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "pan_to_lab_labels_ok",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml:881 DIVU with the rd = 0w companion DIVU_NOP; actual hyp capture ArchBase <> 1w, rd = 0w; conclusion dfn'DIVU (...) s = s. No added premise."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
-    "hol_name": "word_to_stack_good_code_lemma",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "word_to_stack_good_code_lemma",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnMULNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MUL_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml MUL = arithr [] over dfn'MUL_def with the rd = 0w companion MUL_NOP; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-muldiv.py is exactly rd = 0w; conclusion identity dfn'MUL (...) s = s. No added premise."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
-    "hol_name": "from_pan_to_lab_no_install",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "from_pan_to_lab_no_install",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free variables are explicit binders; the script overloads pan_to_word_compile_prog/word_to_word_compile/word_to_stack_compile/stack_to_lab_compile are the tagged panToWordCompileProgHOL/WordToWord.compile/WordToStack.Native.compileNative (F = false)/StackToLab.compile; c : backend config is the tagged Backend.Config (its word_to_word_conf/stack_conf/data_conf fields), mc the tagged MachineConfig; functions is functionsHOL over MlS names; ALL_DISTINCT (MAP FST) is List.Nodup of map Prod.fst; EVERY is ∀ x ∈ l; extract_labels on stack programs is the tagged stackProps extractLabels; labels_ok/good_code/no_install are the tagged stack_to_labProof labels_ok_def / good_code_def and labProps no_install. Proofs follow HOL's structure using the tagged compile_to_word_conventions2, word_to_stack_compile_lab_pres/stack_convs/compile_no_install, stack_to_lab_compile_lab_pres/compile_no_install and the pan_to_word label/no_install lemmas. Positive word dimension via [NeZero width]."
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIV_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml DIV = arithr [] over dfn'DIV_def with the rd = 0w companion DIV_NOP; actual hyp rd = 0w; conclusion dfn'DIV (...) s = s. No added premise."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "labels_of_labelsRel",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_stack_compile_lab_pres: per-row label facts carried across wordConvs labels_rel between programs with equal names (HOL's inline EVERY2/EL_ZIP step); no independent HOL declaration."
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REM_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml REM = arithr [] over dfn'REM_def with the rd = 0w companion REM_NOP; actual hyp rd = 0w; conclusion dfn'REM (...) s = s. No added premise."
   },
   {
-    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
-    "hol_name": "pan_to_lab_good_code_lemma",
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "pan_to_lab_good_code_lemma",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): pan_to_targetProof pan_to_lab_good_code_lemma (26-77), compared with the typed literal-source statement replay pan_to_target_labels_chain_source_replay (proofs not re-run: backendProof is unbuilt). HOL's free c lim1 lim2 offs stack_prog code asm_conf3 word_prog bm wc fs word_conf word_prog0 col pan_prog conf are explicit; LN : β num_map num_map (typed capture) is .ln : Spt (Spt β) with generic β; stack_to_lab$compile/word_to_stack$compile (F = false)/word_to_word$compile/pan_to_word_compile_prog are the tagged compilers; stack_to_labProof$labels_ok and lab_to_targetProof$good_code are the tagged labels_ok_def/good_code_def; all_enc_ok_pre is the tagged labProps allEncOkPreHOL; c's stack_conf/data_conf are Backend.Config fields. Proof follows HOL: sections end with labels (prog_to_section), EVERY_sec_label_ok, labels_ok, and the handler chain pan_to_word_good_handlers → word_good_handlers_word_to_word → word_to_stack_good_handler_labels → stack_to_lab_stack_good_handler_labels; the LN domain is empty. Positive word dimension via [NeZero width]."
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml REMU = arithr [] over dfn'REMU_def with the rd = 0w companion REMU_NOP; actual hyp rd = 0w; conclusion dfn'REMU (...) s = s. No added premise."
   },
   {
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/LabelsChain.lean",
-    "lean_name": "stackToLab_compile_secEndsWithLabel",
-    "hol_path": null,
-    "hol_name": null,
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack proof infrastructure for pan_to_targetProof pan_to_lab_good_code_lemma: every section of stack_to_lab$compile ends with a label (HOL discharges this conjunct inline by unfolding compile_def/prog_to_section_def); no independent HOL declaration."
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/ConfigurationRewrites.lean",
+    "lean_name": "riscvConfigRewrites",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Generated HOL riscv_config (asmLib.target_asm_rwts, riscv_targetScript.sml:331): full source field bundle in original order -- ISA RISC_V, encode riscv_enc, big_endian F, code_alignment 2, link_reg SOME 1, avoid_regs [0;2;3;4;31], reg_count 32, fp_reg_count 0, two_reg_arith F, the signed Sub-lower-bound valid_imm lambda, and every offset pair with original endpoints. Reuses the existing native riscvConfig/riscvEnc defs (no duplicate variants). Typed capture: scripts/hol-probes/check-riscv-target-config.py."
   },
   {
-    "hol_path": "cakeml/compiler/backend/semantics/labPropsScript.sml",
-    "hol_name": "EVERY_sec_label_ok",
-    "lean_path": "Flapjack/Compiler/Backend/LabProps/SecLabelOk.lean",
-    "lean_name": "EVERY_sec_label_ok",
-    "statement_status": "reviewed_words_as_type_indexed_bitvec",
-    "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.3): labProps EVERY_sec_label_ok (1279-1286), compared with the typed capture lab_props_every_sec_label_ok: EVERY (λ(l1,l2). l1 = n ∧ l2 ≠ 0) (extract_labels l) ⇔ EVERY (sec_label_ok n) l, with HOL's free n l explicit, EVERY as ∀ x ∈ l, ⇔ as ↔, extract_labels the tagged labProps LabelSets.extractLabels and sec_label_ok the tagged secLabelOk. Positive word dimension via [NeZero width]."
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_asm_ok",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean",
+    "lean_name": "riscvAsmOkRewrites",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared generated asmLib.target_asm_rwts theorem at riscv_targetScript333-337 and original asmScript asm_ok/inst_ok/arith_ok/fp_ok/reg_imm_ok/offset_ok with fresh fully typed GEN_ALL original theorem capture: 41 conjuncts,17 binder carriers,hyp0/provedT. Full original source order: Skip,Const,Binop Reg/Imm,combined Shift reg_imm,Div/LongMul/LongDiv/AddCarry/AddOverflow/SubOverflow,eight memory forms,sixteen FP forms all false,Jump,JumpCmp Reg/Imm,Call,JumpReg,Loc. All numeric and fixed word64 variables retained; original word-valued r renamed callTarget, GEN_ALL numeric r-prime renamed r. Exact HolAsm/HolInst/HolArith/HolRegImm and reviewed BinOp/Shift/Cmp/FP carriers, current canonical riscvConfig and asmOkExact; no duplicate config/source evaluator. All visible bounds and avoid0/2/3/4/31 explicit, original aliases only; source signed word comparisons represented by toInt at exact word64 constants, strict Sub lower bound and XOR -1 exception, zero-shift restriction, memory/jump/cjump endpoints and code alignment retained. No new premises or subset; private Sum reductions are kernel-proved untagged local canonical-equality compositions. Parent16-field generated config delivery remains separate."
   },
   {
     "lean_path": "Flapjack/Compiler/Backend/FlatLang.lean",

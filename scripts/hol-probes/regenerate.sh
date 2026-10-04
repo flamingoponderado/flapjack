@@ -7072,7 +7072,11 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
     sd_hypotheses sd_statement sw_hypotheses sw_statement sh_hypotheses sh_statement sb_hypotheses sb_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_muldiv_probeScript.sml l3_step_muldiv_probe.out \
-    mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement source \
+    mul_hypotheses mul_statement div_hypotheses div_statement rem_hypotheses rem_statement remu_hypotheses remu_statement \
+    mul_nop_hypotheses mul_nop_statement div_nop_hypotheses div_nop_statement rem_nop_hypotheses rem_nop_statement remu_nop_hypotheses remu_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_divu_probeScript.sml l3_step_divu_probe.out \
+    divu_hypotheses divu_statement divu_nop_hypotheses divu_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
   run_probe l3_step_warith_probeScript.sml l3_step_warith_probe.out \
     skip_statement addw_hypotheses addw_statement subw_hypotheses subw_statement addiw_hypotheses addiw_statement \
@@ -7309,6 +7313,10 @@ run_probe riscv_target_slice_probeScript.sml riscv_target_slice_probe.out \
 
 run_probe riscv_target_state_probeScript.sml riscv_target_state_probe.out \
   riscv_next_statement riscv_next_hypotheses riscv_next_proved riscv_next_type riscv_ok_statement riscv_ok_hypotheses riscv_ok_proved riscv_ok_type riscv_proj_statement riscv_proj_hypotheses riscv_proj_proved riscv_proj_type riscv_target_statement riscv_target_hypotheses riscv_target_proved riscv_target_type riscv_target_fp_field riscv_target_fp_type \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
+
+run_probe riscv_target_config_probeScript.sml riscv_target_config_probe.out \
+  riscv_config_statement riscv_config_hypotheses riscv_asm_ok_statement riscv_asm_ok_hypotheses source \
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" "$cake_dir/compiler/encoders/riscv"
 
 run_probe riscv_target_bytes_probeScript.sml riscv_target_bytes_probe.out \
@@ -8021,6 +8029,11 @@ run_probe riscv_target_longmul_probeScript.sml riscv_target_longmul_probe.out \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_target_addcarry_probeScript.sml riscv_target_addcarry_probe.out \
+  riscv_encoder_correct_addcarry_statement riscv_encoder_correct_addcarry_types riscv_encoder_correct_addcarry_hypotheses riscv_encoder_correct_addcarry_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe riscv_target_div_probeScript.sml riscv_target_div_probe.out \
   riscv_encoder_correct_div_statement riscv_encoder_correct_div_types riscv_encoder_correct_div_hypotheses riscv_encoder_correct_div_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
@@ -8096,6 +8109,36 @@ run_probe riscv_ror_step_probeScript.sml riscv_ror_step_probe.out \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 
+run_probe riscv_target_shift_ror_immediate_probeScript.sml riscv_target_shift_ror_immediate_probe.out \
+  riscv_encoder_correct_shiftRorImmediate_statement riscv_encoder_correct_shiftRorImmediate_types riscv_encoder_correct_shiftRorImmediate_hypotheses riscv_encoder_correct_shiftRorImmediate_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_original_names_program_probeScript.sml crep_to_loop_original_names_program_probe.out \
+  full_program row_names parameters done \
+  "$cake_dir/pancake/crep_to_loopScript.sml"
+
+run_probe riscv_asm_ok_rewrites_probeScript.sml riscv_asm_ok_rewrites_probe.out \
+  riscv_asm_ok_full_statement riscv_asm_ok_full_types riscv_asm_ok_full_conjuncts riscv_asm_ok_full_hypotheses riscv_asm_ok_full_proved \
+  "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
 run_probe backend_word_conventions2_probeScript.sml backend_word_conventions2_probe.out \
   fullConventions_typed fullConventions_proved fullConventions_hypotheses \
   "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe riscv_target_shift_ror_register_probeScript.sml riscv_target_shift_ror_register_probe.out \
+  riscv_encoder_correct_shiftRorRegister_statement riscv_encoder_correct_shiftRorRegister_types riscv_encoder_correct_shiftRorRegister_hypotheses riscv_encoder_correct_shiftRorRegister_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe crep_to_loop_native_declarations_probeScript.sml crep_to_loop_native_declarations_probe.out \
+  native_crep native_loop done \
+  "$cake_dir/pancake/crep_to_loopScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_target_shift_probeScript.sml riscv_target_shift_probe.out \
+  riscv_encoder_correct_shift_statement riscv_encoder_correct_shift_types riscv_encoder_correct_shift_hypotheses riscv_encoder_correct_shift_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+run_probe pan_target_entry_first_match_probeScript.sml pan_target_entry_first_match_probe.out \
+  empty missing head duplicates nonfunction \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
