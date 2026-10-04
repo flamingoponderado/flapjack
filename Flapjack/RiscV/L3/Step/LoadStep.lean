@@ -4,7 +4,7 @@ namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
 /-! Evaluated original `riscv_stepScript.sml` memory-load instruction theorems
-(`LD`/`LW`/`LH`/`LB`/`LWU`/`LHU`, lines 902-907) over the literal native
+(`LD`/`LW`/`LH`/`LB`/`LWU`/`LHU`/`LBU`, lines 902-908) over the literal native
 equations, together with their generated `rd = 0` companions.  Each theorem
 keeps the original hypotheses: the destination guard `rd <> 0`, the bare-mode
 guard `mstatus.VM = 0`, the source-alignment premise `aligned` (present on the
@@ -214,6 +214,32 @@ theorem dfnLHUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
     «dfn'LHU» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LHU»]
+  rw [translateAddr_bare _ _ _ s hVM]
+  simp [«write'GPR», hrd]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU"]
+theorem dfnLBU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
+    (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
+    «dfn'LBU» (rd, (rs1, offs)) s =
+      { s with c_gpr := holUpdate s.procID (holUpdate rd
+          (BitVec.setWidth 64 (holWordExtract 8 7 0
+            (rawReadData (if rs1 = 0 then BitVec.signExtend 64 offs
+              else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) s)))
+          (s.c_gpr s.procID)) s.c_gpr } := by
+  simp only [«dfn'LBU»]
+  have hv : GPR rs1 s + BitVec.signExtend 64 offs =
+      (if rs1 = 0 then BitVec.signExtend 64 offs
+       else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) := by
+    by_cases hr1 : rs1 = 0 <;> simp_all [GPR, gpr]
+  rw [hv, translateAddr_bare _ _ _ s hVM]
+  simp only [«write'GPR», «write'gpr»]
+  rw [if_pos (by simpa [beq_iff_eq] using hrd)]
+
+@[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LBU_NOP"]
+theorem dfnLBUNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
+    (hrd : rd = 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5) :
+    «dfn'LBU» (rd, (rs1, offs)) s = s := by
+  simp only [«dfn'LBU»]
   rw [translateAddr_bare _ _ _ s hVM]
   simp [«write'GPR», hrd]
 
