@@ -98012,5 +98012,69 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol: compared original Call riscv_targetProof723-730/riscv_target258-263, source asmStep/call/jumpToOffset/asm_ok and full encoder_correct_def. Tagged root has only original source step plus initial targetStateRel and full existential/allenv/bothassertions/code-byte/PC/finalrelation conclusion. Near JALrd1 uses source arithmetic halfword shift/signed21 bounds and witness0; far AUIPCrd1/JALRrd1=rs1 uses original signed split, witness1/env0-env1/intermediatePC4. Literal four/eight emitted bytes derive full native fetch/decode/Run/Next. Source configuration supplies lr=1 and original offset/alignment/reg guards. Actual aliased JALR reads old register1 before link overwrite; near/far final link values sourcePC+4/sourcePC+8. No non-alias, decoder, target-run or post-state premise; full native projection preserves source register across interference, memory/frame/all original registers retained. Same-counterpart helpers are untagged local compositions with no separate HOL originals. Inherits reviewed reals_as_rational_cuts assurance limit SOUNDNESS8 through native Run; no production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panPropsALookupEq_eq_none",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only: ALOOKUP misses a key absent from the keys (HOL ALOOKUP_NONE)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetStubLocationsFree",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1606-1622): ALOOKUP wprog raise_stub_location = NONE and store_consts_stub_location = NONE via pan_to_word_compile_prog_lab_min and compile_to_word_conventions2."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "fullMakeInit_bitmaps_code",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1563-1585): a successful full_make_init keeps the given bitmaps and installs fromAList code."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetInitStateOk",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1624-1647): init_state_ok of the full_make_init stack state with the empty word oracle, via IMP_init_state_ok and compile_word_to_stack_bitmaps."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyWordToStack.lean",
+    "lean_name": "panToTargetWordStateFacts",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1686-1716): the word make_init state on a successful full_make_init stack state has gc_fun_const_ok gc_fun (gc_fun_const_ok_word_gc_fun), empty stack, the given code and lookup 0 locals = SOME (Loc 1 0)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
+    "lean_name": "panToTargetInitCodeRun",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E core of the single HOL proof of pan_to_target_compile_semantics (pan_to_targetProofScript.sml 1756-1916): init_code_thm instantiated on the full_make_init stack-names state under the full_make_init_semantics hypotheses, w2/w3/w4 identified with the lab len/ptr2/len2 registers; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
+    "lean_name": "panToTargetFullMakeInitReduce",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stage E: full_make_init = (sst, SOME x) gives x = init_reduce of the init_code result state and sst.stack = x.stack (pan_to_targetProofScript.sml 1756-1797, 1924-1929); intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyInitCode.lean",
+    "lean_name": "panToTargetStackLimitLeInitStack",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Stages E/G: FST (get_stack_heap_limit max_heap (w2,w3,w4)) <= LENGTH sst.stack for the full_make_init stack state (pan_to_targetProofScript.sml 2311-2335 with init_code_thm facts); intermediate proof step, not a HOL theorem."
   }
 ]
