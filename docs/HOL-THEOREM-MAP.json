@@ -95877,5 +95877,125 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source compared original Shift560-620, all four operators and Reg/Imm forms, sole source-step/initial target relation, complete original existential allenv/asserts/asserts2. Assembled eight full kernel cases without extra premises. Fresh full typed original specialization hyp0/provedT. Inherits reals_as_rational_cuts through full native target closure, SOUNDNESS item8."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml:881 DIVU = arithr [] over dfn'DIVU_def. Actual Thm.hyp captured in scripts/hol-probes/check-l3-step-divu.py are ArchBase <> 1w and rd <> 0w; the unconditional RV32 low-32 widening normal form and the explicit zero-divisor all-ones branch are preserved; no added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIVU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml:881 DIVU with the rd = 0w companion DIVU_NOP; actual hyp capture ArchBase <> 1w, rd = 0w; conclusion dfn'DIVU (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnMULNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MUL_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml MUL = arithr [] over dfn'MUL_def with the rd = 0w companion MUL_NOP; actual Thm.hyp captured in scripts/hol-probes/check-l3-step-muldiv.py is exactly rd = 0w; conclusion identity dfn'MUL (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIVNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIV_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml DIV = arithr [] over dfn'DIV_def with the rd = 0w companion DIV_NOP; actual hyp rd = 0w; conclusion dfn'DIV (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REM_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml REM = arithr [] over dfn'REM_def with the rd = 0w companion REM_NOP; actual hyp rd = 0w; conclusion dfn'REM (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source riscv_stepScript.sml REMU = arithr [] over dfn'REMU_def with the rd = 0w companion REMU_NOP; actual hyp rd = 0w; conclusion dfn'REMU (...) s = s. No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/ConfigurationRewrites.lean",
+    "lean_name": "riscvConfigRewrites",
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_config",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Generated HOL riscv_config (asmLib.target_asm_rwts, riscv_targetScript.sml:331): full source field bundle in original order -- ISA RISC_V, encode riscv_enc, big_endian F, code_alignment 2, link_reg SOME 1, avoid_regs [0;2;3;4;31], reg_count 32, fp_reg_count 0, two_reg_arith F, the signed Sub-lower-bound valid_imm lambda, and every offset pair with original endpoints. Reuses the existing native riscvConfig/riscvEnc defs (no duplicate variants). Typed capture: scripts/hol-probes/check-riscv-target-config.py."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/riscv_targetScript.sml",
+    "hol_name": "riscv_asm_ok",
+    "lean_path": "Flapjack/Compiler/Encoders/RiscV/Target/AsmOkRewrites.lean",
+    "lean_name": "riscvAsmOkRewrites",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-sol: compared generated asmLib.target_asm_rwts theorem at riscv_targetScript333-337 and original asmScript asm_ok/inst_ok/arith_ok/fp_ok/reg_imm_ok/offset_ok with fresh fully typed GEN_ALL original theorem capture: 41 conjuncts,17 binder carriers,hyp0/provedT. Full original source order: Skip,Const,Binop Reg/Imm,combined Shift reg_imm,Div/LongMul/LongDiv/AddCarry/AddOverflow/SubOverflow,eight memory forms,sixteen FP forms all false,Jump,JumpCmp Reg/Imm,Call,JumpReg,Loc. All numeric and fixed word64 variables retained; original word-valued r renamed callTarget, GEN_ALL numeric r-prime renamed r. Exact HolAsm/HolInst/HolArith/HolRegImm and reviewed BinOp/Shift/Cmp/FP carriers, current canonical riscvConfig and asmOkExact; no duplicate config/source evaluator. All visible bounds and avoid0/2/3/4/31 explicit, original aliases only; source signed word comparisons represented by toInt at exact word64 constants, strict Sub lower bound and XOR -1 exception, zero-shift restriction, memory/jump/cjump endpoints and code alignment retained. No new premises or subset; private Sum reductions are kernel-proved untagged local canonical-equality compositions. Parent16-field generated config delivery remains separate."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "AstT",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "ast_t",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original ast_t: Atvar tvarN | Atfun | Attup (ast_t list) | Atapp (ast_t list) ((modN,typeN) id); id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Pat",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat: seven constructors, Pcon over ((modN,conN) id) option; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Exp",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "exp",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original exp: 14 constructors in order including Handle/Mat (pat # exp) list, Letrec (varN # varN # exp) list, Lannot exp locs; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "TypeDef",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "type_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original type_def: Type abbreviation (tvarN list # typeN # (conN # ast_t list) list) list; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "Dec",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "dec",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original dec: eight constructors Dlet..Denv with locs payloads; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "patBindings",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pat_bindings clauses (mutual pats_bindings is patsBindings); id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
+  },
+  {
+    "lean_path": "Flapjack/AstHOL/Syntax.lean",
+    "lean_name": "patsBindings",
+    "hol_path": "cakeml/semantics/astScript.sml",
+    "hol_name": "pat_bindings_def",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original pat_bindings_def: pats_bindings clauses of the same mutual definition: [] and pats_bindings ps ++ pat_bindings p; id is NamespaceHOL.Ident, locs is Misc.Location.Locs. Typed capture ast_syntax probe (show_types)."
   }
 ]

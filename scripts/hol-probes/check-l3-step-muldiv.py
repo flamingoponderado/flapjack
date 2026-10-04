@@ -1,4 +1,4 @@
-"""Reject drift in original HOL multiply/divide evaluated instruction captures."""
+"""Reject drift in original HOL Mul/Div (MUL/DIV/REM/REMU) step captures."""
 from pathlib import Path
 
 EXPECTED = [
@@ -76,7 +76,15 @@ EXPECTED = [
     '                else s.c_gpr s.procID rs2))',
     '      ⦈',
     '  ⦈',
-    "source=HOL riscv_stepScript.sml:874-886 mul/div/rem = arithr [] over dfn'MUL/DIV/REM/REMU_def with the rd = 0w companion avoided; per-theorem Thm.hyp captured above; DIVU (line 881) is unconditional with a double in32BitMode RV32 widening and is not ported here",
+    'mul_nop_hypotheses=(rd :word5) = (0w :word5)',
+    "mul_nop_statement=dfn'MUL ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s",
+    'div_nop_hypotheses=(rd :word5) = (0w :word5)',
+    "div_nop_statement=dfn'DIV ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s",
+    'rem_nop_hypotheses=(rd :word5) = (0w :word5)',
+    "rem_nop_statement=dfn'REM ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s",
+    'remu_nop_hypotheses=(rd :word5) = (0w :word5)',
+    "remu_nop_statement=dfn'REMU ((rd :word5),(rs1 :word5),(rs2 :word5)) (s :riscv_state) = s",
+    "source=HOL riscv_stepScript.sml:874-886 mul/div/rem = arithr [] over dfn'MUL/DIV/REM/REMU_def with the rd = 0w companion avoided; per-theorem Thm.hyp captured above; the MUL_NOP/DIV_NOP/REM_NOP/REMU_NOP companions add rd = 0w and conclude identity; DIVU (line 881) is ported separately in l3_step_divu_probe.out",
 ]
 
 
