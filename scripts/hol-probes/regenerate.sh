@@ -8292,6 +8292,10 @@ run_probe crep_inline_nested_decs_provenance_probeScript.sml crep_inline_nested_
   nested_decs_provenance \
   "$cake_dir/pancake/proofs/crep_inlineProofScript.sml" "$cake_dir/pancake/proofs"
 
+run_probe word_to_stack_bitmap_index_probeScript.sml word_to_stack_bitmap_index_probe.out \
+  index_width1_wrap index_width8_wrap index_width8_below index_empty_frame \
+  "$cake_dir/compiler/backend/word_to_stackScript.sml" "$cake_dir/compiler/backend"
+
 run_probe riscv_target_jump_probeScript.sml riscv_target_jump_probe.out \
   riscv_encoder_correct_jump_statement riscv_encoder_correct_jump_types riscv_encoder_correct_jump_hypotheses riscv_encoder_correct_jump_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
