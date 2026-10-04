@@ -95941,5 +95941,23 @@
     "lean_name": "riscvAsmOkRewrites",
     "statement_status": "reviewed_exact",
     "reviewer": "flapjack-sol: compared generated asmLib.target_asm_rwts theorem at riscv_targetScript333-337 and original asmScript asm_ok/inst_ok/arith_ok/fp_ok/reg_imm_ok/offset_ok with fresh fully typed GEN_ALL original theorem capture: 41 conjuncts,17 binder carriers,hyp0/provedT. Full original source order: Skip,Const,Binop Reg/Imm,combined Shift reg_imm,Div/LongMul/LongDiv/AddCarry/AddOverflow/SubOverflow,eight memory forms,sixteen FP forms all false,Jump,JumpCmp Reg/Imm,Call,JumpReg,Loc. All numeric and fixed word64 variables retained; original word-valued r renamed callTarget, GEN_ALL numeric r-prime renamed r. Exact HolAsm/HolInst/HolArith/HolRegImm and reviewed BinOp/Shift/Cmp/FP carriers, current canonical riscvConfig and asmOkExact; no duplicate config/source evaluator. All visible bounds and avoid0/2/3/4/31 explicit, original aliases only; source signed word comparisons represented by toInt at exact word64 constants, strict Sub lower bound and XOR -1 exception, zero-shift restriction, memory/jump/cjump endpoints and code alignment retained. No new premises or subset; private Sum reductions are kernel-proved untagged local canonical-equality compositions. Parent16-field generated config delivery remains separate."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "good_panops_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord.lean",
+    "lean_name": "goodPanopsHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_wordProofScript.sml:1108-1113 good_panops (Function fi) = EVERY (every_exp (\\x. !op es. x = Panop op es ==> LENGTH es = 2)) (exps_of fi.body); good_panops (Decl sh v exp) = every_exp (...) exp; good_panops _ = T. Lean goodPanopsHOL matches clause-for-clause over the exact DeclHOL width / FunDeclHOL width / ExpHOL width carriers, rendering EVERY as the reviewed exact everyExpListHOL, every_exp as everyExpHOL, exps_of as expsOfHOL, and the predicate as a computable Bool (Panop arity two, else true). Positive width-indexed carrier only, so the words qualifier records the translation."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pancake_good_code_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget.lean",
+    "lean_name": "pancakeGoodCodeHOL",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "fs9 source comparison (bead flapjack-cnum): HOL pan_to_wordProofScript.sml:21 pancake_good_code pan_code = EVERY good_panops pan_code. Lean pancakeGoodCodeHOL code = code.all goodPanopsHOL over the exact width-indexed DeclHOL width list carrier; same shape, no extra hypothesis; words qualifier records only the width-indexed carrier translation."
   }
 ]
