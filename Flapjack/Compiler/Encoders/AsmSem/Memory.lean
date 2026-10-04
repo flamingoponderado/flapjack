@@ -27,32 +27,37 @@ open Classical
 def addrHOL {width : Nat} [NeZero width] (address : HolAddr width) (s : AsmState width) : BitVec width :=
   match address with | .addr base offset => readReg base s + offset
 
+/-- Original byte shifts use Nat eight independently of result word dimension.
+An explicit Nat count prevents homogeneous word-shift numeral truncation at
+positive result widths one through three. -/
 @[hol "cakeml/compiler/encoders/asm/asmSemScript.sml" "read_mem_word_def" (words_as_type_indexed_bitvec)]
 noncomputable def readMemWord {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth]
     (a : BitVec width) : Nat → AsmState width → BitVec resultWidth × AsmState width
   | 0, s => (0, s)
   | n + 1, s =>
       let (w, s1) := readMemWord (resultWidth := resultWidth) (if s.be then a - 1 else a + 1) n s
-      ((w <<< 8) ||| (BitVec.setWidth resultWidth (readMem a s1)), assertState (decide (s1.memDomain a)) s1)
+      ((w <<< (8 : Nat)) ||| (BitVec.setWidth resultWidth (readMem a s1)), assertState (decide (s1.memDomain a)) s1)
 
+/-- Original byte shift count is Nat eight, independent of the value width;
+no word-sized shift-count conversion is performed. -/
 @[hol "cakeml/compiler/encoders/asm/asmSemScript.sml" "write_mem_word_def" (words_as_type_indexed_bitvec)]
 noncomputable def writeMemWord {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
     (a : BitVec width) : Nat → BitVec valueWidth → AsmState width → AsmState width
   | 0, _, s => s
   | n + 1, w, s =>
-      let s1 := writeMemWord (valueWidth := valueWidth) (if s.be then a - 1 else a + 1) n (w >>> 8) s
+      let s1 := writeMemWord (valueWidth := valueWidth) (if s.be then a - 1 else a + 1) n (w >>> (8 : Nat)) s
       assertState (decide (s1.memDomain a)) (updMem a (BitVec.setWidth 8 w) s1)
 
 theorem readMemWord_succ {width : Nat} [NeZero width] {resultWidth : Nat} [NeZero resultWidth]
     (a : BitVec width) (n : Nat) (s : AsmState width) :
     readMemWord (resultWidth := resultWidth) a (n + 1) s =
       (let (w, s1) := readMemWord (resultWidth := resultWidth) (if s.be then a - 1 else a + 1) n s
-       ((w <<< 8) ||| (BitVec.setWidth resultWidth (readMem a s1)), assertState (decide (s1.memDomain a)) s1)) := rfl
+       ((w <<< (8 : Nat)) ||| (BitVec.setWidth resultWidth (readMem a s1)), assertState (decide (s1.memDomain a)) s1)) := rfl
 
 theorem writeMemWord_succ {width : Nat} [NeZero width] {valueWidth : Nat} [NeZero valueWidth]
     (a : BitVec width) (n : Nat) (w : BitVec valueWidth) (s : AsmState width) :
     writeMemWord (valueWidth := valueWidth) a (n + 1) w s =
-      (let s1 := writeMemWord (valueWidth := valueWidth) (if s.be then a - 1 else a + 1) n (w >>> 8) s
+      (let s1 := writeMemWord (valueWidth := valueWidth) (if s.be then a - 1 else a + 1) n (w >>> (8 : Nat)) s
        assertState (decide (s1.memDomain a)) (updMem a (BitVec.setWidth 8 w) s1)) := rfl
 
 @[simp] theorem assertState_be {width : Nat} [NeZero width] (c : Bool) (s : AsmState width) : (assertState c s).be = s.be := rfl
