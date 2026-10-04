@@ -98496,5 +98496,13 @@
     "lean_name": "panToTargetInitStage",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Stage E of the single HOL proof of pan_to_target_compile_semantics over the top theorem's inputs (pan_to_targetProofScript.sml 1737-1929): full_make_init returns SOME and init_code runs on its stack-names state with init_code_thm's register facts; intermediate proof step, not a HOL theorem."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyTop.lean",
+    "lean_name": "panToTargetCompileSemantics",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Proof of the untagged statement interface PanToTargetCompileSemanticsStatement (hypotheses and conclusion of pan_to_targetProofScript.sml:1257-1300 pan_to_target_compile_semantics over the reviewed carriers; the interface records the pan_installed memory-domain decide carrier gap). Assembly: compileProgMax_some, pan_installed unpacking, pan_to_word_every_inst_ok_less, panToTargetMachineLab (lab_to_target semantics_compile), panToTargetLabSemanticsResource. Kernel-checked, standard axioms only. Tag decision pending statement review."
   }
 ]
