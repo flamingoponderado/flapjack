@@ -8766,3 +8766,5 @@ its mutation tests cover original configuration and guards, full carriers,
 quantifiers, assertions and typed captures. Native target statements retain
 the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
 definition changes here. Whole encoder and compiler assembly remain open.
+
+`pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.

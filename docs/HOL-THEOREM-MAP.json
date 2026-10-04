@@ -98422,14 +98422,6 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec"
   },
   {
-    "hol_path": null,
-    "hol_name": null,
-    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
-    "lean_name": "panToTargetMachineLab",
-    "statement_status": "no_hol_reference_pending_classification",
-    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, good_code from stage A2 (panToTargetGoodCode), mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components. hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20) is a stage-local premise to be discharged in the top theorem, not a top-theorem premise."
-  },
-  {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
     "hol_name": "every_inst_ok_less_pan_to_crep_compile_prog",
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepProgramValidity.lean",
@@ -98437,6 +98429,23 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source1153-1159 and original full typed capture compared: original EVERY good_panops declaration-list guard implies EVERY binary-Crepop traversal of each actual compile_prog body. Membership renders EVERY, complete native declarations/name/parameter/body carriers retained, sole positive word dimension translated to BitVec width with NeZero. Proof composes complete original compile_to_crep validity and accepted every_inst_w_inline, exactly as HOL; no desired-output/target-run/byte-boundary/default or distinctness premise. Full source simulation and compiler correctness remain open."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "pan_to_word_every_inst_ok_less",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/CompileProgInstOkLess.lean",
+    "lean_name": "panToWordEveryInstOkLess",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source1410-1424 and regenerated full typed capture compared2026-10-04: wprog0 alpha-word-program triples, pan_code alpha-declarations and c alpha-asm_config share same dimension. Original compile_prog c.ISA pan_code=wprog0, byte_offset_ok c 0w, addr_offset_ok c 0w, EVERY good_panops pan_code retained as four hypotheses; full EVERY tuple every_inst(inst_ok_less c) output conclusion. Actual native panToWordCompileProgHOL composes PanSimp/PanStructs/PanGlobals/PanToCrep/CrepToLoop/LoopToWord once in original order. Existing Bool EVERY/membership translations and HolInst.ofWordLangInst constructor translation reused. Only positive width translates to BitVec width with NeZero. No target evaluation, desired-output, source-byte/default or extra pass-success premise; full semantic compilation theorem remains open."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/AssemblyMachineToLab.lean",
+    "lean_name": "panToTargetMachineLab",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 1316-1440, stage A4): lab_to_target semantics_compile instantiated at labst = make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ms lprog (compile mc.target.config) ... with HOL's constant oracle; no_install_or_no_share_mem and compiler_oracle_ok from stage A1, good_code from stage A2 (panToTargetGoodCode), mmio index from compile_lab_IMP_mmio_pcs_min_index, good_init_state/MMIO/bound facts from pan_installed's components. hinst (the conclusion of pan_to_word_every_inst_ok_less, bead .14.20) is a stage-local premise to be discharged in the top theorem, not a top-theorem premise."
   },
   {
     "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
