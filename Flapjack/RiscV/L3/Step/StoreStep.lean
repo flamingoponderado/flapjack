@@ -19,8 +19,8 @@ theorem dfnSD (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 3 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 3 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'SD» (rs1, rs2, offs) s =
       rawWriteData ((if rs1 = 0 then BitVec.signExtend 64 offs
         else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs), GPR rs2 s, 8) s := by
@@ -36,8 +36,8 @@ theorem dfnSD (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SW"]
 theorem dfnSW (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'SW» (rs1, rs2, offs) s =
       rawWriteData ((if rs1 = 0 then BitVec.signExtend 64 offs
         else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs), GPR rs2 s, 4) s := by
@@ -51,8 +51,8 @@ theorem dfnSW (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "SH"]
 theorem dfnSH (rs1 rs2 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'SH» (rs1, rs2, offs) s =
       rawWriteData ((if rs1 = 0 then BitVec.signExtend 64 offs
         else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs), GPR rs2 s, 2) s := by

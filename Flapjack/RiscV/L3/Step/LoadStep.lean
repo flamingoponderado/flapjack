@@ -1,5 +1,5 @@
 import Flapjack.RiscV.L3.Defs.IntegerLoad
-import Flapjack.RiscV.Aligned
+import Flapjack.Misc.Alignment
 namespace Flapjack.RiscV.L3.Step
 open Flapjack.RiscV.L3
 
@@ -8,7 +8,8 @@ open Flapjack.RiscV.L3
 equations, together with their generated `rd = 0` companions.  Each theorem
 keeps the original hypotheses: the destination guard `rd <> 0`, the bare-mode
 guard `mstatus.VM = 0`, the source-alignment premise `aligned` (present on the
-write theorems `LD`/`LW`/`LH`/`LWU`/`LHU` and on `LD_NOP`), and, for the
+write theorems `LD`/`LW`/`LH`/`LWU`/`LHU` and on `LD_NOP`), rendered as the
+tagged `Flapjack.holAligned p addr = true`, and, for the
 64-bit-capable loads `LD`/`LWU`, the architecture guards `ArchBase <> 0`/
 `ArchBase <> 1`.  Address computation, sign/zero extension, the mode guard
 ordering, and the whole-state record update follow the original clauses
@@ -38,8 +39,8 @@ theorem dfnLD (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 3 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 3 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LD» (rd, (rs1, offs)) s =
       { s with c_gpr := holUpdate s.procID (holUpdate rd
           (rawReadData (if rs1 = 0 then BitVec.signExtend 64 offs
@@ -59,8 +60,8 @@ theorem dfnLD (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LW"]
 theorem dfnLW (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LW» (rd, (rs1, offs)) s =
       { s with c_gpr := holUpdate s.procID (holUpdate rd
           (BitVec.signExtend 64 (holWordExtract 32 31 0
@@ -79,8 +80,8 @@ theorem dfnLW (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LH"]
 theorem dfnLH (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LH» (rd, (rs1, offs)) s =
       { s with c_gpr := holUpdate s.procID (holUpdate rd
           (BitVec.signExtend 64 (holWordExtract 16 15 0
@@ -119,8 +120,8 @@ theorem dfnLWU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd ≠ 0)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 2 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LWU» (rd, (rs1, offs)) s =
       { s with c_gpr := holUpdate s.procID (holUpdate rd
           (BitVec.setWidth 64 (holWordExtract 32 31 0
@@ -141,8 +142,8 @@ theorem dfnLWU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
 @[hol "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "LHU"]
 theorem dfnLHU (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (hrd : rd ≠ 0) (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 1 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LHU» (rd, (rs1, offs)) s =
       { s with c_gpr := holUpdate s.procID (holUpdate rd
           (BitVec.setWidth 64 (holWordExtract 16 15 0
@@ -163,8 +164,8 @@ theorem dfnLDNop (rd rs1 : BitVec 5) (offs : BitVec 12) (s : riscv_state)
     (harch0 : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 0)
     (harch : (s.c_MCSR s.procID).mcpuid.ArchBase ≠ 1) (hrd : rd = 0)
     (hVM : (s.c_MCSR s.procID).mstatus.VM = 0#5)
-    (_haligned : aligned 3 (if rs1 = 0 then BitVec.signExtend 64 offs
-      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs)) :
+    (_haligned : Flapjack.holAligned 3 (if rs1 = 0 then BitVec.signExtend 64 offs
+      else s.c_gpr s.procID rs1 + BitVec.signExtend 64 offs) = true) :
     «dfn'LD» (rd, (rs1, offs)) s = s := by
   simp only [«dfn'LD»]
   rw [in32BitMode_false s harch0 harch]
