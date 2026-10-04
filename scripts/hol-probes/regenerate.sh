@@ -8324,3 +8324,7 @@ run_probe riscv_memory_store_value_probeScript.sml riscv_memory_store_value_prob
 run_probe pan_to_crep_inline_table_validity_probeScript.sml pan_to_crep_inline_table_validity_probe.out \
   every_inst_w_inline \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_compile_validity_probeScript.sml pan_to_crep_compile_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile compile_def \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"

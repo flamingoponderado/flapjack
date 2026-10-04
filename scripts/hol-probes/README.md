@@ -8694,3 +8694,5 @@ source register/address extraction, native interference, complete postrelation
 and assertion assembly.
 
 `pan_to_crep_inline_table_validity_probe.out` captures the complete original typed every_inst_w_inline implication. Native proof derives the actual filtered name-map SUBMAP internally, including duplicate keys, and consumes the accepted full inlining theorem. It assumes only the original compile_to_crep table validity, with no output/target-run or added distinctness premise; full source-program/body validity remains separate.
+
+`pan_to_crep_compile_validity_probe.out` captures the complete original typed body-compiler validity and compile_def. The context/body dimensions coincide, while the unrelated quantified e binder is explicitly vacuous. Native proof covers all32 compiler induction cases, every Call fallback/handler branch and changed Dec/DecCall contexts, retaining only the original source guard. This supplies body validity, not complete declaration/program validity or end-to-end compiler correctness.
