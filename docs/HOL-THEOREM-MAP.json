@@ -98420,5 +98420,14 @@
     "words_as_type_indexed_bitvec": true,
     "reviewer": "Source1116-1134 full typed original capture reviewed: original EVERY good_panops pan_code guard and EVERY tuple-body expression validity conclusion over unrestricted original names/params/native syntax. Membership renders EVERY; internal function projection lemma derives source body guard without extra premises; accepted full compiler theorem supplies actual compiled body at actual generated context. Only positive word dimension translates to BitVec width with NeZero; maps internal to compiler do not occur in signature. No target-run/output/byte-range/distinctness premise; full compiler correctness remains open.",
     "statement_status": "reviewed_words_as_type_indexed_bitvec"
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_to_crep_compile_prog",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepProgramValidity.lean",
+    "lean_name": "everyInstOkLess_panToCrepCompileProg",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "Source1153-1159 and original full typed capture compared: original EVERY good_panops declaration-list guard implies EVERY binary-Crepop traversal of each actual compile_prog body. Membership renders EVERY, complete native declarations/name/parameter/body carriers retained, sole positive word dimension translated to BitVec width with NeZero. Proof composes complete original compile_to_crep validity and accepted every_inst_w_inline, exactly as HOL; no desired-output/target-run/byte-boundary/default or distinctness premise. Full source simulation and compiler correctness remain open."
   }
 ]

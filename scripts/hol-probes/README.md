@@ -8743,3 +8743,5 @@ statement, complete evidence and registration; source comparison and kernel
 checking remain required.
 
 `pan_to_crep_table_validity_probe.out` captures the complete original typed declaration-list compiler validity theorem. The native proof preserves its sole good_panops input guard and derives each projected function body guard internally before applying the full body compiler theorem. Names and parameters are unrestricted; no target-run, byte-range or desired-output premise is added. This is table validity, not full compiler correctness.
+
+`pan_to_crep_program_validity_probe.out` captures the complete original typed compile_prog arity invariant. The native proof composes full table validity with full actual inlining validity under the sole original good_panops declaration-list guard. This supplies the source-validity prerequisite, not full compiler correctness.
