@@ -1,0 +1,11 @@
+option_le_X_MAX_X_typed=option_le (x :num option) (OPTION_MAP2 MAX (m :num option) x) ∧ option_le x (OPTION_MAP2 MAX x m)
+Saved theorem _______ "OPTION_MAP2_MAX_IDEMPOT"
+OPTION_MAP2_MAX_IDEMPOT_typed=OPTION_MAP2 MAX (x :num option) x = x
+Saved theorem _______ "OPTION_MAP2_SOME_0"
+OPTION_MAP2_SOME_0_typed=OPTION_MAP2 $+ (x :num option) (SOME (0 :num)) = x ∧ OPTION_MAP2 MAX x (SOME (0 :num)) = x
+max_depth_mk_Branch_typed=∀(t1 :call_tree) (t2 :call_tree). max_depth (s :num sptree$num_map) (mk_Branch t1 t2) = max_depth s (Branch t1 t2 :call_tree)
+MEM_max_depth_graphs_typed=∀(ns :num list) (name :num) (y :α # β prog). MEM name ns ∧ lookup name (code :(α # β prog) sptree$num_map) = SOME y ⇒ option_le (max_depth_graphs (ss :num sptree$num_map) [name] (xs :num list) (funs :(num # β prog) sptree$num_map) code) (max_depth_graphs ss ns xs funs code)
+option_le_max_depth_graph_typed=∀(funs :(num # α prog) sptree$num_map) (h :num) (ns1 :num list) (t :num) (x1 :α prog) (ns2 :num list). set ns2 ⊆ set ns1 ∧ LENGTH ns2 ≤ LENGTH ns1 ⇒ option_le (max_depth (ss :num sptree$num_map) (call_graph funs h ns1 t x1)) (max_depth ss (call_graph funs h ns2 t x1))
+option_le_max_depth_graphs_typed=∀(ns :num list) (ns1 :num list) (ns2 :num list). set ns2 ⊆ set ns1 ∧ LENGTH ns2 ≤ LENGTH ns1 ⇒ option_le (max_depth_graphs (ss :num sptree$num_map) ns ns1 (funs :(num # α prog) sptree$num_map) (funs2 :(β # α prog) sptree$num_map)) (max_depth_graphs ss ns ns2 funs funs2)
+Saved theorem _______ "LENGTH_LESS_size"
+LENGTH_LESS_size_typed=∀(name :num) (ns :num list) (funs :α sptree$num_map) (y :α). ¬MEM name ns ∧ set ns ⊆ (domain funs :num -> bool) ∧ ALL_DISTINCT ns ∧ lookup name funs = SOME y ⇒ LENGTH ns < size funs

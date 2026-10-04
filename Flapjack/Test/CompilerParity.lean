@@ -288,6 +288,7 @@ import Flapjack.Test.LabToTargetPaddingParity
 import Flapjack.Test.LabToTargetRemoveLabelsParity
 import Flapjack.Test.LabToTargetShmemInfoParity
 import Flapjack.Test.LabToTargetCompileParity
+import Flapjack.Test.SourceToFlatPrimConfigParity
 import Flapjack.Test.MiscLookupAnyFindIndexParity
 import Flapjack.Test.StackPropsClockSupportParity
 import Flapjack.Test.StackToLabExecutedCodecParity
@@ -1092,6 +1093,7 @@ import Flapjack.Test.CrepArithExtCallParity
 import Flapjack.Test.CrepArithIfParity
 import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.CrepToLoopOriginalNamesProductionParity
+import Flapjack.Test.PanSourceEntryParity
 import Flapjack.Test.PanNativeWordPrefixParity
 import Flapjack.Test.PanNativeFrontendPrefixParity
 import Flapjack.Test.PanTargetEntryParity
@@ -1580,6 +1582,7 @@ def main : IO Unit := do
     Flapjack.Test.LabToTargetRemoveLabelsParity.runChecks,
     Flapjack.Test.LabToTargetShmemInfoParity.runChecks,
     Flapjack.Test.LabToTargetCompileParity.runChecks,
+    Flapjack.Test.SourceToFlatPrimConfigParity.runChecks,
     Flapjack.Test.MiscLookupAnyFindIndexParity.runChecks,
 
     checkEq "Cake return 0 generated words"
@@ -1944,6 +1947,7 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepArithExactParity.runChecks,
     Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
     Flapjack.Test.CrepToLoopOriginalNamesProductionParity.runChecks,
+    Flapjack.Test.PanSourceEntryParity.runChecks,
     Flapjack.Test.PanNativeWordPrefixParity.runChecks,
     Flapjack.Test.PanNativeFrontendPrefixParity.runChecks,
     Flapjack.Test.PanTargetEntryParity.runChecks,

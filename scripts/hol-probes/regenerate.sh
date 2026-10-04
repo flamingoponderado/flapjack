@@ -997,7 +997,7 @@ run_probe word_to_stack_selector_prelude_probeScript.sml word_to_stack_selector_
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 run_probe word_stack_frame_probeScript.sml word_stack_frame_probe.out \
   maxvar_skip limit_seq later_pair_f later_pair_alloc later_pair_slot_44 \
-  later_pair_slot_46 later_pair_bounded \
+  later_pair_slot_46 later_pair_bounded one_spill_physical_slot one_spill_bitmap \
   "$cake_dir/compiler/backend/word_to_stackScript.sml"
 run_probe word_stack_max_var_probeScript.sml word_stack_max_var_probe.out \
   maxvar_inst_mem maxvar_return "$cake_dir/compiler/backend/word_allocScript.sml" \
@@ -7409,9 +7409,29 @@ run_probe word_to_stack_comp_shareinst_probeScript.sml word_to_stack_comp_sharei
   comp_correct_shareinst_full_statement comp_correct_shareinst_full_proved comp_correct_shareinst_full_hypotheses comp_correct_shareinst_whole_statement comp_correct_shareinst_whole_proved comp_correct_shareinst_whole_hypotheses comp_correct_shareinst_full_statement_typed state_rel_set_var_k_typed word_exp_Op_SOME_Word_typed flat_exp_conventions_ShareInst_exp_simp_typed word_exp_Op_Add_0_typed evaluate_ShareInst_Var_eq_Op_Add_typed share_load_lemma1_typed share_load_lemma2_typed share_store_lemma1_typed share_store_lemma2_typed evaluate_ShareInst_Load_typed evaluate_ShareInst_Store_typed evaluate_ShareInst_correct_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
 
+run_probe backend_props_option_max_probeScript.sml backend_props_option_max_probe.out \
+  option_le_max_typed option_le_eq_eqns_typed option_map2_max_add_typed OPTION_MAP2_MAX_COMM_typed OPTION_MAP2_MAX_ASSOC_typed \
+  "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_depth_helpers_probeScript.sml word_depth_helpers_probe.out \
+  option_le_X_MAX_X_typed OPTION_MAP2_MAX_IDEMPOT_typed OPTION_MAP2_SOME_0_typed max_depth_mk_Branch_typed MEM_max_depth_graphs_typed option_le_max_depth_graph_typed option_le_max_depth_graphs_typed LENGTH_LESS_size_typed \
+  "$cake_dir/compiler/backend/proofs/word_depthProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_props_code_grows_probeScript.sml word_props_code_grows_probe.out \
+  evaluate_code_only_grows_typed evaluate_NONE_stack_size_const_typed \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe pan_target_root_leaves_probeScript.sml pan_target_root_leaves_probe.out \
+  UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed DIV_LESS_DIV_typed WORD_LS_IMP_typed lsr_lsl_typed byte_aligned_mult_typed compile_word_to_stack_sfs_aux_typed \
+  "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
 run_probe pan_to_target_library_lemmas_probeScript.sml pan_to_target_library_lemmas_probe.out \
   fun2set_disjoint_union_typed word_arith_lemma2_typed aligned_add_sub_typed \
   "$cake_dir/misc/miscScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe flat_lang_probeScript.sml flat_lang_probe.out \
+  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
+  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
 
 run_probe prim_types_program_probeScript.sml prim_types_program_probe.out \
   prim_types_program_def_typed \
@@ -7429,13 +7449,33 @@ run_probe namespace_ops_probeScript.sml namespace_ops_probe.out \
   id_datatype_typed mk_id_def_typed id_to_n_def_typed id_to_mods_def_typed nsLookup_def_typed nsLookupMod_def_typed nsEmpty_def_typed nsAppend_def_typed nsLift_def_typed alist_to_ns_def_typed nsBind_def_typed nsBindList_def_typed nsOptBind_def_typed nsSing_def_typed nsSub_def_typed nsAll_def_typed nsAll2_def_typed nsDom_def_typed nsDomMod_def_typed nsMap_def_typed \
   "$cake_dir/semantics/namespaceScript.sml" "$cake_dir/semantics"
 
-run_probe flat_lang_probeScript.sml flat_lang_probe.out \
-  flat_op_datatype_typed flat_pat_datatype_typed flat_exp_datatype_typed ctor_id_abbrev type_id_abbrev type_group_id_abbrev pat_bindings_def_typed bool_id_def_typed Bool_def_typed SmartIf_def_typed false_tag_def_typed true_tag_def_typed bool_to_tag_def_typed \
-  "$cake_dir/compiler/backend/flatLangScript.sml" "$cake_dir/compiler/backend"
-
 run_probe source_to_flat_helpers_probeScript.sml source_to_flat_helpers_probe.out \
   compile_var_def_typed compile_pat_def_typed pat_tups_def_typed astOp_to_flatOp_def_typed type_group_id_type_def_typed str_sep_def_typed join_all_names_aux_def_typed join_all_names_def_typed om_tra_def_typed alloc_defs_def_typed make_varls_def_typed empty_env_def_typed extend_env_def_typed lift_env_def_typed lookup_inc_def_typed alloc_tags1_def_typed alloc_tags_def_typed env_id_tuple_def_typed simple_dlet_def_typed concat_def_typed \
   "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
+run_probe source_to_flat_compile_probeScript.sml source_to_flat_compile_probe.out \
+  compile_exp_def_typed compile_decs_def_typed empty_config_def_typed prim_src_config_eq \
+  "$cake_dir/compiler/backend/source_to_flatScript.sml" "$cake_dir/compiler/backend"
+
+run_probe backend_prim_src_config_probeScript.sml backend_prim_src_config_probe.out \
+  prim_src_config_def_typed prim_src_config_eq_typed \
+  "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
+
+run_probe backend_config_ok_probeScript.sml backend_config_ok_probe.out \
+  backend_config_ok_def_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_read_limits_probeScript.sml backend_read_limits_probe.out \
+  read_limits_def_typed \
+  "$cake_dir/compiler/backend/proofs/backendProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe data_to_word_option_le_probeScript.sml data_to_word_option_le_probe.out \
+  option_le_SOME_typed \
+  "$cake_dir/compiler/backend/proofs/data_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe loop_to_word_every_inst_ok_less_probeScript.sml loop_to_word_every_inst_ok_less_probe.out \
+  loop_inst_ok_def_typed loop_to_word_comp_every_inst_ok_less_typed loop_to_word_comp_func_every_inst_ok_less_typed loop_to_word_compile_prog_every_inst_ok_less_typed loop_to_word_every_inst_ok_less_typed \
+  "$cake_dir/pancake/proofs/loop_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
 
 run_probe backend_compile_lab_probeScript.sml backend_compile_lab_probe.out \
   compile_lab_LENGTH_typed compile_lab_IMP_mmio_pcs_min_index_typed \
@@ -8190,3 +8230,19 @@ run_probe riscv_branch_decode_probeScript.sml riscv_branch_decode_probe.out \
   beq_decode_universal beq_decode_hypotheses beq_zero beq_all_ones beq_alias_sign beq_mixed beq_source_clause beq_carrier_types bne_decode_universal bne_decode_hypotheses bne_zero bne_all_ones bne_alias_sign bne_mixed bne_source_clause bne_carrier_types blt_decode_universal blt_decode_hypotheses blt_zero blt_all_ones blt_alias_sign blt_mixed blt_source_clause blt_carrier_types bltu_decode_universal bltu_decode_hypotheses bltu_zero bltu_all_ones bltu_alias_sign bltu_mixed bltu_source_clause bltu_carrier_types bge_decode_universal bge_decode_hypotheses bge_zero bge_all_ones bge_alias_sign bge_mixed bge_source_clause bge_carrier_types bgeu_decode_universal bgeu_decode_hypotheses bgeu_zero bgeu_all_ones bgeu_alias_sign bgeu_mixed bgeu_source_clause bgeu_carrier_types \
   "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_source_entry_word_probeScript.sml pan_source_entry_word_probe.out \
+  empty_word missing_word \
+  "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe riscv_memory_bytes_probeScript.sml riscv_memory_bytes_probe.out \
+  read_offset0 read_offset1 read_offset2 read_offset3 read_offset4 read_offset5 read_offset6 read_offset7 read_wrap_last read_wrap_cross write1_zero write1_edge write1_wrap write1_cross write2_zero write2_edge write2_wrap write2_cross write4_zero write4_edge write4_wrap write4_cross write8_zero write8_edge write8_wrap write8_cross read_source_clause read_source_hypotheses read_carrier_types write_source_clause write_source_hypotheses write_carrier_types word_read_source_clause word_read_source_hypotheses word_read_carrier_types word_write_source_clause word_write_source_hypotheses word_write_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/model/riscvScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_simp_validity_probeScript.sml pan_simp_validity_probe.out \
+  every_inst_ok_less_ret_to_tail every_inst_ok_less_seq_assoc every_inst_ok_less_pan_simp_compile every_inst_ok_less_pan_simp_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_memory_step_probeScript.sml riscv_memory_step_probe.out \
+  ld_next_sign ld_next_zero lwu_next_sign lwu_next_zero lhu_next_sign lhu_next_zero lbu_next_sign lbu_next_zero sd_next_sign sd_next_zero sw_next_sign sw_next_zero sh_next_sign sh_next_zero sb_next_sign sb_next_zero next_source_clause next_source_hypotheses next_carrier_types pc_source_clause pc_source_hypotheses pc_carrier_types \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
