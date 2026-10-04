@@ -8111,3 +8111,8 @@ The `backend_lower_pipeline` probe also captures the complete original closed
 `from_word_0_def` and its inferred type, including the actual WordToWord tuple
 and oracle update before `from_word`. This is definition evidence, not an
 executed-route or complete compiler-correctness result.
+The `word_to_word_install` probe captures the complete original closed typed
+`compile_single_correct` theorem and its original kernel-proved Install
+specialization. `GEN_ALL` closes every binder; the specialization has zero
+hypotheses. These are original-theory captures, not a local replay or an
+independent cross-language equivalence proof.

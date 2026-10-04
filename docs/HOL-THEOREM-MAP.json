@@ -91274,5 +91274,19 @@
     "words_as_type_indexed_bitvec": true,
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.51): HOL compile_single_correct, Resume Call case (word_to_wordProofScript.sml:347-589). Case piece of the full statement (235-256) at Call ret dest args handler with arbitrary arguments and state via CompileSingleCorrectAt, with exactly HOL's outer termdep/clock induction hypothesis (CompileSingleCorrectLowerIH), used for the compiled callee body at call_env (dec_clock) and for the return/exception handlers at a smaller clock. Proof follows HOL: find_code_thm locates the compiled callee prog' (SND compile_single = (LENGTH args, prog')), the IH runs prog' on both code tables, compile_single_lem relates the source callee to prog', permute_swap_lemma aligns the final permutation, HOL's witness λn. if n = 0 then st.permute 0 else perm (n-1) restores the frame permutation consumed by push_env (pushEnv_shift), and the Result/Exception continuations use pop_env/set_vars/set_var commuting with the replaced fields; bad returns, failed guards and errors are errors on both sides. fmap_as_finite_support records the state carrier's fpRegs/store; positive word dimension via [NeZero width]. Inherits reals_as_rational_cuts: the statement reaches a reals_as_rational_cuts-qualified declaration (the wordSem inst) through evaluate, as computed by the constant-closure exporter; it uses no real rendering itself, and the inherited docs/SOUNDNESS.md item 8 assumption applies to its FP instructions. This marker only propagates the assumption through the constant closure; it does not review any untagged definition on that path."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSingleCorrect/Install.lean",
+    "lean_name": "compile_single_correct_Install",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_single_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "fpRegs",
+      "store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol source comparison 2026-10-04: original full compile_single_correct235-256 specialized to Install, source Resume801-822. Complete arbitrary positive word dimension and independent C/FFI host carriers retained through CompileSingleCorrectAt; all original code_rel/domain/compile-map/oracle-map/gc premises and full existential permutation, source-error conditional, result/code relation/domain/exact post-state update conclusion retained. Install has no recursive subprogram and needs no IH. Identity existing source permutation; every cut-env/variable/buffer/compiler/list/config failure retained, actual oracle source list passed through compileSingle internally, successful actual outputs checked against flushed byte/data buffers and next config. Original left-biased code union proven using source code_rel_union_fromAList; domain equality from exact domain_union/domain_fromAList and original FST_compile_single; entry label preserved and actual shift_seq/oracle-map commutation. No target evaluation/result/post-relation premise. fpRegs/store only canonical finite-map fields, locals/code remain native Spt; same-module two-way witness actual owner; words qualifier only standard positive word dimension. Inherits reals_as_rational_cuts through full evaluate closure, SOUNDNESS item8 applies; no added real operation. Original full theorem and kernel-proved Install specialization captured with show_types and GEN_ALL, not a literal replay or independent HOL-to-Lean equivalence. Final assembly/compiler theorem and executed routing stay separate."
   }
 ]
