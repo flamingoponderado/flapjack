@@ -93433,6 +93433,134 @@
     "reviewer": "Flapjack proof infrastructure for pan_to_targetProof word_to_word_compile_no_install_no_alloc: transfer of no_alloc_code along code_rel with equal domains, or domain preservation of word_to_word$compile (HOL's inline domain_fromAList/MAP_ZIP step); no independent HOL declaration."
   },
   {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLD",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LD",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: ArchBase <> 0w, ArchBase <> 1w, rd <> 0w, mstatus.VM = 0w, aligned 3 on the effective address. Conclusion writes rd |-> rawReadData (low-64 of the eight addressed bytes) into the whole-state c_gpr record. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd <> 0w, mstatus.VM = 0w, aligned 2. Conclusion writes rd |-> signExtend 64 (low 32 of the addressed word). Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLH",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd <> 0w, mstatus.VM = 0w, aligned 1. Conclusion writes rd |-> signExtend 64 (low 16 of the addressed word). Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LB",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd <> 0w, mstatus.VM = 0w (no alignment premise). Conclusion writes rd |-> signExtend 64 (low 8 of the addressed word). Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLWU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LWU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: ArchBase <> 0w, ArchBase <> 1w, rd <> 0w, mstatus.VM = 0w, aligned 2. Conclusion writes rd |-> zeroExtend 64 (low 32 of the addressed word); the 32-bit architecture branch is excluded by the mode hypotheses. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLHU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LHU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd <> 0w, mstatus.VM = 0w, aligned 1. Conclusion writes rd |-> zeroExtend 64 (low 16 of the addressed word). Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLDNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LD_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: ArchBase <> 0w, ArchBase <> 1w, rd = 0w, mstatus.VM = 0w, aligned 3. Companion generated by class_rd0 through utilsLib.save_thms; conclusion dfn'LD ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLWNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LW_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd = 0w, mstatus.VM = 0w (no alignment premise). Companion conclusion dfn'LW ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLHNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LH_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd = 0w, mstatus.VM = 0w. Companion conclusion dfn'LH ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLBNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LB_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd = 0w, mstatus.VM = 0w. Companion conclusion dfn'LB ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLWUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LWU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: ArchBase <> 0w, ArchBase <> 1w, rd = 0w, mstatus.VM = 0w. Companion conclusion dfn'LWU ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/LoadStep.lean",
+    "lean_name": "dfnLHUNop",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "LHU_NOP",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.5): original riscv_stepScript.sml:902-907 memory-load `class_rd0 (rd,rs1,offs)` saved theorem over the native load definition. Original hypotheses: rd = 0w, mstatus.VM = 0w. Companion conclusion dfn'LHU ((rd,rs1,offs)) s = s. Native word5/word12/word64/native-state equation retained with the original hypotheses (the source `aligned` premise rendered as the tagged `Flapjack.holAligned p addr = true`) and no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-load.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/StoreStep.lean",
+    "lean_name": "dfnSD",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SD",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.6): original riscv_stepScript.sml:908-915 memory-store plain `class (rs1,rs2,offs)` saved theorem over the native store definition. Original hypotheses: ArchBase <> 0w, ArchBase <> 1w, mstatus.VM = 0w, aligned 3 on the virtual address. Native word5/word5/word12/native-state equation with the expanded original MEM8 update, stated as the definitionally-equal rawWriteData form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-store.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/StoreStep.lean",
+    "lean_name": "dfnSW",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SW",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.6): original riscv_stepScript.sml:908-915 memory-store plain `class (rs1,rs2,offs)` saved theorem over the native store definition. Original hypotheses: mstatus.VM = 0w, aligned 2 on the virtual address. Native word5/word5/word12/native-state equation with the expanded original MEM8 update, stated as the definitionally-equal rawWriteData form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-store.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/StoreStep.lean",
+    "lean_name": "dfnSH",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SH",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.6): original riscv_stepScript.sml:908-915 memory-store plain `class (rs1,rs2,offs)` saved theorem over the native store definition. Original hypotheses: mstatus.VM = 0w, aligned 1 on the virtual address. Native word5/word5/word12/native-state equation with the expanded original MEM8 update, stated as the definitionally-equal rawWriteData form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-store.py."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/StoreStep.lean",
+    "lean_name": "dfnSB",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SB",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.6): original riscv_stepScript.sml:908-915 memory-store plain `class (rs1,rs2,offs)` saved theorem over the native store definition. Original hypothesis: mstatus.VM = 0w (no alignment condition). Native word5/word5/word12/native-state equation with the expanded original MEM8 update, stated as the definitionally-equal rawWriteData form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-store.py."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/data_to_word_gcProofScript.sml",
     "hol_name": "gc_fun_const_ok_word_gc_fun",
     "lean_path": "Flapjack/Compiler/Backend/DataToWord/Proofs/Gc/GcFunConstOk.lean",
@@ -93440,6 +93568,99 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.8): original data_to_word_gcProofScript.sml:6409-6417, captured by the data_to_word_gc_fun_const_ok probe: gc_fun_const_ok (word_gc_fun c) with c : data_to_word$config implicit, over the reviewed word_simpProof gc_fun_const_ok (WordSimp.gcFunConstOk) and word_gcFunctions word_gc_fun (wordGcFun); the type ascription on wordGcFun only fixes the word width. Proof follows HOL: word_gc_IMP_EVERY2 then LIST_REL_mono (ListRel to List.Forall₂). No added premise."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",
+    "lean_name": "constFpLoopSeq",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "const_fp_loop_Seq",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Original BODY_CONJUNCTS filter Seq selects the sole Seq clause of const_fp_loop_def; full arbitrary first/second program and knowledge tree, dependent intermediate map threading and exact program/map result retained. Lean let pair destructuring matches original."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",
+    "lean_name": "constFpLoopDummyCases",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "const_fp_loop_dummy_cases",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Full actual compile guard for If with Raise1/Raise2, arbitrary cs and csPost/programPost. All three disjuncts retained: destRaiseNum1 and universal equality selecting arbitrary first branch; destRaiseNum2 and universal equality selecting arbitrary second; or destRaiseNum0. Actual lookup/getVarImmCs and original wordCmp decide strategy, no successful strategy assumption or narrowed payload."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/HoistPrerequisites.lean",
+    "lean_name": "destIfIff",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "dest_If_thm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison2026-10-04 original wordConvsProof262-287: native WordLangProgHOL positive arbitrary BitVec width/NeZero, exact List/Spt carriers, no evaluator or numerical FP rendering. Fresh original local derivation/unchanged proof replay full inferred types, T/hyp0; not HOL-to-Lean equivalence. Entire iff between native destructor Some five-tuple and exact If constructor, arbitrary program/cmp/register/RegImm and both subprograms. No projection-only weakening. All constructor arities and tuple order retained."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "extractLabelsConstFpLoop",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_const_fp_loop",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof221-266: full original arbitrary program, native Spt word knowledge and actual returned program/map pair retained, with the loop equation as the sole original premise; the wrapper is unconditional. Positive HOL word dimension translated to BitVec width with [NeZero width]; native instruction/program constructors, exact Spt cutsets and MlString names unchanged. Kernel stronger internal ordered-sublist proof covers every native constFpLoop clause, both chosen conditional branches, unresolved conditionals, state-threaded sequences, all Call/return/handler combinations, Loop and OpCurrHeap. It derives both original labels_rel clauses (source-containment and source-distinctness implication), without assuming output labels or an output relation; no evaluator, real/FP semantics or production-path claim. Both literal original statements/proofs freshly replayed with full typed T/hyp0 in word_convs_simp_const_fp_labels_probe.out; five original sequence/dropConsts prerequisites replayed unchanged. Source review and kernel checks do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "extractLabelsConstFp",
+    "hol_path": "cakeml/compiler/backend/proofs/wordConvsProofScript.sml",
+    "hol_name": "extract_labels_const_fp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol source comparison of original wordConvsProof221-266: full original arbitrary program, native Spt word knowledge and actual returned program/map pair retained, with the loop equation as the sole original premise; the wrapper is unconditional. Positive HOL word dimension translated to BitVec width with [NeZero width]; native instruction/program constructors, exact Spt cutsets and MlString names unchanged. Kernel stronger internal ordered-sublist proof covers every native constFpLoop clause, both chosen conditional branches, unresolved conditionals, state-threaded sequences, all Call/return/handler combinations, Loop and OpCurrHeap. It derives both original labels_rel clauses (source-containment and source-distinctness implication), without assuming output labels or an output relation; no evaluator, real/FP semantics or production-path claim. Both literal original statements/proofs freshly replayed with full typed T/hyp0 in word_convs_simp_const_fp_labels_probe.out; five original sequence/dropConsts prerequisites replayed unchanged. Source review and kernel checks do not independently prove HOL-to-Lean equivalence."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "labelsRelOfSublist",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only generic list support: derive both labelsRel conjuncts from an ordered sublist; no separate HOL original with this stronger premise."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/WordConvs/WordSimpLabels/ConstFp.lean",
+    "lean_name": "constFpLoopLabelsSublist",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-only stronger internal invariant over the actual native constant-folding loop projection. The original proof handles containment/distinctness inline; no separate named sublist theorem."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnMUL",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MUL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Operands zeroed for rs1=0/rs2=0, product in the low word."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIV",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Signed quotient (word_quot / BitVec.sdiv) with the all-ones zero-divisor result."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREM",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Signed remainder (word_rem / BitVec.srem); zero divisor returns the dividend."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Unsigned remainder (word_mod / BitVec.umod); zero divisor returns the dividend."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
