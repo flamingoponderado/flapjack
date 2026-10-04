@@ -200,7 +200,8 @@ theorem retainedConsumer_physicalColour {α : Type} [OfNat α 0] [WordCseHash α
       dead unreach ssa label parameters source = some output)
     (name : Nat) (physical : name % 2 = 0) :
     CakeAlloc.totalColour output.colouring name = name := by
-  unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa at produced
+  unfold cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at produced
   split at produced <;> simp_all
   cases ssaResult : ssa parameters.length source with
   | none => simp [ssaResult] at produced

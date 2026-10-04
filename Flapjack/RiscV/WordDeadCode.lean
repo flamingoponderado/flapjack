@@ -528,7 +528,8 @@ safety boundary does not prove universal source-to-boundary closure. -/
 input memory guard precedes the producer; cleanup, subsequent memory guards,
 IRC and retained colouring are the actual production operations.
 Flapjack infrastructure, not a HOL theorem port. -/
-def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash α]
+def cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy [OfNat α 0] [WordCseHash α]
+    (copy : WordProg α → WordProg α)
     (dead : WordProg α → WordProg α)
     (unreach : WordProg α → Option (WordProg α))
     (ssaProducer : Nat → WordProg α → Option (WordSsaState × List Nat × WordProg α))
@@ -540,7 +541,7 @@ def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash
   if !allocatorMemorySupported ssaProgram then none else
   let ssaProgram := dead ssaProgram
   let ssaProgram := wordCseProp ssaProgram
-  let ssaProgram := wordCopyProp ssaProgram
+  let ssaProgram := copy ssaProgram
   let ssaProgram := wordThreeToTwoReg ssaProgram
   match unreach ssaProgram with
   | none => none
@@ -566,6 +567,18 @@ def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash
       some ⟨state, renamedParameters, ssaProgram,
         cakeColourWordSpillState cakeRiscVRegisterCount
           parameters ssaProgram colouring, colouring⟩
+
+/-- Generic compatibility entrypoint retaining the historical copy pass.
+The executed fixed-width route supplies native copyProp to the same consumer.
+Flapjack infrastructure without a separate HOL original. -/
+def cakeAllocateWordFunctionAfterDeadWithColourWithSsa [OfNat α 0] [WordCseHash α]
+    (dead : WordProg α → WordProg α)
+    (unreach : WordProg α → Option (WordProg α))
+    (ssaProducer : Nat → WordProg α → Option (WordSsaState × List Nat × WordProg α))
+    (currentFunction : Nat) (parameters : List Nat) (program : WordProg α) [BEq α] :
+    Option (CakeAllocationWithColour α) :=
+  cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy wordCopyProp dead unreach
+    ssaProducer currentFunction parameters program
 
 /-- Historical SSA producer feeding the shared allocation consumer. -/
 def cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith [OfNat α 0] [WordCseHash α]
@@ -683,7 +696,8 @@ theorem cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith_allocation
     output.allocation = cakeColourWordSpillState cakeRiscVRegisterCount
       parameters output.program output.colouring := by
   unfold cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at h
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at h
   simp only [Option.bind_some] at h
   repeat' (split at h <;> simp_all)
   all_goals rcases h with ⟨_, _, _, rfl⟩
@@ -699,7 +713,8 @@ theorem cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith_output_supporte
       parameters program = some output) :
     allocatorMemorySupported output.program = true := by
   unfold cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at h
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at h
   simp only [Option.bind_some] at h
   repeat' (split at h <;> simp_all)
   all_goals rcases h with ⟨_, _, checked, rfl⟩
@@ -717,7 +732,8 @@ theorem cakeAllocateWordFunctionAfterDeadWithColour_allocation
       parameters output.program output.colouring := by
   unfold cakeAllocateWordFunctionAfterDeadWithColour cakeAllocateWordFunctionAfterDeadWithColourFromLimit
     cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at h
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at h
   simp only [Option.bind_some] at h
   repeat' (split at h <;> simp_all)
   all_goals rcases h with ⟨_, _, _, rfl⟩
@@ -749,7 +765,8 @@ theorem cakeAllocateWordFunctionAfterDeadWithColour_output_supported
     allocatorMemorySupported output.program = true := by
   unfold cakeAllocateWordFunctionAfterDeadWithColour cakeAllocateWordFunctionAfterDeadWithColourFromLimit
     cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at h
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at h
   simp only [Option.bind_some] at h
   repeat' (split at h <;> simp_all)
   all_goals rcases h with ⟨_, _, checked, rfl⟩
@@ -766,7 +783,8 @@ theorem cakeAllocateWordFunctionAfterDead_input_supported
     allocatorMemorySupported program = true := by
   unfold cakeAllocateWordFunctionAfterDead cakeAllocateWordFunctionAfterDeadWithColour cakeAllocateWordFunctionAfterDeadWithColourFromLimit
     cakeAllocateWordFunctionAfterDeadWithColourFromLimitWith
-    cakeAllocateWordFunctionAfterDeadWithColourWithSsa at h
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsa
+    cakeAllocateWordFunctionAfterDeadWithColourWithSsaAndCopy at h
   simp only [Option.bind_some] at h
   split at h <;> simp_all [CakeAllocationWithColour.toLegacy]
 
