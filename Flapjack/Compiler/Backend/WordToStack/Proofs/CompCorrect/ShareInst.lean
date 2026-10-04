@@ -5,6 +5,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelGetVar
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelRegisterUpdate
 import Flapjack.Compiler.Backend.WordToStack.NativeSharedMemory
 import Flapjack.Misc.Option
+import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 
 /-!
 # Word-to-Stack `comp_correct`: the `ShareInst` case
@@ -357,5 +358,138 @@ theorem shareStoreLemma1 {width : Nat} [NeZero width] {C F : Type}
       rw [r11] at hD
       simp only [hD, Bool.false_eq_true, if_false, Prod.mk.injEq] at hrun
       exact absurd hrun.1.symm notError
+
+/-- The source address `Var r + Const c` (Flapjack infrastructure). -/
+theorem wordAddr {width : Nat} [NeZero width] {C F : Type}
+    {s : WordSemStateFiniteExact width C F} {r : Nat} {c a : BitVec width} :
+    WordSemStateFiniteExact.wordExp s (.op .add [.var r, .const c]) = some (.word a) ↔
+      ∃ x, WordSemStateFiniteExact.getVar r s = some (.word x) ∧ a = x + c := by
+  rcases h : WordSemStateFiniteExact.getVar r s with _ | (x | ⟨p, q⟩) <;>
+    simp [WordSemStateFiniteExact.wordExp, h, theWords, wordOpHOL, wordOp, eq_comm]
+
+/-- The target address `Var r + Const c` (Flapjack infrastructure). -/
+theorem stackAddr {width : Nat} [NeZero width] {C F : Type}
+    {t : StackSemStateFiniteExact width C F} {r : Nat} {c x : BitVec width}
+    (h : StackSemStateOps.getVar r t = some (.word x)) :
+    StackSemExpressions.wordExp t (.op .add [.var r, .const c]) = some (x + c) := by
+  simp [StackSemExpressions.wordExp, StackSemStateOps.getVar] at h ⊢
+  simp [h, wordOpHOL, wordOp]
+
+/-- Source decomposition of a nonerror `ShareInst` with a `Var + Const`
+address (Flapjack infrastructure). -/
+theorem shareInstSource {width : Nat} [NeZero width] {C F : Type}
+    {op : WordMemOp} {v ad : Nat} {offset : BitVec width}
+    {s s1 : WordSemStateFiniteExact width (Nat × C) F} {res : Option (WordSemResult width)}
+    (hrun : WordSemStateFiniteExact.evaluate
+      (.shareInst op v (.op .add [.var ad, .const offset])) s = (res, s1))
+    (notError : res ≠ some .error) :
+    ∃ x, WordSemStateFiniteExact.getVar ad s = some (.word x) ∧
+      WordSemStateFiniteExact.shareInst op v (x + offset) s = (res, s1) := by
+  simp only [WordSemStateFiniteExact.evaluate] at hrun
+  rcases he : WordSemStateFiniteExact.wordExp s (.op .add [.var ad, .const offset]) with
+      _ | (a | ⟨p, q⟩) <;> simp only [he, Prod.mk.injEq] at hrun
+  · exact absurd hrun.1.symm notError
+  · obtain ⟨x, hx, rfl⟩ := wordAddr.mp he
+    exact ⟨x, hx, hrun⟩
+  · exact absurd hrun.1.symm notError
+
+/-- Target shared-memory operations leave the clock unchanged (Flapjack
+infrastructure). -/
+theorem shMemOp_clock {width : Nat} [NeZero width] {C F : Type} (op : WordMemOp) (r : Nat)
+    (a : BitVec width) (u : StackSemStateFiniteExact width C F) :
+    (StackSemShMem.shMemOp op r a u).2.clock = u.clock := by
+  cases op <;>
+    simp only [StackSemShMem.shMemOp, StackSemShMem.shMemLoad, StackSemShMem.shMemLoadByte,
+      StackSemShMem.shMemLoad16, StackSemShMem.shMemLoad32, StackSemShMem.shMemStore,
+      StackSemShMem.shMemStoreByte, StackSemShMem.shMemStore16, StackSemShMem.shMemStore32] <;>
+    repeat' split
+  all_goals rfl
+
+/-- HOL `evaluate_ShareInst_Load` (7386-7445). -/
+@[hol "cakeml/compiler/backend/proofs/word_to_stackProofScript.sml" "evaluate_ShareInst_Load"
+  (fmap_as_finite_support_relation := [WordSemStateFiniteExact.fpRegs,
+    WordSemStateFiniteExact.store, StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.fpRegs, StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem evaluateShareInstLoad {width : Nat} [NeZero width] {C F : Type}
+    {ac : AsmConfigExact width} {k f frame : Nat} {op : WordMemOp} {v ad : Nat}
+    {offset : BitVec width} {s s1 : WordSemStateFiniteExact width (Nat × C) F}
+    {t : StackSemStateFiniteExact width C F} {lens : List Nat}
+    {res : Option (WordSemResult width)} :
+    WordSemStateFiniteExact.evaluate
+        (.shareInst op (2 * v) (.op .add [.var (2 * ad), .const offset])) s = (res, s1) ∧
+      res ≠ some .error ∧ stateRel ac k f frame s t lens 0 ∧ v < frame + k ∧ ad < frame + k ∧
+      (op = .load ∨ op = .load8 ∨ op = .load16 ∨ op = .load32) →
+    ∃ ck t1,
+      StackSemEvaluate.evaluate
+          (wShareInstNative op (2 * v) (.addr (2 * ad) offset) (k, f, frame),
+            { t with clock := ck + t.clock }) = (res.map compileResult, t1) ∧
+      ((∃ fv, res = some (.finalFfi fv) ∧ s1.ffi = t1.ffi ∧ s1.clock = t1.clock) ∨
+        (res = none ∧ stateRel ac k f frame s1 t1 lens 0)) := by
+  rintro ⟨hrun, notError, related, hv, had, hop⟩
+  obtain ⟨x, hx, hshare⟩ := shareInstSource hrun notError
+  rcases fmt : Compiler.Backend.WordToStackRegFormat.wReg1 (2 * ad) (k, f, frame) with ⟨xs, reg⟩
+  obtain ⟨t1, run1, clock1, rel1, len1, sp1, -, -, -, loaded⟩ :=
+    LoadRegister.evaluateWStackLoadWReg1 ac k f frame (2 * ad) reg xs s t lens (.word x) fmt
+      (by omega) hx related
+  refine ⟨1, ?_⟩
+  have hloads : StackSemEvaluate.evaluate (wStackLoadNative xs .skip,
+      { t with clock := 1 + t.clock }) = (none, { t1 with clock := 1 + t.clock }) := by
+    rw [LoadRegisterClock.evaluateWStackLoadClock, run1]; rfl
+  have hfix : StackSemControl.fixClock { t with clock := 1 + t.clock }
+      ((none : Option (StackSemResult width)), { t1 with clock := 1 + t.clock }) =
+      (none, { t1 with clock := 1 + t.clock }) := by
+    simp [StackSemControl.fixClock]
+  have hdec : StackSemStateOps.decClock { t1 with clock := 1 + t.clock } = t1 := by
+    simp only [StackSemStateOps.decClock, clock1]
+    congr 1
+    omega
+  have haddr : StackSemExpressions.wordExp { t1 with clock := 1 + t.clock }
+      (.op .add [.var reg, .const offset]) = some (x + offset) :=
+    stackAddr (t := { t1 with clock := 1 + t.clock }) loaded
+  rcases hop with rfl | rfl | rfl | rfl <;>
+    simp only [wShareInstNative, fmt] <;>
+    rw [LoadRegister.evaluateWStackLoadSeq, StackSemEvaluate.evaluate_seq, hloads, hfix] <;>
+    simp only [wRegWrite1Native, show 2 * v / 2 = v by omega]
+  all_goals
+    split
+    · rename_i hlt
+      rw [StackSemEvaluate.evaluate_shMemOp, haddr]
+      simp only [show ¬ (1 + t.clock = 0) by omega, if_false, hdec]
+      exact shareLoadLemma2 ⟨hshare, rel1, hlt, by simp, notError⟩
+    · rename_i hge
+      rw [StackSemEvaluate.evaluate_seq, StackSemEvaluate.evaluate_shMemOp, haddr]
+      simp only [show ¬ (1 + t.clock = 0) by omega, if_false, hdec]
+      obtain ⟨t2, h2, hc⟩ := shareLoadLemma1 ⟨hshare, rel1, hv, by omega, by simp, notError⟩
+      have hclk : t2.clock = t.clock := by
+        have hc' := congrArg (fun p => p.2.clock) h2
+        simp only [shMemOp_clock] at hc'
+        omega
+      have hmin : min (1 + t.clock) t2.clock = t2.clock := by omega
+      rw [h2]
+      have hfix2 : ∀ r : Option (StackSemResult width), StackSemControl.fixClock
+          { t1 with clock := 1 + t.clock } (r, t2) = (r, t2) := by
+        intro r
+        show (r, { t2 with clock := min (1 + t.clock) t2.clock }) = (r, t2)
+        rw [hmin]
+      rw [hfix2]
+      have related' := related
+      unfold stateRel at related'
+      obtain ⟨-, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -, -,
+        -, -, -, -, -, r33, -, r35, -⟩ := related'
+      rcases hc with ⟨fv, rfl, hffi, hcl⟩ | ⟨rfl, hrel, ⟨xv, hxv⟩, hsp, hlen⟩
+      · exact ⟨t2, rfl, .inl ⟨fv, rfl, hffi, hcl⟩⟩
+      · have huse : t2.useStack = true := by
+          have hrel' := hrel
+          unfold stateRel at hrel'
+          exact hrel'.2.2.2.2.1
+        have hf : f = frame + 1 := by split at r35 <;> omega
+        have hidx : f - 1 - (v - k) = f + k - (v + 1) := by omega
+        refine ⟨_, ?_, .inr ⟨rfl, hrel⟩⟩
+        simp only [Option.map_none]
+        rw [StackSemEvaluate.evaluate_stackStore]
+        simp only [huse, Bool.not_true, Bool.false_eq_true, if_false,
+          StackSemStateOps.getVar, hxv, hidx, Flapjack.holThe]
+        rw [if_neg (by omega)]
 
 end Flapjack.WordToStackProofs.CompCorrect.ShareInst
