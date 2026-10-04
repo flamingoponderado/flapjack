@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslImmediate
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrImmediate
