@@ -99154,5 +99154,13 @@
     "lean_name": "nativeSourceCompile_correct",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific final driver theorem (bead flapjack-executed-cli-correctness): NativeSource.compile source = ok out with parse result parsed (having a main function), out.wholeResult = (some (bytes,bitmaps,c'), stack_max), isRiscvMachineConfig mc and the original non-configuration premises on out.declarations ⇒ every machine behaviour relates (extend_with_resource_limit') to semanticsDecls s main (parsed.map declToHOL). Via compileProgMaxAsmFast_eq, semanticsDecls_mainFirstHOL and panToTargetCompileSemantics (HOL pan_to_target_compile_semantics at RISC-V). Parse/static errors and default-main case excluded; default CLI entry point separate."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/backendScript.sml",
+    "hol_name": "ffinames_to_string_list_def",
+    "lean_path": "Flapjack/Compiler/Backend/Backend.lean",
+    "lean_name": "ffinamesToStringList",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 (bead flapjack-native-cli-default-adapter): backendScript.sml 675-681, three clauses: [] -> []; ExtCall s :: rest -> s :: rec; SharedMem _ :: rest -> rec. Lean over HolFfiName (extCall MlString / sharedMem) returning List MlString, clause-for-clause."
   }
 ]

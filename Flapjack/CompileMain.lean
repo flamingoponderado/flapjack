@@ -1,5 +1,6 @@
 import Flapjack.RiscV.PipelineDiagnostics
 import Flapjack.RiscV.ArtifactFormat
+import Flapjack.RiscV.NativeCLIAdapter
 
 /-!
 # Flapjack compiler command
@@ -23,18 +24,7 @@ def compileRemoveConfig : StackRemoveConfig :=
     wordShift := 3
     jump := false }
 
-def hexDigit (value : Nat) : Char :=
-  if value < 10 then
-    Char.ofNat ('0'.toNat + value)
-  else
-    Char.ofNat ('a'.toNat + value - 10)
-
-def hexByte (value : BitVec 8) : String :=
-  let n := value.toNat
-  String.ofList [hexDigit (n / 16), hexDigit (n % 16)]
-
-def hexBytes (values : List (BitVec 8)) : String :=
-  String.intercalate " " (values.map hexByte)
+open RiscV.NativeCLI (hexBytes)
 
 inductive OutputFormat where
   | pancake
@@ -89,7 +79,30 @@ def printSections (sections : List (RiscV.EncodedRiscVSection width)) : IO Unit 
   for entry in sections do
     IO.println (s!"{entry.label} {entry.address.toNat} " ++ hexBytes entry.bytes)
 
+/-- The parser-backed native whole compiler (`RiscV.NativeSource.compile`), rendered from its
+whole tuple by `RiscV.NativeCLI`. Opt-in with a leading `--native` until its corpus parity
+and performance are established. -/
+def compileMainNative (outputFormat : OutputFormat) (path : Option String) : IO UInt32 := do
+  let source ← readSource path
+  let format : RiscV.NativeCLI.Format :=
+    match outputFormat with
+    | .pancake => .assembly
+    | .hex => .hex
+    | .sections => .sections
+  match RiscV.NativeCLI.output format source with
+  | .error message =>
+      IO.eprintln s!"flapjack-compile: {message}"
+      return 1
+  | .ok (warnings, text) =>
+      for warning in warnings do
+        IO.eprintln s!"warning: {warning}"
+      IO.print text
+      return 0
+
 def compileMain (arguments : List String) : IO UInt32 := do
+  if arguments.head? == some "--native" then
+    let some (outputFormat, path) ← parseArguments arguments.tail | return 0
+    return ← compileMainNative outputFormat path
   let some (outputFormat, path) ← parseArguments arguments | return 0
   let source ← readSource path
   if outputFormat == .pancake then
