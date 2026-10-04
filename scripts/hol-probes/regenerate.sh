@@ -7806,3 +7806,8 @@ run_probe pan_to_target_compile_prog_eq_probeScript.sml pan_to_target_compile_pr
 run_probe word_to_stack_inst_skip_probeScript.sml word_to_stack_inst_skip_probe.out \
   instSkip_typed instSkip_proved instSkip_hypotheses \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_step_immediate_comparison_probeScript.sml l3_step_immediate_comparison_probe.out \
+  slti_statement slti_types slti_source_hypotheses slti_proved sltiu_statement sltiu_types sltiu_source_hypotheses sltiu_proved \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
