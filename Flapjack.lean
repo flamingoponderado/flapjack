@@ -12,6 +12,7 @@ import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapWrite
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapState
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
