@@ -44988,6 +44988,24 @@
     "words_as_type_indexed_bitvec": true
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+    "lean_name": "compileOutputConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_to_word_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison. Literal final EVERY conjunction section1014-1065: every actual output body satisfies all five output conditions. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileConventions/Output.lean",
+    "lean_name": "compileToWordConventions",
+    "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
+    "hol_name": "compile_to_word_conventions",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol2 source comparison. Whole original theorem958-1065: names equality, whole EVERY2 labels relation and whole EVERY of all five output conventions; no original conjunct omitted. Original arbitrary config/list and input EVERY(no_share_inst or ISA not Ag32) retained. Native compile/fullCompileSingle eleven-pass pipeline used. Flat/post-allocation results unconditional under original guard; instruction validity keeps whole input EVERY(inst_ok_less) and all three zero-offset guards inside the output implication; enabled two-register and no-share-or-ISA conclusions retained. Canonical native wordLang/config/oracle tree carriers and truncated Nat register-count subtraction match source; List.Forall₂/EVERY translations constructor-for-constructor, arbitrary positive-width BitVec is the named word translation. Actual native pass proofs discharge all target properties, no output invariant/success/evaluation/callback premises. Fresh whole unchanged original local proof replay provides full typed closed/T/zero-hypothesis capture, not cross-language equivalence or production-route adoption."
+  },
+  {
     "hol_path": "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml",
     "lean_path": "Flapjack/Compiler/Backend/WordToWord/Proofs/CompileSemantics.lean",
     "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
