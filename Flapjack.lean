@@ -106,6 +106,7 @@ import Flapjack.Compiler.Backend.LabProps.DomainAlignmentWordMemory
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Inst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
 import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelStoreUpdate
@@ -1054,6 +1055,7 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LivePrefix
 import Flapjack.Compiler.Backend.WordToStack.Proofs.LiveLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompLength
 import Flapjack.Compiler.Backend.WordToStack.Proofs.ProgramBitmaps
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileBitmaps
 import Flapjack.Compiler.Backend.WordToStack.ProductionExpressionMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionCutsetMaximum
 import Flapjack.Compiler.Backend.WordToStack.ProductionInstructionMaximum
