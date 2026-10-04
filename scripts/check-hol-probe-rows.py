@@ -158,6 +158,13 @@ TYPED_CAPTURE_CONTRACTS = {
     'stack_to_lab_compile_lab_pres_probe.out': (
         ('MAP_FST_compile_compile_statement', 'next_lab_non_zero_3211_statement', 'MAP_prog_to_section_FST_3272_statement', 'extract_label_store_list_code_statement', 'stack_to_lab_compile_lab_pres_statement'),
         ()),
+    # PR1213 CopyProp family (review 5978345241 should-fix 7).
+    'word_convs_cse_copy_probe.out': (
+        ('every_inst_distinct_tar_reg_copy_prop_statement', 'extract_labels_copy_prop_statement', 'flat_exp_conventions_copy_prop_statement', 'full_inst_ok_less_copy_prop_statement', 'pre_alloc_conventions_copy_prop_statement', 'wf_cutsets_copy_prop_statement'),
+        ()),
+    'word_convs_copy_prop_locals_typed_probe.out': (
+        ('copy_prop_not_created_subprogs_source_statement_typed', 'copy_prop_prog_not_alloc_var_source_statement_typed', 'copy_prop_prog_not_alloc_var_aux1_source_statement_typed', 'copy_prop_prog_not_alloc_var_aux2_source_statement_typed', 'every_inst_distinct_tar_reg_copy_prop_aux_source_statement_typed', 'extract_labels_copy_prop_aux_source_statement_typed', 'flat_exp_conventions_copy_prop_aux_source_statement_typed', 'full_inst_ok_less_copy_prop_aux_source_statement_typed', 'pre_alloc_conventions_copy_prop_aux_source_statement_typed', 'wf_cutsets_copy_prop_aux_source_statement_typed', 'word_get_code_labels_copy_prop_source_statement_typed', 'word_good_handlers_copy_prop_source_statement_typed'),
+        ()),
 }
 
 
