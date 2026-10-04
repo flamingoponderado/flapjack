@@ -70159,6 +70159,21 @@
     "reviewer": "flapjack-sol source comparison (2026-10-03; flapjack-sol-remove-install), full original comp_correct Install1932-1997. Retains arbitrary five source registers including the unused return register, both native states, source result/poststate, jump/bounds/register bound parameters and exactly the original source evaluate/non-Error/state_rel/reg_bound premises. Derives the same existential target clock and actual native comp evaluation with the identical result and complete original result-dispatch postrelation. No target evaluation, compiler success, post code_rel, callback law, narrowed register alias/word width or post-state premise. Full source branch analysis retains failures, actual four word reads, code/data buffer flush, compileOracle head and shift, compiler output equality, nonempty program list and all original output/config checks. Source relation supplies target reads, compiler and oracle mapping; native target skips the data flush because its original useStack=false is derived. Successful source data flush proves the new bitmap list plus remaining data-buffer payload is exactly the old combined payload and proves the updated bitmap position. Whole separated heap and every unchanged carrier/field retained. Actual left-biased Spt code union respects first-match duplicate names, full domain equality and original stackNumStubs=5 oracle entry bound preserving error/init stubs; no finite-map qualifier applied to Spt code. Saved-register restriction is transported on all registers below the bound, and the three special registers survive because the original source relation supplies their mask membership. Local actual imported StackSemStateFiniteExact roundtrip witness has no shadow owner. Relation qualifier names only its canonical regs/fpRegs/store maps; word qualifier records original positive type-indexed BitVec and FFI Type carriers. Native evaluator closure inherits reviewed reals_as_rational_cuts FP carrier (SOUNDNESS item 8), though Install executes no FP instruction. No native_decide, whole-pass correctness or executed compiler parity claim."
   },
   {
+    "lean_path": "Flapjack/Compiler/Backend/WordToStack/Proofs/CompCorrect/Inst.lean",
+    "lean_name": "compCorrectInst",
+    "hol_path": "cakeml/compiler/backend/proofs/stack_removeProofScript.sml",
+    "hol_name": "comp_correct",
+    "statement_status": "reviewed_fmap_as_finite_support_relation_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support_relation": [
+      "StackSemStateFiniteExact.regs",
+      "StackSemStateFiniteExact.fpRegs",
+      "StackSemStateFiniteExact.store"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-opus4 source comparison 2026-10-04: original Inst case 6315-6326 of comp_correct5756/motive5719-5751, captured with inferred types by the word_to_stack_comp_inst probe (case obligation and whole specialization, full_proved=T, hypotheses=0; i:'a inst, source config num # 'c, target 'c, shared 'a word/'ffi). Full Seq.Simulation over arbitrary instruction/source; all original hypotheses and the full existential target-run/resource/result conclusion retained. As in HOL: the source Inst run succeeds with NONE (the NONE inst result is the excluded Error), post_alloc_conventions gives every_var_inst is_phy_var and call_arg_convention = inst_arg_convention (transported to the exact HolInst carrier through the reviewed codec), max_var (Inst i) = max_var_inst i, and the full original evaluate_wInst (flapjack-sol da79ec9f3) gives the target run with ck = 0 and the NONE-branch state_rel. No added premise. Five canonical finite-map fields/positive words qualified; inherits reals_as_rational_cuts through the evaluator closure (SOUNDNESS item 8)."
+  },
+  {
     "lean_path": "Flapjack/RiscV/L3/Defs/SystemSignals.lean",
     "lean_name": "signalEnvCall",
     "hol_path": "HOL/examples/l3-machine-code/riscv/model/riscvScript.sml",
