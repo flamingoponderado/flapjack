@@ -98930,5 +98930,41 @@
     "lean_name": "riscvPancakeHeapLimit_lt",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-specific: the top theorem's configuration-only heap bound bytes_in_word * (2 * max_heap_limit (:64) c.data_conf - 1) < dimword (:64), decided for pancakeBackendConf riscvBackendConfig (bead flapjack-nlgac)."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
+    "lean_name": "computeLabelsAlt_domain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "compute_labels_alt_domain_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6217-6267 and freshly loaded full HOL types/hyp0 in lab_to_target_outer_domain_probe.out. Full original positive word-dimension sec/asm_config carrier translated to NeZero BitVec width; HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, fixed byte8, HolFfiName and nested numeric Spt maps retained. Original sptDomain = IMAGE FST getCodeLabels union initial sptDomain conclusion. All original binders and successful-operation observation retained; computed theorem unconditional. No uniqueness/freshness/clock bound/target evaluation/output codec premise. Actual loop recursion and accepted encoding/update similarity derive domain preservation. Probes provide original statement regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
+    "lean_name": "removeLabelsLoop_domain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_loop_domain_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6217-6267 and freshly loaded full HOL types/hyp0 in lab_to_target_outer_domain_probe.out. Full original positive word-dimension sec/asm_config carrier translated to NeZero BitVec width; HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, fixed byte8, HolFfiName and nested numeric Spt maps retained. Original sptDomain = IMAGE FST getCodeLabels union initial sptDomain conclusion. All original binders and successful-operation observation retained; computed theorem unconditional. No uniqueness/freshness/clock bound/target evaluation/output codec premise. Actual loop recursion and accepted encoding/update similarity derive domain preservation. Probes provide original statement regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/OuterLabelDomain.lean",
+    "lean_name": "removeLabels_domain",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "remove_labels_domain_labs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6217-6267 and freshly loaded full HOL types/hyp0 in lab_to_target_outer_domain_probe.out. Full original positive word-dimension sec/asm_config carrier translated to NeZero BitVec width; HolAsm/HolMemop/HolAddr/HolCmp/HolRegImm/MlString, fixed byte8, HolFfiName and nested numeric Spt maps retained. Original sptDomain = IMAGE FST getCodeLabels union initial sptDomain conclusion. All original binders and successful-operation observation retained; computed theorem unconditional. No uniqueness/freshness/clock bound/target evaluation/output codec premise. Actual loop recursion and accepted encoding/update similarity derive domain preservation. Probes provide original statement regression evidence, not cross-language equivalence or whole compiler completion."
+  },
+  {
+    "lean_path": "Flapjack/Compiler/Backend/LabToTarget/ExtractedLabelNavigation.lean",
+    "lean_name": "extractLabels_locToPc",
+    "hol_path": "cakeml/compiler/backend/proofs/lab_to_targetProofScript.sml",
+    "hol_name": "extract_labels_loc_to_pc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 original source6382-6410 and freshly loaded typed original theorem/direct loc_to_pc, sec_labels_ok, extract_labels definitions in lab_to_target_extracted_label_navigation_probe.out. Retains all l1/l2/code binders, original EVERY section validity and MEM pair in FLAT MAP extract_labels Section_lines conjunction, and existential Nat actual locToPc result. Lean flatMap is literal FLAT MAP. Native alpha sec/line alias retains HolAsm/AsmOrCbw/HolMemop/HolAddr/AsmWithLab/HolCmp/HolRegImm/MlString and fixed word8 byte payloads; sole positive word-dimension translation NeZero BitVec width. No stronger validity, label uniqueness, result/search/target execution/codec premise. Nested code/line induction derives actual search and all nonlabel PC increments; label-zero rejection derived from original secLabelOk. Captures are source-review regression evidence, not cross-language equivalence or whole compiler completion."
   }
 ]

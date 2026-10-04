@@ -8866,3 +8866,7 @@ seventeen original constructor groups and target_ok without extra premises.
 The native model retains reals_as_rational_cuts (SOUNDNESS section 8).
 This regression evidence does not prove cross-language equivalence or establish
 production compiler routing or the whole Pancake-to-RISC-V correctness theorem.
+
+`lab_to_target_outer_domain_probe.out` captures the three full original outer-map domain theorems with full types and zero hypotheses. These preserve IMAGE FST of code labels union the initial outer Spt domain, distinct from the guarded paired-label domain theorem. Captures are statement-review evidence, not HOL-to-Lean equivalence or whole compiler completion.
+
+`lab_to_target_extracted_label_navigation_probe.out` captures the full original navigation existence theorem and direct navigation/section-validity/extraction definition types. The port retains EVERY section validity and FLAT MAP label membership and derives the existential PC. Captures are source-review evidence, not cross-language equivalence or whole compiler completion.
