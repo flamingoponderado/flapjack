@@ -93629,5 +93629,37 @@
     "lean_name": "constFpLoopLabelsSublist",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only stronger internal invariant over the actual native constant-folding loop projection. The original proof handles containment/distinctness inline; no separate named sublist theorem."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnMUL",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "MUL",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Operands zeroed for rs1=0/rs2=0, product in the low word."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnDIV",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "DIV",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Signed quotient (word_quot / BitVec.sdiv) with the all-ones zero-divisor result."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREM",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REM",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Signed remainder (word_rem / BitVec.srem); zero divisor returns the dividend."
+  },
+  {
+    "lean_path": "Flapjack/RiscV/L3/Step/MulDivStep.lean",
+    "lean_name": "dfnREMU",
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "REMU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "flap-rv source comparison (2026-10-04; .18.5.13.9.7): original riscv_stepScript.sml:874-886 `arithr []` saved theorem over the native definition. Original hypothesis: rd <> 0w. Native word5/word5/word5/native-state equation with the evaluated normal form; no success premise; kernel checked; original typed statement and hypotheses captured in scripts/hol-probes/check-l3-step-muldiv.py. Unsigned remainder (word_mod / BitVec.umod); zero divisor returns the dividend."
   }
 ]
