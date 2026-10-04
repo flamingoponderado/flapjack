@@ -980,6 +980,9 @@ run_probe word_simp_seq_assoc_source_probeScript.sml word_simp_seq_assoc_source_
   assoc_middle_skip assoc_right_spine assoc_if assoc_loop assoc_must assoc_tail_handler \
   assoc_return assoc_both assoc_prefix_unchanged assoc_inst assoc_pre_ssa \
   "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
+run_probe word_simp_const_fp_mem_probeScript.sml word_simp_const_fp_mem_probe.out \
+  mem_store mem_store8 mem_store16 mem_store32 mem_load mem_load8 mem_load16 mem_load32 \
+  "$cake_dir/compiler/backend/word_simpScript.sml" "$cake_dir/compiler/backend"
 run_probe word_simp_constant_domain_probeScript.sml word_simp_constant_domain_probe.out \
   constant_program_skip constant_program_assign constant_program_selected constant_program_unknown \
   constant_program_tail constant_program_return constant_program_both constant_program_alloc \
