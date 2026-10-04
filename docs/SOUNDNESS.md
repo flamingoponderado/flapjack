@@ -1,5 +1,9 @@
 # Soundness status
 
+This list is not exhaustive. It records what has been noticed so far, and items
+are added occasionally as they are noticed rather than as a complete inventory
+of every open question.
+
 Flapjack is an in-progress Lean 4 port of the CakeML Pancake compiler. This
 document records what the current repository does and does not establish. It
 is deliberately conservative: a theorem that elaborates and a compiler path
