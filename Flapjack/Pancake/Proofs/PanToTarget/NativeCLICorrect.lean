@@ -5,10 +5,10 @@ import Flapjack.RiscV.NativeCLIAdapter
 # Correctness of the default `flapjack-compile` output
 
 The default `flapjack-compile` route prints `RiscV.NativeCLI.output format source`: the
-rendering of the whole tuple of `RiscV.NativeSource.compile source`. This module states, for
+rendering of the artifact of `RiscV.NativeSource.compile source`. This module states, for
 every successful run, that the printed text is the rendering of a compiled tuple whose bytes,
-bitmaps, configuration and stack bound satisfy the concrete RISC-V correctness theorem for the
-parsed program. Untagged Flapjack theorem; HOL has no Pancake driver theorem.
+bitmaps and configuration, together with its logical stack bound, satisfy the concrete
+RISC-V correctness theorem for the parsed program. Untagged Flapjack theorem; HOL has no Pancake driver theorem.
 -/
 
 namespace Flapjack.Pancake.Proofs.PanToTarget
@@ -30,7 +30,8 @@ def NativeRiscVCorrectness (parsed : List (Decl (BitVec 64)))
     (ffi : HolFfiState σ) (cbspace data_sp : Nat) (start : MlS),
     isRiscvMachineConfig mc →
     (∃ fi : FunDeclHOL 64, .function fi ∈ parsed.map declToHOL ∧ fi.name = ofString "main") →
-    out.wholeResult = (some (bytes, bitmaps, c'), stack_max) ∧
+    out.artifact = some (bytes, bitmaps, c') ∧
+    stack_max = nativeSourceLogicalBound out ∧
     pancakeGoodCodeHOL out.declarations = true ∧
     distinctParamsHOL (functionsHOL out.declarations) ∧
     ((functionsHOL out.declarations).map Prod.fst).Nodup ∧
@@ -75,7 +76,7 @@ def NativeRiscVCorrectness (parsed : List (Decl (BitVec 64)))
         (fun b' => b' = PanSemStateFiniteExact.semanticsDecls s start (parsed.map declToHOL)) b
 
 /-- Default CLI correctness: every successful `flapjack-compile` run (any output mode) prints
-the rendering of a compiled whole tuple `(bytes, bitmaps, config)` of `NativeSource.compile`
+the rendering of a compiled artifact `(bytes, bitmaps, config)` of `NativeSource.compile`
 on a successfully parsed program, and that run satisfies the concrete RISC-V correctness
 theorem `NativeRiscVCorrectness` for the parsed program; in particular the emitted code is
 `bytes` (Flapjack-specific; no HOL original). -/
@@ -86,16 +87,19 @@ theorem nativeCLIOutput_correct {format : RiscV.NativeCLI.Format} {source : Stri
         (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64)) (config : Backend.Config),
       Parser.parseTopDecs (fun value => BitVec.ofInt 64 value) source = .ok parsed ∧
       RiscV.NativeSource.compile source = .ok out ∧
-      out.wholeResult.1 = some (bytes, bitmaps, config) ∧
+      out.artifact = some (bytes, bitmaps, config) ∧
       text = RiscV.NativeCLI.render format out.declarations bytes bitmaps config ∧
+      compileProgMaxAsmExecutable pancakeRiscVBackendConfig riscvConfig out.declarations =
+        (some (bytes, bitmaps, config), nativeSourceLogicalBound out) ∧
       NativeRiscVCorrectness parsed out := by
   obtain ⟨out, bytes, bitmaps, config, compiled, result, rendered⟩ :=
     RiscV.NativeCLI.output_ok succeeded
   obtain ⟨parsed, parsedEq, -, -⟩ := nativeSourceCompile_ok compiled
-  refine ⟨parsed, out, bytes, bitmaps, config, parsedEq, compiled, result, rendered, ?_⟩
-  intro σ mc bytes' bitmaps' c' stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi
-    cbspace data_sp start hmc hasMain premises
-  exact nativeSourceCompile_correct parsed compiled parsedEq mc bytes' bitmaps' c' stack_max s ms
-    globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain premises
+  refine ⟨parsed, out, bytes, bitmaps, config, parsedEq, compiled, result, rendered, ?_, ?_⟩
+  · simpa only [result] using nativeSourceCompile_full_result compiled
+  · intro σ mc bytes' bitmaps' c' stack_max s ms globals_size heap_len adj_ptr2 adj_ptr4 ffi
+      cbspace data_sp start hmc hasMain premises
+    exact nativeSourceCompile_correct parsed compiled parsedEq mc bytes' bitmaps' c' stack_max s ms
+      globals_size heap_len adj_ptr2 adj_ptr4 ffi cbspace data_sp start hmc hasMain premises
 
 end Flapjack.Pancake.Proofs.PanToTarget

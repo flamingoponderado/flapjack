@@ -100,7 +100,7 @@ def output (format : Format) (source : String) : Except String (List String × S
   match RiscV.NativeSource.compile source with
   | .error error => .error (sourceRiscVImageErrorDescription error)
   | .ok out =>
-      match out.wholeResult.1 with
+      match out.artifact with
       | none => .error "native backend compilation failed"
       | some (bytes, bitmaps, config) =>
           .ok (out.warnings.map (fun warning => s!"{repr warning}"),
@@ -116,7 +116,7 @@ theorem output_ok {format : Format} {source : String} {warnings : List String} {
     ∃ (out : RiscV.NativeSource.Output) (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64))
         (config : Backend.Config),
       RiscV.NativeSource.compile source = .ok out ∧
-      out.wholeResult.1 = some (bytes, bitmaps, config) ∧
+      out.artifact = some (bytes, bitmaps, config) ∧
       text = render format out.declarations bytes bitmaps config := by
   unfold output at succeeded
   split at succeeded
