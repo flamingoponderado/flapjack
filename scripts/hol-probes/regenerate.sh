@@ -8337,3 +8337,20 @@ run_probe riscv_conditional_next_probeScript.sml riscv_conditional_next_probe.ou
   beq_next_zero beq_next_alias_sign beq_next_odd_taken beq_next_odd_reverse beq_next_signed_boundary bne_next_zero bne_next_alias_sign bne_next_odd_taken bne_next_odd_reverse bne_next_signed_boundary blt_next_zero blt_next_alias_sign blt_next_odd_taken blt_next_odd_reverse blt_next_signed_boundary bltu_next_zero bltu_next_alias_sign bltu_next_odd_taken bltu_next_odd_reverse bltu_next_signed_boundary bge_next_zero bge_next_alias_sign bge_next_odd_taken bge_next_odd_reverse bge_next_signed_boundary bgeu_next_zero bgeu_next_alias_sign bgeu_next_odd_taken bgeu_next_odd_reverse bgeu_next_signed_boundary beq_source beq_hypotheses beq_typed_source bne_source bne_hypotheses bne_typed_source blt_source blt_hypotheses blt_typed_source bltu_source bltu_hypotheses bltu_typed_source bge_source bge_hypotheses bge_typed_source bgeu_source bgeu_hypotheses bgeu_typed_source next_source next_hypotheses next_typed_source \
   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_crep_table_validity_probeScript.sml pan_to_crep_table_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_to_crep \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe pan_to_crep_program_validity_probeScript.sml pan_to_crep_program_validity_probe.out \
+  every_inst_ok_less_pan_to_crep_compile_prog \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_rejected_probeScript.sml riscv_target_rejected_probe.out \
+  riscv_encoder_correct_longdiv_statement riscv_encoder_correct_longdiv_types riscv_encoder_correct_longdiv_hypotheses riscv_encoder_correct_longdiv_proved riscv_encoder_correct_fp_statement riscv_encoder_correct_fp_types riscv_encoder_correct_fp_hypotheses riscv_encoder_correct_fp_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
+  pan_to_word_every_inst_ok_less \
+  "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
