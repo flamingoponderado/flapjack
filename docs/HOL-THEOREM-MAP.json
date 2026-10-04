@@ -95493,5 +95493,14 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source comparison (2026-10-04; bead flapjack-pxn.18.5.13.6.9.10): full original riscv_encoder_correct Shift Reg/Ror case560-620 specialized at Inst(Arith(Shift Ror rd rs (Reg rc))). Unrestricted Nat rd/rs/rc and arbitrary word64 source register values, sole original asmStep plus initial targetStateRel, existential counter and every original interference environment, complete asserts/stateOk/emitted-byte memory/all-PC/targetStateRel and asserts2 outside-domain frame retained. All source asmRegOk/avoid/count<64 guards follow internally from unchanged source step, with no explicit extra bound, nonzero-count or distinct-register premise. Literal ORI31/SUB31/SLL31/SRLrd/ORrd five-step trace derives every fetch/Decode/Run/Next from original emitted bytes and original RV64 validity. Full scratch31 state is retained, excluded from source register relation only by original avoidRegs. Derives masked complementary count from exact 64 minus source word; count0 remains allowed and is explicitly proved using OR idempotence/rotateRight0, nonzero case reuses original ror lemma. Arbitrary source/destination/count register aliases retained. Proves source rotateRight poststate/PC20, every intermediate PC coverage/byte memory/validity and all environment/assertion counters; no target-run/output-relation assumption. Fresh original typed full specialization has unrestricted num registers and word64 state, hyp0/provedT. Native state and actual Run/Next closure inherit reals_as_rational_cuts, SOUNDNESS8. Full Shift assembly, remaining encoder constructors and overall compiler theorem remain separate open work. Kernel/delivery checks recorded on bead."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Shift.lean",
+    "lean_name": "riscv_encoder_correct_shift",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source compared original Shift560-620, all four operators and Reg/Imm forms, sole source-step/initial target relation, complete original existential allenv/asserts/asserts2. Assembled eight full kernel cases without extra premises. Fresh full typed original specialization hyp0/provedT. Inherits reals_as_rational_cuts through full native target closure, SOUNDNESS item8."
   }
 ]

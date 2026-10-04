@@ -8437,3 +8437,5 @@ The return-shape metadata is consumed before this stage and is not an original
 compile_prog input. This producer slice does not yet connect the CLI: native
 WordToStack entry/stub/config consumers and the whole executed route remain
 separate open dependencies coordinated with Sol2.
+
+`riscv_target_shift_probe.out` freshly specializes the full original theorem to all Shift operators and Reg/Imm forms, retaining unrestricted Nat registers, word64 states, source step/initial relation, all environments and both assertions. Capture is regression evidence, not equivalence. Eight full kernel cases supply the assembly; SOUNDNESS8 and other encoder constructors remain tracked.

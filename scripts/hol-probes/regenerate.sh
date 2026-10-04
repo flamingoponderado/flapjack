@@ -8103,3 +8103,7 @@ run_probe riscv_target_shift_ror_register_probeScript.sml riscv_target_shift_ror
 run_probe crep_to_loop_original_names_program_probeScript.sml crep_to_loop_original_names_program_probe.out \
   full_program row_names parameters done \
   "$cake_dir/pancake/crep_to_loopScript.sml"
+
+run_probe riscv_target_shift_probeScript.sml riscv_target_shift_probe.out \
+  riscv_encoder_correct_shift_statement riscv_encoder_correct_shift_types riscv_encoder_correct_shift_hypotheses riscv_encoder_correct_shift_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" "$cake_dir/compiler/encoders/riscv/proofs"
