@@ -1,3 +1,4 @@
+import Flapjack.Test.PanToWordGoodCodeParity
 import Flapjack.Test.CompileProgMaxExecutableParity
 import Flapjack.Test.WordToWordExecutableParity
 import Flapjack.Test.PanToTargetOptionLtParity
@@ -1091,6 +1092,8 @@ import Flapjack.Test.CrepArithExtCallParity
 import Flapjack.Test.CrepArithIfParity
 import Flapjack.Test.CrepToLoopCompileProgParity
 import Flapjack.Test.CrepToLoopOriginalNamesProductionParity
+import Flapjack.Test.PanNativeWordPrefixParity
+import Flapjack.Test.PanNativeFrontendPrefixParity
 import Flapjack.Test.PanTargetEntryParity
 import Flapjack.Test.CrepToLoopNativeDeclarationsParity
 import Flapjack.Test.LoopCallEnvParity
@@ -1941,6 +1944,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.CrepArithExactParity.runChecks,
     Flapjack.Test.CrepToLoopCompileProgParity.runChecks,
     Flapjack.Test.CrepToLoopOriginalNamesProductionParity.runChecks,
+    Flapjack.Test.PanNativeWordPrefixParity.runChecks,
+    Flapjack.Test.PanNativeFrontendPrefixParity.runChecks,
     Flapjack.Test.PanTargetEntryParity.runChecks,
     Flapjack.Test.CrepToLoopNativeDeclarationsParity.runChecks,
     Flapjack.Test.LoopCallEnvParity.runChecks,
@@ -2154,7 +2159,8 @@ Flapjack.Test.PanSemFuelDecompositionParity.runChecks,
     Flapjack.Test.StackRawCallJumpLowerParity.runChecks,
     Flapjack.Test.StackEvaluateMonoParity.runChecks,
     Flapjack.Test.BytesInMemoryDomainParity.runChecks,
-    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks
+    Flapjack.Test.CrepSemIoEventsMonoParity.runChecks,
+    Flapjack.Test.PanToWordGoodCodeParity.runChecks
     ].mapM id
   unless results.all id do
     IO.Process.exit 1
