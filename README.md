@@ -8,8 +8,24 @@ Flapjack is an in-progress Lean 4 port of the formally verified Pancake compiler
 - A compiler correctness theorem from Pancake to a vibe-ported RISC-V semantics
   has been proven, under explicit assumptions: [Lean theorem](https://github.com/flamingoponderado/flapjack/blob/4e120dd7303f7e66a13f04ad60404273a9d90e9c/Flapjack/Pancake/Proofs/PanToTarget/RiscVInstance.lean#L45),
   [corresponding original CakeML theorem](https://github.com/CakeML/cakeml/blob/857f0d98da8f8a3580f34423338e697809308ede/pancake/proofs/pan_to_targetProofScript.sml#L1257).
-- The vibe-ported RISC-V semantics has not been validated. Comparison against
-  the Lean extraction of the Sail RISC-V model is future work.
+- The vibe-ported RISC-V semantics differs from the authoritative Sail RISC-V
+  model. [flapjack-riscv-check](https://github.com/flamingoponderado/flapjack-riscv-check)
+  compares the two models. It proves that they run in lockstep, but only on
+  the 37 instructions Flapjack's backend emits and only under restrictions:
+  no hint encodings, aligned accesses to plain RAM, and a Sail configuration
+  fixed to match the L3 model. Outside those restrictions the two models
+  behave differently. The compiler correctness theorem has not been carried
+  over to Sail. See [`docs/SOUNDNESS.md`](docs/SOUNDNESS.md) item 2.
+
+> [!IMPORTANT]
+> **Review the RISC-V semantics before using Flapjack.** The correctness
+> theorem is about Flapjack's own L3-derived RISC-V model
+> (`Flapjack.RiscV.L3`), not about the official RISC-V specification. Check
+> that this model, and the conditions under which it agrees with Sail, fit
+> your hardware and intended use. Flapjack's `main` branch tries to follow
+> the original Pancake compiler's choices about RISC-V semantics. Where L3 and
+> Sail differ, `main` keeps the L3 behaviour instead of changing the model to
+> match Sail.
 - Other backends, including ARM and x86, have not yet been ported to Lean.
 - The CakeML front end has not been ported to Lean.
 

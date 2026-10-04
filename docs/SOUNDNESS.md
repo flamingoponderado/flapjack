@@ -57,8 +57,61 @@ The following are open review or verification obligations:
 1. The source-to-RISC-V theorem chain and its connection to the default compiler
    have been ported. Their statements, assumptions, and implications still
    require independent review.
-2. The RISC-V semantics in Flapjack have not been proven equivalent to a Lean
-   extraction of the authoritative Sail RISC-V model.
+2. The RISC-V semantics in Flapjack differ from the authoritative Sail RISC-V
+   model. Users should review Flapjack's RISC-V semantics
+   (`Flapjack.RiscV.L3`, a port of the HOL4 L3 RISC-V model) before relying
+   on the compiler. The correctness theorem is stated against that model
+   through `riscvNext`, not against Sail. Flapjack's `main` branch tries to
+   follow the original Pancake compiler's choices about RISC-V semantics,
+   including its use of the L3 model. Where L3 and Sail differ, `main` keeps
+   the L3 behaviour instead of changing the model to match Sail.
+
+   The separate project
+   [flapjack-riscv-check](https://github.com/flamingoponderado/flapjack-riscv-check)
+   (at commit `20c1d8e`, which pins Flapjack `0496e86c3`) compares the two
+   models in Lean against `LeanRV64D`, the Lean extraction of the Sail model.
+
+   That project proves a simulation from L3 steps to Sail steps (`step_sim`
+   and `run_sim`). The simulation holds only under the following
+   restrictions. Outside them, the models are known to diverge or have not
+   been compared:
+
+   - **Instructions.** It covers only the 37 instructions that `riscvEnc`
+     emits: LUI, AUIPC, ADDI, ORI, XORI, ANDI, ADD, SUB, AND, OR, XOR, SLTU,
+     SLLI, SRLI, SRAI, SLL, SRL, SRA, DIV, MUL, MULHU, LD, LWU, LHU, LBU, SD,
+     SW, SH, SB, BEQ, BNE, BLT, BGE, BLTU, BGEU, JAL and JALR.
+   - **Hint encodings.** Sail decodes `ADD x0, x0, x2..x5` as a Zihintntl
+     `NTL` hint. It decodes `ORI x0, rs1, imm` with `imm[4:0] ∈ {0,1,3}` as a
+     Zicbop prefetch, which probes PMA/PMP. L3 decodes both as ordinary ALU
+     operations writing `x0`. These encodings are excluded.
+   - **Misaligned loads and stores.** L3 performs them. Sail traps or splits
+     them depending on the PMA region. All accesses are assumed aligned.
+   - **Memory.** L3's `MEM8` is total. Sail's memory is a partial map with
+     PMA regions and MMIO windows (CLINT, signature, HTIF). Fetches, loads
+     and stores must lie in a suitable RAM region, miss the MMIO windows,
+     and stay within the related memory domain.
+   - **Sail configuration.** The following are fixed as invariants:
+     - machine mode with `mstatus.MPRV = 0`;
+     - pointer masking off and every PMP entry OFF;
+     - `misa.C = misa.M = 1`;
+     - `mseccfg.MLPE = 0` and `elp = 0` (otherwise Sail's JALR updates
+       Zicfilp landing-pad state, which L3 does not model);
+     - `mstatus.MIE = 0`, so there are no interrupts;
+     - a 4-aligned PC.
+   - **Not compared.** Floating point is not compared, because every Sail
+     floating-point primitive is an uninterpreted `axiom`. Also not compared:
+     CSRs, traps, privilege changes and virtual memory (L3 follows the old
+     privileged spec 1.7), atomics, and RV64IM instructions outside the set
+     above. The cycle and instret counters are not related.
+
+   The compiler correctness theorem has not been transferred to Sail. That
+   needs a Sail-based machine configuration and a proof that every execution
+   of compiled code meets the side conditions above. The code must be
+   hint-free encodings of the covered instructions, every access must be
+   aligned plain RAM in the related domain, and the PC must stay 4-aligned.
+   Neither has been done. The comparison is also not a proof that L3 and
+   Sail are equivalent: only the L3-to-Sail direction is proved, and only on
+   the restricted fragment.
 3. Compiler behavior has not been tested extensively against the original
    Pancake compiler. The executable parity suite and differential fuzzer cover
    only a small corpus and do not establish equivalence for arbitrary input.
@@ -243,8 +296,11 @@ all of the following:
 
 - an independently reviewed mapping of each ported theorem statement to its
   HOL counterpart;
-- systematic RISC-V semantic comparison against the Sail model for the
-  instructions and machine state used by the backend;
+- transfer of the compiler correctness theorem to the Sail RISC-V model. The
+  L3-to-Sail step and run simulation for the backend's instructions exists
+  (item 2). What remains is a Sail-based machine configuration and a proof
+  that compiled code meets the simulation's side conditions: hint-free
+  encodings, aligned plain-RAM accesses, and a 4-aligned PC;
 - differential tests over a substantially representative Pancake corpus,
   comparing parse results, intermediate programs, and final artifacts with
   documented name/label normalization;
