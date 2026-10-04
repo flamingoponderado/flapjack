@@ -8013,6 +8013,17 @@ statements. Mutation tests reject a pure replacement iterator, wrong index or
 PC increment, added target-run premise, changed domain premise, wrong assertion
 counter, and reversed outside-domain observation.
 
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+
+The `backend_lower_pipeline` probe also captures the complete original closed
+`from_word_0_def` and its inferred type, including the actual WordToWord tuple
+and oracle update before `from_word`. This is definition evidence, not an
+executed-route or complete compiler-correctness result.
 `pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
 `pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
 independent word/configuration/FFI carrier. Regenerate with
@@ -8084,9 +8095,8 @@ not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
 full Lean statement, original assertion definition and all four probe rows;
 its mutation tests reject extra premises, false oracle evidence and lost rows.
 
-`pan_to_target_source_probeScript.sml` captures the full typed original
-exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
-and the original compiler definition's extracted first LET argument. Eight
-kernel observations cover empty/default/already-first/later main, first-only
-relocation with duplicate names, and exported flags/duplicates. Regenerate with
-`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.
+The `word_to_word_install` probe captures the complete original closed typed
+`compile_single_correct` theorem and its original kernel-proved Install
+specialization. `GEN_ALL` closes every binder; the specialization has zero
+hypotheses. These are original-theory captures, not a local replay or an
+independent cross-language equivalence proof.

@@ -85,7 +85,7 @@ theorem compileSingleCorrectAt_leaf {width : Nat} [NeZero width] {C F : Type} (t
 @[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem compile_single_correct_Skip {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
-    (kk aa : Nat) (co : AsmConfigExact width) 
+    (kk aa : Nat) (co : AsmConfigExact width)
     (st : WordSemStateFiniteExact width C F) :
     CompileSingleCorrectAt tt kk aa co (.skip : WordLangProgHOL (BitVec width)) st :=
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st
@@ -202,7 +202,7 @@ theorem compile_single_correct_Continue {width : Nat} [NeZero width] {C F : Type
 @[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "compile_single_correct"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
 theorem compile_single_correct_Tick {width : Nat} [NeZero width] {C F : Type} (tt : Bool)
-    (kk aa : Nat) (co : AsmConfigExact width) 
+    (kk aa : Nat) (co : AsmConfigExact width)
     (st : WordSemStateFiniteExact width C F) :
     CompileSingleCorrectAt tt kk aa co (.tick : WordLangProgHOL (BitVec width)) st :=
   compileSingleCorrectAt_leaf tt kk aa co _ rfl st

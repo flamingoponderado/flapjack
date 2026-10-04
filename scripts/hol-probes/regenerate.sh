@@ -7616,7 +7616,7 @@ run_probe riscv_const_wide_value_probeScript.sml riscv_const_wide_value_probe.ou
   "$cake_dir/compiler/encoders/riscv/riscv_targetScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe backend_lower_pipeline_probeScript.sml backend_lower_pipeline_probe.out \
-  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed \
+  from_lab_type from_lab_def_typed from_stack_type from_stack_def_typed from_word_type from_word_def_typed from_word_0_type from_word_0_def_typed \
   "$cake_dir/compiler/backend/backendScript.sml" "$cake_dir/compiler/backend"
 run_probe word_to_stack_inst_const_probeScript.sml word_to_stack_inst_const_probe.out \
   evaluateWInstConst_typed evaluateWInstConst_proved evaluateWInstConst_hypotheses \
@@ -7708,3 +7708,7 @@ run_probe pan_to_target_source_probeScript.sml pan_to_target_source_probe.out \
   exports_def compile_prog_def exports_type compile_prog_type zip_def splitp_def compile_prog_main_binding \
   main_empty_names main_missing_names main_already_first_names main_later_names main_nonempty_missing_names main_first_only_duplicates_names exports_empty exports_flags_duplicates \
   "$cake_dir/pancake/pan_to_targetScript.sml" "$cake_dir/pancake"
+
+run_probe word_to_word_install_probeScript.sml word_to_word_install_probe.out \
+  compile_single_correct_typed compile_single_correct_install_typed compile_single_correct_install_hypotheses \
+  "$cake_dir/compiler/backend/proofs/word_to_wordProofScript.sml" "$cake_dir/compiler/backend/proofs"
