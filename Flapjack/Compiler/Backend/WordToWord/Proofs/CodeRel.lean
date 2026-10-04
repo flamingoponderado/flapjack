@@ -41,14 +41,18 @@ theorem compileSingle_arity {width : Nat} [NeZero width] (t : Bool) (k a : Nat)
     (col : Option (Spt Nat)) : (compileSingle t k a c ((n, ar, p), col)).2.1 = ar := rfl
 
 /-- HOL `find_code_thm` (`word_to_wordProofScript.sml:167-189`). Only
-    `st.code` and `st.stack_size` of the state occur. -/
+    `st.code` and `st.stack_size` of the state occur. Argument words have an
+    independent positive dimension; the three ignored return metadata fields
+    retain their independent arbitrary HOL types. -/
 @[hol "cakeml/compiler/backend/proofs/word_to_wordProofScript.sml" "find_code_thm"
   (fmap_as_finite_support := [fpRegs, store]) (words_as_type_indexed_bitvec)]
-theorem find_code_thm {width : Nat} [NeZero width] {C F : Type}
+theorem find_code_thm {width : Nat} [NeZero width]
+    {argWidth : Nat} [NeZero argWidth]
+    {ReturnValue ReturnNames ReturnHandler : Type} {C F : Type}
     (st : WordSemStateFiniteExact width C F) (l : Spt (Nat × WordLangProgHOL (BitVec width)))
     (o1 : Option Nat)
-    (o' : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat))
-    (x : List (WordLocW width)) (args : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width))
+    (o' : Option (ReturnValue × ReturnNames × ReturnHandler × Nat × Nat))
+    (x : List (WordLocW argWidth)) (args : List (WordLocW argWidth)) (prog : WordLangProgHOL (BitVec width))
     (locsize : Option Nat) :
     (∀ n v, sptLookup n st.code = some v →
         ∃ (t : Bool) (k a : Nat) (c : AsmConfigExact width) (col : Option (Spt Nat)),

@@ -1769,6 +1769,18 @@ INFRASTRUCTURE_THEOREMS = {
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepCompileValidity.lean', 'holFmapAsFiniteSupportWitness'): 'Flapjack-specific internal expression/list/nested-declaration/sequence/assignment/generated-global/handler/store and native induction proof factoring, or canonical context representation witness, for the separately tagged full original PanToCrep compile validity in the same module. No standalone HOL declaration or completed port claim; all original source hypotheses are discharged by the final theorem.',
 
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepTableValidity.lean', 'functions_valid'): 'Flapjack-specific internal function-projection membership factoring for the separately tagged full original compiler table validity theorem; no separate HOL declaration or completed port claim.',
+    ("Flapjack/Compiler/Backend/WordToStack/ProductionPreSsaDomain.lean", "acceptedAllocatorInput_usesNativeCopy"):
+        "Actual accepted-input native-copy SSA dispatch equation retaining output and failure branches; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeFormals.lean", "allocatorWithSsaAndCopy_metadata"):
+        "Actual copy/SSA consumer retains its observed producer state and formal list; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeSpillState.lean", "allocatorWithSsaAndCopy_spillState"):
+        "Actual copy/SSA consumer constructs its observed spill state from final program and colouring; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyInstructionMemoryGuard"):
+        "Flapjack runtime memory-domain invariant of native copy instructions; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyProgramMemoryGuard"):
+        "Flapjack runtime memory-domain invariant of full native copy propagation; no separate HOL declaration.",
+    ("Flapjack/Compiler/Backend/WordAlloc/ProductionNativeCopyMemoryGuard.lean", "nativeCopyWrapperMemoryGuard"):
+        "Unconditional executed native-copy memory-guard transport including rejected-input fallback; no separate HOL declaration.",
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean', 'filter_lookup'): 'Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim.',
     ('Flapjack/Pancake/Proofs/PanToWord/PanToCrepInlineTableValidity.lean', 'inline_top_valid'): 'Flapjack-specific internal key-filter lookup and native wrapper proof factoring for the separately tagged full original every_inst_w_inline in the same module; no standalone HOL declaration or completed port claim.',
 

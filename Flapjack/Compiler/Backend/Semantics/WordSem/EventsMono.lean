@@ -502,7 +502,7 @@ private theorem tailCallStatement_ioEvents_prefix {width : Nat} [NeZero width] {
     (dest : Option Nat) (args : List Nat) (state : WordSemStateFiniteExact width C F)
     (xs args1 : List (WordLocW width)) (prog : WordLangProgHOL (BitVec width)) (ss : Option Nat)
     (hg : getVars args state = some xs) (hbad : ¬ wordSemBadDestArgs dest args = true)
-    (hf : wordSemFindCode dest (wordSemAddRetLoc none xs) state.code state.stackSize =
+    (hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) state.code state.stackSize =
       some (args1, prog, ss)) (hz : state.clock ≠ 0)
     (hcallee : (callEnv args1 ss (decClock state)).ffi.ioEvents <+:
       (evaluate prog (callEnv args1 ss (decClock state))).2.ffi.ioEvents) :

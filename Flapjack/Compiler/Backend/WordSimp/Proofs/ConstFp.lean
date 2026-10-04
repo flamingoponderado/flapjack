@@ -528,7 +528,7 @@ theorem evaluate_call_none_ne_none (dest : Option Nat) (args : List Nat)
   by_cases hbad : wordSemBadDestArgs dest args = true
   · simp [hbad]
   simp only [hbad, Bool.false_eq_true, if_false]
-  rcases wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize with
+  rcases wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
     _ | ⟨args1, prog, ss⟩
   · simp
   simp only

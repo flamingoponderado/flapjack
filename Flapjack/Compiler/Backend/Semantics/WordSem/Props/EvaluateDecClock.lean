@@ -186,7 +186,7 @@ theorem evaluate_dec_clock_aux :
         rw [ht, getVars_withClock, hg]
         simp [hbad]
       simp only [hbad, Bool.false_eq_true, if_false]
-      rcases hf : wordSemFindCode dest (wordSemAddRetLoc none xs) s.code s.stackSize with
+      rcases hf : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) s.code s.stackSize with
         _ | ⟨args1, prog, ss⟩
       · simp only [Nat.sub_self]
         rw [ht, getVars_withClock, hg]

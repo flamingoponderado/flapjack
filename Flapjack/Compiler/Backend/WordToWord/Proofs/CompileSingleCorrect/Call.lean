@@ -131,7 +131,7 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
   · refine ⟨st.permute, ?_⟩
     rw [evaluate_call_eq, hxs]
     simp [hbad]
-  rcases hfc : wordSemFindCode dest (wordSemAddRetLoc none xs) st.code st.stackSize with
+  rcases hfc : wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) st.code st.stackSize with
     _ | ⟨args1, prog, ss⟩
   · refine ⟨st.permute, ?_⟩
     rw [evaluate_call_eq, hxs]
@@ -156,7 +156,7 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_call_eq, show WordSemStateFiniteExact.getVars args { st with permute := P } = some xs
       from (getVars_congr st { st with permute := P } rfl args).trans hxs]
     dsimp only
-    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc none xs) st.code st.stackSize =
+    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) st.code st.stackSize =
       some (args1, prog, ss) from hfc]
     dsimp only
     split
@@ -171,7 +171,7 @@ theorem compileSingleCorrect_callTail {width : Nat} [NeZero width] {C F : Type}
     rw [evaluate_call_eq, show WordSemStateFiniteExact.getVars args T = some xs
       from (getVars_congr st T rfl args).trans hxs]
     dsimp only
-    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc none xs) l st.stackSize =
+    rw [if_neg hbad, show wordSemFindCode dest (wordSemAddRetLoc (none : Option (List Nat × WordLangCutsetsHOL × WordLangProgHOL (BitVec width) × Nat × Nat)) xs) l st.stackSize =
       some (args1, prog', ss) from hfcT]
     dsimp only
     split
