@@ -8256,7 +8256,6 @@ run_probe riscv_target_addoverflow_probeScript.sml riscv_target_addoverflow_prob
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
 run_probe riscv_config_proof_replay_probeScript.sml riscv_config_proof_replay_probe.out \
-  is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
   riscv_backend_config_ok_typed riscv_backend_config_ok_hypotheses is_riscv_machine_config_def_typed riscv_init_ok_typed riscv_init_ok_hypotheses \
   "$cake_dir/compiler/backend/riscv/proofs/riscv_configProofScript.sml" \
   "$cake_dir/compiler/backend/riscv/proofs"

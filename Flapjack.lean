@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.RiscV.CorrectnessEncoding.BitRewrites
 import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
 import Flapjack.RiscV.CorrectnessEncoding.Complete
