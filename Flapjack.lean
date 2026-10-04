@@ -110,6 +110,9 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.DataBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.CodeBufferWrite
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Install
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Inst
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCall
+import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelSemantics
+import Flapjack.Compiler.Backend.WordToStack.Proofs.CompileSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Assembly
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.ShareInst
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.Set
