@@ -131,6 +131,9 @@ PARTIAL_OUT: dict[str, tuple[frozenset[str], str]] = {
 # the independently captured signatures of definition-level entry points.
 # These are syntax/coverage checks, not HOL-to-Lean equivalence checks.
 TYPED_CAPTURE_CONTRACTS = {
+    "word_to_word_locals_typed_probe.out": (
+        ('rm_perm_statement', 'find_code_thm_statement', 'pop_env_termdep_statement', 'compile_single_eta_statement', 'code_rel_union_fromAList_statement', 'code_rel_no_alloc_statement', 'code_rel_no_install_statement'),
+        ()),
     'stack_rawcall_conventions_probe.out': (
         ('reg_bound_comp_statement', 'stack_rawcall_reg_bound_statement', 'call_args_comp_statement', 'stack_alloc_call_args_statement', 'MAP_FST_compile_statement', 'call_arg_comp_statement'),
         ()),
