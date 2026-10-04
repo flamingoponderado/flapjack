@@ -46546,7 +46546,7 @@
     "lean_name": "readMemWord",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:182-189 read_mem_word_def: count 0 returns (0w,s); SUC n recurses at (if s.be then a-1w else a+1w) then word_or (w<<8) (w2w (read_mem a s1)) with assert (a IN s1.mem_domain). HOL type read_mem_word : 'b word -> num -> 'b asm_state -> 'a word # 'b asm_state, so the read-result word dimension is INDEPENDENT of the address/state dimension; Lean readMemWord binds both (width for address/state, resultWidth for the result) and w2w to word8 is BitVec.setWidth resultWidth. Assert is assertState, the same rendering used by the accepted asmSem arithmetic primitives."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:182-189 read_mem_word_def: count 0 returns (0w,s); SUC n recurses at (if s.be then a-1w else a+1w) then word_or (w<<8) (w2w (read_mem a s1)) with assert (a IN s1.mem_domain). HOL type read_mem_word : 'b word -> num -> 'b asm_state -> 'a word # 'b asm_state, so the read-result word dimension is INDEPENDENT of the address/state dimension; Lean readMemWord binds both (width for address/state, resultWidth for the result) and w2w to word8 is BitVec.setWidth resultWidth. Assert is assertState, the same rendering used by the accepted asmSem arithmetic primitives. flapjack-sol-c correction review (flapjack-pxn.18.5.13.6.10.7): original asmSemScript.sml:183-189/199-204 shifts use Nat eight, independent of word dimension. Explicit (8 : Nat) repairs prior homogeneous numeral truncation at widths 1/2/3; original count-zero, byte traversal, memory assertions and independent positive dimensions are unchanged. Fresh asm_memory_shift_probe covers widths 1/2/3/64 with exactly matched Lean state/input/value/memory observations."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
@@ -46555,7 +46555,7 @@
     "lean_name": "writeMemWord",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:191-... write_mem_word_def: count 0 returns s; SUC n recurses at (if s.be then a-1w else a+1w) on (w>>>8), then assert (a IN s1.mem_domain) (upd_mem a (w2w w) s1). HOL type write_mem_word : 'a word -> num -> 'b word -> 'a asm_state -> 'a asm_state, so the written-value word dimension is INDEPENDENT of the address/state dimension; Lean writeMemWord binds both (width for address/state, valueWidth for the value) and w2w to word8 is BitVec.setWidth 8."
+    "reviewer": "flapjack-ds10 source comparison (bead flapjack-pxn.18.5.15.10.25.1) against cakeml/compiler/encoders/asm/asmSemScript.sml:191-... write_mem_word_def: count 0 returns s; SUC n recurses at (if s.be then a-1w else a+1w) on (w>>>8), then assert (a IN s1.mem_domain) (upd_mem a (w2w w) s1). HOL type write_mem_word : 'a word -> num -> 'b word -> 'a asm_state -> 'a asm_state, so the written-value word dimension is INDEPENDENT of the address/state dimension; Lean writeMemWord binds both (width for address/state, valueWidth for the value) and w2w to word8 is BitVec.setWidth 8. flapjack-sol-c correction review (flapjack-pxn.18.5.13.6.10.7): original asmSemScript.sml:183-189/199-204 shifts use Nat eight, independent of word dimension. Explicit (8 : Nat) repairs prior homogeneous numeral truncation at widths 1/2/3; original count-zero, byte traversal, memory assertions and independent positive dimensions are unchanged. Fresh asm_memory_shift_probe covers widths 1/2/3/64 with exactly matched Lean state/input/value/memory observations."
   },
   {
     "hol_path": "cakeml/compiler/encoders/asm/asmSemScript.sml",
@@ -97172,7 +97172,7 @@
     "lean_name": "crepExpsOfNestedSeqHOL",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; arbitrary program list; complete expression enumeration equality with FLAT MAP. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; arbitrary program list; complete expression enumeration equality with FLAT MAP. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97181,7 +97181,7 @@
     "lean_name": "everyInstOk_nestedDecs",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; all three binders; matched length guard; full iff of input expression list and body validity. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; all three binders; matched length guard; full iff of input expression list and body validity. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97190,7 +97190,7 @@
     "lean_name": "everyInstOkLess_compField",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; all five binders; original validity AND actual result pair equation curried as two premises; full selected list validity. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; all five binders; original validity AND actual result pair equation curried as two premises; full selected list validity. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97199,7 +97199,7 @@
     "lean_name": "everyInstOkLess_loadShape",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; arbitrary source word offset/count/expression; only source expression validity premise. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; arbitrary source word offset/count/expression; only source expression validity premise. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97208,7 +97208,7 @@
     "lean_name": "everyInstOkLess_cexpHeads",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; both nested/output lists; original nested EVERY guard AND actual SOME extraction curried as two premises. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; both nested/output lists; original nested EVERY guard AND actual SOME extraction curried as two premises. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97217,7 +97217,7 @@
     "lean_name": "everyInstOkLess_stores",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; all address/list/offset binders; full iff including original es nonempty conditional address validity. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; all address/list/offset binders; full iff including original es nonempty conditional address validity. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
   },
   {
     "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
@@ -97226,7 +97226,16 @@
     "lean_name": "everyInstOkLess_storeGlobals",
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
-    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; original fixed word5 address retained; arbitrary source expression list; full iff. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22."
+    "reviewer": "flapjack-sol3 source comparison 2026-10-04 bead flapjack-pantocrep-validity-helpers: source928-1048 and regenerated full typed original seven-row capture; original fixed word5 address retained; arbitrary source expression list; full iff. Exact native CrepProgHOL/CrepExpHOL positive width and ShapeHOL/MlString where applicable. words_as_type_indexed_bitvec records only dimension translation, fixed global address remains BitVec5. crepBinaryExp renders original every_exp through constructor-for-constructor crepExpOfHOL and existing reviewed traversal, constraining ONLY Crepop argument length2; Op BinOp remains unconstrained. EVERY rendered by List.all=true. Original helpers nestedDecsHOL/crepNestedSeqHOL/storesHOL/storeGlobalsHOL/loadShapeBytesHOLW/cexpHeads/compFieldHOL source clauses compared; no additional guard/output validity/target run premise. Full source compiler and inline assembly remain open on .14.22. Native interface review flapjack-sol3 2026-10-04 bead flapjack-crep-native-validity-interface: predicate-bearing signatures now use shared Opus4 crepEveryExpHOL with literal forall op es equality implication; EVERY is membership quantification. Complete unconditional expression/list decoder traversal equivalence kernelchecked in CrepProps/EveryExpCodec. Original guards/results unchanged, six Boolean proofs internal untagged factoring; no duplicate every_exp port. exps_of_nested_seq equality unchanged."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_nested_decs",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfNestedDecs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-sol3 source comparison2026-10-04 bead flapjack-crep-inline-exps-nested-decs: original3051-3058 and freshly regenerated fully typed capture. All e/vs/es/p binders retained at exact native CrepExpHOL/CrepProgHOL positive word dimension. Sole original premise is membership in exps_of(nested_decs vs es p); full conclusion original value-list membership OR original body-expression membership. No length equality or output provenance hypothesis. Native nestedDecsHOL mismatch clauses give Skip and native crepExpsOfHOL Skip is empty, so unequal name/value lengths retained. Canonical syntax MlString/BitVec; words qualifier only. Induction covers every list clause; this is original expression provenance, not complete inline/compiler correctness."
   },
   {
     "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess.lean",
@@ -97397,6 +97406,371 @@
     "lean_name": "mem_zipWith_exists",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only: membership in List.zipWith (HOL MAP2_MAP/EVERY_MAP step)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_exp",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_exp",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders ctxt e; premise every_exp P e; conclusion every_exp P (compile_exp ctxt e). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_shape_val",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_shape_val",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: both conjuncts: every_exp P (shape_val e) and EVERY (every_exp P) (shape_vals es). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders ctxt code; EVERY (every_exp P) (exps_of code) ⇒ same for exps_of (compile ctxt code); by compile_ind. every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_decs",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_decs",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: EVERY good_panops pan_code ⇒ EVERY good_panops (FST (SND (compile_decs ctxt pan_code))). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_decs_init",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_decs_init",
+    "statement_status": "reviewed_fmap_as_finite_support_words_as_type_indexed_bitvec",
+    "fmap_as_finite_support": [
+      "globals"
+    ],
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: EVERY good_panops pan_code ⇒ EVERY (EVERY (every_exp P)) (MAP exps_of (FST (compile_decs ctxt pan_code))). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only otherwise; PanGlobalsContextExact.globals is the reviewed HolFiniteMapExact carrier."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_fperm",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_fperm",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders f g code (mlstring names); EVERY (every_exp P) (exps_of code) ⇒ same for fperm f g code. every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_fperm_decs",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_fperm_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: EVERY good_panops pan_code ⇒ EVERY good_panops (fperm_decs f g pan_code). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "every_inst_ok_less_pan_globals_compile_top",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_globals_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: binders pan_code main; EVERY good_panops pan_code ⇒ EVERY good_panops (compile_top pan_code main). every_exp (λx. ∀op es. x = Panop op es ⇒ LENGTH es = 2) is everyExpHOL panopArityTwoHOL, EVERY (every_exp P) is everyExpListHOL P, EVERY good_panops is List.all goodPanopsHOL (as in the reviewed good_panops_def/pancake_good_code_def ports); compilers are the reviewed exact pan_globals ports. Typed capture pan_globals_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses). Word translation only."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "holFmapAsFiniteSupportWitness",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Same-module canonical witness re-exporting the reviewed PanGlobalsContextExact roundtrip for the fmap_as_finite_support [globals] qualifier; no HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "everyExpListHOL_append",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack list-append factoring of EVERY (every_exp P) used by the tagged every_inst_ok_less ports in this module; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "compileExp_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual single-expression half of the tagged every_inst_ok_less_pan_globals_compile_exp (with compileExpList_every); no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "compileExpList_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "MAP (compile_exp ctxt) half of the mutual induction behind every_inst_ok_less_pan_globals_compile_exp, also recording length preservation for the Panop arity; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "shapeVal_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual shape_val half assembled into the tagged every_inst_ok_less_shape_val; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "shapeVals_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual shape_vals half assembled into the tagged every_inst_ok_less_shape_val; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "everyExpListHOL_flatten",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack FLAT factoring of EVERY (every_exp P) used by the tagged every_inst_ok_less_pan_globals_compile_top; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "resortDecls_all_good",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "resort_decls (four FILTERs) preserves EVERY good_panops; Flapjack support for the tagged every_inst_ok_less_pan_globals_compile_top, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanGlobals.lean",
+    "lean_name": "params_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Parameter variables (MAP (Var Local o FST)) satisfy the Panop arity predicate; Flapjack support for the tagged every_inst_ok_less_pan_globals_compile_top, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOk_nestedDecsCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_storeGlobalsCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_storesCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_loadShapeCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_cexpHeadsCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "everyInstOkLess_compFieldCodec",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "binaryExpNative_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "binaryListNative_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/PanToCrepValidity.lean",
+    "lean_name": "binaryProgNative_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Flapjack-specific internal Boolean proof factoring/codec equivalence for the separately tagged full original native Crep validity statements in the same module. No standalone HOL declaration or completed port claim; unconditional constructor-for-constructor codec correspondence supplies shared literal crepEveryExpHOL predicate and membership EVERY without additional premises."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile_exp",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile_exp",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: all three conjuncts: compile_exp, compile_exps with LENGTH preservation, compile_fields over MAP SND; ctxt : pan_structs$context = ContextExact. Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ctxt p. EVERY (every_exp P) (exps_of p) ⇒ same for exps_of (compile ctxt p); by compile_ind (context-changing). Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile_decs",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile_decs",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ctxt pan_code. EVERY good_panops pan_code ⇒ EVERY good_panops (FST (compile_decs ctxt pan_code)). Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "every_inst_ok_less_pan_structs_compile_top",
+    "hol_path": "cakeml/pancake/proofs/pan_to_wordProofScript.sml",
+    "hol_name": "every_inst_ok_less_pan_structs_compile_top",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04: ∀ctxt pan_code. ... ⇒ EVERY good_panops (compile_top pan_code); HOL ctxt is an unused binder at a free type alpha independent of the decl word type, retained as (_ctxt : β). Renderings as the pan_globals group (everyExpHOL panopArityTwoHOL / everyExpListHOL / List.all goodPanopsHOL; MAP SND as List.map Prod.snd); compilers are the reviewed exact pan_structs ports over ContextExact. Word translation only. Typed capture pan_structs_inst_ok probe (pan_to_wordProofTheory, show_types, no hypotheses)."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "everyExpListHOL_iff",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Membership form of EVERY (every_exp P); Flapjack support for the tagged pan_structs every_inst_ok_less ports, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "everyExpFieldListHOL_eq",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "The field-list every_exp traversal equals EVERY (every_exp P) (MAP SND flds); Flapjack support, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "findSome_snd_mem",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "ALOOKUP_MEM-style fact for the name-keyed findSome? rendering; Flapjack support for the NStruct case, no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "structsExp_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual compile_exp half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "structsExps_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual compile_exps half (with length) assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/PanToWord/EveryInstOkLess/PanStructs.lean",
+    "lean_name": "structsFields_every",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Mutual compile_fields half assembled into the tagged every_inst_ok_less_pan_structs_compile_exp; no independent HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_nested_seq_assign",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfNestedSeqAssign",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-seq-assign: original 3042-3049 and typed capture crep_inline_exps_provenance (ns:num list, es: alpha exp list). ns/es/e retained; MAP2 Assign rendered as List.zipWith (.assign n v), which truncates at the shorter list exactly as HOL MAP2 (unequal lengths retained, no length premise). Sole premise MEM e (exps_of (nested_seq ...)); conclusion MEM e es. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_arg_load",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfArgLoad",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-arg-load: original 3060-3068 and typed capture. Binders e/tmp_vars/args/args_vname/p retained at native carriers; argLoadHOLExact is the native arg_load. Full three-way disjunction retained: MEM e args OR (exists c. MEM c tmp_vars and e = Var c) OR MEM e (exps_of p). No length premise. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_unreach_elim",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfUnreachElim",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-unreach: original 3082-3091 and typed capture (r: early_exit option, rt: free type beta). Binders p q r e retained; HOL rt does not occur in the body and is retained as an unused explicit binder at a free universe-0 type beta. Premise unreach_elim p = (q,r) and MEM e (exps_of q); conclusion MEM e (exps_of p). Proved via Flapjack helper crepInline_unreachElim_exps over all unreachElimHOLExact clauses. Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_transform_eoc",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfTransformEoc",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-eoc: original 3093-3108 and typed capture. Binders rts p e retained; native transformEocHOLExact; induction covers every transform_eoc clause. Premise MEM e (exps_of (transform_eoc rts p)); conclusion MEM e (exps_of p). Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/crep_inlineProofScript.sml",
+    "hol_name": "exps_of_transform_branch",
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_expsOfTransformBranch",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison 2026-10-04 bead flapjack-crep-inline-exps-branch: original 3110-3125 and typed capture. Binders ld rts p e retained; native transformBranchHOLExact; induction covers every transform_branch clause. Premise MEM e (exps_of (transform_branch ld rts p)); conclusion MEM e (exps_of p). Canonical syntax MlString/BitVec; words qualifier only. This is original expression provenance, not complete inline/compiler correctness."
+  },
+  {
+    "hol_path": null,
+    "hol_name": null,
+    "lean_path": "Flapjack/Pancake/Proofs/CrepInline/ExpressionProvenance.lean",
+    "lean_name": "crepInline_unreachElim_exps",
+    "statement_status": "no_hol_reference_pending_classification",
+    "reviewer": "Projection form of exps_of_unreach_elim (first component of unreachElimHOLExact) used to prove the tagged crepInline_expsOfUnreachElim; no independent HOL declaration."
   },
   {
     "hol_path": null,

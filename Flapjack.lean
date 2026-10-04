@@ -1,3 +1,4 @@
+import Flapjack.Compiler.Encoders.AsmSem.MemoryByteShift
 import Flapjack.RiscV.CorrectnessEncoding.MemorySource
 import Flapjack.RiscV.CorrectnessEncoding.MemoryRun
 import Flapjack.RiscV.CorrectnessEncoding.MemoryBytes
@@ -8,6 +9,7 @@ import Flapjack.RiscV.CorrectnessEncoding.ShiftRorRegister
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveDomain
 import Flapjack.Compiler.Backend.WordToStack.ProductionMoveMaterialization
 import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapTransport
+import Flapjack.Compiler.Backend.WordToStack.ProductionBitmapCaller
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRorImmediate
 import Flapjack.RiscV.CorrectnessEncoding.RorExecution
 import Flapjack.RiscV.CorrectnessEncoding.RorStep
@@ -2078,8 +2080,11 @@ import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ShMemLoad
 import Flapjack.Pancake.Proofs.PanToCrep.PcCompileCorrect.ExtCall
 import Flapjack.Pancake.Proofs.PanToCrep.NotMemContextAssignedMemGt
 import Flapjack.Pancake.Proofs.PanToWord
+import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanGlobals
+import Flapjack.Pancake.Proofs.PanToWord.EveryInstOkLess.PanStructs
 import Flapjack.Pancake.Proofs.PanToWord.PanSimpValidity
 import Flapjack.Pancake.Proofs.PanToWord.PanToCrepValidity
+import Flapjack.Pancake.Proofs.CrepInline.ExpressionProvenance
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pipeline
 import Flapjack.Pipeline.Proofs.SourceLoopState
@@ -2675,4 +2680,3 @@ The library currently contains the first Lean representation of Flapjack's
 front-end language. The source of truth used while porting is the CakeML HOL
 development in `cakeml/pancake`.
 -/
-

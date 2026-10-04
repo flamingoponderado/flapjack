@@ -67,7 +67,7 @@ theorem setByteHOL8_eq {width : Nat} [NeZero width] (a : BitVec width) (b : BitV
 def rmwVal {width : Nat} [NeZero width] {rw : Nat} (be : Bool) (mem : BitVec width → BitVec 8)
     (a : BitVec width) : Nat → BitVec rw
   | 0 => 0
-  | n + 1 => (rmwVal be mem (if be then a - 1 else a + 1) n <<< 8) ||| (mem a).setWidth rw
+  | n + 1 => (rmwVal be mem (if be then a - 1 else a + 1) n <<< (8 : Nat)) ||| (mem a).setWidth rw
 
 /-- Whether every address touched by `read_mem_word`/`write_mem_word` is in
 the domain. -/
@@ -97,7 +97,7 @@ def wmwMem {width : Nat} [NeZero width] {vw : Nat} (be : Bool) (mem : BitVec wid
     (a : BitVec width) : Nat → BitVec vw → BitVec width → BitVec 8
   | 0, _ => mem
   | n + 1, w => fun x => if x = a then w.setWidth 8
-      else wmwMem be mem (if be then a - 1 else a + 1) n (w >>> 8) x
+      else wmwMem be mem (if be then a - 1 else a + 1) n (w >>> (8 : Nat)) x
 
 theorem writeMemWord_eq {width : Nat} [NeZero width] {vw : Nat} [NeZero vw]
     (a : BitVec width) (n : Nat) (w : BitVec vw) (s : AsmState width) :
@@ -130,20 +130,14 @@ theorem stepAddr_zero {width : Nat} [NeZero width] (be : Bool) (B : BitVec width
 
 /-- Every bit of a read word is a bit of the byte it came from. -/
 theorem getLsbD_rmwVal {width : Nat} [NeZero width] {rw : Nat} (be : Bool)
-    (mem : BitVec width → BitVec 8) (B : BitVec width) (n j : Nat) (hrw : 4 ≤ rw)
+    (mem : BitVec width → BitVec 8) (B : BitVec width) (n j : Nat) (_hrw : 4 ≤ rw)
     (hj : j < rw) :
     (rmwVal (rw := rw) be mem B n).getLsbD j =
       (decide (j / 8 < n) && (mem (stepAddr be B (j / 8))).getLsbD (j % 8)) := by
-  have h8 : (8 : BitVec rw).toNat = 8 := by
-    change (BitVec.ofNat rw 8).toNat = 8
-    rw [BitVec.toNat_ofNat]
-    apply Nat.mod_eq_of_lt
-    calc 8 < 2 ^ 4 := by decide
-      _ ≤ 2 ^ rw := Nat.pow_le_pow_right (by decide) hrw
   induction n generalizing B j with
   | zero => simp [rmwVal]
   | succ n ih =>
-    simp only [rmwVal, BitVec.getLsbD_or, BitVec.shiftLeft_eq', h8, BitVec.getLsbD_shiftLeft,
+    simp only [rmwVal, BitVec.getLsbD_or, BitVec.getLsbD_shiftLeft,
       BitVec.getLsbD_setWidth, hj, decide_true, Bool.true_and]
     by_cases hj8 : j < 8
     · have h0 : j / 8 = 0 := Nat.div_eq_of_lt hj8
@@ -161,14 +155,8 @@ theorem getLsbD_rmwVal {width : Nat} [NeZero width] {rw : Nat} (be : Bool)
 the `k`-th byte of the value. -/
 theorem wmwMem_step {width : Nat} [NeZero width] {vw : Nat} (be : Bool)
     (mem : BitVec width → BitVec 8) (B : BitVec width) (n : Nat) (w : BitVec vw) (k : Nat)
-    (hvw : 4 ≤ vw) (hk : k < n) (hn : n ≤ 2 ^ width) :
+    (_hvw : 4 ≤ vw) (hk : k < n) (hn : n ≤ 2 ^ width) :
     wmwMem be mem B n w (stepAddr be B k) = (w >>> (8 * k)).setWidth 8 := by
-  have h8 : (8 : BitVec vw).toNat = 8 := by
-    change (BitVec.ofNat vw 8).toNat = 8
-    rw [BitVec.toNat_ofNat]
-    apply Nat.mod_eq_of_lt
-    calc 8 < 2 ^ 4 := by decide
-      _ ≤ 2 ^ vw := Nat.pow_le_pow_right (by decide) hvw
   induction n generalizing B w k with
   | zero => omega
   | succ n ih =>
@@ -189,8 +177,8 @@ theorem wmwMem_step {width : Nat} [NeZero width] {vw : Nat} (be : Bool)
       rw [if_neg hne, ← stepAddr_succ, ih _ _ k (by omega) (by omega)]
       apply BitVec.eq_of_getLsbD_eq
       intro i hi
-      simp only [BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight, BitVec.ushiftRight_eq',
-        h8, hi, decide_true, Bool.true_and]
+      simp only [BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight,
+        hi, decide_true, Bool.true_and]
       congr 1
       omega
 
