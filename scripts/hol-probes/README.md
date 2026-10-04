@@ -8534,3 +8534,13 @@ slot-to-bit index arithmetic, and allocator stack-colour transport. Full GC
 caller and whole-body production correspondence remain open. Pancake's
 LoopToWord Call/FFI producers use empty GC cutsets, so the source artifact
 corpus does not distinguish this nonempty-GC regression.
+
+### Native memory Next composition
+
+`riscv_memory_step_probeScript.sml` evaluates actual original NextRISCV for all
+eight emitted memory families, with signed-offset and zero-register fixtures.
+It also captures the literal original Next and PC-update equations, zero open
+hypotheses, and their carrier types. These finite observations accompany the
+unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
+they do not establish full Mem encoder correctness or discharge its original
+source/initial-relation, environment, memory-domain and assertion obligations.
