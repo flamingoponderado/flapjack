@@ -9,10 +9,14 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.StateRelFp
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpConversions
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Binary
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Shift
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpArith
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.FpTransfer
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Division
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.LongArithmetic
 import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 import Flapjack.Pancake.Proofs.PanToTarget
+import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
+import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
@@ -61,6 +65,7 @@ import Flapjack.RiscV.CorrectnessEncoding.JumpReg
 import Flapjack.RiscV.CorrectnessEncoding.Skip
 import Flapjack.Compiler.Backend.WordToWord.Config
 import Flapjack.Compiler.Backend.WordToWord.Compile
+import Flapjack.Compiler.Backend.WordToWord.ExecutableCompile
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CodeRel
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingle
 import Flapjack.Compiler.Backend.WordToWord.Proofs.CompileSingleCorrect.Frame
@@ -133,6 +138,8 @@ import Flapjack.RiscV.L3.Step.Evaluation
 import Flapjack.RiscV.L3.Step.Next
 import Flapjack.RiscV.L3.Step.UpdatePC
 import Flapjack.RiscV.L3.Step.AvoidSignalAddressException
+import Flapjack.RiscV.L3.Step.RegisterALUStep
+import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
@@ -2476,6 +2483,8 @@ import Flapjack.Compiler.Backend.WordUnreach.ProductionCanonicalImage
 import Flapjack.Compiler.Backend.WordUnreach.Proofs
 import Flapjack.Compiler.Backend.WordCopy
 import Flapjack.Compiler.Backend.WordInst
+import Flapjack.Compiler.Backend.WordInst.ExecutablePullExp
+import Flapjack.Compiler.Backend.WordInst.ExecutableInstSelect
 import Flapjack.Compiler.Backend.WordInst.Proofs.PullExp
 import Flapjack.Compiler.Backend.WordInst.Proofs.InstSelect
 import Flapjack.Compiler.Backend.WordInst.Proofs.ThreeToTwo
@@ -2508,6 +2517,8 @@ import Flapjack.Compiler.Backend.WordToStack.Proofs.LoadRegisterClock
 import Flapjack.Compiler.Backend.WordToStack.Proofs.CompCorrect.If
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryLoad
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.MemoryStore
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Memory
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.Skip
 
 -- Tagged modules required by the HOL reference coverage gate.
 
