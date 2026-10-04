@@ -1,0 +1,12 @@
+load "preamble";
+load "pan_to_wordProofTheory";
+open HolKernel Parse bossLib preamble pan_to_wordProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = if null (hyp (every_inst_ok_less_pan_structs_compile_exp)) then () else raise Fail "hypotheses: every_inst_ok_less_pan_structs_compile_exp";
+val _ = (print "every_inst_ok_less_pan_structs_compile_exp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_pan_structs_compile_exp)); print "\n");
+val _ = if null (hyp (every_inst_ok_less_pan_structs_compile)) then () else raise Fail "hypotheses: every_inst_ok_less_pan_structs_compile";
+val _ = (print "every_inst_ok_less_pan_structs_compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_pan_structs_compile)); print "\n");
+val _ = if null (hyp (every_inst_ok_less_pan_structs_compile_decs)) then () else raise Fail "hypotheses: every_inst_ok_less_pan_structs_compile_decs";
+val _ = (print "every_inst_ok_less_pan_structs_compile_decs_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_pan_structs_compile_decs)); print "\n");
+val _ = if null (hyp (every_inst_ok_less_pan_structs_compile_top)) then () else raise Fail "hypotheses: every_inst_ok_less_pan_structs_compile_top";
+val _ = (print "every_inst_ok_less_pan_structs_compile_top_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_pan_structs_compile_top)); print "\n");

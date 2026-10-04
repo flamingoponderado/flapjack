@@ -1,0 +1,12 @@
+load "pan_to_wordProofTheory"; load "crepPropsTheory";
+open HolKernel Parse boolLib bossLib pan_to_wordProofTheory;
+val _ = Globals.linewidth := 1000000;
+val _ = (print "crep_every_exp_def_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl crepPropsTheory.every_exp_def); print "\n");
+val _ = if null (hyp (every_inst_ok_less_crep_to_loop_compile_exp)) then () else raise Fail "hypotheses: every_inst_ok_less_crep_to_loop_compile_exp";
+val _ = (print "every_inst_ok_less_crep_to_loop_compile_exp_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_crep_to_loop_compile_exp)); print "\n");
+val _ = if null (hyp (every_prog_loop_inst_ok_nested_seq)) then () else raise Fail "hypotheses: every_prog_loop_inst_ok_nested_seq";
+val _ = (print "every_prog_loop_inst_ok_nested_seq_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_prog_loop_inst_ok_nested_seq)); print "\n");
+val _ = if null (hyp (every_inst_ok_less_crep_to_loop_compile)) then () else raise Fail "hypotheses: every_inst_ok_less_crep_to_loop_compile";
+val _ = (print "every_inst_ok_less_crep_to_loop_compile_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_crep_to_loop_compile)); print "\n");
+val _ = if null (hyp (every_inst_ok_less_comp_func)) then () else raise Fail "hypotheses: every_inst_ok_less_comp_func";
+val _ = (print "every_inst_ok_less_comp_func_typed="; Lib.with_flag (Globals.show_types,true) print_term (concl (every_inst_ok_less_comp_func)); print "\n");

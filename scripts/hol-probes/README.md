@@ -8563,3 +8563,45 @@ hypotheses, and their carrier types. These finite observations accompany the
 unrestricted Lean native Next/control/validity proofs in `MemoryStep.lean`;
 they do not establish full Mem encoder correctness or discharge its original
 source/initial-relation, environment, memory-domain and assertion obligations.
+
+### Universal native conditional-branch decoder prerequisites
+
+`CorrectnessEncoding/DecodeBranches.lean` proves the six actual BEQ/BNE/BLT/
+BLTU/BGE/BGEU Encode/DecodeAny compositions for every word5 source register
+and word12 logical halfword offset. Original SBtype (riscvScript.sml
+19012–19020) stores imm11/imm9..4/rs2/rs1/funct3/imm3..0/imm10/opcode;
+asImm12 reconstructs all twelve offset bits. Register zero, all aliases and
+negative offsets remain admitted. The local lemmas are untagged infrastructure
+because there are no separately named original composition theorems.
+
+`riscv_branch_decode_probeScript.sml` proves all six universal identities in
+the original HOL kernel, captures their typed statements and zero hypotheses,
+and checks zero, all-ones, aliased sign-bit and mixed-input boundaries for each.
+The original Encode clauses and word5/word12 carriers are also captured.
+These decoder prerequisites do not prove the full JumpCmp case or compiler
+correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
+run `check-riscv-branch-decode.py` to detect source/evidence drift.
+
+### Generic source memory byte-shift repair
+
+`asm_memory_shift_probeScript.sml` executes original `read_mem_word` and
+`write_mem_word` with address width 8 and independent result/value widths
+1, 2, 3 and 64. The matched Lean kernel regressions live in
+`AsmSem/MemoryByteShift.lean`. Original shifts use a Nat count of eight;
+a homogeneous BitVec count truncates the numeral to zero at widths 1–3.
+The source definitions and companion proofs now explicitly use `(8 : Nat)`.
+No positivity restriction or error guard changes. These observations supplement
+the generic source-domain proofs; they do not complete native Mem correctness.
+
+`pan_to_crep_validity_helpers_probe.out` captures seven complete original typed list/field/head/store/load validity statements from pan_to_wordProofScript. Guards retain matched declaration lengths, actual pair/Option results, and the stores nonempty conditional; global addresses remain word5. Native kernel proofs retain the original equivalences/implications. Full arithmetic/compiler/inlining validity remains separate; captures support source review, not cross-language equivalence.
+
+### Source memory traversal domains
+
+`riscv_memory_source_probeScript.sml` checks literal original read/write success
+and failure at zero,1,2,4,8,12 bytes, both endian modes,8-bit wrapping addresses
+and16-bit independent read/value widths. Missing final-byte domains fail;
+previous failures persist even at zero count. Captured successor and wrapper
+clauses retain original assertions and alignment guards. `MemorySource.lean`
+proves arbitrary-count source success/domain characterizations and extracts
+original memLoad/memStore guards. It does not prove the full native Mem encoder.
+`crep_inline_nested_decs_provenance_probe.out` captures the full typed original nested-declaration expression-provenance implication. All list lengths, including mismatches, remain admitted; the conclusion retains the original argument-list or original body alternatives. This prerequisite does not establish complete inlining validity.
