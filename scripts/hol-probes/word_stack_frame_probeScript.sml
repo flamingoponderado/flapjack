@@ -100,3 +100,9 @@ val _ = print_eval "later_pair_bounded"
   ``let f = FST (SND (compile_prog ^cp_config F ^later_pair_prog 22 22 ^cp_bitmaps))
    in SND (HD (FST (wReg1 44 (22,f,0:num)))) < f /\
       SND (HD (FST (wReg1 46 (22,f,0:num)))) < f``
+
+(* Production physical slot one versus source bitmap index zero. *)
+val _ = print_eval "one_spill_physical_slot"
+  ``SND (HD (FST (wReg1 44 (22,2,1:num))))``
+val _ = print_eval "one_spill_bitmap"
+  ``(write_bitmap (insert 44 () (LN:unit spt)) 22 1:64 word list)``

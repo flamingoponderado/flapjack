@@ -997,7 +997,7 @@ run_probe word_to_stack_selector_prelude_probeScript.sml word_to_stack_selector_
   "$cake_dir/compiler/backend/word_instScript.sml" "$cake_dir/compiler/backend"
 run_probe word_stack_frame_probeScript.sml word_stack_frame_probe.out \
   maxvar_skip limit_seq later_pair_f later_pair_alloc later_pair_slot_44 \
-  later_pair_slot_46 later_pair_bounded \
+  later_pair_slot_46 later_pair_bounded one_spill_physical_slot one_spill_bitmap \
   "$cake_dir/compiler/backend/word_to_stackScript.sml"
 run_probe word_stack_max_var_probeScript.sml word_stack_max_var_probe.out \
   maxvar_inst_mem maxvar_return "$cake_dir/compiler/backend/word_allocScript.sml" \
@@ -7408,6 +7408,18 @@ run_probe pan_structs_convert_code_locals_probeScript.sml pan_structs_convert_co
 run_probe word_to_stack_comp_shareinst_probeScript.sml word_to_stack_comp_shareinst_probe.out \
   comp_correct_shareinst_full_statement comp_correct_shareinst_full_proved comp_correct_shareinst_full_hypotheses comp_correct_shareinst_whole_statement comp_correct_shareinst_whole_proved comp_correct_shareinst_whole_hypotheses comp_correct_shareinst_full_statement_typed state_rel_set_var_k_typed word_exp_Op_SOME_Word_typed flat_exp_conventions_ShareInst_exp_simp_typed word_exp_Op_Add_0_typed evaluate_ShareInst_Var_eq_Op_Add_typed share_load_lemma1_typed share_load_lemma2_typed share_store_lemma1_typed share_store_lemma2_typed evaluate_ShareInst_Load_typed evaluate_ShareInst_Store_typed evaluate_ShareInst_correct_lemma_typed \
   "$cake_dir/compiler/backend/proofs/word_to_stackProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe backend_props_option_max_probeScript.sml backend_props_option_max_probe.out \
+  option_le_max_typed option_le_eq_eqns_typed option_map2_max_add_typed OPTION_MAP2_MAX_COMM_typed OPTION_MAP2_MAX_ASSOC_typed \
+  "$cake_dir/compiler/backend/semantics/backendPropsScript.sml" "$cake_dir/compiler/backend/semantics"
+
+run_probe word_depth_helpers_probeScript.sml word_depth_helpers_probe.out \
+  option_le_X_MAX_X_typed OPTION_MAP2_MAX_IDEMPOT_typed OPTION_MAP2_SOME_0_typed max_depth_mk_Branch_typed MEM_max_depth_graphs_typed option_le_max_depth_graph_typed option_le_max_depth_graphs_typed LENGTH_LESS_size_typed \
+  "$cake_dir/compiler/backend/proofs/word_depthProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe word_props_code_grows_probeScript.sml word_props_code_grows_probe.out \
+  evaluate_code_only_grows_typed evaluate_NONE_stack_size_const_typed \
+  "$cake_dir/compiler/backend/semantics/wordPropsScript.sml" "$cake_dir/compiler/backend/semantics"
 
 run_probe pan_target_root_leaves_probeScript.sml pan_target_root_leaves_probe.out \
   UPDATE_LIST_def_typed APPLY_UPDATE_LIST_ALOOKUP_typed MOD_SUB_LEMMA_typed DISJOINT_INTER_typed IMP_MULT_DIV_LESS_typed DIV_LESS_DIV_typed WORD_LS_IMP_typed lsr_lsl_typed byte_aligned_mult_typed compile_word_to_stack_sfs_aux_typed \
