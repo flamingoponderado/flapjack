@@ -6960,9 +6960,12 @@ run_probe l3_step_nop_probeScript.sml l3_step_nop_probe.out \
 run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
   slli_hypotheses slli_statement srli_hypotheses srli_statement srai_hypotheses srai_statement slli_nop_hypotheses slli_nop_statement srli_nop_hypotheses srli_nop_statement srai_nop_hypotheses srai_nop_statement source \
    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
- run_probe l3_step_reg_shift_probeScript.sml l3_step_reg_shift_probe.out \
-   sll_hypotheses sll_statement srl_hypotheses srl_statement sra_hypotheses sra_statement sll_nop_hypotheses sll_nop_statement srl_nop_hypotheses srl_nop_statement sra_nop_hypotheses sra_nop_statement source \
-   "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_reg_shift_probeScript.sml l3_step_reg_shift_probe.out \
+    sll_hypotheses sll_statement srl_hypotheses srl_statement sra_hypotheses sra_statement sll_nop_hypotheses sll_nop_statement srl_nop_hypotheses srl_nop_statement sra_nop_hypotheses sra_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_wshift_probeScript.sml l3_step_wshift_probe.out \
+    slliw_hypotheses slliw_statement srliw_hypotheses srliw_statement sraiw_hypotheses sraiw_statement sllw_hypotheses sllw_statement srlw_hypotheses srlw_statement sraw_hypotheses sraw_statement slliw_nop_hypotheses slliw_nop_statement srliw_nop_hypotheses srliw_nop_statement sraiw_nop_hypotheses sraiw_nop_statement sllw_nop_hypotheses sllw_nop_statement srlw_nop_hypotheses srlw_nop_statement sraw_nop_hypotheses sraw_nop_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
  run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
