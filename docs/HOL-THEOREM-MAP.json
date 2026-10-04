@@ -98245,5 +98245,23 @@
     "lean_name": "panToTargetPanToWordStageLab",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only assembly step of pan_to_target_compile_semantics (HOL proof lines 2103-2284): panToTargetPanToWordFromInit instantiated at labst = lab_to_target make_init mc ffi t m (dm INTER byte_aligned) (sdm INTER byte_aligned) ...; the lab-state facts are derived from pan_installed's memory agreement, good_init_state (target_state_rel registers, word memory) and shared-domain equation, mc_conf_ok reg_ok of len/ptr2/len2, and the top theorem's register, bound, endianness, FFI and memory hypotheses in their original form."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Rejected.lean",
+    "lean_name": "riscv_encoder_correct_longdiv",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original full LongDiv637-642 case and complete encoder_correct_def with original asmSem asm_step seventh conjunct, asm arith_ok/fp_ok and riscv_config/asm_ok. Only original source asmStep plus initial targetStateRel; full existential n/all interference environments/both asserts/outside-domain asserts2/code bytes/PC membership/final full relation. Derives impossible original source step from actual RISC-V config, not an assumed rejection or target-output premise. All five unrestricted natural register names retained; original LongDiv requires x86_64 ISA, whereas reviewed config is riscv. Original theorem specialized to this exact complete source constructor in fresh typed/hyp0/proved captures. Statement inherits reals_as_rational_cuts assurance limit SOUNDNESS8 through native target carrier; no instruction executes in these contradiction proofs. No production-route or full encoder/compiler completion claim."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/Rejected.lean",
+    "lean_name": "riscv_encoder_correct_fp",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol: compared original full FP673-677 case and complete encoder_correct_def with original asmSem asm_step seventh conjunct, asm arith_ok/fp_ok and riscv_config/asm_ok. Only original source asmStep plus initial targetStateRel; full existential n/all interference environments/both asserts/outside-domain asserts2/code bytes/PC membership/final full relation. Derives impossible original source step from actual RISC-V config, not an assumed rejection or target-output premise. Entire original sixteen-constructor HolFp carrier retained. Original riscv_config fp_reg_count=0 rejects every form, including integer move/conversion and armv7-only FMA; kernel proof cases all sixteen forms. Original theorem specialized to this exact complete source constructor in fresh typed/hyp0/proved captures. Statement inherits reals_as_rational_cuts assurance limit SOUNDNESS8 through native target carrier; no instruction executes in these contradiction proofs. No production-route or full encoder/compiler completion claim."
   }
 ]
