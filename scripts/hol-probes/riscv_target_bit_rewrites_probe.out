@@ -1,0 +1,8 @@
+word_bit_0_add4_statement=∀(w :word64). (word_bit (0 :num) (w + (4w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (8w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (12w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (16w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (20w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (24w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (28w :word64)) ⇔ word_bit (0 :num) w) ∧ (word_bit (0 :num) (w + (32w :word64)) ⇔ word_bit (0 :num) w)
+word_bit_0_add4_types=(w :word64) : :word64
+word_bit_0_add4_hypotheses=0
+word_bit_0_add4_proved=T
+word_bit_0_lemmas_statement=∀(v :word64) (w :word64). ¬word_bit (0 :num) ((0xFFFFFFFFFFFFFFFEw :word64) && w) ∧ (word_bit (0 :num) (((0xFFFFFFFFFFFFFFFEw :word64) && w) + v) ⇔ word_bit (0 :num) v)
+word_bit_0_lemmas_types=(v :word64) : :word64, (w :word64) : :word64
+word_bit_0_lemmas_hypotheses=0
+word_bit_0_lemmas_proved=T
