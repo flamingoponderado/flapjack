@@ -19,6 +19,7 @@ import Flapjack.Pancake.Proofs.PanToWord.InitialComposition
 import Flapjack.Pancake.Proofs.PanToTarget
 import Flapjack.Pancake.Proofs.PanToTarget.CompileProgEq
 import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMax
+import Flapjack.Pancake.Proofs.PanToTarget.ConstMemory
 import Flapjack.Compiler.Backend.WordDepth
 import Flapjack.Pancake.Proofs.PanToWord.StateRelImpSemantics
 import Flapjack.Compiler.Backend.WordToStack.Proofs.InstSimulation.CarryOverflow
