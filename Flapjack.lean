@@ -1469,6 +1469,7 @@ import Flapjack.Pancake.Proofs.WordConvs.GoodHandlersTail
 import Flapjack.Pancake.Proofs.WordConvs.UnreachPreAlloc
 import Flapjack.Compiler.Backend.WordRemove
 import Flapjack.Compiler.Backend.WordRemove.Production
+import Flapjack.Compiler.Backend.WordRemove.ProductionAllocatorImage
 import Flapjack.Compiler.Backend.WordRemove.Proofs.CompileState
 import Flapjack.Compiler.Backend.WordRemove.Proofs.Correct
 import Flapjack.Compiler.Backend.DataToWord.Config
