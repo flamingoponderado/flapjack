@@ -7828,3 +7828,8 @@ run_probe word_inst_sub_probeScript.sml word_inst_sub_probe.out \
 run_probe word_convs_unreach_labels_probeScript.sml word_convs_unreach_labels_probe.out \
   unreachLabels1_typed unreachLabels1_proved unreachLabels1_hypotheses unreachLabels2_typed unreachLabels2_proved unreachLabels2_hypotheses unreachLabels3_typed unreachLabels3_proved unreachLabels3_hypotheses unreachLabels4_typed unreachLabels4_proved unreachLabels4_hypotheses unreachLabels5_typed unreachLabels5_proved unreachLabels5_hypotheses unreachLabels6_typed unreachLabels6_proved unreachLabels6_hypotheses unreachLabels7_typed unreachLabels7_proved unreachLabels7_hypotheses \
   "$cake_dir/compiler/backend/proofs/wordConvsProofScript.sml" "$cake_dir/compiler/backend/proofs"
+
+run_probe l3_step_immediate_comparison_probeScript.sml l3_step_immediate_comparison_probe.out \
+  slti_statement slti_types slti_source_hypotheses slti_proved sltiu_statement sltiu_types sltiu_source_hypotheses sltiu_proved \
+  "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

@@ -8187,3 +8187,16 @@ it does not establish whole-pass production adoption or HOL/Lean equivalence.
 closed quantification, zero hypotheses and kernel-proved statements. Source
 review evidence covers the original guards and complete target existential;
 it does not assert cross-assistant equivalence or whole compiler correctness.
+
+## Evaluated SLTI and SLTIU original hypotheses
+
+`Step/ImmediateComparison.lean` completes the original six-case immediate ALU
+group with SLTI and SLTIU. The fresh complete typed theorem captures in
+`l3_step_immediate_comparison_probe.out` discharge and quantify BOTH original
+hypotheses: destination nonzero and ArchBase unequal to1. The latter propagates
+from source `not1` into the `in32BitMode` evaluator. These are original guards,
+not new port assumptions. Both equations preserve the full native record and
+RV32 sign extension of low32 source bits, including literal SLTIU asymmetry.
+The proof uses the actual reviewed definitions and kernel-checked finite-word
+case analysis. Captures are regression evidence, not cross-language equivalence.
+The elaborated declaration closure contains no inherited real-cut operation.

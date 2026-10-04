@@ -92635,5 +92635,21 @@
     "statement_status": "reviewed_words_as_type_indexed_bitvec",
     "words_as_type_indexed_bitvec": true,
     "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.15.2.54): word_to_wordProof syntactic group. HOL statement compared clause by clause against the probe word_to_word_syntactic (statement/hypotheses/typed); HOL's free variables are explicit leading binders in source order, HOL bool predicates as Lean Bool = true, no_share_inst/no_mt/no_alloc/no_install as the tagged noShareInstSubprogsHOL/noMtSubprogsHOL/noAllocSubprogsHOL/noInstallSubprogsHOL, find_code as tagged wordSemFindCode, code_rel as tagged codeRel, fromAList/ALOOKUP as sptFromAList/sptAListLookup, ALL_DISTINCT as List.Nodup, ZIP on equal-length lists as List.zip. Positive HOL word dimension is the sole carrier translation. Definition over Spt lookup as in no_install_code_def."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTI",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparison.lean",
+    "lean_name": "dfnSltI",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared evaluated SLTI at line839 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
+  },
+  {
+    "hol_path": "HOL/examples/l3-machine-code/riscv/step/riscv_stepScript.sml",
+    "hol_name": "SLTIU",
+    "lean_path": "Flapjack/RiscV/L3/Step/ImmediateComparison.lean",
+    "lean_name": "dfnSltIU",
+    "statement_status": "reviewed_exact",
+    "reviewer": "Source compared evaluated SLTIU at line840 and original class/in32BitMode EV/not1. Fresh GEN_ALL(DISCH_ALL original) capture has BOTH rd<>0 and ArchBase<>1 (sourcehypotheses2), full word5 registers/word12 immediate/native-state record equation. Literal signed low32 extension retained in RV32 for both signed and unsigned comparisons; zero-source and aliases unrestricted. Word/register/mode operation only; elaborated declaration closure has no inherited real-cut assumption; no added premise. Captured source theorem/provedT is regression evidence, kernel proof and source comparison establish reviewed shape."
   }
 ]
