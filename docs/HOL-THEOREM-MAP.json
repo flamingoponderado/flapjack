@@ -93982,5 +93982,32 @@
     "lean_name": "holFmapAsFiniteSupportParamWitness_FLOOKUP_MAP_KEYS_LINV_m",
     "statement_status": "no_hol_reference_pending_classification",
     "reviewer": "Flapjack-only canonical standalone-map witness for the fmap_as_finite_support_parameters qualifier on the tagged FLOOKUP_MAP_KEYS_LINV: the HolFiniteMapExact parameter roundtrips through its lookup and finite-support proof. It introduces no carrier and has no separate HOL declaration."
+  },
+  {
+    "hol_path": "cakeml/compiler/backend/semantics/targetSemScript.sml",
+    "hol_name": "installed_def",
+    "lean_path": "Flapjack/Compiler/Backend/Semantics/TargetSem/Installed.lean",
+    "lean_name": "installed",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): targetSem installed_def (477-510), compared clause by clause with the typed capture target_sem_installed; all binders and all clauses in HOL order. Address sets are α word -> bool in HOL (typed capture), rendered as Boolean domains as in the tagged good_init_state_def: set-builder {w | t.regs r1 <=+ w ∧ w <+ t.regs r2} as the decided unsigned range, ∪ as ||, DISJOINT as pointwise exclusion, byte_aligned ∩ bitmaps_dm as the conjunction; unsigned <=+/<+/≤₊ as BitVec ≤/<; bytes_in_word as n2w (dimindex DIV 8) (StackRemove.bytesInWord); word_list/word_list_exists/fun2set/STAR as the tagged Misc.wordList/Misc.wordListExists/SetSep.fun2Set/SetSep.star; ffi_names : ffiname list option as Option (List HolFfiName); shmem_info_num as the tagged ShmemInfoNum; mmio_pcs_min_index, ffi_offset, Addr as the tagged mmioPcsMinIndex, ffiOffset, HolAddr.addr; GENLIST f n as (List.range n).map f, ZIP on equal-length lists, DROP as List.drop, w2n as toNat, dimword (:α) as 2 ^ width; HOL's paired argument (r1,r2) is the pair regs. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_installed_def",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/PanInstalled.lean",
+    "lean_name": "panInstalled",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_def (290-326), compared with the literal-source replay pan_to_target_pan_installed_source_replay; the installed_def clauses plus (∀a. a ∈ p_dom ⇒ m a = p_mem a) and sdm' = sdm ∩ byte_aligned (p_dom, sdm' Boolean domains, ∩ as &&), in HOL order. Address sets are α word -> bool in HOL (typed capture), rendered as Boolean domains as in the tagged good_init_state_def: set-builder {w | t.regs r1 <=+ w ∧ w <+ t.regs r2} as the decided unsigned range, ∪ as ||, DISJOINT as pointwise exclusion, byte_aligned ∩ bitmaps_dm as the conjunction; unsigned <=+/<+/≤₊ as BitVec ≤/<; bytes_in_word as n2w (dimindex DIV 8) (StackRemove.bytesInWord); word_list/word_list_exists/fun2set/STAR as the tagged Misc.wordList/Misc.wordListExists/SetSep.fun2Set/SetSep.star; ffi_names : ffiname list option as Option (List HolFfiName); shmem_info_num as the tagged ShmemInfoNum; mmio_pcs_min_index, ffi_offset, Addr as the tagged mmioPcsMinIndex, ffiOffset, HolAddr.addr; GENLIST f n as (List.range n).map f, ZIP on equal-length lists, DROP as List.drop, w2n as toNat, dimword (:α) as 2 ^ width; HOL's paired argument (r1,r2) is the pair regs. Positive word dimension via [NeZero width]."
+  },
+  {
+    "hol_path": "cakeml/pancake/proofs/pan_to_targetProofScript.sml",
+    "hol_name": "pan_installed_imp_installed",
+    "lean_path": "Flapjack/Pancake/Proofs/PanToTarget/PanInstalled.lean",
+    "lean_name": "pan_installed_imp_installed",
+    "statement_status": "reviewed_words_as_type_indexed_bitvec",
+    "words_as_type_indexed_bitvec": true,
+    "reviewer": "flapjack-opus3 source comparison (2026-10-04; bead flapjack-pxn.18.5.14.7.4): pan_to_targetProof pan_installed_imp_installed (328-334), compared with the literal-source replay pan_to_target_pan_installed_source_replay (re-proved with HOL's tactic); HOL's free variables explicit in order of appearance with (r1,r2) as the pair. Positive word dimension via [NeZero width]."
   }
 ]
