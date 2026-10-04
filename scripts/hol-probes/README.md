@@ -8582,3 +8582,5 @@ The original Encode clauses and word5/word12 carriers are also captured.
 These decoder prerequisites do not prove the full JumpCmp case or compiler
 correctness. Regenerate through the registered `HOL_PROBE_ONLY` driver and
 run `check-riscv-branch-decode.py` to detect source/evidence drift.
+
+`crep_inline_nested_decs_provenance_probe.out` captures the full typed original nested-declaration expression-provenance implication. All list lengths, including mismatches, remain admitted; the conclusion retains the original argument-list or original body alternatives. This prerequisite does not establish complete inlining validity.
