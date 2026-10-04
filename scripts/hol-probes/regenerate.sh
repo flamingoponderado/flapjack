@@ -8359,3 +8359,8 @@ run_probe riscv_jumpcmp_offsets_probeScript.sml riscv_jumpcmp_offsets_probe.out 
 run_probe pan_to_word_inst_ok_less_probeScript.sml pan_to_word_inst_ok_less_probe.out \
   pan_to_word_every_inst_ok_less \
   "$cake_dir/pancake/proofs/pan_to_wordProofScript.sml" "$cake_dir/pancake/proofs"
+
+run_probe riscv_target_jumpcmp_probeScript.sml riscv_target_jumpcmp_probe.out \
+  riscv_encoder_correct_jumpcmp_statement riscv_encoder_correct_jumpcmp_types riscv_encoder_correct_jumpcmp_hypotheses riscv_encoder_correct_jumpcmp_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

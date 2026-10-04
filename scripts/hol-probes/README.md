@@ -8790,3 +8790,9 @@ the reviewed `reals_as_rational_cuts` assurance limit; no executable compiler
 definition changes here. Whole encoder and compiler assembly remain open.
 
 `pan_to_word_inst_ok_less_probe.out` captures the complete original typed six-pass instruction-validity theorem. Source declarations, asm_config and output word programs share one word dimension. The native proof composes reviewed source invariants and full LoopToWord instruction validity under the actual compile equation, both zero-offset guards and original good_panops guard. No target-run or desired-result premise is added; whole semantic compiler correctness remains open.
+
+`riscv_target_jumpcmp_probeScript.sml` specializes the full original native
+encoder correctness theorem to arbitrary JumpCmp operands and comparison.
+Four fresh typed rows retain the complete statement, carrier annotations,
+zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
+The statement/evidence guard detects drift but does not replace source review.

@@ -1,3 +1,4 @@
+import Flapjack.RiscV.CorrectnessEncoding.JumpCmp
 import Flapjack.RiscV.CorrectnessEncoding.JumpCmp.Arithmetic
 import Flapjack.RiscV.CorrectnessEncoding.Rejected
 import Flapjack.RiscV.CorrectnessEncoding.MemoryStore
