@@ -8340,3 +8340,15 @@ Fresh original theorem specialization includes complete statement, typed
 quantifiers, hyp0 and provedT. These captures are regression evidence, not a
 cross-assistant equivalence proof. The full target closure retains inherited
 reals_as_rational_cuts (SOUNDNESS item8). Other Shift/Ror cases remain open.
+
+## Full original register Lsr and Asr encoder cases
+
+`ShiftLsrRegister.lean` and `ShiftAsrRegister.lean` preserve the original
+sole source-step/initial-state premise and complete existential interference
+and asserts/asserts2 conclusions. Logical SRL and signed arithmetic SRA are
+kept distinct. Source count bounds, actual native masked counts, fetched
+bytes/Decode/Run/Next and whole post-state preservation are derived. Both
+fresh complete original theorem specializations have typed quantifiers, hyp0
+and provedT. Captures are source regression evidence, not equivalence proofs.
+The target closures retain inherited reals_as_rational_cuts (SOUNDNESS item8);
+immediate shifts and both Ror routes remain open.

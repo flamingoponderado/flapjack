@@ -1,3 +1,5 @@
+import Flapjack.RiscV.CorrectnessEncoding.ShiftLsrRegister
+import Flapjack.RiscV.CorrectnessEncoding.ShiftAsrRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftLslRegister
 import Flapjack.RiscV.CorrectnessEncoding.ShiftRun
 import Flapjack.RiscV.CorrectnessEncoding.DecodeShift

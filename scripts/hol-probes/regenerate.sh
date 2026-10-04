@@ -7970,3 +7970,13 @@ run_probe riscv_target_shift_lsl_register_probeScript.sml riscv_target_shift_lsl
   riscv_encoder_correct_shiftLslRegister_statement riscv_encoder_correct_shiftLslRegister_types riscv_encoder_correct_shiftLslRegister_hypotheses riscv_encoder_correct_shiftLslRegister_proved \
   "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
   "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_shift_lsr_register_probeScript.sml riscv_target_shift_lsr_register_probe.out \
+  riscv_encoder_correct_shiftLsrRegister_statement riscv_encoder_correct_shiftLsrRegister_types riscv_encoder_correct_shiftLsrRegister_hypotheses riscv_encoder_correct_shiftLsrRegister_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"
+
+run_probe riscv_target_shift_asr_register_probeScript.sml riscv_target_shift_asr_register_probe.out \
+  riscv_encoder_correct_shiftAsrRegister_statement riscv_encoder_correct_shiftAsrRegister_types riscv_encoder_correct_shiftAsrRegister_hypotheses riscv_encoder_correct_shiftAsrRegister_proved \
+  "$cake_dir/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml" \
+  "$cake_dir/compiler/encoders/riscv/proofs"

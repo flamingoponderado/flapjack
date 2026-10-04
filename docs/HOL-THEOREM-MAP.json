@@ -94138,5 +94138,23 @@
     "statement_status": "reviewed_exact",
     "inherits_reals_as_rational_cuts": true,
     "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Lsl case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SLL Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftLsrRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftLsrRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Lsr case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native SRL logical right and low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SRL Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
+  },
+  {
+    "hol_path": "cakeml/compiler/encoders/riscv/proofs/riscv_targetProofScript.sml",
+    "hol_name": "riscv_encoder_correct",
+    "lean_path": "Flapjack/RiscV/CorrectnessEncoding/ShiftAsrRegister.lean",
+    "lean_name": "riscv_encoder_correct_shiftAsrRegister",
+    "statement_status": "reviewed_exact",
+    "inherits_reals_as_rational_cuts": true,
+    "reviewer": "flapjack-sol-c source comparison2026-10-04: original riscv_targetProofScript Shift560-620 Reg/Asr case; encoder_correct_def117-132 whole shape. Arbitrary Nat rd/rs1/rs2 and original sole asmStep/initial targetStateRel; full existential n/allenv/asserts/asserts2. Count<64 derived from source failed=false, native SRA signed arithmetic right and low6/widen64 count equality from that bound. Four emitted bytes, unrestricted SRA Decode/Run and complete Next are derived. No target-run, output-relation, extra range or alias premise. Native target closure inherits reals_as_rational_cuts SOUNDNESS item8; other Shift and Ror cases remain open."
   }
 ]
