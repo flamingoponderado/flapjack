@@ -9,6 +9,8 @@ import Flapjack.Compiler.Backend.StackRawCall.Proofs.AsmNames
 import Flapjack.Compiler.Backend.StackAlloc.Proofs.Conventions
 import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.InitStoreOk
 import Flapjack.Compiler.Backend.StackRemove.Proofs.WordListMemory
+import Flapjack.Compiler.Backend.DataToWord.Proofs.Gc.GcFunOk
+import Flapjack.Compiler.Backend.WordToStack.Proofs.InitializationStateRel
 
 /-! The encoding and initial-state group of `stack_to_labProofScript.sml:3620-3799`.
 `flatten_line_ok_pre` and `compile_all_enc_ok_pre` live in
@@ -19,6 +21,8 @@ namespace Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState
 open Flapjack Flapjack.Compiler.Backend.StackLang Flapjack.Compiler.Backend.LabLang
 open Flapjack.Compiler.Backend.StackToLab.Proofs.CodeInstalled
 open Flapjack.Compiler.Backend.StackToLab.Proofs.FullMakeInit Flapjack.Compiler.Encoders.Asm
+open Flapjack.Compiler.Backend.WordToStack.Native Flapjack.Compiler.Backend.WordToStack.Native.Initialization
+open Flapjack.Pancake
 
 /-- HOL `EVERY_sec_ends_with_label_MAP_prog_to_section`. -/
 @[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml"
@@ -168,5 +172,85 @@ theorem impInitStoreOk {width : Nat} [NeZero width] {C F : Type} {maxHeap : Nat}
         simp [holAlign, holWordSlice, getLsbD_holFcpWord]
       simp only [holByteAligned, holAligned, decide_eq_true_eq]
       exact h0
+
+/-- `make_init_opt` returns an `init_reduce` state (Flapjack infrastructure). -/
+theorem initReduce_of_makeInitOpt {width : Nat} [NeZero width] {C F : Type} {gen : Bool}
+    {maxHeap : Nat} {bitmaps : List (BitVec width)} {dataSp : Nat}
+    {oracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)} {jump : Bool}
+    {bounds : BitVec width × BitVec width} {pointer : Nat} {code : Spt (HolProg width)}
+    {s t : StackSemStateFiniteExact width C F}
+    (h : StackRemove.Proofs.InitMake.makeInitOpt gen maxHeap bitmaps dataSp oracle jump bounds
+      pointer code s = some t) :
+    ∃ t', t = StackRemove.Proofs.InitReduce.initReduce gen jump bounds pointer code bitmaps
+      dataSp oracle t' := by
+  unfold StackRemove.Proofs.InitMake.makeInitOpt at h
+  split at h
+  · simp at h
+  · split at h
+    · cases h; exact ⟨_, rfl⟩
+    · simp at h
+
+theorem drop_eq_singleton_of_holLast {α : Type} [Nonempty α] :
+    ∀ (l : List α) (n : Nat) (x : α), l.length = n + 1 → holLast l = x → l.drop n = [x]
+  | [], _, _, h, _ => by simp at h
+  | [a], n, x, h, hl => by
+      simp at h; subst h; simpa [holLast] using hl
+  | a :: b :: l, 0, x, h, _ => by simp at h
+  | a :: b :: l, n + 1, x, h, hl => by
+      simp only [List.drop_succ_cons]
+      exact drop_eq_singleton_of_holLast (b :: l) n x (by simpa using h) (by simpa [holLast] using hl)
+
+/-- HOL `IMP_init_state_ok`. HOL's free variables are implicit; `EVERY P progs`
+over the Boolean conventions is `progs.all P = true`, as in the reviewed
+`init_state_ok`, and `(λy. raise_stub_location ≠ y) ∘ FST` keeps HOL's
+orientation. -/
+@[hol "cakeml/compiler/backend/proofs/stack_to_labProofScript.sml" "IMP_init_state_ok"
+  (fmap_as_finite_support_relation := [StackSemStateFiniteExact.regs,
+    StackSemStateFiniteExact.store])
+  (words_as_type_indexed_bitvec)]
+theorem impInitStateOk {width : Nat} [NeZero width] {C F : Type} {kkk : Nat}
+    {bitmaps t : List (BitVec width)}
+    {wordOracle : Nat → (Nat × C) × List (Nat × Nat × WordLangProgHOL (BitVec width))}
+    {stackOracle : Nat → C × List (Nat × HolProg width) × List (BitVec width)}
+    {ac : AsmConfigExact width} {scc : StackToLab.Config} {dc : DataToWord.Config}
+    {maxHeap stk : Nat} {stoff : BitVec width × BitVec width} {p6 : List (Nat × HolProg width)}
+    {labSt : LabSem.State width C F} {saveRegs : Nat → Bool} {dataSp : Nat}
+    {fmis xxx : StackSemStateFiniteExact width C F} :
+    4 < kkk ∧ bitmaps = 4 :: t ∧ goodDimindex width ∧
+      (∀ n,
+        let ((bm0, _), progs) := wordOracle n
+        progs.all (fun p => postAllocConventionsHOL kkk p.2.2) = true ∧
+        progs.all (fun p => flatExpConventions p.2.2) = true ∧
+        progs.all (fun p => decide (raiseStubLocation ≠ p.1)) = true ∧
+        progs.all (fun p => decide (storeConstsStubLocation ≠ p.1)) = true ∧
+        (n = 0 → bm0 = bitmaps.length)) ∧
+      stackOracle = (fun n =>
+        let ((bm0, cfg), progs) := wordOracle n
+        let (progs, _, bm) := compileWordToStackNative ac false kkk progs (.nil, bm0)
+        (cfg, progs, appListAppend bm.1)) ∧
+      fullMakeInit scc dc maxHeap stk stoff bitmaps p6 labSt saveRegs dataSp stackOracle =
+        (fmis, some xxx) →
+      WordToStackProofs.InitializationStateRel.initStateOk ac kkk fmis wordOracle := by
+  rintro ⟨hk, rfl, hdim, hconv, horacle, hf⟩
+  simp only [fullMakeInit, Prod.mk.injEq] at hf
+  obtain ⟨hfmis, hopt⟩ := hf
+  subst hfmis
+  unfold StackRemove.Proofs.InitMake.makeInitAny
+  rw [hopt]
+  obtain ⟨cur, oth, bb, len, h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15,
+    h16, h17, h18, h19, h20, h21, h22, h23, h24, h25, h26, h27, h28, h29, h30, h31, h32⟩ :=
+    initProp_of_makeInitOpt hopt
+  obtain ⟨t', rfl⟩ := initReduce_of_makeInitOpt hopt
+  simp only [StackAlloc.makeInit, WordToStackProofs.InitializationStateRel.initStateOk]
+  refine ⟨hk, hdim, by rcases hdim with h | h <;> omega, trivial, h22, trivial,
+    DataToWord.Proofs.Gc.gcFunOkWordGcFun, by omega, h23, ?_, ?_,
+    h25, drop_eq_singleton_of_holLast _ _ _ h29 h28, Option.ne_none_iff_exists'.mpr ⟨_, h12⟩,
+    ?_, horacle, ?_⟩
+  all_goals simp only [StackRemove.Proofs.InitReduce.initReduce] at h24 ⊢
+  · simp at h24 ⊢; omega
+  · exact ⟨t, rfl⟩
+  · simp at h24 ⊢; omega
+  · intro n
+    simpa [ne_comm] using hconv n
 
 end Flapjack.Compiler.Backend.StackToLab.Proofs.EncodingInitState

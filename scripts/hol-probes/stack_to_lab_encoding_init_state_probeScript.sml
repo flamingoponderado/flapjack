@@ -41,3 +41,6 @@ val _ = type_list "stack_to_lab_compile_all_enc_ok_statement_types" stack_to_lab
 val _ = checked "IMP_init_store_ok_statement" IMP_init_store_ok;
 val _ = typed_statement "IMP_init_store_ok_statement_typed" IMP_init_store_ok;
 val _ = type_list "IMP_init_store_ok_statement_types" IMP_init_store_ok;
+val _ = checked "IMP_init_state_ok_statement" IMP_init_state_ok;
+val _ = typed_statement "IMP_init_state_ok_statement_typed" IMP_init_state_ok;
+val _ = type_list "IMP_init_state_ok_statement_types" IMP_init_state_ok;

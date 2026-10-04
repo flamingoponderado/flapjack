@@ -28,6 +28,7 @@ correspondence additionally covers arbitrary partner lists.
 `word_cse_knowledge_lemmas_probe.out` captures the full zero-hypothesis statements of the word_cseProof knowledge lemmas ported in `WordCse/Proofs/KnowledgeLemmas.lean` (`firstRegOfArith_canonicalArith`, `lookup_listCmp_empty`, `invariant_listCmp_empty`, `lookup_insert_listCmp` (also typed), `register_read(s)_simps`, `lookup_register_read(s)`). Statement evidence for source review only.
 `word_cse_wf_data_preservation_probe.out` captures the full zero-hypothesis statements of the 13 exported word_cseProof `wf_data` preservation theorems ported in `WordCse/Proofs/WfDataPreservation.lean` (`wf_data_empty` through `wf_canonicalMoveRegs`, with `wf_add_to_data_aux` also typed); the 16 local ones are not exported. Statement evidence for source review only.
 `word_cse_transform_probe.out` captures the types of `word_cseInst` (`knowledge -> α inst -> knowledge # α prog`), `word_cse` and `word_common_subexp_elim`, the full `word_cseInst_def` and `word_common_subexp_elim_def`, the clause count (26) of `word_cse_def`, and the zero-hypothesis `word_cse_wf_data`. The built theory exports `Seqs_ind` but no `Seqs_def`, so the `Seqs` test helper is compared against the script text only. Statement evidence for source review only.
+`word_cse_typed_captures_probe.out` adds, from the built `word_cse`/`word_cseProof` theories, the fully typed (`show_types`) statement of every exported word_cse/word_cseProof declaration with a reviewed manifest row that no other probe types (109 declarations, including `sem_inv_def`, `data_inv_def`, `data_inv_empty`, `wf_data_def`, `in_names_set_def` and the `canonicalRegs*_correct` theorems), plus the field types of the `knowledge` record. `[local]` declarations are not exported and remain compared against the script text; `Seqs` is absent from the built theory (see above). Statement and carrier evidence for source review only, not an equivalence proof.
 `word_cse_data_inv_transport_probe.out` captures the full zero-hypothesis statements of word_cseProof `canonicalArith_correct`, `data_inv_locals`, `wf_data_untracked`, `data_inv_set_var`, `data_inv_unset_var`, `not_seen_data_inv_alist_insert`, `data_inv_memory` and `data_inv_state_agree` (also typed: one state type for s1 and s2). Statement evidence for source review only.
 `word_cse_data_inv_updates_probe.out` captures the full zero-hypothesis statements of the 12 exported word_cseProof `data_inv` knowledge-update theorems ported in `WordCse/Proofs/DataInvUpdates.lean` (`data_inv_merge_l` through `evaluate_Move1`, with `data_inv_set_store` also typed); the 10 local ones are not exported. Statement evidence for source review only.
 `word_cse_fact_insert_probe.out` captures the full zero-hypothesis statements of the 7 exported word_cseProof fact-producer correctness theorems in `WordCse/Proofs/FactInsert.lean` (`add_to_data_aux_correct` through `add_to_load_correct`, with `add_to_data_Arith_correct` also typed); the 7 local ones are not exported. Statement evidence for source review only.
@@ -7974,6 +7975,8 @@ untagged. Emitted-list byte availability and full original Const assertions
 remain separate open work; this complete pure-step list result does not assume
 or claim their assembly.
 
+
+
 `pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
 `pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
 independent word/configuration/FFI carrier. Regenerate with
@@ -8010,6 +8013,40 @@ statements. Mutation tests reject a pure replacement iterator, wrong index or
 PC increment, added target-run premise, changed domain premise, wrong assertion
 counter, and reversed outside-domain observation.
 
+`pan_to_word_semantics_probeScript.sml` captures the closed, fully typed original
+`pan_to_wordProof$state_rel_imp_semantics` with every original conjunct and
+independent word/configuration/FFI carrier. Regenerate with
+`HOL_PROBE_ONLY=pan_to_word_semantics_probeScript.sml`. The native theorem
+composes all six reviewed pass paths; production routing remains separate.
+
+### Complete native Const control and register post-state
+
+`CorrectnessEncoding/ConstPost.lean` proves that each of the seven literal
+native register `Run` clauses commutes with current-core PC/Skip updates under
+original `riscv_ok`. It lifts the equation to arbitrary instruction lists,
+including the unchanged empty-list state. For nonempty lists the complete
+native step fold is the original register `Run` fold with Skip4 and PC advanced
+by four times the list length. The full Const specialization uses original
+`asm_ok` and `riscv_ok` only and retains the accepted wide-constant scratch31
+write. No target execution or post-state relation is assumed.
+
+These are untagged composition lemmas, not separately named HOL declarations.
+Source comparison uses the literal seven register clauses and Const lowering
+at `riscv_targetScript.sml:103-126`; the full original Const constructor at
+`riscv_targetProofScript.sml:533-545` remains open until its intermediate and
+final source-state assertions are assembled. Existing oracle captures retain
+their original scope; this addition does not claim a new full-Next oracle.
+
+`CorrectnessEncoding/ConstRelation.lean` derives the literal source Const
+post-state using the original encoded byte length, then proves the final
+`targetStateRel` for the complete native step fold. Its public relation lemma
+assumes only original `asmStep` and the initial `targetStateRel`. Register
+bounds and nonzero destination follow from `asm_ok`; scratch31 is retained in
+the native post-state and excluded from source observations by the original
+`avoidRegs`. The memory domain and exact PC increment are preserved. These
+untagged composition lemmas have no separately named HOL original; the full
+original interference/assertions constructor remains open.
+
 ## Full typed Word-to-Stack proof captures
 
 The five WordToStack `move_single`, `move_aux`, `move_aux_seqsem`, `move_div2`,
@@ -8022,3 +8059,34 @@ Call row is an original kernel theorem specialization, and its induction row is
 the original `evaluate_ind` obligation instantiated with the full compiler
 motive. Printing the obligation does not prove its compiler case, and none of
 these captures establishes HOL-to-Lean equivalence.
+
+### Full original native Const constructor
+
+`CorrectnessEncoding/ConstAssertions.lean` now assembles the full original
+`riscv_encoder_correct` Const constructor from original `asmStep` and initial
+`targetStateRel` only. The existential witness is the nonempty emitted-list
+length minus one. Every environment satisfying the original projection
+condition is retained. Actual prefix execution derives all intermediate native
+validity, equality of every code byte, and modular PC coverage; whole execution
+transports the exact final source relation, and original `asserts2` preserves
+outside-domain bytes for each native transition. All signed12/32/wide constant
+branches remain, including the native scratch31 write. No target execution,
+post-state relation, narrowed constant range or stronger environment premise
+is added. Full encoder correctness for other constructors and the final compiler
+remains open.
+
+Fresh `riscv_target_const_probe.out` specializes the original theorem only to
+`Inst (Const r c)`, prints unrestricted original binders/types and the entire
+assertion conclusion, reports zero stored hypotheses and proved `T`. It was
+regenerated against the committed HOL/CakeML revisions using their same-revision
+prebuilt original theory cache. This is original theorem regression evidence,
+not a cross-language equivalence proof. `check-riscv-target-const.py` pins the
+full Lean statement, original assertion definition and all four probe rows;
+its mutation tests reject extra premises, false oracle evidence and lost rows.
+
+`pan_to_target_source_probeScript.sml` captures the full typed original
+exports and compile_prog definitions/types, actual library ZIP/SPLITP clauses,
+and the original compiler definition's extracted first LET argument. Eight
+kernel observations cover empty/default/already-first/later main, first-only
+relocation with duplicate names, and exported flags/duplicates. Regenerate with
+`HOL_PROBE_ONLY=pan_to_target_source_probeScript.sml`.

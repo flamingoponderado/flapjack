@@ -1,9 +1,12 @@
 import Flapjack.Compiler.Backend.BackendCommon
 import Flapjack.HolRef
 
-/-! Counterpart of `cakeml/compiler/backend/bvl_to_bviScript.sml`. Only the
-stub-location constants are ported so far; the language carriers and the
-compiler remain open. -/
+/-! Counterpart of `cakeml/compiler/backend/bvl_to_bviScript.sml` for the
+stub-location constants. The distinct native BVL/BVI expression carriers are
+ported in `Bvl/Syntax.lean` and `Bvi/Syntax.lean`; `BvlToBvi/Config.lean`
+contains the complete source configuration and default initializer. These
+support declarations do not port the whole BVL-to-BVI compiler or prove its
+semantics, and do not establish final Pancake-to-RISC-V correctness. -/
 
 namespace Flapjack.Compiler.Backend.BvlToBvi
 
