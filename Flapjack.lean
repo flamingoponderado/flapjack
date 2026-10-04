@@ -127,6 +127,7 @@ import Flapjack.RiscV.L3.Step.RegisterALUStep
 import Flapjack.RiscV.L3.Step.ImmediateALUStep
 import Flapjack.RiscV.L3.Step.UpperImmediateStep
 import Flapjack.RiscV.L3.Step.ImmediateShiftStep
+import Flapjack.RiscV.L3.Step.RegisterShiftStep
 import Flapjack.RiscV.L3.Step.DecodeAny
 import Flapjack.RiscV.L3.Defs.WritePC
 import Flapjack.Test.L3DecodeParity
