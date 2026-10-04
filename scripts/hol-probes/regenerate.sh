@@ -6969,6 +6969,9 @@ run_probe l3_step_shift_probeScript.sml l3_step_shift_probe.out \
   run_probe l3_step_load_probeScript.sml l3_step_load_probe.out \
     ld_hypotheses ld_statement lw_hypotheses lw_statement lh_hypotheses lh_statement lb_hypotheses lb_statement lwu_hypotheses lwu_statement lhu_hypotheses lhu_statement ld_nop_hypotheses ld_nop_statement lw_nop_hypotheses lw_nop_statement lh_nop_hypotheses lh_nop_statement lb_nop_hypotheses lb_nop_statement lwu_nop_hypotheses lwu_nop_statement lhu_nop_hypotheses lhu_nop_statement source \
     "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
+  run_probe l3_step_store_probeScript.sml l3_step_store_probe.out \
+    sd_hypotheses sd_statement sw_hypotheses sw_statement sh_hypotheses sh_statement sb_hypotheses sb_statement source \
+    "$hol_dir/examples/l3-machine-code/riscv/step/riscv_stepScript.sml" "$hol_dir/examples/l3-machine-code/riscv/step"
  run_probe pan_structs_mmap_faithful_probeScript.sml pan_structs_mmap_faithful_probe.out \
   compile_exp_correct_mmap_helper_statement compile_exp_correct_mmap_helper_types compile_exp_correct_mmap_helper_hypotheses compile_exp_correct_mmap_helper_proved \
   "$cake_dir/pancake/proofs/pan_structsProofScript.sml" "$cake_dir/pancake/proofs"
