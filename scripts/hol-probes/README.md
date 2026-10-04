@@ -8816,3 +8816,8 @@ Capture regenerated from the pinned original source; it is regression evidence,
 not a HOL-to-Lean equivalence proof.
 
 `word_to_word_find_code_carriers_probe.out` replays the literal local `find_code_thm` statement and proof from the pinned source. Its typed, zero-hypothesis result records independent code/config, argument-word, and three return-metadata carriers. This is source-review regression evidence, not a HOL-to-Lean equivalence proof.
+`riscv_target_jumpcmp_probeScript.sml` specializes the full original native
+encoder correctness theorem to arbitrary JumpCmp operands and comparison.
+Four fresh typed rows retain the complete statement, carrier annotations,
+zero hypotheses and proof T; the Lean root covers all near/far Reg/Imm cases.
+The statement/evidence guard detects drift but does not replace source review.
